@@ -1,0 +1,107 @@
+.Formbuilder_icon_button{
+    background: url(/plugins/Formbuilder/static/img/button.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_captcha{
+    background: url(/plugins/Formbuilder/static/img/captcha.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_checkbox{
+    background: url(/plugins/Formbuilder/static/img/checkbox.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_file{
+    background: url(/plugins/Formbuilder/static/img/file.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_hash{
+    background: url(/plugins/Formbuilder/static/img/Hash.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_hidden{
+    background: url(/plugins/Formbuilder/static/img/hidden.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_image{
+    background: url(/plugins/Formbuilder/static/img/picture.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_multiCheckbox{
+    background: url(/plugins/Formbuilder/static/img/multicheckbox.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_multiselect{
+    background: url(/plugins/Formbuilder/static/img/multiselect.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_password{
+    background: url(/plugins/Formbuilder/static/img/password.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_radio{
+    background: url(/plugins/Formbuilder/static/img/radio.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_reset{
+    background: url(/plugins/Formbuilder/static/img/reset.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_select{
+    background: url(/plugins/Formbuilder/static/img/select.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_submit{
+    background: url(/plugins/Formbuilder/static/img/submit.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_text{
+    background: url(/plugins/Formbuilder/static/img/textfield.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_textarea{
+    background: url(/plugins/Formbuilder/static/img/textarea.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_filter{
+    background: url(/plugins/Formbuilder/static/img/Filter.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_validator{
+    background: url(/plugins/Formbuilder/static/img/bool.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_root{
+    background: url(/plugins/Formbuilder/static/img/application_form.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_fbuilder{
+    background: url(/plugins/Formbuilder/static/img/formBuilder.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_filter_add{
+    background: url(/plugins/Formbuilder/static/img/Filter_add.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_validator_add{
+    background: url(/plugins/Formbuilder/static/img/bool_add.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_item_add{
+    background: url(/plugins/Formbuilder/static/img/elem_add.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_root_add{
+    background: url(/plugins/Formbuilder/static/img/application_form_add.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_displayGroup{
+    background: url(/plugins/Formbuilder/static/img/fieldset.png) left center no-repeat !important;
+}
+
+.Formbuilder_icon_displayGroup_add{
+    background: url(/plugins/Formbuilder/static/img/fieldset_add.png) left center no-repeat !important;
+}
+
+.pimcore_icon_api{
+    background: url(/plugins/Formbuilder/static/img/help.png) left center no-repeat !important;
+}
