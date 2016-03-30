@@ -64,7 +64,6 @@ class Builder {
 
     public function getDatas()
     {
-
         return $this->datas;
     }
 
@@ -454,6 +453,11 @@ class Builder {
     protected function buildMultiData($datas)
     {
         $arr = array();
+
+        if( !is_array( $datas ) )
+        {
+            return $arr;
+        }
 
         foreach ($datas as $data)
         {
