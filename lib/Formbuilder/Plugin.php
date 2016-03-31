@@ -18,6 +18,11 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
     }
 
+    public function preDispatch($e) {
+
+        $e->getTarget()->registerPlugin(new Controller\Plugin\Frontend());
+    }
+
     public static function needsReloadAfterInstall()
     {
         return false;
@@ -84,11 +89,6 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         }
 
         return !empty($result);
-    }
-
-    public function preDispatch()
-    {
-
     }
 
     /**

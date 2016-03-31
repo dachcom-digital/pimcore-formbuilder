@@ -155,6 +155,8 @@ class Frontend {
 
                 $form->setDisableTranslator(true);
 
+                $this->setFormDefaults( $form );
+
                 if ($locale != null && $locale != "")
                 {
                     $form->setTranslator($trans);
@@ -202,6 +204,8 @@ class Frontend {
                 $form = $this->getDynamicForm($id, $locale, $class);
             }
 
+            $this->setFormDefaults( $form );
+
             //correctly set recaptcha to https if request is over https
             if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
             {
@@ -225,6 +229,31 @@ class Frontend {
         {
             return false;
         }
+    }
+
+    private function setFormDefaults( $form )
+    {
+        $form->addElementPrefixPath(
+            'Formbuilder',
+            'Formbuilder/Zend/Form/'
+        );
+
+        $form->addElement(
+            'text',
+            'honeypot',
+            array(
+                'label' => '',
+                'required' => false,
+                'class' => 'hon-hide',
+                'decorators' => array('ViewHelper'),
+                'validators' => array(
+                    array(
+                        'validator' => 'Honeypot'
+                    )
+                )
+            )
+        );
+
     }
 
     protected function translateForm( $id, $locale)
