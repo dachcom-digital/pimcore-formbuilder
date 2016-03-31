@@ -55,20 +55,27 @@ class Form extends Document\Tag\Area\AbstractArea {
         {
             $frontendLib = new Frontend();
 
-            //$form = $frontendLib->getForm($formName, $this->view->language, true);
             $form = $frontendLib->getTwitterForm($formName, $this->view->language, $horizontalForm);
 
             $valid = $form->isValid( $this->getAllParams() );
 
             //var_dump( $form->getErrorMessages( ) );
 
-            if( $valid ) {
+            $isSubmit = !is_null( $this->getParam('submit') );
 
-                echo "valid";
+            if( $valid && $isSubmit ) {
 
                 $mailTemplate = $this->view->href('sendMailTemplate')->getElement();
-
                 $this->sendMail( $mailTemplate, $form->getValues() );
+
+                $successMessage = $mailTemplate->getProperty('mail_successfully_sent');
+
+                if( !empty( $successMessage ) )
+                {
+                    echo '<div class="row"><div class="col-xs-12"><div class="alert alert-success">' . $successMessage . '</div></div></div>';
+                }
+
+                $form->reset();
 
             }
 
