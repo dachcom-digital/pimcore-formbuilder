@@ -107,7 +107,6 @@ class Frontend {
 
     protected function initTranslation(\Zend_Form $form, $id, $locale = null)
     {
-
         if($locale === null)
         {
             $locale = \Zend_Locale::findLocale();
@@ -120,7 +119,9 @@ class Frontend {
             if(null === $form->getTranslator())
             {
                 $form->setTranslator($trans);
-            } else {
+            }
+            else
+            {
                 $form->getTranslator()->addTranslation($trans);
             }
         }

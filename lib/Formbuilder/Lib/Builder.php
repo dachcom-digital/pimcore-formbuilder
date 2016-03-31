@@ -537,7 +537,8 @@ class Builder {
             if (is_string($data))
             {
                 array_push($arr, $data);
-            } else
+            }
+            else
             {
                 $arr[$data['name']] = $data['value'];
             }
@@ -597,7 +598,6 @@ class Builder {
         {
             $FilVal['validators'] = $validators;
         }
-
 
         return $FilVal;
     }
@@ -660,16 +660,22 @@ class Builder {
         {
             foreach ($datas['messages'] as $key)
             {
-                if ($datas['messages.' . $key] != '')
+                if ($datas['translate']['messages.' . $key] != '')
                 {
-                    foreach ($datas['translate'][$key] as $trans)
+                    $defaultKeyValue = $datas['translate']['messages.' . $key];
+
+                    if (isset( $datas['translate'][ $key ] ) && is_array( $datas['translate'][ $key ] ) )
                     {
-                        array_push($this->translateValidator, array(
-                            'locale' => $trans['locale'],
-                            'value' => $trans['value'],
-                            'key' => $datas['messages.' . $key]
-                        ));
+                        foreach ($datas['translate'][$key] as $trans)
+                        {
+                            array_push($this->translateValidator, array(
+                                'locale' => $trans['name'],
+                                'value' => $trans['value'],
+                                'name' => $defaultKeyValue
+                            ));
+                        }
                     }
+
                 }
             }
         }

@@ -19,7 +19,9 @@ Formbuilder.comp.validator.alpha = Class.create(Formbuilder.comp.validator.base,
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -31,10 +33,13 @@ Formbuilder.comp.validator.alpha = Class.create(Formbuilder.comp.validator.base,
                 checked:false
             }
 
-        ]
+            ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
+
     }
 
 });

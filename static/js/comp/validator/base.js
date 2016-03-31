@@ -2,9 +2,13 @@ pimcore.registerNS("Formbuilder.comp.validator.base");
 Formbuilder.comp.validator.base = Class.create({
 
     type: "base",
+
     apiUrl:"http://apigen.juzna.cz/doc/zendframework/zf1/class-Zend_Validate_{name}.html",
+
     apiPrefix:"",
+
     errors:[],
+
     errorsDef:[],
 
     initialize: function(treeNode, initData) {
@@ -94,6 +98,13 @@ Formbuilder.comp.validator.base = Class.create({
             title: t("custom error panel"),
             closable:false,
             autoScroll:true,
+            listeners: {
+                activate: function(tab){
+                    this.applyData();
+                    this.layout2.removeAll();
+                    this.layout2.add(this.getTranslatForm());
+                }.bind(this)
+            },
             items: [this.getTranslatForm()]
 
         });
@@ -151,8 +162,9 @@ Formbuilder.comp.validator.base = Class.create({
 
         data.translate = {};
         data.messages = this.errors;
+        var translateCouples = {};
 
-        var formTransItems = this.form.queryBy(function() {
+        var formTransItems = this.transForm.queryBy(function() {
             return true;
         });
 
@@ -165,11 +177,59 @@ Formbuilder.comp.validator.base = Class.create({
                 var val = item.getValue(),
                     name = item.getName();
 
-                if(item.ownerCt.layout != "hbox") {
-                    data.translate[name] = val;
+                if (name.substring(0, 10) == "translate_") {
+
+                    if( val !== "") {
+
+                        var elements = name.split('_');
+
+                        var translateType = elements[1],
+                            type = elements[2],
+                            id = elements[3];
+
+                        //define translate type
+                        if( !translateCouples[translateType] ) {
+                            translateCouples[translateType] = {}
+                        }
+
+                        //define translate name
+                        if( !translateCouples[ translateType ][ id ] ) {
+                            translateCouples[ translateType ][ id ] = {'name' : null, 'value' : null}
+                        }
+
+                        //set data
+                        translateCouples[ translateType ][ id ][ type ] = val;
+
+                    }
+
+                } else {
+
+                    if(item.ownerCt.layout != "hbox") {
+                        data.translate[name] = val;
+                    }
+
                 }
+
             }
 
+        }
+
+        if( Object.keys(translateCouples).length > 0) {
+
+            //each type
+            Ext.Object.each(translateCouples, function (name, translateValues) {
+
+                //each object
+                if( Object.keys(translateValues).length > 0) {
+
+                    data["translate"][name] = [];
+                    Ext.Object.each(translateValues, function (id, value) {
+                        data["translate"][name].push( value );
+                    });
+
+                }
+
+            });
         }
 
         data.fieldtype = this.getType();
@@ -245,22 +305,30 @@ Formbuilder.comp.validator.base = Class.create({
 
     },
 
-    getTranslatForm: function(){
+    getTranslatForm: function() {
 
         this.getLanguages();
 
         this.transForm = new Ext.FormPanel({
             bodyStyle:'padding:5px 5px 0',
-            items: [
-                this.getErrorsFS()
-            ]
+            labelWidth: 150,
+            defaultType: 'textfield',
+
+            items: [{
+                xtype:'fieldset',
+                title: t('label translation'),
+                collapsible: false,
+                autoHeight:true,
+                defaultType: 'textfield',
+                items: this.getErrorFieldSet()
+            }]
 
         });
 
         return this.transForm;
     },
 
-    getErrorsFS: function(){
+    getErrorFieldSet: function() {
 
         var items = [];
 
@@ -279,48 +347,12 @@ Formbuilder.comp.validator.base = Class.create({
                     {
                         xtype: "textfield",
                         name: "messages." + error,
-                        value:this.datax["messages." + error],
+                        value: this.datax["translate"]["messages." + error],
                         fieldLabel: t("custom error"),
                         anchor: "100%"
                     },
 
-                    this.generateValidateLocateRepeater()
-
-                    /*
-
-                     new Ext.ux.form.SuperField({
-                     allowEdit: true,
-                     name: error,
-                     stripeRows:true,
-                     values:this.datax.translate[error],
-                     fieldLabel: t("traduction"),
-                     items: [
-                     {
-                     xtype: "combo",
-                     name: "locale",
-                     fieldLabel: t("Locale"),
-                     queryDelay: 0,
-                     displayField:"label",
-                     valueField: "key",
-                     mode: 'local',
-                     store: this.localeStore,
-                     editable: false,
-                     triggerAction: 'all',
-                     anchor:"100%",
-                     summaryDisplay:true,
-                     allowBlank:false
-                     },{
-                     xtype: "textfield",
-                     name: "value",
-                     fieldLabel: t("value"),
-                     anchor: "100%",
-                     summaryDisplay:true,
-                     allowBlank:false
-                     }
-                     ]
-                     })
-
-                     */
+                    this.generateValidateLocateRepeater( error )
 
                 ]
             });
@@ -330,12 +362,12 @@ Formbuilder.comp.validator.base = Class.create({
 
     },
 
-    generateValidateLocateRepeater: function() {
+    generateValidateLocateRepeater: function( elementName ) {
 
         var selector = null,
             storeData = this.localeStore;
 
-        var addMetaData = function (name, value) {
+        var addMetaData = function (name, value, elementName) {
 
             if(typeof name != "string") {
                 name = "";
@@ -357,7 +389,7 @@ Formbuilder.comp.validator.base = Class.create({
 
             var items = [{
                 xtype: "combo",
-                name: "translate_name_" + count,
+                name: "translate_" + elementName + "_name_" + count,
                 fieldLabel: t("Locale"),
                 queryDelay: 0,
                 displayField: "label",
@@ -369,17 +401,17 @@ Formbuilder.comp.validator.base = Class.create({
                 anchor: "100%",
                 value: name,
                 summaryDisplay: true,
-                //allowBlank: false,
+                allowBlank: false,
                 flex: 1,
                 listeners: combolisteners
             },
                 {
                 xtype: "textfield",
-                name: "translate_value_" + count,
+                name: "translate_" + elementName + "_value_" + count,
                 fieldLabel: t("value"),
                 anchor: "100%",
                 summaryDisplay: true,
-                //allowBlank: false,
+                allowBlank: false,
                 value : value,
                 flex: 1,
                 listeners: combolisteners
@@ -413,7 +445,7 @@ Formbuilder.comp.validator.base = Class.create({
 
         selector = new Ext.form.FieldSet({
 
-            title: t("traduction"),
+            title: t("translation"),
             collapsible: false,
             autoHeight:true,
             width: 700,
@@ -425,7 +457,7 @@ Formbuilder.comp.validator.base = Class.create({
                     xtype: 'button',
                     text: t("add"),
                     iconCls: "pimcore_icon_add",
-                    handler: addMetaData,
+                    handler: addMetaData.bind(null, null, null, elementName),
                     tooltip: {
                         title:'',
                         text: t('add_metadata')
@@ -436,10 +468,10 @@ Formbuilder.comp.validator.base = Class.create({
 
         try {
 
-            if(typeof this.datax.translate == "object" && this.datax.translate.length > 0) {
+            if(typeof this.datax.translate == "object" && typeof this.datax.translate[elementName] == "object" && this.datax.translate[elementName].length > 0) {
 
-                this.datax.translate.forEach(function(field) {
-                    addMetaData(field["name"], field["value"]);
+                this.datax.translate[elementName].forEach(function(field) {
+                    addMetaData(field["name"], field["value"], elementName);
                 });
 
             }

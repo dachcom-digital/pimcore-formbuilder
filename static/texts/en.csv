@@ -53,6 +53,7 @@
 "displayGroup","Fieldset"
 "legend","Legend"
 "single multiOption","Option",
+"translation","Translation",
 "multiOptions translation","MultiOptions translation"
 "legend translation","Legend translation"
 "original legend","Original legend"
