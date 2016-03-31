@@ -30,10 +30,10 @@ class Twitter_Bootstrap_Form_Vertical extends Twitter_Bootstrap_Form
         $this->setElementDecorators(array(
             array('FieldSize'),
             array('ViewHelper'),
-            array('ElementErrors'),
-            array('Description', array('tag' => null, 'class' => 'help-block','escape'=>false)),
             array('Addon'),
-            array('Label', array('class' => 'control-label')),
+            array('ElementErrors'),
+            array('Description', array('tag' => 'span', 'class' => 'help-block')),
+            array('Label'),
             array('Wrapper')
         ));
 

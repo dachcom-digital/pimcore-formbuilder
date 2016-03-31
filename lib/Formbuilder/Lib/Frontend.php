@@ -219,7 +219,9 @@ class Frontend {
             }
 
             return $form;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }

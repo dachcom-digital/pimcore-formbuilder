@@ -27,6 +27,12 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
 
     protected $_prefixesInitialized = false;
 
+    protected $_labelColSize = 2;
+    protected $_fieldColSize = 10;//3
+
+    public $_allowedColType = array('xs', 'sm', 'md', 'lg');
+    protected $_colType = 'md';//lg
+
     /**
      * Override the base form constructor.
      *
@@ -35,12 +41,33 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
     public function __construct($options = null)
     {
         $this->_initializePrefixes();
+
         $this->setDecorators(array(
             'FormElements',
             'Form'
         ));
 
         parent::__construct($options);
+
+        $this->_initializeFieldColSize();
+    }
+
+    protected function _initializeFieldColSize()
+    {
+        foreach ($this->getElements() as $element) {
+            if(!$element instanceof Zend_Form_Element_Submit
+                    and !$element instanceof Zend_Form_Element_Button
+                    and !$element instanceof Zend_Form_Element_Image
+                    and !$element instanceof Zend_Form_Element_Checkbox
+                    and !$element instanceof Zend_Form_Element_MultiCheckbox
+                    and !$element instanceof Zend_Form_Element_Radio)
+            {
+                $this->_addClassNames(array(
+                    'form-control',
+                    //'col-'.$this->_getColType().'-'.$this->_getFieldColSize()
+                ), $element);
+            }
+        }
     }
 
     protected function _initializePrefixes()
@@ -48,60 +75,32 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
         if (!$this->_prefixesInitialized) {
             if (null !== $this->getView()) {
                 $this->getView()->addHelperPath(
-                        'Twitter/Bootstrap/View/Helper',
-                        'Twitter_Bootstrap_View_Helper'
+                    'Twitter/Bootstrap/View/Helper',
+                    'Twitter_Bootstrap_View_Helper'
                 );
             }
 
             $this->addPrefixPath(
-                    'Twitter_Bootstrap_Form_Element',
-                    'Twitter/Bootstrap/Form/Element',
-                    'element'
+                'Twitter_Bootstrap_Form_Element',
+                'Twitter/Bootstrap/Form/Element',
+                'element'
             );
 
             $this->addElementPrefixPath(
-                    'Twitter_Bootstrap_Form_Decorator',
-                    'Twitter/Bootstrap/Form/Decorator',
-                    'decorator'
+                'Twitter_Bootstrap_Form_Decorator',
+                'Twitter/Bootstrap/Form/Decorator',
+                'decorator'
             );
 
             $this->addDisplayGroupPrefixPath(
-                    'Twitter_Bootstrap_Form_Decorator',
-                    'Twitter/Bootstrap/Form/Decorator'
+                'Twitter_Bootstrap_Form_Decorator',
+                'Twitter/Bootstrap/Form/Decorator'
             );
 
             $this->setDefaultDisplayGroupClass('Twitter_Bootstrap_Form_DisplayGroup');
 
             $this->_prefixesInitialized = true;
         }
-    }
-
-    /**
-     * Adds default decorators if none are specified in the options and then calls Zend_Form::createElement()
-     * (non-PHPdoc)
-     * @see Zend_Form::createElement()
-     */
-    public function createElement($type, $name, $options = null)
-    {
-        // If we haven't specified our own decorators, add the default ones in.
-        if (is_array($this->_elementDecorators)) {
-            if (null === $options) {
-                $options = array('decorators' => $this->_elementDecorators);
-            } elseif ($options instanceof Zend_Config) {
-                $options = $options->toArray();
-            }
-
-            if ( is_array($options) && !array_key_exists('decorators', $options) ) {
-                $options['decorators'] = $this->_elementDecorators;
-            }
-        }
-
-        // no decorators for hidden elements
-        if (in_array($type, array('hidden', 'hash'))) {
-            $options["decorators"] = array('ViewHelper');
-        }
-
-        return parent::createElement($type, $name, $options);
     }
 
     /**
@@ -124,19 +123,26 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
     }
 
     /**
-     * Adds a class name
+     * Adds a class name to a Zend_Form_Element if given or to the
+     * base form
      *
-     * @param string $classNames
+     * @param Zend_Form_Element $element
+     * @param string            $classNames
      */
-    protected function _addClassNames($classNames)
+    protected function _addClassNames($classNames, Zend_Form_Element $element = null)
     {
-        $classes = $this->_getClassNames();
+        if (null !== $element) {
+            $classes = $this->_getClassNames($element);
+        } else {
+            $element = $this;
+            $classes = $this->_getClassNames();
+        }
 
         foreach ((array) $classNames as $className) {
             $classes[] = $className;
         }
 
-        $this->setAttrib('class', trim(implode(' ', array_unique($classes))));
+        $element->setAttrib('class', trim(implode(' ', array_unique($classes))));
     }
 
     /**
@@ -179,6 +185,15 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
         $elements = $this->getElements();
 
         foreach ($elements as $eachElement) {
+
+            /**
+             * Add required attribute to required elements
+             * https://github.com/manticorp
+             */
+            if ($eachElement->isRequired()) {
+                $eachElement->setAttrib('required', '');
+            }
+
             /**
              * Removing label from buttons before render.
              */
@@ -186,7 +201,17 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
                 $eachElement->removeDecorator('Label');
             }
 
+            /**
+             * No decorators for hidden elements
+             */
             if ($eachElement instanceof Zend_Form_Element_Hidden) {
+                $eachElement->clearDecorators()->addDecorator('ViewHelper');
+            }
+
+            /**
+             * No decorators for hash elements
+             */
+            if ($eachElement instanceof Zend_Form_Element_Hash) {
                 $eachElement->clearDecorators()->addDecorator('ViewHelper');
             }
         }
@@ -196,5 +221,37 @@ abstract class Twitter_Bootstrap_Form extends Zend_Form
          */
 
         return parent::render($view);
+    }
+
+    protected function _getLabelColSize()
+    {
+        return $this->_labelColSize;
+    }
+
+    protected function _getFieldColSize()
+    {
+        return $this->_fieldColSize;
+    }
+
+    protected function _getColType()
+    {
+        return $this->_colType;
+    }
+
+    public function setLabelColSize($size)
+    {
+        $this->_labelColSize = intval($size);
+    }
+
+    public function setFieldColSize($size)
+    {
+        $this->_fieldColSize = intval($size);
+    }
+
+    public function setColType($type)
+    {
+        if (in_array($type, $this->_allowedColType)) {
+            $this->_colType = $type;
+        }
     }
 }
