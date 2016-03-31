@@ -2,7 +2,7 @@ pimcore.registerNS("Formbuilder.comp.validator.base");
 Formbuilder.comp.validator.base = Class.create({
 
     type: "base",
-    apiUrl:"http://framework.zend.com/apidoc/1.12/classes/Zend_Validate_{name}.html",
+    apiUrl:"http://apigen.juzna.cz/doc/zendframework/zf1/class-Zend_Validate_{name}.html",
     apiPrefix:"",
     errors:[],
     errorsDef:[],
@@ -325,8 +325,6 @@ Formbuilder.comp.validator.base = Class.create({
                 ]
             });
         }
-
-        console.log(items);
 
         return items;
 

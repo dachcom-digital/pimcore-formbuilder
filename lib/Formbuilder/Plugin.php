@@ -2,31 +2,20 @@
 
 namespace Formbuilder;
 
+use Pimcore\Model\Tool\Setup;
 use Pimcore\API\Plugin as PluginLib;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
-    public static function install()
+    public function __construct($jsPaths = null, $cssPaths = null, $alternateIndexDir = null)
     {
-        $db = \Pimcore\Db::get();
+        parent::__construct($jsPaths, $cssPaths);
 
-        $db->query("CREATE TABLE IF NOT EXISTS `formbuilder_forms` (
-		`id` INT NOT NULL AUTO_INCREMENT,
-        `name` varchar(255) DEFAULT NULL ,
-		`date` INT NULL ,
-        PRIMARY KEY  (`id`),
-        UNIQUE KEY `name` (`name`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+        define('FORMBUILDER_PATH', PIMCORE_PLUGINS_PATH . '/Formbuilder');
+        define('FORMBUILDER_DEFAULT_ERROR_PATH', FORMBUILDER_PATH . '/static/lang/errors');
+        define('FORMBUILDER_INSTALL_PATH', FORMBUILDER_PATH . '/install');
+        define('FORMBUILDER_DATA_PATH', PIMCORE_WEBSITE_VAR . '/formbuilder');
 
-        if (self::isInstalled())
-        {
-            $statusMessage = "Plugin successfully installed. <br/>Please reload pimcore";
-        }
-        else
-        {
-            $statusMessage = "Fourmbuilder Plugin could not be installed";
-        }
-        return $statusMessage;
     }
 
     public static function needsReloadAfterInstall()
@@ -37,71 +26,47 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     public static function uninstall()
     {
         $db = \Pimcore\Db::get();
-        $db->query("DROP TABLE `formbuilder_forms`");
+        $db->query('DROP TABLE `formbuilder_forms`');
 
-        $rep = PIMCORE_PLUGINS_PATH . "/Formbuilder/data/";
-
-        if (is_dir($rep))
-        {
-            $dir = opendir($rep);
-            while ($f = readdir($dir))
-            {
-                if(substr($f,0,4)=="main")
-                {
-                    if (file_exists($rep . $f))
-                    {
-                        unlink($rep . $f);
-                    }
-                }
-            }
-        }
-
-        $rep = PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/";
-
-        if (is_dir($rep))
-        {
-            $dir = opendir($rep);
-            while ($f = readdir($dir))
-            {
-                if(substr($f,0,4)=="form")
-                {
-                    if (file_exists($rep . $f))
-                    {
-                        unlink($rep . $f);
-                    }
-                }
-            }
-        }
-
-        $rep = PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/";
-
-        if (is_dir($rep))
-        {
-            $dir = opendir($rep);
-            while ($f = readdir($dir))
-            {
-                if(substr($f,0,4)=="form")
-                {
-                    if (file_exists($rep . $f))
-                    {
-                        unlink($rep . $f);
-                    }
-                }
-            }
-        }
+        recursiveDelete( FORMBUILDER_DATA_PATH );
 
         if (!self::isInstalled())
         {
-            $statusMessage = "Plugin successfully uninstalled.";
+            $statusMessage = 'Plugin successfully uninstalled.';
         }
         else
         {
-            $statusMessage = "Formbuilder Plugin could not be uninstalled";
+            $statusMessage = 'Formbuilder Plugin could not be uninstalled';
         }
 
         return $statusMessage;
 
     }
+
+    public static function install()
+    {
+        $setup = new Setup();
+        $setup->insertDump( FORMBUILDER_INSTALL_PATH . '/sql/install.sql' );
+
+        if( !is_dir( FORMBUILDER_DATA_PATH ) )
+        {
+            mkdir( FORMBUILDER_DATA_PATH );
+            mkdir(FORMBUILDER_DATA_PATH . '/lang');
+            mkdir(FORMBUILDER_DATA_PATH . '/form');
+        }
+
+        if (self::isInstalled())
+        {
+            $statusMessage = 'Plugin successfully installed.<br>Please reload pimcore!';
+        }
+        else
+        {
+            $statusMessage = 'Fourmbuilder Plugin could not be installed.';
+        }
+
+        return $statusMessage;
+    }
+
 
     public static function isInstalled()
     {
@@ -113,7 +78,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         {
             $result = $db->query("SELECT * FROM `formbuilder_forms`") or die ("table formbuilder_forms doesn't exist.");
         }
-        catch (Zend_Db_Statement_Exception $e)
+        catch (\Zend_Db_Statement_Exception $e)
         {
 
         }
@@ -132,12 +97,12 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
      */
     public static function getTranslationFile($language)
     {
-        if(file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/texts/" . $language . ".csv"))
+        if(file_exists(FORMBUILDER_PATH . '/static/texts/' . $language . '.csv'))
         {
-            return "/Formbuilder/texts/" . $language . ".csv";
+            return '/Formbuilder/static/texts/' . $language . '.csv';
         }
 
-        return "/Formbuilder/texts/en.csv";
+        return '/Formbuilder/static/texts/en.csv';
         
     }
 

@@ -3,7 +3,7 @@ Formbuilder.comp.type.base = Class.create({
 
     type: "base",
 
-    apiUrl:"http://framework.zend.com/apidoc/1.12/classes/Zend_Form_Element_{name}.html",
+    apiUrl:"http://apigen.juzna.cz/doc/zendframework/zf1/class-Zend_Form_Element_{name}.html",
 
     apiPrefix:"",
 

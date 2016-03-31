@@ -55,9 +55,9 @@ class Frontend {
 
     protected function getStaticForm($id, $locale, $className = 'Zend_Form')
     {
-        if (file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $id . ".ini"))
+        if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini"))
         {
-            $config = new \Zend_Config_Ini(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $id . ".ini", 'config');
+            $config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
 
             $form = $this->createInstance($config->form, $className);
             $this->initTranslation($form, $id, $locale);
@@ -72,9 +72,9 @@ class Frontend {
 
     protected function getDynamicForm($id, $locale, $className = 'Zend_Form')
     {
-        if (file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/main_" . $id . ".json"))
+        if (file_exists(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json"))
         {
-            $config = new \Zend_Config_Json(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/main_" . $id . ".json");
+            $config = new \Zend_Config_Json(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json");
             $datas = $config->toArray();
 
             $builder = new Builder();
@@ -135,9 +135,9 @@ class Frontend {
 
         if (is_numeric($id) == true)
         {
-            if (file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $id . ".ini"))
+            if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini"))
             {
-                $config = new \Zend_Config_Ini(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $id . ".ini", 'config');
+                $config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
 
                 $trans = $this->translateForm($id, $locale);
 
@@ -227,7 +227,7 @@ class Frontend {
     protected function translateForm( $id, $locale)
     {
         $trans = new \Zend_Translate_Adapter_Csv(array("delimiter" => ",", "disableNotices" => true));
-        $file = PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/form_" . $id . "_" . $locale . ".csv";
+        $file = FORMBUILDER_DATA_PATH . "/lang/form_" . $id . "_" . $locale . ".csv";
 
         if (file_exists($file))
         {
@@ -238,7 +238,7 @@ class Frontend {
                 ));
         }
 
-        $file = PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/errors/" . $locale . "/Zend_Validate.php";
+        $file = FORMBUILDER_DEFAULT_ERROR_PATH . "/" . $locale . "/Zend_Validate.php";
 
         if (file_exists($file))
         {

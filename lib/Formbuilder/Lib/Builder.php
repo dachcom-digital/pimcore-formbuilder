@@ -80,20 +80,17 @@ class Builder {
 
     public function saveConfig()
     {
-        if (!is_dir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/'))
-        {
-            mkdir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/');
-        }
 
-        if (file_exists(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/form_' . $this->id . '.ini'))
+
+        if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini'))
         {
-            unlink(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/form_' . $this->id . '.ini');
+            unlink(FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini');
         }
 
         $config = new \Zend_Config($this->config, true);
         $writer = new \Zend_Config_Writer_Ini(array(
             'config' => $config,
-            'filename' => PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/form_' . $this->id . '.ini'
+            'filename' => FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini'
         ));
 
         $writer->write();
@@ -302,19 +299,14 @@ class Builder {
 
     protected function saveTranslations()
     {
-        if (!is_dir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/'))
-        {
-            mkdir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/');
-        }
-
         foreach ($this->languages as $lang)
         {
-            if (file_exists(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv'))
+            if (file_exists(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv'))
             {
-                unlink(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv');
+                unlink(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv');
             }
 
-            touch(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv');
+            touch(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv');
 
             $text = '';
             foreach ($this->translations[$lang] as $key => $value)
@@ -322,7 +314,7 @@ class Builder {
                 $text .= "\"" . mb_strtolower($key) . "\",\"" . $value . "\"\n";
             }
 
-            file_put_contents(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv', $text, FILE_TEXT);
+            file_put_contents(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv', $text, FILE_TEXT);
         }
 
     }
