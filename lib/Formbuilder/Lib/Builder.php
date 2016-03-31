@@ -80,25 +80,23 @@ class Builder {
 
     public function saveConfig()
     {
-
-        if (!is_dir(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/"))
+        if (!is_dir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/'))
         {
-            mkdir(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/");
+            mkdir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/');
         }
 
-        if (file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $this->id . ".ini"))
+        if (file_exists(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/form_' . $this->id . '.ini'))
         {
-            unlink(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $this->id . ".ini");
+            unlink(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/form_' . $this->id . '.ini');
         }
 
         $config = new \Zend_Config($this->config, true);
         $writer = new \Zend_Config_Writer_Ini(array(
-            "config" => $config,
-            "filename" => PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $this->id . ".ini"
+            'config' => $config,
+            'filename' => PIMCORE_PLUGINS_PATH . '/Formbuilder/data/form/form_' . $this->id . '.ini'
         ));
 
         $writer->write();
-
     }
 
     protected function createForm()
@@ -113,42 +111,42 @@ class Builder {
 
         $this->config = array();
 
-        $this->config["config"]["form"] = array();
-        $this->config["config"]["form"]["action"] = $this->datas["action"];
-        $this->config["config"]["form"]["method"] = $this->datas["method"];
-        $this->config["config"]["form"]["enctype"] = $this->datas["enctype"];
-        $multi = $this->buildMultiData($this->datas["attrib"]);
+        $this->config['config']['form'] = array();
+        $this->config['config']['form']['action'] = $this->datas['action'];
+        $this->config['config']['form']['method'] = $this->datas['method'];
+        $this->config['config']['form']['enctype'] = $this->datas['enctype'];
+
+        $multi = $this->buildMultiData($this->datas['attrib']);
 
         if (count($multi) > 0)
         {
-            $this->config["config"]["form"] = array_merge($this->config["config"]["form"], $multi);
+            $this->config['config']['form'] = array_merge($this->config['config']['form'], $multi);
         }
 
-        $this->config["config"]["form"]["elements"] = array();
+        $this->config['config']['form']['elements'] = array();
         $position = 0;
 
-        if(!isset($this->datas["mainDefinitions"]["childs"]))
+        if(!isset($this->datas['mainDefinitions']['childs']))
         {
             return FALSE;
         }
 
-        foreach ($this->datas["mainDefinitions"]["childs"] as $data) {
+        foreach ($this->datas['mainDefinitions']['childs'] as $data) {
 
-            if ($data["fieldtype"] == "displayGroup") {
-
-                if (!is_array($this->config["config"]["form"]["displayGroups"]))
+            if ($data['fieldtype'] == 'displayGroup')
+            {
+                if (!is_array($this->config['config']['form']['displayGroups']))
                 {
-                    $this->config["config"]["form"]["displayGroups"] = array();
+                    $this->config['config']['form']['displayGroups'] = array();
                 }
 
                 $ret = $this->buildFieldSet($data, $position);
-                $this->config["config"]["form"]["displayGroups"] = array_merge($this->config["config"]["form"]["displayGroups"], $ret);
+                $this->config['config']['form']['displayGroups'] = array_merge($this->config['config']['form']['displayGroups'], $ret);
             }
             else
             {
-
                 $ret = $this->buildField($data);
-                $this->config["config"]["form"]["elements"] = array_merge($this->config["config"]["form"]["elements"], $ret);
+                $this->config['config']['form']['elements'] = array_merge($this->config['config']['form']['elements'], $ret);
             }
             $position++;
         }
@@ -158,22 +156,30 @@ class Builder {
     {
         $ret = array();
 
-        foreach ($datas as $k => $v) {
-
-            if (preg_match("#\.#", $k)) {
-                $temp = preg_split("#\.#", $k);
-                if (!array_key_exists($temp[0], $ret)) {
+        foreach ($datas as $k => $v)
+        {
+            if (preg_match('#\.#', $k))
+            {
+                $temp = preg_split('#\.#', $k);
+                if (!array_key_exists($temp[0], $ret))
+                {
                     $ret[$temp[0]] = array();
                 }
                 $ret[$temp[0]][$temp[1]] = $v;
-            } else {
-                if (is_array($v)) {
+            }
+            else
+            {
+                if (is_array($v))
+                {
                     $ret[$k] = $this->correctArray($v);
-                } else {
+                }
+                else
+                {
                     $ret[$k] = $v;
                 }
             }
         }
+
         return $ret;
     }
 
@@ -181,14 +187,14 @@ class Builder {
     {
         $this->createForm();
         $this->config = $this->correctArray($this->config);
-        return $this->config["config"]["form"];
+        return $this->config['config']['form'];
     }
 
     public function buildForm($id)
     {
-        $this->getLanguages();
-
         $this->id = $id;
+
+        $this->getLanguages();
 
         $this->createForm();
 
@@ -203,73 +209,82 @@ class Builder {
     {
         $this->translations = array();
 
-        foreach ($this->languages as $lang) {
+        foreach ($this->languages as $lang)
+        {
             $this->translations[$lang] = array();
         }
 
-        foreach ($this->translate as $nkey => $elem) {
-
-            foreach ($elem as $key => $value) {
-                if (substr($key, 0, 8) == "original") {
+        foreach ($this->translate as $fieldName => $translateData)
+        {
+            foreach ($translateData as $key => $value)
+            {
+                if (substr($key, 0, 8) == 'original')
+                {
                     $n = strlen($key);
-                    $name = substr($key, 8, $n - 8);
-                    $name = $name;
 
-                    $this->addTranslate($value, $this->translate[$nkey][$name]);
+                    //type = label, description, legend, etc...
+                    $fieldType = substr($key, 8, $n - 8);
+
+                    if( isset( $translateData[ $fieldType ] ))
+                    {
+                        $translations = $translateData[ $fieldType ];
+
+                        if( is_array( $translations ) )
+                        {
+                            $storeData = array();
+                            foreach( $translations as $translation )
+                            {
+                                $locale = $translation['name'];
+                                $transValue = $translation['value'];
+
+                                $element = array(
+                                    'locale' => $locale,
+                                    'value' => $transValue
+                                );
+
+                                $storeData[] = $element;
+
+                            }
+
+                            $this->addTranslate($value, $storeData);
+                        }
+                    }
+
                 }
-                if ($key == "multiOptions") {
-                    $this->addTranslateMulti($value);
+                else if ($key == 'multiOptions')
+                {
+                    if( is_array( $value ) )
+                    {
+                        $storeData = array();
+                        $originalValue = null;
+                        foreach( $value as $translation )
+                        {
+                            $locale = $translation['name'];
+                            $originalValue = $translation['multiOption'];
+                            $transValue = $translation['value'];
+
+                            $element = array(
+                                'locale' => $locale,
+                                'value' => $transValue
+                            );
+
+                            $storeData[] = $element;
+                            $this->addTranslate($originalValue, $storeData);
+                        }
+
+
+                    }
+
                 }
             }
         }
 
-        foreach ($this->translateValidator as $elem) {
-
-            $this->translations[$elem["locale"]][$elem["key"]] = $elem["value"];
+        foreach ($this->translateValidator as $elem)
+        {
+            $this->translations[ $elem['locale'] ][ $elem['name'] ] = $elem['value'];
         }
-
 
         $this->saveTranslations();
-    }
-
-    protected function saveTranslations()
-    {
-        if (!is_dir(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/"))
-        {
-            mkdir(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/");
-        }
-
-        foreach ($this->languages as $lang)
-        {
-            if (file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/form_" . $this->id . "_" . $lang . ".csv"))
-            {
-                unlink(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/form_" . $this->id . "_" . $lang . ".csv");
-            }
-
-            touch(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/form_" . $this->id . "_" . $lang . ".csv");
-
-
-            $text = "";
-            foreach ($this->translations[$lang] as $key => $value) {
-                $text .= "\"" . mb_strtolower($key) . "\",\"" . $value . "\"\n";
-            }
-
-            file_put_contents(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/lang/form_" . $this->id . "_" . $lang . ".csv", $text, FILE_TEXT);
-        }
-
-    }
-
-    protected function addTranslateMulti($array)
-    {
-        if( empty( $array ) )
-        {
-            return FALSE;
-        }
-
-        foreach ($array as $elem)
-        {
-            $this->translations[$elem["locale"]][$elem["multiOptions"]] = $elem["value"];
-        }
     }
 
     protected function addTranslate($original, $array)
@@ -281,17 +296,44 @@ class Builder {
 
         foreach ($array as $elem) {
 
-            $this->translations[$elem["locale"]][$original] = $elem["value"];
+            $this->translations[$elem['locale']][$original] = $elem['value'];
         }
+    }
+
+    protected function saveTranslations()
+    {
+        if (!is_dir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/'))
+        {
+            mkdir(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/');
+        }
+
+        foreach ($this->languages as $lang)
+        {
+            if (file_exists(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv'))
+            {
+                unlink(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv');
+            }
+
+            touch(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv');
+
+            $text = '';
+            foreach ($this->translations[$lang] as $key => $value)
+            {
+                $text .= "\"" . mb_strtolower($key) . "\",\"" . $value . "\"\n";
+            }
+
+            file_put_contents(PIMCORE_PLUGINS_PATH . '/Formbuilder/data/lang/form_' . $this->id . '_' . $lang . '.csv', $text, FILE_TEXT);
+        }
+
     }
 
     protected function buildFieldSet($datas, $order)
     {
         $config = array();
-        $config[$datas["name"]] = array();
+        $config[$datas['name']] = array();
 
-        $this->translate[$datas["name"]] = $datas["translate"];
-        unset($datas["translate"]);
+        $this->translate[$datas['name']] = $datas['translate'];
+        unset($datas['translate']);
 
         $options = array();
         $elements = array();
@@ -302,33 +344,44 @@ class Builder {
 
             switch ($dataType)
             {
-                case "array":
-                    if ($key == "childs") {
-                        foreach ($data as $elem) {
+                case 'array':
 
-
+                    if ($key == 'childs')
+                    {
+                        foreach ($data as $elem)
+                        {
                             $ret = $this->buildField($elem);
-                            $this->config["config"]["form"]["elements"] = array_merge($this->config["config"]["form"]["elements"], $ret);
+                            $this->config['config']['form']['elements'] = array_merge($this->config['config']['form']['elements'], $ret);
 
-                            $elements[$elem["name"]] = $elem["name"];
+                            $elements[$elem['name']] = $elem['name'];
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $multi = $this->buildMultiData($data);
-                        if (count($multi) > 0) {
-                            if ($key == "attrib") {
+                        if (count($multi) > 0)
+                        {
+                            if ($key == 'attrib')
+                            {
                                 $options = array_merge($options, $multi);
-                            } else {
+                            }
+                            else
+                            {
                                 $options[$key] = $multi;
                             }
                         }
                     }
                     break;
+
                 default :
-                    if ($key != "name" && $key != "fieldtype") {
-                        if ($data != "") {
+                    if ($key != 'name' && $key != 'fieldtype')
+                    {
+                        if ($data != '')
+                        {
                             $options[$key] = $data;
 
-                        } elseif ($dataType == "boolean") {
+                        } elseif ($dataType == 'boolean')
+                        {
                             $options[$key] = (bool) $data;
                         }
                     }
@@ -337,16 +390,16 @@ class Builder {
             }
         }
 
-        $options["order"] = $order;
+        $options['order'] = $order;
 
         if (count($options) > 0)
         {
-            $config[$datas["name"]]["options"] = $options;
+            $config[$datas['name']]['options'] = $options;
         }
 
         if (count($elements) > 0)
         {
-            $config[$datas["name"]]["elements"] = $elements;
+            $config[$datas['name']]['elements'] = $elements;
         }
 
         return $config;
@@ -355,16 +408,16 @@ class Builder {
     protected function buildField($datas)
     {
         $config = array();
-        $config[$datas["name"]] = array();
-        $config[$datas["name"]]["type"] = $datas["fieldtype"];
+        $config[$datas['name']] = array();
+        $config[$datas['name']]['type'] = $datas['fieldtype'];
 
-        $this->translate[$datas["name"]] = $datas["translate"];
-        unset($datas["translate"]);
+        $this->translate[$datas['name']] = $datas['translate'];
+        unset($datas['translate']);
 
-        $cClass = $datas["custom_class"];
-        $cAction = $datas["custom_action"];
-        unset($datas["custom_class"]);
-        unset($datas["custom_action"]);
+        $cClass = $datas['custom_class'];
+        $cAction = $datas['custom_action'];
+        unset($datas['custom_class']);
+        unset($datas['custom_action']);
 
         $options = array();
 
@@ -372,48 +425,70 @@ class Builder {
         {
             $dataType = gettype($data);
 
-            switch ($dataType) {
-                case "array":
-                    if ($key == "childs") {
+            switch ($dataType)
+            {
+                case 'array':
+
+                    if ($key == 'childs')
+                    {
                         $FilVal = $this->buildFilterValidator($data);
                         $options = array_merge($options, $FilVal);
-                    } else {
+                    }
+                    else
+                    {
                         $multi = $this->buildMultiData($data);
-                        if (count($multi) > 0) {
-                            if ($key == "attrib") {
+                        if (count($multi) > 0)
+                        {
+                            if ($key == 'attrib')
+                            {
                                 $options = array_merge($options, $multi);
-                            } else {
+                            }
+                            else
+                            {
                                 $options[$key] = $multi;
                             }
                         }
                     }
+
                     break;
+
                 default :
-                    if ($key != "name" && $key != "fieldtype") {
-                        if ($data != "") {
-                            $multipl = preg_split("#,#", $data);
-                            if (count($multipl) > 1) {
+
+                    if ($key != 'name' && $key != 'fieldtype')
+                    {
+                        if ($data != '')
+                        {
+                            $multipl = preg_split('#,#', $data);
+
+                            if (count($multipl) > 1)
+                            {
                                 $options[$key] = array();
-                                foreach ($multipl as $val) {
+                                foreach ($multipl as $val)
+                                {
                                     array_push($options[$key], $val);
                                 }
-                            } else {
+                            }
+                            else
+                            {
                                 $options[$key] = $data;
                             }
-                        } elseif ($dataType == "boolean") {
+                        }
+                        elseif ($dataType == 'boolean')
+                        {
                             $options[$key] = (bool) $data;
                         }
                     }
+
                     break;
             }
         }
 
         if (count($options) > 0)
         {
-            $config[$datas["name"]]["options"] = $options;
+            $config[$datas['name']]['options'] = $options;
         }
 
-        $config[$datas["name"]]["options"]["disableTranslator"] = false;
+        $config[$datas['name']]['options']['disableTranslator'] = false;
 
         $config = $this->fireHook($cClass, $cAction, $config);
 
@@ -422,23 +497,29 @@ class Builder {
 
     protected function fireHook($class, $method, $config)
     {
-        if ($class != null && $class != "" && $method != null && $method != "")
+        if ($class != null && $class != '' && $method != null && $method != '')
         {
-            // $type = mb_strtolower($type);
-            if (class_exists($class)) {
-                if (method_exists($class, $method)) {
-                    $refl = new ReflectionMethod($class, $method);
+            if (class_exists($class))
+            {
+                if (method_exists($class, $method))
+                {
+                    $refl = new \ReflectionMethod($class, $method);
 
-                    if ($refl->isStatic() && $refl->isPublic()) {
-
+                    if ($refl->isStatic() && $refl->isPublic())
+                    {
                         $ret = $class::$method($config, $this->locale);
-                        if (is_array($ret)) {
+                        if (is_array($ret))
+                        {
                             $config = $ret;
                         }
-                    } elseif (!$refl->isStatic() && $refl->isPublic()) {
+                    }
+                    elseif (!$refl->isStatic() && $refl->isPublic())
+                    {
                         $obj = new $class();
                         $ret = $obj->$method($config, $this->locale);
-                        if (is_array($ret)) {
+
+                        if (is_array($ret))
+                        {
                             $config = $ret;
                         }
                     }
@@ -466,7 +547,7 @@ class Builder {
                 array_push($arr, $data);
             } else
             {
-                $arr[$data["key"]] = $data["value"];
+                $arr[$data['name']] = $data['value'];
             }
         }
 
@@ -485,42 +566,44 @@ class Builder {
 
         foreach ($datas as $data)
         {
-            if ($data["isFilter"] == true)
+            if ($data['isFilter'] == true)
             {
-                if (array_key_exists($data["fieldtype"], $iFilter))
+                if (array_key_exists($data['fieldtype'], $iFilter))
                 {
-                    $iFilter[$data["fieldtype"]]++;
+                    $iFilter[$data['fieldtype']]++;
                 }
                 else
                 {
-                    $iFilter[$data["fieldtype"]] = 0;
+                    $iFilter[$data['fieldtype']] = 0;
                 }
-                $filter = $this->buildFilter($data, $iFilter[$data["fieldtype"]]);
+
+                $filter = $this->buildFilter($data, $iFilter[$data['fieldtype']]);
                 $filters = array_merge($filters, $filter);
             }
 
-            if ($data["isValidator"] == true)
+            if ($data['isValidator'] == true)
             {
-                if (array_key_exists($data["fieldtype"], $iValidator))
+                if (array_key_exists($data['fieldtype'], $iValidator))
                 {
-                    $iValidator[$data["fieldtype"]]++;
+                    $iValidator[$data['fieldtype']]++;
                 }
                 else
                 {
-                    $iValidator[$data["fieldtype"]] = 0;
+                    $iValidator[$data['fieldtype']] = 0;
                 }
-                $validator = $this->buildValidator($data, $iValidator[$data["fieldtype"]]);
+
+                $validator = $this->buildValidator($data, $iValidator[$data['fieldtype']]);
                 $validators = array_merge($validators, $validator);
             }
         }
 
         if (count($filters) > 0)
         {
-            $FilVal["filters"] = $filters;
+            $FilVal['filters'] = $filters;
         }
         if (count($validators) > 0)
         {
-            $FilVal["validators"] = $validators;
+            $FilVal['validators'] = $validators;
         }
 
 
@@ -530,12 +613,12 @@ class Builder {
     protected function buildFilter($datas, $index)
     {
         $filter = array();
-        $filter[$datas["fieldtype"] . $index] = array();
-        $filter[$datas["fieldtype"] . $index]["filter"] = $datas["fieldtype"];
-        $cClass = $datas["custom_class"];
-        $cAction = $datas["custom_action"];
-        unset($datas["custom_class"]);
-        unset($datas["custom_action"]);
+        $filter[$datas['fieldtype'] . $index] = array();
+        $filter[$datas['fieldtype'] . $index]['filter'] = $datas['fieldtype'];
+        $cClass = $datas['custom_class'];
+        $cAction = $datas['custom_action'];
+        unset($datas['custom_class']);
+        unset($datas['custom_action']);
 
         $options = array();
 
@@ -544,7 +627,7 @@ class Builder {
             $dataType = gettype($data);
 
             switch ($dataType) {
-                case "array":
+                case 'array':
 
                     $multi = $this->buildMultiData($data);
                     if (count($multi) > 0)
@@ -554,13 +637,13 @@ class Builder {
 
                     break;
                 default :
-                    if ($key != "name" && $key != "fieldtype" && $key != "isFilter")
+                    if ($key != 'name' && $key != 'fieldtype' && $key != 'isFilter')
                     {
-                        if ($data != "")
+                        if ($data != '')
                         {
                             $options[$key] = $data;
                         }
-                        elseif ($dataType == "boolean")
+                        elseif ($dataType == 'boolean')
                         {
                             $options[$key] = (bool) $data;
                         }
@@ -571,7 +654,7 @@ class Builder {
 
         if (count($options) > 0)
         {
-            $filter[$datas["fieldtype"] . $index]["options"] = $options;
+            $filter[$datas['fieldtype'] . $index]['options'] = $options;
         }
 
         $filter = $this->fireHook($cClass, $cAction, $filter);
@@ -581,18 +664,18 @@ class Builder {
 
     protected function addValidatorTranslate($datas, $index)
     {
-        if (is_array($datas["messages"]))
+        if (is_array($datas['messages']))
         {
-            foreach ($datas["messages"] as $key)
+            foreach ($datas['messages'] as $key)
             {
-                if ($datas["messages." . $key] != "")
+                if ($datas['messages.' . $key] != '')
                 {
-                    foreach ($datas["translate"][$key] as $trans)
+                    foreach ($datas['translate'][$key] as $trans)
                     {
                         array_push($this->translateValidator, array(
-                            "locale" => $trans["locale"],
-                            "value" => $trans["value"],
-                            "key" => $datas["messages." . $key]
+                            'locale' => $trans['locale'],
+                            'value' => $trans['value'],
+                            'key' => $datas['messages.' . $key]
                         ));
                     }
                 }
@@ -603,17 +686,17 @@ class Builder {
     protected function buildValidator($datas, $index)
     {
         $validator = array();
-        $validator[$datas["fieldtype"] . $index] = array();
-        $validator[$datas["fieldtype"] . $index]["validator"] = $datas["fieldtype"];
+        $validator[$datas['fieldtype'] . $index] = array();
+        $validator[$datas['fieldtype'] . $index]['validator'] = $datas['fieldtype'];
 
         $this->addValidatorTranslate($datas, $index);
-        unset($datas["messages"]);
-        unset($datas["translate"]);
+        unset($datas['messages']);
+        unset($datas['translate']);
 
-        $cClass = $datas["custom_class"];
-        $cAction = $datas["custom_action"];
-        unset($datas["custom_class"]);
-        unset($datas["custom_action"]);
+        $cClass = $datas['custom_class'];
+        $cAction = $datas['custom_action'];
+        unset($datas['custom_class']);
+        unset($datas['custom_action']);
 
         $options = array();
 
@@ -623,7 +706,7 @@ class Builder {
 
             switch ($dataType)
             {
-                case "array":
+                case 'array':
 
                     $multi = $this->buildMultiData($data);
                     if (count($multi) > 0)
@@ -632,24 +715,27 @@ class Builder {
                     }
 
                     break;
+
                 default :
-                    if ($key != "name" && $key != "fieldtype" && $key != "isValidator")
+
+                    if ($key != 'name' && $key != 'fieldtype' && $key != 'isValidator')
                     {
-                        if ($data != "")
+                        if ($data != '')
                         {
                             $options[$key] = $data;
-                        } elseif ($dataType == "boolean")
+                        } elseif ($dataType == 'boolean')
                         {
                             $options[$key] = (bool) $data;
                         }
                     }
+
                     break;
             }
         }
 
         if (count($options) > 0)
         {
-            $validator[$datas["fieldtype"] . $index]["options"] = $options;
+            $validator[$datas['fieldtype'] . $index]['options'] = $options;
         }
 
         $validator = $this->fireHook($cClass, $cAction, $validator);

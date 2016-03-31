@@ -69,14 +69,14 @@ Formbuilder.comp.type.displayGroup = Class.create(Formbuilder.comp.type.base,{
         $super();
 
         var trans = new Ext.form.FieldSet({
-            title: t("multiOptions translation"),
+            title: t("legend translation"),
             collapsible: true,
             defaultType: 'textfield',
             items:[
                 {
                     xtype: "textfield",
                     name: "originallegend",
-                    fieldLabel: t("original legand"),
+                    fieldLabel: t("original legend"),
                     anchor: "100%",
                     value:this.datax.legend,
                     disabled:true

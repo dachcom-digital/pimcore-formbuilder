@@ -2,9 +2,9 @@ pimcore.registerNS("Formbuilder.comp.validator.alnum");
 Formbuilder.comp.validator.alnum = Class.create(Formbuilder.comp.validator.base,{
 
     type: "alnum",
-    errors:["alnumInvalid","notAlnum","alnumStringEmpty"],
+    errors: ["alnumInvalid","notAlnum","alnumStringEmpty"],
 
-    initialize: function (treeNode, initData, parent) {
+    initialize: function (treeNode, initData) {
 
         this.treeNode = treeNode;
         this.initData(initData);
@@ -19,20 +19,25 @@ Formbuilder.comp.validator.alnum = Class.create(Formbuilder.comp.validator.base,
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
+
             title: t("This node"),
             collapsible: true,
             defaultType: 'textfield',
-            items:[{
-                xtype: "checkbox",
-                name: "allowWhiteSpace",
-                fieldLabel: t("AllowWhiteSpace"),
-                checked:false
-            }
+            items:[
+                {
+                    xtype: "checkbox",
+                    name: "allowWhiteSpace",
+                    fieldLabel: t("AllowWhiteSpace"),
+                    checked:false
+                }
 
-        ]
+            ]
         });
+
         this.form.add(thisNode);
         return this.form;
     }

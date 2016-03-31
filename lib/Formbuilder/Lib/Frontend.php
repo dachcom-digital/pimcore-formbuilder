@@ -55,7 +55,6 @@ class Frontend {
 
     protected function getStaticForm($id, $locale, $className = 'Zend_Form')
     {
-
         if (file_exists(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $id . ".ini"))
         {
             $config = new \Zend_Config_Ini(PIMCORE_PLUGINS_PATH . "/Formbuilder/data/form/form_" . $id . ".ini", 'config');
@@ -87,7 +86,9 @@ class Frontend {
             $this->initTranslation($form, $id, $locale);
 
             return $form;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
@@ -95,6 +96,7 @@ class Frontend {
     protected function createInstance($config, $className = 'Zend_Form')
     {
         $reflClass = new \ReflectionClass($className);
+
         if(!($reflClass->isSubclassOf('Zend_Form') || $reflClass->name == 'Zend_Form'))
         {
             throw new \Exception('Form class must be a subclass of "Zend_Form"');
@@ -128,8 +130,8 @@ class Frontend {
     {
         $this->getLanguages();
 
-        $table = new Builder();
-        $id = $table->getIdByName($name);
+        $form = new Form();
+        $id = $form->getIdByName($name);
 
         if (is_numeric($id) == true)
         {
@@ -143,11 +145,11 @@ class Frontend {
 
                 if($horizontal==true)
                 {
-                    $form = new Twitter_Bootstrap_Form_Horizontal($config->form);
+                    $form = new \Twitter_Bootstrap_Form_Horizontal($config->form);
                 }
                 else
                 {
-                    $form = new Twitter_Bootstrap_Form_Vertical($config->form);
+                    $form = new \Twitter_Bootstrap_Form_Vertical($config->form);
                 }
 
                 $form->setDisableTranslator(true);
@@ -172,13 +174,13 @@ class Frontend {
     }
 
     /**
-     * If $dynamic equal true, the form form is completly rebuild. It is useful if you need to interact to the form with hooks.
+     * If $dynamic equal true, the form form is completely rebuild. It is useful if you need to interact to the form with hooks.
      *
      * @param string $name
      * @param string $locale
      * @param boolean $dynamic
      * @param string Custom form class
-     * @return Zend_Form
+     * @return \Zend_Form
      */
     public function getForm($name, $locale=null, $dynamic=false, $formClass = null)
     {
@@ -198,6 +200,7 @@ class Frontend {
             {
                 $form = $this->getDynamicForm($id, $locale, $class);
             }
+
             //correctly set recaptcha to https if request is over https
             if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
             {
@@ -239,8 +242,8 @@ class Frontend {
 
         if (file_exists($file))
         {
-            $arrTrans = new \Zend_Translate_Adapter_Array(array("disableNotices" => true));
-            $arrTrans->addTranslation(array("content" => $file, "locale" => $locale));
+            $arrTrans = new \Zend_Translate_Adapter_Array( array("disableNotices" => true)) ;
+            $arrTrans->addTranslation(array( "content" => $file, "locale" => $locale));
             $trans->addTranslation($arrTrans);
         }
 

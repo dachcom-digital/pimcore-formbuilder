@@ -96,7 +96,6 @@ Formbuilder.comp.type.base = Class.create({
                     this.applyData();
                     this.layout2.removeAll();
                     this.layout2.add(this.getTranslatForm());
-                    //this.layout2.doLayout();
                 }.bind(this)
             },
             items: [this.getTranslatForm()]
@@ -165,9 +164,10 @@ Formbuilder.comp.type.base = Class.create({
             return true;
         }
 
-        if(in_array(data.name.toLowerCase(), this.forbiddenNames)==true){
+        if(in_array(data.name.toLowerCase(), this.forbiddenNames)==true) {
             this.invalidFieldNames = true;
         }
+
         return false;
 
     },
@@ -178,14 +178,17 @@ Formbuilder.comp.type.base = Class.create({
             //return;
         }
 
+        //1. fill default values and parse attr and multioptions repeater.
         var data = {};
         var attrCouples = {};
+        var multiOptionsCouples = {};
 
         var formItems = this.form.queryBy(function() {
             return true;
         });
 
         for (var i = 0; i < formItems.length; i++) {
+
             if (typeof formItems[i].getValue == "function") {
 
                 var val = formItems[i].getValue(),
@@ -202,6 +205,20 @@ Formbuilder.comp.type.base = Class.create({
                         }
 
                         attrCouples[ elements[2] ][ elements[1] ] = val;
+
+                    }
+
+                } else if (name.substring(0, 13) == "multiOptions_") {
+
+                    if( val !== "") {
+
+                        var elements = name.split('_');
+
+                        if( !multiOptionsCouples[elements[2]] ) {
+                            multiOptionsCouples[elements[2]] = {'name' : null, 'value' : null}
+                        }
+
+                        multiOptionsCouples[ elements[2] ][ elements[1] ] = val;
 
                     }
 
@@ -222,6 +239,14 @@ Formbuilder.comp.type.base = Class.create({
             });
         }
 
+        if( Object.keys(multiOptionsCouples).length > 0) {
+            data["multiOptions"] = [];
+            Ext.Object.each(multiOptionsCouples, function (name, value) {
+                data["multiOptions"].push( value );
+            });
+        }
+
+        //2. check translations repeater
         data.translate = {};
         var translateCouples = {};
 
@@ -253,7 +278,7 @@ Formbuilder.comp.type.base = Class.create({
 
                         //define translate name
                         if( !translateCouples[ translateType ][ id ] ) {
-                            translateCouples[ translateType ][ id ] = {'name' : null, 'value' : null}
+                            translateCouples[ translateType ][ id ] = {'name' : null, 'value' : null, 'multiOption' : null}
                         }
 
                         //set data
@@ -265,8 +290,6 @@ Formbuilder.comp.type.base = Class.create({
 
                     data.translate[ name ] = val;
                 }
-
-
             }
         }
 
@@ -317,6 +340,7 @@ Formbuilder.comp.type.base = Class.create({
                     xtype: "textfield",
                     fieldLabel: t("name"),
                     name: "name",
+                    value: this.datax.name,
                     allowBlank:false,
                     anchor: "100%",
                     enableKeyEvents: true
@@ -325,6 +349,7 @@ Formbuilder.comp.type.base = Class.create({
                     id:"fieldlabel",
                     xtype: "textfield",
                     name: "label",
+                    value: this.datax.label,
                     fieldLabel: t("label"),
                     anchor: "100%"
                 },
@@ -332,6 +357,7 @@ Formbuilder.comp.type.base = Class.create({
                     id:"fielddescription",
                     xtype: "textfield",
                     name: "description",
+                    value: this.datax.description,
                     fieldLabel: t("description"),
                     anchor: "100%"
                 },
@@ -340,6 +366,7 @@ Formbuilder.comp.type.base = Class.create({
                     id:"fieldallowempty",
                     xtype: "checkbox",
                     name: "allowEmpty",
+                    value: this.datax.allowEmpty,
                     fieldLabel: t("allowEmpty"),
                     checked:true
                 },
@@ -347,6 +374,7 @@ Formbuilder.comp.type.base = Class.create({
                     id:"fieldrequired",
                     xtype: "checkbox",
                     name: "required",
+                    value: this.datax.required,
                     fieldLabel: t("required"),
                     checked:false
                 },
@@ -354,6 +382,7 @@ Formbuilder.comp.type.base = Class.create({
                     id:"fieldvalue",
                     xtype: "textfield",
                     name: "value",
+                    value: this.datax.value,
                     fieldLabel: t("value"),
                     anchor: "100%"
                 },
@@ -487,7 +516,6 @@ Formbuilder.comp.type.base = Class.create({
             data : [["class","class"],["id","id"],["style","style"],["maxlegth","maxlength"],["disabled","disabled"],["readonly","readonly"],["size","size"],["title","title"],["onchange","onchange"],["onclick","onclick"],["ondbclick","ondbclick"],["onfocus","onfocus"],["onkeydown","onkeydown"],["onkeypress","onkeypress"],["onkeyup","onkeyup"],["onmousedown","onmousedown"],["onmousemove","onmousemove"],["onmouseout","onmouseout"],["onmouseover","onmouseover"],["onmouseup","onmouseup"],["onselect","onselect"]]
         });
 
-        // meta-data
         var addMetaData = function (name, value) {
 
             if(typeof name != "string") {
@@ -601,16 +629,19 @@ Formbuilder.comp.type.base = Class.create({
     generateLocaleRepeaterField : function( elementName ) {
 
         var selector = null,
-            storeData = this.localeStore;
+            storeData = this.localeStore,
+            multiOptionStore = this.multiOptionStore;
 
-        // meta-data
-        var addMetaData = function (name, value, elementName) {
+        var addMetaData = function (name, value, multiOption, elementName) {
 
             if(typeof name != "string") {
                 name = "";
             }
             if(typeof value != "string") {
                 value = "";
+            }
+            if(typeof multiOption != "string") {
+                multiOption = "";
             }
 
             var count = selector.query("button").length+1;
@@ -624,39 +655,64 @@ Formbuilder.comp.type.base = Class.create({
                 }
             };
 
+            var items = [{
+                    xtype: "combo",
+                    name: "translate_" + elementName + "_name_" + count,
+                    fieldLabel: t("Locale"),
+                    queryDelay: 0,
+                    displayField: "label",
+                    valueField: "key",
+                    mode: 'local',
+                    store: storeData,
+                    editable: true,
+                    triggerAction: 'all',
+                    anchor: "100%",
+                    value: name,
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    flex: 1,
+                    listeners: combolisteners
+                },
+                {
+                    xtype: "textfield",
+                    name: "translate_" + elementName + "_value_" + count,
+                    fieldLabel: t("value"),
+                    anchor: "100%",
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    value : value,
+                    flex: 1,
+                    listeners: combolisteners
+                }
+            ];
+
+            if( elementName == 'multiOptions') {
+
+                items.splice(1, 0, {
+                    xtype: "combo",
+                    name: "translate_" + elementName + "_multiOption_" + count,
+                    fieldLabel: t("single multiOption"),
+                    queryDelay: 0,
+                    displayField: "label",
+                    valueField: "key",
+                    mode: 'local',
+                    store: multiOptionStore,
+                    editable: true,
+                    triggerAction: 'all',
+                    anchor: "100%",
+                    value: multiOption,
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    flex: 1,
+                    listeners: combolisteners
+                });
+            }
+
             var compositeField = new Ext.form.FieldContainer({
                 layout: 'hbox',
                 hideLabel: true,
                 style: "padding-bottom:5px;",
-                items: [{
-                        xtype: "combo",
-                        name: "translate_" + elementName + "_name_" + count,
-                        fieldLabel: t("Locale"),
-                        queryDelay: 0,
-                        displayField: "label",
-                        valueField: "key",
-                        mode: 'local',
-                        store: storeData,
-                        editable: true,
-                        triggerAction: 'all',
-                        anchor: "100%",
-                        value: value,
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        flex: 1,
-                        listeners: combolisteners
-                    },
-                    {
-                        xtype: "textfield",
-                        name: "translate_" + elementName + "_value_" + count,
-                        fieldLabel: t("value"),
-                        anchor: "100%",
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        value : value,
-                        flex: 1,
-                        listeners: combolisteners
-                    }]
+                items: items
             });
 
             compositeField.add([{
@@ -691,7 +747,7 @@ Formbuilder.comp.type.base = Class.create({
                     xtype: 'button',
                     text: t("add"),
                     iconCls: "pimcore_icon_add",
-                    handler: addMetaData.bind(null, null, null, elementName),
+                    handler: addMetaData.bind(null, null, null, null, elementName),
                     tooltip: {
                         title:'',
                         text: t('add_metadata')
@@ -705,7 +761,7 @@ Formbuilder.comp.type.base = Class.create({
             if(typeof this.datax.translate == "object" && typeof this.datax.translate[elementName] == "object" && this.datax.translate[elementName].length > 0) {
 
                 this.datax.translate[elementName].forEach(function(field) {
-                    addMetaData(field["name"], field["value"], elementName);
+                    addMetaData(field["name"], field["value"], field["multiOption"], elementName);
                 });
 
             }
@@ -715,11 +771,119 @@ Formbuilder.comp.type.base = Class.create({
         return selector;
     },
 
-    pathChecked: function(response){
+    generateMultiOptionsRepeaterField : function( ) {
+
+        var selector = null;
+
+        var addMetaData = function (name, value) {
+
+            if(typeof name != "string") {
+                name = "";
+            }
+            if(typeof value != "string") {
+                value = "";
+            }
+
+            var count = selector.query("button").length+1;
+
+            var combolisteners = {
+                "afterrender": function (el) {
+                    el.getEl().parent().applyStyles({
+                        float: "left",
+                        "margin-right": "5px"
+                    });
+                }
+            };
+
+            var compositeField = new Ext.form.FieldContainer({
+                layout: 'hbox',
+                hideLabel: true,
+                style: "padding-bottom:5px;",
+                items: [{
+                    xtype: "textfield",
+                    name: "multiOptions_name_" + count,
+                    fieldLabel: t("Option"),
+                    anchor: "100%",
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    value : value,
+                    flex: 1,
+                    listeners: combolisteners
+                },
+                    {
+                        xtype: "textfield",
+                        name: "multiOptions_value_" + count,
+                        fieldLabel: t("Value"),
+                        anchor: "100%",
+                        summaryDisplay: true,
+                        allowBlank: false,
+                        value : value,
+                        flex: 1,
+                        listeners: combolisteners
+                    }]
+            });
+
+            compositeField.add([{
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                style: "float:left;",
+                handler: function (compositeField, el) {
+                    selector.remove(compositeField);
+                    selector.updateLayout();
+                }.bind(this, compositeField)
+            },{
+                xtype: "box",
+                style: "clear:both;"
+            }]);
+
+            selector.add(compositeField);
+            selector.updateLayout();
+
+        }.bind(this);
+
+        selector = new Ext.form.FieldSet({
+
+            title: "multiOptions",
+            collapsible: false,
+            autoHeight:true,
+            width: 700,
+            style: "margin-top: 20px;",
+            items: [{
+                xtype: "toolbar",
+                style: "margin-bottom: 10px;",
+                items: ["->", {
+                    xtype: 'button',
+                    text: t("add"),
+                    iconCls: "pimcore_icon_add",
+                    handler: addMetaData,
+                    tooltip: {
+                        title:'',
+                        text: t('add_metadata')
+                    }
+                }]
+            }]
+        });
+
+        try {
+
+            if(typeof this.datax.multiOptions == "object" && this.datax.multiOptions.length > 0) {
+
+                this.datax.multiOptions.forEach(function(field) {
+                    addMetaData(field["name"], field["value"]);
+                });
+
+            }
+
+        } catch (e) {}
+
+        return selector;
+    },
+
+    pathChecked: function(response) {
 
         var ret = Ext.decode(response.responseText);
 
-        if(ret.success == true){
+        if(ret.success == true) {
 
             this.clearInvalid();
 

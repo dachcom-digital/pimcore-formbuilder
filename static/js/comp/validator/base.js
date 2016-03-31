@@ -2,59 +2,69 @@ pimcore.registerNS("Formbuilder.comp.validator.base");
 Formbuilder.comp.validator.base = Class.create({
 
     type: "base",
-    apiUrl:"http://framework.zend.com/apidoc/core/_Validate_{name}.html#\Zend_Validate_{name}",
+    apiUrl:"http://framework.zend.com/apidoc/1.12/classes/Zend_Validate_{name}.html",
     apiPrefix:"",
     errors:[],
     errorsDef:[],
 
-    initialize: function (treeNode, initData, parent) {
+    initialize: function(treeNode, initData) {
 
         this.treeNode = treeNode;
         this.initData(initData);
     },
     
     getApiUrl: function(){
+
         var name = this.getType();
         var firstLetter = name.substr(0, 1);
         name =  firstLetter.toUpperCase() + name.substr(1);
         name = this.apiPrefix + name;
+
         var url = str_replace("{name}", name, this.apiUrl);
         return url;
-        
 
     },
     
     viewApi: function(){
+
         var wind = new Formbuilder.apiwindow(this.getApiUrl());
         wind.showWindow();
+
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
+
         return t("base");
+
     },
 
-    getIconClass: function () {
+    getIconClass: function() {
+
         return "Formbuilder_icon_validator";
+
     },
 
     initData: function (d) {
+
         this.valid = true;
 
         this.datax = {
             name: this.getType(),
             fieldtype: this.getType(),
             isValidator: true,
-            translate:new Array()
+            translate: []
         };
 
         if(d){
+
             try{
+
                 this.datax = d;
                 if(!this.datax.translate){
-                    this.datax.translate = new Array();
+                    this.datax.translate = [];
                 }
                 if(!this.datax.messages){
-                    this.datax.messages = new Array();
+                    this.datax.messages = [];
                 }
                 this.datax.isValidator = true;
             }
@@ -64,70 +74,11 @@ Formbuilder.comp.validator.base = Class.create({
         }
     },
 
-    getType: function () {
+    getType: function() {
         return this.type;
     },
 
-    getErrorsFS: function(){
-
-        var items = [];
-        for (var i=0;i<this.errors.length;i++){
-        
-            var error = this.errors[i];
-
-            items.push({
-                xtype:"fieldset",
-                title: t('custom error : ') + error,
-                collapsible: false,
-                autoHeight:true,
-                defaultType: 'textfield',
-                items:[{
-                    xtype: "textfield",
-                    name: "messages." + error,
-                    value:this.datax["messages." + error],
-                    fieldLabel: t("custom error"),
-                    anchor: "100%"
-                },
-                new Ext.ux.form.SuperField({
-                    allowEdit: true,
-                    name: error,
-                    stripeRows:true,
-                    values:this.datax.translate[error],
-                    fieldLabel: t("traduction"),
-                    items: [
-                    {
-                        xtype: "combo",
-                        name: "locale",
-                        fieldLabel: t("Locale"),
-                        queryDelay: 0,
-                        displayField:"label",
-                        valueField: "key",
-                        mode: 'local',
-                        store: this.localeStore,
-                        editable: false,
-                        triggerAction: 'all',
-                        anchor:"100%",
-                        summaryDisplay:true,
-                        allowBlank:false
-                    },{
-                        xtype: "textfield",
-                        name: "value",
-                        fieldLabel: t("value"),
-                        anchor: "100%",
-                        summaryDisplay:true,
-                        allowBlank:false
-                    }
-                    ]
-                })
-                ]
-            });
-        }
-
-        return items;
-
-    },
-
-    getLayout: function () {
+    getLayout: function() {
 
         this.getLanguages();
 
@@ -162,30 +113,11 @@ Formbuilder.comp.validator.base = Class.create({
         return this.tab;
     },
 
-    onAfterPopulate: function(){
-        return true;
-    },
-
-    layoutRendered: function () {
-        var form = this.form.getForm();
-        //This is for the SuperField bug
-        form.items.each(function(item,index,length){
-            var name = item.getName();
-            if(!(item instanceof Ext.form.DisplayField) && !(item instanceof Ext.ux.form.SuperField)){
-
-                
-                if(item.ownerCt.layout != "hbox"){
-                    item.setValue(this.datax[name]);
-                }
-            }
-        },this
-        );
-
-        this.onAfterPopulate();
+    layoutRendered: function() {
 
     },
 
-    getData: function () {
+    getData: function() {
         return this.datax;
     },
 
@@ -193,52 +125,55 @@ Formbuilder.comp.validator.base = Class.create({
         return this.valid;
     },
 
-    applyData: function () {
-
-        this.valid = this.form.getForm().isValid();
-        
-
-        if(this.valid == true){
-            this.treeNode.getUI().removeClass("tree_node_error");
-        }else{
-            this.treeNode.getUI().addClass("tree_node_error");
-        }
+    applyData: function() {
 
         var data = {};
-        
-        this.form.getForm().items.each(function(item,index,length){
-            var name = item.getName();
-            var bug = name.indexOf("[]");
-            if(!(item instanceof Ext.form.DisplayField) && bug==-1){
-                
-                if(item.ownerCt.layout != "hbox"){
-                    data[name]=item.getValue();
+
+        var formItems = this.form.queryBy(function() {
+            return true;
+        });
+
+        for (var i = 0; i < formItems.length; i++) {
+
+            var item = formItems[i];
+
+            if (typeof item.getValue == "function") {
+
+                var val = item.getValue(),
+                    name = item.getName();
+
+                if(item.ownerCt.layout != "hbox") {
+                    data[name] = val;
                 }
             }
-        },this
-        );
+
+        }
 
         data.translate = {};
         data.messages = this.errors;
 
-        this.transForm.getForm().items.each(function(item,index,length){
-            var name = item.getName();
-            var bug = name.indexOf("[]");
-            if(!(item instanceof Ext.form.DisplayField) && bug==-1){
-                
-                if(item instanceof Ext.ux.form.SuperField){
-                    data.translate[name]= item.getValue();
-                }else{
-                    data[name] = item.getValue();
+        var formTransItems = this.form.queryBy(function() {
+            return true;
+        });
+
+        for (var i = 0; i < formTransItems.length; i++) {
+
+            var item = formTransItems[i];
+
+            if (typeof item.getValue == "function") {
+
+                var val = item.getValue(),
+                    name = item.getName();
+
+                if(item.ownerCt.layout != "hbox") {
+                    data.translate[name] = val;
                 }
             }
-        },this
-        );
 
-        //var data = this.form.getForm().getFieldValues();
+        }
+
         data.fieldtype = this.getType();
-        
-        
+
         this.datax = data;
             
         this.datax.isValidator = true;
@@ -246,7 +181,8 @@ Formbuilder.comp.validator.base = Class.create({
         this.datax.name = this.getType();
     },
 
-    getHookForm: function(){
+    getHookForm: function() {
+
       var fs = new Ext.form.FieldSet({
             title: t("Hook"),
             collapsible: true,
@@ -268,7 +204,8 @@ Formbuilder.comp.validator.base = Class.create({
         return fs;
     },
 
-    getForm: function(){
+    getForm: function() {
+
         this.form = new Ext.FormPanel({
             bodyStyle:'padding:5px 5px 0',
             labelWidth: 150,
@@ -288,14 +225,13 @@ Formbuilder.comp.validator.base = Class.create({
         return this.form;
     },
 
-    getLanguages: function(){
-
+    getLanguages: function() {
 
         var languages = pimcore.globalmanager.get("Formbuilder.languages");
 
         var values = new Array();
 
-        for (var i=0;i<languages.length;i++){
+        for (var i=0;i<languages.length;i++) {
             values.push([languages[i],languages[i]]);
         };
 
@@ -315,13 +251,205 @@ Formbuilder.comp.validator.base = Class.create({
 
         this.transForm = new Ext.FormPanel({
             bodyStyle:'padding:5px 5px 0',
-            labelWidth: 150,
-            defaultType: 'textfield',
-            items: [this.getErrorsFS()]
+            items: [
+                this.getErrorsFS()
+            ]
 
         });
 
         return this.transForm;
+    },
+
+    getErrorsFS: function(){
+
+        var items = [];
+
+        for (var i=0;i<this.errors.length;i++) {
+
+            var error = this.errors[i];
+
+            items.push({
+
+                xtype:"fieldset",
+                title: t('custom error : ') + error,
+                collapsible: false,
+                autoHeight:true,
+                defaultType: 'textfield',
+                items:[
+                    {
+                        xtype: "textfield",
+                        name: "messages." + error,
+                        value:this.datax["messages." + error],
+                        fieldLabel: t("custom error"),
+                        anchor: "100%"
+                    },
+
+                    this.generateValidateLocateRepeater()
+
+                    /*
+
+                     new Ext.ux.form.SuperField({
+                     allowEdit: true,
+                     name: error,
+                     stripeRows:true,
+                     values:this.datax.translate[error],
+                     fieldLabel: t("traduction"),
+                     items: [
+                     {
+                     xtype: "combo",
+                     name: "locale",
+                     fieldLabel: t("Locale"),
+                     queryDelay: 0,
+                     displayField:"label",
+                     valueField: "key",
+                     mode: 'local',
+                     store: this.localeStore,
+                     editable: false,
+                     triggerAction: 'all',
+                     anchor:"100%",
+                     summaryDisplay:true,
+                     allowBlank:false
+                     },{
+                     xtype: "textfield",
+                     name: "value",
+                     fieldLabel: t("value"),
+                     anchor: "100%",
+                     summaryDisplay:true,
+                     allowBlank:false
+                     }
+                     ]
+                     })
+
+                     */
+
+                ]
+            });
+        }
+
+        console.log(items);
+
+        return items;
+
+    },
+
+    generateValidateLocateRepeater: function() {
+
+        var selector = null,
+            storeData = this.localeStore;
+
+        var addMetaData = function (name, value) {
+
+            if(typeof name != "string") {
+                name = "";
+            }
+            if(typeof value != "string") {
+                value = "";
+            }
+
+            var count = selector.query("button").length+1;
+
+            var combolisteners = {
+                "afterrender": function (el) {
+                    el.getEl().parent().applyStyles({
+                        float: "left",
+                        "margin-right": "5px"
+                    });
+                }
+            };
+
+            var items = [{
+                xtype: "combo",
+                name: "translate_name_" + count,
+                fieldLabel: t("Locale"),
+                queryDelay: 0,
+                displayField: "label",
+                valueField: "key",
+                mode: 'local',
+                store: storeData,
+                editable: true,
+                triggerAction: 'all',
+                anchor: "100%",
+                value: name,
+                summaryDisplay: true,
+                //allowBlank: false,
+                flex: 1,
+                listeners: combolisteners
+            },
+                {
+                xtype: "textfield",
+                name: "translate_value_" + count,
+                fieldLabel: t("value"),
+                anchor: "100%",
+                summaryDisplay: true,
+                //allowBlank: false,
+                value : value,
+                flex: 1,
+                listeners: combolisteners
+                }
+            ];
+
+            var compositeField = new Ext.form.FieldContainer({
+                layout: 'hbox',
+                hideLabel: true,
+                style: "padding-bottom:5px;",
+                items: items
+            });
+
+            compositeField.add([{
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                style: "float:left;",
+                handler: function (compositeField, el) {
+                    selector.remove(compositeField);
+                    selector.updateLayout();
+                }.bind(this, compositeField)
+            },{
+                xtype: "box",
+                style: "clear:both;"
+            }]);
+
+            selector.add(compositeField);
+            selector.updateLayout();
+
+        }.bind(this);
+
+        selector = new Ext.form.FieldSet({
+
+            title: t("traduction"),
+            collapsible: false,
+            autoHeight:true,
+            width: 700,
+            style: "margin-top: 20px;",
+            items: [{
+                xtype: "toolbar",
+                style: "margin-bottom: 10px;",
+                items: ["->", {
+                    xtype: 'button',
+                    text: t("add"),
+                    iconCls: "pimcore_icon_add",
+                    handler: addMetaData,
+                    tooltip: {
+                        title:'',
+                        text: t('add_metadata')
+                    }
+                }]
+            }]
+        });
+
+        try {
+
+            if(typeof this.datax.translate == "object" && this.datax.translate.length > 0) {
+
+                this.datax.translate.forEach(function(field) {
+                    addMetaData(field["name"], field["value"]);
+                });
+
+            }
+
+        } catch (e) {}
+
+        return selector;
+
     }
 
 });

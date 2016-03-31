@@ -115,10 +115,15 @@ Formbuilder.comp.elem = Class.create({
 
     recursiveAddNode: function (con, scope) {
 
-        var fn = null;
-        var newNode = null;
+        var stype = null, fn = null, newNode = null;
 
-        fn = this.addElemChild.bind(scope, con.fieldtype, con);
+        if( con.isFilter == true) {
+            stype = "filter";
+        } else if( con.isValidator == true) {
+            stype = "validator";
+        }
+
+        fn = this.addElemChild.bind(scope, con.fieldtype, con, stype);
         newNode = fn();
 
         if (con.childs) {
@@ -562,8 +567,6 @@ Formbuilder.comp.elem = Class.create({
         // meta-data
         var addMetaData = function (name, value) {
 
-            console.log('add', name, value);
-
             if(typeof name != "string") {
                 name = "";
             }
@@ -739,9 +742,11 @@ Formbuilder.comp.elem = Class.create({
         var validator = false;
 
         if (initData) {
+
             if (initData.name) {
                 nodeLabel = initData.name;
             }
+
         }
 
         if(stype == "filter" ) {
@@ -867,19 +872,25 @@ Formbuilder.comp.elem = Class.create({
 
                 data.name = trim(data.name);
 
-                // field specific validation
                 var fieldValidation = true;
                 if(typeof node.data.object.isValid == "function") {
                     fieldValidation = node.data.object.isValid();
                 }
 
                 var view = this.tree.getView();
-                // check if the name is unique, localizedfields can be used more than once
                 var nodeEl = Ext.fly(view.getNodeByRecord(node));
 
-                if(fieldValidation && (in_array(data.name,this.usedFieldNames) == false)) {
+                var nsName = data.name;
+                if( data.isFilter === true ) {
+                    nsName = 'f.' + nsName;
+                }
+                if( data.isValidator === true ) {
+                    nsName = 'v.' + nsName;
+                }
 
-                    this.usedFieldNames.push(data.name);
+                if(fieldValidation && (in_array(nsName, this.usedFieldNames) == false)) {
+
+                    this.usedFieldNames.push(nsName);
 
                     if(nodeEl) {
                         nodeEl.removeCls("tree_node_error");

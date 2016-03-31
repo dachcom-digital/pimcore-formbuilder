@@ -52,8 +52,10 @@
 "Unchecked value","Valeur de 'décoché'"
 "displayGroup","Fieldset"
 "legend","Legende"
+"single multiOption","Option",
 "multiOptions translation","Traduction de multiOptions"
-"original legand","Légende d'origine"
+"legend translation","Traduction de Légende"
+"original legend","Légende d'origine"
 "file","Fichier"
 "destination","Destination"
 "maxFileSize","Taille maximum du fichier"

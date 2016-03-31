@@ -52,9 +52,10 @@
 "Unchecked value","Unchecked value"
 "displayGroup","Fieldset"
 "legend","Legend"
+"single multiOption","Option",
 "multiOptions translation","MultiOptions translation"
-"legend translation","MultiOptions translation"
-"original legand","Original legend"
+"legend translation","Legend translation"
+"original legend","Original legend"
 "file","File"
 "destination","Destination"
 "maxFileSize","Max file size"
