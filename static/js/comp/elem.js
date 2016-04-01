@@ -530,8 +530,8 @@ Formbuilder.comp.elem = Class.create({
                     }
                 }
 
+                _self.data["attrib"] = [];
                 if( Object.keys(attrCouples).length > 0) {
-                    _self.data["attrib"] = [];
                     Ext.Object.each(attrCouples, function (name, value) {
                         _self.data["attrib"].push( value );
                     });
@@ -723,6 +723,13 @@ Formbuilder.comp.elem = Class.create({
                 anchor:"100%",
                 value: this.data.enctype,
                 allowBlank:false
+            },
+            {
+                xtype: "checkbox",
+                name: "useAjax",
+                fieldLabel: t("Use Ajax to Submit"),
+                checked:false,
+                value: this.data.useAjax
             },
 
             this.metaDataPanel
@@ -954,7 +961,7 @@ Formbuilder.comp.elem = Class.create({
     },
     
     getExportFile: function(){
-        location.href = "/plugin/Formbuilder/Settings/getexportfile?id=" + this.data.id + "&name=" + this.data.name;
+        location.href = "/plugin/Formbuilder/admin_Settings/get-export-file?id=" + this.data.id + "&name=" + this.data.name;
     },
 
     rootFormIsValid : function() {
@@ -1000,7 +1007,7 @@ Formbuilder.comp.elem = Class.create({
             if (this.rootFormIsValid() && this.getDataSuccess) {
 
                 Ext.Ajax.request({
-                    url: "/plugin/Formbuilder/Settings/save",
+                    url: "/plugin/Formbuilder/admin_Settings/save",
                     method: "post",
                     params: {
                         configuration: m,

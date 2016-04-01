@@ -22,19 +22,26 @@ Formbuilder.comp.type.radio = Class.create(Formbuilder.comp.type.base,{
             collapsible: true,
             defaultType: 'textfield',
             items:[{
-                    xtype: "textfield",
-                    name: "separator",
-                    fieldLabel: t("separator"),
-                    anchor: "100%"
+                xtype: "textfield",
+                name: "separator",
+                fieldLabel: t("separator"),
+                anchor: "100%"
                 },
                 {
                 xtype: "checkbox",
                 name: "registerInArrayValidator",
                 fieldLabel: t("registerInArrayValidator"),
                 checked:false
-            },
+                },
+                {
+                xtype: "checkbox",
+                name: "inline",
+                fieldLabel: t("show inline fields"),
+                checked:false,
+                value: this.datax.inline
+                },
 
-            this.generateMultiOptionsRepeaterField()
+                this.generateMultiOptionsRepeaterField()
 
             ]
         });

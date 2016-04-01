@@ -6,6 +6,7 @@ use Pimcore\Model\Document;
 
 use Formbuilder\Model\Form as FormModel;
 use Formbuilder\Lib\Frontend;
+use Formbuilder\Lib\Mailer;
 
 class Form extends Document\Tag\Area\AbstractArea {
 
@@ -51,35 +52,61 @@ class Form extends Document\Tag\Area\AbstractArea {
             $horizontalForm = FALSE;
         }
 
+        $mailTemplate = $this->view->href('sendMailTemplate')->getElement();
+
         if( $formName !== NULL )
         {
+            $form = new FormModel();
+            $formId = $form->getIdByName($formName);
+
             $frontendLib = new Frontend();
 
-            $form = $frontendLib->getTwitterForm($formName, $this->view->language, $horizontalForm);
+            $form = $frontendLib->getTwitterForm($formId, $this->view->language, $horizontalForm);
 
-            $valid = $form->isValid( $this->getAllParams() );
+            if( $form !== FALSE )
+            {
+                $frontendLib->addDefaultValuesToForm(
+                    $form,
+                    array(
+                        'formId' => $formId,
+                        'locale' => $this->view->language,
+                        'mailTemplate' => $mailTemplate
+                    )
+                );
 
-            //var_dump( $form->getErrorMessages( ) );
+                $isSubmit = !is_null( $this->getParam('submit') );
 
-            $isSubmit = !is_null( $this->getParam('submit') );
-
-            if( $valid && $isSubmit ) {
-
-                $mailTemplate = $this->view->href('sendMailTemplate')->getElement();
-                $this->sendMail( $mailTemplate, $form->getValues() );
-
-                $successMessage = $mailTemplate->getProperty('mail_successfully_sent');
-
-                if( !empty( $successMessage ) )
+                if( $isSubmit )
                 {
-                    echo '<div class="row"><div class="col-xs-12"><div class="alert alert-success">' . $successMessage . '</div></div></div>';
+                    $valid = $form->isValid( $this->getAllParams() );
+
+                    if( $valid )
+                    {
+                        Mailer::sendForm( $mailTemplate->getId(), array('data' => $form->getValues() ) );
+
+                        $successMessages = Mailer::getMessages();
+
+                        if (!empty($successMessages))
+                        {
+                            echo '<div class="row"><div class="col-xs-12"><div class="alert alert-success">';
+
+                                foreach( $successMessages as $message )
+                                {
+                                    echo $message . '<br>';
+                                }
+
+                            echo '</div></div></div>';
+
+                        }
+
+                        $form->reset();
+                    }
+
                 }
 
-                $form->reset();
+                $formHtml = $form->render( $this->view );
 
             }
-
-            $formHtml = $form->render( $this->view );
 
         }
 
@@ -87,53 +114,4 @@ class Form extends Document\Tag\Area\AbstractArea {
 
     }
 
-    public function postRenderAction(){
-
-    }
-
-    private function sendMail( $mailTemplate, $data ) {
-
-        $mail = new \Pimcore\Mail();
-        $mail->setParam('body', $this->parseHtml( $data ) );
-        $mail->setDocument( $mailTemplate );
-        $mail->send();
-
-    }
-
-    private function parseHtml( $data )
-    {
-
-        $html = '<table>';
-
-        foreach( $data as $label => $field ) {
-
-            $data = '';
-
-            if( is_array( $field ) )
-            {
-                foreach( $field as $f )
-                {
-                    $data .= $f . '<br>';
-
-                }
-            }
-            else
-            {
-                $data = $field;
-            }
-
-            $html .= '<tr>';
-
-                $html .= '<td><strong>' . $label . '</strong></td>';
-                $html .= '<td>' . $data . '</td>';
-
-            $html .= '</tr>';
-
-        }
-
-        $html .= '</table>';
-
-        return $html;
-
-    }
 }

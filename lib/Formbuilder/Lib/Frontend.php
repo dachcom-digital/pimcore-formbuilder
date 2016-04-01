@@ -10,6 +10,8 @@ class Frontend {
 
     protected $languages = null;
 
+    protected $config = null;
+
     protected static $defaultFormClass = 'Zend_Form';
 
     protected $formClass = 'Zend_Form';
@@ -57,9 +59,9 @@ class Frontend {
     {
         if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini"))
         {
-            $config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
+            $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
 
-            $form = $this->createInstance($config->form, $className);
+            $form = $this->createInstance($this->config->form, $className);
             $this->initTranslation($form, $id, $locale);
 
             return $form;
@@ -74,8 +76,8 @@ class Frontend {
     {
         if (file_exists(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json"))
         {
-            $config = new \Zend_Config_Json(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json");
-            $datas = $config->toArray();
+            $this->config = new \Zend_Config_Json(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json");
+            $datas = $this->config->toArray();
 
             $builder = new Builder();
             $builder->setDatas($datas);
@@ -127,35 +129,30 @@ class Frontend {
         }
     }
 
-    public function getTwitterForm($name, $locale = null,$horizontal=true)
+    public function getTwitterForm($formId, $locale = null,$horizontal=true)
     {
         $this->getLanguages();
 
-        $form = new Form();
-        $id = $form->getIdByName($name);
-
-        if (is_numeric($id) == true)
+        if (is_numeric($formId) == true)
         {
-            if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini"))
+            if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $formId . ".ini"))
             {
-                $config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
+                $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $formId . ".ini", 'config');
 
-                $trans = $this->translateForm($id, $locale);
+                $trans = $this->translateForm($formId, $locale);
 
                 \Zend_Form::setDefaultTranslator($trans);
 
                 if($horizontal==true)
                 {
-                    $form = new \Twitter_Bootstrap_Form_Horizontal($config->form);
+                    $form = new \Twitter_Bootstrap3_Form_Horizontal($this->config->form);
                 }
                 else
                 {
-                    $form = new \Twitter_Bootstrap_Form_Vertical($config->form);
+                    $form = new \Twitter_Bootstrap3_Form_Vertical($this->config->form);
                 }
 
                 $form->setDisableTranslator(true);
-
-                $this->setFormDefaults( $form );
 
                 if ($locale != null && $locale != "")
                 {
@@ -179,32 +176,27 @@ class Frontend {
     /**
      * If $dynamic equal true, the form form is completely rebuild. It is useful if you need to interact to the form with hooks.
      *
-     * @param string $name
+     * @param int $formId
      * @param string $locale
      * @param boolean $dynamic
      * @param string Custom form class
      * @return \Zend_Form
      */
-    public function getForm($name, $locale=null, $dynamic=false, $formClass = null)
+    public function getForm($formId, $locale=null, $dynamic=false, $formClass = null)
     {
         $this->getLanguages();
 
-        $form = new Form();
-        $id = $form->getIdByName($name);
-
-        if (is_numeric($id) == true)
+        if (is_numeric($formId) == true)
         {
             $class = $formClass ?: $this->getFormClass();
             if ($dynamic == false)
             {
-                $form = $this->getStaticForm($id, $locale, $class);
+                $form = $this->getStaticForm($formId, $locale, $class);
             }
             else
             {
-                $form = $this->getDynamicForm($id, $locale, $class);
+                $form = $this->getDynamicForm($formId, $locale, $class);
             }
-
-            $this->setFormDefaults( $form );
 
             //correctly set recaptcha to https if request is over https
             if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
@@ -231,8 +223,17 @@ class Frontend {
         }
     }
 
-    private function setFormDefaults( $form )
+    public function addDefaultValuesToForm( $form, $attributes = array() )
     {
+        $defaults = array(
+            'formId' => NULL,
+            'locale' => 'en',
+            'mailTemplate' => NULL,
+            'ajaxForm' => FALSE
+        );
+
+        $params = array_merge($defaults, $attributes);
+
         $form->addElementPrefixPath(
             'Formbuilder',
             'Formbuilder/Zend/Form/'
@@ -253,6 +254,49 @@ class Frontend {
                 )
             )
         );
+
+        $form->addElement(
+            'hidden',
+            '_formId',
+            array(
+                'value' => $params['formId']
+            )
+        );
+
+        $form->addElement(
+            'hidden',
+            '_language',
+            array(
+                'value' => $params['locale']
+            )
+        );
+
+        if( $params['mailTemplate'] instanceof \Pimcore\Model\Document\Email ) {
+
+            $form->addElement(
+                'hidden',
+                '_mailTemplate',
+                array(
+                    'value' => $params['mailTemplate']->getId()
+                )
+            );
+
+        }
+
+        $configData = $this->config->toArray();
+
+        $settedFormClasses = explode(' ', $form->getAttrib('class') );
+
+        $settedFormClasses[] = 'formbuilder';
+
+        if( isset( $configData['form']['useAjax']) && $configData['form']['useAjax'] == TRUE )
+        {
+            $settedFormClasses[] = 'ajax-form';
+        }
+
+        $form->setAttrib('class', implode(' ', $settedFormClasses ) );
+
+        return $form;
 
     }
 

@@ -220,9 +220,8 @@ Formbuilder.comp.validator.base = Class.create({
             Ext.Object.each(translateCouples, function (name, translateValues) {
 
                 //each object
+                data["translate"][name] = [];
                 if( Object.keys(translateValues).length > 0) {
-
-                    data["translate"][name] = [];
                     Ext.Object.each(translateValues, function (id, value) {
                         data["translate"][name].push( value );
                     });

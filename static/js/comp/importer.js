@@ -17,7 +17,7 @@ Formbuilder.comp.importer = Class.create({
             var failure = function () {};
         }
 
-        var url =   '/plugin/Formbuilder/Settings/import?id=' + this.importId + '&pimcore_admin_sid=' + pimcore.settings.sessionId;
+        var url =   '/plugin/Formbuilder/admin_Settings/import?id=' + this.importId + '&pimcore_admin_sid=' + pimcore.settings.sessionId;
 
         var uploadWindowCompatible = new Ext.Window({
             autoHeight: true,
@@ -73,7 +73,7 @@ Formbuilder.comp.importer = Class.create({
     getImport: function () {
 
         Ext.Ajax.request({
-            url: "/plugin/Formbuilder/Settings/getimport",
+            url: "/plugin/Formbuilder/admin_Settings/get-import",
             params: {
                 id: this.importId,
                 method: "post"

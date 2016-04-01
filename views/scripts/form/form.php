@@ -2,7 +2,9 @@
 
     <div class="row">
 
-        <?=$this->form;?>
+        <div class="form-wrapper">
+            <?=$this->form;?>
+        </div>
 
     </div>
 

@@ -232,15 +232,15 @@ Formbuilder.comp.type.base = Class.create({
 
         }
 
+        data["attrib"] = [];
         if( Object.keys(attrCouples).length > 0) {
-            data["attrib"] = [];
             Ext.Object.each(attrCouples, function (name, value) {
                 data["attrib"].push( value );
             });
         }
 
+        data["multiOptions"] = [];
         if( Object.keys(multiOptionsCouples).length > 0) {
-            data["multiOptions"] = [];
             Ext.Object.each(multiOptionsCouples, function (name, value) {
                 data["multiOptions"].push( value );
             });
@@ -299,9 +299,8 @@ Formbuilder.comp.type.base = Class.create({
             Ext.Object.each(translateCouples, function (name, translateValues) {
 
                 //each object
+                data["translate"][name] = [];
                 if( Object.keys(translateValues).length > 0) {
-
-                    data["translate"][name] = [];
                     Ext.Object.each(translateValues, function (id, value) {
                         data["translate"][name].push( value );
                     });
@@ -499,7 +498,7 @@ Formbuilder.comp.type.base = Class.create({
     checkPath: function(path,field){
 
         Ext.Ajax.request({
-            url: "/plugin/Formbuilder/Settings/checkpath",
+            url: "/plugin/Formbuilder/admin_Settings/checkpath",
             method: "post",
             params: {
                 path:path

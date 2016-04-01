@@ -80,8 +80,6 @@ class Builder {
 
     public function saveConfig()
     {
-
-
         if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini'))
         {
             unlink(FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini');
@@ -112,6 +110,8 @@ class Builder {
         $this->config['config']['form']['action'] = $this->datas['action'];
         $this->config['config']['form']['method'] = $this->datas['method'];
         $this->config['config']['form']['enctype'] = $this->datas['enctype'];
+        $this->config['config']['form']['useAjax'] = $this->datas['useAjax'];
+        $this->config['config']['form']['novalidate'] = TRUE;
 
         $multi = $this->buildMultiData($this->datas['attrib']);
 
@@ -366,6 +366,7 @@ class Builder {
                     break;
 
                 default :
+
                     if ($key != 'name' && $key != 'fieldtype')
                     {
                         if ($data != '')

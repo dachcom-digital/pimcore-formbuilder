@@ -93,7 +93,7 @@ Formbuilder.settings = Class.create({
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
                     type: 'ajax',
-                    url: '/plugin/Formbuilder/settings/get-tree',
+                    url: '/plugin/Formbuilder/admin_Settings/get-tree'
                 },
 
                 listeners : {
@@ -185,7 +185,7 @@ Formbuilder.settings = Class.create({
     openFormConfig : function(id) {
 
         Ext.Ajax.request({
-            url: "/plugin/Formbuilder/Settings/get",
+            url: "/plugin/Formbuilder/admin_Settings/get",
             params: {
                 id: id
             },
@@ -253,7 +253,7 @@ Formbuilder.settings = Class.create({
                 this.usedFormNames.push(value);
 
                  Ext.Ajax.request({
-                     url: "/plugin/Formbuilder/Settings/add",
+                     url: "/plugin/Formbuilder/admin_Settings/add",
                      params: {
                         name: value
                      },
@@ -300,7 +300,7 @@ Formbuilder.settings = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/plugin/Formbuilder/Settings/delete",
+            url: "/plugin/Formbuilder/admin_Settings/delete",
             params: {
                 id: record.id
             }

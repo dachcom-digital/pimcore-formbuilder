@@ -9,9 +9,11 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
      */
     protected $initialized = false;
 
-    public function preDispatch() {
+    public function preDispatch()
+    {
 
-        if ($this->initialized) {
+        if ($this->initialized)
+        {
             return;
         }
 
@@ -22,8 +24,10 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
         /** @var \Pimcore\View $view */
         $view = $renderer->view;
         $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/views/scripts');
+        $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/views/layouts');
 
-        //$view->headStyle()->prependStyle('<style>.hon-hide {display:none;}</style>');
+        $view->headScript()->appendFile('/plugins/Formbuilder/static/js/frontend/formbuilder.js');
+        $view->headLink()->appendStylesheet('/plugins/Formbuilder/static/css/formbuilder.css');
 
         $this->initialized = true;
 

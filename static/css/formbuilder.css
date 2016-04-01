@@ -1,0 +1,22 @@
+/*
+Bootstrap 3 patch
+*/
+
+.form-vertical label + .radio,
+.form-vertical label + .checkbox {
+    margin-top: 0;
+}
+.form-vertical label + .form-control-static {
+    padding-top: 0;
+}
+.form-vertical .form-control-static:last-child {
+    padding-bottom: 0;
+}
+
+input[type=range]:after {
+    padding-left: 0.5em;
+    content: attr(data-value);
+}
+.hon-hide {
+    display:none !important;
+}
