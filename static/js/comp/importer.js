@@ -8,7 +8,8 @@ Formbuilder.comp.importer = Class.create({
 
     },
 
-    showPanel: function(){
+    showPanel: function() {
+
         if(typeof success != "function") {
             var success = function () {  };
         }
@@ -17,34 +18,35 @@ Formbuilder.comp.importer = Class.create({
             var failure = function () {};
         }
 
-        var url =   '/plugin/Formbuilder/admin_Settings/import?id=' + this.importId + '&pimcore_admin_sid=' + pimcore.settings.sessionId;
+        var url = '/plugin/Formbuilder/admin_Settings/import?id=' + this.importId + '&pimcore_admin_sid=' + pimcore.settings.sessionId;
 
         var uploadWindowCompatible = new Ext.Window({
             autoHeight: true,
-            title: t('Select Import'),
+            title: t('upload'),
             closeAction: 'close',
             width:400,
             modal: true
         });
+
         var fbClass = this;
         var uploadForm = new Ext.form.FormPanel({
-            layout: "pimcoreform",
+            bodyStyle: "padding:5px 5px 0",
+            border: false,
             fileUpload: true,
             width: 400,
-            bodyStyle: 'padding: 10px;',
             items: [{
                 xtype: 'fileuploadfield',
                 emptyText: t("select_a_file"),
-                fieldLabel: t("Import File"),
+                fieldLabel: t("file"),
                 width: 230,
                 name: 'Filedata',
                 buttonText: "",
-                buttonCfg: {
-                    iconCls: 'pimcore_icon_upload_single'
-
+                buttonConfig: {
+                    iconCls: 'pimcore_icon_upload'
                 },
                 listeners: {
-                    fileselected: function () {
+                    change: function () {
+
                         uploadForm.getForm().submit({
                             url: url,
                             waitMsg: t("please_wait"),
@@ -67,7 +69,7 @@ Formbuilder.comp.importer = Class.create({
         uploadWindowCompatible.add(uploadForm);
         uploadWindowCompatible.show();
         uploadWindowCompatible.setWidth(401);
-        uploadWindowCompatible.doLayout();
+        uploadWindowCompatible.updateLayout();
 
     },
     getImport: function () {

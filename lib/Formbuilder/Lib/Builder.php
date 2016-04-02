@@ -311,7 +311,7 @@ class Builder {
             $text = '';
             foreach ($this->translations[$lang] as $key => $value)
             {
-                $text .= "\"" . mb_strtolower($key) . "\",\"" . $value . "\"\n";
+                $text .= "\"" . $key . "\",\"" . $value . "\"\n";
             }
 
             file_put_contents(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv', $text, FILE_TEXT);

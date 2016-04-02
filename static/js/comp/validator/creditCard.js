@@ -31,7 +31,7 @@ Formbuilder.comp.validator.creditCard = Class.create(Formbuilder.comp.validator.
             collapsible: true,
             defaultType: 'textfield',
             items:[{
-                xtype: 'superboxselectspe',
+                xtype: 'tagfield',
                 name: "type",
                 allowBlank:true,
                 queryDelay: 0,
@@ -45,7 +45,8 @@ Formbuilder.comp.validator.creditCard = Class.create(Formbuilder.comp.validator.
                 emptyText: t("Choose credit cards"),
                 store: cbStore,
                 displayField: "label",
-                valueField: "value"
+                valueField: "value",
+                value: this.datax.type
             }
 
         ]

@@ -80,7 +80,6 @@
             <path>/plugins/Formbuilder/static/js/comp/validator/postCode.js</path>
             <path>/plugins/Formbuilder/static/js/comp/validator/regex.js</path>
             <path>/plugins/Formbuilder/static/js/comp/validator/stringLength.js</path>
-            <path>/plugins/Formbuilder/static/js/composite/SuperBoxSelectSpe.js</path>
         </pluginJsPaths-extjs6>
         <pluginCssPaths-extjs6>
             <path>/Formbuilder/static/css/admin.css</path>

@@ -32,7 +32,7 @@ Formbuilder.comp.filter.boolean = Class.create(Formbuilder.comp.filter.base,{
             defaultType: 'textfield',
             items:[
             {
-                xtype: 'superboxselectspe',
+                xtype: 'tagfield',
                 name: "type",
                 allowBlank:false,
                 queryDelay: 0,
@@ -46,7 +46,8 @@ Formbuilder.comp.filter.boolean = Class.create(Formbuilder.comp.filter.base,{
                 emptyText: t("Choose the boolean types"),
                 store: typeStore,
                 displayField: "label",
-                valueField: "value"
+                valueField: "value",
+                value: this.datax.type
             }
 
 

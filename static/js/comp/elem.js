@@ -417,11 +417,12 @@ Formbuilder.comp.elem = Class.create({
             }
         }
 
-        if (this.id != 0) {
+        if (record.id != 0) {
 
             menu.add(new Ext.menu.Item({
                 text: t('copy'),
                 iconCls: "pimcore_icon_copy",
+                hideOnClick: true,
                 handler: this.copyChild.bind(this, tree, record)
             }));
         }
@@ -430,29 +431,31 @@ Formbuilder.comp.elem = Class.create({
 
         if (this.copyData != null) {
 
-            var copyType = this.copyData.fieldtype;
+            var copyType = this.copyData.data.type;
 
-            if(this.id == 0){
+            if(record.id == 0) {
 
-                if(copyType=="displayGroup"){
+                if(copyType == "displayGroup") {
                     showPaste = true;
                 }
 
                 if(in_array(copyType, allowedTypes[parentType])){
-                    showPaste=true;
+                    showPaste = true;
                 }
 
             } else {
 
-                if( ! (record.data.object.datax.isFilter || record.data.object.datax.isValidator)){
+                if( ! (record.data.object.datax.isFilter
+                    || record.data.object.datax.isValidator)) {
+
                     if(in_array(copyType, allowedTypes[parentType])){
-                        showPaste=true;
+                        showPaste = true;
                     }
                     if(in_array(copyType, allowedFilters[parentType])){
-                        showPaste=true;
+                        showPaste = true;
                     }
                     if(in_array(copyType, allowedValidators[parentType])){
-                        showPaste=true;
+                        showPaste = true;
                     }
 
                 }
@@ -460,20 +463,24 @@ Formbuilder.comp.elem = Class.create({
 
         }
 
-        if(showPaste == true){
+        if(showPaste == true) {
+
             menu.add(new Ext.menu.Item({
                 text: t('paste'),
                 iconCls: "pimcore_icon_paste",
-                handler: this.pasteChild.bind(this)
+                handler: this.pasteChild.bind(this, tree, record)
             }));
+
         }
 
         if (this.id != 0 && deleteAllowed) {
+
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: this.removeChild.bind(this, tree, record)
             }));
+
         }
 
         menu.showAt(e.pageX, e.pageY);
@@ -834,20 +841,33 @@ Formbuilder.comp.elem = Class.create({
 
     copyChild: function (tree, record) {
 
-        if (this.id != 0) {
-            this.attributes.reference.names = [];
-            this.attributes.reference.saveCurrentNode();
-            this.attributes.reference.getData();
-            this.attributes.reference.copyData = this.attributes.object.datax;
+        this.copyData = {};
+
+        var newNode = this.cloneChild(tree, record);
+        this.copyData = newNode;
+
+        /*
+        if (record.id != 0) {
+
+            this.names = [];
+            this.saveCurrentNode();
+            this.getData();
+            this.copyData = record.data.object.datax;
 
         }
-
+        */
     },
 
-    pasteChild: function () {
+    pasteChild: function (tree, record) {
 
-        this.recursiveAddNode(this.copyData,this);
-        
+        var node = this.copyData;
+        var newNode = this.cloneChild(tree, node);
+
+        record.appendChild(newNode);
+        tree.updateLayout();
+
+        //this.recursiveAddNode.bind(this.copyData, record);
+
     },
 
     removeChild: function (tree, record) {
@@ -862,6 +882,61 @@ Formbuilder.comp.elem = Class.create({
         }
     },
 
+    cloneChild: function(tree, node) {
+
+        var theReference = this;
+        var nodeLabel = node.data.text;
+        var nodeType = node.data.object.type;
+
+        var config = {
+            text: nodeLabel,
+            type: nodeType,
+            leaf: false,
+            expandable: false,
+            expanded: true
+        };
+
+        config.listeners = theReference.getTreeNodeListeners();
+
+        if (node.data.object) {
+            config.iconCls = node.data.object.getIconClass();
+        }
+
+        var newNode = node.createNode(config);
+
+        var theData = {};
+
+        if (node.data.object) {
+            theData = Ext.apply(theData, node.data.object.datax);
+        }
+
+        var newObjectClass = null;
+
+        if( node.data.object.datax.isValidator === true) {
+            newObjectClass = Formbuilder.comp.validator[nodeType];
+        } else if( node.data.object.datax.isFilter === true) {
+            newObjectClass = Formbuilder.comp.filter[nodeType];
+        } else {
+            newObjectClass = Formbuilder.comp.type[nodeType];
+        }
+
+        newNode.data.object = new newObjectClass(newNode, theData);
+
+        var len = node.childNodes ? node.childNodes.length : 0;
+
+        var i = 0;
+
+        // Move child nodes across to the copy if required
+        for (i = 0; i < len; i++) {
+            var childNode = node.childNodes[i];
+            var clonedChildNode = this.cloneChild(tree, childNode);
+            newNode.appendChild(clonedChildNode);
+        }
+
+        return newNode;
+
+    },
+
     getNodeData: function (node) {
 
         var data = {};
@@ -871,11 +946,6 @@ Formbuilder.comp.elem = Class.create({
             if (typeof node.data.object.getData == "function") {
 
                 data = node.data.object.getData();
-
-                //@fixme? not ready yet?
-                if( data.name === undefined) {
-                    return false;
-                }
 
                 data.name = trim(data.name);
 
@@ -960,51 +1030,59 @@ Formbuilder.comp.elem = Class.create({
         this.initLayoutFields();
     },
     
-    getExportFile: function(){
+    getExportFile: function() {
+
         location.href = "/plugin/Formbuilder/admin_Settings/get-export-file?id=" + this.data.id + "&name=" + this.data.name;
+
     },
 
-    rootFormIsValid : function() {
+    rootFormIsValid : function(data) {
 
         var isValid = true;
 
         if( this.rootFields.length > 0 )
         {
-            this.rootFields.each(function(field) {
-                if( typeof field.isValid == "function" ) {
-
-                    try {
-                        if( field.isValid() === false){
+            this.rootFields.each(function(field)
+            {
+                if( typeof field.getValue == "function" )
+                {
+                    try
+                    {
+                        if( field.getValue() === "")
+                        {
                             isValid = false;
+                            return false;
                         }
+
                     } catch(e) {
+
+                        //console.warn(e);
                     }
 
                 }
-
-                if( isValid === false) {
-                    return false;
-                }
             });
+        }
+
+        var regresult = data["name"].match(/[a-zA-Z]+/);
+
+        if( data["name"].length <= 2 || regresult != data["name"] || in_array(data["name"].toLowerCase(), this.parentPanel.forbiddennames)) {
+            isValid = false;
         }
 
         return isValid;
 
     },
 
-    save: function (ev) {
+    save: function(ev) {
 
         this.saveCurrentNode();
 
         var m = Ext.encode(this.getData());
         var n = Ext.encode(this.data);
 
-        var regresult = this.data["name"].match(/[a-zA-Z]+/);
+        if ( this.rootFormIsValid(this.data) ) {
 
-        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
-            this.parentPanel.forbiddennames)) {
-
-            if (this.rootFormIsValid() && this.getDataSuccess) {
+            if ( this.getDataSuccess ) {
 
                 Ext.Ajax.request({
                     url: "/plugin/Formbuilder/admin_Settings/save",
@@ -1018,11 +1096,14 @@ Formbuilder.comp.elem = Class.create({
                     failure: this.saveOnError.bind(this)
                 });
 
+            } else {
+
+                Ext.Msg.alert(t('error'), t('problem_creating_new_elem'));
             }
 
         } else {
 
-            Ext.Msg.alert(t('error'), t('problem_creating_new_elem'));
+            Ext.Msg.alert(t('error'), t('problem_creating_new_elem_form'));
 
         }
 

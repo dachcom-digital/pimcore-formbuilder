@@ -808,18 +808,19 @@ Formbuilder.comp.type.base = Class.create({
                     value : value,
                     flex: 1,
                     listeners: combolisteners
-                },
+                    },
                     {
-                        xtype: "textfield",
-                        name: "multiOptions_value_" + count,
-                        fieldLabel: t("Value"),
-                        anchor: "100%",
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        value : value,
-                        flex: 1,
-                        listeners: combolisteners
-                    }]
+                    xtype: "textfield",
+                    name: "multiOptions_value_" + count,
+                    fieldLabel: t("Value"),
+                    anchor: "100%",
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    value : value,
+                    flex: 1,
+                    listeners: combolisteners
+                    }
+                ]
             });
 
             compositeField.add([{
