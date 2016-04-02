@@ -1,14 +1,16 @@
 # Pimcore Formbuilder
 
-**Attention!** This plugin is under heavy development!
-
-This is an adaption from the [Zendformbuilder] (https://github.com/brainsbucket/Zendformbuilder) Plugin.
-It's totally rewritten and requires Pimcore 4.0.
+This Plugin is based on the [Zendformbuilder] (https://github.com/brainsbucket/Zendformbuilder) Plugin.
+It's totally rewritten, offers a lot of new features and requires Pimcore 4.0.
 
 Just download and install it into your plugin folder.
 
-# Requirements
+## Requirements
 * Pimcore 4.0
 
-# Features
+## Features
 * Build Forms in Backend easily. :)
+* Place Forms everywhere you want with the form area
+* Server validation
+* Activate ajax mode to each form
+* Define mail templates

@@ -10,12 +10,7 @@
             "name": "Stefan Hagspiel",
             "homepage": "http://www.dachcom-digital.ch",
             "role": "Developer"
-       },
-        {
-            "name": "Brainsbucket",
-            "homepage": "https://github.com/brainsbucket/Zendformbuilder",
-            "role": "Developer"
-        }
+       }
     ],
     "require": {
         "pimcore/installer-plugin": ">=1"
