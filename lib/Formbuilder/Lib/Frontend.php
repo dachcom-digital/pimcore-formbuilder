@@ -61,7 +61,9 @@ class Frontend {
         {
             $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
 
-            $form = $this->createInstance($this->config->form, $className);
+            $formData = $this->parseFormData( $this->config->form->toArray() );
+
+            $form = $this->createInstance($formData, $className);
             $this->initTranslation($form, $id, $locale);
 
             return $form;
@@ -84,7 +86,9 @@ class Frontend {
             $builder->setLocale($locale);
             $array = $builder->buildDynamicForm();
 
-            $form = $this->createInstance($array, $className);
+            $formData = $this->parseFormData( $array );
+
+            $form = $this->createInstance($formData, $className);
             $this->initTranslation($form, $id, $locale);
 
             return $form;
@@ -143,13 +147,15 @@ class Frontend {
 
                 \Zend_Form::setDefaultTranslator($trans);
 
+                $formData = $this->parseFormData( $this->config->form->toArray() );
+
                 if($horizontal==true)
                 {
-                    $form = new \Twitter_Bootstrap3_Form_Horizontal($this->config->form);
+                    $form = new \Twitter_Bootstrap3_Form_Horizontal($formData);
                 }
                 else
                 {
-                    $form = new \Twitter_Bootstrap3_Form_Vertical($this->config->form);
+                    $form = new \Twitter_Bootstrap3_Form_Vertical($formData);
                 }
 
                 $form->setDisableTranslator(true);
@@ -327,4 +333,35 @@ class Frontend {
 
     }
 
+    protected function parseFormData( $form )
+    {
+        foreach( $form['elements'] as $elementName => &$element) {
+
+            if( !is_array( $element ) )
+            {
+                continue;
+            }
+
+            if( $element['type'] == 'select' && isset( $element['options']['multiOptions']))
+            {
+                $realOptions = array();
+                foreach( $element['options']['multiOptions'] as $optionKey => $optionValue)
+                {
+                    if( $optionKey == 'choose')
+                    {
+                        $optionKey = '';
+                    }
+
+                    $realOptions[$optionKey] = $optionValue;
+
+                }
+
+                $element['options']['multiOptions'] = $realOptions;
+            }
+
+        }
+
+        return $form;
+
+    }
 }

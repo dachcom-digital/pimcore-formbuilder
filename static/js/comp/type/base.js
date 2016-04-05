@@ -15,7 +15,7 @@ Formbuilder.comp.type.base = Class.create({
         this.initData(initData);
 
     },
-    
+
     getApiUrl: function(){
 
         var name = this.getType();
@@ -27,10 +27,10 @@ Formbuilder.comp.type.base = Class.create({
         return url;
 
     },
-    
+
     viewApi: function(){
-         var wind = new Formbuilder.apiwindow(this.getApiUrl());
-         wind.showWindow();
+        var wind = new Formbuilder.apiwindow(this.getApiUrl());
+        wind.showWindow();
     },
 
     getTypeName: function () {
@@ -40,7 +40,7 @@ Formbuilder.comp.type.base = Class.create({
     getIconClass: function () {
         return "Formbuilder_icon_base";
     },
-    
+
     initData: function (d) {
 
         this.valid = true;
@@ -68,7 +68,7 @@ Formbuilder.comp.type.base = Class.create({
                 }
             }
             catch(e){
-                    
+
             }
         }
     },
@@ -89,7 +89,7 @@ Formbuilder.comp.type.base = Class.create({
 
         this.layout2 = new Ext.Panel({
             title: t("Translate : ") + this.getTypeName(),
-            closable:false,            
+            closable:false,
             autoScroll:true,
             listeners: {
                 activate: function(tab){
@@ -146,7 +146,7 @@ Formbuilder.comp.type.base = Class.create({
                 }
             }
         }
-           
+
     },
 
     getData: function () {
@@ -335,58 +335,58 @@ Formbuilder.comp.type.base = Class.create({
                     handler: this.viewApi.bind(this),
                     style:{marginBottom : "5px"}
                 },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("name"),
-                    name: "name",
-                    value: this.datax.name,
-                    allowBlank:false,
-                    anchor: "100%",
-                    enableKeyEvents: true
-                },
-                {
-                    id:"fieldlabel",
-                    xtype: "textfield",
-                    name: "label",
-                    value: this.datax.label,
-                    fieldLabel: t("label"),
-                    anchor: "100%"
-                },
-                {
-                    id:"fielddescription",
-                    xtype: "textfield",
-                    name: "description",
-                    value: this.datax.description,
-                    fieldLabel: t("description"),
-                    anchor: "100%"
-                },
+                    {
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "name",
+                        value: this.datax.name,
+                        allowBlank:false,
+                        anchor: "100%",
+                        enableKeyEvents: true
+                    },
+                    {
+                        id:"fieldlabel",
+                        xtype: "textfield",
+                        name: "label",
+                        value: this.datax.label,
+                        fieldLabel: t("label"),
+                        anchor: "100%"
+                    },
+                    {
+                        id:"fielddescription",
+                        xtype: "textfield",
+                        name: "description",
+                        value: this.datax.description,
+                        fieldLabel: t("description"),
+                        anchor: "100%"
+                    },
 
-                {
-                    id:"fieldallowempty",
-                    xtype: "checkbox",
-                    name: "allowEmpty",
-                    value: this.datax.allowEmpty,
-                    fieldLabel: t("allowEmpty"),
-                    checked:true
-                },
-                {
-                    id:"fieldrequired",
-                    xtype: "checkbox",
-                    name: "required",
-                    value: this.datax.required,
-                    fieldLabel: t("required"),
-                    checked:false
-                },
-                {
-                    id:"fieldvalue",
-                    xtype: "textfield",
-                    name: "value",
-                    value: this.datax.value,
-                    fieldLabel: t("value"),
-                    anchor: "100%"
-                },
+                    {
+                        id:"fieldallowempty",
+                        xtype: "checkbox",
+                        name: "allowEmpty",
+                        value: this.datax.allowEmpty,
+                        fieldLabel: t("allowEmpty"),
+                        checked:true
+                    },
+                    {
+                        id:"fieldrequired",
+                        xtype: "checkbox",
+                        name: "required",
+                        value: this.datax.required,
+                        fieldLabel: t("required"),
+                        checked:false
+                    },
+                    {
+                        id:"fieldvalue",
+                        xtype: "textfield",
+                        name: "value",
+                        value: this.datax.value,
+                        fieldLabel: t("value"),
+                        anchor: "100%"
+                    },
 
-                this.generateAttributeRepeaterField()
+                    this.generateAttributeRepeaterField()
 
                 ]
 
@@ -398,17 +398,17 @@ Formbuilder.comp.type.base = Class.create({
 
     getHookForm: function(){
 
-      var fs = new Ext.form.FieldSet({
+        var fs = new Ext.form.FieldSet({
             title: t("Hook"),
             collapsible: true,
             collapsed:true,
             defaultType: 'textfield',
             items:[{
-                    xtype: "textfield",
-                    name: "custom_class",
-                    fieldLabel: t("custom class"),
-                    anchor: "100%"
-                },
+                xtype: "textfield",
+                name: "custom_class",
+                fieldLabel: t("custom class"),
+                anchor: "100%"
+            },
                 {
                     xtype: "textfield",
                     name: "custom_action",
@@ -438,9 +438,9 @@ Formbuilder.comp.type.base = Class.create({
 
         this.localeStore = store;
         return this.localeStore;
-            
+
     },
-    
+
     getTranslatForm: function(){
 
         this.getLanguages();
@@ -448,7 +448,7 @@ Formbuilder.comp.type.base = Class.create({
         this.transForm = new Ext.FormPanel({
             bodyStyle:'padding:5px 5px 0',
             labelWidth: 150,
-            defaultType: 'textfield',            
+            defaultType: 'textfield',
             items: [{
                 xtype:'fieldset',
                 title: t('label translation'),
@@ -464,37 +464,37 @@ Formbuilder.comp.type.base = Class.create({
                     disabled:true
                 },
 
-                this.generateLocaleRepeaterField('label')
+                    this.generateLocaleRepeaterField('label')
 
                 ]
             },
-            {
-                xtype:'fieldset',
-                title: t('description translation'),
-                collapsible: false,
-                autoHeight:true,
-                defaultType: 'textfield',
-                items:[{
-                    xtype: "textfield",
-                    name: "originaldescription",
-                    fieldLabel: t("original description"),
-                    anchor: "100%",
-                    value:this.datax.description,
-                    disabled:true
-                },
+                {
+                    xtype:'fieldset',
+                    title: t('description translation'),
+                    collapsible: false,
+                    autoHeight:true,
+                    defaultType: 'textfield',
+                    items:[{
+                        xtype: "textfield",
+                        name: "originaldescription",
+                        fieldLabel: t("original description"),
+                        anchor: "100%",
+                        value:this.datax.description,
+                        disabled:true
+                    },
 
-                this.generateLocaleRepeaterField('description'),
+                        this.generateLocaleRepeaterField('description'),
 
-                ]
-            }
+                    ]
+                }
 
             ]
 
         });
-        
+
         return this.transForm;
     },
-    
+
     checkPath: function(path,field){
 
         Ext.Ajax.request({
@@ -540,23 +540,23 @@ Formbuilder.comp.type.base = Class.create({
                 hideLabel: true,
                 style: "padding-bottom:5px;",
                 items: [{
-                        xtype: "combo",
-                        name: "attrib_name_" + count,
-                        fieldLabel: t("attribute name"),
-                        queryDelay: 0,
-                        displayField: "label",
-                        valueField: "value",
-                        mode: 'local',
-                        store: html,
-                        editable: true,
-                        triggerAction: 'all',
-                        anchor: "100%",
-                        value: name,
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        flex: 1,
-                        listeners: combolisteners
-                    },
+                    xtype: "combo",
+                    name: "attrib_name_" + count,
+                    fieldLabel: t("attribute name"),
+                    queryDelay: 0,
+                    displayField: "label",
+                    valueField: "value",
+                    mode: 'local',
+                    store: html,
+                    editable: true,
+                    triggerAction: 'all',
+                    anchor: "100%",
+                    value: name,
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    flex: 1,
+                    listeners: combolisteners
+                },
                     {
                         xtype: "textfield",
                         name: "attrib_value_" + count,
@@ -655,23 +655,23 @@ Formbuilder.comp.type.base = Class.create({
             };
 
             var items = [{
-                    xtype: "combo",
-                    name: "translate_" + elementName + "_name_" + count,
-                    fieldLabel: t("Locale"),
-                    queryDelay: 0,
-                    displayField: "label",
-                    valueField: "key",
-                    mode: 'local',
-                    store: storeData,
-                    editable: true,
-                    triggerAction: 'all',
-                    anchor: "100%",
-                    value: name,
-                    summaryDisplay: true,
-                    allowBlank: false,
-                    flex: 1,
-                    listeners: combolisteners
-                },
+                xtype: "combo",
+                name: "translate_" + elementName + "_name_" + count,
+                fieldLabel: t("Locale"),
+                queryDelay: 0,
+                displayField: "label",
+                valueField: "key",
+                mode: 'local',
+                store: storeData,
+                editable: true,
+                triggerAction: 'all',
+                anchor: "100%",
+                value: name,
+                summaryDisplay: true,
+                allowBlank: false,
+                flex: 1,
+                listeners: combolisteners
+            },
                 {
                     xtype: "textfield",
                     name: "translate_" + elementName + "_value_" + count,
@@ -770,7 +770,7 @@ Formbuilder.comp.type.base = Class.create({
         return selector;
     },
 
-    generateMultiOptionsRepeaterField : function( ) {
+    generateMultiOptionsRepeaterField : function( allowFirstOptionsEmpty ) {
 
         var selector = null;
 
@@ -805,20 +805,20 @@ Formbuilder.comp.type.base = Class.create({
                     anchor: "100%",
                     summaryDisplay: true,
                     allowBlank: false,
-                    value : value,
+                    value : name,
                     flex: 1,
                     listeners: combolisteners
-                    },
+                },
                     {
-                    xtype: "textfield",
-                    name: "multiOptions_value_" + count,
-                    fieldLabel: t("Value"),
-                    anchor: "100%",
-                    summaryDisplay: true,
-                    allowBlank: false,
-                    value : value,
-                    flex: 1,
-                    listeners: combolisteners
+                        xtype: "textfield",
+                        name: "multiOptions_value_" + count,
+                        fieldLabel: t("Value"),
+                        anchor: "100%",
+                        summaryDisplay: true,
+                        allowBlank: false,
+                        value : value,
+                        flex: 1,
+                        listeners: combolisteners
                     }
                 ]
             });
@@ -841,6 +841,35 @@ Formbuilder.comp.type.base = Class.create({
 
         }.bind(this);
 
+        var items = [
+            "->",
+            {
+                xtype: 'button',
+                text: t("add"),
+                iconCls: "pimcore_icon_add",
+                handler: addMetaData,
+                tooltip: {
+                    title:'',
+                    text: t('add_metadata')
+                }
+            }
+        ];
+
+        if( allowFirstOptionsEmpty )
+        {
+            items.unshift( {
+                xtype: 'panel',
+                name: 'multiOptionsInfo',
+                fieldLabel: '',
+                submitValue : false,
+                frame: false,
+                border: false,
+                bodyStyle: 'background:transparent;',
+                width: 400,
+                html: t('empty multiOption first value')
+            });
+        }
+
         selector = new Ext.form.FieldSet({
 
             title: "multiOptions",
@@ -851,16 +880,7 @@ Formbuilder.comp.type.base = Class.create({
             items: [{
                 xtype: "toolbar",
                 style: "margin-bottom: 10px;",
-                items: ["->", {
-                    xtype: 'button',
-                    text: t("add"),
-                    iconCls: "pimcore_icon_add",
-                    handler: addMetaData,
-                    tooltip: {
-                        title:'',
-                        text: t('add_metadata')
-                    }
-                }]
+                items: items
             }]
         });
 
@@ -890,7 +910,7 @@ Formbuilder.comp.type.base = Class.create({
         } else {
 
             this.markInvalid(t("thePath doesn't exist"));
-            
+
         }
 
     }

@@ -26,12 +26,12 @@ Formbuilder.comp.type.multiCheckbox = Class.create(Formbuilder.comp.type.base,{
                 name: "separator",
                 fieldLabel: t("separator"),
                 anchor: "100%"
-                },
+            },
                 {
-                xtype: "checkbox",
-                name: "registerInArrayValidator",
-                fieldLabel: t("registerInArrayValidator"),
-                checked:false
+                    xtype: "checkbox",
+                    name: "registerInArrayValidator",
+                    fieldLabel: t("registerInArrayValidator"),
+                    checked:false
                 },
                 {
                     xtype: "checkbox",
@@ -50,7 +50,7 @@ Formbuilder.comp.type.multiCheckbox = Class.create(Formbuilder.comp.type.base,{
 
         return this.form;
     },
-    
+
     getTranslatForm: function($super){
 
         $super();
@@ -60,7 +60,7 @@ Formbuilder.comp.type.multiCheckbox = Class.create(Formbuilder.comp.type.base,{
             var values = [];
 
             for (var i=0;i<this.datax.multiOptions.length;i++){
-                values.push([this.datax.multiOptions[i]["name"],this.datax.multiOptions[i]["value"]]);
+                values.push([this.datax.multiOptions[i]["value"],this.datax.multiOptions[i]["value"]]);
             }
 
             this.multiOptionStore = new Ext.data.ArrayStore({
@@ -79,9 +79,9 @@ Formbuilder.comp.type.multiCheckbox = Class.create(Formbuilder.comp.type.base,{
         });
 
         this.transForm.add(trans);
-        
+
         return this.transForm;
-        
+
     }
 
 });

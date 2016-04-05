@@ -26,19 +26,19 @@ Formbuilder.comp.type.radio = Class.create(Formbuilder.comp.type.base,{
                 name: "separator",
                 fieldLabel: t("separator"),
                 anchor: "100%"
+            },
+                {
+                    xtype: "checkbox",
+                    name: "registerInArrayValidator",
+                    fieldLabel: t("registerInArrayValidator"),
+                    checked:false
                 },
                 {
-                xtype: "checkbox",
-                name: "registerInArrayValidator",
-                fieldLabel: t("registerInArrayValidator"),
-                checked:false
-                },
-                {
-                xtype: "checkbox",
-                name: "inline",
-                fieldLabel: t("show inline fields"),
-                checked:false,
-                value: this.datax.inline
+                    xtype: "checkbox",
+                    name: "inline",
+                    fieldLabel: t("show inline fields"),
+                    checked:false,
+                    value: this.datax.inline
                 },
 
                 this.generateMultiOptionsRepeaterField()
@@ -58,9 +58,9 @@ Formbuilder.comp.type.radio = Class.create(Formbuilder.comp.type.base,{
         if(this.datax.multiOptions){
 
             var values = [];
-        
+
             for (var i=0;i<this.datax.multiOptions.length;i++){
-                values.push([this.datax.multiOptions[i]["name"],this.datax.multiOptions[i]["value"]]);
+                values.push([this.datax.multiOptions[i]["value"],this.datax.multiOptions[i]["value"]]);
             }
 
             this.multiOptionStore = new Ext.data.ArrayStore({
@@ -68,7 +68,7 @@ Formbuilder.comp.type.radio = Class.create(Formbuilder.comp.type.base,{
                 data : values
             });
         }
-        
+
         var trans = new Ext.form.FieldSet({
             title: t("multiOptions translation"),
             collapsible: true,
@@ -79,9 +79,9 @@ Formbuilder.comp.type.radio = Class.create(Formbuilder.comp.type.base,{
         });
 
         this.transForm.add(trans);
-        
+
         return this.transForm;
-        
+
     }
 
 });
