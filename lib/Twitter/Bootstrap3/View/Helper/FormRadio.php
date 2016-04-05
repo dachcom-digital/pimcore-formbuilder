@@ -169,18 +169,19 @@ class Twitter_Bootstrap3_View_Helper_FormRadio extends Zend_View_Helper_FormRadi
 
             // Wrap the radios in labels
             $radio = '<label'
-                    . $this->_htmlAttribs($label_attribs) . '>'
-                    . (('prepend' == $labelPlacement) ? $opt_label . ' ' : '')
-                    . '<input type="' . $this->_inputType . '"'
-                    . ' name="' . $name . '"'
-                    . ' id="' . $optId . '"'
-                    . ' value="' . $this->view->escape($opt_value) . '"'
-                    . $checked
-                    . $disabled
-                    . $this->_htmlAttribs($attribs)
-                    . $this->getClosingBracket()
-                    . (('append' == $labelPlacement) ? ' ' . $opt_label : '')
-                    . '</label>';
+                        . $this->_htmlAttribs($label_attribs) . '>'
+                        . (('prepend' == $labelPlacement) ? $opt_label . ' ' : '')
+                        . '<input type="' . $this->_inputType . '"'
+                        . ' name="' . $name . '"'
+                        . ' id="' . $optId . '"'
+                        . ' value="' . $this->view->escape($opt_value) . '"'
+                        . $checked
+                        . $disabled
+                        . $this->_htmlAttribs($attribs)
+                        . $this->getClosingBracket()
+                        . '<span class="check"></span>'
+                        . (('append' == $labelPlacement) ? ' ' . $opt_label : '')
+                        . '</label>';
             
             if (0 < count($wrapper_attribs)) {
                 $radio = '<div'
