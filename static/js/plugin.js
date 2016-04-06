@@ -12,29 +12,28 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
     },
 
     uninstall: function() {
-    
+
     },
 
     pimcoreReady: function (params,broker){
 
         var user = pimcore.globalmanager.get("user");
-        
+
         if(user.admin == true){
 
-            var action = new Ext.Action({
+            var formBuilderMenu = new Ext.Action({
 
                 id:"Formbuilder_setting_button",
                 text: t('formBuilder settings'),
                 iconCls:"Formbuilder_icon_fbuilder",
-                handler: function(){
-                    var gestion = new Formbuilder.settings;
-                }
+                handler: this.openSettings
 
             });
 
-            layoutToolbar.extrasMenu.add(action);
-        
+            layoutToolbar.settingsMenu.add(formBuilderMenu);
+
         }
+
         this.getLanguages();
     },
 
@@ -48,6 +47,16 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
                 pimcore.globalmanager.add("Formbuilder.languages",resp);
             }
         });
+    },
+
+    openSettings : function()
+    {
+        try {
+            pimcore.globalmanager.get('formBuilder_settings').activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add('formBuilder_settings', new Formbuilder.settings());
+        }
     }
 
 });

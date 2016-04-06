@@ -19,45 +19,45 @@ Formbuilder.settings = Class.create({
         if (!this.panel) {
 
             /*
-            //DEBUG START
-            // refreshes the layout
-            pimcore.registerNS("pimcore.layout.refresh");
-            pimcore.layout.refresh = function () {
-                try {
-                    pimcore.viewport.doLayout();
-                }
-                catch (e) {
-                }
-            };
+             //DEBUG START
+             // refreshes the layout
+             pimcore.registerNS("pimcore.layout.refresh");
+             pimcore.layout.refresh = function () {
+             try {
+             pimcore.viewport.doLayout();
+             }
+             catch (e) {
+             }
+             };
 
-            pimcore.viewport = new Ext.Viewport({
-                id:"pimcore_viewport",
-                layout:'fit',
-                items:[
-                    {
-                        xtype:"panel",
-                        id:"pimcore_body",
-                        cls:"pimcore_body",
-                        layout:"border",
-                        border:false,
-                        items:[
+             pimcore.viewport = new Ext.Viewport({
+             id:"pimcore_viewport",
+             layout:'fit',
+             items:[
+             {
+             xtype:"panel",
+             id:"pimcore_body",
+             cls:"pimcore_body",
+             layout:"border",
+             border:false,
+             items:[
 
-                            new Ext.TabPanel({
-                                region:'center',
-                                deferredRender:false,
-                                id:"pimcore_panel_tabs",
-                                enableTabScroll:true,
-                                hideMode:"offsets",
-                                cls:"tab_panel"
+             new Ext.TabPanel({
+             region:'center',
+             deferredRender:false,
+             id:"pimcore_panel_tabs",
+             enableTabScroll:true,
+             hideMode:"offsets",
+             cls:"tab_panel"
 
-                            })
-                        ]
-                    }
-                ]
-            });
+             })
+             ]
+             }
+             ]
+             });
 
-            //DEBUG END
-            */
+             //DEBUG END
+             */
 
             this.panel = new Ext.Panel({
 
@@ -72,7 +72,7 @@ Formbuilder.settings = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            //tabPanel.setActiveItem(this.panel);
+            tabPanel.setActiveItem("Formbuilder_settings");
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("Formbuilder");
@@ -132,11 +132,11 @@ Formbuilder.settings = Class.create({
                 listeners: this.getTreeNodeListeners(),
                 tbar: {
                     items: [
-                    {
-                        text: t("add_form"),
-                        iconCls: "Formbuilder_icon_root_add",
-                        handler: this.addMain.bind(this)
-                    }
+                        {
+                            text: t("add_form"),
+                            iconCls: "Formbuilder_icon_root_add",
+                            handler: this.addMain.bind(this)
+                        }
                     ]
                 }
             });
@@ -242,7 +242,7 @@ Formbuilder.settings = Class.create({
 
         var regresult = value.match(/[a-zA-Z]+/);
         if (button == "ok" && value.length > 2 && regresult == value
-                                                && !in_array(value.toLowerCase(), this.forbiddennames)) {
+            && !in_array(value.toLowerCase(), this.forbiddennames)) {
 
             if( in_array(value, this.usedFormNames) ) {
 
@@ -252,29 +252,29 @@ Formbuilder.settings = Class.create({
 
                 this.usedFormNames.push(value);
 
-                 Ext.Ajax.request({
-                     url: "/plugin/Formbuilder/admin_Settings/add",
-                     params: {
+                Ext.Ajax.request({
+                    url: "/plugin/Formbuilder/admin_Settings/add",
+                    params: {
                         name: value
-                     },
-                     success: function (response) {
+                    },
+                    success: function (response) {
 
-                         var data = Ext.decode(response.responseText);
+                        var data = Ext.decode(response.responseText);
 
-                         this.tree.getStore().load();
+                        this.tree.getStore().load();
 
-                         if(!data || !data.success) {
+                        if(!data || !data.success) {
 
                             Ext.Msg.alert(t('add_elem'), t('problem_creating_new_elem'));
 
-                         } else {
+                        } else {
 
-                             this.openFormConfig(intval(data.id));
+                            this.openFormConfig(intval(data.id));
 
-                         }
+                        }
 
-                     }.bind(this)
-                 });
+                    }.bind(this)
+                });
 
             }
 
@@ -313,7 +313,7 @@ Formbuilder.settings = Class.create({
 
     activate: function () {
 
-        Ext.getCmp("pimcore_panel_tabs").activate("Formbuilder_settings");
+        Ext.getCmp("pimcore_panel_tabs").setActiveItem("Formbuilder_settings");
 
     }
 
