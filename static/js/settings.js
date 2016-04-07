@@ -75,7 +75,7 @@ Formbuilder.settings = Class.create({
             tabPanel.setActiveItem("Formbuilder_settings");
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("Formbuilder");
+                pimcore.globalmanager.remove("Formbuilder_settings");
             }.bind(this));
 
             pimcore.layout.refresh();
