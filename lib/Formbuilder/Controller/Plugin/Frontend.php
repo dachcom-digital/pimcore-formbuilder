@@ -24,6 +24,7 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
         $view = $renderer->view;
         $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/views/scripts');
         $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/views/layouts');
+        $view->addScriptPath(PIMCORE_WEBSITE_PATH . '/views/scripts/formbuilder');
 
         $view->headScript()->appendFile('/plugins/Formbuilder/static/js/frontend/formbuilder.js');
         $view->headLink()->appendStylesheet('/plugins/Formbuilder/static/css/formbuilder.css');

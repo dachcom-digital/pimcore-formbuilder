@@ -24,11 +24,13 @@ Class Mailer {
         {
             $mail = new Mail();
 
-            $mailTemplateType = $mailTemplate->getProperty('mail_disable_default_mail_body');
+            $disableDefaultMailBody = $mailTemplate->getProperty('mail_disable_default_mail_body');
 
-            self::setMailPlaceholders( $attributes['data'], $mail, $mailTemplateType );
+            self::setMailPlaceholders( $attributes['data'], $mail, $disableDefaultMailBody );
+            self::setMailRecipients( $attributes['data'], $mailTemplate );
 
             $mail->setDocument( $mailTemplate );
+            exit;
             $mail->send();
 
             $successMessage = $mailTemplate->getProperty('mail_successfully_sent');
@@ -51,9 +53,43 @@ Class Mailer {
         return self::$messages;
     }
 
-    private static function setMailPlaceholders($data, $mail, $mailTemplateType )
+    /**
+     * @param array $data
+     * @param \Pimcore\Model\Document\Email $mailTemplate
+     */
+    private static function setMailRecipients($data = array(), $mailTemplate) {
+
+        $to = $mailTemplate->getTo();
+
+        preg_match_all("/\%(.+?)\%/", $to, $matches);
+
+        if (isset($matches[1]) && count($matches[1]) > 0){
+
+            foreach ($matches[1] as $key => $inputValue)
+            {
+                foreach( $data as $formFieldName => $formFieldValue)
+                {
+                    if( $formFieldName == $inputValue)
+                    {
+                        $to = str_replace( $matches[0][$key], $formFieldValue, $to);
+                    }
+                }
+
+                //replace with '' if not found.
+                $to = str_replace( $matches[0][$key], '', $to);
+            }
+        }
+
+        //remove invalid commas
+        $to = trim( implode(',', preg_split('@,@', $to, NULL, PREG_SPLIT_NO_EMPTY ) ) );
+
+        $mailTemplate->setTo( $to );
+
+    }
+
+    private static function setMailPlaceholders($data, $mail, $disableDefaultMailBody )
     {
-        if( is_null( $mailTemplateType ) )
+        if( $disableDefaultMailBody === TRUE )
         {
             $mail->setParam('body', self::parseHtml( $data ) );
         }

@@ -81,8 +81,8 @@
             <path>/plugins/Formbuilder/static/js/comp/validator/regex.js</path>
             <path>/plugins/Formbuilder/static/js/comp/validator/stringLength.js</path>
         </pluginJsPaths-extjs6>
-        <pluginCssPaths-extjs6>
+        <pluginDocumentEditmodeCssPaths>
             <path>/Formbuilder/static/css/admin.css</path>
-        </pluginCssPaths-extjs6>
+        </pluginDocumentEditmodeCssPaths>
     </plugin>
 </zend-config>

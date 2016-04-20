@@ -21,6 +21,8 @@ If you want to add some fancy radio / checkbox styling, just implement [this] (h
 ###Mail Template
 
 Place your Form somewhere on your Website.
+If you want to submit the form to the user, you can use your field names as placeholders. Formbuilder automatically will transform the field into the given address.
+For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
 
 ##### Available Properties
 
