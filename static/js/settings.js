@@ -18,7 +18,7 @@ Formbuilder.settings = Class.create({
 
         if (!this.panel) {
 
-
+            /*
              //DEBUG START
              // refreshes the layout
              pimcore.registerNS("pimcore.layout.refresh");
@@ -57,7 +57,7 @@ Formbuilder.settings = Class.create({
              });
 
              //DEBUG END
-
+            */
 
             this.panel = new Ext.Panel({
 
