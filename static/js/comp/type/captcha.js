@@ -54,10 +54,9 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
     },
 
     addCaptchaFS: function(form){
-        
-
 
         var word = new Ext.form.FieldSet({
+
             id:"wordFS",
             title: t("captcha word options"),
             collapsible: true,
@@ -68,20 +67,23 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 name: "captchaOptions.wordLen",
                 fieldLabel: t("wordLen"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.wordLen']
             },
             {
                 xtype: "numberfield",
                 name: "captchaOptions.timeout",
                 fieldLabel: t("timeout"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.timeout']
             },
             {
                 xtype: "checkbox",
                 name: "captchaOptions.useNumbers",
                 fieldLabel: t("useNumbers"),
-                checked:false
+                checked:false,
+                value:this.datax['captchaOptions.useNumbers']
             }
             ]
         });
@@ -99,34 +101,39 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 name: "captchaOptions.expiration",
                 fieldLabel: t("expiration"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.expiration']
             },
             {
                 xtype: "textfield",
                 name: "captchaOptions.font",
                 fieldLabel: t("font"),
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.font']
             },
             {
                 xtype: "numberfield",    
                 name: "captchaOptions.fontSize",
                 fieldLabel: t("font Size"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.fontSize']
             },
             {
                 xtype: "numberfield",    
                 name: "captchaOptions.height",
                 fieldLabel: t("height"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.height']
             },
             {
                 xtype: "numberfield",    
                 name: "captchaOptions.width",
                 fieldLabel: t("width"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.width']
             },
             {
                 id:"imgDir",
@@ -134,6 +141,7 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 name: "captchaOptions.imgDir",
                 fieldLabel: t("image directory"),
                 anchor: "100%",
+                value:this.datax['captchaOptions.imgDir'],
                 listeners:{
                     scope:this,
                     'change': function(field,newValue,oldValue,Object){
@@ -148,27 +156,31 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 xtype: "textfield",
                 name: "captchaOptions.imgUrl",
                 fieldLabel: t("Image Url"),
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.imgUrl']
             },
             {
                 xtype: "textfield",
                 name: "captchaOptions.suffix",
                 fieldLabel: t("image suffix"),
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.suffix']
             },
             {
                 xtype: "numberfield",    
                 name: "captchaOptions.dotNoiseLevel",
                 fieldLabel: t("dot noise level"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.dotNoiseLevel']
             },
             {
                 xtype: "numberfield",    
                 name: "captchaOptions.lineNoiseLevel",
                 fieldLabel: t("Line noise level"),
                 allowDecimals:false,
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.lineNoiseLevel']
             }
             ]
         });
@@ -181,15 +193,17 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
             defaultType: 'textfield',
             items:[{
                 xtype: "textfield",
-                name: "captchaOptions.privKey",
+                name: "captchaOptions.secretKey",
                 fieldLabel: t("Private key"),
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.secretKey']
             },
             {
                 xtype: "textfield",
-                name: "captchaOptions.pubKey",
+                name: "captchaOptions.siteKey",
                 fieldLabel: t("Public key"),
-                anchor: "100%"
+                anchor: "100%",
+                value:this.datax['captchaOptions.siteKey']
             }
             ]
         });
@@ -198,13 +212,13 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
     },
 
     getForm: function($super){
+
         $super();
 
         var captchaStore = new Ext.data.ArrayStore({
             fields: ["value","label"],
             data : [["dumb","Dumb"],["figlet","Figlet"],["image","Image"],["reCaptcha","ReCaptcha"]]
         });
-
 
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
@@ -223,7 +237,7 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 editable: false,
                 triggerAction: 'all',
                 anchor:"100%",
-                value:"word",
+                value:this.datax.captcha,
                 allowBlank:false,
                 listeners:{
                     scope:this,

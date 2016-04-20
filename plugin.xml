@@ -25,7 +25,7 @@
             <path>/plugins/Formbuilder/static/js/comp/type/base.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/displayGroup.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/button.js</path>
-            <path>/Formbuilder/static/js/comp/type/captcha.js</path>
+            <path>/plugins/Formbuilder/static/js/comp/type/captcha.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/checkbox.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/file.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/hash.js</path>

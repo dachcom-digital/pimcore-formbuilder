@@ -61,7 +61,7 @@ var Formbuilder = (function () {
                     $btns = $form.find('.btn');
 
 
-                $btns.attr('disabled', 'disabled');
+                //$btns.attr('disabled', 'disabled');
 
                 $.ajax({
                     type: "POST",
@@ -78,17 +78,27 @@ var Formbuilder = (function () {
 
                             $.each( response.validationData, function( fieldId, messages) {
 
-                                $field = $form.find('#' +fieldId).first();
+                                var $fields = $form.find('.element-' +fieldId),
+                                    $field = $fields.first();
+
                                 if( $field.length > 0) {
 
-                                    $formGroup = $field.closest('.form-group');
+                                    var $formGroup = $field.closest('.form-group');
 
                                     $.each( messages, function( validationType, message) {
 
                                         $formGroup.addClass('has-error');
                                         $formGroup.find('span.help-block').remove();
 
-                                        $field.before( $('<span/>', {'class' : 'help-block', 'text' : message}));
+                                        //its a multiple field
+                                        var $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
+
+                                        if( $fields.length > 1 ) {
+                                            $field.closest('label').before( $spanEl );
+                                        } else {
+                                            $field.before( $spanEl );
+                                        }
+
                                         var name = $field.attr('name');
 
                                     });

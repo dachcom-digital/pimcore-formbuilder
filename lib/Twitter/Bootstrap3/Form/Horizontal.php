@@ -59,6 +59,8 @@ class Twitter_Bootstrap3_Form_Horizontal extends Twitter_Bootstrap3_Form
     public function getDefaultCaptchaDecorators()
     {
         return array(
+            array('ViewHelper'),
+            array('Addon'),
             array('Errors'),
             array('Description', array(
                 'tag' => 'p',

@@ -13,6 +13,7 @@
        }
     ],
     "require": {
-        "pimcore/installer-plugin": ">=1"
+        "pimcore/installer-plugin": ">=1",
+        "cgsmith/zf1-recaptcha-2": "~1.0"
     }
 }

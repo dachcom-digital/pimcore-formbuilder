@@ -41,10 +41,10 @@
 <script type="text/javascript">
     pimcore.settings = {
         upload_max_filesize: 2097152,
-        sessionId: "1ctk1durqdgsflcalvpd2j0q92",
-        csrfToken: "b5d251e5e7f44773a6390fcb21d5099e6a9268ea",
+        sessionId: "2pt3uoh15l7arf5akeop2b2ls6",
+        csrfToken: "d0e28492cd1bdf12b9cbb36aee2c4973d5a565ac",
         version: "4.0.0-RC2",
-        build: "3708",
+        build: "3734",
         maintenance_active: true,
         maintenance_mode: false,
         mail: true,
@@ -52,23 +52,24 @@
         devmode: false,
         google_analytics_enabled: false,
         google_webmastertools_enabled: false,
-        customviews: [],
         language: 'en',
-        websiteLanguages: ["en"],
+        websiteLanguages: ["en","de"],
         google_maps_api_key: "",
         showCloseConfirmation: true,
         debug_admin_translations: false,
-        document_generatepreviews: true,
+        document_generatepreviews: false,
         htmltoimage: true,
         videoconverter: false,
-        asset_hide_edit: false    };
+        asset_hide_edit: false,
+        perspective: {"iconCls":"pimcore_icon_perspective","elementTree":[{"type":"documents","position":"left","expanded":false,"hidden":false,"sort":-3},{"type":"assets","position":"left","expanded":false,"hidden":false,"sort":-2},{"type":"objects","position":"left","expanded":false,"hidden":false,"sort":-1}]},
+        availablePerspectives: [{"name":"default","icon":null,"iconCls":"pimcore_icon_perspective","active":true}],
+        customviews: []    };
 </script>
 
 <script type="text/javascript" src="/admin/misc/json-translations-system/language/en/?_dc=3708"></script>
 <script type="text/javascript" src="/admin/misc/json-translations-admin/language/en/?_dc=3708"></script>
 <script type="text/javascript" src="/admin/user/get-current-user/?_dc=3708"></script>
 <script type="text/javascript" src="/admin/misc/available-languages?_dc=3708"></script>
-
 
 <!-- library scripts -->
 <script type="text/javascript" src="/pimcore/static6/js/lib/prototype-light.js?_dc=3708"></script>
@@ -83,10 +84,8 @@
 <script type="text/javascript" src="/pimcore/static6/js/lib/ckeditor/ckeditor.js?_dc=3708"></script>
 <script type="text/javascript" src="/pimcore/static6/js/lib/ext/classic/locale/locale-en.js?_dc=3708"></script>
 
-
 <!-- internal scripts -->
-
-<script type="text/javascript" src="/website/var/tmp/minified_javascript_core_f5757da9fa29d5bf13e6aa5058eff9f7.js?_dc=3708"></script>
+<script type="text/javascript" src="/website/var/tmp/minified_javascript_core_4df9a915f149222331762f2a269ae0e0.js?_dc=3734"></script>
 
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/plugin.js?_dc=1459268461"></script>
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/settings.js?_dc=1459268461"></script>
@@ -151,7 +150,6 @@
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/comp/validator/postCode.js?_dc=1459268461"></script>
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/comp/validator/regex.js?_dc=1459268461"></script>
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/comp/validator/stringLength.js?_dc=1459268461"></script>
-<script type="text/javascript" src="/plugins/Formbuilder/static/js/composite/SuperBoxSelectSpe.js?_dc=1459268461"></script>
 <link rel="stylesheet" type="text/css" href="/plugins/Formbuilder/static/css/admin.css?_dc=1459268461"/>
 
 <script>

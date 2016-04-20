@@ -229,6 +229,8 @@ abstract class Twitter_Bootstrap3_Form extends Zend_Form
     public function getDefaultCaptchaDecorators()
     {
         return array(
+            array('ViewHelper'),
+            array('Addon'),
             array('Errors'),
             array('Description', array(
                 'tag' => 'p',
@@ -393,7 +395,7 @@ abstract class Twitter_Bootstrap3_Form extends Zend_Form
                     return $this->_checkboxDecorators;
                 }
                 break;
-            case 'captcha':
+            case 'reCaptcha':
                 if (is_array($this->_captchaDecorators)) {
                     return $this->_captchaDecorators;
                 }

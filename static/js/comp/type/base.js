@@ -117,6 +117,11 @@ Formbuilder.comp.type.base = Class.create({
         return this.tab;
     },
 
+    onAfterPopulate: function(){
+
+        return true;
+    },
+
     layoutRendered: function () {
 
         var items = this.tab.queryBy(function() {
@@ -129,6 +134,8 @@ Formbuilder.comp.type.base = Class.create({
                 break;
             }
         }
+
+        this.onAfterPopulate();
 
     },
 

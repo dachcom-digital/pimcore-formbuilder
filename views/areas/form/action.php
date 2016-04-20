@@ -78,7 +78,7 @@ class Form extends Document\Tag\Area\AbstractArea {
 
                 if( $isSubmit )
                 {
-                    $valid = $form->isValid( $this->getAllParams() );
+                    $valid = $form->isValid( $frontendLib->parseFormParams( $this->getAllParams(), $form ) );
 
                     if( $valid )
                     {

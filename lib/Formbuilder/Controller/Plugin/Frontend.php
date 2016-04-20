@@ -11,7 +11,6 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
 
     public function preDispatch()
     {
-
         if ($this->initialized)
         {
             return;
@@ -32,5 +31,4 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
         $this->initialized = true;
 
     }
-
 }

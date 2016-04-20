@@ -6,15 +6,20 @@ use Pimcore\Tool;
 use Formbuilder\Model\Form;
 use Formbuilder\Lib\Builder;
 
+use Formbuilder\Zend\TwitterHorizontalForm;
+use Formbuilder\Zend\TwitterVerticalForm;
+
 class Frontend {
 
-    protected $languages = null;
+    protected $languages = NULL;
 
-    protected $config = null;
+    protected $config = NULL;
+
+    protected $recaptchaV2Key = NULL;
 
     protected static $defaultFormClass = 'Zend_Form';
 
-    protected $formClass = 'Zend_Form';
+    protected $formClass = 'Formbuilder\Zend\DefaultForm';
 
     public static function setDefaultFormClass($defaultFormClass)
     {
@@ -55,7 +60,7 @@ class Frontend {
 
     }
 
-    protected function getStaticForm($id, $locale, $className = 'Zend_Form')
+    protected function getStaticForm($id, $locale, $className = 'DefaultForm')
     {
         if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini"))
         {
@@ -74,7 +79,7 @@ class Frontend {
         }
     }
 
-    protected function getDynamicForm($id, $locale, $className = 'Zend_Form')
+    protected function getDynamicForm($id, $locale, $className = 'DefaultForm')
     {
         if (file_exists(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json"))
         {
@@ -99,7 +104,7 @@ class Frontend {
         }
     }
 
-    protected function createInstance($config, $className = 'Zend_Form')
+    protected function createInstance($config, $className = 'DefaultForm')
     {
         $reflClass = new \ReflectionClass($className);
 
@@ -151,11 +156,11 @@ class Frontend {
 
                 if($horizontal==true)
                 {
-                    $form = new \Twitter_Bootstrap3_Form_Horizontal($formData);
+                    $form = new TwitterHorizontalForm($formData);
                 }
                 else
                 {
-                    $form = new \Twitter_Bootstrap3_Form_Vertical($formData);
+                    $form = new TwitterVerticalForm($formData);
                 }
 
                 $form->setDisableTranslator(true);
@@ -186,9 +191,9 @@ class Frontend {
      * @param string $locale
      * @param boolean $dynamic
      * @param string Custom form class
-     * @return \Zend_Form
+     * @return \Formbuilder\Zend\DefaultForm
      */
-    public function getForm($formId, $locale=null, $dynamic=false, $formClass = null)
+    public function getForm($formId, $locale = null, $dynamic = false, $formClass = null)
     {
         $this->getLanguages();
 
@@ -207,18 +212,7 @@ class Frontend {
             //correctly set recaptcha to https if request is over https
             if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
             {
-                /**@var \Zend_Form $form */
-                $elements = $form->getElements();
-
-                foreach($elements as $element)
-                {
-                    if(get_class($element) == 'Zend_Form_Element_Captcha' )
-                    {
-                        /**@var  \Zend_Form_Element_Captcha $element */
-                        $cap = $element->getCaptcha();
-                        $cap->getService()->setParams(array('ssl'=>true));
-                    }
-                }
+                //@fixme: deprecated?
             }
 
             return $form;
@@ -227,6 +221,39 @@ class Frontend {
         {
             return false;
         }
+    }
+
+    public function parseFormParams( $params = array(), $form )
+    {
+        //no Recaptcha (v2) requested!
+        if( !isset( $params['g-recaptcha-response'] ) )
+        {
+            return $params;
+        }
+
+        foreach ($form->getElements() as $key => $element)
+        {
+            if($element instanceof \Cgsmith\Form\Element\Recaptcha )
+            {
+                $element->setIgnore(TRUE);
+                $this->recaptchaV2Key = $element->getName();
+                $params[ $this->recaptchaV2Key ] = $params['g-recaptcha-response'];
+                unset( $params['g-recaptcha-response'] );
+                break;
+            }
+        }
+
+        return $params;
+    }
+
+    public function hasRecaptchaV2()
+    {
+        return !is_null( $this->recaptchaV2Key );
+    }
+
+    public function getRecaptchaV2Key()
+    {
+        return $this->recaptchaV2Key;
     }
 
     public function addDefaultValuesToForm( $form, $attributes = array() )
@@ -240,17 +267,13 @@ class Frontend {
 
         $params = array_merge($defaults, $attributes);
 
-        $form->addElementPrefixPath(
-            'Formbuilder',
-            'Formbuilder/Zend/Form/'
-        );
-
         $form->addElement(
             'text',
             'honeypot',
             array(
                 'label' => '',
                 'required' => false,
+                'ignore' => TRUE,
                 'class' => 'hon-hide',
                 'decorators' => array('ViewHelper'),
                 'validators' => array(
@@ -265,6 +288,7 @@ class Frontend {
             'hidden',
             '_formId',
             array(
+                'ignore' => TRUE,
                 'value' => $params['formId']
             )
         );
@@ -273,6 +297,7 @@ class Frontend {
             'hidden',
             '_language',
             array(
+                'ignore' => TRUE,
                 'value' => $params['locale']
             )
         );
@@ -283,6 +308,7 @@ class Frontend {
                 'hidden',
                 '_mailTemplate',
                 array(
+                    'ignore' => TRUE,
                     'value' => $params['mailTemplate']->getId()
                 )
             );
@@ -291,16 +317,15 @@ class Frontend {
 
         $configData = $this->config->toArray();
 
-        $settedFormClasses = explode(' ', $form->getAttrib('class') );
-
-        $settedFormClasses[] = 'formbuilder';
+        $setFormClasses = explode(' ', $form->getAttrib('class') );
+        $setFormClasses[] = 'formbuilder';
 
         if( isset( $configData['form']['useAjax']) && $configData['form']['useAjax'] == TRUE )
         {
-            $settedFormClasses[] = 'ajax-form';
+            $setFormClasses[] = 'ajax-form';
         }
 
-        $form->setAttrib('class', implode(' ', $settedFormClasses ) );
+        $form->setAttrib('class', implode(' ', $setFormClasses ) );
 
         return $form;
 
@@ -342,6 +367,32 @@ class Frontend {
                 continue;
             }
 
+            //set class to each field to allow ajax validation!
+            $classes = '';
+            if( isset( $element['options']['class'] ) )
+            {
+                $classes = $element['options']['class'];
+            }
+
+            $element['options']['class'] = $classes . ' element-' . $elementName;
+
+            //rearrange reCaptcha (v2) config
+            if( $element['type'] == 'captcha' && $element['options']['captcha'] == 'reCaptcha' && isset( $element['options']['captchaOptions'] ) )
+            {
+                $captchaOptions = $element['options']['captchaOptions'];
+
+                $element['type'] = 'reCaptcha';
+                $element['options'] = array(
+                    'secretKey' => $captchaOptions['secretKey'],
+                    'siteKey' => $captchaOptions['siteKey'],
+                    'classes' => array($element['options']['class'])
+                );
+
+                unset( $element['options']['captchaOptions']);
+
+            }
+
+            //allow "please select" field in multi select element
             if( $element['type'] == 'select' && isset( $element['options']['multiOptions']))
             {
                 $realOptions = array();
@@ -362,6 +413,5 @@ class Frontend {
         }
 
         return $form;
-
     }
 }

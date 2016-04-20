@@ -49,7 +49,6 @@ Class Mailer {
 
     private static function parseHtml( $data )
     {
-
         $html = '<table>';
 
         foreach( $data as $label => $field ) {
@@ -61,7 +60,6 @@ Class Mailer {
                 foreach( $field as $f )
                 {
                     $data .= $f . '<br>';
-
                 }
             }
             else
