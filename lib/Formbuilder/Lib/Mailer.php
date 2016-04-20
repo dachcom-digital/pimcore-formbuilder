@@ -23,7 +23,11 @@ Class Mailer {
         if( $mailTemplate instanceof Model\Document\Email )
         {
             $mail = new Mail();
-            $mail->setParam('body', self::parseHtml( $attributes['data'] ) );
+
+            $mailTemplateType = $mailTemplate->getProperty('mail_disable_default_mail_body');
+
+            self::setMailPlaceholders( $attributes['data'], $mail, $mailTemplateType );
+
             $mail->setDocument( $mailTemplate );
             $mail->send();
 
@@ -47,37 +51,39 @@ Class Mailer {
         return self::$messages;
     }
 
+    private static function setMailPlaceholders($data, $mail, $mailTemplateType )
+    {
+        if( is_null( $mailTemplateType ) )
+        {
+            $mail->setParam('body', self::parseHtml( $data ) );
+        }
+        else
+        {
+            foreach( $data as $label => $field )
+            {
+                $mail->setParam($label, self::getSingleRenderedValue( $field ) );
+            }
+        }
+
+    }
+
     private static function parseHtml( $data )
     {
         $html = '<table>';
 
-        foreach( $data as $label => $field ) {
-
-            $data = '';
-
-            if( is_array( $field ) )
-            {
-                foreach( $field as $f )
-                {
-                    $data .= $f . '<br>';
-                }
-            }
-            else
-            {
-                $data = $field;
-            }
+        foreach( $data as $label => $field )
+        {
+            $data = self::getSingleRenderedValue( $field );
 
             if( empty( $data ) )
             {
                 continue;
             }
 
-            $html .= '<tr>';
-
-            $html .= '<td><strong>' . $label . ':</strong></td>';
-            $html .= '<td>' . $data . '</td>';
-
-            $html .= '</tr>';
+            $html .= '<tr>' . "\n";
+                $html .= '<td><strong>' . $label . ':</strong></td>' . "\n";
+                $html .= '<td>' . $data . '</td>' . "\n";
+            $html .= '</tr>' . "\n";
 
         }
 
@@ -85,6 +91,25 @@ Class Mailer {
 
         return $html;
 
+    }
+
+    private static function getSingleRenderedValue( $field )
+    {
+        $data = '';
+
+        if( is_array( $field ) )
+        {
+            foreach( $field as $f )
+            {
+                $data .= $f . '<br>';
+            }
+        }
+        else
+        {
+            $data = $field;
+        }
+
+        return $data;
     }
 
 }

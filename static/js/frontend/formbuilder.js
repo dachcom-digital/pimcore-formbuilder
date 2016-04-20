@@ -112,7 +112,7 @@ var Formbuilder = (function () {
                         } else {
 
                             $form.trigger('formbuilder.success', [response.message, $form])
-                            $form.find("input[type=text], textarea").val("");
+                            //$form.find("input[type=text], textarea").val("");
                         }
 
                     }
