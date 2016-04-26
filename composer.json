@@ -12,8 +12,16 @@
             "role": "Developer"
        }
     ],
+
     "require": {
         "pimcore/installer-plugin": ">=1",
-        "cgsmith/zf1-recaptcha-2": "~1.0"
-    }
+        "cgsmith/zf1-recaptcha-2": "dev-master"
+    },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/solverat/zf1-recaptcha-2"
+        }
+    ]
 }

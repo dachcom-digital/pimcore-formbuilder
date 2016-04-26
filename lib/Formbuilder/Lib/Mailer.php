@@ -30,7 +30,6 @@ Class Mailer {
             self::setMailRecipients( $attributes['data'], $mailTemplate );
 
             $mail->setDocument( $mailTemplate );
-            exit;
             $mail->send();
 
             $successMessage = $mailTemplate->getProperty('mail_successfully_sent');

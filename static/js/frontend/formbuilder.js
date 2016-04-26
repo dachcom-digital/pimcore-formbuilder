@@ -61,7 +61,7 @@ var Formbuilder = (function () {
                     $btns = $form.find('.btn');
 
 
-                //$btns.attr('disabled', 'disabled');
+                $btns.attr('disabled', 'disabled');
 
                 $.ajax({
                     type: "POST",
@@ -112,7 +112,12 @@ var Formbuilder = (function () {
                         } else {
 
                             $form.trigger('formbuilder.success', [response.message, $form])
-                            //$form.find("input[type=text], textarea").val("");
+                            $form.find("input[type=text], textarea").val("");
+
+                            if( typeof grecaptcha == 'object') {
+                                grecaptcha.reset();
+                            }
+
                         }
 
                     }
