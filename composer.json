@@ -15,24 +15,13 @@
 
     "require": {
         "pimcore/installer-plugin": ">=1",
-        "cgsmith/zf1-recaptcha-2": "dev-master"
+        "cgsmith/zf1-recaptcha-2": "dev-dev-solverat"
     },
 
     "repositories": [
         {
-        "type": "package",
-        "package": {
-            "name": "cgsmith/zf1-recaptcha-2",
-            "version": "dev-master",
-            "source": {
-                "url": "https://github.com/solverat/zf1-recaptcha-2.git",
-                "type": "git",
-                "reference": "dev-solverat"
-            },
-            "autoload": {
-                "classmap": [""]
-            }
-        }
+            "type": "vcs",
+            "url": "https://github.com/solverat/zf1-recaptcha-2"
         }
     ]
 }
