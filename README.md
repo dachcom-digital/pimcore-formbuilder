@@ -15,6 +15,40 @@ Just download and install it into your plugin folder.
 * Activate ajax mode to each form
 * Define mail templates
 
+### Important installation notes
+
+With Version 1.0.6 the you need the [cgsmith/zf1-recaptcha-2] (https://github.com/cgsmith/zf1-recaptcha-2) repository. 
+Because we're awaiting a PR approval and composer [does not allow loading repositories recursively] (https://getcomposer.org/doc/faqs/why-can't-composer-load-repositories-recursively.md), you **need** to add a composer repository to your root composer.json.
+Hopefully this isn't necessary in Version 1.0.7. Add this to your `repositories` array:
+
+```json
+"repositories": [
+    {
+    "type": "package",
+    "package": 
+        {
+            "name": "cgsmith/zf1-recaptcha-2",
+            "version": "dev-master",
+            "source": {
+                "url": "https://github.com/solverat/zf1-recaptcha-2",
+                "type": "git",
+                "reference": "dev-solverat"
+            }
+        }
+    }
+]
+```
+
+Also add this to your composer.json:
+
+
+```json
+{
+    "minimum-stability" : "dev",
+    "prefer-stable" : true
+}
+```
+
 ###Styling
 If you want to add some fancy radio / checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
 
