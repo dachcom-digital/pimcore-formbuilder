@@ -4,17 +4,9 @@ namespace Formbuilder\Controller\Plugin;
 
 class Frontend extends \Zend_Controller_Plugin_Abstract {
 
-    /**
-     * @var bool
-     */
-    protected $initialized = false;
-
-    public function preDispatch()
+    public function preDispatch(\Zend_Controller_Request_Abstract $request)
     {
-        if ($this->initialized)
-        {
-            return;
-        }
+        parent::preDispatch($request);
 
         /** @var \Pimcore\Controller\Action\Helper\ViewRenderer $renderer */
         $renderer = \Zend_Controller_Action_HelperBroker::getExistingHelper('ViewRenderer');
@@ -28,8 +20,6 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
 
         $view->headScript()->appendFile('/plugins/Formbuilder/static/js/frontend/formbuilder.js');
         $view->headLink()->appendStylesheet('/plugins/Formbuilder/static/css/formbuilder.css');
-
-        $this->initialized = true;
 
     }
 }
