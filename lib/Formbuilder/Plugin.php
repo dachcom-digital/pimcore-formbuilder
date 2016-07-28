@@ -3,6 +3,7 @@
 namespace Formbuilder;
 
 use Pimcore\Model\Tool\Setup;
+use Pimcore\Model\Translation\Admin;
 use Pimcore\API\Plugin as PluginLib;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
@@ -15,11 +16,10 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         define('FORMBUILDER_DEFAULT_ERROR_PATH', FORMBUILDER_PATH . '/static/lang/errors');
         define('FORMBUILDER_INSTALL_PATH', FORMBUILDER_PATH . '/install');
         define('FORMBUILDER_DATA_PATH', PIMCORE_WEBSITE_VAR . '/formbuilder');
-
     }
 
-    public function preDispatch($e) {
-
+    public function preDispatch($e)
+    {
         $e->getTarget()->registerPlugin(new Controller\Plugin\Frontend());
     }
 
@@ -37,7 +37,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
         if (!self::isInstalled())
         {
-            $statusMessage = 'Plugin successfully uninstalled.';
+            $statusMessage = 'Formbuilder Plugin successfully uninstalled.';
         }
         else
         {
@@ -60,9 +60,12 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             mkdir(FORMBUILDER_DATA_PATH . '/form');
         }
 
+        $csv = PIMCORE_PLUGINS_PATH . '/Formbuilder/install/translations/data.csv';
+        Admin::importTranslationsFromFile($csv, true, \Pimcore\Tool\Admin::getLanguages());
+
         if (self::isInstalled())
         {
-            $statusMessage = 'Plugin successfully installed.<br>Please reload pimcore!';
+            $statusMessage = 'Plugin has been successfully installed.<br>Please reload pimcore!';
         }
         else
         {
@@ -103,7 +106,17 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         }
 
         return '/Formbuilder/static/texts/en.csv';
-        
+    }
+
+    /**
+     * @param \Pimcore\View $view
+     */
+    public static function addFrontendPaths($view)
+    {
+        if( $view instanceof \Pimcore\View)
+        {
+            $view->addScriptPath(PIMCORE_WEBSITE_PATH . '/views/scripts/formbuilder');
+        }
     }
 
 }

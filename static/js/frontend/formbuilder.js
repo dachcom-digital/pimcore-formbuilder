@@ -1,16 +1,3 @@
-/*
-
-        __           __                                ___       _ __        __
-   ____/ /___ ______/ /_  _________  ____ ___     ____/ (_)___ _(_) /_____ _/ /
-  / __  / __ `/ ___/ __ \/ ___/ __ \/ __ `__ \   / __  / / __ `/ / __/ __ `/ /
- / /_/ / /_/ / /__/ / / / /__/ /_/ / / / / / /  / /_/ / / /_/ / / /_/ /_/ / /
- \__,_/\__,_/\___/_/ /_/\___/\____/_/ /_/ /_/   \__,_/_/\__, /_/\__/\__,_/_/
-                                                       /____/
-
- copyright @ 2016, dachcom digital
- don't be a dick. don't copy.
-
-*/
 var Formbuilder = (function () {
 
     var self = {
@@ -18,16 +5,12 @@ var Formbuilder = (function () {
         isBusy : false,
 
         config: {
-
-            debug: false,
             settings : {}
-
         },
 
         init: function (options) {
 
             jQuery.extend(self.config, options);
-
             self.startSystem();
 
         },
@@ -55,17 +38,16 @@ var Formbuilder = (function () {
 
             $('form.formbuilder.ajax-form').on('submit', function( ev ) {
 
-                ev.preventDefault();
-
                 var $form = $(this),
                     $btns = $form.find('.btn');
 
+                ev.preventDefault();
 
                 $btns.attr('disabled', 'disabled');
 
                 $.ajax({
-                    type: "POST",
-                    url: "/plugin/Formbuilder/ajax/parse",
+                    type: 'POST',
+                    url: '/plugin/Formbuilder/ajax/parse',
                     data: $form.serialize(),
                     success: function (response) {
 
@@ -74,16 +56,18 @@ var Formbuilder = (function () {
                         $form.find('.help-block').remove();
                         $form.find('.form-group').removeClass('has-error');
 
-                        if(response.success == false ) {
+                        if(response.success === false ) {
 
                             $.each( response.validationData, function( fieldId, messages) {
 
                                 var $fields = $form.find('.element-' +fieldId),
-                                    $field = $fields.first();
+                                    $field = $fields.first(),
+                                    $formGroup = null,
+                                    $spanEl = null;
 
                                 if( $field.length > 0) {
 
-                                    var $formGroup = $field.closest('.form-group');
+                                    $formGroup = $field.closest('.form-group');
 
                                     $.each( messages, function( validationType, message) {
 
@@ -91,15 +75,13 @@ var Formbuilder = (function () {
                                         $formGroup.find('span.help-block').remove();
 
                                         //its a multiple field
-                                        var $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
+                                        $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
 
                                         if( $fields.length > 1 ) {
                                             $field.closest('label').before( $spanEl );
                                         } else {
                                             $field.before( $spanEl );
                                         }
-
-                                        var name = $field.attr('name');
 
                                     });
 
@@ -112,9 +94,9 @@ var Formbuilder = (function () {
                         } else {
 
                             $form.trigger('formbuilder.success', [response.message, $form])
-                            $form.find("input[type=text], textarea").val("");
+                            $form.find('input[type=text], textarea').val('');
 
-                            if( typeof grecaptcha == 'object') {
+                            if( typeof grecaptcha === 'object') {
                                 grecaptcha.reset();
                             }
 
@@ -135,8 +117,10 @@ var Formbuilder = (function () {
 
         init: self.init
 
-    }
+    };
 
 })();
 
-$(document).ready(Formbuilder.init.bind({debug: false, settings : null }));
+$(document).ready(
+    Formbuilder.init.bind({settings : null})
+);

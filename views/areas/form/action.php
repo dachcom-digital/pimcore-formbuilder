@@ -42,12 +42,12 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         $horizontalForm = TRUE;
 
-        if (!$this->view->select("formName")->isEmpty())
+        if (!$this->view->select('formName')->isEmpty())
         {
-            $formName = $this->view->select("formName")->getData();
+            $formName = $this->view->select('formName')->getData();
         }
 
-        if( $this->view->select("formType")->getData() == 'vertical')
+        if( $this->view->select('formType')->getData() == 'vertical')
         {
             $horizontalForm = FALSE;
         }
