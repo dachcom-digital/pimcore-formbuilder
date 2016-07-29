@@ -8,16 +8,18 @@ Formbuilder.comp.filter.stripTags = Class.create(Formbuilder.comp.filter.base,{
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("stripNewlines");
     },
 
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_filter";
     },
 
-    getForm: function($super){
+    getForm: function($super) {
+
         $super();
+
         return this.form;
     }
 

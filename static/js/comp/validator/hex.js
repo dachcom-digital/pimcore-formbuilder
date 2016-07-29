@@ -5,7 +5,6 @@ Formbuilder.comp.validator.hex = Class.create(Formbuilder.comp.validator.base,{
     errors:["hexInvalid","notHex"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -19,11 +18,10 @@ Formbuilder.comp.validator.hex = Class.create(Formbuilder.comp.validator.base,{
     },
 
     getForm: function($super){
+
         $super();
 
         return this.form;
     }
-
-
 
 });

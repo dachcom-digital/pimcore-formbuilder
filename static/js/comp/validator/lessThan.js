@@ -6,8 +6,6 @@ Formbuilder.comp.validator.lessThan = Class.create(Formbuilder.comp.validator.ba
 
     initialize: function (treeNode, initData, parent) {
 
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },

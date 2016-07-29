@@ -5,9 +5,6 @@ Formbuilder.comp.validator.iban = Class.create(Formbuilder.comp.validator.base,{
     errors:["ibanNotSupported","ibanFalseFormat","ibanCheckFailed"],
 
     initialize: function (treeNode, initData, parent) {
-
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -31,16 +28,13 @@ Formbuilder.comp.validator.iban = Class.create(Formbuilder.comp.validator.base,{
                 name: "locale",
                 fieldLabel: t("Locale"),
                 anchor: "100%",
-                allowBlank:false
+                allowBlank:false,
+                checked: this.datax.locale
             }
-
-
         ]
         });
         this.form.add(thisNode);
         return this.form;
     }
-
-
 
 });

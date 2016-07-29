@@ -5,7 +5,6 @@ Formbuilder.comp.validator.hostname = Class.create(Formbuilder.comp.validator.ba
     errors:["hostnameCannotDecodePunycode","hostnameInvalid","hostnameDashCharacter","hostnameInvalidHostname","hostnameInvalidHostnameSchema","hostnameInvalidLocalName","hostnameInvalidUri","hostnameIpAddressNotAllowed","hostnameLocalNameNotAllowed","hostnameUndecipherableTld","hostnameUnknownTld"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -19,9 +18,9 @@ Formbuilder.comp.validator.hostname = Class.create(Formbuilder.comp.validator.ba
     },
 
     getForm: function($super){
+
         $super();
 
         return this.form;
     }
-
 });

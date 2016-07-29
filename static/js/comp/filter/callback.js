@@ -4,7 +4,6 @@ Formbuilder.comp.filter.callback = Class.create(Formbuilder.comp.filter.base,{
     type: "callback",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -27,12 +26,14 @@ Formbuilder.comp.filter.callback = Class.create(Formbuilder.comp.filter.base,{
                 xtype: "textfield",
                 name: "callback",
                 fieldLabel: t("Callback"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.callback
             }
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
 

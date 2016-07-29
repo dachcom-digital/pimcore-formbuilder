@@ -83,7 +83,7 @@ Formbuilder.comp.validator.inArray = Class.create(Formbuilder.comp.validator.bas
                 xtype: "checkbox",
                 name: "strict",
                 fieldLabel: t("Strict"),
-                checked:false
+                checked: this.datax.strict
                 },
 
                 this.generateInArrayRepeater()

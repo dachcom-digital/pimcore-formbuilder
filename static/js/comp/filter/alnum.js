@@ -4,10 +4,8 @@ Formbuilder.comp.filter.alnum = Class.create(Formbuilder.comp.filter.base, {
     type: "alnum",
 
     initialize: function (treeNode, initData) {
-
         this.treeNode = treeNode;
         this.initData(initData);
-
     },
 
     getTypeName: function () {
@@ -34,14 +32,14 @@ Formbuilder.comp.filter.alnum = Class.create(Formbuilder.comp.filter.base, {
                     xtype: "checkbox",
                     name: "allowWhiteSpace",
                     fieldLabel: t("AllowWhiteSpace"),
-                    checked: false
+                    checked: this.datax.allowWhiteSpace
                 }
             ]
         });
 
         this.form.add(thisNode);
+
         return this.form;
 
     }
-
 });

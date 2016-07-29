@@ -4,7 +4,6 @@ Formbuilder.comp.filter.baseName = Class.create(Formbuilder.comp.filter.base,{
     type: "baseName",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -18,6 +17,7 @@ Formbuilder.comp.filter.baseName = Class.create(Formbuilder.comp.filter.base,{
     },
 
     getForm: function($super){
+
         $super();
         
         return this.form;

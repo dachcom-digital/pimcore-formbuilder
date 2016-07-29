@@ -5,9 +5,6 @@ Formbuilder.comp.validator["int"] = Class.create(Formbuilder.comp.validator.base
     errors:["intInvalid","notInt"],
 
     initialize: function (treeNode, initData, parent) {
-
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -21,7 +18,9 @@ Formbuilder.comp.validator["int"] = Class.create(Formbuilder.comp.validator.base
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -30,16 +29,14 @@ Formbuilder.comp.validator["int"] = Class.create(Formbuilder.comp.validator.base
                 xtype: "textfield",
                 name: "locale",
                 fieldLabel: t("Locale"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.locale
             }
-
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
-
-
 });

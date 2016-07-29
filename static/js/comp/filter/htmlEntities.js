@@ -4,7 +4,6 @@ Formbuilder.comp.filter.htmlEntities = Class.create(Formbuilder.comp.filter.base
     type: "htmlEntities",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -43,13 +42,14 @@ Formbuilder.comp.filter.htmlEntities = Class.create(Formbuilder.comp.filter.base
                 editable: false,
                 triggerAction: 'all',
                 anchor:"100%",
-                value:"2"
+                value: this.datax.quoteStyle
             }
 
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
 });

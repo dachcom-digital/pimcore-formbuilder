@@ -6,8 +6,6 @@ Formbuilder.comp.validator.postCode = Class.create(Formbuilder.comp.validator.ba
 
     initialize: function (treeNode, initData, parent) {
 
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -21,7 +19,9 @@ Formbuilder.comp.validator.postCode = Class.create(Formbuilder.comp.validator.ba
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,

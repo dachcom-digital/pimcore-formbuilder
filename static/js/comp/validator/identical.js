@@ -5,9 +5,6 @@ Formbuilder.comp.validator.identical = Class.create(Formbuilder.comp.validator.b
     errors:["notSame","missingToken"],
 
     initialize: function (treeNode, initData, parent) {
-
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -21,7 +18,9 @@ Formbuilder.comp.validator.identical = Class.create(Formbuilder.comp.validator.b
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -30,10 +29,9 @@ Formbuilder.comp.validator.identical = Class.create(Formbuilder.comp.validator.b
                 xtype: "textfield",
                 name: "token",
                 fieldLabel: t("Token"),
-                anchor: "100%"
+                anchor: "100%",
+                checked: this.datax.token
             }
-
-
         ]
         });
         this.form.add(thisNode);

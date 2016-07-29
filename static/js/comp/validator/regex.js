@@ -6,8 +6,6 @@ Formbuilder.comp.validator.regex = Class.create(Formbuilder.comp.validator.base,
 
     initialize: function (treeNode, initData, parent) {
 
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -21,7 +19,9 @@ Formbuilder.comp.validator.regex = Class.create(Formbuilder.comp.validator.base,
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -32,7 +32,6 @@ Formbuilder.comp.validator.regex = Class.create(Formbuilder.comp.validator.base,
                 fieldLabel: t("Pattern"),
                 anchor: "100%"
             }
-
 
         ]
         });

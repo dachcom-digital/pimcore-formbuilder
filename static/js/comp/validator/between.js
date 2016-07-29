@@ -5,7 +5,6 @@ Formbuilder.comp.validator.between = Class.create(Formbuilder.comp.validator.bas
     errors:["notBetween","notBetweenStrict"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -19,7 +18,9 @@ Formbuilder.comp.validator.between = Class.create(Formbuilder.comp.validator.bas
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -28,23 +29,24 @@ Formbuilder.comp.validator.between = Class.create(Formbuilder.comp.validator.bas
                 xtype: "checkbox",
                 name: "inclusive",
                 fieldLabel: t("Inclusive"),
-                checked:true
+                checked: this.datax.inclusive
             },
             {
                 xtype: "numberfield",
                 name: "min",
                 fieldLabel: t("min value"),
                 allowDecimals : true,
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.min
             },
             {
                 xtype: "numberfield",
                 name: "max",
                 fieldLabel: t("max value"),
                 allowDecimals : true,
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.max
             }
-
         ]
         });
         this.form.add(thisNode);

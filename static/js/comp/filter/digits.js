@@ -4,7 +4,6 @@ Formbuilder.comp.filter.digits = Class.create(Formbuilder.comp.filter.base,{
     type: "digits",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -18,9 +17,9 @@ Formbuilder.comp.filter.digits = Class.create(Formbuilder.comp.filter.base,{
     },
 
     getForm: function($super){
+
         $super();
         
         return this.form;
     }
-
 });

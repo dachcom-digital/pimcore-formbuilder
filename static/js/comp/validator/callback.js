@@ -5,21 +5,22 @@ Formbuilder.comp.validator.callback = Class.create(Formbuilder.comp.validator.ba
     errors:["callbackInvalid","callbackValue"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("callback");
     },   
     
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_validator";
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -28,19 +29,21 @@ Formbuilder.comp.validator.callback = Class.create(Formbuilder.comp.validator.ba
                 xtype: "textfield",
                 name: "callback.0",
                 fieldLabel: t("class name"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax["callback.0"]
             },
             {
                 xtype: "textfield",
                 name: "callback.1",
                 fieldLabel: t("static function name"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax["callback.1"]
             }
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
 });

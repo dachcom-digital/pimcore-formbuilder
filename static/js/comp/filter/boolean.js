@@ -4,7 +4,6 @@ Formbuilder.comp.filter.boolean = Class.create(Formbuilder.comp.filter.base,{
     type: "boolean",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -24,7 +23,6 @@ Formbuilder.comp.filter.boolean = Class.create(Formbuilder.comp.filter.base,{
             fields: ["value","label"],
             data : [["1","boolean"],["2","integer"],["4","float"],["8","string"],["16","zero"],["32","empty array"],["64","null"],["127","php"],["128","false string"],["256","yes"],["511","all"]]
         });
-
 
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
@@ -53,7 +51,9 @@ Formbuilder.comp.filter.boolean = Class.create(Formbuilder.comp.filter.base,{
 
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
 

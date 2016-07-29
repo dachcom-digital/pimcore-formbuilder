@@ -5,7 +5,6 @@ Formbuilder.comp.validator.graterThan = Class.create(Formbuilder.comp.validator.
     errors:["notGreaterThan"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -19,7 +18,9 @@ Formbuilder.comp.validator.graterThan = Class.create(Formbuilder.comp.validator.
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -29,14 +30,15 @@ Formbuilder.comp.validator.graterThan = Class.create(Formbuilder.comp.validator.
                 name: "min",
                 fieldLabel: t("Min value"),
                 allowDecimals : true,
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.min
             }
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
-
 
 });

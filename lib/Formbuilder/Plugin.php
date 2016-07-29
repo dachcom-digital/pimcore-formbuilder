@@ -69,7 +69,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         }
         else
         {
-            $statusMessage = 'Fourmbuilder Plugin could not be installed.';
+            $statusMessage = 'Formbuilder Plugin could not be installed.';
         }
 
         return $statusMessage;

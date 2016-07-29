@@ -52,8 +52,6 @@ Formbuilder.comp.validator.isbn = Class.create(Formbuilder.comp.validator.base,{
                 value:"auto"
             }
 
-
-
         ]
         });
         this.form.add(thisNode);

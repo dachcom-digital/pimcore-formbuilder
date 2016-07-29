@@ -5,23 +5,22 @@ Formbuilder.comp.validator.stringLength = Class.create(Formbuilder.comp.validato
     errors:["stringLengthInvalid","stringLengthTooShort","stringLengthTooLong"],
 
     initialize: function (treeNode, initData, parent) {
-
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("stringLength");
     },   
     
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_validator";
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -31,24 +30,23 @@ Formbuilder.comp.validator.stringLength = Class.create(Formbuilder.comp.validato
                 name: "min",
                 fieldLabel: t("Min value"),
                 allowDecimals : true,
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.min
             },
             {
                 xtype: "numberfield",
                 name: "max",
                 fieldLabel: t("Max value"),
                 allowDecimals : true,
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.max
             }
-
-
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
-
 
 });

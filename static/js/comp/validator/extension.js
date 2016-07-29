@@ -6,23 +6,22 @@ Formbuilder.comp.validator.extension = Class.create(Formbuilder.comp.validator.b
     errors:["fileExtensionFalse","fileExtensionNotFound"],
 
     initialize: function (treeNode, initData, parent) {
-
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("extension");
     },   
     
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_validator";
     },
 
-    getForm: function($super){
+    getForm: function($super) {
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -31,20 +30,19 @@ Formbuilder.comp.validator.extension = Class.create(Formbuilder.comp.validator.b
                 xtype: "checkbox",
                 name: "case",
                 fieldLabel: t("case sensitive"),
-                checked:false
+                checked: this.datax.case
             },{
                 xtype: "textfield",
                 name: "extension",
                 fieldLabel: t("extensions (sep',')"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.extension
             }
-
-
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
 });

@@ -5,7 +5,6 @@ Formbuilder.comp.validator.ip = Class.create(Formbuilder.comp.validator.base,{
     errors:["ipInvalid","notIpAddress"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -23,7 +22,5 @@ Formbuilder.comp.validator.ip = Class.create(Formbuilder.comp.validator.base,{
 
         return this.form;
     }
-
-
 
 });

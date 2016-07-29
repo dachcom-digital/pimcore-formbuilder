@@ -3,22 +3,23 @@ Formbuilder.comp.filter.stringTrim = Class.create(Formbuilder.comp.filter.base,{
 
     type: "stringTrim",
 
-    initialize: function (treeNode, initData, parent) {
-
+    initialize: function(treeNode, initData, parent) {
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("stringTrim");
     },
 
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_filter";
     },
 
-    getForm: function($super){
+    getForm: function($super) {
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -27,13 +28,14 @@ Formbuilder.comp.filter.stringTrim = Class.create(Formbuilder.comp.filter.base,{
                 xtype: "textfield",
                 name: "charList",
                 fieldLabel: t("Char list"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.charList
             }
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
 });

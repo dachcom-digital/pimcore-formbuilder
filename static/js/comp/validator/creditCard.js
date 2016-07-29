@@ -4,21 +4,21 @@ Formbuilder.comp.validator.creditCard = Class.create(Formbuilder.comp.validator.
     type: "creditCard",
     errors:["creditcardChecksum","creditcardContent","creditcardInvalid","creditcardLength","creditcardPrefix","creditcardService","creditcardServiceFailure"],
 
-    initialize: function (treeNode, initData, parent) {
-
+    initialize: function(treeNode, initData, parent) {
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("creditCard");
     },   
     
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_validator";
     },
 
-    getForm: function($super){
+    getForm: function($super) {
+
         $super();
         
         var cbStore = new Ext.data.ArrayStore({
@@ -48,11 +48,11 @@ Formbuilder.comp.validator.creditCard = Class.create(Formbuilder.comp.validator.
                 valueField: "value",
                 value: this.datax.type
             }
-
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
-
 });

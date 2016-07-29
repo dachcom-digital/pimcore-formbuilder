@@ -4,23 +4,22 @@ Formbuilder.comp.filter.alpha = Class.create(Formbuilder.comp.filter.base,{
     type: "alpha",
 
     initialize: function (treeNode, initData, parent) {
-
-
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("alpha");
     },
 
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_filter";
     },
 
     getForm: function($super){
+
         $super();
+
         var thisNode = new Ext.form.FieldSet({
             title: t("This node"),
             collapsible: true,
@@ -29,12 +28,14 @@ Formbuilder.comp.filter.alpha = Class.create(Formbuilder.comp.filter.base,{
                 xtype: "checkbox",
                 name: "allowWhiteSpace",
                 fieldLabel: t("AllowWhiteSpace"),
-                checked:false
+                checked: this.datax.allowWhiteSpace
             }
 
         ]
         });
+
         this.form.add(thisNode);
+
         return this.form;
     }
 

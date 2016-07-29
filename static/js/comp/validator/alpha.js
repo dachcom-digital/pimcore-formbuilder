@@ -5,7 +5,6 @@ Formbuilder.comp.validator.alpha = Class.create(Formbuilder.comp.validator.base,
     errors:["alphaInvalid","notAlpha","alphaStringEmpty"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -30,10 +29,9 @@ Formbuilder.comp.validator.alpha = Class.create(Formbuilder.comp.validator.base,
                 xtype: "checkbox",
                 name: "allowWhiteSpace",
                 fieldLabel: t("AllowWhiteSpace"),
-                checked:false
+                checked: this.datax.allowWhiteSpace
             }
-
-            ]
+        ]
         });
 
         this.form.add(thisNode);
@@ -41,5 +39,4 @@ Formbuilder.comp.validator.alpha = Class.create(Formbuilder.comp.validator.base,
         return this.form;
 
     }
-
 });

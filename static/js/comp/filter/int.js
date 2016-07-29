@@ -4,7 +4,6 @@ Formbuilder.comp.filter["int"] = Class.create(Formbuilder.comp.filter.base,{
     type: "int",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -18,9 +17,9 @@ Formbuilder.comp.filter["int"] = Class.create(Formbuilder.comp.filter.base,{
     },
 
     getForm: function($super){
+
         $super();
 
         return this.form;
     }
-
 });

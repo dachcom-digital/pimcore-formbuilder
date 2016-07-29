@@ -4,7 +4,6 @@ Formbuilder.comp.filter.stringToLower = Class.create(Formbuilder.comp.filter.bas
     type: "stringToLower",
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
@@ -18,12 +17,10 @@ Formbuilder.comp.filter.stringToLower = Class.create(Formbuilder.comp.filter.bas
     },
 
     getForm: function($super){
+
         $super();
 
         return this.form;
 
     }
-
-
-
 });

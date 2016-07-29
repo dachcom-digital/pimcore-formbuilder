@@ -5,20 +5,20 @@ Formbuilder.comp.validator.digits = Class.create(Formbuilder.comp.validator.base
     errors:["notDigits","digitsStringEmpty","digitsInvalid"],
 
     initialize: function (treeNode, initData, parent) {
-
         this.treeNode = treeNode;
         this.initData(initData);
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("digits");
     },   
     
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_validator";
     },
 
-    getForm: function($super){
+    getForm: function($super) {
+
         $super();
 
         return this.form;
