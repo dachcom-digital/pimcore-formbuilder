@@ -34,12 +34,9 @@ Feel free to copy its content into your main style.
 
 **Override Templates**
 
-To override the FormBuilder scripts, add this to your `lib/Website/Controller/Action.php`
-```php
-\FormBuilder\Plugin::addFrontendPaths($this->view);
-```
-Now it's possible to override templates, for example: `/website/views/scripts/formbuilder/form/form.php`
-
+To override the FormBuilder scripts, just create a formbuilder folder in your scripts folder to override templates:
+ 
+ `/website/views/scripts/formbuilder/form/form.php`
 
 ###Styling
 If you want to add some fancy radio / checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).

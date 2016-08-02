@@ -1,1 +1,1 @@
-<?= $this->template('form/form.php', ['form' => $this->form]); ?>
+<?= $this->template('formbuilder/form/form.php', ['form' => $this->form]); ?>

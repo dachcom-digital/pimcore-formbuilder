@@ -1,4 +1,4 @@
-<?=$this->template('email/layout/header.php'); ?>
+<?=$this->template('formbuilder/email/layout/header.php'); ?>
 
 <?=$this->wysiwyg('text'); ?>
 
@@ -12,4 +12,4 @@
 
 <?php } ?>
 
-<?=$this->template('email/layout/footer.php'); ?>
+<?=$this->template('formbuilder/email/layout/footer.php'); ?>
