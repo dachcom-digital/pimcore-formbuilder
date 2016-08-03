@@ -40,6 +40,10 @@ To override the FormBuilder scripts, just create a formbuilder folder in your sc
  
  `/website/views/scripts/formbuilder/form/form.php`
 
+**Misc**
+
+add `/website/var/formbuilder/` to your `.gitignore` since forms only can be created in backend.
+
 ### Styling
 If you want to add some fancy radio / checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
 
