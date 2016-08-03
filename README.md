@@ -9,11 +9,13 @@ Just download and install it into your plugin folder.
 * Pimcore 4.0
 
 ### Features
-* Build Forms in Backend easily. :)
+* Build Forms in Backend easily.
 * Place Forms everywhere you want with the form area
 * Server validation
 * Activate ajax mode to each form
 * Define mail templates
+* Bootstrap 3 ready
+* V2 of reCAPTCHA
 
 ### Installation
 Some installation advices. 
@@ -38,10 +40,10 @@ To override the FormBuilder scripts, just create a formbuilder folder in your sc
  
  `/website/views/scripts/formbuilder/form/form.php`
 
-###Styling
+### Styling
 If you want to add some fancy radio / checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
 
-###Mail Template
+### Mail Template
 Place your form somewhere on your Website.
 If you want to submit the form to the user, you can use your field names as placeholders. Formbuilder automatically will transform the field into the given address.
 For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
