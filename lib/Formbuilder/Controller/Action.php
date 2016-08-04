@@ -1,5 +1,5 @@
 <?php
-namespace Members\Controller;
+namespace Formbuilder\Controller;
 
 use Pimcore\Controller\Action\Frontend;
 use Members\Auth;
