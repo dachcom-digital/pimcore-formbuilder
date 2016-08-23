@@ -2,7 +2,6 @@
 namespace Formbuilder\Controller;
 
 use Pimcore\Controller\Action\Frontend;
-use Members\Auth;
 
 class Action extends Frontend
 {
