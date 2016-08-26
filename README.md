@@ -61,10 +61,10 @@ If `mail_disable_default_mail_body` is defined and checked, you need to add your
 You can use all the field names as placeholder. For example:
 
 ```html
-Hello %Text(firstname)!
+Hello %Text(firstname);!
 
 Your Data:
 
-Name: %Text(firstname)
-Mail: %Text(mailaddress)
+Name: %Text(firstname);
+Mail: %Text(mailaddress);
 ```
