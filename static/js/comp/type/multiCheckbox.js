@@ -51,7 +51,7 @@ Formbuilder.comp.type.multiCheckbox = Class.create(Formbuilder.comp.type.base,{
         return this.form;
     },
 
-    getTranslatForm: function($super){
+    getTranslateForm: function($super){
 
         $super();
 

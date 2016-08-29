@@ -64,7 +64,7 @@ Formbuilder.comp.type.displayGroup = Class.create(Formbuilder.comp.type.base,{
 
     },
 
-    getTranslatForm: function($super) {
+    getTranslateForm: function($super) {
 
         $super();
 

@@ -661,9 +661,9 @@ class Builder {
         {
             foreach ($datas['messages'] as $key)
             {
-                if ($datas['translate']['messages.' . $key] != '')
+                if ($datas['messages.' . $key] != '')
                 {
-                    $defaultKeyValue = $datas['translate']['messages.' . $key];
+                    $defaultKeyValue = $datas['messages.' . $key];
 
                     if (isset( $datas['translate'][ $key ] ) && is_array( $datas['translate'][ $key ] ) )
                     {

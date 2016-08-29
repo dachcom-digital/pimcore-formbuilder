@@ -164,7 +164,7 @@
 "static function name","Static method name"
 "class name","Class name"
 "custom error","Custom error message"
-"custom error panel","Custom error panel"
+"custom error panel","Custom error messages"
 "custom error : ","Custom error for : "
 "stripTags","Strip tags"
 "stripNewlines","Strip new lines"

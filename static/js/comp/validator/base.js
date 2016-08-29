@@ -5,7 +5,6 @@ Formbuilder.comp.validator.base = Class.create({
     apiUrl:"http://apigen.juzna.cz/doc/zendframework/zf1/class-Zend_Validate_{name}.html",
     apiPrefix:"",
     errors:[],
-    errorsDef:[],
 
     initialize: function(treeNode, initData) {
 
@@ -98,10 +97,10 @@ Formbuilder.comp.validator.base = Class.create({
                 activate: function(tab){
                     this.applyData();
                     this.layout2.removeAll();
-                    this.layout2.add(this.getTranslatForm());
+                    this.layout2.add(this.getTranslateForm());
                 }.bind(this)
             },
-            items: [this.getTranslatForm()]
+            items: [this.getTranslateForm()]
 
         });
 
@@ -201,7 +200,7 @@ Formbuilder.comp.validator.base = Class.create({
                 } else {
 
                     if(item.ownerCt.layout != "hbox") {
-                        data.translate[name] = val;
+                        data[name] = val;
                     }
 
                 }
@@ -300,7 +299,7 @@ Formbuilder.comp.validator.base = Class.create({
 
     },
 
-    getTranslatForm: function() {
+    getTranslateForm: function() {
 
         this.getLanguages();
 
@@ -342,7 +341,7 @@ Formbuilder.comp.validator.base = Class.create({
                     {
                         xtype: "textfield",
                         name: "messages." + error,
-                        value: this.datax["translate"]["messages." + error],
+                        value: this.datax["messages." + error],
                         fieldLabel: t("custom error"),
                         anchor: "100%"
                     },

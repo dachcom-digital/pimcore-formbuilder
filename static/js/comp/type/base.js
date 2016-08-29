@@ -95,10 +95,10 @@ Formbuilder.comp.type.base = Class.create({
                 activate: function(tab){
                     this.applyData();
                     this.layout2.removeAll();
-                    this.layout2.add(this.getTranslatForm());
+                    this.layout2.add(this.getTranslateForm());
                 }.bind(this)
             },
-            items: [this.getTranslatForm()]
+            items: [this.getTranslateForm()]
 
         });
 
@@ -448,7 +448,7 @@ Formbuilder.comp.type.base = Class.create({
 
     },
 
-    getTranslatForm: function(){
+    getTranslateForm: function(){
 
         this.getLanguages();
 
