@@ -1,8 +1,6 @@
-var Formbuilder = (function () {
+var formBuilder = (function () {
 
     var self = {
-
-        isBusy : false,
 
         config: {
             settings : {}
@@ -96,7 +94,7 @@ var Formbuilder = (function () {
                             $form.trigger('formbuilder.success', [response.message, $form])
                             $form.find('input[type=text], textarea').val('');
 
-                            if( typeof grecaptcha === 'object') {
+                            if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
                                 grecaptcha.reset();
                             }
 
@@ -122,5 +120,5 @@ var Formbuilder = (function () {
 })();
 
 $(document).ready(
-    Formbuilder.init.bind({settings : null})
+    formBuilder.init.bind({settings : null})
 );

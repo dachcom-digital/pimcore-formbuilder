@@ -23,37 +23,35 @@ Formbuilder.settings = Class.create({
              // refreshes the layout
              pimcore.registerNS("pimcore.layout.refresh");
              pimcore.layout.refresh = function () {
+
              try {
-             pimcore.viewport.doLayout();
+                pimcore.viewport.doLayout();
              }
-             catch (e) {
-             }
+             catch (e) {}
              };
 
              pimcore.viewport = new Ext.Viewport({
-             id:"pimcore_viewport",
-             layout:'fit',
-             items:[
-             {
-             xtype:"panel",
-             id:"pimcore_body",
-             cls:"pimcore_body",
-             layout:"border",
-             border:false,
-             items:[
-
-             new Ext.TabPanel({
-             region:'center',
-             deferredRender:false,
-             id:"pimcore_panel_tabs",
-             enableTabScroll:true,
-             hideMode:"offsets",
-             cls:"tab_panel"
-
-             })
-             ]
-             }
-             ]
+                 id:"pimcore_viewport",
+                 layout:'fit',
+                 items:[
+                     {
+                         xtype:"panel",
+                         id:"pimcore_body",
+                         cls:"pimcore_body",
+                         layout:"border",
+                         border:false,
+                         items:[
+                             new Ext.TabPanel({
+                                 region:'center',
+                                 deferredRender:false,
+                                 id:"pimcore_panel_tabs",
+                                 enableTabScroll:true,
+                                 hideMode:"offsets",
+                                 cls:"tab_panel"
+                            })
+                        ]
+                     }
+                 ]
              });
 
              //DEBUG END
@@ -241,6 +239,7 @@ Formbuilder.settings = Class.create({
     addMainComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z]+/);
+
         if (button == "ok" && value.length > 2 && regresult == value
             && !in_array(value.toLowerCase(), this.forbiddennames)) {
 
@@ -278,11 +277,9 @@ Formbuilder.settings = Class.create({
 
             }
 
-        }
+        } else if (button == "cancel") {
 
-        else if (button == "cancel") {
-
-            return;
+            return false;
 
         } else {
 

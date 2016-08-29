@@ -15,7 +15,7 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
 
     },
 
-    pimcoreReady: function (params,broker){
+    pimcoreReady: function (params,broker) {
 
         var user = pimcore.globalmanager.get("user");
 
@@ -37,7 +37,7 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
         this.getLanguages();
     },
 
-    getLanguages: function(){
+    getLanguages: function() {
 
         Ext.Ajax.request({
             url: '/admin/settings/get-available-languages',
@@ -49,14 +49,15 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
         });
     },
 
-    openSettings : function()
-    {
+    openSettings : function() {
+
         try {
             pimcore.globalmanager.get('Formbuilder_settings').activate();
         }
         catch (e) {
             pimcore.globalmanager.add('Formbuilder_settings', new Formbuilder.settings());
         }
+
     }
 
 });

@@ -1,7 +1,7 @@
 pimcore.registerNS("Formbuilder.comp.elem");
 Formbuilder.comp.elem = Class.create({
 
-    initialize: function (data, parentPanel) {
+    initialize: function(data, parentPanel) {
 
         this.parentPanel = parentPanel;
         this.data = data;
@@ -13,7 +13,7 @@ Formbuilder.comp.elem = Class.create({
         this.initLayoutFields();
     },
 
-    addLayout: function () {
+    addLayout: function() {
 
         this.tree = Ext.create('Ext.tree.Panel', {
 
@@ -79,7 +79,7 @@ Formbuilder.comp.elem = Class.create({
 
         });
 
-        this.panel.on("beforedestroy", function () {
+        this.panel.on("beforedestroy", function() {
             delete this.parentPanel.panels["form_" + this.data.id];
         }.bind(this));
 
@@ -93,13 +93,13 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    activate: function () {
+    activate: function() {
 
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
 
     },
 
-    initLayoutFields: function () {
+    initLayoutFields: function() {
 
         if (this.data.mainDefinitions) {
             if (this.data.mainDefinitions.childs) {
@@ -113,7 +113,7 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    recursiveAddNode: function (con, scope) {
+    recursiveAddNode: function(con, scope) {
 
         var stype = null, fn = null, newNode = null;
 
@@ -135,7 +135,7 @@ Formbuilder.comp.elem = Class.create({
         return newNode;
     },
 
-    getTreeNodeListeners: function () {
+    getTreeNodeListeners: function() {
 
         var listeners = {
 
@@ -148,7 +148,7 @@ Formbuilder.comp.elem = Class.create({
 
     },
     
-    onTreeNodeOver: function (event) {
+    onTreeNodeOver: function(event) {
 
         var parent = "";
 
@@ -199,7 +199,7 @@ Formbuilder.comp.elem = Class.create({
         }
     },
 
-    onTreeNodeBeforeMove : function (node, oldParent, newParent, index, eOpts){
+    onTreeNodeBeforeMove : function(node, oldParent, newParent, index, eOpts){
         
         switch (newParent.data.iconCls){
             
@@ -236,7 +236,7 @@ Formbuilder.comp.elem = Class.create({
         return false;
     },
 
-    onTreeNodeClick: function (tree, record, item, index, e, eOpts) {
+    onTreeNodeClick: function(tree, record, item, index, e, eOpts) {
 
         try {
             this.saveCurrentNode();
@@ -266,7 +266,7 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
+    onTreeNodeContextmenu: function(tree, record, item, index, e, eOpts) {
 
         e.stopEvent();
         tree.select();
@@ -486,12 +486,12 @@ Formbuilder.comp.elem = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
-    setCurrentNode: function (cn) {
+    setCurrentNode: function(cn) {
 
         this.currentNode = cn;
     },
 
-    saveCurrentNode: function () {
+    saveCurrentNode: function() {
 
         var _self = this;
 
@@ -539,7 +539,7 @@ Formbuilder.comp.elem = Class.create({
 
                 _self.data["attrib"] = [];
                 if( Object.keys(attrCouples).length > 0) {
-                    Ext.Object.each(attrCouples, function (name, value) {
+                    Ext.Object.each(attrCouples, function(name, value) {
                         _self.data["attrib"].push( value );
                     });
                 }
@@ -548,7 +548,7 @@ Formbuilder.comp.elem = Class.create({
         }
     },
 
-    getRootPanel: function () {
+    getRootPanel: function() {
 
         var methodStore = new Ext.data.ArrayStore({
 
@@ -572,7 +572,7 @@ Formbuilder.comp.elem = Class.create({
         });
 
         // meta-data
-        var addMetaData = function (name, value) {
+        var addMetaData = function(name, value) {
 
             if(typeof name != "string") {
                 name = "";
@@ -584,7 +584,7 @@ Formbuilder.comp.elem = Class.create({
             var count = this.metaDataPanel.query("button").length+1;
 
             var combolisteners = {
-                "afterrender": function (el) {
+                "afterrender": function(el) {
                     el.getEl().parent().applyStyles({
                         float: "left",
                         "margin-right": "5px"
@@ -631,7 +631,7 @@ Formbuilder.comp.elem = Class.create({
                 xtype: "button",
                 iconCls: "pimcore_icon_delete",
                 style: "float:left;",
-                handler: function (compositeField, el) {
+                handler: function(compositeField, el) {
                     this.metaDataPanel.remove(compositeField);
                     this.metaDataPanel.updateLayout();
                 }.bind(this, compositeField)
@@ -696,10 +696,10 @@ Formbuilder.comp.elem = Class.create({
             {
                 xtype: "textfield",
                 name: "action",
-                value:this.data.action,
+                value: this.data.action,
                 fieldLabel: t("Action"),
                 width: 300,
-                allowBlank:false
+                allowBlank: false
             },
             {
                 xtype: "combo",
@@ -713,8 +713,8 @@ Formbuilder.comp.elem = Class.create({
                 editable: true,
                 triggerAction: 'all',
                 width: 300,
-                value:this.data.method,
-                allowBlank:false
+                value: this.data.method,
+                allowBlank: false
             },
             {
                 xtype: "combo",
@@ -727,15 +727,15 @@ Formbuilder.comp.elem = Class.create({
                 store: encStore,
                 editable: false,
                 triggerAction: 'all',
-                anchor:"100%",
+                width: 300,
                 value: this.data.enctype,
-                allowBlank:false
+                allowBlank: false
             },
             {
                 xtype: "checkbox",
                 name: "useAjax",
                 fieldLabel: t("Use Ajax to Submit"),
-                checked:false,
+                checked: false,
                 value: this.data.useAjax
             },
 
@@ -749,7 +749,7 @@ Formbuilder.comp.elem = Class.create({
         return this.rootPanel;
     },
 
-    addElemChild: function (type, initData, stype) {
+    addElemChild: function(type, initData, stype) {
 
         var nodeLabel = t(type);
         var filter = false;
@@ -839,7 +839,7 @@ Formbuilder.comp.elem = Class.create({
         return newNode;
     },
 
-    copyChild: function (tree, record) {
+    copyChild: function(tree, record) {
 
         this.copyData = {};
 
@@ -858,7 +858,7 @@ Formbuilder.comp.elem = Class.create({
         */
     },
 
-    pasteChild: function (tree, record) {
+    pasteChild: function(tree, record) {
 
         var node = this.copyData;
         var newNode = this.cloneChild(tree, node);
@@ -870,7 +870,7 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    removeChild: function (tree, record) {
+    removeChild: function(tree, record) {
 
         if (this.id != 0) {
             if (this.currentNode == record.data.object) {
@@ -937,11 +937,11 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    getNodeData: function (node) {
+    getNodeData: function(node) {
 
         var data = {};
 
-        if (node.data.object) {
+        if(node.data.object) {
 
             if (typeof node.data.object.getData == "function") {
 
@@ -988,6 +988,7 @@ Formbuilder.comp.elem = Class.create({
         }
 
         data.childs = null;
+
         if (node.childNodes.length > 0) {
 
             data.childs = [];
@@ -1001,16 +1002,12 @@ Formbuilder.comp.elem = Class.create({
         return data;
     },
 
-    getData: function () {
+    getData: function() {
 
         this.getDataSuccess = true;
-
         this.usedFieldNames = [];
 
-        var rootNode = this.tree.getRootNode();
-        var nodeData = this.getNodeData(rootNode);
-
-        return nodeData;
+        return this.getNodeData( this.tree.getRootNode() );
 
     },
 
@@ -1077,12 +1074,14 @@ Formbuilder.comp.elem = Class.create({
 
         this.saveCurrentNode();
 
-        var m = Ext.encode(this.getData());
-        var n = Ext.encode(this.data);
+        if( this.rootFormIsValid(this.data) ) {
 
-        if ( this.rootFormIsValid(this.data) ) {
+            this.tree.getRootNode().set("cls", "");
 
-            if ( this.getDataSuccess ) {
+            var m = Ext.encode(this.getData()),
+                n = Ext.encode(this.data);
+
+            if( this.getDataSuccess ) {
 
                 Ext.Ajax.request({
                     url: "/plugin/Formbuilder/admin_Settings/save",
@@ -1103,13 +1102,14 @@ Formbuilder.comp.elem = Class.create({
 
         } else {
 
+            this.tree.getRootNode().set("cls", "tree_node_error");
             Ext.Msg.alert(t('error'), t('problem_creating_new_elem_form'));
 
         }
 
     },
 
-    saveOnComplete: function (response) {
+    saveOnComplete: function(response) {
 
         var res = Ext.decode(response.responseText);
 
@@ -1118,7 +1118,7 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    saveOnError: function () {
+    saveOnError: function() {
         pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error");
     }
 

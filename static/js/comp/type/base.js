@@ -9,14 +9,14 @@ Formbuilder.comp.type.base = Class.create({
 
     attributeSelector: null,
 
-    initialize: function (treeNode, initData) {
+    initialize: function(treeNode, initData) {
 
         this.treeNode = treeNode;
         this.initData(initData);
 
     },
 
-    getApiUrl: function(){
+    getApiUrl: function() {
 
         var name = this.getType();
         var firstLetter = name.substr(0, 1);
@@ -28,20 +28,20 @@ Formbuilder.comp.type.base = Class.create({
 
     },
 
-    viewApi: function(){
+    viewApi: function() {
         var wind = new Formbuilder.apiwindow(this.getApiUrl());
         wind.showWindow();
     },
 
-    getTypeName: function () {
+    getTypeName: function() {
         return t("base");
     },
 
-    getIconClass: function () {
+    getIconClass: function() {
         return "Formbuilder_icon_base";
     },
 
-    initData: function (d) {
+    initData: function(d) {
 
         this.valid = true;
 
@@ -73,11 +73,11 @@ Formbuilder.comp.type.base = Class.create({
         }
     },
 
-    getType: function () {
+    getType: function() {
         return this.type;
     },
 
-    getLayout: function () {
+    getLayout: function() {
 
         this.layout = new Ext.Panel({
             title: t("Field type ") + this.getTypeName(),
@@ -117,12 +117,12 @@ Formbuilder.comp.type.base = Class.create({
         return this.tab;
     },
 
-    onAfterPopulate: function(){
+    onAfterPopulate: function() {
 
         return true;
     },
 
-    layoutRendered: function () {
+    layoutRendered: function() {
 
         var items = this.tab.queryBy(function() {
             return true;
@@ -139,7 +139,7 @@ Formbuilder.comp.type.base = Class.create({
 
     },
 
-    updateName: function () {
+    updateName: function() {
 
         var items = this.tab.queryBy(function() {
             return true;
@@ -156,11 +156,11 @@ Formbuilder.comp.type.base = Class.create({
 
     },
 
-    getData: function () {
+    getData: function() {
         return this.datax;
     },
 
-    isValid: function(){
+    isValid: function() {
 
         var data = this.getData();
         data.name = trim(data.name);
@@ -179,7 +179,7 @@ Formbuilder.comp.type.base = Class.create({
 
     },
 
-    applyData: function () {
+    applyData: function() {
 
         if (!this.layout) {
             //return;

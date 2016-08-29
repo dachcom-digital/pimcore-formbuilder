@@ -85,7 +85,7 @@
 <script type="text/javascript" src="/pimcore/static6/js/lib/ext/classic/locale/locale-en.js?_dc=3708"></script>
 
 <!-- internal scripts -->
-<script type="text/javascript" src="/website/var/tmp/minified_javascript_core_4df9a915f149222331762f2a269ae0e0.js?_dc=3734"></script>
+<script type="text/javascript" src="/website/var/tmp/minified_javascript_core_c671756ff9993ee4262c0c43477a855b.js?_dc=3821"></script>
 
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/plugin.js?_dc=1459268461"></script>
 <script type="text/javascript" src="/plugins/Formbuilder/static/js/settings.js?_dc=1459268461"></script>

@@ -53,6 +53,7 @@ trait Form
         if (!is_array($data)) {
             throw new \Zend_Form_Exception(__METHOD__ . ' expects an array');
         }
+
         $translator = $this->getTranslator();
         $valid      = true;
         $eBelongTo  = null;

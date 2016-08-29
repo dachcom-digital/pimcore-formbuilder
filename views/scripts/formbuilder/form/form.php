@@ -3,7 +3,11 @@
     <div class="row">
 
         <div class="form-wrapper">
-            <?=$this->form;?>
+
+            <div class="col-xs-12">
+                <?=$this->form;?>
+            </div>
+
         </div>
 
     </div>
