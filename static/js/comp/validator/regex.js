@@ -30,7 +30,8 @@ Formbuilder.comp.validator.regex = Class.create(Formbuilder.comp.validator.base,
                 xtype: "textfield",
                 name: "pattern",
                 fieldLabel: t("Pattern"),
-                anchor: "100%"
+                anchor: "100%",
+                value: this.datax.pattern
             }
 
         ]
