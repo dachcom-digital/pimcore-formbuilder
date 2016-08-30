@@ -24,7 +24,7 @@ Class Mailer {
         {
             $mail = new Mail();
 
-            $disableDefaultMailBody = $mailTemplate->getProperty('mail_disable_default_mail_body');
+            $disableDefaultMailBody = (bool) $mailTemplate->getProperty('mail_disable_default_mail_body');
 
             self::setMailPlaceholders( $attributes['data'], $mail, $disableDefaultMailBody );
             self::setMailRecipients( $attributes['data'], $mailTemplate );
@@ -88,7 +88,7 @@ Class Mailer {
 
     private static function setMailPlaceholders($data, $mail, $disableDefaultMailBody )
     {
-        if( $disableDefaultMailBody === TRUE )
+        if( $disableDefaultMailBody === FALSE )
         {
             $mail->setParam('body', self::parseHtml( $data ) );
         }
