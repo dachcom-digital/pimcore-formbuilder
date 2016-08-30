@@ -381,7 +381,7 @@ class Frontend {
             {
                 $captchaOptions = $element['options']['captchaOptions'];
 
-                $element['type'] = 'reCaptcha';
+                $element['type'] = 'recaptcha';
                 $element['options'] = array(
                     'secretKey' => $captchaOptions['secretKey'],
                     'siteKey' => $captchaOptions['siteKey'],
