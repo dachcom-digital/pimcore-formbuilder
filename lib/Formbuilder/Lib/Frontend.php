@@ -209,11 +209,7 @@ class Frontend {
                 $form = $this->getDynamicForm($formId, $locale, $class);
             }
 
-            //correctly set recaptcha to https if request is over https
-            if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
-            {
-                //@fixme: deprecated?
-            }
+            
 
             return $form;
         }
