@@ -7,8 +7,6 @@ use \Pimcore\Mail;
 
 Class Mailer {
 
-    private static $messages = array();
-
     /**
      * @param int    $mailTemplateId
      * @param array $attributes
@@ -29,15 +27,15 @@ Class Mailer {
             self::setMailPlaceholders( $attributes['data'], $mail, $disableDefaultMailBody );
             self::setMailRecipients( $attributes['data'], $mailTemplate );
 
+            $mail->setFrom( $mailTemplate->getFrom() );
+
+            $mail->addCc( $mailTemplate->getCcAsArray() );
+            $mail->addBcc( $mailTemplate->getBccAsArray() );
+
+            $mail->setSubject( $mailTemplate->getSubject() );
             $mail->setDocument( $mailTemplate );
+
             $mail->send();
-
-            $successMessage = $mailTemplate->getProperty('mail_successfully_sent');
-
-            if (!empty($successMessage))
-            {
-                self::$messages[] = $successMessage;
-            }
 
             return TRUE;
 
@@ -45,11 +43,6 @@ Class Mailer {
 
         return FALSE;
 
-    }
-
-    public static function getMessages()
-    {
-        return self::$messages;
     }
 
     /**
@@ -116,8 +109,8 @@ Class Mailer {
             }
 
             $html .= '<tr>' . "\n";
-                $html .= '<td><strong>' . $label . ':</strong></td>' . "\n";
-                $html .= '<td>' . $data . '</td>' . "\n";
+            $html .= '<td><strong>' . $label . ':</strong></td>' . "\n";
+            $html .= '<td>' . $data . '</td>' . "\n";
             $html .= '</tr>' . "\n";
 
         }

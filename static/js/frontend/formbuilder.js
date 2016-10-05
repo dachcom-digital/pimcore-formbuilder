@@ -1,14 +1,21 @@
+/*
+        __           __                                ___       _ __        __
+   ____/ /___ ______/ /_  _________  ____ ___     ____/ (_)___ _(_) /_____ _/ /
+  / __  / __ `/ ___/ __ \/ ___/ __ \/ __ `__ \   / __  / / __ `/ / __/ __ `/ /
+ / /_/ / /_/ / /__/ / / / /__/ /_/ / / / / / /  / /_/ / / /_/ / / /_/ /_/ / /
+ \__,_/\__,_/\___/_/ /_/\___/\____/_/ /_/ /_/   \__,_/_/\__, /_/\__/\__,_/_/
+                                                       /____/
+ copyright @ 2016, dachcom digital
+
+ */
 var formBuilder = (function () {
+
+    'use strict';
 
     var self = {
 
-        config: {
-            settings : {}
-        },
+        init: function () {
 
-        init: function (options) {
-
-            jQuery.extend(self.config, options);
             self.startSystem();
 
         },
@@ -23,16 +30,17 @@ var formBuilder = (function () {
 
             /*
 
-            // Use those Events in your Project!
-            $('form.ajax-form').on('formbuilder.success', function(ev, messages, $form) {
-                console.log(messages);
-            });
+             // Use those Events in your Project!
 
-            $('form.ajax-form').on('formbuilder.error', function(ev, messages, $form) {
-                console.log(messages);
-            });
+             $('form.ajax-form').on('formbuilder.success', function(ev, message, $form) {
+             console.log(messages);
+             }).on('formbuilder.error', function(ev, message, $form) {
+             console.log(messages);
+             }).on('formbuilder.error-field', function(ev, data, $form) {
+             console.log(messages);
+             });
 
-            */
+             */
 
             $('form.formbuilder.ajax-form').on('submit', function( ev ) {
 
@@ -56,42 +64,49 @@ var formBuilder = (function () {
 
                         if(response.success === false ) {
 
-                            $.each( response.validationData, function( fieldId, messages) {
+                            if( response.validationData !== false ) {
 
-                                var $fields = $form.find('.element-' +fieldId),
-                                    $field = $fields.first(),
-                                    $formGroup = null,
-                                    $spanEl = null;
+                                $.each( response.validationData, function( fieldId, messages) {
 
-                                if( $field.length > 0) {
+                                    var $fields = $form.find('.element-' +fieldId),
+                                        $field = $fields.first(),
+                                        $formGroup = null,
+                                        $spanEl = null;
 
-                                    $formGroup = $field.closest('.form-group');
+                                    if( $field.length > 0) {
 
-                                    $.each( messages, function( validationType, message) {
+                                        $formGroup = $field.closest('.form-group');
 
-                                        $formGroup.addClass('has-error');
-                                        $formGroup.find('span.help-block').remove();
+                                        $.each( messages, function( validationType, message) {
 
-                                        //its a multiple field
-                                        $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
+                                            $formGroup.addClass('has-error');
+                                            $formGroup.find('span.help-block').remove();
 
-                                        if( $fields.length > 1 ) {
-                                            $field.closest('label').before( $spanEl );
-                                        } else {
-                                            $field.before( $spanEl );
-                                        }
+                                            //its a multiple field
+                                            $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
 
-                                    });
+                                            if( $fields.length > 1 ) {
+                                                $field.closest('label').before( $spanEl );
+                                            } else {
+                                                $field.before( $spanEl );
+                                            }
 
-                                    $form.trigger('formbuilder.error', [{'field': $field, 'messages' : messages}, $form])
+                                        });
 
-                                }
+                                        $form.trigger('formbuilder.error-field', [ { 'field': $field, 'messages' : messages }, $form ]);
 
-                            });
+                                    }
+
+                                });
+
+                            } else {
+
+                                $form.trigger('formbuilder.error', [ response.message, $form ]);
+                            }
 
                         } else {
 
-                            $form.trigger('formbuilder.success', [response.message, $form])
+                            $form.trigger('formbuilder.success', [ response.message, $form ]);
                             $form.find('input[type=text], textarea').val('');
 
                             if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
@@ -119,6 +134,7 @@ var formBuilder = (function () {
 
 })();
 
-$(document).ready(
-    formBuilder.init.bind({settings : null})
-);
+$(function() {
+    'use strict';
+    formBuilder.init();
+});
