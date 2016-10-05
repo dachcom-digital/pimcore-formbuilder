@@ -32,7 +32,7 @@ var formBuilder = (function () {
 
              // Use those Events in your Project!
 
-             $('form.ajax-form').on('formbuilder.success', function(ev, message, $form) {
+             $('form.ajax-form').on('formbuilder.success', function(ev, message, redirect, $form) {
              console.log(messages);
              }).on('formbuilder.error', function(ev, message, $form) {
              console.log(messages);
@@ -106,7 +106,7 @@ var formBuilder = (function () {
 
                         } else {
 
-                            $form.trigger('formbuilder.success', [ response.message, $form ]);
+                            $form.trigger('formbuilder.success', [ response.message, response.redirect, $form ]);
                             $form.find('input[type=text], textarea').val('');
 
                             if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
