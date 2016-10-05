@@ -326,7 +326,7 @@ Formbuilder.comp.type.base = Class.create({
     getForm: function() {
 
         this.form = new Ext.form.FormPanel({
-            bodyStyle:'padding:5px 5px 0',
+            bodyStyle: "padding: 10px;",
             labelWidth: 150,
             defaultType: 'textfield',
             items: [ this.getHookForm() ,{
@@ -430,7 +430,7 @@ Formbuilder.comp.type.base = Class.create({
 
     getLanguages: function(){
 
-        var languages = pimcore.globalmanager.get("Formbuilder.languages");
+        var languages = pimcore.settings.websiteLanguages;
 
         var values = [];
 
@@ -453,7 +453,7 @@ Formbuilder.comp.type.base = Class.create({
         this.getLanguages();
 
         this.transForm = new Ext.FormPanel({
-            bodyStyle:'padding:5px 5px 0',
+            bodyStyle:'padding:10px',
             labelWidth: 150,
             defaultType: 'textfield',
             items: [{

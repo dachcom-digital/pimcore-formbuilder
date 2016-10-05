@@ -40,7 +40,6 @@ Formbuilder.comp.elem = Class.create({
                     ddGroup: "element"
                 }
             }
-
         });
 
         this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
@@ -683,7 +682,7 @@ Formbuilder.comp.elem = Class.create({
         this.rootPanel = new Ext.form.FormPanel({
 
             title: t("Form configuration"),
-            bodyStyle: "padding:5px 5px 0",
+            bodyStyle: "padding:10px",
             border: false,
             items: [
             {

@@ -30,7 +30,7 @@ Formbuilder.comp.importer = Class.create({
 
         var fbClass = this;
         var uploadForm = new Ext.form.FormPanel({
-            bodyStyle: "padding:5px 5px 0",
+            bodyStyle: "padding:10px",
             border: false,
             fileUpload: true,
             width: 400,
