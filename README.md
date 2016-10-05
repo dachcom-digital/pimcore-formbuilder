@@ -52,8 +52,7 @@ For Example you can set a placeholder called `%emailaddress%` (where *emailaddre
 
 Add those properties to your mail template.
 
-#### mail_successfully_sent
-*(String|Document|Snippet)*
+#### mail_successfully_sent *(String|Document|Snippet)*
 
 Use the `mail_successfully_sent` property to define a message after the form has been successfully sent.
 There are three options:
@@ -67,8 +66,7 @@ Use a Snippet to return some complex html stuff.
 **Document**  
 Add a Document to redirect after your form has been successfully submitted.
 
-#### mail_disable_default_mail_body
-*(Checkbox)*  
+#### mail_disable_default_mail_body *(Checkbox)*  
 
 If the `mail_disable_default_mail_body` property is defined and checked, you need to add your own data to the mail template.
 You can use all the field names as placeholder. For example:
