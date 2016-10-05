@@ -116,7 +116,7 @@ Formbuilder.settings = Class.create({
                 autoScroll:true,
                 animate:true,
                 containerScroll: true,
-                border: true,
+                split: true,
                 width: 200,
 
                 root: {

@@ -14,7 +14,7 @@ Formbuilder.comp.type.displayGroup = Class.create(Formbuilder.comp.type.base,{
     getForm: function() {
 
         this.form = new Ext.FormPanel({
-            bodyStyle:'padding:5px 5px 0',
+            bodyStyle:'padding:10px',
             labelWidth: 150,
             defaultType: 'textfield',
             items: [ {
