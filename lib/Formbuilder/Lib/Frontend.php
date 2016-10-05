@@ -3,8 +3,8 @@
 namespace Formbuilder\Lib;
 
 use Pimcore\Tool;
-use Formbuilder\Model\Form;
-use Formbuilder\Lib\Builder;
+use Formbuilder\Model;
+
 
 use Formbuilder\Zend\TwitterHorizontalForm;
 use Formbuilder\Zend\TwitterVerticalForm;
@@ -209,18 +209,19 @@ class Frontend {
                 $form = $this->getDynamicForm($formId, $locale, $class);
             }
 
-            //correctly set recaptcha to https if request is over https
-            if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
-            {
-                //@fixme: deprecated?
-            }
+
 
             return $form;
         }
         else
         {
-            return false;
+        	// get the form by name
+	        $formclass = new Model\Form();
+	        $id = $formclass->getIdByName($formId);
+	        return $this->getForm($id , $locale,$dynamic,$formClass);
+
         }
+
     }
 
     public function parseFormParams( $params = array(), $form )
