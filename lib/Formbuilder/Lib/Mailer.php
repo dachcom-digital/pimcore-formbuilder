@@ -109,8 +109,8 @@ Class Mailer {
             }
 
             $html .= '<tr>' . "\n";
-            $html .= '<td><strong>' . $label . ':</strong></td>' . "\n";
-            $html .= '<td>' . $data . '</td>' . "\n";
+            $html .= '<td width="20%"><strong>' . $label . ':</strong></td>' . "\n";
+            $html .= '<td width="70%">' . $data . '</td>' . "\n";
             $html .= '</tr>' . "\n";
 
         }

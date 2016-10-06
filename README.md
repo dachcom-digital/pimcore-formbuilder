@@ -87,7 +87,7 @@ If you want to hook into the ajax form events, you may use this example:
 ```javascript
 $('form.ajax-form')
    .on('formbuilder.success', function(ev, message, redirect, $form) {
-         console.log(messages, redirect);
+         console.log(message, redirect);
  }).on('formbuilder.error', function(ev, message, $form) {
          console.log(messages);
  }).on('formbuilder.error-field', function(ev, data, $form) {
