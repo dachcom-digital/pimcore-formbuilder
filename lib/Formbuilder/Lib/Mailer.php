@@ -27,7 +27,11 @@ Class Mailer {
             self::setMailPlaceholders( $attributes['data'], $mail, $disableDefaultMailBody );
             self::setMailRecipients( $attributes['data'], $mailTemplate );
 
-            $mail->setFrom( $mailTemplate->getFrom() );
+            $from = $mailTemplate->getFrom();
+
+            if( !empty($from) ) {
+                $mail->setFrom( $from );
+            }
 
             $mail->addCc( $mailTemplate->getCcAsArray() );
             $mail->addBcc( $mailTemplate->getBccAsArray() );
