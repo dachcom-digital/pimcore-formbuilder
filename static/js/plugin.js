@@ -18,7 +18,7 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
     {
         var user = pimcore.globalmanager.get("user");
 
-        if(user.admin == true) {
+        if(user.isAllowed('formbuilder_permission_settings')) {
             var formBuilderMenu = new Ext.Action({
                 id:"Formbuilder_setting_button",
                 text: t('formBuilder settings'),
