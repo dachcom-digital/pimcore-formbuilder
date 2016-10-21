@@ -27,7 +27,11 @@ Class Mailer {
             self::setMailPlaceholders( $attributes['data'], $mail, $disableDefaultMailBody );
             self::setMailRecipients( $attributes['data'], $mailTemplate );
 
-            $mail->setFrom( $mailTemplate->getFrom() );
+            $from = $mailTemplate->getFrom();
+
+            if( !empty($from) ) {
+                $mail->setFrom( $from );
+            }
 
             $mail->addCc( $mailTemplate->getCcAsArray() );
             $mail->addBcc( $mailTemplate->getBccAsArray() );
@@ -109,8 +113,8 @@ Class Mailer {
             }
 
             $html .= '<tr>' . "\n";
-            $html .= '<td><strong>' . $label . ':</strong></td>' . "\n";
-            $html .= '<td>' . $data . '</td>' . "\n";
+            $html .= '<td width="20%"><strong>' . $label . ':</strong></td>' . "\n";
+            $html .= '<td width="70%">' . $data . '</td>' . "\n";
             $html .= '</tr>' . "\n";
 
         }
