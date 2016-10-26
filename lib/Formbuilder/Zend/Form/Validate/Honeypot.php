@@ -1,11 +1,11 @@
 <?php
 
-class Formbuilder_Validate_Honeypot extends Zend_Validate_Abstract
+class Formbuilder_Validate_Honeypot extends \Zend_Validate_Abstract
 {
     const SPAM = 'spam';
 
     protected $_messageTemplates = array(
-        self::SPAM => "I think you're a spambot. Sorry."
+        self::SPAM => 'I think you\'re a spambot. Sorry.'
     );
 
     public function isValid($value, $context = null)
@@ -13,11 +13,13 @@ class Formbuilder_Validate_Honeypot extends Zend_Validate_Abstract
         $value = (string)$value;
         $this->_setValue($value);
 
-        if(is_string($value) and $value == ''){
-            return true;
+        if(is_string($value) && $value == '')
+        {
+            return TRUE;
         }
 
         $this->_error(self::SPAM);
-        return false;
+
+        return FALSE;
     }
 }

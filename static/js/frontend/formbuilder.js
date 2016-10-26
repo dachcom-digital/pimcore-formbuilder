@@ -28,6 +28,61 @@ var formBuilder = (function () {
 
         loadForms: function() {
 
+            //add multiuploads
+            $('form.formbuilder.ajax-form .formbuilder-html5File').each(function() {
+
+                var $el = $(this),
+                    $form = $el.closest('form'),
+                    $submitButton = $form.find('input[type="submit"]'),
+                    formId = $form.find('input[type="hidden"][name="_formId"]').val();
+
+                $el.fineUploader({
+                    //uploaderType: 'basic',
+                    debug: true,
+                    template: $el.find('.formbuilder-template:first'),
+                    element: $el.find('.formbuilder-content:first'),
+                    //button: $form.find('input[type="submit"]'),
+
+                    chunking: {
+                        enabled: true,
+                        concurrent: {
+                            enabled: true
+                        },
+                        success: {
+                            endpoint: "/plugin/Formbuilder/ajax/chunk-done"
+                        }
+                    },
+
+                    request: {
+                        endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
+                        params: {
+                            _formId: formId
+                        }
+                    },
+                    deleteFile: {
+                        enabled: true,
+                        endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
+                        params: {
+                            _formId: formId
+                        }
+                    },
+                    validation: {
+                        allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'zip', 'sql']
+                    },
+
+                    callbacks: {
+
+                        onUpload : function() {
+                            $submitButton.attr('disabled', 'disabled');
+                        },
+                        onComplete : function() {
+                            $submitButton.attr('disabled', false);
+                        }
+                    }
+                });
+
+            });
+
             /*
 
              // Use those Events in your Project!
@@ -45,17 +100,22 @@ var formBuilder = (function () {
             $('form.formbuilder.ajax-form').on('submit', function( ev ) {
 
                 var $form = $(this),
-                    $btns = $form.find('.btn');
+                    $btns = $form.find('.btn'),
+                    formData = new FormData( $form[0] ); //$form.serialize();
 
                 ev.preventDefault();
 
                 $btns.attr('disabled', 'disabled');
 
+                $form.find('.qq-upload-delete').hide();
+
                 $.ajax({
                     type: 'POST',
                     url: '/plugin/Formbuilder/ajax/parse',
-                    data: $form.serialize(),
-                    success: function (response) {
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function ( response ) {
 
                         $btns.attr('disabled', false);
 
@@ -63,6 +123,8 @@ var formBuilder = (function () {
                         $form.find('.form-group').removeClass('has-error');
 
                         if(response.success === false ) {
+
+                            $form.find('.qq-upload-delete').show();
 
                             if( response.validationData !== false ) {
 
@@ -108,6 +170,8 @@ var formBuilder = (function () {
 
                             $form.trigger('formbuilder.success', [ response.message, response.redirect, $form ]);
                             $form.find('input[type=text], textarea').val('');
+
+                            $('form').find('.formbuilder-html5File').fineUploader('reset');
 
                             if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
                                 grecaptcha.reset();

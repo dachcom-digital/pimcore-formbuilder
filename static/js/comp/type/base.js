@@ -916,7 +916,7 @@ Formbuilder.comp.type.base = Class.create({
 
         } else {
 
-            this.markInvalid(t("thePath doesn't exist"));
+            this.markInvalid( t("Path doesn't exist") );
 
         }
 

@@ -11,10 +11,19 @@ trait Form
     {
         $recaptchaPath = realpath(PIMCORE_PATH . '/../vendor/cgsmith/zf1-recaptcha-2/src');
 
-        if (null !== $this->getView()) {
+        if ($this->getView() !== NULL)
+        {
             $this->getView()->addHelperPath($recaptchaPath . '/Cgsmith/View/Helper', 'Cgsmith\\View\\Helper\\');
+            $this->getView()->addHelperPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/lib/Formbuilder/Zend/View/Helper', 'Formbuilder\\Zend\\View\\Helper\\');
+
             $this->getView()->headScript()->appendFile('//www.google.com/recaptcha/api.js?hl=' . $this->getView()->language);
         }
+
+        $this->addPrefixPath(
+            'Formbuilder\\Zend\\Form\\Element',
+            PIMCORE_PLUGINS_PATH . '/Formbuilder/lib/Formbuilder/Zend/Form/Element/',
+            \Zend_Form::ELEMENT
+        );
 
         $this->addPrefixPath(
             'Cgsmith\\Form\\Element',
@@ -50,59 +59,77 @@ trait Form
      */
     public function isValid($data, $suppressCaptchaValidation = NULL)
     {
-        if (!is_array($data)) {
+        if (!is_array($data))
+        {
             throw new \Zend_Form_Exception(__METHOD__ . ' expects an array');
         }
 
         $translator = $this->getTranslator();
-        $valid      = true;
-        $eBelongTo  = null;
+        $valid      = TRUE;
+        $eBelongTo  = NULL;
 
-        if ($this->isArray()) {
+        if ($this->isArray())
+        {
             $eBelongTo = $this->getElementsBelongTo();
             $data = $this->_dissolveArrayValue($data, $eBelongTo);
         }
-        $context = $data;
-        /** @var \Zend_Form_Element $element */
-        foreach ($this->getElements() as $key => $element) {
 
+        $context = $data;
+
+        /** @var \Zend_Form_Element $element */
+        foreach ($this->getElements() as $key => $element)
+        {
             if( !is_null( $suppressCaptchaValidation ) && $key == $suppressCaptchaValidation)
             {
                 continue;
             }
 
-            if (null !== $translator && $this->hasTranslator()
-                && !$element->hasTranslator()) {
+            if ($translator !== NULL && $this->hasTranslator() && !$element->hasTranslator())
+            {
                 $element->setTranslator($translator);
             }
+
             $check = $data;
-            if (($belongsTo = $element->getBelongsTo()) !== $eBelongTo) {
+
+            if (($belongsTo = $element->getBelongsTo()) !== $eBelongTo)
+            {
                 $check = $this->_dissolveArrayValue($data, $belongsTo);
             }
-            if (!isset($check[$key])) {
+
+            if (!isset($check[$key]))
+            {
                 $valid = $element->isValid(null, $context) && $valid;
-            } else {
+            }
+            else
+            {
                 $valid = $element->isValid($check[$key], $context) && $valid;
                 $data = $this->_dissolveArrayUnsetKey($data, $belongsTo, $key);
             }
         }
+
         /** @var \Zend_Form_SubForm $form */
-        foreach ($this->getSubForms() as $key => $form) {
-            if (null !== $translator && $this->hasTranslator()
-                && !$form->hasTranslator()) {
+        foreach ($this->getSubForms() as $key => $form)
+        {
+            if ($translator !== NULL && $this->hasTranslator() && !$form->hasTranslator())
+            {
                 $form->setTranslator($translator);
             }
-            if (isset($data[$key]) && !$form->isArray()) {
+
+            if (isset($data[$key]) && !$form->isArray())
+            {
                 $valid = $form->isValid($data[$key]) && $valid;
-            } else {
+            }
+            else
+            {
                 $valid = $form->isValid($data) && $valid;
             }
         }
 
         $this->_errorsExist = !$valid;
 
-        if ($this->_errorsForced) {
-            return false;
+        if ($this->_errorsForced)
+        {
+            return FALSE;
         }
 
         return $valid;

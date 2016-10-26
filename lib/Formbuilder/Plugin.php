@@ -63,6 +63,21 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         $csv = PIMCORE_PLUGINS_PATH . '/Formbuilder/install/translations/data.csv';
         Admin::importTranslationsFromFile($csv, true, \Pimcore\Tool\Admin::getLanguages());
 
+        //create folder for upload storage!
+        $folderName = 'formdata';
+
+        if( !\Pimcore\Model\Asset\Folder::getByPath('/' . $folderName) instanceof \Pimcore\Model\Asset\Folder)
+        {
+            $folder = new \Pimcore\Model\Asset\Folder();
+            $folder->setCreationDate ( time() );
+            $folder->setLocked(true);
+            $folder->setUserOwner (1);
+            $folder->setUserModification (0);
+            $folder->setParentId(1);
+            $folder->setFilename($folderName);
+            $folder->save();
+        }
+
         if (self::isInstalled())
         {
             $statusMessage = 'Plugin has been successfully installed.<br>Please reload pimcore!';

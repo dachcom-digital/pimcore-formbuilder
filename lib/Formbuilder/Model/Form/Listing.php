@@ -14,7 +14,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function isValidOrderKey($key)
     {
-        return true;
+        return TRUE;
     }
 
     /**
@@ -31,9 +31,11 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getData()
     {
-        if ($this->data === null) {
+        if ($this->data === NULL)
+        {
             $this->load();
         }
+
         return $this->data;
     }
 }

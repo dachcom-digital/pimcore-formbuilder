@@ -4,21 +4,35 @@ namespace Formbuilder\Lib;
 
 use Pimcore\Tool;
 use Formbuilder\Model\Form;
-use Formbuilder\Lib\Builder;
 
 use Formbuilder\Zend\TwitterHorizontalForm;
 use Formbuilder\Zend\TwitterVerticalForm;
 
 class Frontend {
 
+    /**
+     * @var null
+     */
     protected $languages = NULL;
 
+    /**
+     * @var null
+     */
     protected $config = NULL;
 
+    /**
+     * @var null
+     */
     protected $recaptchaV2Key = NULL;
 
+    /**
+     * @var string
+     */
     protected static $defaultFormClass = 'Zend_Form';
 
+    /**
+     * @var string
+     */
     protected $formClass = 'Formbuilder\Zend\DefaultForm';
 
     public static function setDefaultFormClass($defaultFormClass)
@@ -62,9 +76,9 @@ class Frontend {
 
     protected function getStaticForm($id, $locale, $className = 'DefaultForm')
     {
-        if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini"))
+        if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $id . '.ini'))
         {
-            $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $id . ".ini", 'config');
+            $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . '/form/form_' . $id . '.ini', 'config');
 
             $formData = $this->parseFormData( $this->config->form->toArray() );
 
@@ -81,16 +95,16 @@ class Frontend {
 
     protected function getDynamicForm($id, $locale, $className = 'DefaultForm')
     {
-        if (file_exists(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json"))
+        if (file_exists(FORMBUILDER_DATA_PATH . '/main_' . $id . '.json'))
         {
-            $this->config = new \Zend_Config_Json(FORMBUILDER_DATA_PATH . "/main_" . $id . ".json");
+            $this->config = new \Zend_Config_Json(FORMBUILDER_DATA_PATH . '/main_' . $id . '.json');
             $datas = $this->config->toArray();
 
             $builder = new Builder();
             $builder->setDatas($datas);
             $builder->setLocale($locale);
-            $array = $builder->buildDynamicForm();
 
+            $array = $builder->buildDynamicForm();
             $formData = $this->parseFormData( $array );
 
             $form = $this->createInstance($formData, $className);
@@ -108,7 +122,7 @@ class Frontend {
     {
         $reflClass = new \ReflectionClass($className);
 
-        if(!($reflClass->isSubclassOf('Zend_Form') || $reflClass->name == 'Zend_Form'))
+        if( !($reflClass->isSubclassOf('Zend_Form') || $reflClass->name == 'Zend_Form') )
         {
             throw new \Exception('Form class must be a subclass of "Zend_Form"');
         }
@@ -116,18 +130,18 @@ class Frontend {
         return $reflClass->newInstance($config);
     }
 
-    protected function initTranslation(\Zend_Form $form, $id, $locale = null)
+    protected function initTranslation(\Zend_Form $form, $id, $locale = NULL)
     {
-        if($locale === null)
+        if($locale === NULL)
         {
             $locale = \Zend_Locale::findLocale();
         }
 
         $trans = $this->translateForm($id, $locale);
 
-        if ($locale != null && $locale != "")
+        if ($locale != NULL && $locale != '')
         {
-            if(null === $form->getTranslator())
+            if($form->getTranslator() === NULL)
             {
                 $form->setTranslator($trans);
             }
@@ -138,15 +152,15 @@ class Frontend {
         }
     }
 
-    public function getTwitterForm($formId, $locale = null,$horizontal=true)
+    public function getTwitterForm($formId, $locale = NULL, $horizontal = TRUE)
     {
         $this->getLanguages();
 
-        if (is_numeric($formId) == true)
+        if (is_numeric($formId) == TRUE)
         {
-            if (file_exists(FORMBUILDER_DATA_PATH . "/form/form_" . $formId . ".ini"))
+            if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $formId . '.ini'))
             {
-                $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . "/form/form_" . $formId . ".ini", 'config');
+                $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . '/form/form_' . $formId . '.ini', 'config');
 
                 $trans = $this->translateForm($formId, $locale);
 
@@ -154,7 +168,7 @@ class Frontend {
 
                 $formData = $this->parseFormData( $this->config->form->toArray() );
 
-                if($horizontal==true)
+                if($horizontal == TRUE)
                 {
                     $form = new TwitterHorizontalForm($formData);
                 }
@@ -163,9 +177,9 @@ class Frontend {
                     $form = new TwitterVerticalForm($formData);
                 }
 
-                $form->setDisableTranslator(true);
+                $form->setDisableTranslator(TRUE);
 
-                if ($locale != null && $locale != "")
+                if ($locale != NULL && $locale != '')
                 {
                     $form->setTranslator($trans);
                 }
@@ -175,12 +189,12 @@ class Frontend {
             }
             else
             {
-                return false;
+                return FALSE;
             }
         }
         else
         {
-            return false;
+            return FALSE;
         }
     }
 
@@ -193,14 +207,14 @@ class Frontend {
      * @param string Custom form class
      * @return \Formbuilder\Zend\DefaultForm
      */
-    public function getForm($formId, $locale = null, $dynamic = false, $formClass = null)
+    public function getForm($formId, $locale = NULL, $dynamic = FALSE, $formClass = NULL)
     {
         $this->getLanguages();
 
-        if (is_numeric($formId) == true)
+        if (is_numeric($formId) == TRUE)
         {
             $class = $formClass ?: $this->getFormClass();
-            if ($dynamic == false)
+            if ($dynamic == FALSE)
             {
                 $form = $this->getStaticForm($formId, $locale, $class);
             }
@@ -219,7 +233,7 @@ class Frontend {
         }
         else
         {
-            return false;
+            return FALSE;
         }
     }
 
@@ -302,8 +316,8 @@ class Frontend {
             )
         );
 
-        if( $params['mailTemplate'] instanceof \Pimcore\Model\Document\Email ) {
-
+        if( $params['mailTemplate'] instanceof \Pimcore\Model\Document\Email )
+        {
             $form->addElement(
                 'hidden',
                 '_mailTemplate',
@@ -312,7 +326,6 @@ class Frontend {
                     'value' => $params['mailTemplate']->getId()
                 )
             );
-
         }
 
         $configData = $this->config->toArray();
@@ -333,8 +346,8 @@ class Frontend {
 
     protected function translateForm( $id, $locale)
     {
-        $trans = new \Zend_Translate_Adapter_Csv(array("delimiter" => ",", "disableNotices" => true));
-        $file = FORMBUILDER_DATA_PATH . "/lang/form_" . $id . "_" . $locale . ".csv";
+        $trans = new \Zend_Translate_Adapter_Csv(array('delimiter' => ',', 'disableNotices' => true));
+        $file = FORMBUILDER_DATA_PATH . '/lang/form_' . $id . '_' . $locale . '.csv';
 
         if (file_exists($file))
         {
@@ -342,15 +355,16 @@ class Frontend {
                 array(
                     'content' => $file,
                     'locale' => $locale
-                ));
+                )
+            );
         }
 
-        $file = FORMBUILDER_DEFAULT_ERROR_PATH . "/" . $locale . "/Zend_Validate.php";
+        $file = FORMBUILDER_DEFAULT_ERROR_PATH . '/' . $locale . '/Zend_Validate.php';
 
-        if (file_exists($file))
+        if ( file_exists($file) )
         {
-            $arrTrans = new \Zend_Translate_Adapter_Array( array("disableNotices" => true)) ;
-            $arrTrans->addTranslation(array( "content" => $file, "locale" => $locale));
+            $arrTrans = new \Zend_Translate_Adapter_Array( array('disableNotices' => TRUE));
+            $arrTrans->addTranslation(array( 'content' => $file, 'locale' => $locale));
             $trans->addTranslation($arrTrans);
         }
 
@@ -360,8 +374,8 @@ class Frontend {
 
     protected function parseFormData( $form )
     {
-        foreach( $form['elements'] as $elementName => &$element) {
-
+        foreach( $form['elements'] as $elementName => &$element)
+        {
             if( !is_array( $element ) )
             {
                 continue;
@@ -377,7 +391,7 @@ class Frontend {
             $element['options']['class'] = $classes . ' element-' . $elementName;
 
             //rearrange reCaptcha (v2) config
-            if( $element['type'] == 'captcha' && $element['options']['captcha'] == 'reCaptcha' && isset( $element['options']['captchaOptions'] ) )
+            if( $element['type'] === 'captcha' && $element['options']['captcha'] == 'reCaptcha' && isset( $element['options']['captchaOptions'] ) )
             {
                 $captchaOptions = $element['options']['captchaOptions'];
 
@@ -391,9 +405,31 @@ class Frontend {
                 unset( $element['options']['captchaOptions']);
 
             }
+            //set right upload options
+            else if( $element['type'] === 'file')
+            {
+                $element['options']['destination'] = PIMCORE_WEBSITE_PATH . '/' . ltrim($element['options']['destination'] , '/');
 
+                //if it's a multifile, use a javascript library!
+                if( (int) $element['options']['multiFile'] === 1 )
+                {
+                    $element['type'] = 'html5File';
+
+                    if( !isset( $element['options']['validators'] ) )
+                    {
+                        $element['options']['validators'] = array();
+                    }
+
+                    $element['options']['validators']['html5file'] = array(
+                        'validator' => 'Html5File',
+                        'options' => array()
+                    );
+
+                }
+
+            }
             //allow "please select" field in multi select element
-            if( $element['type'] == 'select' && isset( $element['options']['multiOptions']))
+            else if( $element['type'] === 'select' && isset( $element['options']['multiOptions'] ))
             {
                 $realOptions = array();
                 foreach( $element['options']['multiOptions'] as $optionKey => $optionValue)

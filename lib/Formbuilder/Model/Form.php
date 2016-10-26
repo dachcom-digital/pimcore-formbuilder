@@ -30,7 +30,7 @@ class Form extends Model\AbstractModel
 
         if ($id < 1)
         {
-            return null;
+            return NULL;
         }
 
         $obj = new self;
