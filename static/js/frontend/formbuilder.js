@@ -50,15 +50,23 @@ var formBuilder = (function () {
                     $submitButton = $form.find('input[type="submit"]'),
                     formId = $form.find('input[type="hidden"][name="_formId"]').val(),
                     $template = $el.find('.formbuilder-template:first'),
-                    $messages = $template.find('input[name="js-messages"]').val(),
-                    $element = $el.find('.formbuilder-content:first');
+                    $element = $el.find('.formbuilder-content:first'),
+                    messages = $template.find('input[name="js-messages"]').val();
 
+                messages = jQuery.parseJSON( messages );
 
                 $el.fineUploader({
                     debug: false,
                     template: $template,
                     element: $element,
-                    messages: jQuery.parseJSON( $messages ),
+                    messages: messages.core,
+
+                    text: {
+                        formatProgress: messages.text.formatProgress,
+                        failUpload: messages.text.failUpload,
+                        waitingForResponse: messages.text.waitingForResponse,
+                        paused: messages.text.paused
+                    },
 
                     chunking: {
                         enabled: true,
@@ -78,6 +86,10 @@ var formBuilder = (function () {
                     },
 
                     deleteFile: {
+                        confirmMessage: messages.delete.confirmMessage,
+                        deletingStatusText: messages.delete.deletingStatusText,
+                        deletingFailedText: messages.delete.deletingFailedText,
+
                         enabled: true,
                         endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
                         params: {

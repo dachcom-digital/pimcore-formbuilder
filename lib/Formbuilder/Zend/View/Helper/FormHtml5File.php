@@ -20,7 +20,7 @@ class FormHtml5File extends \Zend_View_Helper_FormElement
             $sizeLimit = ( $attribs['maxFileSize'] * 1024 * 1024 );
         }
 
-        $messages = array(
+        $coreMessages = array(
             'typeError'                     => $this->view->translate('{file} has an invalid extension. Valid extension(s): {extensions}.'),
             'sizeError'                     => $this->view->translate('{file} is too large, maximum file size is {sizeLimit}.'),
             'minSizeError'                  => $this->view->translate('{file} is too small, minimum file size is {minSizeLimit}.'),
@@ -35,6 +35,21 @@ class FormHtml5File extends \Zend_View_Helper_FormElement
             'onLeave'                       => $this->view->translate('The files are being uploaded, if you leave now the upload will be canceled.'),
             'unsupportedBrowserIos8Safari'  => $this->view->translate('Unrecoverable error - this browser does not permit file uploading of any kind due to serious bugs in iOS8 Safari. Please use iOS8 Chrome until Apple fixes these issues.')
         );
+
+        $deleteMessages = array(
+            'confirmMessage'                => $this->view->translate('Are you sure you want to delete {filename}?'),
+            'deletingStatusText'            => $this->view->translate('Deleting...'),
+            'deletingFailedText'            => $this->view->translate('Delete failed')
+        );
+
+        $interfacesText = array(
+            'formatProgress'                => $this->view->translate('{percent}% of {total_size}'),
+            'failUpload'                    => $this->view->translate('Upload failed'),
+            'waitingForResponse'            => $this->view->translate('Processing...'),
+            'paused'                        => $this->view->translate('Paused')
+        );
+
+        $messages = array( 'core' => $coreMessages, 'delete' => $deleteMessages, 'text' => $interfacesText );
 
         return $this->view->partial('formbuilder/form/elements/html5file/default.php', array( 'message' => $messages, 'sizeLimit' => $sizeLimit, 'allowedExtensions' => $allowedExtensions ));
     }
