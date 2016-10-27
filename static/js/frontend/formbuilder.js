@@ -28,61 +28,6 @@ var formBuilder = (function () {
 
         loadForms: function() {
 
-            //add multiuploads
-            $('form.formbuilder.ajax-form .formbuilder-html5File').each(function() {
-
-                var $el = $(this),
-                    $form = $el.closest('form'),
-                    $submitButton = $form.find('input[type="submit"]'),
-                    formId = $form.find('input[type="hidden"][name="_formId"]').val();
-
-                $el.fineUploader({
-                    //uploaderType: 'basic',
-                    debug: true,
-                    template: $el.find('.formbuilder-template:first'),
-                    element: $el.find('.formbuilder-content:first'),
-                    //button: $form.find('input[type="submit"]'),
-
-                    chunking: {
-                        enabled: true,
-                        concurrent: {
-                            enabled: true
-                        },
-                        success: {
-                            endpoint: "/plugin/Formbuilder/ajax/chunk-done"
-                        }
-                    },
-
-                    request: {
-                        endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
-                        params: {
-                            _formId: formId
-                        }
-                    },
-                    deleteFile: {
-                        enabled: true,
-                        endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
-                        params: {
-                            _formId: formId
-                        }
-                    },
-                    validation: {
-                        allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'zip', 'sql']
-                    },
-
-                    callbacks: {
-
-                        onUpload : function() {
-                            $submitButton.attr('disabled', 'disabled');
-                        },
-                        onComplete : function() {
-                            $submitButton.attr('disabled', false);
-                        }
-                    }
-                });
-
-            });
-
             /*
 
              // Use those Events in your Project!
@@ -96,6 +41,68 @@ var formBuilder = (function () {
              });
 
              */
+
+            //add multiuploads
+            $('form.formbuilder.ajax-form .formbuilder-html5File').each(function() {
+
+                var $el = $(this),
+                    $form = $el.closest('form'),
+                    $submitButton = $form.find('input[type="submit"]'),
+                    formId = $form.find('input[type="hidden"][name="_formId"]').val(),
+                    $template = $el.find('.formbuilder-template:first'),
+                    $messages = $template.find('input[name="js-messages"]').val(),
+                    $element = $el.find('.formbuilder-content:first');
+
+
+                $el.fineUploader({
+                    debug: false,
+                    template: $template,
+                    element: $element,
+                    messages: jQuery.parseJSON( $messages ),
+
+                    chunking: {
+                        enabled: true,
+                        concurrent: {
+                            enabled: true
+                        },
+                        success: {
+                            endpoint: '/plugin/Formbuilder/ajax/chunk-done'
+                        }
+                    },
+
+                    request: {
+                        endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
+                        params: {
+                            _formId: formId
+                        }
+                    },
+
+                    deleteFile: {
+                        enabled: true,
+                        endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
+                        params: {
+                            _formId: formId
+                        }
+                    },
+
+                    validation: {
+                        sizeLimit: $element.data('size-limit'),
+                        allowedExtensions: $element.data('allowed-extensions').split(',')
+                    },
+
+                    callbacks: {
+
+                        onUpload : function() {
+                            $submitButton.attr('disabled', 'disabled');
+                        },
+                        onComplete : function() {
+                            $submitButton.attr('disabled', false);
+                        }
+                    }
+
+                });
+
+            });
 
             $('form.formbuilder.ajax-form').on('submit', function( ev ) {
 

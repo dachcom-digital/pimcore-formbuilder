@@ -1,7 +1,6 @@
 /*
-Bootstrap 3 patch
+    Bootstrap 3 patch
 */
-
 .form-vertical label + .radio,
 .form-vertical label + .checkbox {
     margin-top: 0;
@@ -19,4 +18,29 @@ input[type=range]:after {
 }
 .hon-hide {
     display:none !important;
+}
+
+/*
+    FineUploader Overrides
+*/
+.formbuilder-template {
+    display:none;
+}
+
+.qq-uploader {
+    border:1px solid #eee;
+    border-radius:0;
+    margin:0 0 20px 0;
+}
+
+.qq-upload-button {
+    width:auto;
+}
+
+ul.qq-upload-list {
+
+}
+
+ul.qq-upload-list li {
+    background:none;
 }

@@ -6,6 +6,8 @@ use Pimcore\Model\Tool\Setup;
 use Pimcore\Model\Translation\Admin;
 use Pimcore\API\Plugin as PluginLib;
 
+use Formbuilder\Tool\File;
+
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
     public function __construct($jsPaths = null, $cssPaths = null, $alternateIndexDir = null)
@@ -18,14 +20,55 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         define('FORMBUILDER_DATA_PATH', PIMCORE_WEBSITE_VAR . '/formbuilder');
     }
 
+    public function init()
+    {
+        parent::init();
+
+        \Pimcore::getEventManager()->attach('system.maintenance', array($this, 'maintenanceJob'));
+    }
+
     public function preDispatch($e)
     {
         $e->getTarget()->registerPlugin(new Controller\Plugin\Frontend());
     }
 
+    /**
+     * Hook called when maintenance script is called
+     */
+    public function maintenanceJob()
+    {
+        if ( !self::isInstalled() )
+        {
+            return FALSE;
+        }
+
+        File::setupTmpFolder();
+
+        foreach( File::getFolderContent( File::getFilesFolder(), 86400 ) as $file )
+        {
+            \Pimcore\Logger::log('Remove formbuilder file: ' . $file);
+            File::removeDir($file);
+        }
+
+        foreach( File::getFolderContent( File::getChunksFolder(), 86400 ) as $file )
+        {
+            \Pimcore\Logger::log('Remove formbuilder file: ' . $file);
+            File::removeDir($file);
+        }
+
+        foreach( File::getFolderContent( File::getZipFolder(), 86400 ) as $file )
+        {
+            \Pimcore\Logger::log('Remove formbuilder file: ' . $file);
+            File::removeDir($file);
+        }
+
+        return TRUE;
+
+    }
+
     public static function needsReloadAfterInstall()
     {
-        return false;
+        return FALSE;
     }
 
     public static function uninstall()
@@ -99,7 +142,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
         try
         {
-            $result = $db->query("SELECT * FROM `formbuilder_forms`") or die ("table formbuilder_forms doesn't exist.");
+            $result = $db->query("SELECT * FROM `formbuilder_forms`") or die ('Table formbuilder_forms doesn\'t exist.');
         }
         catch (\Zend_Db_Statement_Exception $e)
         {

@@ -15,30 +15,10 @@
 
 namespace Formbuilder\Lib;
 
+use \Formbuilder\Tool\File;
 use \Pimcore\Model\Asset;
 
 class FileHandler {
-
-    /**
-     * @var null
-     */
-    private $tmpFolder = NULL;
-
-    /**
-     *  If you want to use the chunking/resume feature, specify the folder to temporarily save parts.
-     * @var string
-     */
-    private $chunksFolder = 'chunks';
-
-    /**
-     * @var string
-     */
-    private $filesFolder = 'files';
-
-    /**
-     * @var string
-     */
-    private $zipFolder = 'zip';
 
     /**
      * Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
@@ -76,7 +56,7 @@ class FileHandler {
 
     public function __construct()
     {
-        $this->setupTmpFolder();
+        File::setupTmpFolder();
     }
 
     /**
@@ -131,9 +111,9 @@ class FileHandler {
 
         $name = preg_replace('/[^a-zA-Z0-9]+/', '', $this->getName());
 
-        $targetFolder = $this->chunksFolder . DIRECTORY_SEPARATOR . $uuid;
+        $targetFolder = File::getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
         $totalParts = isset($_REQUEST['qqtotalparts']) ? (int) $_REQUEST['qqtotalparts'] : 1;
-        $targetPath = join(DIRECTORY_SEPARATOR, array($this->filesFolder, $uuid, $name));
+        $targetPath = join(DIRECTORY_SEPARATOR, array(File::getFilesFolder(), $uuid, $name));
         $this->uploadName = $name;
 
         if ( !file_exists($targetPath) )
@@ -183,7 +163,7 @@ class FileHandler {
      */
     public function handleUpload()
     {
-        if (is_writable($this->chunksFolder) && 1 == mt_rand(1, 1/$this->chunksCleanupProbability))
+        if (is_writable( File::getChunksFolder() ) && 1 == mt_rand(1, 1/$this->chunksCleanupProbability))
         {
             // Run garbage collection
             $this->cleanupChunks();
@@ -197,7 +177,7 @@ class FileHandler {
             return array( 'error' => 'Server error. Increase post_max_size and upload_max_filesize to ' . $neededRequestSize);
         }
 
-        if ( $this->isInaccessible( $this->filesFolder ) )
+        if ( $this->isInaccessible( File::getFilesFolder() ) )
         {
             return array('error' => 'Server error. Uploads directory isn\'t writable');
         }
@@ -269,16 +249,16 @@ class FileHandler {
         if ($totalParts > 1)
         {
             # chunked upload
-            $chunksFolder = $this->chunksFolder;
+            $chunksFolder = File::getChunksFolder();
             $partIndex = (int)$_REQUEST['qqpartindex'];
 
-            if (!is_writable($chunksFolder) && !is_executable($this->filesFolder))
+            if (!is_writable($chunksFolder) && !is_executable(File::getFilesFolder()))
             {
                 return array('error' => 'Server error. Chunks directory isn\'t writable or executable.');
             }
 
-            $targetFolder = $this->chunksFolder . DIRECTORY_SEPARATOR . $uuid;
-            if (!file_exists($targetFolder))
+            $targetFolder = File::getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
+            if ( !is_dir($targetFolder) )
             {
                 mkdir($targetFolder, 0777, TRUE);
             }
@@ -296,7 +276,7 @@ class FileHandler {
         else
         {
             # non-chunked upload
-            $target = join(DIRECTORY_SEPARATOR, array($this->filesFolder, $uuid, $name));
+            $target = join(DIRECTORY_SEPARATOR, array(File::getFilesFolder(), $uuid, $name));
             if ($target)
             {
                 $this->uploadName = basename($target);
@@ -316,30 +296,30 @@ class FileHandler {
                 }
             }
 
-            return array('error'=> 'Could not save uploaded file.' . 'The upload was cancelled, or server error encountered');
+            return array('error'=> 'Could not save uploaded file. The upload was cancelled, or server error encountered');
         }
 
     }
 
     /**
      * Process a delete.
-     * @params string $name Overwrites the name of the file.
+     * @params integer $uuid
      *
      * @return array
      */
     public function handleDelete( $uuid )
     {
-        if ($this->isInaccessible( $this->filesFolder ))
+        if( $this->isInaccessible( File::getFilesFolder() ) )
         {
             return array('error' => 'Server error. Uploads directory isn\'t writable' . ((!$this->isWindows()) ? ' or executable.' : '.'));
         }
 
-        $targetFolder = $this->filesFolder;
+        $targetFolder = File::getFilesFolder();
         $target = join(DIRECTORY_SEPARATOR, array($targetFolder, $uuid));
 
-        if (is_dir($target))
+        if( is_dir($target) )
         {
-            $this->removeDir($target);
+            File::removeDir($target);
 
             return array(
 
@@ -367,7 +347,7 @@ class FileHandler {
      *
      * @return bool|null|Asset
      */
-    public function createZipAsset( $data, $formName, $templateId)
+    public function createZipAsset( $data, $formName, $templateId )
     {
         if( !is_array( $data ) )
         {
@@ -379,7 +359,7 @@ class FileHandler {
         //Find all Files!
         foreach( $data as $folderName => $fileName )
         {
-            $fileDir = $this->filesFolder . '/' . $folderName;
+            $fileDir = File::getFilesFolder() . '/' . $folderName;
             if( is_dir( $fileDir ) )
             {
                 $dirFiles = glob($fileDir . '/*');
@@ -399,7 +379,7 @@ class FileHandler {
         }
 
         $zipFileName = uniqid('form-') . '.zip';
-        $zipPath = $this->zipFolder . '/' . $zipFileName;
+        $zipPath = File::getZipFolder() . '/' . $zipFileName;
 
         try
         {
@@ -553,47 +533,23 @@ class FileHandler {
      */
     protected function cleanupChunks()
     {
-        foreach (scandir($this->chunksFolder) as $item)
+        foreach (scandir( File::getChunksFolder() ) as $item)
         {
             if ($item == '.' || $item == '..')
                 continue;
 
-            $path = $this->chunksFolder.DIRECTORY_SEPARATOR . $item;
+            $path = File::getChunksFolder() . DIRECTORY_SEPARATOR . $item;
 
             if (!is_dir($path))
                 continue;
 
             if (time() - filemtime($path) > $this->chunksExpireIn)
             {
-                $this->removeDir($path);
+                File::removeDir($path);
             }
         }
     }
 
-    /**
-     * Removes a directory and all files contained inside
-     * @param string $dir
-     */
-    protected function removeDir($dir)
-    {
-        foreach (scandir($dir) as $item)
-        {
-            if ($item == '.' || $item == '..')
-                continue;
-
-            if (is_dir($item))
-            {
-                $this->removeDir($item);
-            }
-            else
-            {
-                unlink(join(DIRECTORY_SEPARATOR, array($dir, $item)));
-            }
-        }
-
-        rmdir($dir);
-
-    }
 
     /**
      * Converts a given size with units to bytes.
@@ -647,38 +603,4 @@ class FileHandler {
         $isWin = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
         return $isWin;
     }
-
-    protected function setupTmpFolder()
-    {
-        $this->tmpFolder = PIMCORE_TEMPORARY_DIRECTORY . '/' . 'formbuilder-cache';
-        $this->chunksFolder = $this->tmpFolder . '/' . 'chunks';
-        $this->filesFolder = $this->tmpFolder . '/' . 'files';
-        $this->zipFolder = $this->tmpFolder . '/' . 'zip';
-
-        if( !is_dir( $this->tmpFolder ) )
-        {
-            mkdir( $this->tmpFolder );
-        }
-
-        if( !is_dir( $this->chunksFolder ) )
-        {
-            //make subfolder for files
-            mkdir( $this->chunksFolder );
-        }
-
-        if( !is_dir( $this->filesFolder ) )
-        {
-            //make subfolder for chunks
-            mkdir( $this->filesFolder );
-        }
-
-        if( !is_dir( $this->zipFolder ) )
-        {
-            //make subfolder for zip
-            mkdir( $this->zipFolder );
-        }
-
-        return $this->tmpFolder;
-    }
-
 }

@@ -47,11 +47,35 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                     value: this.datax.maxFileSize
                 },
                 {
+                    xtype: "label",
+                    text: "Max file size will be calculated in MB. Empty or Zero means no Limit!"
+                },
+                {
                     xtype: "checkbox",
                     name: "multiFile",
                     fieldLabel: t("multiFile"),
                     checked: false,
                     value: this.datax.multiFile
+                },
+                {
+                    xtype: "tagfield",
+                    name: "allowedExtensions",
+                    fieldLabel: t("allowedExtensions"),
+                    store: new Ext.data.ArrayStore({
+                        fields: [
+                            "allowedExtensions"
+                        ],
+                        data : [
+
+                        ]
+                    }),
+                    value: this.datax.allowedExtensions,
+                    createNewOnEnter: true,
+                    createNewOnBlur: true,
+                    queryMode: "allowedExtensions",
+                    displayField: "allowedExtensions",
+                    valueField: "allowedExtensions",
+                    hideTrigger : true
                 }
 
             ]
