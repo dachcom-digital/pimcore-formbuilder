@@ -340,6 +340,20 @@ class Frontend {
 
         $form->setAttrib('class', implode(' ', $setFormClasses ) );
 
+        $cmdEv = \Pimcore::getEventManager()->trigger('formbuilder.form.preCreateForm', NULL, ['form' => $form]);
+
+        if ($cmdEv->stopped())
+        {
+            $customForm = $cmdEv->last();
+
+            if( $customForm instanceof \Zend_Form )
+            {
+
+                $form = $customForm;
+            }
+
+        }
+
         return $form;
 
     }
