@@ -348,7 +348,6 @@ class Frontend {
 
             if( $customForm instanceof \Zend_Form )
             {
-
                 $form = $customForm;
             }
 

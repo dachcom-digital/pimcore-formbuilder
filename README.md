@@ -93,3 +93,41 @@ $('form.ajax-form')
  }).on('formbuilder.error-field', function(ev, data, $form) {
          console.log(messages);
 ```
+
+## Events
+
+**formbuilder.form.preCreateForm**  
+Use this Event to manipulate and extend Forms dynamically. 
+
+*Example*
+
+```php
+\Pimcore::getEventManager()->attach(
+    'formbuilder.form.preCreateForm', 
+    function( \Zend_EventManager_Event $e ) 
+    {
+        $form = $e->getParam('form');
+        
+        $frontController = \Zend_Controller_Front::getInstance();
+        $var = $frontController->getRequest()->getParam('getVarOne');
+    
+        if ( !empty( $var) ) 
+        {
+            $form->addElement(
+                'hidden',
+                'getVarOne',
+                [
+                    'label' => 'Get Var One',
+                    'value' => $var,
+                    'order' => '-1'
+                ]
+            );
+    
+        }
+    
+        $e->stopPropagation(true);
+    
+        return $form;
+    }
+);
+```
