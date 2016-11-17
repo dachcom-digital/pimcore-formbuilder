@@ -418,6 +418,15 @@ class Frontend {
                 unset( $element['options']['captchaOptions']);
 
             }
+            //check if image is src
+            else if( $element['type'] === 'image')
+            {
+                if( !isset( $element['options']['useAsInputField'] ) || (int) $element['options']['useAsInputField'] !== 1)
+                {
+                    $element['type'] = 'imageTag';
+                }
+
+            }
             //set right upload options
             else if( $element['type'] === 'file')
             {

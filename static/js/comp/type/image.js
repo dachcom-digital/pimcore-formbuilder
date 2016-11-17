@@ -32,14 +32,52 @@ Formbuilder.comp.type.image = Class.create(Formbuilder.comp.type.base,{
             title: t("This node"),
             collapsible: true,
             defaultType: 'textfield',
-            items:[{
-                xtype: "textfield",
-                name: "image",
-                fieldLabel: t("Image"),
-                anchor: "100%"
-            }
+            items:[
+                {
+                    fieldLabel: t("Image"),
+                    name: "image",
+                    cls: "input_drop_target",
+                    value: this.datax.image,
+                    width: 600,
+                    xtype: "textfield",
+                    listeners: {
+                        "render": function (el) {
+                            new Ext.dd.DropZone(el.getEl(), {
+                                reference: this,
+                                ddGroup: "element",
+                                getTargetFromEvent: function (e) {
+                                    return this.getEl();
+                                }.bind(el),
+                                onNodeOver: function (target, dd, e, data) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                },
+                                onNodeDrop: function (target, dd, e, data) {
+                                    var record = data.records[0],
+                                        data = record.data;
 
-        ]
+                                    if (data.elementType === "asset" && data.type === "image") {
+                                        this.setValue(data.path);
+                                        return true;
+                                    }
+                                    return false;
+                                }.bind(el)
+                            });
+                        }
+                    }
+                },
+                {
+                    xtype: "label",
+                    text: "Only Pimcore Assets (Images) are allowed. Just drag your Asset into the field above."
+                },
+                {
+                    xtype: "checkbox",
+                    name: "useAsInputField",
+                    fieldLabel: t("Use Image as graphical Submit Button (input field)"),
+                    checked: false,
+                    value: this.datax.useAsInputField
+                }
+
+            ]
         });
 
         this.form.add(thisNode);
