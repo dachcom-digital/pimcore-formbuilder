@@ -26,6 +26,10 @@
     background: url(/plugins/Formbuilder/static/img/picture.svg) left center no-repeat !important;
 }
 
+.Formbuilder_icon_download{
+    background: url(/plugins/Formbuilder/static/img/download.svg) left center no-repeat !important;
+}
+
 .Formbuilder_icon_multiCheckbox{
     background: url(/plugins/Formbuilder/static/img/multicheckbox.svg) left center no-repeat !important;
 }
