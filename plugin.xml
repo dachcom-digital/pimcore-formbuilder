@@ -38,6 +38,7 @@
             <path>/plugins/Formbuilder/static/js/comp/type/select.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/submit.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/image.js</path>
+            <path>/plugins/Formbuilder/static/js/comp/type/download.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/text.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/textarea.js</path>
             <path>/plugins/Formbuilder/static/js/comp/filter/base.js</path>
