@@ -275,8 +275,8 @@ Formbuilder.comp.elem = Class.create({
         // specify which childs a layout can have
         // the child-type "data" is a placehoder for all data components
         var allowedTypes = {
-            root: ["button","captcha","checkbox","file","hash","hidden","image","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
-            displayGroup: ["button","captcha","checkbox","file","hash","hidden","image","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
+            root: ["button","captcha","checkbox","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
+            displayGroup: ["button","captcha","checkbox","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
         };
 
         var allowedFilters = {
