@@ -25,8 +25,8 @@ Some installation advices.
 4. Activate & install it through backend 
 
 **Composer Installation**  
-1. Add code below to your composer.json
-2. Activate & install it through backend 
+1. Add code below to your `composer.json`   
+2. Activate & install it through backend  
 
 ```json
 "require" : {
@@ -147,3 +147,5 @@ Use this Event to manipulate and extend Forms dynamically.
     }
 );
 ```
+## Upgrade Info
+Before updating, please [check our upgrade notes!](UPGRADE.md)
