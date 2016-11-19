@@ -21,7 +21,7 @@ Some installation advices.
 **Handcrafted Installation**    
 1. Download Plugin  
 2. Rename it to `Formbuilder`  
-3. Place it in your plugins directory  
+3. Place it in your plugin directory  
 4. Activate & install it through backend 
 
 **Composer Installation**  
