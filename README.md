@@ -3,8 +3,6 @@
 This Plugin is based on the [Zendformbuilder] (https://github.com/brainsbucket/Zendformbuilder) Plugin.
 It's totally rewritten, offers a lot of new features and requires Pimcore 4.0.
 
-Just download and install it into your plugin folder.
-
 ## Requirements
 * Pimcore 4.0
 
@@ -19,6 +17,24 @@ Just download and install it into your plugin folder.
 
 ## Installation
 Some installation advices. 
+
+**Handcrafted Installation**    
+1. Download Plugin  
+2. Rename it to `Formbuilder`  
+3. Place it in your plugins directory  
+4. Activate & install it through backend 
+
+**Composer Installation**  
+1. Add code below to your composer.json
+2. Activate & install it through backend 
+
+```json
+"require" : {
+    "dachcom-digital/pimcore-formbuilder" : "1.2.6",
+}
+```
+
+
 
 **Ajax**  
 If you want to use Ajaxforms, you need to load the FormBuilder Javascript Library. For example in your `lib/Website/Controller/Action.php`:
