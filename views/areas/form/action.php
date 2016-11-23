@@ -69,6 +69,7 @@ class Form extends Document\Tag\Area\AbstractArea {
                     $form,
                     array(
                         'formId' => $formId,
+                        'formName' => $formName,
                         'locale' => $this->view->language,
                         'mailTemplate' => $mailTemplate
                     )
@@ -111,6 +112,7 @@ class Form extends Document\Tag\Area\AbstractArea {
         }
 
         $this->view->form = $formHtml;
+        $this->view->formName = $formName;
 
     }
 

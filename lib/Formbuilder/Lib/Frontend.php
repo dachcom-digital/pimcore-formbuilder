@@ -274,6 +274,7 @@ class Frontend {
     {
         $defaults = array(
             'formId' => NULL,
+            'formName' => NULL,
             'locale' => 'en',
             'mailTemplate' => NULL,
             'ajaxForm' => FALSE
@@ -340,7 +341,7 @@ class Frontend {
 
         $form->setAttrib('class', implode(' ', $setFormClasses ) );
 
-        $cmdEv = \Pimcore::getEventManager()->trigger('formbuilder.form.preCreateForm', NULL, ['form' => $form]);
+        $cmdEv = \Pimcore::getEventManager()->trigger('formbuilder.form.preCreateForm', NULL, ['form' => $form, 'formId' => $params['formId'], 'formName' => $params['formName']]);
 
         if ($cmdEv->stopped())
         {
