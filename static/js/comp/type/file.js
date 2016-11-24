@@ -14,7 +14,9 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
     onAfterPopulate: function(){
 
         var field = Ext.getCmp("destination");
-        this.checkPath(field.getValue(),field);
+        if( !this.datax.multiFile ) {
+            this.checkPath(field.getValue(),field);
+        }
     },
 
     getForm: function($super){
@@ -26,21 +28,33 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
             defaultType: 'textfield',
             items:[
                 {
-                    id:"destination",
-                    xtype: "textfield",
-                    name: "destination",
-                    fieldLabel: t("destination"),
-                    anchor: "100%",
-                    value: this.datax.destination,
-                    listeners: {
-                        scope:this,
-                        'change': function(field,newValue,oldValue,Object){
-                            this.checkPath(newValue,field);
+                    xtype: "checkbox",
+                    id: "fbMultfile",
+                    name: "multiFile",
+                    fieldLabel: t("multiFile"),
+                    checked: false,
+                    value: this.datax.multiFile,
+                    listeners:{
+                        change: function(checkbox, checked) {
+                            if (checked) {
+                                Ext.getCmp('fbAllowedExtensions').show();
+                                Ext.getCmp('fbDestination').hide();
+                            } else {
+                                Ext.getCmp('fbAllowedExtensions').hide();
+                                Ext.getCmp('fbDestination').show();
+
+                            }
                         }
                     }
                 },
                 {
+                    xtype: "label",
+                    style:'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
+                    text: t("If your form is in ajax mode, we highly recommend to activate the multi file mode. It is safer, nicer and simple cool!")
+                },
+                {
                     xtype: "numberfield",
+                    id: "fbMaxFileSize",
                     name: "maxFileSize",
                     fieldLabel: t("maxFileSize"),
                     allowDecimals:false,
@@ -48,17 +62,12 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                 },
                 {
                     xtype: "label",
-                    text: "Max file size will be calculated in MB. Empty or Zero means no Limit!"
-                },
-                {
-                    xtype: "checkbox",
-                    name: "multiFile",
-                    fieldLabel: t("multiFile"),
-                    checked: false,
-                    value: this.datax.multiFile
+                    style:'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
+                    text: t("Max file size will be calculated in MB. Empty or Zero means no Limit!")
                 },
                 {
                     xtype: "tagfield",
+                    id: "fbAllowedExtensions",
                     name: "allowedExtensions",
                     fieldLabel: t("allowedExtensions"),
                     store: new Ext.data.ArrayStore({
@@ -75,7 +84,22 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                     queryMode: "allowedExtensions",
                     displayField: "allowedExtensions",
                     valueField: "allowedExtensions",
-                    hideTrigger : true
+                    hideTrigger: true
+                },
+                {
+                    xtype: "textfield",
+                    id:"fbDestination",
+                    name: "destination",
+                    fieldLabel: t("destination"),
+                    anchor: "100%",
+                    value: this.datax.destination,
+                    hidden: this.datax.multiFile,
+                    listeners: {
+                        scope:this,
+                        'change': function(field,newValue){
+                            this.checkPath(newValue,field);
+                        }
+                    }
                 }
 
             ]

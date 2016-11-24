@@ -291,20 +291,28 @@ Formbuilder.settings = Class.create({
 
     deleteMain: function (tree, record) {
 
-        var i = this.usedFormNames.indexOf( record.data.text );
-        if(i != -1) {
-            this.usedFormNames.splice(i, 1);
-        }
+        Ext.Msg.confirm(t("delete"), t("Do you really want to delete this form? this can't be undone!"), function(btn){
 
-        Ext.Ajax.request({
-            url: "/plugin/Formbuilder/admin_Settings/delete",
-            params: {
-                id: record.id
+            if (btn === "yes") {
+
+                var i = this.usedFormNames.indexOf( record.data.text );
+                if(i != -1) {
+                    this.usedFormNames.splice(i, 1);
+                }
+
+                Ext.Ajax.request({
+                    url: "/plugin/Formbuilder/admin_Settings/delete",
+                    params: {
+                        id: record.id
+                    }
+                });
+
+                this.getEditPanel().removeAll();
+                record.remove();
+
             }
-        });
 
-        this.getEditPanel().removeAll();
-        record.remove();
+        }.bind(this));
 
     },
 

@@ -695,7 +695,7 @@ Formbuilder.comp.elem = Class.create({
             {
                 xtype: "textfield",
                 name: "action",
-                value: this.data.action,
+                value: this.data.action ? this.data.action : "/",
                 fieldLabel: t("Action"),
                 width: 300,
                 allowBlank: false
@@ -712,7 +712,7 @@ Formbuilder.comp.elem = Class.create({
                 editable: true,
                 triggerAction: 'all',
                 width: 300,
-                value: this.data.method,
+                value: this.data.method ? this.data.method : 'POST',
                 allowBlank: false
             },
             {
@@ -727,14 +727,14 @@ Formbuilder.comp.elem = Class.create({
                 editable: false,
                 triggerAction: 'all',
                 width: 300,
-                value: this.data.enctype,
+                value: this.data.enctype ? this.data.enctype : 'multipart/form-data',
                 allowBlank: false
             },
             {
                 xtype: "checkbox",
                 name: "useAjax",
                 fieldLabel: t("Use Ajax to Submit"),
-                checked: false,
+                checked: this.data.useAjax === undefined ? true : false,
                 value: this.data.useAjax
             },
 
