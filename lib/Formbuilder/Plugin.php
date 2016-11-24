@@ -3,6 +3,7 @@
 namespace Formbuilder;
 
 use Pimcore\Model\Tool\Setup;
+use Pimcore\Model\Property;
 use Pimcore\Model\Translation\Admin;
 use Pimcore\API\Plugin as PluginLib;
 
@@ -121,6 +122,9 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             $folder->save();
         }
 
+        //install properties
+        self::installProperties();
+
         if (self::isInstalled())
         {
             $statusMessage = 'Plugin has been successfully installed.<br>Please reload pimcore!';
@@ -133,6 +137,54 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         return $statusMessage;
     }
 
+    private static function installProperties()
+    {
+        $properties = [
+
+            'mail_disable_default_mail_body' => [
+                'ctype'         => 'document',
+                'type'          => 'bool',
+                'name'          => 'Mail: Use custom template fields layout',
+                'description'   => 'If the mail_disable_default_mail_body property is defined and checked, you need to add your own data to the mail template. You can use all the field names as placeholder.'
+            ],
+            'mail_successfully_sent' => [
+                'ctype'         => 'document',
+                'type'          => 'document',
+                'name'          => 'Mail: Message after Submit',
+                'description'   => 'Use the mail_successfully_sent property to define a message after the form has been successfully sent. There are three options: "String", "Snippet", "Dokument"'
+
+            ],
+            'mail_ignore_fields' => [
+                'ctype'         => 'document',
+                'type'          => 'text',
+                'name'          => 'Mail: Ignored Fields in Email',
+                'description'   => 'In some cases, you don\'t want to send specific fields via mail. Add one or multiple (comma separated) fields as string.'
+            ],
+
+        ];
+
+        foreach( $properties as $key => $propertyConfig)
+        {
+            $defProperty = Property\Predefined::getByKey( $key );
+
+            if( $defProperty instanceof Property\Predefined)
+            {
+                continue;
+            }
+
+            $property = new Property\Predefined();
+            $property->setKey( $key );
+            $property->setType( $propertyConfig['type'] );
+            $property->setName( $propertyConfig['name'] );
+
+            $property->setDescription( $propertyConfig['description'] );
+            $property->setCtype( $propertyConfig['ctype'] );
+            $property->setInheritable(FALSE);
+            $property->save();
+
+        }
+
+    }
 
     public static function isInstalled()
     {
