@@ -1,6 +1,6 @@
 <?php
 
-namespace Formbuilder\Lib;
+namespace Formbuilder\Lib\Form;
 
 use Pimcore\Tool;
 

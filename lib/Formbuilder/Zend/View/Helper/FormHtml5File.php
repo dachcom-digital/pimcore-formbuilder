@@ -51,6 +51,6 @@ class FormHtml5File extends \Zend_View_Helper_FormElement
 
         $messages = array( 'core' => $coreMessages, 'delete' => $deleteMessages, 'text' => $interfacesText );
 
-        return $this->view->partial('formbuilder/form/elements/html5file/default.php', array( 'message' => $messages, 'sizeLimit' => $sizeLimit, 'allowedExtensions' => $allowedExtensions ));
+        return $this->view->partial('formbuilder/form/elements/html5file/default.php', array( 'fieldName' => $name, 'message' => $messages, 'sizeLimit' => $sizeLimit, 'allowedExtensions' => $allowedExtensions ));
     }
 }

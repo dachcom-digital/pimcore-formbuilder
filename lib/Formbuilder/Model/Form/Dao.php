@@ -56,41 +56,45 @@ class Dao extends AbstractDao
     {
         $vars = get_object_vars($this->model);
 
-        $buffer = array();
+        $buffer = [];
 
         $validColumns = $this->getValidTableColumns($this->tableName);
 
-        if (count($vars))
+        if ( count($vars) )
         {
-            foreach ($vars as $k => $v)
+            foreach ( $vars as $k => $v )
             {
-                if (!in_array($k, $validColumns))
+                if( !in_array($k, $validColumns) )
                 {
                     continue;
                 }
 
                 $getter = 'get' . ucfirst($k);
 
-                if (!is_callable(array($this->model, $getter)))
+                if( !is_callable( [$this->model, $getter] ) )
                 {
                     continue;
                 }
 
                 $value = $this->model->$getter();
 
-                if (is_bool($value)) {
+                if( is_bool($value) )
+                {
                     $value = (int)$value;
                 }
-                if (is_array($value)) {
+
+                if( is_array($value) )
+                {
                     $value = serialize($value);
                 }
-                if ($value instanceof AbstractObject) {
+
+                if($value instanceof AbstractObject || $value instanceof AbstractModel)
+                {
                     $value = $value->getId();
                 }
-                if($value instanceof AbstractModel) {
-                    $value = $value->getId();
-                }
-                if(is_object($value)) {
+
+                if( is_object($value) )
+                {
                     $value = serialize($value);
                 }
 
@@ -100,7 +104,7 @@ class Dao extends AbstractDao
 
         if ($this->model->getId() !== NULL)
         {
-            $this->db->update($this->tableName, $buffer, $this->db->quoteInto('id = ?', $this->model->getId()));
+            $this->db->update($this->tableName, $buffer, $this->db->quoteInto('id = ?', (int) $this->model->getId()));
             return;
         }
 
@@ -113,7 +117,7 @@ class Dao extends AbstractDao
     {
         try
         {
-            $this->db->delete($this->tableName, $this->db->quoteInto('id = ', $this->model->getId()));
+            $this->db->delete($this->tableName, $this->db->quoteInto('id = ?', (int) $this->model->getId()));
         }
         catch (\Exception $e)
         {

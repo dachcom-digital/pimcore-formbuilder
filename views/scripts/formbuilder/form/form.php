@@ -1,5 +1,9 @@
 <?php if ($this->form) { ?>
 
+    <?php if( !empty( $this->messages ) ) { ?>
+        <?= $this->messages; ?>
+    <?php } ?>
+
     <div class="row">
 
         <div class="form-wrapper">

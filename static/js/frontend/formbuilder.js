@@ -48,7 +48,7 @@ var formBuilder = (function () {
                 var $el = $(this),
                     $form = $el.closest('form'),
                     $submitButton = $form.find('input[type="submit"]'),
-                    formId = $form.find('input[type="hidden"][name="_formId"]').val(),
+                    formConfig = $form.find('input[type="hidden"][name="_formConfig"]').val(),
                     $template = $el.find('.formbuilder-template:first'),
                     $element = $el.find('.formbuilder-content:first'),
                     messages = $template.find('input[name="js-messages"]').val();
@@ -81,7 +81,8 @@ var formBuilder = (function () {
                     request: {
                         endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
                         params: {
-                            _formId: formId
+                            _formConfig: formConfig,
+                            _fieldName: $element.data('field-name')
                         }
                     },
 
@@ -93,7 +94,8 @@ var formBuilder = (function () {
                         enabled: true,
                         endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
                         params: {
-                            _formId: formId
+                            _formConfig: formConfig,
+                            _fieldName: $element.data('field-name')
                         }
                     },
 
@@ -120,7 +122,7 @@ var formBuilder = (function () {
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
-                    formData = new FormData( $form[0] ); //$form.serialize();
+                    formData = new FormData( $form[0] );
 
                 ev.preventDefault();
 

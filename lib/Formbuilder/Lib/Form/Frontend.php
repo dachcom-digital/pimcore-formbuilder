@@ -1,6 +1,6 @@
 <?php
 
-namespace Formbuilder\Lib;
+namespace Formbuilder\Lib\Form;
 
 use Pimcore\Tool;
 use Formbuilder\Model\Form;
@@ -237,7 +237,7 @@ class Frontend {
         }
     }
 
-    public function parseFormParams( $params = array(), $form )
+    public function parseFormParams( $params = [], $form )
     {
         //no Recaptcha (v2) requested!
         if( !isset( $params['g-recaptcha-response'] ) )
@@ -270,64 +270,52 @@ class Frontend {
         return $this->recaptchaV2Key;
     }
 
-    public function addDefaultValuesToForm( $form, $attributes = array() )
+    public function addDefaultValuesToForm( $form, $attributes = [] )
     {
-        $defaults = array(
-            'formId' => NULL,
-            'formName' => NULL,
-            'locale' => 'en',
-            'mailTemplate' => NULL,
-            'ajaxForm' => FALSE
-        );
+        $defaults = [
+            'formData'              => NULL,
+            'locale'                => 'en',
+            'mailTemplateId'        => NULL,
+            'copyMailTemplateId'    => NULL,
+            'sendCopy'              => FALSE,
+            'ajaxForm'              => FALSE
+        ];
 
         $params = array_merge($defaults, $attributes);
 
         $form->addElement(
             'text',
             'honeypot',
-            array(
-                'label' => '',
-                'required' => false,
-                'ignore' => TRUE,
-                'class' => 'hon-hide',
-                'decorators' => array('ViewHelper'),
-                'validators' => array(
-                    array(
+            [
+                'label'         => '',
+                'required'      => FALSE,
+                'ignore'        => TRUE,
+                'class'         => 'hon-hide',
+                'decorators'    => ['ViewHelper'],
+                'validators'    => [
+                    [
                         'validator' => 'Honeypot'
-                    )
-                )
-            )
+                    ]
+                ]
+            ]
         );
+
+        $formData = [
+            'formId'                => $params['formData']->getId(),
+            'language'              => $params['locale'],
+            'mailTemplateId'        => $params['mailTemplateId'],
+            'copyMailTemplateId'    => $params['copyMailTemplateId'],
+            'sendCopy'              => $params['sendCopy']
+        ];
 
         $form->addElement(
             'hidden',
-            '_formId',
-            array(
+            '_formConfig',
+            [
                 'ignore' => TRUE,
-                'value' => $params['formId']
-            )
+                'value' => htmlentities( json_encode( $formData ) )
+            ]
         );
-
-        $form->addElement(
-            'hidden',
-            '_language',
-            array(
-                'ignore' => TRUE,
-                'value' => $params['locale']
-            )
-        );
-
-        if( $params['mailTemplate'] instanceof \Pimcore\Model\Document\Email )
-        {
-            $form->addElement(
-                'hidden',
-                '_mailTemplate',
-                array(
-                    'ignore' => TRUE,
-                    'value' => $params['mailTemplate']->getId()
-                )
-            );
-        }
 
         $configData = $this->config->toArray();
 
@@ -341,7 +329,15 @@ class Frontend {
 
         $form->setAttrib('class', implode(' ', $setFormClasses ) );
 
-        $cmdEv = \Pimcore::getEventManager()->trigger('formbuilder.form.preCreateForm', NULL, ['form' => $form, 'formId' => $params['formId'], 'formName' => $params['formName']]);
+        $cmdEv = \Pimcore::getEventManager()->trigger(
+            'formbuilder.form.preCreateForm',
+            NULL,
+            [
+                'form'      => $form,
+                'formId'    => $params['formData']->getId(),
+                'formName'  => $params['formData']->getName()
+            ]
+        );
 
         if ($cmdEv->stopped())
         {
@@ -360,7 +356,7 @@ class Frontend {
 
     protected function translateForm( $id, $locale)
     {
-        $trans = new \Zend_Translate_Adapter_Csv(array('delimiter' => ',', 'disableNotices' => true));
+        $trans = new \Zend_Translate_Adapter_Csv( ['delimiter' => ',', 'disableNotices' => TRUE ] );
         $file = FORMBUILDER_DATA_PATH . '/lang/form_' . $id . '_' . $locale . '.csv';
 
         if (file_exists($file))
@@ -377,8 +373,8 @@ class Frontend {
 
         if ( file_exists($file) )
         {
-            $arrTrans = new \Zend_Translate_Adapter_Array( array('disableNotices' => TRUE));
-            $arrTrans->addTranslation(array( 'content' => $file, 'locale' => $locale));
+            $arrTrans = new \Zend_Translate_Adapter_Array( [ 'disableNotices' => TRUE ] );
+            $arrTrans->addTranslation( [ 'content' => $file, 'locale' => $locale ] );
             $trans->addTranslation($arrTrans);
         }
 
@@ -410,11 +406,11 @@ class Frontend {
                 $captchaOptions = $element['options']['captchaOptions'];
 
                 $element['type'] = 'recaptcha';
-                $element['options'] = array(
+                $element['options'] = [
                     'secretKey' => $captchaOptions['secretKey'],
-                    'siteKey' => $captchaOptions['siteKey'],
-                    'classes' => array($element['options']['class'])
-                );
+                    'siteKey'   => $captchaOptions['siteKey'],
+                    'classes'   => [ $element['options']['class'] ]
+                ];
 
                 unset( $element['options']['captchaOptions']);
 
@@ -440,13 +436,13 @@ class Frontend {
 
                     if( !isset( $element['options']['validators'] ) )
                     {
-                        $element['options']['validators'] = array();
+                        $element['options']['validators'] = [];
                     }
 
-                    $element['options']['validators']['html5file'] = array(
+                    $element['options']['validators']['html5file'] = [
                         'validator' => 'Html5File',
-                        'options' => array()
-                    );
+                        'options'   => []
+                    ];
 
                 }
 
@@ -454,10 +450,10 @@ class Frontend {
             //allow "please select" field in multi select element
             else if( $element['type'] === 'select' && isset( $element['options']['multiOptions'] ))
             {
-                $realOptions = array();
+                $realOptions = [];
                 foreach( $element['options']['multiOptions'] as $optionKey => $optionValue)
                 {
-                    if( $optionKey == 'choose')
+                    if( $optionKey === 'choose')
                     {
                         $optionKey = '';
                     }

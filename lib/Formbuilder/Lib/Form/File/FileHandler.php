@@ -13,7 +13,7 @@
  *    but is now required in all cases if you are making use of this PHP example.
  */
 
-namespace Formbuilder\Lib;
+namespace Formbuilder\Lib\Form\File;
 
 use \Formbuilder\Tool\File;
 use \Pimcore\Model\Asset;

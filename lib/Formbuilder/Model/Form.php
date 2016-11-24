@@ -6,12 +6,25 @@ use Pimcore\Model;
 
 class Form extends Model\AbstractModel
 {
+
+    /**
+     * @var
+     */
     protected $table;
 
+    /**
+     * @var null
+     */
     var $id = NULL;
 
+    /**
+     * @var null
+     */
     var $name = NULL;
 
+    /**
+     * @var null
+     */
     var $date = NULL;
 
     public function save()
@@ -38,6 +51,21 @@ class Form extends Model\AbstractModel
 
         return $obj;
 
+    }
+
+    public static function getByName($name)
+    {
+        $name = (string) $name;
+
+        if ( empty( $name ) )
+        {
+            return NULL;
+        }
+
+        $obj = new self;
+        $obj->getDao()->getByName($name);
+
+        return $obj;
     }
 
     public function getAll()

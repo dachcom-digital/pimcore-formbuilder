@@ -1,6 +1,6 @@
 <?php
 
-namespace Formbuilder\Lib;
+namespace Formbuilder\Lib\Form\File;
 
 use \Formbuilder\Tool\File;
 use \Pimcore\Model\Asset;
@@ -15,11 +15,12 @@ class PackageHandler {
     /**
      * @param $data
      * @param string $formName
+     * @param string $fieldName
      * @param int $templateId
      *
      * @return bool|null|Asset
      */
-    public function createZipAsset( $data, $formName, $templateId )
+    public function createZipAsset( $data, $formName, $fieldName, $templateId )
     {
         if( !is_array( $data ) )
         {
@@ -50,7 +51,7 @@ class PackageHandler {
             return FALSE;
         }
 
-        $zipFileName = uniqid('form-') . '.zip';
+        $zipFileName = uniqid('form-' . \Pimcore\File::getValidFilename( $fieldName ) . '-') . '.zip';
         $zipPath = File::getZipFolder() . '/' . $zipFileName;
 
         try

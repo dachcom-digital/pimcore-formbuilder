@@ -5,8 +5,9 @@ namespace Pimcore\Model\Document\Tag\Area;
 use Pimcore\Model\Document;
 
 use Formbuilder\Model\Form as FormModel;
-use Formbuilder\Lib\Frontend;
-use Formbuilder\Lib\Mailer;
+
+use Formbuilder\Lib\Processor;
+use Formbuilder\Lib\Form\Frontend;
 
 class Form extends Document\Tag\Area\AbstractArea {
 
@@ -23,14 +24,14 @@ class Form extends Document\Tag\Area\AbstractArea {
             {
                 foreach( $mains as $form)
                 {
-                    $store[] = array($form['name'], $form['name'] );
+                    $store[] = [ $form['name'], $form['name'] ];
                 }
             }
 
-            $typeStore = array(
-                array('horizontal', 'Horizontal'),
-                array('vertical', 'Vertical')
-            );
+            $typeStore = [
+                [ 'horizontal', 'Horizontal' ],
+                [ 'vertical', 'Vertical' ]
+            ];
 
             $this->view->availableForms = $store;
             $this->view->availableFormTypes = $typeStore;
@@ -39,8 +40,11 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         $formName = NULL;
         $formHtml = NULL;
+        $messageHtml = NULL;
+        $messages = [];
 
         $horizontalForm = TRUE;
+        $sendCopy = $this->view->checkbox('userCopy')->isChecked() === '1';
 
         if (!$this->view->select('formName')->isEmpty())
         {
@@ -52,66 +56,91 @@ class Form extends Document\Tag\Area\AbstractArea {
             $horizontalForm = FALSE;
         }
 
-        $mailTemplate = $this->view->href('sendMailTemplate')->getElement();
+        $copyMailTemplate = NULL;
 
-        if( $formName !== NULL )
+        if( empty( $formName ) )
         {
-            $form = new FormModel();
-            $formId = $form->getIdByName($formName);
+            return FALSE;
+        }
 
-            $frontendLib = new Frontend();
+        $formData = FormModel::getByName($formName);
 
-            $form = $frontendLib->getTwitterForm($formId, $this->view->language, $horizontalForm);
+        if( !$formData instanceof FormModel)
+        {
+            return FALSE;
+        }
 
-            if( $form !== FALSE )
+        $frontendLib = new Frontend();
+
+        $form = $frontendLib->getTwitterForm($formData->getId(), $this->view->language, $horizontalForm);
+
+        $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
+        $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
+
+        $mailTemplateId = NULL;
+        $copyMailTemplateId = NULL;
+
+        if( $_mailTemplate instanceof \Pimcore\Model\Document\Email )
+        {
+            $mailTemplateId = $_mailTemplate->getId();
+        }
+
+        if( $sendCopy === TRUE && $_copyMailTemplate instanceof \Pimcore\Model\Document\Email )
+        {
+            $copyMailTemplateId = $_copyMailTemplate->getId();
+        }
+
+        if( $form !== FALSE )
+        {
+            $frontendLib->addDefaultValuesToForm(
+                $form,
+                [
+                    'formData'              => $formData,
+                    'formName'              => $formName,
+                    'locale'                => $this->view->language,
+                    'mailTemplateId'        => $mailTemplateId,
+                    'copyMailTemplateId'    => $copyMailTemplateId,
+                    'sendCopy'              => $sendCopy
+                ]
+            );
+
+            $isSubmit = !is_null( $this->getParam('submit') );
+
+            if( $isSubmit )
             {
-                $frontendLib->addDefaultValuesToForm(
-                    $form,
-                    array(
-                        'formId' => $formId,
-                        'formName' => $formName,
-                        'locale' => $this->view->language,
-                        'mailTemplate' => $mailTemplate
-                    )
-                );
+                $valid = $form->isValid( $frontendLib->parseFormParams( $this->getAllParams(), $form ) );
 
-                $isSubmit = !is_null( $this->getParam('submit') );
-
-                if( $isSubmit )
+                if( $valid )
                 {
-                    $valid = $form->isValid( $frontendLib->parseFormParams( $this->getAllParams(), $form ) );
+                    $processor = new Processor();
+                    $processor->setSendCopy( $sendCopy );
 
-                    if( $valid )
+                    $processor->parse( $form, $formData, $mailTemplateId, $copyMailTemplateId );
+
+                    $valid = $processor->isValid();
+                    $messages = $processor->getMessages();
+
+                    if( $valid === TRUE )
                     {
-                        Mailer::sendForm( $mailTemplate->getId(), array('data' => $form->getValues() ) );
-
-                        $successMessages = Mailer::getMessages();
-
-                        if (!empty($successMessages))
-                        {
-                            echo '<div class="row"><div class="col-xs-12"><div class="alert alert-success">';
-
-                                foreach( $successMessages as $message )
-                                {
-                                    echo $message . '<br>';
-                                }
-
-                            echo '</div></div></div>';
-
-                        }
-
-                        $form->reset();
+                        $messages = [ $this->view->translate('form has been successfully sent') ];
                     }
 
+                    if ( !empty($messages) )
+                    {
+                        $messageHtml = $this->view->partial('formbuilder/form/partials/notifications.php', ['valid' => $valid, 'messages' => $messages]);
+                    }
+
+                    $form->reset();
                 }
 
-                $formHtml = $form->render( $this->view );
-
             }
+
+            $formHtml = $form->render( $this->view );
 
         }
 
         $this->view->form = $formHtml;
+        $this->view->messages = $messageHtml;
         $this->view->formName = $formName;
 
     }
