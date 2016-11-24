@@ -73,19 +73,20 @@ Add those properties to your mail template.
 Use the `mail_successfully_sent` property to define a message after the form has been successfully sent.
 There are three options:
 
-**String**  
+*String*  
 Use a String to return a simple text like "Thank you for your message".
 
-**Snippet**  
+*Snippet*  
 Use a Snippet to return some complex html stuff.
 
-**Document**  
+*Document*  
 Add a Document to redirect after your form has been successfully submitted.
 
 #### mail_disable_default_mail_body *(Checkbox)*  
 
 If the `mail_disable_default_mail_body` property is defined and checked, you need to add your own data to the mail template.
 You can use all the field names as placeholder. For example:
+
 
 ```html
 Hello %Text(firstname);!
@@ -95,6 +96,12 @@ Your Data:
 Name: %Text(firstname);
 Mail: %Text(mailaddress);
 ```
+
+#### mail_ignore_fields *(String)*
+
+In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user.
+To do so, just define the `mail_ignore_fields` property in your email template. Add one or multiple (comma separated) fields as string.  
+*Notice:* The field name needs be identical to the field name in your form configuration.
 
 ## Ajax Forms
 
