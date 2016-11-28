@@ -38,10 +38,14 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         }
 
+        $formData = NULL;
         $formName = NULL;
         $formHtml = NULL;
         $messageHtml = NULL;
         $messages = [];
+
+        $noteMessage = '';
+        $noteError = FALSE;
 
         $horizontalForm = TRUE;
         $sendCopy = $this->view->checkbox('userCopy')->isChecked() === '1';
@@ -58,15 +62,33 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         $copyMailTemplate = NULL;
 
-        if( empty( $formName ) )
+        if( !empty( $formName ) )
         {
-            return FALSE;
+            try
+            {
+                $formData = FormModel::getByName( $formName );
+
+                if( !$formData instanceof FormModel)
+                {
+                    $noteMessage = 'Form (' . $formName . ') is not a valid FormBuilder Element.';
+                    $noteError = TRUE;
+                }
+
+            } catch( \Exception $e )
+            {
+                $noteMessage = $e->getMessage();
+                $noteError = TRUE;
+            }
+        }
+        else
+        {
+            $noteMessage = 'No valid form selected.';
+            $noteError = TRUE;
         }
 
-        $formData = FormModel::getByName($formName);
-
-        if( !$formData instanceof FormModel)
+        if( $noteError === TRUE )
         {
+            $this->view->notifications = ['error' => $noteError, 'message' => $noteMessage ];
             return FALSE;
         }
 
@@ -138,6 +160,7 @@ class Form extends Document\Tag\Area\AbstractArea {
             $formHtml = $form->render( $this->view );
 
         }
+
 
         $this->view->form = $formHtml;
         $this->view->messages = $messageHtml;

@@ -1,3 +1,7 @@
+<?php if( $this->editmode && $this->notifications['error'] === TRUE ) { ?>
+    <div class="alert alert-danger"><?= $this->notifications['message']; ?></div>
+<?php } ?>
+
 <?php if ($this->form) { ?>
 
     <?php if( !empty( $this->messages ) ) { ?>
@@ -15,9 +19,5 @@
         </div>
 
     </div>
-
-<?php } else { ?>
-
-    <?= $this->translate('No form found'); ?>
 
 <?php } ?>
