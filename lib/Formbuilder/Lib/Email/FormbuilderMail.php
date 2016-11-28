@@ -8,7 +8,7 @@ Class FormbuilderMail extends Mail {
 
     private $ignoreFields = [];
 
-    public function setIgnoreFields( $fields = [])
+    public function setIgnoreFields($fields = [])
     {
         $this->ignoreFields = $fields;
     }
@@ -29,10 +29,9 @@ Class FormbuilderMail extends Mail {
                     continue;
                 }
 
-                $this->setParam($label, $this->getSingleRenderedValue( $field ) );
+                $this->setParam( $label, $this->getSingleRenderedValue( $field ) );
             }
         }
-
     }
 
     private function parseHtml( $data )
@@ -66,7 +65,43 @@ Class FormbuilderMail extends Mail {
 
     }
 
-    private function getSingleRenderedValue( $field )
+    /**
+     *
+     * Transform placeholders into values.
+     *
+     * @param string $subject
+     * @param array  $data
+     *
+     * @throws \Zend_Mail_Exception
+     */
+    public function parseSubject($subject = '', $data = array() )
+    {
+        $realSubject = $subject;
+
+        preg_match_all("/\%(.+?)\%/", $realSubject, $matches);
+
+        if (isset($matches[1]) && count($matches[1]) > 0)
+        {
+            foreach ($matches[1] as $key => $inputValue )
+            {
+                foreach( $data as $formFieldName => $formFieldValue )
+                {
+                    if( $formFieldName == $inputValue)
+                    {
+                        $realSubject = str_replace( $matches[0][$key], $this->getSingleRenderedValue( $formFieldValue, ', '), $realSubject);
+                    }
+                }
+
+                //replace with '' if not found.
+                $realSubject = str_replace( $matches[0][$key], '', $realSubject);
+            }
+        }
+
+        $this->setSubject( $realSubject );
+
+    }
+
+    private function getSingleRenderedValue( $field, $separator = '<br>' )
     {
         $data = '';
 
@@ -74,7 +109,7 @@ Class FormbuilderMail extends Mail {
         {
             foreach( $field as $f )
             {
-                $data .= $f . '<br>';
+                $data .= $f . $separator;
             }
         }
         else

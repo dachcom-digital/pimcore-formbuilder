@@ -51,7 +51,7 @@ Class Processor {
                 //remove tmp element from session!
                 Session::removeFromTmpSession( $formData->getId(), $fieldName );
 
-                if( $asset instanceof \Pimcore\Model\Asset)
+                if( $asset instanceof \Pimcore\Model\Asset )
                 {
                     $http = 'http://';
                     if ( !empty( $_SERVER['HTTPS'] ) )
@@ -63,7 +63,26 @@ Class Processor {
                     $data[ $fieldName ] = $websiteUrl . $asset->getRealFullPath();
                 }
             }
+        }
 
+        //allow third parties to manipulate form data!
+        $cmdEv = \Pimcore::getEventManager()->trigger(
+            'formbuilder.form.preSendData',
+            NULL,
+            [
+                'formData'  => $formData,
+                'data'      => $data,
+            ]
+        );
+
+        if ($cmdEv->stopped())
+        {
+            $customData = $cmdEv->last();
+
+            if( is_array($customData) )
+            {
+                $data = $customData;
+            }
         }
 
         $send = $this->sendForm( $mailTemplateId, [ 'data' => $data ] );
@@ -115,6 +134,7 @@ Class Processor {
 
         $mail = new FormbuilderMail();
         $mail->setIgnoreFields( $ignoreFields );
+        $mail->parseSubject( $mailTemplate->getSubject(), $attributes['data'] );
         $mail->setMailPlaceholders( $attributes['data'], $disableDefaultMailBody );
 
         $from = $mailTemplate->getFrom();
@@ -127,7 +147,6 @@ Class Processor {
         $mail->addCc( $mailTemplate->getCcAsArray() );
         $mail->addBcc( $mailTemplate->getBccAsArray() );
 
-        $mail->setSubject( $mailTemplate->getSubject() );
         $mail->setDocument( $mailTemplate );
 
         $mail->send();
@@ -146,20 +165,20 @@ Class Processor {
 
         preg_match_all("/\%(.+?)\%/", $to, $matches);
 
-        if (isset($matches[1]) && count($matches[1]) > 0){
-
-            foreach ($matches[1] as $key => $inputValue)
+        if ( isset($matches[1]) && count($matches[1]) > 0 )
+        {
+            foreach ( $matches[1] as $key => $inputValue )
             {
-                foreach( $data as $formFieldName => $formFieldValue)
+                foreach( $data as $formFieldName => $formFieldValue )
                 {
                     if( $formFieldName == $inputValue)
                     {
-                        $to = str_replace( $matches[0][$key], $formFieldValue, $to);
+                        $to = str_replace( $matches[0][$key], $formFieldValue, $to );
                     }
                 }
 
                 //replace with '' if not found.
-                $to = str_replace( $matches[0][$key], '', $to);
+                $to = str_replace( $matches[0][$key], '', $to );
             }
         }
 
@@ -169,7 +188,6 @@ Class Processor {
         $mailTemplate->setTo( $to );
 
     }
-
 
     public function setSendCopy( $state = FALSE )
     {
