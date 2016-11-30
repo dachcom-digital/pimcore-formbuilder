@@ -4,3 +4,6 @@
 "send copy to user";"Send Copy to User";"Kopie an User versenden";1460395362;1460395362;
 "copy mail template";"Copy Mail Template";"Mail Vorlage für Kopie";1460395362;1460395362;
 "mail template";"Mail Template";"Mail Vorlage";1460395362;1460395362;
+"Form data will be rendered automatically.";"Form data will be rendered automatically.";"Formular-Inhalt wird automatisch in dieses E-Mail eingefügt.";1460395362;1460395362;
+"Custom style mode has been activated. Please use placeholder like %s to display form value fields.";"Custom style mode has been activated. Please use placeholder like %s to display form value fields.";"Benutzerdefiniertes Formular-Layout wurde aktiviert. Bitte benutzen Sie Platzhalter (zb. %s), um Formular-Elemente im E-Mail anzuzeigen.";1460395362;1460395362;
+"Your form content will be placed here.";"Your form content will be placed here.";"Formular-Inhalt wird hier angezeigt.";1460395362;1460395362;

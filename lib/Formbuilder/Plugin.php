@@ -125,6 +125,8 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         //install properties
         self::installProperties();
 
+        self::installDocumentTypes();
+
         if (self::isInstalled())
         {
             $statusMessage = 'Plugin has been successfully installed.<br>Please reload pimcore!';
@@ -183,6 +185,46 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             $property->save();
 
         }
+
+    }
+
+    private static function installDocumentTypes()
+    {
+        // get list of types
+        $list = new \Pimcore\Model\Document\DocType\Listing();
+        $list->load();
+
+        $skipInstall = FALSE;
+        $elementName = 'Formbuilder Email';
+
+        foreach( $list->getDocTypes() as $type )
+        {
+            if( $type->getName() === $elementName )
+            {
+                $skipInstall = TRUE;
+                break;
+            }
+        }
+
+        if( $skipInstall )
+        {
+            return FALSE;
+        }
+
+        $type = \Pimcore\Model\Document\DocType::create();
+
+        $data = [
+            'name'          => $elementName,
+            'module'        => 'Formbuilder',
+            'controller'    => 'Email',
+            'action'        => 'default',
+            'template'      => '/formbuilder/email/default.php',
+            'type'          => 'email',
+            'priority'      => 0
+        ];
+
+        $type->setValues($data);
+        $type->save();
 
     }
 

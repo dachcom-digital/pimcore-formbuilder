@@ -38,9 +38,11 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                         change: function(checkbox, checked) {
                             if (checked) {
                                 Ext.getCmp('fbAllowedExtensions').show();
+                                Ext.getCmp('fbAllowedExtensionsLabel').show();
                                 Ext.getCmp('fbDestination').hide();
                             } else {
                                 Ext.getCmp('fbAllowedExtensions').hide();
+                                Ext.getCmp('fbAllowedExtensionsLabel').hide();
                                 Ext.getCmp('fbDestination').show();
 
                             }
@@ -88,6 +90,7 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                 },
                 {
                     xtype: "label",
+                    id: "fbAllowedExtensionsLabel",
                     style:'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
                     text: t("Add some extensions and confirm with enter.")
                 },
