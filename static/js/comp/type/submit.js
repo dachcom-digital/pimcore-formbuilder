@@ -17,7 +17,7 @@ Formbuilder.comp.type.submit = Class.create(Formbuilder.comp.type.base,{
             required = this.form.getForm().findField("required"),
             value = this.form.getForm().findField("value");
 
-        allowempty.hide();
+        allowEmpty.hide();
         required.hide();
         value.hide();
 
