@@ -13,12 +13,14 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
 
     onAfterPopulate: function(){
 
-        var wordFS = Ext.getCmp('wordFS');
-        var imageFS = Ext.getCmp('imageFS');
-        var reCaptchaFS = Ext.getCmp('reCaptchaFS');
-        var combo = Ext.getCmp('captchaCombo');
+        var wordFS = this.wordFS,
+            imageFS = this.imageFS,
+            reCaptchaFS = this.reCaptchaFS,
+            combo = this.form.getForm().findField("captcha"),
+            imgDir = this.form.getForm().findField("captchaOptions.imgDir");
 
-        switch(combo.getValue()){
+        switch( combo.getValue() ) {
+
             case "dumb" :
                 wordFS.show();
                 imageFS.hide();
@@ -46,168 +48,171 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 break;
         }
         
-        var imgDir = Ext.getCmp("imgDir");
-        if(imageFS.hidden == false){
-            this.checkPath(imgDir.getValue(),imgDir);
+        if(imageFS.hidden === false) {
+            this.checkPath(imgDir.getValue(), imgDir);
         }
         
     },
 
-    addCaptchaFS: function(form){
+    addCaptchaFS: function() {
 
-        var word = new Ext.form.FieldSet({
+        var _me = this;
 
-            id:"wordFS",
+        this.wordFS = new Ext.form.FieldSet({
+
             title: t("captcha word options"),
             collapsible: true,
             defaultType: 'textfield',
             items:[
-            {
-                xtype: "numberfield",
-                name: "captchaOptions.wordLen",
-                fieldLabel: t("wordLen"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.wordLen']
-            },
-            {
-                xtype: "numberfield",
-                name: "captchaOptions.timeout",
-                fieldLabel: t("timeout"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.timeout']
-            },
-            {
-                xtype: "checkbox",
-                name: "captchaOptions.useNumbers",
-                fieldLabel: t("useNumbers"),
-                checked:false,
-                value:this.datax['captchaOptions.useNumbers']
-            }
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.wordLen",
+                    fieldLabel: t("wordLen"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.wordLen']
+                },
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.timeout",
+                    fieldLabel: t("timeout"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.timeout']
+                },
+                {
+                    xtype: "checkbox",
+                    name: "captchaOptions.useNumbers",
+                    fieldLabel: t("useNumbers"),
+                    checked:false,
+                    value:this.datax['captchaOptions.useNumbers']
+                }
             ]
         });
 
-        form.add(word);
+        this.form.add( this.wordFS );
 
-        var image = new Ext.form.FieldSet({
-            id:"imageFS",
+        this.imageFS = new Ext.form.FieldSet({
+
             title: t("image options"),
             collapsible: true,
             defaultType: 'textfield',
             items:[
-            {
-                xtype: "numberfield",    
-                name: "captchaOptions.expiration",
-                fieldLabel: t("expiration"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.expiration']
-            },
-            {
-                xtype: "textfield",
-                name: "captchaOptions.font",
-                fieldLabel: t("font"),
-                anchor: "100%",
-                value:this.datax['captchaOptions.font']
-            },
-            {
-                xtype: "numberfield",    
-                name: "captchaOptions.fontSize",
-                fieldLabel: t("font Size"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.fontSize']
-            },
-            {
-                xtype: "numberfield",    
-                name: "captchaOptions.height",
-                fieldLabel: t("height"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.height']
-            },
-            {
-                xtype: "numberfield",    
-                name: "captchaOptions.width",
-                fieldLabel: t("width"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.width']
-            },
-            {
-                id:"imgDir",
-                xtype: "textfield",
-                name: "captchaOptions.imgDir",
-                fieldLabel: t("image directory"),
-                anchor: "100%",
-                value:this.datax['captchaOptions.imgDir'],
-                listeners:{
-                    scope:this,
-                    'change': function(field,newValue,oldValue,Object){
-                        var ctr = Ext.getCmp("imageFS");
-                        if(ctr.hidden == false){
-                            this.checkPath(newValue,field);
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.expiration",
+                    fieldLabel: t("expiration"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.expiration']
+                },
+                {
+                    xtype: "textfield",
+                    name: "captchaOptions.font",
+                    fieldLabel: t("font"),
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.font']
+                },
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.fontSize",
+                    fieldLabel: t("font Size"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.fontSize']
+                },
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.height",
+                    fieldLabel: t("height"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.height']
+                },
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.width",
+                    fieldLabel: t("width"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.width']
+                },
+                {
+                    xtype: "textfield",
+                    name: "captchaOptions.imgDir",
+                    fieldLabel: t("image directory"),
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.imgDir'],
+                    listeners:{
+                        scope:this,
+                        'change': function(field,newValue,oldValue,Object){
+                            var ctr = _me.imageFS;
+                            if(ctr.hidden === false){
+                                this.checkPath(newValue,field);
+                            }
                         }
                     }
+                },
+                {
+                    xtype: "textfield",
+                    name: "captchaOptions.imgUrl",
+                    fieldLabel: t("Image Url"),
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.imgUrl']
+                },
+                {
+                    xtype: "textfield",
+                    name: "captchaOptions.suffix",
+                    fieldLabel: t("image suffix"),
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.suffix']
+                },
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.dotNoiseLevel",
+                    fieldLabel: t("dot noise level"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.dotNoiseLevel']
+                },
+                {
+                    xtype: "numberfield",
+                    name: "captchaOptions.lineNoiseLevel",
+                    fieldLabel: t("Line noise level"),
+                    allowDecimals:false,
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.lineNoiseLevel']
                 }
-            },
-            {
-                xtype: "textfield",
-                name: "captchaOptions.imgUrl",
-                fieldLabel: t("Image Url"),
-                anchor: "100%",
-                value:this.datax['captchaOptions.imgUrl']
-            },
-            {
-                xtype: "textfield",
-                name: "captchaOptions.suffix",
-                fieldLabel: t("image suffix"),
-                anchor: "100%",
-                value:this.datax['captchaOptions.suffix']
-            },
-            {
-                xtype: "numberfield",    
-                name: "captchaOptions.dotNoiseLevel",
-                fieldLabel: t("dot noise level"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.dotNoiseLevel']
-            },
-            {
-                xtype: "numberfield",    
-                name: "captchaOptions.lineNoiseLevel",
-                fieldLabel: t("Line noise level"),
-                allowDecimals:false,
-                anchor: "100%",
-                value:this.datax['captchaOptions.lineNoiseLevel']
-            }
             ]
         });
-        form.add(image);
 
-        var reCaptcha = new Ext.form.FieldSet({
-            id:"reCaptchaFS",
+        this.form.add( this.imageFS );
+
+        this.reCaptchaFS = new Ext.form.FieldSet({
+
+            name:"reCaptchaFS",
             title: t("reCaptcha options"),
             collapsible: true,
             defaultType: 'textfield',
-            items:[{
-                xtype: "textfield",
-                name: "captchaOptions.secretKey",
-                fieldLabel: t("Private key"),
-                anchor: "100%",
-                value:this.datax['captchaOptions.secretKey']
-            },
-            {
-                xtype: "textfield",
-                name: "captchaOptions.siteKey",
-                fieldLabel: t("Public key"),
-                anchor: "100%",
-                value:this.datax['captchaOptions.siteKey']
-            }
+            items:[
+                {
+                    xtype: "textfield",
+                    name: "captchaOptions.secretKey",
+                    fieldLabel: t("Private key"),
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.secretKey']
+                },
+                {
+                    xtype: "textfield",
+                    name: "captchaOptions.siteKey",
+                    fieldLabel: t("Public key"),
+                    anchor: "100%",
+                    value:this.datax['captchaOptions.siteKey']
+                }
             ]
         });
-        form.add(reCaptcha);
+
+        this.form.add( this.reCaptchaFS );
 
     },
 
@@ -215,74 +220,78 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
 
         $super();
 
-        var captchaStore = new Ext.data.ArrayStore({
-            fields: ["value","label"],
-            data : [["dumb","Dumb"],["figlet","Figlet"],["image","Image"],["reCaptcha","ReCaptcha"]]
-        });
-
-        var thisNode = new Ext.form.FieldSet({
-            title: t("This node"),
-            collapsible: true,
-            defaultType: 'textfield',
-            items:[{
-                id:"captchaCombo",
-                xtype: "combo",
-                name: "captcha",
-                fieldLabel: t("captcha type"),
-                queryDelay: 0,
-                displayField:"label",
-                valueField: "value",
-                mode: 'local',
-                store: captchaStore,
-                editable: false,
-                triggerAction: 'all',
-                anchor:"100%",
-                value:this.datax.captcha,
-                allowBlank:false,
-                listeners:{
-                    scope:this,
-                    'select': function(combo,record,index){
-                        var wordFS = Ext.getCmp('wordFS');
-                        var imageFS = Ext.getCmp('imageFS');
-                        var reCaptchaFS = Ext.getCmp('reCaptchaFS');
-
-                        switch(record.data.value){
-                            case "dumb" :
-                                wordFS.show();
-                                imageFS.hide();
-                                reCaptchaFS.hide();
-                                break;
-                            case "figlet" :
-                                wordFS.show();
-                                imageFS.hide();
-                                reCaptchaFS.hide();
-                                break;
-                            case "image" :
-                                wordFS.show();
-                                imageFS.show();
-                                reCaptchaFS.hide();
-                                break;
-                            case "reCaptcha" :
-                                wordFS.hide();
-                                imageFS.hide();
-                                reCaptchaFS.show();
-                                break;
-                            default:
-                                wordFS.hide();
-                                imageFS.hide();
-                                reCaptchaFS.hide();
-                                break;
-                        }
-
-                    }
+        var _me = this,
+            captchaStore = new Ext.data.ArrayStore(
+                {
+                    fields: ["value","label"],
+                    data : [["dumb","Dumb"],["figlet","Figlet"],["image","Image"],["reCaptcha","ReCaptcha"]]
                 }
-            }
+            ),
+            thisNode = new Ext.form.FieldSet({
+                title: t("This node"),
+                collapsible: true,
+                defaultType: 'textfield',
+                items:[
+                    {
+                        xtype: "combo",
+                        name: "captcha",
+                        fieldLabel: t("captcha type"),
+                        queryDelay: 0,
+                        displayField:"label",
+                        valueField: "value",
+                        mode: 'local',
+                        store: captchaStore,
+                        editable: false,
+                        triggerAction: 'all',
+                        anchor:"100%",
+                        value:this.datax.captcha,
+                        allowBlank:false,
+                        listeners: {
+                            scope:this,
+                            select: function(combo,record,index) {
 
-            ]
-        });
+                                var wordFS = _me.wordFS,
+                                    imageFS = _me.imageFS,
+                                    reCaptchaFS = _me.reCaptchaFS;
+
+                                switch(record.data.value){
+                                    case "dumb" :
+                                        wordFS.show();
+                                        imageFS.hide();
+                                        reCaptchaFS.hide();
+                                        break;
+                                    case "figlet" :
+                                        wordFS.show();
+                                        imageFS.hide();
+                                        reCaptchaFS.hide();
+                                        break;
+                                    case "image" :
+                                        wordFS.show();
+                                        imageFS.show();
+                                        reCaptchaFS.hide();
+                                        break;
+                                    case "reCaptcha" :
+                                        wordFS.hide();
+                                        imageFS.hide();
+                                        reCaptchaFS.show();
+                                        break;
+                                    default:
+                                        wordFS.hide();
+                                        imageFS.hide();
+                                        reCaptchaFS.hide();
+                                        break;
+                                }
+
+                            }
+                        }
+                    }
+
+                ]
+            }
+        );
 
         this.form.add(thisNode);
-        this.addCaptchaFS(this.form);
+        this.addCaptchaFS();
         
         return this.form;
     }

@@ -181,10 +181,6 @@ Formbuilder.comp.type.base = Class.create({
 
     applyData: function() {
 
-        if (!this.layout) {
-            //return;
-        }
-
         //1. fill default values and parse attr and multioptions repeater.
         var data = {};
         var attrCouples = {};
@@ -335,13 +331,14 @@ Formbuilder.comp.type.base = Class.create({
                 collapsible: true,
                 autoHeight:true,
                 defaultType: 'textfield',
-                items:[{
-                    xtype:"button",
-                    text: t("View API"),
-                    iconCls: "pimcore_icon_api",
-                    handler: this.viewApi.bind(this),
-                    style:{marginBottom : "5px"}
-                },
+                items:[
+                    {
+                        xtype:"button",
+                        text: t("View API"),
+                        iconCls: "pimcore_icon_api",
+                        handler: this.viewApi.bind(this),
+                        style:{marginBottom : "5px"}
+                    },
                     {
                         xtype: "textfield",
                         fieldLabel: t("name"),
@@ -352,7 +349,6 @@ Formbuilder.comp.type.base = Class.create({
                         enableKeyEvents: true
                     },
                     {
-                        id:"fieldlabel",
                         xtype: "textfield",
                         name: "label",
                         value: this.datax.label,
@@ -360,16 +356,13 @@ Formbuilder.comp.type.base = Class.create({
                         anchor: "100%"
                     },
                     {
-                        id:"fielddescription",
                         xtype: "textfield",
                         name: "description",
                         value: this.datax.description,
                         fieldLabel: t("description"),
                         anchor: "100%"
                     },
-
                     {
-                        id:"fieldallowempty",
                         xtype: "checkbox",
                         name: "allowEmpty",
                         value: this.datax.allowEmpty,
@@ -377,7 +370,6 @@ Formbuilder.comp.type.base = Class.create({
                         checked:true
                     },
                     {
-                        id:"fieldrequired",
                         xtype: "checkbox",
                         name: "required",
                         value: this.datax.required,
@@ -385,7 +377,6 @@ Formbuilder.comp.type.base = Class.create({
                         checked:false
                     },
                     {
-                        id:"fieldvalue",
                         xtype: "textfield",
                         name: "value",
                         value: this.datax.value,
@@ -397,10 +388,12 @@ Formbuilder.comp.type.base = Class.create({
 
                 ]
 
-
             }]
+
         });
+
         return this.form;
+
     },
 
     getHookForm: function(){
@@ -410,12 +403,13 @@ Formbuilder.comp.type.base = Class.create({
             collapsible: true,
             collapsed:true,
             defaultType: 'textfield',
-            items:[{
-                xtype: "textfield",
-                name: "custom_class",
-                fieldLabel: t("custom class"),
-                anchor: "100%"
-            },
+            items:[
+                {
+                    xtype: "textfield",
+                    name: "custom_class",
+                    fieldLabel: t("custom class"),
+                    anchor: "100%"
+                },
                 {
                     xtype: "textfield",
                     name: "custom_action",
@@ -430,20 +424,19 @@ Formbuilder.comp.type.base = Class.create({
 
     getLanguages: function(){
 
-        var languages = pimcore.settings.websiteLanguages;
-
-        var values = [];
+        var languages = pimcore.settings.websiteLanguages,
+            values = [],
+            store;
 
         for (var i=0;i<languages.length;i++){
             values.push([languages[i],languages[i]]);
         }
 
-        var store = new Ext.data.ArrayStore({
+        this.localeStore  = new Ext.data.ArrayStore({
             fields: ["key","label"],
             data : values
         });
 
-        this.localeStore = store;
         return this.localeStore;
 
     },
@@ -456,39 +449,42 @@ Formbuilder.comp.type.base = Class.create({
             bodyStyle:'padding:10px',
             labelWidth: 150,
             defaultType: 'textfield',
-            items: [{
-                xtype:'fieldset',
-                title: t('label translation'),
-                collapsible: false,
-                autoHeight:true,
-                defaultType: 'textfield',
-                items:[{
-                    xtype: "textfield",
-                    name: "originallabel",
-                    fieldLabel: t("original label"),
-                    anchor: "100%",
-                    value:this.datax.label,
-                    disabled:true
+            items: [
+                {
+                    xtype:'fieldset',
+                    title: t('label translation'),
+                    collapsible: false,
+                    autoHeight:true,
+                    defaultType: 'textfield',
+                    items:[
+                        {
+                            xtype: "textfield",
+                            name: "originallabel",
+                            fieldLabel: t("original label"),
+                            anchor: "100%",
+                            value: this.datax.label,
+                            disabled: true
+                        },
+
+                        this.generateLocaleRepeaterField('label')
+
+                    ]
                 },
-
-                    this.generateLocaleRepeaterField('label')
-
-                ]
-            },
                 {
                     xtype:'fieldset',
                     title: t('description translation'),
                     collapsible: false,
                     autoHeight:true,
                     defaultType: 'textfield',
-                    items:[{
-                        xtype: "textfield",
-                        name: "originaldescription",
-                        fieldLabel: t("original description"),
-                        anchor: "100%",
-                        value:this.datax.description,
-                        disabled:true
-                    },
+                    items:[
+                        {
+                            xtype: "textfield",
+                            name: "originaldescription",
+                            fieldLabel: t("original description"),
+                            anchor: "100%",
+                            value: this.datax.description,
+                            disabled: true
+                        },
 
                         this.generateLocaleRepeaterField('description'),
 
@@ -502,7 +498,11 @@ Formbuilder.comp.type.base = Class.create({
         return this.transForm;
     },
 
-    checkPath: function(path,field){
+    checkPath: function(path,field) {
+
+        if( path === "" ) {
+            return;
+        }
 
         Ext.Ajax.request({
             url: "/plugin/Formbuilder/admin_Settings/checkpath",
@@ -515,7 +515,7 @@ Formbuilder.comp.type.base = Class.create({
 
     },
 
-    generateAttributeRepeaterField : function() {
+    generateAttributeRepeaterField: function() {
 
         var html = new Ext.data.ArrayStore({
             fields: ["value","label"],
@@ -524,16 +524,15 @@ Formbuilder.comp.type.base = Class.create({
 
         var addMetaData = function (name, value) {
 
-            if(typeof name != "string") {
+            if(typeof name !== "string") {
                 name = "";
             }
-            if(typeof value != "string") {
+            if(typeof value !== "string") {
                 value = "";
             }
 
-            var count = this.attributeSelector.query("button").length+1;
-
-            var combolisteners = {
+            var count = this.attributeSelector.query("button").length+ 1,
+                combolisteners = {
                 "afterrender": function (el) {
                     el.getEl().parent().applyStyles({
                         float: "left",
@@ -546,24 +545,25 @@ Formbuilder.comp.type.base = Class.create({
                 layout: 'hbox',
                 hideLabel: true,
                 style: "padding-bottom:5px;",
-                items: [{
-                    xtype: "combo",
-                    name: "attrib_name_" + count,
-                    fieldLabel: t("attribute name"),
-                    queryDelay: 0,
-                    displayField: "label",
-                    valueField: "value",
-                    mode: 'local',
-                    store: html,
-                    editable: true,
-                    triggerAction: 'all',
-                    anchor: "100%",
-                    value: name,
-                    summaryDisplay: true,
-                    allowBlank: false,
-                    flex: 1,
-                    listeners: combolisteners
-                },
+                items: [
+                    {
+                        xtype: "combo",
+                        name: "attrib_name_" + count,
+                        fieldLabel: t("attribute name"),
+                        queryDelay: 0,
+                        displayField: "label",
+                        valueField: "value",
+                        mode: 'local',
+                        store: html,
+                        editable: true,
+                        triggerAction: 'all',
+                        anchor: "100%",
+                        value: name,
+                        summaryDisplay: true,
+                        allowBlank: false,
+                        flex: 1,
+                        listeners: combolisteners
+                    },
                     {
                         xtype: "textfield",
                         name: "attrib_value_" + count,
@@ -574,7 +574,9 @@ Formbuilder.comp.type.base = Class.create({
                         allowBlank: false,
                         flex: 1,
                         listeners: combolisteners
-                    }]
+                    }
+                ]
+
             });
 
             compositeField.add([{
@@ -661,24 +663,25 @@ Formbuilder.comp.type.base = Class.create({
                 }
             };
 
-            var items = [{
-                xtype: "combo",
-                name: "translate_" + elementName + "_name_" + count,
-                fieldLabel: t("Locale"),
-                queryDelay: 0,
-                displayField: "label",
-                valueField: "key",
-                mode: 'local',
-                store: storeData,
-                editable: true,
-                triggerAction: 'all',
-                anchor: "100%",
-                value: name,
-                summaryDisplay: true,
-                allowBlank: false,
-                flex: 1,
-                listeners: combolisteners
-            },
+            var items = [
+                {
+                    xtype: "combo",
+                    name: "translate_" + elementName + "_name_" + count,
+                    fieldLabel: t("Locale"),
+                    queryDelay: 0,
+                    displayField: "label",
+                    valueField: "key",
+                    mode: 'local',
+                    store: storeData,
+                    editable: true,
+                    triggerAction: 'all',
+                    anchor: "100%",
+                    value: name,
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    flex: 1,
+                    listeners: combolisteners
+                },
                 {
                     xtype: "textfield",
                     name: "translate_" + elementName + "_value_" + count,
@@ -777,7 +780,7 @@ Formbuilder.comp.type.base = Class.create({
         return selector;
     },
 
-    generateMultiOptionsRepeaterField : function( allowFirstOptionsEmpty ) {
+    generateMultiOptionsRepeaterField: function( allowFirstOptionsEmpty ) {
 
         var selector = null;
 
@@ -805,17 +808,18 @@ Formbuilder.comp.type.base = Class.create({
                 layout: 'hbox',
                 hideLabel: true,
                 style: "padding-bottom:5px;",
-                items: [{
-                    xtype: "textfield",
-                    name: "multiOptions_name_" + count,
-                    fieldLabel: t("Option"),
-                    anchor: "100%",
-                    summaryDisplay: true,
-                    allowBlank: false,
-                    value : name,
-                    flex: 1,
-                    listeners: combolisteners
-                },
+                items: [
+                    {
+                        xtype: "textfield",
+                        name: "multiOptions_name_" + count,
+                        fieldLabel: t("Option"),
+                        anchor: "100%",
+                        summaryDisplay: true,
+                        allowBlank: false,
+                        value : name,
+                        flex: 1,
+                        listeners: combolisteners
+                    },
                     {
                         xtype: "textfield",
                         name: "multiOptions_value_" + count,
@@ -908,9 +912,14 @@ Formbuilder.comp.type.base = Class.create({
 
     pathChecked: function(response) {
 
+        //maybe layout is not available anymore => return!
+        if( this.el === null ) {
+            return;
+        }
+
         var ret = Ext.decode(response.responseText);
 
-        if(ret.success == true) {
+        if(ret.success === true) {
 
             this.clearInvalid();
 

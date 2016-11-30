@@ -691,60 +691,60 @@ Formbuilder.comp.elem = Class.create({
             bodyStyle: "padding:10px",
             border: false,
             items: [
-            {
-                xtype: "textfield",
-                fieldLabel: t("name"),
-                name: "name",
-                width: 300,
-                value: this.data.name
-            },
-            {
-                xtype: "textfield",
-                name: "action",
-                value: this.data.action ? this.data.action : "/",
-                fieldLabel: t("Action"),
-                width: 300,
-                allowBlank: false
-            },
-            {
-                xtype: "combo",
-                name: "method",
-                fieldLabel: t("Method"),
-                queryDelay: 0,
-                displayField:"label",
-                valueField: "value",
-                mode: 'local',
-                store: methodStore,
-                editable: true,
-                triggerAction: 'all',
-                width: 300,
-                value: this.data.method ? this.data.method : 'POST',
-                allowBlank: false
-            },
-            {
-                xtype: "combo",
-                name: "enctype",
-                fieldLabel: t("Enctype"),
-                queryDelay: 0,
-                displayField:"label",
-                valueField: "value",
-                mode: 'local',
-                store: encStore,
-                editable: false,
-                triggerAction: 'all',
-                width: 300,
-                value: this.data.enctype ? this.data.enctype : 'multipart/form-data',
-                allowBlank: false
-            },
-            {
-                xtype: "checkbox",
-                name: "useAjax",
-                fieldLabel: t("Use Ajax to Submit"),
-                checked: this.data.useAjax === undefined ? true : false,
-                value: this.data.useAjax
-            },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "name",
+                    width: 300,
+                    value: this.data.name
+                },
+                {
+                    xtype: "textfield",
+                    name: "action",
+                    value: this.data.action ? this.data.action : "/",
+                    fieldLabel: t("Action"),
+                    width: 300,
+                    allowBlank: false
+                },
+                {
+                    xtype: "combo",
+                    name: "method",
+                    fieldLabel: t("Method"),
+                    queryDelay: 0,
+                    displayField:"label",
+                    valueField: "value",
+                    mode: 'local',
+                    store: methodStore,
+                    editable: true,
+                    triggerAction: 'all',
+                    width: 300,
+                    value: this.data.method ? this.data.method : 'POST',
+                    allowBlank: false
+                },
+                {
+                    xtype: "combo",
+                    name: "enctype",
+                    fieldLabel: t("Enctype"),
+                    queryDelay: 0,
+                    displayField:"label",
+                    valueField: "value",
+                    mode: 'local',
+                    store: encStore,
+                    editable: false,
+                    triggerAction: 'all',
+                    width: 300,
+                    value: this.data.enctype ? this.data.enctype : 'multipart/form-data',
+                    allowBlank: false
+                },
+                {
+                    xtype: "checkbox",
+                    name: "useAjax",
+                    fieldLabel: t("Use Ajax to Submit"),
+                    checked: this.data.useAjax === undefined ? true : false,
+                    value: this.data.useAjax
+                },
 
-            this.metaDataPanel
+                this.metaDataPanel
 
             ]
         });
@@ -768,17 +768,17 @@ Formbuilder.comp.elem = Class.create({
 
         }
 
-        if(stype == "filter" ) {
+        if(stype === "filter" ) {
             filter = true;
         }
 
-        if(stype == "validator") {
+        if(stype === "validator") {
             validator = true;
         }
 
         var newNode = null;
 
-        if(filter == true) {
+        if(filter === true) {
 
             newNode = {
                 type: "layout",
@@ -793,7 +793,7 @@ Formbuilder.comp.elem = Class.create({
             newNode = this.appendChild(newNode);
             newNode.set('object', new Formbuilder.comp.filter[type](newNode, initData, this) );
 
-        } else if(validator == true) {
+        } else if(validator === true) {
 
             newNode = {
                 type: "layout",
@@ -824,20 +824,6 @@ Formbuilder.comp.elem = Class.create({
             newNode.set('object', new Formbuilder.comp.type[type](newNode, initData, this) );
 
         }
-
-        /*
-
-        newNode.addListener('remove', function(node, removedNode, isMove) {
-            if(!node.hasChildNodes()) {
-                node.set('expandable', false);
-            }
-        });
-
-        newNode.addListener('append', function(node) {
-            node.set('expandable', true);
-        });
-
-        */
 
         this.expand();
 

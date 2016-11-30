@@ -13,13 +13,11 @@ Formbuilder.comp.type.reset = Class.create(Formbuilder.comp.type.base,{
 
     onAfterPopulate: function(){
 
-        var label = Ext.getCmp("fieldlabel");
-        var description = Ext.getCmp("fielddescription");
-        var allowempty = Ext.getCmp("fieldallowempty");
-        var required = Ext.getCmp("fieldrequired");
-        var value = Ext.getCmp("fieldvalue");
+        var allowEmpty = this.form.getForm().findField("allowEmpty"),
+            required = this.form.getForm().findField("required"),
+            value = this.form.getForm().findField("value");
 
-        allowempty.hide();
+        allowEmpty.hide();
         required.hide();
         value.hide();
 

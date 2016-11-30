@@ -13,13 +13,15 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
 
     onAfterPopulate: function(){
 
-        var field = Ext.getCmp("destination");
+        var field = this.form.getForm().findField("destination");
+
         if( field && !this.datax.multiFile ) {
             this.checkPath(field.getValue(),field);
         }
     },
 
     getForm: function($super){
+
         $super();
 
         var thisNode = new Ext.form.FieldSet({
@@ -29,24 +31,32 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
             items:[
                 {
                     xtype: "checkbox",
-                    id: "fbMultfile",
                     name: "multiFile",
                     fieldLabel: t("multiFile"),
                     checked: false,
                     value: this.datax.multiFile,
                     listeners:{
                         change: function(checkbox, checked) {
+
+                            var fbAllowedExtensions = this.form.getForm().findField("allowedExtensions"),
+                                fbAllowedExtensionsLabel = fbAllowedExtensions.nextSibling(),
+                                fbDestination = this.form.getForm().findField("destination");
+
                             if (checked) {
-                                Ext.getCmp('fbAllowedExtensions').show();
-                                Ext.getCmp('fbAllowedExtensionsLabel').show();
-                                Ext.getCmp('fbDestination').hide();
+
+                                fbAllowedExtensions.show();
+                                fbAllowedExtensionsLabel.show();
+                                fbDestination.hide();
+
                             } else {
-                                Ext.getCmp('fbAllowedExtensions').hide();
-                                Ext.getCmp('fbAllowedExtensionsLabel').hide();
-                                Ext.getCmp('fbDestination').show();
+
+                                fbAllowedExtensions.hide();
+                                fbAllowedExtensionsLabel.hide();
+                                fbDestination.show();
 
                             }
-                        }
+
+                        }.bind(this)
                     }
                 },
                 {
@@ -56,9 +66,9 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                 },
                 {
                     xtype: "numberfield",
-                    id: "fbMaxFileSize",
                     name: "maxFileSize",
                     fieldLabel: t("maxFileSize"),
+                    labelWidth: 150,
                     allowDecimals:false,
                     value: this.datax.maxFileSize
                 },
@@ -69,7 +79,6 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                 },
                 {
                     xtype: "tagfield",
-                    id: "fbAllowedExtensions",
                     name: "allowedExtensions",
                     fieldLabel: t("allowedExtensions"),
                     store: new Ext.data.ArrayStore({
@@ -83,6 +92,7 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                     value: this.datax.allowedExtensions,
                     createNewOnEnter: true,
                     createNewOnBlur: true,
+                    labelWidth: 150,
                     queryMode: "allowedExtensions",
                     displayField: "allowedExtensions",
                     valueField: "allowedExtensions",
@@ -90,21 +100,21 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                 },
                 {
                     xtype: "label",
-                    id: "fbAllowedExtensionsLabel",
+                    name: "fbAllowedExtensionsLabel",
                     style:'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
                     text: t("Add some extensions and confirm with enter.")
                 },
                 {
                     xtype: "textfield",
-                    id:"fbDestination",
                     name: "destination",
                     fieldLabel: t("destination"),
+                    labelWidth: 150,
                     anchor: "100%",
                     value: this.datax.destination,
                     hidden: this.datax.multiFile,
                     listeners: {
-                        scope:this,
-                        'change': function(field,newValue){
+                        scope: this,
+                        change: function(field,newValue){
                             this.checkPath(newValue,field);
                         }
                     }
