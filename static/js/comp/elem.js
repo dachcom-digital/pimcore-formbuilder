@@ -52,6 +52,7 @@ Formbuilder.comp.elem = Class.create({
 
         this.panel = new Ext.Panel({
             title: this.data.name + " ( ID: " + this.data.id + ")",
+            id: this.data.id,
             closable: true,
             iconCls: "Formbuilder_icon_root",
             autoScroll: true,
@@ -80,6 +81,11 @@ Formbuilder.comp.elem = Class.create({
 
         this.panel.on("beforedestroy", function() {
             delete this.parentPanel.panels["form_" + this.data.id];
+
+            if( Object.keys( this.parentPanel.panels ).length === 0 ) {
+                this.parentPanel.tree.getSelectionModel().deselectAll();
+            }
+
         }.bind(this));
 
         this.parentPanel.getEditPanel().add(this.panel);

@@ -14,7 +14,7 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
     onAfterPopulate: function(){
 
         var field = Ext.getCmp("destination");
-        if( !this.datax.multiFile ) {
+        if( field && !this.datax.multiFile ) {
             this.checkPath(field.getValue(),field);
         }
     },
@@ -85,6 +85,11 @@ Formbuilder.comp.type.file = Class.create(Formbuilder.comp.type.base,{
                     displayField: "allowedExtensions",
                     valueField: "allowedExtensions",
                     hideTrigger: true
+                },
+                {
+                    xtype: "label",
+                    style:'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
+                    text: t("Add some extensions and confirm with enter.")
                 },
                 {
                     xtype: "textfield",

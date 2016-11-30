@@ -176,3 +176,4 @@
 "Use Image as graphical Submit Button (input field)","Bild als grafische Absende-Schaltfläche (input field)"
 "Max file size will be calculated in MB. Empty or Zero means no Limit!","Maximale Dateigröße wird in MB verarbeitet. Leer oder 0 bedeutet kein Limit!"
 "If your form is in ajax mode, we highly recommend to activate the multi file mode. It is safer, nicer and simple cool!","Wenn Ihr Formular sich im Ajax-Modus befindet, empfehlen wir den Multi-File Modus. Er ist hübscher, toller, sicherer und überhaupt: Awesome!"
+"Add some extensions and confirm with enter.","Fügen Sie erlaubte Dateierweiterungen hinzu und bestätigen Sie mit der Enter-Taste."

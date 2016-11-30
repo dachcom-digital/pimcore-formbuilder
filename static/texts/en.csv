@@ -178,3 +178,4 @@
 "Use Image as graphical Submit Button (input field)","Use Image as graphical Submit Button (input field)"
 "Max file size will be calculated in MB. Empty or Zero means no Limit!","Max file size will be calculated in MB. Empty or Zero means no Limit!"
 "If your form is in ajax mode, we highly recommend to activate the multi file mode. It is safer, nicer and simple cool!","If your form is in ajax mode, we highly recommend to activate the multi file mode. It is safer, nicer and simple cool!"
+"Add some extensions and confirm with enter.","Add some allowed extensions and confirm with Enter."

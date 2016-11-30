@@ -10,6 +10,8 @@ Formbuilder.settings = Class.create({
 
         this.panels = {};
 
+        this.loading = false;
+
         this.getTabPanel();
 
     },
@@ -17,45 +19,6 @@ Formbuilder.settings = Class.create({
     getTabPanel: function () {
 
         if (!this.panel) {
-
-            /*
-             //DEBUG START
-             // refreshes the layout
-             pimcore.registerNS("pimcore.layout.refresh");
-             pimcore.layout.refresh = function () {
-
-             try {
-                pimcore.viewport.doLayout();
-             }
-             catch (e) {}
-             };
-
-             pimcore.viewport = new Ext.Viewport({
-                 id:"pimcore_viewport",
-                 layout:'fit',
-                 items:[
-                     {
-                         xtype:"panel",
-                         id:"pimcore_body",
-                         cls:"pimcore_body",
-                         layout:"border",
-                         border:false,
-                         items:[
-                             new Ext.TabPanel({
-                                 region:'center',
-                                 deferredRender:false,
-                                 id:"pimcore_panel_tabs",
-                                 enableTabScroll:true,
-                                 hideMode:"offsets",
-                                 cls:"tab_panel"
-                            })
-                        ]
-                     }
-                 ]
-             });
-
-             //DEBUG END
-            */
 
             this.panel = new Ext.Panel({
 
@@ -95,13 +58,21 @@ Formbuilder.settings = Class.create({
                 },
 
                 listeners : {
-                    load : function(tree, records, successful) {
+                    load : function(tree, records, success, opt) {
 
-                        Ext.each(records, function(record, index){
+                        Ext.each(records, function(record){
                             if( !in_array(record.data.text, _self.usedFormNames)) {
-                                _self.usedFormNames.push( record.data.text);
+                                _self.usedFormNames.push( record.data.text );
                             }
                         }, this);
+
+                        //new form added, mark es selected!
+                        if( opt.formId !== undefined ) {
+
+                            var record = _self.tree.getRootNode().findChild('id',opt.formId,true);
+                            _self.tree.getSelectionModel().select(record);
+
+                        }
 
                     }
 
@@ -153,7 +124,15 @@ Formbuilder.settings = Class.create({
                 activeTab: 0,
                 items: [],
                 region: "center",
-                layout: "fit"
+                layout: "fit",
+                listeners: {
+                    tabchange: function(tabpanel, tab) {
+
+                        var record = this.tree.getRootNode().findChild('id',tab.id,true);
+                        this.tree.getSelectionModel().select(record);
+
+                    }.bind(this)
+                }
             });
         }
 
@@ -162,52 +141,66 @@ Formbuilder.settings = Class.create({
 
     getTreeNodeListeners: function () {
 
-        var treeNodeListeners = {
-            "itemclick" : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            "render": function () {
+        return {
+
+            itemclick : this.onTreeNodeClick.bind(this),
+            itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
+            render: function () {
                 this.getRootNode().expand();
             },
-            "beforeitemappend": function (thisNode, newChildNode, index, eOpts) {
+            beforeitemappend: function (thisNode, newChildNode, index, eOpts) {
                 newChildNode.data.qtip = t('id') +  ": " + newChildNode.data.id;
             }
+
         };
 
-        return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record) {
         this.openFormConfig(record.data.id);
     },
 
-    openFormConfig : function(id) {
+    openFormConfig: function(id) {
 
-        Ext.Ajax.request({
-            url: "/plugin/Formbuilder/admin_Settings/get",
-            params: {
-                id: id
-            },
-            success: this.addMainPanel.bind(this)
-        });
+        var formPanelKey = "form_" + id;
 
-    },
+        if( this.loading === true ) {
+            return false;
+        }
 
-    addMainPanel: function (response) {
-
-        var data = Ext.decode(response.responseText);
-
-        var formPanelKey = "form_" + data.id;
-
-        if(this.panels[formPanelKey]) {
+        //its already loaded
+        if( this.panels[formPanelKey] ) {
 
             this.panels[formPanelKey].activate();
 
         } else {
 
-            var formPanel = new Formbuilder.comp.elem(data, this);
-            this.panels[formPanelKey] = formPanel;
+            this.loading = true;
+            this.tree.disable();
 
+            Ext.Ajax.request({
+                url: "/plugin/Formbuilder/admin_Settings/get",
+                params: {
+                    id: id
+                },
+                success: this.addMainPanel.bind(this)
+            });
         }
+
+
+    },
+
+    addMainPanel: function (response) {
+
+        var formPanel,
+            data = Ext.decode(response.responseText),
+            formPanelKey = "form_" + data.id;
+
+        this.loading = false;
+        this.tree.enable();
+
+        formPanel = new Formbuilder.comp.elem(data, this);
+        this.panels[formPanelKey] = formPanel;
 
         pimcore.layout.refresh();
 
@@ -240,8 +233,7 @@ Formbuilder.settings = Class.create({
 
         var regresult = value.match(/[a-zA-Z]+/);
 
-        if (button == "ok" && value.length > 2 && regresult == value
-            && !in_array(value.toLowerCase(), this.forbiddennames)) {
+        if (button === "ok" && value.length > 2 && regresult == value && !in_array(value.toLowerCase(), this.forbiddennames)) {
 
             if( in_array(value, this.usedFormNames) ) {
 
@@ -256,11 +248,11 @@ Formbuilder.settings = Class.create({
                     params: {
                         name: value
                     },
-                    success: function (response) {
+                    success: function(response) {
 
                         var data = Ext.decode(response.responseText);
 
-                        this.tree.getStore().load();
+                        this.tree.getStore().load({ 'formId' : data.id });
 
                         if(!data || !data.success) {
 
@@ -277,7 +269,7 @@ Formbuilder.settings = Class.create({
 
             }
 
-        } else if (button == "cancel") {
+        } else if (button === "cancel") {
 
             return false;
 
@@ -307,7 +299,7 @@ Formbuilder.settings = Class.create({
                     }
                 });
 
-                this.getEditPanel().removeAll();
+                this.getEditPanel().remove( record.id );
                 record.remove();
 
             }
