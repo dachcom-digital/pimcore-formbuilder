@@ -74,7 +74,7 @@ class Placeholder {
                     'data-id'   => $id,
                     'data-type' => 'snippet',
                     'target'    => '_self',
-                    'href'      => NULL,
+                    'href'      => '#',
                     'content'   => $content
                 ];
 
