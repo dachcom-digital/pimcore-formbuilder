@@ -34,14 +34,15 @@ Some installation advices.
 }
 ```
 
-
-
 **Ajax**  
-If you want to use Ajaxforms, you need to load the FormBuilder Javascript Library. For example in your `lib/Website/Controller/Action.php`:
+If you want to use Ajaxforms, you need to load the FormBuilder Javascript Library. 
+For example in your `lib/Website/Controller/Action.php`:
+
 ```php
 $this->view->headScript()->appendFile('/plugins/Formbuilder/static/js/frontend/formbuilder.js');
 ```
-Of course it's up to you, to modify this file for your needs.
+
+Of course it's up to you, to modify this file for your needs.  
 **Attention:** Be sure that jQuery has been initialized, before you load formbuilder.js.
 
 **CSS**  
@@ -55,6 +56,21 @@ To override the FormBuilder scripts, just create a formbuilder folder in your sc
 
 **Misc**  
 Add `/website/var/formbuilder/` to your `.gitignore` since forms only can be created in backend.
+
+## Backend
+
+### Label Placeholder
+It's possible to add some placeholder in labels which will be transformed to links automatically.
+A Label may look like this: `I'm ok with your evil [document id=1]conditions[/document].`
+
+*Document*  
+Creates a Link to a Dokument
+
+*Snippet*  
+Creates a empty link element with some data attributes (id, type). If you want to link to the snippet content, you need to define your own methods or routes to do so.
+
+*Document*  
+Creates a Link to a Asset
 
 ## Styling
 If you want to add some fancy radio/checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
@@ -160,6 +176,26 @@ Use this Event to manipulate and extend Forms dynamically.
 
 **formbuilder.form.preSendData**  
 Use this Event to manipulate form data before they get submitted.
+
+**formbuilder.form.label.placeholder**  
+Use this Event to manipulate label placeholder attributes. See Section *Backend* => *Label Placeholder*.
+
+*Example*
+
+```php
+\Pimcore::getEventManager()->attach(
+    'formbuilder.label.placeholder',
+    function( \Zend_EventManager_Event $e ) 
+    {
+        $params = $e->getParam('params');
+        $params['class'] = $params['class'] . ' your-custom-class';
+
+        $e->stopPropagation(true);
+        
+        return $params;
+    }
+);
+```
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)

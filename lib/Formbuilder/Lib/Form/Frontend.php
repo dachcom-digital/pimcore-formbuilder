@@ -391,6 +391,12 @@ class Frontend {
                 continue;
             }
 
+            //parse label placeholder
+            if( isset( $element['options']['label'] ) )
+            {
+                $element['options']['label'] = \Formbuilder\Tool\Placeholder::parse( $element['options']['label'] );
+            }
+
             //set class to each field to allow ajax validation!
             $classes = '';
             if( isset( $element['options']['class'] ) )
