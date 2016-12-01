@@ -80,9 +80,15 @@ Formbuilder.comp.elem = Class.create({
         });
 
         this.panel.on("beforedestroy", function() {
-            delete this.parentPanel.panels["form_" + this.data.id];
 
-            if( Object.keys( this.parentPanel.panels ).length === 0 ) {
+            if( this.data.id && this.parentPanel.panels["form_" + this.data.id] ) {
+                this.editPanel.removeAll();
+                delete this.parentPanel.panels["form_" + this.data.id];
+            }
+
+            if( this.parentPanel.tree.initialConfig !== null &&
+                Object.keys( this.parentPanel.panels ).length === 0 ) {
+
                 this.parentPanel.tree.getSelectionModel().deselectAll();
             }
 
