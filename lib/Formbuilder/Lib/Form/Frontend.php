@@ -270,6 +270,12 @@ class Frontend {
         return $this->recaptchaV2Key;
     }
 
+    /**
+     * @param  \Zend_Form $form
+     * @param array $attributes
+     *
+     * @return \Zend_Form
+     */
     public function addDefaultValuesToForm( $form, $attributes = [] )
     {
         $defaults = [
@@ -350,6 +356,20 @@ class Frontend {
 
         }
 
+        //@fixme: Maybe it's possible to extend the Label Decorator?
+        //Now transform Label Placeholder. Because the may get translated, we need to do this here.
+        $elements = $form->getElements();
+
+        /** @var \Zend_Form_Element $element */
+        foreach( $elements as $element)
+        {
+            $label = $element->getLabel();
+            if( !empty( $label ) )
+            {
+                $element->setLabel( \Formbuilder\Tool\Placeholder::parse( $label ) );
+            }
+        }
+
         return $form;
 
     }
@@ -389,12 +409,6 @@ class Frontend {
             if( !is_array( $element ) )
             {
                 continue;
-            }
-
-            //parse label placeholder
-            if( isset( $element['options']['label'] ) )
-            {
-                $element['options']['label'] = \Formbuilder\Tool\Placeholder::parse( $element['options']['label'] );
             }
 
             //set class to each field to allow ajax validation!
