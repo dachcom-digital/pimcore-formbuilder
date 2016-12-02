@@ -435,7 +435,7 @@ class Builder {
                         {
                             $multipleData = [];
 
-                            if( $key !== 'label')
+                            if( !in_array( $key, ['label', 'description'] ) )
                             {
                                 $multipleData = preg_split('#,#', $data);
                             }
