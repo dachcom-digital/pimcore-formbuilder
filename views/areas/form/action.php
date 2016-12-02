@@ -193,9 +193,7 @@ class Form extends Document\Tag\Area\AbstractArea {
                 ]
             );
 
-            $isSubmit = !is_null( $this->getParam('submit') );
-
-            if( $isSubmit )
+            if( \Zend_Controller_Front::getInstance()->getRequest()->isPost() )
             {
                 $valid = $form->isValid( $frontendLib->parseFormParams( $this->getAllParams(), $form ) );
 
