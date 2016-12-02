@@ -8,7 +8,7 @@ class Formbuilder_EmailController extends Frontend {
 
     public function defaultAction()
     {
-        $this->enableLayout();
+        $this->disableLayout();
     }
 
 }

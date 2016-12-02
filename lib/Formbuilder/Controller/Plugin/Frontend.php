@@ -15,7 +15,6 @@ class Frontend extends \Zend_Controller_Plugin_Abstract {
         /** @var \Pimcore\View $view */
         $view = $renderer->view;
         $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/views/scripts');
-        $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/Formbuilder/views/layouts');
 
     }
 }
