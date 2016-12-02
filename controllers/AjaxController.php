@@ -111,6 +111,7 @@ class Formbuilder_AjaxController extends Action {
         $mailTemplateId = $formConfig->mailTemplateId;
         $copyMailTemplateId = $formConfig->copyMailTemplateId;
         $sendCopy = $formConfig->sendCopy;
+        $formPreset = $formConfig->formPreset;
 
         $valid = FALSE;
         $redirect = FALSE;
@@ -129,6 +130,7 @@ class Formbuilder_AjaxController extends Action {
                 $form,
                 [
                     'formData'              => $formData,
+                    'formPreset'            => $formPreset,
                     'locale'                => $language,
                     'mailTemplateId'        => $mailTemplateId,
                     'copyMailTemplateId'    => $copyMailTemplateId,

@@ -280,6 +280,7 @@ class Frontend {
     {
         $defaults = [
             'formData'              => NULL,
+            'formPreset'            => NULL,
             'locale'                => 'en',
             'mailTemplateId'        => NULL,
             'copyMailTemplateId'    => NULL,
@@ -308,6 +309,7 @@ class Frontend {
 
         $formData = [
             'formId'                => $params['formData']->getId(),
+            'formPreset'            => $params['formPreset'],
             'language'              => $params['locale'],
             'mailTemplateId'        => $params['mailTemplateId'],
             'copyMailTemplateId'    => $params['copyMailTemplateId'],
@@ -339,9 +341,10 @@ class Frontend {
             'formbuilder.form.preCreateForm',
             NULL,
             [
-                'form'      => $form,
-                'formId'    => $params['formData']->getId(),
-                'formName'  => $params['formData']->getName()
+                'form'          => $form,
+                'formPreset'    => $params['formPreset'],
+                'formId'        => $params['formData']->getId(),
+                'formName'      => $params['formData']->getName()
             ]
         );
 

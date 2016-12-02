@@ -85,5 +85,8 @@
         <pluginCssPaths-extjs6>
             <path>/plugins/Formbuilder/static/css/admin.css</path>
         </pluginCssPaths-extjs6>
+        <pluginDocumentEditmodeJsPaths>
+            <path>/Formbuilder/static/js/admin/area.js</path>
+        </pluginDocumentEditmodeJsPaths>
     </plugin>
 </zend-config>

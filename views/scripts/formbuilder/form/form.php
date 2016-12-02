@@ -8,6 +8,10 @@
         <?= $this->messages; ?>
     <?php } ?>
 
+    <?php if( $this->formPreset !== 'custom') { ?>
+        <?=$this->template('/formbuilder/form/presets/'. $this->formPreset . '.php'); ?>
+    <?php } ?>
+
     <div class="row">
 
         <div class="form-wrapper">

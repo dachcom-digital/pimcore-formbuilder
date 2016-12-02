@@ -4,15 +4,16 @@ namespace Pimcore\Model\Document\Tag\Area;
 
 use Pimcore\Model\Document;
 
-use Formbuilder\Model\Form as FormModel;
-
 use Formbuilder\Lib\Processor;
 use Formbuilder\Lib\Form\Frontend;
+use Formbuilder\Tool\Preset;
+use Formbuilder\Model\Configuration;
+use Formbuilder\Model\Form as FormModel;
 
 class Form extends Document\Tag\Area\AbstractArea {
 
-    public function action() {
-
+    public function action()
+    {
         if ($this->view->editmode)
         {
             $mainList = new FormModel();
@@ -36,6 +37,26 @@ class Form extends Document\Tag\Area\AbstractArea {
             $this->view->availableForms = $store;
             $this->view->availableFormTypes = $typeStore;
 
+            $formPresets = Configuration::get('form.area.presets');
+            $formPresetsStore = [];
+
+            if( !empty( $formPresets ) )
+            {
+                $formPresetsStore[] = [ 'custom', $this->view->translateAdmin('no form preset') ];
+
+                foreach( $formPresets as $presetName => $preset )
+                {
+                    $formPresetsStore[] = [ $presetName, $preset['niceName'] ];
+                }
+
+                if($this->view->select('formPreset')->isEmpty() )
+                {
+                    $this->view->select('formPreset')->setDataFromResource( 'custom' );
+                }
+
+                $this->view->availableFormPresets = $formPresetsStore;
+            }
+
         }
 
         $formData = NULL;
@@ -49,6 +70,12 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         $horizontalForm = TRUE;
         $sendCopy = $this->view->checkbox('userCopy')->isChecked() === '1';
+        $formPreset = $this->view->select('formPreset')->getData();
+
+        if( empty( $formPreset ) || is_null( $formPreset ) )
+        {
+            $formPreset = 'custom';
+        }
 
         if (!$this->view->select('formName')->isEmpty())
         {
@@ -88,7 +115,16 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         if( $noteError === TRUE )
         {
-            $this->view->notifications = ['error' => $noteError, 'message' => $noteMessage ];
+            $this->view->assign(
+                [
+                    'form'          => NULL,
+                    'messages'      => NULL,
+                    'formName'      => NULL,
+                    'formPreset'    => NULL,
+                    'notifications' => ['error' => $noteError, 'message' => $noteMessage ],
+                ]
+            );
+
             return FALSE;
         }
 
@@ -96,8 +132,34 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         $form = $frontendLib->getTwitterForm($formData->getId(), $this->view->language, $horizontalForm);
 
-        $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
-        $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
+        $_mailTemplate = NULL;
+        $_copyMailTemplate = NULL;
+
+        if( $formPreset === 'custom')
+        {
+            $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
+            $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
+        }
+        else
+        {
+            $presetInfo = Preset::getPresetConfig( $formPreset );
+            if( !empty( $presetInfo ) )
+            {
+                $language = isset( $this->view->language ) ? $this->view->language : 'en';
+
+                if( isset( $presetInfo['mail'][ $language ] ) && !empty( $presetInfo['mail'][ $language ] ) )
+                {
+                    $_mailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mail'][ $language ] );
+                }
+
+                if( isset( $presetInfo['mailCopy'][ $language ] ) && !empty( $presetInfo['mailCopy'][ $language ] ) )
+                {
+                    $sendCopy = TRUE;
+                    $_copyMailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mailCopy'][ $language ] );
+                }
+            }
+
+        }
 
         $mailTemplateId = NULL;
         $copyMailTemplateId = NULL;
@@ -111,6 +173,10 @@ class Form extends Document\Tag\Area\AbstractArea {
         {
             $copyMailTemplateId = $_copyMailTemplate->getId();
         }
+        else //disable copy!
+        {
+            $sendCopy = FALSE;
+        }
 
         if( $form !== FALSE )
         {
@@ -118,6 +184,7 @@ class Form extends Document\Tag\Area\AbstractArea {
                 $form,
                 [
                     'formData'              => $formData,
+                    'formPreset'            => $formPreset,
                     'formName'              => $formName,
                     'locale'                => $this->view->language,
                     'mailTemplateId'        => $mailTemplateId,
@@ -161,10 +228,15 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         }
 
-
-        $this->view->form = $formHtml;
-        $this->view->messages = $messageHtml;
-        $this->view->formName = $formName;
+        $this->view->assign(
+            [
+                'form'          => $formHtml,
+                'messages'      => $messageHtml,
+                'formName'      => $formName,
+                'formPreset'    => $formPreset,
+                'notifications' => [],
+            ]
+        );
 
     }
 

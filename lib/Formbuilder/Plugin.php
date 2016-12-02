@@ -8,6 +8,7 @@ use Pimcore\Model\Translation\Admin;
 use Pimcore\API\Plugin as PluginLib;
 
 use Formbuilder\Tool\File;
+use Formbuilder\Model\Configuration;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
@@ -16,6 +17,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         parent::__construct($jsPaths, $cssPaths);
 
         define('FORMBUILDER_PATH', PIMCORE_PLUGINS_PATH . '/Formbuilder');
+        define('FORMBUILDER_PLUGIN_CONFIG', FORMBUILDER_PATH . '/plugin.xml');
         define('FORMBUILDER_DEFAULT_ERROR_PATH', FORMBUILDER_PATH . '/static/lang/errors');
         define('FORMBUILDER_INSTALL_PATH', FORMBUILDER_PATH . '/install');
         define('FORMBUILDER_DATA_PATH', PIMCORE_WEBSITE_VAR . '/formbuilder');
@@ -121,6 +123,9 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             $folder->setFilename($folderName);
             $folder->save();
         }
+
+        //set default config
+        Configuration::set('form.area.presets', []);
 
         //install properties
         self::installProperties();

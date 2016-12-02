@@ -447,16 +447,21 @@ class Builder {
 
                 default :
 
-                    if ($key != 'name' && $key != 'fieldtype')
+                    if ($key !== 'name' && $key !== 'fieldtype')
                     {
                         if ($data != '')
                         {
-                            $multipl = preg_split('#,#', $data);
+                            $multipleData = [];
 
-                            if (count($multipl) > 1)
+                            if( $key !== 'label')
+                            {
+                                $multipleData = preg_split('#,#', $data);
+                            }
+
+                            if (count( $multipleData ) > 1)
                             {
                                 $options[$key] = array();
-                                foreach ($multipl as $val)
+                                foreach ($multipleData as $val)
                                 {
                                     array_push($options[$key], $val);
                                 }
