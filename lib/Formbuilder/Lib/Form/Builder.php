@@ -78,22 +78,6 @@ class Builder {
         return $this->languages;
     }
 
-    public function saveConfig()
-    {
-        if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini'))
-        {
-            unlink(FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini');
-        }
-
-        $config = new \Zend_Config($this->config, true);
-        $writer = new \Zend_Config_Writer_Ini(array(
-            'config' => $config,
-            'filename' => FORMBUILDER_DATA_PATH . '/form/form_' . $this->id . '.ini'
-        ));
-
-        $writer->write();
-    }
-
     protected function createForm()
     {
         $this->translate = array();
@@ -194,8 +178,6 @@ class Builder {
         $this->getLanguages();
 
         $this->createForm();
-
-        $this->saveConfig();
 
         $this->buildTranslate();
 

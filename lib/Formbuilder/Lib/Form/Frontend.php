@@ -74,25 +74,6 @@ class Frontend {
 
     }
 
-    protected function getStaticForm($id, $locale, $className = 'DefaultForm')
-    {
-        if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $id . '.ini'))
-        {
-            $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . '/form/form_' . $id . '.ini', 'config');
-
-            $formData = $this->parseFormData( $this->config->form->toArray() );
-
-            $form = $this->createInstance($formData, $className);
-            $this->initTranslation($form, $id, $locale);
-
-            return $form;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     protected function getDynamicForm($id, $locale, $className = 'DefaultForm')
     {
         if (file_exists(FORMBUILDER_DATA_PATH . '/main_' . $id . '.json'))
@@ -158,15 +139,21 @@ class Frontend {
 
         if (is_numeric($formId) == TRUE)
         {
-            if (file_exists(FORMBUILDER_DATA_PATH . '/form/form_' . $formId . '.ini'))
+            if (file_exists(FORMBUILDER_DATA_PATH . '/main_' . $formId . '.json'))
             {
-                $this->config = new \Zend_Config_Ini(FORMBUILDER_DATA_PATH . '/form/form_' . $formId . '.ini', 'config');
+                $this->config = new \Zend_Config_Json(FORMBUILDER_DATA_PATH . '/main_' . $formId . '.json');
+                $datas = $this->config->toArray();
 
                 $trans = $this->translateForm($formId, $locale);
 
                 \Zend_Form::setDefaultTranslator($trans);
 
-                $formData = $this->parseFormData( $this->config->form->toArray() );
+                $builder = new Builder();
+                $builder->setDatas($datas);
+                $builder->setLocale($locale);
+
+                $array = $builder->buildDynamicForm();
+                $formData = $this->parseFormData( $array );
 
                 if($horizontal == TRUE)
                 {
@@ -203,25 +190,17 @@ class Frontend {
      *
      * @param int $formId
      * @param string $locale
-     * @param boolean $dynamic
      * @param string Custom form class
      * @return \Formbuilder\Zend\DefaultForm
      */
-    public function getForm($formId, $locale = NULL, $dynamic = FALSE, $formClass = NULL)
+    public function getForm($formId, $locale = NULL, $formClass = NULL)
     {
         $this->getLanguages();
 
         if (is_numeric($formId) == TRUE)
         {
             $class = $formClass ?: $this->getFormClass();
-            if ($dynamic == FALSE)
-            {
-                $form = $this->getStaticForm($formId, $locale, $class);
-            }
-            else
-            {
-                $form = $this->getDynamicForm($formId, $locale, $class);
-            }
+            $form = $this->getDynamicForm($formId, $locale, $class);
 
             //correctly set recaptcha to https if request is over https
             if(\Zend_Controller_Front::getInstance()->getRequest()->isSecure())
@@ -330,7 +309,7 @@ class Frontend {
         $setFormClasses = explode(' ', $form->getAttrib('class') );
         $setFormClasses[] = 'formbuilder';
 
-        if( isset( $configData['form']['useAjax']) && $configData['form']['useAjax'] == TRUE )
+        if( isset( $configData['useAjax']) && $configData['useAjax'] == TRUE )
         {
             $setFormClasses[] = 'ajax-form';
         }

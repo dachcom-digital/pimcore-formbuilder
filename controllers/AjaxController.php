@@ -124,7 +124,7 @@ class Formbuilder_AjaxController extends Action {
         {
             $frontendLib = new FormFrontEnd();
 
-            $form = $frontendLib->getForm($formData->getId(), $language, TRUE);
+            $form = $frontendLib->getForm($formData->getId(), $language);
 
             $frontendLib->addDefaultValuesToForm(
                 $form,
