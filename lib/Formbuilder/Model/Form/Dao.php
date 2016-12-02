@@ -20,7 +20,7 @@ class Dao extends AbstractDao
 
         if (!$data['id'])
         {
-            throw new \Exception('Object with the name ' . $name . ' doesn\'t exists');
+            throw new \Exception('Form with ID ' . $name . ' doesn\'t exists');
         }
 
         $this->assignVariablesToModel($data);

@@ -131,6 +131,7 @@ class Formbuilder_AjaxController extends Action {
                 [
                     'formData'              => $formData,
                     'formPreset'            => $formPreset,
+                    'formId'                => $formId,
                     'locale'                => $language,
                     'mailTemplateId'        => $mailTemplateId,
                     'copyMailTemplateId'    => $copyMailTemplateId,

@@ -51,7 +51,7 @@ Formbuilder.comp.elem = Class.create({
         });
 
         this.panel = new Ext.Panel({
-            title: this.data.name + " ( ID: " + this.data.id + ")",
+            title: this.data.name + " (ID: " + this.data.id + ")",
             id: this.data.id,
             closable: true,
             iconCls: "Formbuilder_icon_root",
@@ -1057,9 +1057,7 @@ Formbuilder.comp.elem = Class.create({
             });
         }
 
-        var regresult = data["name"].match(/[a-zA-Z]+/);
-
-        if( data["name"].length <= 2 || regresult != data["name"] || in_array(data["name"].toLowerCase(), this.parentPanel.forbiddennames)) {
+        if( data["name"].length <= 2 || in_array(data["name"].toLowerCase(), this.parentPanel.forbiddennames)) {
             isValid = false;
         }
 
@@ -1109,6 +1107,11 @@ Formbuilder.comp.elem = Class.create({
     saveOnComplete: function(response) {
 
         var res = Ext.decode(response.responseText);
+
+        if( res.formId && res.formName ) {
+            this.panel.setTitle( res.formName + " (ID: " + res.formId + ")");
+        }
+
 
         this.parentPanel.tree.getStore().load();
         pimcore.helpers.showNotification(t("success"), t("Formbuilder_saved_successfully"), "success");

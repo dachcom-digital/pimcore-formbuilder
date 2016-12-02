@@ -260,6 +260,7 @@ class Frontend {
         $defaults = [
             'formData'              => NULL,
             'formPreset'            => NULL,
+            'formId'                => NULL,
             'locale'                => 'en',
             'mailTemplateId'        => NULL,
             'copyMailTemplateId'    => NULL,

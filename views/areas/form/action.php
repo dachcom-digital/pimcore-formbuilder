@@ -25,7 +25,7 @@ class Form extends Document\Tag\Area\AbstractArea {
             {
                 foreach( $mains as $form)
                 {
-                    $store[] = [ $form['name'], $form['name'] ];
+                    $store[] = [ $form['id'], $form['name'] ];
                 }
             }
 
@@ -60,7 +60,7 @@ class Form extends Document\Tag\Area\AbstractArea {
         }
 
         $formData = NULL;
-        $formName = NULL;
+        $formId = NULL;
         $formHtml = NULL;
         $messageHtml = NULL;
         $messages = [];
@@ -79,7 +79,7 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         if (!$this->view->select('formName')->isEmpty())
         {
-            $formName = $this->view->select('formName')->getData();
+            $formId = $this->view->select('formName')->getData();
         }
 
         if( $this->view->select('formType')->getData() == 'vertical')
@@ -89,15 +89,15 @@ class Form extends Document\Tag\Area\AbstractArea {
 
         $copyMailTemplate = NULL;
 
-        if( !empty( $formName ) )
+        if( !empty( $formId ) )
         {
             try
             {
-                $formData = FormModel::getByName( $formName );
+                $formData = FormModel::getById( $formId );
 
                 if( !$formData instanceof FormModel)
                 {
-                    $noteMessage = 'Form (' . $formName . ') is not a valid FormBuilder Element.';
+                    $noteMessage = 'Form (' . $formId . ') is not a valid FormBuilder Element.';
                     $noteError = TRUE;
                 }
 
@@ -119,7 +119,7 @@ class Form extends Document\Tag\Area\AbstractArea {
                 [
                     'form'          => NULL,
                     'messages'      => NULL,
-                    'formName'      => NULL,
+                    'formId'        => NULL,
                     'formPreset'    => NULL,
                     'notifications' => ['error' => $noteError, 'message' => $noteMessage ],
                 ]
@@ -185,7 +185,7 @@ class Form extends Document\Tag\Area\AbstractArea {
                 [
                     'formData'              => $formData,
                     'formPreset'            => $formPreset,
-                    'formName'              => $formName,
+                    'formId'                => $formId,
                     'locale'                => $this->view->language,
                     'mailTemplateId'        => $mailTemplateId,
                     'copyMailTemplateId'    => $copyMailTemplateId,
@@ -232,7 +232,7 @@ class Form extends Document\Tag\Area\AbstractArea {
             [
                 'form'          => $formHtml,
                 'messages'      => $messageHtml,
-                'formName'      => $formName,
+                'formId'        => $formId,
                 'formPreset'    => $formPreset,
                 'notifications' => [],
             ]
