@@ -37,7 +37,7 @@ class Form extends Document\Tag\Area\AbstractArea {
             $this->view->availableForms = $store;
             $this->view->availableFormTypes = $typeStore;
 
-            $formPresets = Configuration::get('form.area.presets');
+            $formPresets = Preset::getAvailablePresets();
             $formPresetsStore = [];
 
             if( !empty( $formPresets ) )
@@ -142,20 +142,20 @@ class Form extends Document\Tag\Area\AbstractArea {
         }
         else
         {
-            $presetInfo = Preset::getPresetConfig( $formPreset );
+            $language = isset( $this->view->language ) ? $this->view->language : FALSE;
+            $presetInfo = Preset::getPresetConfig( $formPreset, $language );
+
             if( !empty( $presetInfo ) )
             {
-                $language = isset( $this->view->language ) ? $this->view->language : 'en';
-
-                if( isset( $presetInfo['mail'][ $language ] ) && !empty( $presetInfo['mail'][ $language ] ) )
+                if( $presetInfo['mail'] !== FALSE )
                 {
-                    $_mailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mail'][ $language ] );
+                    $_mailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mail'] );
                 }
 
-                if( isset( $presetInfo['mailCopy'][ $language ] ) && !empty( $presetInfo['mailCopy'][ $language ] ) )
+                if( $presetInfo['mailCopy'] !== FALSE )
                 {
                     $sendCopy = TRUE;
-                    $_copyMailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mailCopy'][ $language ] );
+                    $_copyMailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mailCopy'] );
                 }
             }
 

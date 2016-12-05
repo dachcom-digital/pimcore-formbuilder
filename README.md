@@ -72,6 +72,61 @@ Creates a empty link element with some data attributes (id, type). If you want t
 *Document*  
 Creates a Link to a Asset
 
+### Form Presets
+It's possible to define some form presets.
+
+In your /website/var/config/ folder you'll find a `formbuilder_configurations.php` file. You may want to add some presets there. For example:
+
+```php
+
+<?php 
+
+return [
+    1 => [
+        "id" => 1,
+        "key" => "form.area.presets",
+        "data" => [
+
+            "example" => [
+            
+                /**
+                    Required (string)
+                   Add a nice name for the preset dropdown.
+                **/
+                "niceName" => "Example Form",
+                
+                /**
+                    Optional (array|string)
+                    Restrict preset to an active domain. 
+                **/
+                "site" => ["example-page.com"],
+                
+                /**
+                    Required (array|string)
+                    Set mail template which should be used to sent your form. 
+                    If you want to use language based templates, use an array with language keys.
+                **/
+                "mail" => [
+                    "en" => "/en/emails/example-form"
+                ],
+                
+                /**
+                    Optional (empty|array|string)
+                    Set mail template which should be used to sent a copy of your form. 
+                    If you want to use language based templates, use an array with language keys.
+                **/
+                "mailCopy" => [
+                    "en" => "/en/emails/example-form-copy"
+                ]
+            ]
+
+        ],
+        "creationDate" => 1480684113,
+        "modificationDate" => 1480684113
+    ]
+];
+```
+
 ## Styling
 If you want to add some fancy radio/checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
 
