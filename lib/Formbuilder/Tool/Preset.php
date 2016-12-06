@@ -107,26 +107,13 @@ class Preset {
             //check for site restriction
             if( PimcoreTool::isFrontentRequestByAdmin() && isset( $presetConfig['site'] ) && !empty( $presetConfig['site'] ) )
             {
-                $front = \Zend_Controller_Front::getInstance();
-                $originDocument = $front->getRequest()->getParam('document');
-                $siteId = NULL;
+                $currentSite = self::getCurrentSiteInAdminMode();
 
-                if ($originDocument)
-                {
-                    $site = PimcoreTool\Frontend::getSiteForDocument($originDocument);
-                    if ($site)
-                    {
-                        $siteId = $site->getId();
-                    }
-                }
-
-                if( $siteId !== NULL )
+                if( $currentSite !== NULL )
                 {
                     $allowedSites = (array) $presetConfig['site'];
 
-                    $site = Site::getById($siteId);
-
-                    if( !in_array( $site->getMainDomain(), $allowedSites ) )
+                    if( !in_array( $currentSite->getMainDomain(), $allowedSites ) )
                     {
                         continue;
                     }
@@ -138,5 +125,100 @@ class Preset {
 
         return $dat;
 
+    }
+
+    public static function getDataForPreview( $presetName, $presetConfig, $language )
+    {
+        $previewData = [ 'presetName' => $presetName, 'description' => '', 'fields' => [] ];
+
+        $rootPath = '/';
+
+        if( PimcoreTool::isFrontentRequestByAdmin() && isset( $presetConfig['site'] ) && !empty( $presetConfig['site'] ) )
+        {
+            $currentSite = self::getCurrentSiteInAdminMode();
+            $rootPath = rtrim($currentSite->getRootPath(), '/') . '/';
+        }
+
+        if( isset( $presetConfig['mail'] ) && !empty( $presetConfig['mail'] ) )
+        {
+            $line = [ 'label' => 'Mail', 'value' => NULL ];
+
+            if( is_string( $presetConfig['mail'] ) )
+            {
+                $line['value'] = ltrim( $presetConfig['mail'], '/' );
+            }
+            else if( is_array( $presetConfig['mail'] ))
+            {
+                foreach( $presetConfig['mail'] as $languageKey => $mail )
+                {
+                    if( $languageKey === $language )
+                    {
+                        $line['value'] = $rootPath . ltrim( $mail, '/' );
+                        break;
+                    }
+                }
+            }
+
+            $previewData['fields'][] = $line;
+        }
+
+        if( isset( $presetConfig['mailCopy'] ) && !empty( $presetConfig['mailCopy'] ) )
+        {
+            $line = [ 'label' => 'Mail Copy', 'value' => NULL ];
+
+            if( is_string( $presetConfig['mailCopy'] ) )
+            {
+                $line['value'] = $rootPath . ltrim( $presetConfig['mailCopy'], '/' );
+            }
+            else if( is_array( $presetConfig['mailCopy'] ))
+            {
+                foreach( $presetConfig['mailCopy'] as $languageKey => $mail )
+                {
+                    if( $languageKey === $language )
+                    {
+                        $line['value'] = $rootPath . ltrim( $mail, '/' );
+                        break;
+                    }
+                }
+            }
+
+            $previewData['fields'][] = $line;
+        }
+
+        if( isset( $presetConfig['adminDescription'] ) )
+        {
+            $previewData['description'] = strip_tags($presetConfig['adminDescription'], '<br><strong><em><p><span>');
+        }
+
+        return $previewData;
+    }
+
+    /**
+     * Get Site Id in EditMode if SiteRequest is available
+     * @return null|\Pimcore\Model\Site
+     */
+    private static function getCurrentSiteInAdminMode()
+    {
+        $front = \Zend_Controller_Front::getInstance();
+        $originDocument = $front->getRequest()->getParam('document');
+
+        $currentSite = NULL;
+
+        if ($originDocument)
+        {
+            $site = PimcoreTool\Frontend::getSiteForDocument($originDocument);
+
+            if ($site)
+            {
+                $siteId = $site->getId();
+
+                if( $siteId !== NULL )
+                {
+                    $currentSite = $site;
+                }
+            }
+        }
+
+        return $currentSite;
     }
 }

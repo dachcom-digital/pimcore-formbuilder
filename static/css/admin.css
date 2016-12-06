@@ -114,15 +114,3 @@
 .pimcore_tag_area .pimcore_area_edit_button {
     z-index:99;
 }
-
-.formbuilder-placeholder-body {
-
-    background: #F9F9F9;
-    padding: 20px;
-    border: 2px dashed #DADADA;
-    text-align: center;
-    color: #A9A9A9;
-    font-size: 12px;
-    font-family: Arial , Tahoma, Verdana, sans-serif;
-    text-transform: uppercase;
-}

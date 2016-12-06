@@ -1,0 +1,93 @@
+.formbuilder-placeholder-body {
+
+    background: #F9F9F9;
+    padding: 20px;
+    border: 2px dashed #DADADA;
+    text-align: center;
+    color: #A9A9A9;
+    font-size: 12px;
+    font-family: Arial , Tahoma, Verdana, sans-serif;
+    text-transform: uppercase;
+}
+
+/* Form Edit Window */
+.x-window .form-config-window {
+    padding:0;
+}
+
+.x-window .form-config-window .preview-fields {
+
+    background:#eaeaea;
+    border:1px solid #d8d8d8;
+    padding:10px;
+    display:none;
+}
+
+.x-window .form-config-window .preview-fields h5 {
+
+    font-family: Arial , Tahoma, Verdana, sans-serif;
+    font-size:15px;
+    font-weight:bold;
+
+ }
+
+.x-window .form-config-window .preview-fields .preview-field {
+    display:none;
+}
+.x-window .form-config-window .preview-fields .preview-field .description {
+
+    display:block;
+    margin:10px 0 20px 0;
+    padding:10px;
+    font-size:12px;
+    line-height:14px;
+    font-family: Arial, Tahoma, Verdana, sans-serif;
+    text-align: left;
+
+    background:#fff;
+    border:1px solid #d8d8d8;
+
+}
+
+
+.x-window .form-config-window .preview-fields .preview-field .mail-field {
+    margin:0 0 5px 0;
+}
+
+.x-window .form-config-window .preview-fields .preview-field .mail-field .label {
+
+    width:15%;
+    float:left;
+    font-weight:bold;
+    font-size: 12px;
+    font-family: Arial , Tahoma, Verdana, sans-serif;
+    text-align: left;
+    margin:0;
+    padding:0;
+
+}
+
+.x-window .form-config-window .preview-fields .preview-field .mail-field .value {
+
+    width:85%;
+    float:left;
+
+    background: #fff;
+    border: 1px solid #d8d8d8;
+    font-family:"courier new", courier, monospace;
+    font-size: 11px;
+    line-height: 14px;
+    color: #969696;
+    padding: 3px;
+    word-wrap: normal;
+    word-break: break-all;
+    cursor:default;
+}
+
+.x-window .form-config-window .clearfix:after {
+    content: ".";
+    clear: both;
+    display: block;
+    visibility: hidden;
+    height: 0;
+}

@@ -88,5 +88,8 @@
         <pluginDocumentEditmodeJsPaths>
             <path>/Formbuilder/static/js/admin/area.js</path>
         </pluginDocumentEditmodeJsPaths>
+        <pluginDocumentEditmodeCssPaths>
+            <path>/Formbuilder/static/css/admin-editmode.css</path>
+        </pluginDocumentEditmodeCssPaths>
     </plugin>
 </zend-config>

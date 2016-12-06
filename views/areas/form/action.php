@@ -17,36 +17,44 @@ class Form extends Document\Tag\Area\AbstractArea {
         if ($this->view->editmode)
         {
             $mainList = new FormModel();
-            $mains = $mainList->getAll();
 
-            $store = array();
+            $mains = $mainList->getAll();
+            $formPresets = Preset::getAvailablePresets();
+
+            $formPresetsStore = [];
+            $formPresetsInfo = [];
+            $availableForms = [];
 
             if( !empty( $mains ) )
             {
                 foreach( $mains as $form)
                 {
-                    $store[] = [ $form['id'], $form['name'] ];
+                    $availableForms[] = [ $form['id'], $form['name'] ];
                 }
             }
 
-            $typeStore = [
+            $availableFormsTypes = [
                 [ 'horizontal', 'Horizontal' ],
                 [ 'vertical', 'Vertical' ]
             ];
 
-            $this->view->availableForms = $store;
-            $this->view->availableFormTypes = $typeStore;
+            $this->view->assign(
+                [
+                    'availableForms'        => $availableForms,
+                    'availableFormTypes'    => $availableFormsTypes,
+                ]
+            );
 
-            $formPresets = Preset::getAvailablePresets();
-            $formPresetsStore = [];
 
             if( !empty( $formPresets ) )
             {
+                $language = isset( $this->view->language ) ? $this->view->language : FALSE;
                 $formPresetsStore[] = [ 'custom', $this->view->translateAdmin('no form preset') ];
 
                 foreach( $formPresets as $presetName => $preset )
                 {
                     $formPresetsStore[] = [ $presetName, $preset['niceName'] ];
+                    $formPresetsInfo[] = Preset::getDataForPreview( $presetName, $preset, $language );
                 }
 
                 if($this->view->select('formPreset')->isEmpty() )
@@ -54,7 +62,12 @@ class Form extends Document\Tag\Area\AbstractArea {
                     $this->view->select('formPreset')->setDataFromResource( 'custom' );
                 }
 
-                $this->view->availableFormPresets = $formPresetsStore;
+                $this->view->assign(
+                    [
+                        'availableFormPresets'  => $formPresetsStore,
+                        'formPresetsInfo'       => $formPresetsInfo,
+                    ]
+                );
             }
 
         }

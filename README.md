@@ -96,8 +96,14 @@ return [
                 "niceName" => "Example Form",
                 
                 /**
+                    Optional (string)
+                   Add some Description. (Allowed Tags: strong,em,p,span)
+                **/
+                "adminDescription" => "Example Form. For your Health.",
+                
+                /**
                     Optional (array|string)
-                    Restrict preset to an active domain. 
+                    Restrict preset to an active domain. Use site main domains!
                 **/
                 "site" => ["example-page.com"],
                 
