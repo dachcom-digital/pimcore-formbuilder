@@ -56,7 +56,7 @@
                             <?php foreach( $formPresetPreview['fields'] as $field ) {?>
 
                                 <div class="mail-field clearfix">
-                                    <div class="label"><?= $field['label']; ?></div>
+                                    <div class="label"><?= $this->translateAdmin($field['label']); ?></div>
                                     <div class="value"><?= $field['value']; ?></div>
                                 </div>
 
