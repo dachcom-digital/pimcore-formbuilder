@@ -298,7 +298,7 @@ Formbuilder.comp.elem = Class.create({
             file: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             hash: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             hidden: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
-            image: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
+            image: [],
             multiCheckbox: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             multiselect: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             password: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
@@ -317,7 +317,7 @@ Formbuilder.comp.elem = Class.create({
             file: ["extension","callback"],
             hash: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             hidden: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
-            image: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
+            image: [],
             multiCheckbox: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             multiselect: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             password: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
@@ -741,6 +741,12 @@ Formbuilder.comp.elem = Class.create({
                     width: 300,
                     value: this.data.enctype ? this.data.enctype : 'multipart/form-data',
                     allowBlank: false
+                },
+                {
+                    xtype: "checkbox",
+                    name: "noValidate",
+                    fieldLabel: t("Enable html5 form validation"),
+                    value: this.data.noValidate
                 },
                 {
                     xtype: "checkbox",

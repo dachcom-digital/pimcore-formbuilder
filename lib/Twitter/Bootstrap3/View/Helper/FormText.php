@@ -18,7 +18,14 @@
 class Twitter_Bootstrap3_View_Helper_FormText extends Zend_View_Helper_FormText
 {
     /**
-     * Generates a 'text' element.
+     * Array the specifies which types are allowed to be used for the type attribute
+     *
+     * @var array
+     */
+    protected $_allowedTypes = ['text', 'email', 'url', 'number', 'range', 'date', 'month', 'week', 'time', 'datetime-local'];
+
+    /**
+     * Generates a text|html5 element.
      *
      * @access public
      *
@@ -34,7 +41,14 @@ class Twitter_Bootstrap3_View_Helper_FormText extends Zend_View_Helper_FormText
      */
     public function formText($name, $value = null, $attribs = null)
     {
-        return $this->_formText('text', $name, $value, $attribs);
+        $type = 'text';
+        if (isset($attribs['type']) && in_array($attribs['type'], $this->_allowedTypes))
+        {
+            $type = $attribs['type'];
+            unset($attribs['type']);
+        }
+
+        return $this->_formText($type, $name, $value, $attribs);
     }
     
     /**

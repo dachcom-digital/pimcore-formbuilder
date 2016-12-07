@@ -122,7 +122,8 @@ var formBuilder = (function () {
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
-                    formData = new FormData( $form[0] );
+                    formData = new FormData( $form[0]),
+                    $fbHtmlFile = $form.find('.formbuilder-html5File');
 
                 ev.preventDefault();
 
@@ -192,7 +193,10 @@ var formBuilder = (function () {
                             $form.trigger('formbuilder.success', [ response.message, response.redirect, $form ]);
                             $form.find('input[type=text], textarea').val('');
 
-                            $('form').find('.formbuilder-html5File').fineUploader('reset');
+                            if( $fbHtmlFile.length > 0)
+                            {
+                                $fbHtmlFile.fineUploader('reset');
+                            }
 
                             if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
                                 grecaptcha.reset();

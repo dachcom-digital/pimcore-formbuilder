@@ -26,6 +26,12 @@ trait Form
         );
 
         $this->addPrefixPath(
+            'Formbuilder\\Zend\\Form\\Element\\Html5Text',
+            PIMCORE_PLUGINS_PATH . '/Formbuilder/lib/Formbuilder/Zend/Form/Element/Html5Text',
+            \Zend_Form::ELEMENT
+        );
+
+        $this->addPrefixPath(
             'Cgsmith\\Form\\Element',
             $recaptchaPath . '/Cgsmith/Form/Element/',
             \Zend_Form::ELEMENT

@@ -468,6 +468,35 @@ class Frontend {
                 $element['options']['multiOptions'] = $realOptions;
             }
 
+            //allow html5 input variations in text field
+            else if( $element['type'] === 'text' && isset( $element['options']['inputType'] ) )
+            {
+                if( !empty( $element['options']['inputType'] ) && $element['options']['inputType'] !== 'default' )
+                {
+                    $inputType = $element['options']['inputType'];
+
+                    //fix camelcase stuff. ugly.
+                    if( $element['options']['inputType'] === 'datetime-local')
+                    {
+                        $inputType = 'dateTimeLocal';
+                    }
+
+                    $element['type'] = $inputType;
+                    unset( $element['options']['inputType'] );
+
+                    //set extended attributes
+                    if( isset( $element['options'][ 'options' . ucfirst( $inputType ) ] ) )
+                    {
+                        $options = $element['options'][ 'options' . ucfirst( $inputType ) ];
+                        unset( $element['options'][ 'options' . ucfirst( $inputType ) ] );
+
+                        if( is_array( $options ) && !empty( $options) )
+                        {
+                            $element['options'] = array_merge( $element['options'], $options);
+                        }
+                    }
+                }
+            }
         }
 
         return $form;

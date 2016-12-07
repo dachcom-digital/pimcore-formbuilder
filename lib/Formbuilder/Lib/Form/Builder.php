@@ -88,14 +88,18 @@ class Builder {
             return false;
         }
 
-        $this->config = array();
+        $this->config = [];
 
-        $this->config['config']['form'] = array();
+        $this->config['config']['form'] = [];
         $this->config['config']['form']['action'] = $this->datas['action'];
         $this->config['config']['form']['method'] = $this->datas['method'];
         $this->config['config']['form']['enctype'] = $this->datas['enctype'];
         $this->config['config']['form']['useAjax'] = $this->datas['useAjax'];
-        $this->config['config']['form']['novalidate'] = TRUE;
+
+        if( $this->datas['noValidate'] !== TRUE)
+        {
+            $this->config['config']['form']['novalidate'] = 1;
+        }
 
         $multi = $this->buildMultiData($this->datas['attrib']);
 
