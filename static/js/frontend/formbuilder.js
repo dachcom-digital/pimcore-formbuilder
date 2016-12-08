@@ -55,66 +55,69 @@ var formBuilder = (function () {
 
                 messages = jQuery.parseJSON( messages );
 
-                $el.fineUploader({
-                    debug: false,
-                    template: $template,
-                    element: $element,
-                    messages: messages.core,
+                if( jQuery().fineUploader !== undefined ) {
 
-                    text: {
-                        formatProgress: messages.text.formatProgress,
-                        failUpload: messages.text.failUpload,
-                        waitingForResponse: messages.text.waitingForResponse,
-                        paused: messages.text.paused
-                    },
+                    $el.fineUploader({
+                        debug: false,
+                        template: $template,
+                        element: $element,
+                        messages: messages.core,
 
-                    chunking: {
-                        enabled: true,
-                        concurrent: {
-                            enabled: true
+                        text: {
+                            formatProgress: messages.text.formatProgress,
+                            failUpload: messages.text.failUpload,
+                            waitingForResponse: messages.text.waitingForResponse,
+                            paused: messages.text.paused
                         },
-                        success: {
-                            endpoint: '/plugin/Formbuilder/ajax/chunk-done'
-                        }
-                    },
 
-                    request: {
-                        endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
-                        params: {
-                            _formConfig: formConfig,
-                            _fieldName: $element.data('field-name')
-                        }
-                    },
-
-                    deleteFile: {
-                        confirmMessage: messages.delete.confirmMessage,
-                        deletingStatusText: messages.delete.deletingStatusText,
-                        deletingFailedText: messages.delete.deletingFailedText,
-
-                        enabled: true,
-                        endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
-                        params: {
-                            _formConfig: formConfig,
-                            _fieldName: $element.data('field-name')
-                        }
-                    },
-
-                    validation: {
-                        sizeLimit: $element.data('size-limit'),
-                        allowedExtensions: $element.data('allowed-extensions').split(',')
-                    },
-
-                    callbacks: {
-
-                        onUpload : function() {
-                            $submitButton.attr('disabled', 'disabled');
+                        chunking: {
+                            enabled: true,
+                            concurrent: {
+                                enabled: true
+                            },
+                            success: {
+                                endpoint: '/plugin/Formbuilder/ajax/chunk-done'
+                            }
                         },
-                        onComplete : function() {
-                            $submitButton.attr('disabled', false);
-                        }
-                    }
 
-                });
+                        request: {
+                            endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
+                            params: {
+                                _formConfig: formConfig,
+                                _fieldName: $element.data('field-name')
+                            }
+                        },
+
+                        deleteFile: {
+                            confirmMessage: messages.delete.confirmMessage,
+                            deletingStatusText: messages.delete.deletingStatusText,
+                            deletingFailedText: messages.delete.deletingFailedText,
+
+                            enabled: true,
+                            endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
+                            params: {
+                                _formConfig: formConfig,
+                                _fieldName: $element.data('field-name')
+                            }
+                        },
+
+                        validation: {
+                            sizeLimit: $element.data('size-limit'),
+                            allowedExtensions: $element.data('allowed-extensions').split(',')
+                        },
+
+                        callbacks: {
+
+                            onUpload : function() {
+                                $submitButton.attr('disabled', 'disabled');
+                            },
+                            onComplete : function() {
+                                $submitButton.attr('disabled', false);
+                            }
+                        }
+
+                    });
+                }
 
             });
 
