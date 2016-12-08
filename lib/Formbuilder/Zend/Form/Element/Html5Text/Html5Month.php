@@ -2,7 +2,7 @@
 
 namespace Formbuilder\Zend\Form\Element\Html5Text;
 
-class Month extends \Formbuilder\Zend\Form\Element\Html5Text
+class Html5Month extends \Formbuilder\Zend\Form\Element\Html5Text
 {
     public function init()
     {

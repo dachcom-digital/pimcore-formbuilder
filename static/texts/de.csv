@@ -194,3 +194,7 @@
 "number max","Max."
 "number step","Schritt"
 "Important! Use these attributes only if you have activated the 'html5 form validation option'. otherwise use the element validation and filter settings!","Wichtig! Benutzen Sie die unten angegebenen Optionen nur, wenn Sie im Formular die Option 'HTML5 Formular Validierung aktivieren' aktiviert haben. Verwenden Sie ansonsten die Filter und Validatoren des jeweiligen Elements."
+"Name: Do not use any spaces or special characters. Ideally you should use english as language.","Name: Verwenden Sie keine Leerzeichen oder Sonderzeichen! Wenn Sie den Namen in Englisch schreiben, sind Sie ein Held."
+"Label: Ideally you should use english as language. Translate the Label in the translation tab.","Label: Idealerweise in Englisch geschrieben. Sie können es im Reiter 'Übersetzung' jederzeit übersetzen."
+"Only Pimcore Assets (Images) are allowed. Just drag your Asset into the field above.","Nur Pimcore Assets (Bilder) erlaubt. Asset in das Feld ziehen."
+"Only Pimcore Assets are allowed. Just drag your Asset into the field above.","Nur Pimcore Assets erlaubt. Asset in das Feld ziehen."

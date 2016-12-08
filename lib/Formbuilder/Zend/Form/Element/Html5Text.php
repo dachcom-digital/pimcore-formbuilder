@@ -16,17 +16,18 @@ class Html5Text extends \Zend_Form_Element_Text
      *
      * @var string
      */
-    const DEFAULT_TYPE = 'text';
-    const FIELD_EMAIL = 'email';
-    const FIELD_EMAIL_ADDRESS = 'emailaddress';
-    const FIELD_URL = 'url';
-    const FIELD_NUMBER = 'number';
-    const FIELD_RANGE = 'range';
-    const FIELD_DATE = 'date';
-    const FIELD_MONTH = 'month';
-    const FIELD_WEEK = 'week';
-    const FIELD_TIME = 'time';
-    const FIELD_DATE_TIME_LOCAL = 'datetime-local';
+    const DEFAULT_TYPE              = 'Html5Text';
+
+    const FIELD_EMAIL               = 'Html5Email';
+    const FIELD_EMAIL_ADDRESS       = 'Html5EmailAddress';
+    const FIELD_URL                 = 'Html5Url';
+    const FIELD_NUMBER              = 'Html5Number';
+    const FIELD_RANGE               = 'Html5Range';
+    const FIELD_DATE                = 'Html5Date';
+    const FIELD_MONTH               = 'Html5Month';
+    const FIELD_WEEK                = 'Html5Week';
+    const FIELD_TIME                = 'Html5Time';
+    const FIELD_DATE_TIME_LOCAL     = 'Html5DatetimeLocal';
 
     /**
      * Mapping of key => value pairs for the elements
@@ -34,6 +35,7 @@ class Html5Text extends \Zend_Form_Element_Text
      * @var array
      */
     protected static $_mapping = [
+        self::DEFAULT_TYPE          => 'text',
         self::FIELD_EMAIL           => 'email',
         self::FIELD_EMAIL_ADDRESS   => 'email',
         self::FIELD_URL             => 'url',
@@ -67,11 +69,10 @@ class Html5Text extends \Zend_Form_Element_Text
      */
     public function __construct($spec, $options = null)
     {
-        if ( isset($options['inputType']) && !empty( $options['inputType'] ) && $options['inputType'] !== 'default' )
-        {
-            $options['type'] = $this->_getType( $options['inputType'] );
-            unset( $options['inputType'] );
-        }
+        $options['type'] = $this->_getType( $options['inputType'] );
+
+        //remove invalid e
+        unset( $options['inputType'] );
 
         parent::__construct($spec, $options);
     }
@@ -129,10 +130,11 @@ class Html5Text extends \Zend_Form_Element_Text
      */
     private function _getType($spec)
     {
-        if (array_key_exists(strtolower($spec), self::$_mapping))
+        if ( array_key_exists( $spec, self::$_mapping) )
         {
             return self::$_mapping[$spec];
         }
+
         return self::DEFAULT_TYPE;
     }
 }

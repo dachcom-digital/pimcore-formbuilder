@@ -2,7 +2,7 @@
 
 namespace Formbuilder\Zend\Form\Element\Html5Text;
 
-class Week extends \Formbuilder\Zend\Form\Element\Html5Text
+class Html5Week extends \Formbuilder\Zend\Form\Element\Html5Text
 {
     public function init()
     {

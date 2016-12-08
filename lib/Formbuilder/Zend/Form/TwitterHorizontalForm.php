@@ -1,12 +1,14 @@
 <?php
 
-namespace Formbuilder\Zend;
+namespace Formbuilder\Zend\Form;
 
 use Formbuilder\Zend\Traits\Form;
 
-class TwitterVerticalForm extends \Twitter_Bootstrap3_Form_Vertical {
+class TwitterHorizontalForm extends \Twitter_Bootstrap3_Form_Horizontal {
 
     use Form;
+
+    public $overrideCreateElement = TRUE;
 
     public function __construct( $formData )
     {
@@ -22,7 +24,7 @@ class TwitterVerticalForm extends \Twitter_Bootstrap3_Form_Vertical {
      */
     public function getDefaultDecoratorsByElementType($type)
     {
-        if( in_array($type, array('download', 'html5File', 'imageTag') ) )
+        if( $this->isValidFormBuilderElement( $type ) )
         {
             return parent::getDefaultDecoratorsByElementType('text');
         }

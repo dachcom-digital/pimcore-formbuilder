@@ -349,11 +349,21 @@ Formbuilder.comp.type.base = Class.create({
                         enableKeyEvents: true
                     },
                     {
+                        xtype: "label",
+                        style:"display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;",
+                        text: t("Name: Do not use any spaces or special characters. Ideally you should use english as language.")
+                    },
+                    {
                         xtype: "textfield",
                         name: "label",
                         value: this.datax.label,
                         fieldLabel: t("label"),
                         anchor: "100%"
+                    },
+                    {
+                        xtype: "label",
+                        style:"display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;",
+                        text: t("Label: Ideally you should use english as language. Translate the Label in the translation tab.")
                     },
                     {
                         xtype: "textfield",

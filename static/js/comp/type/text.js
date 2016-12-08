@@ -3,6 +3,45 @@ Formbuilder.comp.type.text = Class.create(Formbuilder.comp.type.base,{
 
     type: "text",
 
+    allowedHtml5Elements: {
+
+        "default" : {
+            label : t("default")
+        },
+        "email" : {
+            label : t("html5 email")
+        },
+        "url" : {
+            label : t("html5 url")
+        },
+        "number" : {
+            label : t("html5 number"),
+            attributes : [
+                "min",
+                "max",
+                "step"
+            ]
+        },
+        "range" : {
+            label : t("html5 range")
+        },
+        "date" : {
+            label: t("html5 date")
+        },
+        "month" : {
+            label : t("html5 month")
+        },
+        "week" : {
+            label : t("html5 week")
+        },
+        "time" : {
+            label : t("html5 time")
+        },
+        "datetime-local" : {
+            label : t("html5 datetime")
+        },
+    },
+
     getTypeName: function () {
         return t("text");
     },
@@ -32,23 +71,18 @@ Formbuilder.comp.type.text = Class.create(Formbuilder.comp.type.base,{
 
         $super();
 
+        var fields = [];
+
+        Ext.iterate(this.allowedHtml5Elements, function(type, value) {
+            fields.push( [type, value.label] );
+        });
+
         var descriptionField,
             _me = this,
             inputStore = new Ext.data.ArrayStore(
                 {
                     fields: ["value","label"],
-                    data : [
-                        ["default", t("default")],
-                        ["email", t("html5 email")],
-                        ["url", t("html5 url")],
-                        ["number", t("html5 number")],
-                        ["range", t("html5 range")],
-                        ["date", t("html5 date")],
-                        ["month", t("html5 month")],
-                        ["week", t("html5 week")],
-                        ["time", t("html5 time")],
-                        ["datetime-local", t("html5 datetime")]
-                    ]
+                    data : fields
                 }
             ),
             thisNode = new Ext.form.FieldSet({
@@ -72,18 +106,26 @@ Formbuilder.comp.type.text = Class.create(Formbuilder.comp.type.base,{
                         allowBlank:false,
                         listeners: {
                             scope:this,
-                            select: function(combo,record,index) {
+                            change: function(combo,newValue,oldValue,options) {
 
                                 var numberAttributes = _me.numberAttributes;
 
-                                //hide
-                                numberAttributes.hide();
+                                if( newValue !== oldValue ) {
 
-                                switch(record.data.value) {
-                                    case "number" :
-                                        numberAttributes.show();
+                                    this.resetHtml5Attributes( newValue );
+
+                                    //hide
+                                    numberAttributes.hide();
+
+                                    switch( newValue ) {
+                                        case "number" :
+                                            numberAttributes.show();
+                                            break;
+                                    }
+
                                 }
-                            }
+
+                            }.bind(this)
                         }
                     }
                 ]
@@ -107,36 +149,62 @@ Formbuilder.comp.type.text = Class.create(Formbuilder.comp.type.base,{
 
                 {
                     xtype: "numberfield",
-                    name: "optionsNumber.min",
+                    name: "html5Options.min",
                     fieldLabel: t("number min"),
                     allowDecimals: false,
                     anchor: "100%",
-                    value:this.datax['optionsNumber.min']
+                    value:this.datax['html5Options.min']
                 },
                 {
                     xtype: "numberfield",
-                    name: "optionsNumber.max",
+                    name: "html5Options.max",
                     fieldLabel: t("number max"),
                     allowDecimals: false,
                     anchor: "100%",
-                    value:this.datax['optionsNumber.max']
+                    value:this.datax['html5Options.max']
                 },
                 {
                     xtype: "numberfield",
-                    name: "optionsNumber.step",
+                    name: "html5Options.step",
                     fieldLabel: t("number step"),
                     allowDecimals: false,
                     anchor: "100%",
-                    value:this.datax['optionsNumber.step']
+                    value:this.datax['html5Options.step']
                 }
             ]
         });
 
-        this.form.add(thisNode);
+        this.form.add( thisNode );
 
         this.form.add( this.numberAttributes );
 
         return this.form;
-    }
 
+    },
+
+    resetHtml5Attributes: function( ignoreElement ) {
+
+        var _ = this;
+
+        Ext.iterate(this.allowedHtml5Elements, function(type, value) {
+
+            var attributes = value.attributes ? value.attributes : [];
+
+            if( _.hasOwnProperty( type + "Attributes" ) ) {
+                Ext.each(_[type + "Attributes"].query("field"), function(field) {
+                    field.setValue(null);
+                    field.resetOriginalValue();
+
+                });
+            }
+
+            Ext.each(attributes, function(attribute, index) {
+                if( _.datax.hasOwnProperty( 'html5Options.' + attribute ) ) {
+                    delete _.datax[ 'html5Options.' + attribute ];
+                }
+            });
+
+        });
+
+    }
 });

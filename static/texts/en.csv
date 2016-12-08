@@ -196,3 +196,7 @@
 "number max","Max."
 "number step","Step"
 "Important! Use these attributes only if you have activated the 'html5 form validation option'. otherwise use the element validation and filter settings!","Important! Use these attributes only if you have activated the 'html5 form validation option'. otherwise use the element validation and filter settings!"
+"Name: Do not use any spaces or special characters. Ideally you should use english as language.","Name: Do not use any spaces or special characters. Ideally you should use english as language."
+"Label: Ideally you should use english as language. Translate the Label in the translation tab.","Label: Ideally you should use english as language. Translate the Label in the translation tab."
+"Only Pimcore Assets (Images) are allowed. Just drag your Asset into the field above.","Only Pimcore Assets (Images) are allowed. Just drag your Asset into the field above."
+"Only Pimcore Assets are allowed. Just drag your Asset into the field above.","Only Pimcore Assets are allowed. Just drag your Asset into the field above."

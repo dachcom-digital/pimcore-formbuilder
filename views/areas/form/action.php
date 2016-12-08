@@ -5,7 +5,7 @@ namespace Pimcore\Model\Document\Tag\Area;
 use Pimcore\Model\Document;
 
 use Formbuilder\Lib\Processor;
-use Formbuilder\Lib\Form\Frontend;
+use Formbuilder\Lib\Form\Frontend\Builder;
 use Formbuilder\Tool\Preset;
 use Formbuilder\Model\Configuration;
 use Formbuilder\Model\Form as FormModel;
@@ -82,6 +82,8 @@ class Form extends Document\Tag\Area\AbstractArea {
         $noteError = FALSE;
 
         $horizontalForm = TRUE;
+        $inlineForm = FALSE;
+
         $sendCopy = $this->view->checkbox('userCopy')->isChecked() === '1';
         $formPreset = $this->view->select('formPreset')->getData();
 
@@ -141,9 +143,10 @@ class Form extends Document\Tag\Area\AbstractArea {
             return FALSE;
         }
 
-        $frontendLib = new Frontend();
+        $frontendLib = new Builder();
 
-        $form = $frontendLib->getTwitterForm($formData->getId(), $this->view->language, $horizontalForm);
+        $twitterFormType = $horizontalForm ? 'TwitterHorizontal' : ( $inlineForm ? 'TwitterInline' : 'TwitterVertical');
+        $form = $frontendLib->getForm($formData->getId(), $this->view->language, $twitterFormType);
 
         $_mailTemplate = NULL;
         $_copyMailTemplate = NULL;
@@ -162,13 +165,13 @@ class Form extends Document\Tag\Area\AbstractArea {
             {
                 if( $presetInfo['mail'] !== FALSE )
                 {
-                    $_mailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mail'] );
+                    $_mailTemplate = Document\Email::getByPath( $presetInfo['mail'] );
                 }
 
                 if( $presetInfo['mailCopy'] !== FALSE )
                 {
                     $sendCopy = TRUE;
-                    $_copyMailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mailCopy'] );
+                    $_copyMailTemplate = Document\Email::getByPath( $presetInfo['mailCopy'] );
                 }
             }
 
@@ -177,12 +180,12 @@ class Form extends Document\Tag\Area\AbstractArea {
         $mailTemplateId = NULL;
         $copyMailTemplateId = NULL;
 
-        if( $_mailTemplate instanceof \Pimcore\Model\Document\Email )
+        if( $_mailTemplate instanceof Document\Email )
         {
             $mailTemplateId = $_mailTemplate->getId();
         }
 
-        if( $sendCopy === TRUE && $_copyMailTemplate instanceof \Pimcore\Model\Document\Email )
+        if( $sendCopy === TRUE && $_copyMailTemplate instanceof Document\Email )
         {
             $copyMailTemplateId = $_copyMailTemplate->getId();
         }

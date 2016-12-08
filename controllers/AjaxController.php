@@ -2,11 +2,10 @@
 
 use Formbuilder\Controller\Action;
 use Formbuilder\Model\Form;
-use Formbuilder\Lib\Form\Frontend as FormFrontEnd;
-use Formbuilder\Lib\Processor;
-
-use Formbuilder\Lib\Form\File\FileHandler;
 use Formbuilder\Tool\Session;
+use Formbuilder\Lib\Processor;
+use Formbuilder\Lib\Form\Frontend\Builder;
+use Formbuilder\Lib\Form\File\FileHandler;
 
 class Formbuilder_AjaxController extends Action {
 
@@ -122,7 +121,7 @@ class Formbuilder_AjaxController extends Action {
 
         if( $formData instanceof Form )
         {
-            $frontendLib = new FormFrontEnd();
+            $frontendLib = new Builder();
 
             $form = $frontendLib->getForm($formData->getId(), $language);
 
