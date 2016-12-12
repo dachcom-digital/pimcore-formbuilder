@@ -106,6 +106,14 @@
     background: url(/plugins/Formbuilder/static/img/fieldset_add.svg) left center no-repeat !important;
 }
 
+.Formbuilder_icon_container{
+    background: url(/plugins/Formbuilder/static/img/container.svg) left center no-repeat !important;
+}
+
+.Formbuilder_icon_container_add{
+    background: url(/plugins/Formbuilder/static/img/container_add.svg) left center no-repeat !important;
+}
+
 .pimcore_icon_api{
     background: url(/plugins/Formbuilder/static/img/help.svg) left center no-repeat !important;
 }

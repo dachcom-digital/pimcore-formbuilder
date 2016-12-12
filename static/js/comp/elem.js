@@ -9,6 +9,33 @@ Formbuilder.comp.elem = Class.create({
         this.copyData = null;
         this.rootFields = [];
 
+        this.allowedMoveElements = {
+            "root" : [
+                "container",
+                "displayGroup",
+                "element"
+            ],
+            "container" : [
+                "displayGroup",
+                "container",
+                "element"
+            ],
+            "displayGroup" : [
+                "element"
+            ],
+            "element" : [
+                "validator",
+                "filter"
+            ],
+            "validator" : [
+                "element"
+            ],
+            "filter" : [
+                "element"
+            ]
+
+        };
+
         this.addLayout();
         this.initLayoutFields();
     },
@@ -29,6 +56,7 @@ Formbuilder.comp.elem = Class.create({
                 id: "0",
                 text: t("base"),
                 iconCls:"Formbuilder_icon_root",
+                fbType: "root",
                 isTarget: true,
                 leaf:true,
                 root: true
@@ -41,8 +69,6 @@ Formbuilder.comp.elem = Class.create({
                 }
             }
         });
-
-        this.tree.on("nodedragover", this.onTreeNodeOver.bind(this));
 
         this.editPanel = new Ext.Panel({
             region: "center",
@@ -148,103 +174,21 @@ Formbuilder.comp.elem = Class.create({
 
     getTreeNodeListeners: function() {
 
-        var listeners = {
-
-            'itemclick' : this.onTreeNodeClick.bind(this),
-            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
-            'beforeitemmove': this.onTreeNodeBeforeMove.bind(this)
+        return {
+            'itemclick'         : this.onTreeNodeClick.bind(this),
+            'itemcontextmenu'   : this.onTreeNodeContextMenu.bind(this),
+            'beforeitemmove'    : this.onTreeNodeBeforeMove.bind(this)
         };
 
-        return listeners;
-
-    },
-    
-    onTreeNodeOver: function(event) {
-
-        var parent = "";
-
-        if (event.point != "append"){
-            parent = event.target.parentNode.data.iconCls;
-        }else{
-            parent = event.target.attributes.iconCls;
-        }
-        
-        switch (parent){
-            
-            case "Formbuilder_icon_validator" :
-                if(event.point != "append" && (event.dropNode.data.iconCls != "Formbuilder_icon_validator" || event.dropNode.data.iconCls != "Formbuilder_icon_filter")){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-            case "Formbuilder_icon_filter" :
-                if(event.point != "append" && (event.dropNode.data.iconCls != "Formbuilder_icon_validator" || event.dropNode.data.iconCls != "Formbuilder_icon_filter")){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-            case "Formbuilder_icon_displayGroup":
-                if(event.dropNode.data.iconCls != "Formbuilder_icon_validator" && event.dropNode.data.iconCls != "Formbuilder_icon_filter" && event.dropNode.data.iconCls != "Formbuilder_icon_displayGroup"){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-            case "Formbuilder_icon_root" :
-                if(event.dropNode.data.iconCls != "Formbuilder_icon_validator" && event.dropNode.data.iconCls != "Formbuilder_icon_filter"){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-            default://field
-                if(event.dropNode.data.iconCls != "Formbuilder_icon_validator" || event.dropNode.data.iconCls != "Formbuilder_icon_filter"){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-
-        }
     },
 
-    onTreeNodeBeforeMove : function(node, oldParent, newParent, index, eOpts){
-        
-        switch (newParent.data.iconCls){
-            
-            case "Formbuilder_icon_validator" :
-                return false;
-                break;
-            case "Formbuilder_icon_filter" :
-                return false;
-                break;
-            case "Formbuilder_icon_displayGroup":
-                if(node.data.iconCls != "Formbuilder_icon_validator" && node.data.iconCls != "Formbuilder_icon_filter" && node.data.iconCls != "Formbuilder_icon_displayGroup"){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-            case "Formbuilder_icon_root" :
-                if(node.data.iconCls != "Formbuilder_icon_validator" && node.data.iconCls != "Formbuilder_icon_filter"){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-            default://field
-                if(node.data.iconCls != "Formbuilder_icon_validator" || node.data.iconCls != "Formbuilder_icon_filter"){
-                    return true;
-                }else{
-                    return false;
-                }
-                break;
-                    
-        }
-        
-        return false;
+    onTreeNodeBeforeMove: function(node, oldParent, newParent, index, eOpts){
+
+        var targetType = newParent.data.fbType,
+            elementType = node.data.fbType;
+
+        return Ext.Array.contains(this.allowedMoveElements[ targetType ], elementType  );
+
     },
 
     onTreeNodeClick: function(tree, record, item, index, e, eOpts) {
@@ -277,7 +221,7 @@ Formbuilder.comp.elem = Class.create({
 
     },
 
-    onTreeNodeContextmenu: function(tree, record, item, index, e, eOpts) {
+    onTreeNodeContextMenu: function(tree, record, item, index, e, eOpts) {
 
         e.stopEvent();
         tree.select();
@@ -288,7 +232,8 @@ Formbuilder.comp.elem = Class.create({
         // the child-type "data" is a placehoder for all data components
         var allowedTypes = {
             root: ["button","captcha","checkbox","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
-            displayGroup: ["button","captcha","checkbox","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
+            displayGroup: ["button","captcha","checkbox","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
+            container: ["button","captcha","checkbox","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
         };
 
         var allowedFilters = {
@@ -353,14 +298,21 @@ Formbuilder.comp.elem = Class.create({
             }
         }
 
-        if (parentType == "root") {
+        if (parentType == "root" || parentType == "container") {
+            menu.add(new Ext.menu.Item({
+                text: t('Add container'),
+                iconCls: "Formbuilder_icon_container_add",
+                handler: this.addElemChild.bind(record, "container")
+            }));
+        }
+
+        if (parentType == "root" || parentType == "container") {
             menu.add(new Ext.menu.Item({
                 text: t('Add displayGroup'),
                 iconCls: "Formbuilder_icon_displayGroup_add",
                 handler: this.addElemChild.bind(record, "displayGroup")
             }));
         }
-
         if (layoutElem.length > 0) {
             menu.add(new Ext.menu.Item({
                 text: t('Add elem item'),
@@ -446,7 +398,7 @@ Formbuilder.comp.elem = Class.create({
 
             if(record.id == 0) {
 
-                if(copyType == "displayGroup") {
+                if(copyType === "displayGroup" || copyType === "container") {
                     showPaste = true;
                 }
 
@@ -459,13 +411,15 @@ Formbuilder.comp.elem = Class.create({
                 if( ! (record.data.object.datax.isFilter
                     || record.data.object.datax.isValidator)) {
 
-                    if(in_array(copyType, allowedTypes[parentType])){
+                    if(copyType === "container" && parentType !== "displayGroup") {
                         showPaste = true;
-                    }
-                    if(in_array(copyType, allowedFilters[parentType])){
+                    } else if(copyType === "displayGroup" && parentType === "container") {
                         showPaste = true;
-                    }
-                    if(in_array(copyType, allowedValidators[parentType])){
+                    } else if(in_array(copyType, allowedTypes[parentType])){
+                        showPaste = true;
+                    } else if(in_array(copyType, allowedFilters[parentType])){
+                        showPaste = true;
+                    } else if(in_array(copyType, allowedValidators[parentType])){
                         showPaste = true;
                     }
 
@@ -474,7 +428,7 @@ Formbuilder.comp.elem = Class.create({
 
         }
 
-        if(showPaste == true) {
+        if(showPaste === true) {
 
             menu.add(new Ext.menu.Item({
                 text: t('paste'),
@@ -571,14 +525,36 @@ Formbuilder.comp.elem = Class.create({
         var html = new Ext.data.ArrayStore({
 
             fields: ["value","label"],
-            data : [["class","class"],["id","id"],["title","title"],["onclick","onclick"],["ondbclick","ondbclick"],["onkeydown","onkeydown"],["onkeypress","onkeypress"],["onkeyup","onkeyup"],["onmousedown","onmousedown"],["onmousemove","onmousemove"],["onmouseout","onmouseout"],["onmouseover","onmouseover"],["onmouseup","onmouseup"],["onselect","onselect"],["onreset","onreset"],["onsubmit","onsubmit"]]
+            data : [
+                ["class","class"],
+                ["id","id"],
+                ["title","title"],
+                ["onclick","onclick"],
+                ["ondbclick","ondbclick"],
+                ["onkeydown","onkeydown"],
+                ["onkeypress","onkeypress"],
+                ["onkeyup","onkeyup"],
+                ["onmousedown","onmousedown"],
+                ["onmousemove","onmousemove"],
+                ["onmouseout","onmouseout"],
+                ["onmouseover","onmouseover"],
+                ["onmouseup","onmouseup"],
+                ["onselect","onselect"],
+                ["onreset","onreset"],
+                ["onsubmit","onsubmit"]
+            ]
 
         });
         
         var encStore = new Ext.data.ArrayStore({
 
             fields: ["value","label"],
-            data : [["text/plain","text/plain"],["application/x-www-form-urlencoded","application/x-www-form-urlencoded"],["multipart/form-data","multipart/form-data"]]
+            data :
+                [
+                    ["text/plain","text/plain"],
+                    ["application/x-www-form-urlencoded","application/x-www-form-urlencoded"],
+                    ["multipart/form-data","multipart/form-data"]
+                ]
 
         });
 
@@ -607,7 +583,8 @@ Formbuilder.comp.elem = Class.create({
                 layout: 'hbox',
                 hideLabel: true,
                 style: "padding-bottom:5px;",
-                items: [{
+                items: [
+                    {
                         xtype: "combo",
                         name: "attrib_name_" + count,
                         fieldLabel: t("attribute name"),
@@ -635,7 +612,8 @@ Formbuilder.comp.elem = Class.create({
                         value: value,
                         flex: 1,
                         listeners: combolisteners
-                    }]
+                    }
+                ]
             });
 
             compositeField.add([{
@@ -796,6 +774,7 @@ Formbuilder.comp.elem = Class.create({
                 type: "layout",
                 draggable: true,
                 iconCls: "Formbuilder_icon_filter",
+                fbType: "filter",
                 text: nodeLabel,
                 leaf: false,
                 expandable: false,
@@ -811,6 +790,7 @@ Formbuilder.comp.elem = Class.create({
                 type: "layout",
                 draggable: true,
                 iconCls: "Formbuilder_icon_validator",
+                fbType: "validator",
                 text: nodeLabel,
                 leaf: false,
                 expandable: false,
@@ -827,8 +807,9 @@ Formbuilder.comp.elem = Class.create({
                 type: "layout",
                 draggable: true,
                 iconCls: "Formbuilder_icon_" + type,
+                fbType: type === "container" ? "container" : ( type === "displayGroup" ? "displayGroup" : "element" ),
                 leaf: false,
-                expandable: false,
+                expandable: type === "container" || type === "displayGroup",
                 expanded: true
             };
 
@@ -849,16 +830,6 @@ Formbuilder.comp.elem = Class.create({
         var newNode = this.cloneChild(tree, record);
         this.copyData = newNode;
 
-        /*
-        if (record.id != 0) {
-
-            this.names = [];
-            this.saveCurrentNode();
-            this.getData();
-            this.copyData = record.data.object.datax;
-
-        }
-        */
     },
 
     pasteChild: function(tree, record) {
@@ -887,17 +858,16 @@ Formbuilder.comp.elem = Class.create({
 
     cloneChild: function(tree, node) {
 
-        var theReference = this;
-        var nodeLabel = node.data.text;
-        var nodeType = node.data.object.type;
-
-        var config = {
-            text: nodeLabel,
-            type: nodeType,
-            leaf: false,
-            expandable: false,
-            expanded: true
-        };
+        var theReference = this,
+            nodeLabel = node.data.text,
+            nodeType = node.data.object.type,
+            config = {
+                text: nodeLabel,
+                type: nodeType,
+                leaf: false,
+                expandable: nodeType === "container" || nodeType === "displayGroup",
+                expanded: true
+            };
 
         config.listeners = theReference.getTreeNodeListeners();
 
@@ -905,9 +875,8 @@ Formbuilder.comp.elem = Class.create({
             config.iconCls = node.data.object.getIconClass();
         }
 
-        var newNode = node.createNode(config);
-
-        var theData = {};
+        var newNode = node.createNode(config),
+            theData = {};
 
         if (node.data.object) {
             theData = Ext.apply(theData, node.data.object.datax);

@@ -4,7 +4,7 @@ namespace Formbuilder\Zend\Form;
 
 use Formbuilder\Zend\Traits\Form;
 
-class DefaultForm extends \Zend_Form {
+class DefaultSubForm extends \Zend_Form_SubForm {
 
     use Form;
 

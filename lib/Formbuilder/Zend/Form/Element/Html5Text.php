@@ -71,7 +71,6 @@ class Html5Text extends \Zend_Form_Element_Text
     {
         $options['type'] = $this->_getType( $options['inputType'] );
 
-        //remove invalid e
         unset( $options['inputType'] );
 
         parent::__construct($spec, $options);

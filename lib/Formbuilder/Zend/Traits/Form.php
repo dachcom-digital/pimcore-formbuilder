@@ -207,41 +207,62 @@ trait Form
      */
     public function createElement($type, $name, $options = null)
     {
-        if( $this->overrideCreateElement === FALSE || !$this->isValidHtml5Element( $type ) )
+        if (null !== $options && $options instanceof \Zend_Config)
+        {
+            $options = $options->toArray();
+        }
+
+        if ((null === $options) || !is_array($options))
+        {
+            $options = [];
+        }
+
+        $decorators = [];
+
+        //get default decorators, but only if we're a bootstrap form!
+        if( $this->isBootstrapForm )
+        {
+            $decorators = $this->getDefaultDecoratorsByElementType($type);
+        }
+
+        if( isset( $options['additionalDecorators'] ) && is_array( $options['additionalDecorators'] ) )
+        {
+            $decorators = array_merge( $decorators, $options['additionalDecorators'] );
+        }
+
+        if ( !empty($decorators) )
+        {
+            $options['decorators'] = $decorators;
+        }
+
+        //finished if we're not a bootstrap form!
+        if( !$this->isBootstrapForm && !$this->isValidHtml5Element( $type ) )
         {
             return parent::createElement($type, $name, $options);
         }
 
-        if (null !== $options && $options instanceof \Zend_Config) {
-            $options = $options->toArray();
-        }
-
-        // Load default decorators
-        if ((null === $options) || !is_array($options)) {
-            $options = array();
-        }
-
-        if (!array_key_exists('decorators', $options)) {
-            $decorators = $this->getDefaultDecoratorsByElementType($type);
-            if (!empty($decorators)) {
-                $options['decorators'] = $decorators;
+        if ( in_array( strtolower($type), $this->getValidHtml5Elements(TRUE)) )
+        {
+            if (null === $options)
+            {
+                $options = ['class' => 'form-control'];
             }
-        }
-
-        if (in_array(strtolower($type), $this->getValidHtml5Elements(TRUE))) {
-            if (null === $options) {
-                $options = array('class' => 'form-control');
-            } elseif (array_key_exists('class', $options)) {
-                if (!strstr($options['class'], 'form-control')) {
+            else if( array_key_exists('class', $options) )
+            {
+                if (!strstr($options['class'], 'form-control'))
+                {
                     $options['class'] .= ' form-control';
                     $options['class'] = trim($options['class']);
                 }
-            } else {
+            }
+            else
+            {
                 $options['class'] = 'form-control';
             }
         }
 
         return parent::createElement($type, $name, $options);
     }
+
 }
 

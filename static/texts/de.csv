@@ -50,6 +50,7 @@
 "Checked value","Checked value"
 "Unchecked value","Unchecked value"
 "displayGroup","Fieldset"
+"container","Container"
 "legend","Legende"
 "single multiOption","Option",
 "translation","Übersetzung",
@@ -89,7 +90,8 @@
 "stringLength","Zeichenkette Länge"
 "Min value","Minium Wert"
 "save","Speichern"
-"Add displayGroup","Gruppierung (Fieldset) hinzufügen"
+"Add container","Container hinzufügen"
+"Add displayGroup","Gruppierung hinzufügen"
 "Add elem item","Feld hinzufügen"
 "Add elem filter","Filter hinzufügen"
 "Add elem validator","Validator hinzufügen"

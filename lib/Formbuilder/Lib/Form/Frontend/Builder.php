@@ -31,7 +31,17 @@ class Builder {
     /**
      * @var string
      */
+    protected static $defaultSubFormClass = 'Zend_Form_SubForm';
+
+    /**
+     * @var string
+     */
     protected $formClass = '\\Formbuilder\\Zend\\Form\\DefaultForm';
+
+    /**
+     * @var string
+     */
+    protected $subFormClass = '\\Formbuilder\\Zend\\Form\\DefaultSubForm';
 
     /**
      * @param $defaultFormClass
@@ -42,11 +52,13 @@ class Builder {
     }
 
     /**
+     * @param bool $subForm
+
      * @return string
      */
-    public static function getDefaultFormClass()
+    public static function getDefaultFormClass( $subForm = FALSE )
     {
-        return self::$defaultFormClass;
+        return $subForm ? self::$defaultSubFormClass : self::$defaultFormClass;
     }
 
     /**
@@ -58,18 +70,54 @@ class Builder {
     }
 
     /**
+     * @param bool $subForm
+     *
      * @return string
      */
-    public function getFormClass()
+    public function getFormClass( $subForm = FALSE )
     {
-        if(null !== $this->formClass)
+        $formClass = $subForm ? 'subFormClass' : 'formClass';
+
+        if($this->$formClass !== NULL )
         {
-            return $this->formClass;
+            return $this->$formClass;
         }
         else
         {
-            return self::getDefaultFormClass();
+            return self::getDefaultFormClass($subForm);
         }
+    }
+
+    /**
+     * @param      $formClass
+     * @param bool $subForm
+     *
+     * @return null|string|\Zend_Form|\Zend_Form_SubForm
+     */
+    protected function getZendFormClass( $formClass, $subForm = FALSE )
+    {
+        $mappedClass = NULL;
+
+        if( is_string( $formClass ) )
+        {
+            $formClassName = $subForm ? ucfirst( $formClass ) . 'SubForm' : ucfirst( $formClass ) . 'Form';
+
+            if(  class_exists( '\\Formbuilder\\Zend\\Form\\' . $formClassName ) )
+            {
+                $mappedClass = '\\Formbuilder\\Zend\\Form\\' . $formClassName;
+            }
+        }
+        else if( ($subForm == FALSE && $formClass instanceof \Zend_Form) || ( $subForm == TRUE && $formClass instanceof \Zend_Form_SubForm ))
+        {
+            $mappedClass = $formClass;
+        }
+        else
+        {
+            $mappedClass = $this->getFormClass( $subForm );
+        }
+
+        return $mappedClass;
+
     }
 
     /**
@@ -91,26 +139,6 @@ class Builder {
             return FALSE;
         }
 
-        $mappedClass = NULL;
-
-        if( is_string( $formClass ) && class_exists( '\\Formbuilder\\Zend\\Form\\' . ucfirst( $formClass ) . 'Form' ) )
-        {
-            $mappedClass = '\\Formbuilder\\Zend\\Form\\' . ucfirst( $formClass ) . 'Form';
-        }
-        else if( $formClass instanceof \Zend_Form)
-        {
-            $mappedClass = $formClass;
-
-        } else
-        {
-            $mappedClass = $this->getFormClass();
-        }
-
-        if( $mappedClass === NULL )
-        {
-            return FALSE;
-        }
-
         if ( !file_exists(FORMBUILDER_DATA_PATH . '/main_' . $formId . '.json') )
         {
             return FALSE;
@@ -123,13 +151,55 @@ class Builder {
         $builder->setDatas($dataStorage);
         $builder->setLocale($locale);
 
-        $array = $builder->buildDynamicForm();
-        $formData = $this->parseFormData( $array, $formClass );
+        $formData = $builder->buildDynamicForm();
 
-        $form = $this->createInstance($formData, $mappedClass);
-        $this->initTranslation($form, $formId, $locale);
+        $subForms = isset( $formData['subForms'] ) && !empty( $formData['subForms'] ) ? $formData['subForms'] : FALSE;
 
-        return $form;
+        if( $subForms !== FALSE)
+        {
+            $formData['subForms'] = $this->parseSubForms( $subForms, $formClass, $formId, $locale );
+        }
+
+        $formData = $this->parseFormData( $formData, $formClass );
+
+        $mappedClass = $this->getZendFormClass( $formClass );
+
+        return $this->instantiateForm( $formData, $mappedClass, $formId, $locale );
+
+    }
+
+    private function parseSubForms( $subForms, $formClass, $formId, $locale )
+    {
+        $forms = [];
+
+        foreach( $subForms as $formName => $subForm )
+        {
+            $subFormData = $subForm[0];
+            $subFormName = $subForm[1];
+
+            $subForms = isset( $subFormData['subForms'] ) && !empty( $subFormData['subForms'] ) ? $subFormData['subForms'] : FALSE;
+
+            if( $subForms !== FALSE )
+            {
+                $subFormData['subForms'] = $this->parseSubForms( $subFormData['subForms'], $formClass, $formId, $locale );
+            }
+
+            $formData = $this->parseFormData( $subFormData, $formClass );
+
+            $mappedClass = $this->getZendFormClass( $formClass, TRUE );
+
+            $form = $this->instantiateForm( $formData, $mappedClass, $formId, $locale );
+
+            if( isset( $subFormData['options']['order'] ))
+            {
+                $form->setOrder( $subFormData['options']['order'] );
+            }
+
+            $forms[] = $form;
+
+        }
+
+        return $forms;
 
     }
 
@@ -269,24 +339,6 @@ class Builder {
 
         }
 
-        /**
-         *
-         *  @fixme: Maybe it's possible to extend the Label Decorator?
-         *  Now transform Label Placeholder. Because the may get translated, we need to do this here.
-         *
-         **/
-        $elements = $form->getElements();
-
-        /** @var \Zend_Form_Element $element */
-        foreach( $elements as $element)
-        {
-            $label = $element->getLabel();
-            if( !empty( $label ) )
-            {
-                $element->setLabel( \Formbuilder\Tool\Placeholder::parse( $label ) );
-            }
-        }
-
         return $form;
 
     }
@@ -333,7 +385,7 @@ class Builder {
      */
     protected function parseFormData( $form, $formType = 'Default' )
     {
-        foreach( $form['elements'] as $elementName => &$element)
+        foreach( $form['elements'] as $elementName => &$element )
         {
             if( !is_array( $element ) )
             {
@@ -376,24 +428,6 @@ class Builder {
         return $this->languages;
     }
 
-    /**
-     * @param        $config
-     * @param string $className
-     *
-     * @return \Zend_Form
-     * @throws \Exception
-     */
-    protected function createInstance($config, $className = 'DefaultForm')
-    {
-        $reflectionClass = new \ReflectionClass($className);
-
-        if( !($reflectionClass->isSubclassOf('Zend_Form') || $reflectionClass->name == 'Zend_Form') )
-        {
-            throw new \Exception('Form class must be a subclass of "Zend_Form"');
-        }
-
-        return $reflectionClass->newInstance($config);
-    }
 
     /**
      * @param \Zend_Form $form
@@ -424,5 +458,59 @@ class Builder {
                 $form->getTranslator()->addTranslation($trans);
             }
         }
+    }
+
+    protected function instantiateForm( $formData = [], $mappedClass, $formId, $locale)
+    {
+        $form = $this->createInstance($formData, $mappedClass);
+        $this->initTranslation($form, $formId, $locale);
+
+        return $this->onAfterFormInstance( $form );
+
+    }
+
+    /**
+     * @param        $config
+     * @param string $className
+     *
+     * @return \Zend_Form
+     * @throws \Exception
+     */
+    protected function createInstance($config, $className = 'DefaultForm')
+    {
+        $reflectionClass = new \ReflectionClass($className);
+
+        if( !($reflectionClass->isSubclassOf('Zend_Form') || $reflectionClass->name == 'Zend_Form') )
+        {
+            throw new \Exception('Form class must be a subclass of "Zend_Form"');
+        }
+
+        return $reflectionClass->newInstance($config);
+    }
+
+    /**
+     * @param \Zend_Form $form
+     *
+     * @return mixed
+     */
+    protected function onAfterFormInstance( $form )
+    {
+        /** @var \Zend_Form_Element $element */
+        foreach( $form->getElements() as $element)
+        {
+            /**
+             *
+             *  @fixme: Maybe it's possible to extend the Label Decorator?
+             *  Now transform Label Placeholder. Because the may get translated, we need to do this here.
+             *
+             **/
+            $label = $element->getLabel();
+            if( !empty( $label ) )
+            {
+                $element->setLabel( \Formbuilder\Tool\Placeholder::parse( $label ) );
+            }
+        }
+
+        return $form;
     }
 }

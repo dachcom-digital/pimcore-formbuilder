@@ -8,7 +8,10 @@ class TwitterVerticalForm extends \Twitter_Bootstrap3_Form_Vertical {
 
     use Form;
 
-    public $overrideCreateElement = TRUE;
+    /**
+     * @var bool
+     */
+    public $isBootstrapForm = TRUE;
 
     public function __construct( $formData )
     {

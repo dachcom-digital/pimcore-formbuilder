@@ -51,6 +51,7 @@
 "Checked value","Checked value"
 "Unchecked value","Unchecked value"
 "displayGroup","Fieldset"
+"Container","Container"
 "legend","Legend"
 "single multiOption","Option",
 "translation","Translation",
@@ -91,6 +92,7 @@
 "Min value","Min value"
 "Elem tree","Elem tree"
 "save","Save"
+"Add container","Add Container"
 "Add displayGroup","Add Fieldset"
 "Add elem item","Add Field"
 "Add elem filter","Add Filter"

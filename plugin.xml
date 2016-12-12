@@ -23,6 +23,7 @@
             <path>/plugins/Formbuilder/static/js/comp/importer.js</path>
             <path>/plugins/Formbuilder/static/js/comp/elem.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/base.js</path>
+            <path>/plugins/Formbuilder/static/js/comp/type/container.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/displayGroup.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/button.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/captcha.js</path>

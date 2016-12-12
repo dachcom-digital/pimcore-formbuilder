@@ -132,6 +132,71 @@ return [
 ];
 ```
 
+### Form Container
+
+```php
+
+<?php 
+
+return [
+    1 => [
+        "id" => 1,
+        "key" => "form.area.groupTemplates",
+        "data" => [
+
+            /*
+               Required (string)
+               template id
+            */
+            "half" => [
+                "niceName" => "Half Layout",
+                
+                /*
+                   apply decorators to container itself
+                */
+                "group" => [
+                    "decorators" => [
+                        [
+                            ['wrapperField' => 'HtmlTag'],
+                            ['tag' => 'div', 'class' => 'col-xs-12 col-sm-6']
+                        ]
+                    ]
+                ],
+                
+                /*
+                   apply decorators to elements IN container
+                */
+                "elements" => [
+                    "decorators" => [
+
+                    ]
+                ]
+            ],
+            
+            "row" => [
+                "niceName" => "Row Layout",
+                "group" => [
+                    "decorators" => [
+                        [
+                            ['rowField' => 'HtmlTag'],
+                            ['tag' => 'div', 'class' => 'row']
+                        ]
+                    ]
+                ],
+                "elements" => [
+                    "decorators" => [
+
+                    ]
+                ]
+            ]
+
+        ],
+        "creationDate" => 1480684113,
+        "modificationDate" => 1480684113
+    ]
+];
+```
+
 ## Styling
 If you want to add some fancy radio/checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
 
