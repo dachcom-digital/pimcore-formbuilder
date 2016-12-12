@@ -155,12 +155,8 @@ class Builder {
 
     protected function parseFormChilds( $childElements )
     {
-        $formData = [];
-
-        $formData = $this->_setElement( $childElements, $formData );
-
+        $formData = $this->_setElement( $childElements, [] );
         return $formData;
-
     }
 
     protected function _setElement( $elements, $formData, $optionalParams = [] )

@@ -35,7 +35,7 @@ Class Processor {
             return FALSE;
         }
 
-        $data = $this->flatValueArray( $form->getValues() );
+        $data = $this->getFormValues( $form );
 
         //set upload data!
         $packageHandler = new PackageHandler();
@@ -60,7 +60,16 @@ Class Processor {
                     }
 
                     $websiteUrl = $http . \Pimcore\Tool::getHostname();
-                    $data[ $fieldName ] = $websiteUrl . $asset->getRealFullPath();
+
+                    //get translated label for files!
+                    $fileLabel = $fieldName;
+
+                    if( isset( $data[ $fieldName ]))
+                    {
+                        $fileLabel = $data[ $fieldName ]['label'];
+                    }
+
+                    $data[ $fieldName ] = [ 'label' => $fileLabel, 'value' => $websiteUrl . $asset->getRealFullPath() ];
                 }
             }
         }
@@ -213,26 +222,73 @@ Class Processor {
      *
      * Flat all subForm values to single key value array.
      *
-     * @param       $arg
+     * @param \Zend_form $form
      * @param array $dat
+     * @param bool $allowEmptyValues
      *
      * @return array
      */
-    private function flatValueArray($arg, $dat = [])
+    private function getFormValues($form, $dat = [], $allowEmptyValues = TRUE)
     {
-        foreach( $arg as $key => $val)
+        foreach ($form->getElementsAndSubFormsOrdered() as $element)
         {
-            if( is_numeric( $key ) && is_array( $val ) )
+            if ($element instanceof \Zend_Form)
             {
-                $dat = $this->flatValueArray($val, $dat);
+                $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
             }
-            else
+            elseif ($element instanceof \Zend_Form_SubForm)
             {
-                $dat[ $key ] = $val;
+                $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
+            }
+            elseif ($element instanceof \Zend_Form_Element)
+            {
+                $label = $element->getLabel();
+                $value = $element->getValue();
+                $name = $element->getName();
+
+                //skip private name convention
+                if( substr( $name, 0,1 ) === '_')
+                {
+                    continue;
+                }
+
+                if( empty( $label ) )
+                {
+                    $label = $name;
+                }
+
+                if( empty( $value ) && $allowEmptyValues === FALSE )
+                {
+                    continue;
+                }
+
+                if( $element instanceof \Zend_Form_Element_Multi)
+                {
+                    $_multiValue = [];
+
+                    if( is_array( $value ) )
+                    {
+                        foreach( $value as $val )
+                        {
+                            $_multiValue[] = $element->getMultiOption( $val );
+                        }
+                    }
+                    else
+                    {
+                        $_multiValue[] = $element->getMultiOption( $value );
+                    }
+                    if( !empty( $_multiValue ) )
+                    {
+                        $value = implode(', ', $_multiValue );
+                    }
+                }
+
+                $dat[ $name ] = [ 'label' => $label, 'value' => $value ];
             }
         }
 
         return $dat;
+
     }
 }
 

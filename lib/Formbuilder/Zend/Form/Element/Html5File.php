@@ -17,6 +17,9 @@ class Html5File extends \Zend_Form_Element
      */
     public function __construct($spec, $options = null)
     {
+        //keep nice name in subForms!
+        $options['realName'] = $spec;
+
         parent::__construct($spec, $options);
     }
 }
