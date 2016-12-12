@@ -347,22 +347,24 @@ class Builder {
      * @param $id
      * @param $locale
      *
-     * @return \Zend_Translate_Adapter_Csv
+     * @return \Zend_Translate_Adapter_Array
      * @throws \Zend_Translate_Exception
      */
     protected function translateForm( $id, $locale)
     {
-        $trans = new \Zend_Translate_Adapter_Csv( ['delimiter' => ',', 'disableNotices' => TRUE ] );
-        $file = FORMBUILDER_DATA_PATH . '/lang/form_' . $id . '_' . $locale . '.csv';
+        $translationFile = FORMBUILDER_DATA_PATH . '/lang/form_' . $id . '_' . $locale . '.json';
 
-        if (file_exists($file))
+        $trans = NULL;
+
+        if ( file_exists( $translationFile ) )
         {
-            $trans->addTranslation(
-                array(
-                    'content' => $file,
-                    'locale' => $locale
-                )
+            $transConfig = new \Zend_Config_Json( $translationFile );
+
+            $trans = new \Zend_Translate_Adapter_Array(
+                $transConfig->toArray(),
+                $locale
             );
+
         }
 
         $file = FORMBUILDER_DEFAULT_ERROR_PATH . '/' . $locale . '/Zend_Validate.php';

@@ -639,11 +639,11 @@ class Builder {
 
     protected function buildTranslate()
     {
-        $this->translations = array();
+        $this->translations = [];
 
         foreach ($this->languages as $lang)
         {
-            $this->translations[$lang] = array();
+            $this->translations[ $lang ] = [];
         }
 
         foreach ($this->translate as $fieldName => $translateData)
@@ -663,16 +663,16 @@ class Builder {
 
                         if( is_array( $translations ) )
                         {
-                            $storeData = array();
+                            $storeData = [];
                             foreach( $translations as $translation )
                             {
-                                $locale = $translation['name'];
+                                $locale     = $translation['name'];
                                 $transValue = $translation['value'];
 
-                                $element = array(
-                                    'locale' => $locale,
-                                    'value' => $transValue
-                                );
+                                $element = [
+                                    'locale'    => $locale,
+                                    'value'     => $transValue
+                                ];
 
                                 $storeData[] = $element;
 
@@ -687,26 +687,20 @@ class Builder {
                 {
                     if( is_array( $value ) )
                     {
-                        $storeData = array();
-                        $originalValue = null;
                         foreach( $value as $translation )
                         {
-                            $locale = $translation['name'];
-                            $originalValue = $translation['multiOption'];
-                            $transValue = $translation['value'];
+                            $locale         = $translation['name'];
+                            $originalValue  = $translation['multiOption'];
+                            $transValue     = $translation['value'];
 
-                            $element = array(
-                                'locale' => $locale,
-                                'value' => $transValue
-                            );
+                            $element = [
+                                'locale'    => $locale,
+                                'value'     => $transValue
+                            ];
 
-                            $storeData[] = $element;
-                            $this->addTranslate($originalValue, $storeData);
+                            $this->addTranslate($originalValue, [ $element ]);
                         }
-
-
                     }
-
                 }
             }
         }
@@ -726,9 +720,9 @@ class Builder {
             return FALSE;
         }
 
-        foreach ($array as $elem) {
-
-            $this->translations[$elem['locale']][$original] = $elem['value'];
+        foreach ($array as $elem)
+        {
+            $this->translations[ $elem['locale'] ][ $original ] = $elem['value'];
         }
     }
 
@@ -736,20 +730,20 @@ class Builder {
     {
         foreach ($this->languages as $lang)
         {
-            if (file_exists(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv'))
-            {
-                unlink(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv');
-            }
+            $path = FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.json';
 
-            touch(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv');
+            $config = new \Zend_Config($this->translations[ $lang ], TRUE);
 
-            $text = '';
-            foreach ($this->translations[$lang] as $key => $value)
-            {
-                $text .= "\"" . $key . "\",\"" . $value . "\"\n";
-            }
+            $writer = new \Zend_Config_Writer_Json(
+                array(
+                    'config'    => $config,
+                    'filename'  => $path
+                )
+            );
 
-            file_put_contents(FORMBUILDER_DATA_PATH . '/lang/form_' . $this->id . '_' . $lang . '.csv', $text, FILE_TEXT);
+            $writer->setPrettyPrint( TRUE );
+            $writer->write();
+
         }
 
     }
