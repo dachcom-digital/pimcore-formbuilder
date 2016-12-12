@@ -125,14 +125,17 @@ var formBuilder = (function () {
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
-                    formData = new FormData( $form[0]),
+                    formData = new FormData( $form[0] ),
                     $fbHtmlFile = $form.find('.formbuilder-html5File');
 
                 ev.preventDefault();
 
                 $btns.attr('disabled', 'disabled');
 
-                $form.find('.qq-upload-delete').hide();
+                if( $fbHtmlFile.length > 0)
+                {
+                    $form.find('.qq-upload-delete').hide();
+                }
 
                 $.ajax({
                     type: 'POST',
@@ -147,9 +150,11 @@ var formBuilder = (function () {
                         $form.find('.help-block').remove();
                         $form.find('.form-group').removeClass('has-error');
 
-                        if(response.success === false ) {
-
+                        if( $fbHtmlFile.length > 0) {
                             $form.find('.qq-upload-delete').show();
+                        }
+
+                        if(response.success === false ) {
 
                             if( response.validationData !== false ) {
 

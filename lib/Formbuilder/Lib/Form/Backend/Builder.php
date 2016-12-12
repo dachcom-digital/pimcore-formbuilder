@@ -92,8 +92,10 @@ class Builder {
         return $this->languages;
     }
 
-    public function buildDynamicForm()
+    public function buildDynamicForm($id)
     {
+        $this->id = $id;
+
         $this->createForm();
         $this->config = $this->correctArray($this->config);
 
@@ -480,6 +482,12 @@ class Builder {
         }
 
         $options['order'] = $this->subFormCounter;
+
+        //add id to file ajax field
+        if( $elementData['fieldtype'] == 'file' && $elementData['multiFile'] === TRUE)
+        {
+            $options['formId'] = $this->id;
+        }
 
         if ( count($options) > 0 )
         {

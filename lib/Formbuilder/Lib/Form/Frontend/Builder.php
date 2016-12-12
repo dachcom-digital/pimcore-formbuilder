@@ -151,7 +151,7 @@ class Builder {
         $builder->setDatas($dataStorage);
         $builder->setLocale($locale);
 
-        $formData = $builder->buildDynamicForm();
+        $formData = $builder->buildDynamicForm($formId);
 
         $subForms = isset( $formData['subForms'] ) && !empty( $formData['subForms'] ) ? $formData['subForms'] : FALSE;
 
