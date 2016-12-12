@@ -35,7 +35,7 @@ Class Processor {
             return FALSE;
         }
 
-        $data = $form->getValues();
+        $data = $this->flatValueArray( $form->getValues() );
 
         //set upload data!
         $packageHandler = new PackageHandler();
@@ -209,5 +209,30 @@ Class Processor {
         $this->messages[] = $message;
     }
 
+    /**
+     *
+     * Flat all subForm values to single key value array.
+     *
+     * @param       $arg
+     * @param array $dat
+     *
+     * @return array
+     */
+    private function flatValueArray($arg, $dat = [])
+    {
+        foreach( $arg as $key => $val)
+        {
+            if( is_numeric( $key ) && is_array( $val ) )
+            {
+                $dat = $this->flatValueArray($val, $dat);
+            }
+            else
+            {
+                $dat[ $key ] = $val;
+            }
+        }
+
+        return $dat;
+    }
 }
 
