@@ -8,89 +8,6 @@ use Formbuilder\Model\Configuration;
 
 class Preset {
 
-    /**
-     * @param      $preset
-     * @param bool $language
-     *
-     * @return array
-     */
-    public static function getPresetConfig( $preset, $language = FALSE )
-    {
-        $formPresets = Configuration::get('form.area.presets');
-
-        $dat = [ 'mail' => FALSE, 'mailCopy' => FALSE ];
-
-        if( empty( $formPresets ) )
-        {
-            return $dat;
-        }
-
-        foreach( $formPresets as $presetName => $presetConfig )
-        {
-            if( $presetName === $preset)
-            {
-                $rootPath = '/';
-
-                $siteRequest = isset( $presetConfig['site'] ) && !empty( $presetConfig['site'] ) ? (array) $presetConfig['site'] : FALSE;
-
-                if( $siteRequest !== FALSE && Site::isSiteRequest())
-                {
-                    $site = Site::getCurrentSite();
-
-                    if( !in_array( $site->getMainDomain(), $siteRequest ) )
-                    {
-                        continue;
-                    }
-
-                    $rootPath = rtrim( $site->getRootPath(), '/') . '/';
-                }
-
-                if( isset( $presetConfig['mail'] ) && !empty( $presetConfig['mail'] ) )
-                {
-                    if( is_string( $presetConfig['mail'] ) )
-                    {
-                        $dat['mail'] = $rootPath . ltrim( $presetConfig['mail'], '/' );
-                    }
-                    else if( is_array( $presetConfig['mail'] ))
-                    {
-                        foreach( $presetConfig['mail'] as $languageKey => $mail )
-                        {
-                            if( $languageKey === $language )
-                            {
-                                $dat['mail'] = $rootPath . ltrim( $mail, '/' );
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if( isset( $presetConfig['mailCopy'] ) && !empty( $presetConfig['mailCopy'] ) )
-                {
-                    if( is_string( $presetConfig['mailCopy'] ) )
-                    {
-                        $dat['mailCopy'] = $rootPath . ltrim( $presetConfig['mailCopy'], '/' );
-                    }
-                    else if( is_array( $presetConfig['mailCopy'] ))
-                    {
-                        foreach( $presetConfig['mailCopy'] as $languageKey => $mail )
-                        {
-                            if( $languageKey === $language )
-                            {
-                                $dat['mailCopy'] = $rootPath . ltrim( $mail, '/' );
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                break;
-            }
-        }
-
-        return $dat;
-
-    }
-
     public static function getAvailablePresets()
     {
         $formPresets = Configuration::get('form.area.presets');
@@ -127,63 +44,9 @@ class Preset {
 
     }
 
-    public static function getDataForPreview( $presetName, $presetConfig, $language )
+    public static function getDataForPreview( $presetName, $presetConfig )
     {
         $previewData = [ 'presetName' => $presetName, 'description' => '', 'fields' => [] ];
-
-        $rootPath = '/';
-
-        if( PimcoreTool::isFrontentRequestByAdmin() && isset( $presetConfig['site'] ) && !empty( $presetConfig['site'] ) )
-        {
-            $currentSite = self::getCurrentSiteInAdminMode();
-            $rootPath = rtrim($currentSite->getRootPath(), '/') . '/';
-        }
-
-        if( isset( $presetConfig['mail'] ) && !empty( $presetConfig['mail'] ) )
-        {
-            $line = [ 'label' => 'Mail', 'value' => NULL ];
-
-            if( is_string( $presetConfig['mail'] ) )
-            {
-                $line['value'] = ltrim( $presetConfig['mail'], '/' );
-            }
-            else if( is_array( $presetConfig['mail'] ))
-            {
-                foreach( $presetConfig['mail'] as $languageKey => $mail )
-                {
-                    if( $languageKey === $language )
-                    {
-                        $line['value'] = $rootPath . ltrim( $mail, '/' );
-                        break;
-                    }
-                }
-            }
-
-            $previewData['fields'][] = $line;
-        }
-
-        if( isset( $presetConfig['mailCopy'] ) && !empty( $presetConfig['mailCopy'] ) )
-        {
-            $line = [ 'label' => 'Mail Copy', 'value' => NULL ];
-
-            if( is_string( $presetConfig['mailCopy'] ) )
-            {
-                $line['value'] = $rootPath . ltrim( $presetConfig['mailCopy'], '/' );
-            }
-            else if( is_array( $presetConfig['mailCopy'] ))
-            {
-                foreach( $presetConfig['mailCopy'] as $languageKey => $mail )
-                {
-                    if( $languageKey === $language )
-                    {
-                        $line['value'] = $rootPath . ltrim( $mail, '/' );
-                        break;
-                    }
-                }
-            }
-
-            $previewData['fields'][] = $line;
-        }
 
         if( isset( $presetConfig['adminDescription'] ) )
         {

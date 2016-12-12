@@ -47,22 +47,17 @@ var formBuilderAreaWatcher = (function () {
             var $parent = $formPresetSelector.closest( '.form-config-window'),
                 toggle = function(v) {
 
-                    var $presetToggle = $parent.find('.preset-toggle'),
-                        $previewFieldContainer = $parent.find('.preview-fields'),
+                    var $previewFieldContainer = $parent.find('.preview-fields'),
                         $previewFields = $previewFieldContainer.find('.preview-field'),
                         $previewField = $previewFieldContainer.find('.preview-field[data-name="' + v + '"]');
 
                     if( v === 'custom') {
-
-                        $presetToggle.show();
 
                         $previewFields.hide();
                         $previewFieldContainer.hide();
                         $previewField.hide();
 
                     } else {
-
-                        $presetToggle.hide();
 
                         $previewFields.hide();
                         $previewField.show();

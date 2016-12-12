@@ -106,22 +106,6 @@ return [
                    Restrict preset to an active domain. Use site main domains!
                 */
                 "site" => ["example-page.com"],
-                
-                /*
-                   Required (array|string)
-                   Set mail template which should be used to sent your form. 
-                   If you want to use language based templates, use an array with language keys.
-                */
-                "mail" => [
-                   "en" => "/en/emails/example-form"
-                ],
-                
-                /*
-                   Optional (empty|array|string)
-                   Set mail template which should be used to sent a copy of your form. 
-                   If you want to use language based templates, use an array with language keys.
-                */
-                "mailCopy" => "/en/emails/example-form-copy"
               
             ]
 

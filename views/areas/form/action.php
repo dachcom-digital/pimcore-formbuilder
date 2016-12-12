@@ -48,13 +48,12 @@ class Form extends Document\Tag\Area\AbstractArea {
 
             if( !empty( $formPresets ) )
             {
-                $language = isset( $this->view->language ) ? $this->view->language : FALSE;
                 $formPresetsStore[] = [ 'custom', $this->view->translateAdmin('no form preset') ];
 
                 foreach( $formPresets as $presetName => $preset )
                 {
                     $formPresetsStore[] = [ $presetName, $preset['niceName'] ];
-                    $formPresetsInfo[] = Preset::getDataForPreview( $presetName, $preset, $language );
+                    $formPresetsInfo[] = Preset::getDataForPreview( $presetName, $preset );
                 }
 
                 if($this->view->select('formPreset')->isEmpty() )
@@ -151,31 +150,8 @@ class Form extends Document\Tag\Area\AbstractArea {
         $_mailTemplate = NULL;
         $_copyMailTemplate = NULL;
 
-        if( $formPreset === 'custom')
-        {
-            $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
-            $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
-        }
-        else
-        {
-            $language = isset( $this->view->language ) ? $this->view->language : FALSE;
-            $presetInfo = Preset::getPresetConfig( $formPreset, $language );
-
-            if( !empty( $presetInfo ) )
-            {
-                if( $presetInfo['mail'] !== FALSE )
-                {
-                    $_mailTemplate = Document\Email::getByPath( $presetInfo['mail'] );
-                }
-
-                if( $presetInfo['mailCopy'] !== FALSE )
-                {
-                    $sendCopy = TRUE;
-                    $_copyMailTemplate = Document\Email::getByPath( $presetInfo['mailCopy'] );
-                }
-            }
-
-        }
+        $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
+        $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
 
         $mailTemplateId = NULL;
         $copyMailTemplateId = NULL;

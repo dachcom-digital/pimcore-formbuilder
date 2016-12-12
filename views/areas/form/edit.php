@@ -53,15 +53,6 @@
                                 <div class="description"><?= $formPresetPreview['description']; ?></div>
                             <?php } ?>
 
-                            <?php foreach( $formPresetPreview['fields'] as $field ) {?>
-
-                                <div class="mail-field clearfix">
-                                    <div class="label"><?= $this->translateAdmin($field['label']); ?></div>
-                                    <div class="value"><?= $field['value']; ?></div>
-                                </div>
-
-                            <?php } ?>
-
                         </div>
 
                     <?php } ?>
@@ -74,7 +65,7 @@
 
     <?php }?>
 
-    <div class="row preset-toggle">
+    <div class="row">
 
         <div class="col-xs-12">
 
@@ -87,7 +78,7 @@
 
     </div>
 
-    <div class="row preset-toggle">
+    <div class="row">
 
         <div class="col-xs-6">
 
