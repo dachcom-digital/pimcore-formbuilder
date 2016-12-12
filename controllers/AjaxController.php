@@ -192,7 +192,6 @@ class Formbuilder_AjaxController extends Action {
             else
             {
                 $validationData = $this->flatMessages( $form->getMessages() );
-
             }
         }
 

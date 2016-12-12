@@ -94,27 +94,45 @@ Class Processor {
             }
         }
 
-        $send = $this->sendForm( $mailTemplateId, [ 'data' => $data ] );
-
-        if( $send === TRUE )
+        try
         {
-            $this->isValid = TRUE;
+            $send = $this->sendForm( $mailTemplateId, [ 'data' => $data ] );
 
-            //send copy!
-            if( $this->sendCopy === TRUE )
+            if( $send === TRUE )
             {
-                $send = $this->sendForm( $copyMailTemplateId, [ 'data' => $data ] );
+                $this->isValid = TRUE;
 
-                if( $send !== TRUE )
+                //send copy!
+                if( $this->sendCopy === TRUE )
                 {
-                    $this->log('copy mail not sent.');
-                    $this->isValid = FALSE;
+                    try
+                    {
+                        $send = $this->sendForm( $copyMailTemplateId, [ 'data' => $data ] );
+
+                        if( $send !== TRUE )
+                        {
+                            $this->log('copy mail not sent.');
+                            $this->isValid = FALSE;
+                        }
+
+                    } catch(\Exception $e)
+                    {
+                        $this->log( 'copy mail sent error: ' . $e->getMessage() );
+                        $this->isValid = FALSE;
+                    }
+
                 }
             }
+            else
+            {
+                $this->log('mail not sent.');
+            }
+
         }
-        else
+        catch(\Exception $e)
         {
-            $this->log('mail not sent.');
+            $this->log( 'mail sent error: ' . $e->getMessage() );
+            $this->isValid = FALSE;
         }
     }
 
@@ -182,7 +200,7 @@ Class Processor {
                 {
                     if( $formFieldName == $inputValue)
                     {
-                        $to = str_replace( $matches[0][$key], $formFieldValue, $to );
+                        $to = str_replace( $matches[0][$key], $formFieldValue['value'], $to );
                     }
                 }
 

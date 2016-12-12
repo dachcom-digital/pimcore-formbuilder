@@ -147,7 +147,7 @@ var formBuilder = (function () {
 
                         $btns.attr('disabled', false);
 
-                        $form.find('.help-block').remove();
+                        $form.find('.help-block.validation').remove();
                         $form.find('.form-group').removeClass('has-error');
 
                         if( $fbHtmlFile.length > 0) {
@@ -172,10 +172,10 @@ var formBuilder = (function () {
                                         $.each( messages, function( validationType, message) {
 
                                             $formGroup.addClass('has-error');
-                                            $formGroup.find('span.help-block').remove();
+                                            $formGroup.find('span.help-block.validation').remove();
 
                                             //its a multiple field
-                                            $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
+                                            $spanEl = $('<span/>', {'class' : 'help-block validation', 'text' : message});
 
                                             if( $fields.length > 1 ) {
                                                 $field.closest('label').before( $spanEl );
