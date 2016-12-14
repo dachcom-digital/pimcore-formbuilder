@@ -136,10 +136,11 @@ class Builder {
             $this->config['config']['form']['elements'] = [];
         }
 
-        $this->config['config']['form']['action'] = $this->datas['action'];
-        $this->config['config']['form']['method'] = $this->datas['method'];
-        $this->config['config']['form']['enctype'] = $this->datas['enctype'];
-        $this->config['config']['form']['useAjax'] = $this->datas['useAjax'];
+        $this->config['config']['form']['action'] =     $this->datas['action'];
+        $this->config['config']['form']['method'] =     $this->datas['method'];
+        $this->config['config']['form']['enctype'] =    $this->datas['enctype'];
+        $this->config['config']['form']['useAjax'] =    $this->datas['useAjax'];
+        $this->config['config']['form']['name'] =       \Pimcore\File::getValidFilename($this->datas['name']);
 
         if( $this->datas['noValidate'] !== TRUE)
         {
@@ -204,6 +205,13 @@ class Builder {
                     }
 
                     $displayGroup = $this->_buildDisplayGroup($data, $optionalParams);
+
+                    //no elements in DisplayGroup? Not allowed! Skip!
+                    if( !isset( $displayGroup['elements'] ) || empty( $displayGroup['elements'] ) )
+                    {
+                        continue;
+                    }
+
                     $displayGroupElement = [];
 
                     if( isset( $displayGroup['elements'] ) )
