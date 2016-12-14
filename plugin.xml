@@ -5,7 +5,7 @@
         <pluginDescription>Build Forms quickly and easily</pluginDescription>
         <pluginNiceName>Zend Form Builder</pluginNiceName>
         <pluginIcon>/plugins/Formbuilder/static/img/logo_formbuilder.png</pluginIcon>
-        <pluginVersion>1.2.7</pluginVersion>
+        <pluginVersion>1.3.0</pluginVersion>
         <pluginRevision>1</pluginRevision>
         <pluginBuildTimestamp>1459355459</pluginBuildTimestamp>
         <pluginClassName>\Formbuilder\Plugin</pluginClassName>
