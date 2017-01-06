@@ -13,7 +13,10 @@ class Html5Number extends \Formbuilder\Zend\Form\Element\Html5Text
 
         if ($this->isAutoloadValidators())
         {
-            $this->addValidator('Digits');
+            if($this->getValidator('Digits') === false) {
+                $this->addValidator('Digits');
+            }
+
             $validatorOpts = array_filter(array(
                 'min' => $this->getAttrib('min'),
                 'max' => $this->getAttrib('max'),
@@ -33,7 +36,10 @@ class Html5Number extends \Formbuilder\Zend\Form\Element\Html5Text
             }
             if (null !== $validator)
             {
-                $this->addValidator($validator, false, $validatorOpts);
+                if($this->getValidator($validator) === false) {
+                    $this->addValidator($validator, false, $validatorOpts);
+                }
+
             }
         }
     }
