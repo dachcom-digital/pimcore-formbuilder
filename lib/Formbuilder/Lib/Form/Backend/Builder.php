@@ -457,7 +457,7 @@ class Builder {
 
                     if ($key !== 'name' && $key !== 'fieldtype')
                     {
-                        if ($data != '')
+                        if ($data !== '' && !is_null($data))
                         {
                             $multipleData = [];
 
