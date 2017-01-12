@@ -15,30 +15,34 @@ Class FormbuilderMail extends Mail {
 
     public function setMailPlaceholders( $data, $disableDefaultMailBody )
     {
+        //allow access to all form placeholders
+        foreach( $data as $label => $field )
+        {
+            //ignore fields!
+            if( in_array( $label, $this->ignoreFields ) || empty( $field['value'] ))
+            {
+                continue;
+            }
+
+            $this->setParam( $label, $this->getSingleRenderedValue( $field['value'] ) );
+        }
+
         if( $disableDefaultMailBody === FALSE )
         {
             $this->setParam('body', self::parseHtml( $data, $this->ignoreFields ) );
         }
-        else
-        {
-            foreach( $data as $label => $field )
-            {
-                //ignore fields!
-                if( in_array( $label, $this->ignoreFields ) )
-                {
-                    continue;
-                }
-
-                $this->setParam( $label, $this->getSingleRenderedValue( $field ) );
-            }
-        }
     }
 
+    /**
+     * @param array $data [label,value]
+     *
+     * @return string
+     */
     private function parseHtml( $data )
     {
         $html = '<table>';
 
-        foreach( $data as $label => $field )
+        foreach( $data as $label => $fieldData )
         {
             //ignore fields!
             if( in_array( $label, $this->ignoreFields ) )
@@ -46,7 +50,7 @@ Class FormbuilderMail extends Mail {
                 continue;
             }
 
-            $data = $this->getSingleRenderedValue( $field );
+            $data = $this->getSingleRenderedValue( $fieldData['value'] );
 
             if( empty( $data ) )
             {
@@ -54,7 +58,7 @@ Class FormbuilderMail extends Mail {
             }
 
             $html .= '<tr>' . "\n";
-            $html .= '<td width="20%"><strong>' . $label . ':</strong></td>' . "\n";
+            $html .= '<td width="20%"><strong>' . $fieldData['label'] . ':</strong></td>' . "\n";
             $html .= '<td width="70%">' . $data . '</td>' . "\n";
             $html .= '</tr>' . "\n";
         }
@@ -74,7 +78,7 @@ Class FormbuilderMail extends Mail {
      *
      * @throws \Zend_Mail_Exception
      */
-    public function parseSubject($subject = '', $data = array() )
+    public function parseSubject($subject = '', $data = [] )
     {
         $realSubject = $subject;
 
@@ -86,9 +90,14 @@ Class FormbuilderMail extends Mail {
             {
                 foreach( $data as $formFieldName => $formFieldValue )
                 {
+                    if( empty( $formFieldValue['value'] ) )
+                    {
+                        continue;
+                    }
+
                     if( $formFieldName == $inputValue)
                     {
-                        $realSubject = str_replace( $matches[0][$key], $this->getSingleRenderedValue( $formFieldValue, ', '), $realSubject);
+                        $realSubject = str_replace( $matches[0][$key], $this->getSingleRenderedValue( $formFieldValue['value'], ', '), $realSubject);
                     }
                 }
 

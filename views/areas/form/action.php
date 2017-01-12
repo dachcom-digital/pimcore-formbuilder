@@ -5,7 +5,7 @@ namespace Pimcore\Model\Document\Tag\Area;
 use Pimcore\Model\Document;
 
 use Formbuilder\Lib\Processor;
-use Formbuilder\Lib\Form\Frontend;
+use Formbuilder\Lib\Form\Frontend\Builder;
 use Formbuilder\Tool\Preset;
 use Formbuilder\Model\Configuration;
 use Formbuilder\Model\Form as FormModel;
@@ -17,28 +17,34 @@ class Form extends Document\Tag\Area\AbstractArea {
         if ($this->view->editmode)
         {
             $mainList = new FormModel();
-            $mains = $mainList->getAll();
 
-            $store = array();
+            $mains = $mainList->getAll();
+            $formPresets = Preset::getAvailablePresets();
+
+            $formPresetsStore = [];
+            $formPresetsInfo = [];
+            $availableForms = [];
 
             if( !empty( $mains ) )
             {
                 foreach( $mains as $form)
                 {
-                    $store[] = [ $form['id'], $form['name'] ];
+                    $availableForms[] = [ $form['id'], $form['name'] ];
                 }
             }
 
-            $typeStore = [
+            $availableFormsTypes = [
                 [ 'horizontal', 'Horizontal' ],
                 [ 'vertical', 'Vertical' ]
             ];
 
-            $this->view->availableForms = $store;
-            $this->view->availableFormTypes = $typeStore;
+            $this->view->assign(
+                [
+                    'availableForms'        => $availableForms,
+                    'availableFormTypes'    => $availableFormsTypes,
+                ]
+            );
 
-            $formPresets = Preset::getAvailablePresets();
-            $formPresetsStore = [];
 
             if( !empty( $formPresets ) )
             {
@@ -47,6 +53,7 @@ class Form extends Document\Tag\Area\AbstractArea {
                 foreach( $formPresets as $presetName => $preset )
                 {
                     $formPresetsStore[] = [ $presetName, $preset['niceName'] ];
+                    $formPresetsInfo[] = Preset::getDataForPreview( $presetName, $preset );
                 }
 
                 if($this->view->select('formPreset')->isEmpty() )
@@ -54,7 +61,12 @@ class Form extends Document\Tag\Area\AbstractArea {
                     $this->view->select('formPreset')->setDataFromResource( 'custom' );
                 }
 
-                $this->view->availableFormPresets = $formPresetsStore;
+                $this->view->assign(
+                    [
+                        'availableFormPresets'  => $formPresetsStore,
+                        'formPresetsInfo'       => $formPresetsInfo,
+                    ]
+                );
             }
 
         }
@@ -69,6 +81,8 @@ class Form extends Document\Tag\Area\AbstractArea {
         $noteError = FALSE;
 
         $horizontalForm = TRUE;
+        $inlineForm = FALSE;
+
         $sendCopy = $this->view->checkbox('userCopy')->isChecked() === '1';
         $formPreset = $this->view->select('formPreset')->getData();
 
@@ -128,48 +142,26 @@ class Form extends Document\Tag\Area\AbstractArea {
             return FALSE;
         }
 
-        $frontendLib = new Frontend();
+        $frontendLib = new Builder();
 
-        $form = $frontendLib->getTwitterForm($formData->getId(), $this->view->language, $horizontalForm);
+        $twitterFormType = $horizontalForm ? 'TwitterHorizontal' : ( $inlineForm ? 'TwitterInline' : 'TwitterVertical');
+        $form = $frontendLib->getForm($formData->getId(), $this->view->language, $twitterFormType);
 
         $_mailTemplate = NULL;
         $_copyMailTemplate = NULL;
 
-        if( $formPreset === 'custom')
-        {
-            $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
-            $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
-        }
-        else
-        {
-            $language = isset( $this->view->language ) ? $this->view->language : FALSE;
-            $presetInfo = Preset::getPresetConfig( $formPreset, $language );
-
-            if( !empty( $presetInfo ) )
-            {
-                if( $presetInfo['mail'] !== FALSE )
-                {
-                    $_mailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mail'] );
-                }
-
-                if( $presetInfo['mailCopy'] !== FALSE )
-                {
-                    $sendCopy = TRUE;
-                    $_copyMailTemplate = \Pimcore\Model\Document\Email::getByPath( $presetInfo['mailCopy'] );
-                }
-            }
-
-        }
+        $_mailTemplate = $this->view->href('sendMailTemplate')->getElement();
+        $_copyMailTemplate = $this->view->href('sendCopyMailTemplate')->getElement();
 
         $mailTemplateId = NULL;
         $copyMailTemplateId = NULL;
 
-        if( $_mailTemplate instanceof \Pimcore\Model\Document\Email )
+        if( $_mailTemplate instanceof Document\Email )
         {
             $mailTemplateId = $_mailTemplate->getId();
         }
 
-        if( $sendCopy === TRUE && $_copyMailTemplate instanceof \Pimcore\Model\Document\Email )
+        if( $sendCopy === TRUE && $_copyMailTemplate instanceof Document\Email )
         {
             $copyMailTemplateId = $_copyMailTemplate->getId();
         }

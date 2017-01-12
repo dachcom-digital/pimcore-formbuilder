@@ -23,7 +23,8 @@ Formbuilder.comp.type.displayGroup = Class.create(Formbuilder.comp.type.base,{
                 collapsible: true,
                 autoHeight:true,
                 defaultType: 'textfield',
-                items:[{
+                items:[
+                    {
                         xtype: "textfield",
                         fieldLabel: t("name"),
                         name: "name",
@@ -45,7 +46,8 @@ Formbuilder.comp.type.displayGroup = Class.create(Formbuilder.comp.type.base,{
                         fieldLabel: t("description"),
                         value: this.datax.description,
                         anchor: "100%"
-                    },{
+                    },
+                    {
                         xtype: "textfield",
                         name: "legend",
                         fieldLabel: t("legend"),

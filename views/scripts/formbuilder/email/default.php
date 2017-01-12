@@ -2,6 +2,10 @@
 
 <?php if( $this->editmode ) { ?>
 
+    <div class="alert alert-info">
+        <strong>Admin:</strong> <?= sprintf( $this->translateAdmin('Depending on your selected form, some placeholder like %s are available.'), '<code>%Text(firstname);</code>'); ?>
+    </div>
+
     <?php if( $this->getProperty('mail_disable_default_mail_body') !== TRUE) { ?>
 
         <div class="alert alert-info"><strong>Admin:</strong> <?=$this->translateAdmin('Form data will be rendered automatically.') ?></div>

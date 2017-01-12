@@ -4,6 +4,25 @@ namespace Formbuilder\Zend\Traits;
 
 trait Form
 {
+    protected static $validFields = [
+        'download',
+        'html5file',
+        'imagetag'
+    ];
+
+    protected static $validHtml5Fields = [
+        'html5text',
+        'html5date',
+        'html5datetimelocal',
+        'html5email',
+        'html5month',
+        'html5number',
+        'html5range',
+        'html5time',
+        'html5url',
+        'html5week'
+    ];
+
     /**
      * @return $this
      */
@@ -26,6 +45,12 @@ trait Form
         );
 
         $this->addPrefixPath(
+            'Formbuilder\\Zend\\Form\\Element\\Html5Text',
+            PIMCORE_PLUGINS_PATH . '/Formbuilder/lib/Formbuilder/Zend/Form/Element/Html5Text',
+            \Zend_Form::ELEMENT
+        );
+
+        $this->addPrefixPath(
             'Cgsmith\\Form\\Element',
             $recaptchaPath . '/Cgsmith/Form/Element/',
             \Zend_Form::ELEMENT
@@ -44,6 +69,43 @@ trait Form
 
         return $this;
 
+    }
+
+    /**
+     * @param bool $forClasses
+     *
+     * @return array
+     */
+    public function getValidHtml5Elements( $forClasses = FALSE )
+    {
+        $elements = self::$validHtml5Fields;
+
+        if ($forClasses == TRUE)
+        {
+            $elements = array_diff($elements, ['html5range']);
+        }
+
+        return $elements;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    protected function isValidHtml5Element( $type = '')
+    {
+        return in_array( strtolower($type), self::$validHtml5Fields);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    protected function isValidFormBuilderElement( $type = '')
+    {
+        return in_array( strtolower($type), self::$validFields) || in_array( strtolower($type), self::$validHtml5Fields);
     }
 
     /**
@@ -135,6 +197,72 @@ trait Form
         return $valid;
     }
 
+    /**
+     * If Twitter Form has been activated, we have to get rid of the input bootstrap classes.
+     *
+     * @param  string            $type
+     * @param  string            $name
+     * @param  array|\Zend_Config $options
+     * @return \Zend_Form_Element
+     */
+    public function createElement($type, $name, $options = null)
+    {
+        if (null !== $options && $options instanceof \Zend_Config)
+        {
+            $options = $options->toArray();
+        }
+
+        if ((null === $options) || !is_array($options))
+        {
+            $options = [];
+        }
+
+        $decorators = [];
+
+        //get default decorators, but only if we're a bootstrap form!
+        if( $this->isBootstrapForm )
+        {
+            $decorators = $this->getDefaultDecoratorsByElementType($type);
+        }
+
+        if( isset( $options['additionalDecorators'] ) && is_array( $options['additionalDecorators'] ) )
+        {
+            $decorators = array_merge( $decorators, $options['additionalDecorators'] );
+        }
+
+        if ( !empty($decorators) )
+        {
+            $options['decorators'] = $decorators;
+        }
+
+        //finished if we're not a bootstrap form!
+        if( !$this->isBootstrapForm && !$this->isValidHtml5Element( $type ) )
+        {
+            return parent::createElement($type, $name, $options);
+        }
+
+        if ( in_array( strtolower($type), $this->getValidHtml5Elements(TRUE)) )
+        {
+            if (null === $options)
+            {
+                $options = ['class' => 'form-control'];
+            }
+            else if( array_key_exists('class', $options) )
+            {
+                if (!strstr($options['class'], 'form-control'))
+                {
+                    $options['class'] .= ' form-control';
+                    $options['class'] = trim($options['class']);
+                }
+            }
+            else
+            {
+                $options['class'] = 'form-control';
+            }
+        }
+
+        return parent::createElement($type, $name, $options);
+    }
 
 }
 

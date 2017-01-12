@@ -2,11 +2,10 @@
 
 use Formbuilder\Controller\Action;
 use Formbuilder\Model\Form;
-use Formbuilder\Lib\Form\Frontend as FormFrontEnd;
-use Formbuilder\Lib\Processor;
-
-use Formbuilder\Lib\Form\File\FileHandler;
 use Formbuilder\Tool\Session;
+use Formbuilder\Lib\Processor;
+use Formbuilder\Lib\Form\Frontend\Builder;
+use Formbuilder\Lib\Form\File\FileHandler;
 
 class Formbuilder_AjaxController extends Action {
 
@@ -15,6 +14,9 @@ class Formbuilder_AjaxController extends Action {
      */
     private $fileHandler = NULL;
 
+    /**
+     *
+     */
     public function init()
     {
         parent::init();
@@ -22,6 +24,9 @@ class Formbuilder_AjaxController extends Action {
         $this->fileHandler = new FileHandler();
     }
 
+    /**
+     * @throws Zend_Controller_Response_Exception
+     */
     public function addFromUploadAction()
     {
         $this->setPlainHeader();
@@ -58,6 +63,9 @@ class Formbuilder_AjaxController extends Action {
 
     }
 
+    /**
+     *
+     */
     public function deleteFromUploadAction()
     {
         $this->setPlainHeader();
@@ -78,6 +86,9 @@ class Formbuilder_AjaxController extends Action {
         echo json_encode( $result );
     }
 
+    /**
+     *
+     */
     public function chunkDoneAction()
     {
         $this->setPlainHeader();
@@ -101,6 +112,9 @@ class Formbuilder_AjaxController extends Action {
 
     }
 
+    /**
+     * @throws Zend_Form_Exception
+     */
     public function parseAction()
     {
         $formConfig = $this->getFormInfoFromRequest();
@@ -122,7 +136,7 @@ class Formbuilder_AjaxController extends Action {
 
         if( $formData instanceof Form )
         {
-            $frontendLib = new FormFrontEnd();
+            $frontendLib = new Builder();
 
             $form = $frontendLib->getForm($formData->getId(), $language);
 
@@ -177,7 +191,7 @@ class Formbuilder_AjaxController extends Action {
             }
             else
             {
-                $validationData = $form->getMessages();
+                $validationData = $this->flatMessages( $form->getMessages() );
             }
         }
 
@@ -192,6 +206,34 @@ class Formbuilder_AjaxController extends Action {
 
     }
 
+    /**
+     * @param       $arg
+     * @param array $dat
+     *
+     * @return array
+     */
+    private function flatMessages($arg, $dat = [])
+    {
+        foreach( $arg as $key => $val)
+        {
+            if( is_numeric( $key ) && is_array( $val ) )
+            {
+                $dat = $this->flatMessages($val, $dat);
+            }
+            else
+            {
+                $dat[ $key ] = $val;
+            }
+        }
+
+        return $dat;
+    }
+
+    /**
+     * @param $mailTemplateId
+     *
+     * @return array
+     */
     private function afterSend( $mailTemplateId )
     {
         $redirect = FALSE;
@@ -247,6 +289,9 @@ class Formbuilder_AjaxController extends Action {
 
     }
 
+    /**
+     * @return mixed|stdClass
+     */
     private function getFormInfoFromRequest()
     {
         $formConfig = $this->getParam('_formConfig');
@@ -268,6 +313,9 @@ class Formbuilder_AjaxController extends Action {
         return $data;
     }
 
+    /**
+     *
+     */
     private function setPlainHeader()
     {
         $this->disableViewAutoRender();

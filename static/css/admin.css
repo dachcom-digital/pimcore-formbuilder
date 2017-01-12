@@ -106,6 +106,14 @@
     background: url(/plugins/Formbuilder/static/img/fieldset_add.svg) left center no-repeat !important;
 }
 
+.Formbuilder_icon_container{
+    background: url(/plugins/Formbuilder/static/img/container.svg) left center no-repeat !important;
+}
+
+.Formbuilder_icon_container_add{
+    background: url(/plugins/Formbuilder/static/img/container_add.svg) left center no-repeat !important;
+}
+
 .pimcore_icon_api{
     background: url(/plugins/Formbuilder/static/img/help.svg) left center no-repeat !important;
 }
@@ -113,16 +121,4 @@
 .pimcore_area_entry .pimcore_area_edit_button,
 .pimcore_tag_area .pimcore_area_edit_button {
     z-index:99;
-}
-
-.formbuilder-placeholder-body {
-
-    background: #F9F9F9;
-    padding: 20px;
-    border: 2px dashed #DADADA;
-    text-align: center;
-    color: #A9A9A9;
-    font-size: 12px;
-    font-family: Arial , Tahoma, Verdana, sans-serif;
-    text-transform: uppercase;
 }

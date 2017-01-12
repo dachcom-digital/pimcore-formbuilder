@@ -89,34 +89,88 @@ return [
 
             "example" => [
             
-                /**
-                    Required (string)
+                /*
+                   Required (string)
                    Add a nice name for the preset dropdown.
-                **/
+                */
                 "niceName" => "Example Form",
                 
-                /**
-                    Optional (array|string)
-                    Restrict preset to an active domain. 
+                /*
+                   Optional (string)
+                   Add some Description. (Allowed Tags: strong,em,p,span)
                 **/
-                "site" => ["example-page.com"],
+                "adminDescription" => "Example Form. For your Health.",
                 
-                /**
-                    Required (array|string)
-                    Set mail template which should be used to sent your form. 
-                    If you want to use language based templates, use an array with language keys.
-                **/
-                "mail" => [
-                    "en" => "/en/emails/example-form"
+                /*
+                   Optional (array|string)
+                   Restrict preset to an active domain. Use site main domains!
+                */
+                "site" => ["example-page.com"],
+              
+            ]
+
+        ],
+        "creationDate" => 1480684113,
+        "modificationDate" => 1480684113
+    ]
+];
+```
+
+### Form Container
+
+```php
+
+<?php 
+
+return [
+    1 => [
+        "id" => 1,
+        "key" => "form.area.groupTemplates",
+        "data" => [
+
+            /*
+               Required (string)
+               template id
+            */
+            "half" => [
+                "niceName" => "Half Layout",
+                
+                /*
+                   apply decorators to container itself
+                */
+                "group" => [
+                    "decorators" => [
+                        [
+                            ['wrapperField' => 'HtmlTag'],
+                            ['tag' => 'div', 'class' => 'col-xs-12 col-sm-6']
+                        ]
+                    ]
                 ],
                 
-                /**
-                    Optional (empty|array|string)
-                    Set mail template which should be used to sent a copy of your form. 
-                    If you want to use language based templates, use an array with language keys.
-                **/
-                "mailCopy" => [
-                    "en" => "/en/emails/example-form-copy"
+                /*
+                   apply decorators to elements IN container
+                */
+                "elements" => [
+                    "decorators" => [
+
+                    ]
+                ]
+            ],
+            
+            "row" => [
+                "niceName" => "Row Layout",
+                "group" => [
+                    "decorators" => [
+                        [
+                            ['rowField' => 'HtmlTag'],
+                            ['tag' => 'div', 'class' => 'row']
+                        ]
+                    ]
+                ],
+                "elements" => [
+                    "decorators" => [
+
+                    ]
                 ]
             ]
 

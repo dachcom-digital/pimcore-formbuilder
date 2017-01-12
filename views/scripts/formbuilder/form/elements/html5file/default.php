@@ -1,7 +1,7 @@
-<div class="formbuilder-html5File">
+<div class="formbuilder-html5File element-<?= $this->fieldName; ?>">
 
     <?php /** NEVER (!) remove those data attributes! **/ ?>
-    <div class="formbuilder-content" data-field-name="<?= $this->fieldName ?>" data-size-limit="<?= $this->sizeLimit; ?>" data-allowed-extensions="<?= implode(',', $this->allowedExtensions); ?>"></div>
+    <div class="formbuilder-content" data-required="<?= $this->required ? 'true' : 'false'; ?>" data-field-name="<?= $this->fieldName ?>" data-size-limit="<?= $this->sizeLimit; ?>" data-allowed-extensions="<?= implode(',', $this->allowedExtensions); ?>"></div>
 
     <div class="formbuilder-template">
 

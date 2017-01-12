@@ -35,7 +35,7 @@ Class Processor {
             return FALSE;
         }
 
-        $data = $form->getValues();
+        $data = $this->getFormValues( $form );
 
         //set upload data!
         $packageHandler = new PackageHandler();
@@ -60,7 +60,16 @@ Class Processor {
                     }
 
                     $websiteUrl = $http . \Pimcore\Tool::getHostname();
-                    $data[ $fieldName ] = $websiteUrl . $asset->getRealFullPath();
+
+                    //get translated label for files!
+                    $fileLabel = $fieldName;
+
+                    if( isset( $data[ $fieldName ]))
+                    {
+                        $fileLabel = $data[ $fieldName ]['label'];
+                    }
+
+                    $data[ $fieldName ] = [ 'label' => $fileLabel, 'value' => $websiteUrl . $asset->getRealFullPath() ];
                 }
             }
         }
@@ -85,27 +94,45 @@ Class Processor {
             }
         }
 
-        $send = $this->sendForm( $mailTemplateId, [ 'data' => $data ] );
-
-        if( $send === TRUE )
+        try
         {
-            $this->isValid = TRUE;
+            $send = $this->sendForm( $mailTemplateId, [ 'data' => $data ] );
 
-            //send copy!
-            if( $this->sendCopy === TRUE )
+            if( $send === TRUE )
             {
-                $send = $this->sendForm( $copyMailTemplateId, [ 'data' => $data ] );
+                $this->isValid = TRUE;
 
-                if( $send !== TRUE )
+                //send copy!
+                if( $this->sendCopy === TRUE )
                 {
-                    $this->log('copy mail not sent.');
-                    $this->isValid = FALSE;
+                    try
+                    {
+                        $send = $this->sendForm( $copyMailTemplateId, [ 'data' => $data ] );
+
+                        if( $send !== TRUE )
+                        {
+                            $this->log('copy mail not sent.');
+                            $this->isValid = FALSE;
+                        }
+
+                    } catch(\Exception $e)
+                    {
+                        $this->log( 'copy mail sent error: ' . $e->getMessage() );
+                        $this->isValid = FALSE;
+                    }
+
                 }
             }
+            else
+            {
+                $this->log('mail not sent.');
+            }
+
         }
-        else
+        catch(\Exception $e)
         {
-            $this->log('mail not sent.');
+            $this->log( 'mail sent error: ' . $e->getMessage() );
+            $this->isValid = FALSE;
         }
     }
 
@@ -173,7 +200,7 @@ Class Processor {
                 {
                     if( $formFieldName == $inputValue)
                     {
-                        $to = str_replace( $matches[0][$key], $formFieldValue, $to );
+                        $to = str_replace( $matches[0][$key], $formFieldValue['value'], $to );
                     }
                 }
 
@@ -209,5 +236,77 @@ Class Processor {
         $this->messages[] = $message;
     }
 
+    /**
+     *
+     * Flat all subForm values to single key value array.
+     *
+     * @param \Zend_form $form
+     * @param array $dat
+     * @param bool $allowEmptyValues
+     *
+     * @return array
+     */
+    private function getFormValues($form, $dat = [], $allowEmptyValues = TRUE)
+    {
+        foreach ($form->getElementsAndSubFormsOrdered() as $element)
+        {
+            if ($element instanceof \Zend_Form)
+            {
+                $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
+            }
+            elseif ($element instanceof \Zend_Form_SubForm)
+            {
+                $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
+            }
+            elseif ($element instanceof \Zend_Form_Element)
+            {
+                $label = $element->getLabel();
+                $value = $element->getValue();
+                $name = $element->getName();
+
+                //skip private name convention
+                if( substr( $name, 0,1 ) === '_')
+                {
+                    continue;
+                }
+
+                if( empty( $label ) )
+                {
+                    $label = $name;
+                }
+
+                if( empty( $value ) && $allowEmptyValues === FALSE )
+                {
+                    continue;
+                }
+
+                if( $element instanceof \Zend_Form_Element_Multi)
+                {
+                    $_multiValue = [];
+
+                    if( is_array( $value ) )
+                    {
+                        foreach( $value as $val )
+                        {
+                            $_multiValue[] = $element->getMultiOption( $val );
+                        }
+                    }
+                    else
+                    {
+                        $_multiValue[] = $element->getMultiOption( $value );
+                    }
+                    if( !empty( $_multiValue ) )
+                    {
+                        $value = implode(', ', $_multiValue );
+                    }
+                }
+
+                $dat[ $name ] = [ 'label' => $label, 'value' => $value ];
+            }
+        }
+
+        return $dat;
+
+    }
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Formbuilder\Zend;
+namespace Formbuilder\Zend\Form;
 
 use Formbuilder\Zend\Traits\Form;
 
@@ -13,5 +13,4 @@ class DefaultForm extends \Zend_Form {
         $this->addPrefixes();
         parent::__construct($formData);
     }
-
 }

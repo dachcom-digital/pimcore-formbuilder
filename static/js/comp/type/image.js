@@ -65,7 +65,8 @@ Formbuilder.comp.type.image = Class.create(Formbuilder.comp.type.base,{
                 },
                 {
                     xtype: "label",
-                    text: "Only Pimcore Assets (Images) are allowed. Just drag your Asset into the field above."
+                    style:'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
+                    text: t("Only Pimcore Assets (Images) are allowed. Just drag your Asset into the field above.")
                 },
                 {
                     xtype: "checkbox",

@@ -329,7 +329,7 @@ abstract class Twitter_Bootstrap3_Form extends Zend_Form
                 $options['decorators'] = $decorators;
             }
         }
-        
+
         // Elements type use 'form-control' class
         $element_fc = array(
             // all input:

@@ -55,66 +55,69 @@ var formBuilder = (function () {
 
                 messages = jQuery.parseJSON( messages );
 
-                $el.fineUploader({
-                    debug: false,
-                    template: $template,
-                    element: $element,
-                    messages: messages.core,
+                if( jQuery().fineUploader !== undefined ) {
 
-                    text: {
-                        formatProgress: messages.text.formatProgress,
-                        failUpload: messages.text.failUpload,
-                        waitingForResponse: messages.text.waitingForResponse,
-                        paused: messages.text.paused
-                    },
+                    $el.fineUploader({
+                        debug: false,
+                        template: $template,
+                        element: $element,
+                        messages: messages.core,
 
-                    chunking: {
-                        enabled: true,
-                        concurrent: {
-                            enabled: true
+                        text: {
+                            formatProgress: messages.text.formatProgress,
+                            failUpload: messages.text.failUpload,
+                            waitingForResponse: messages.text.waitingForResponse,
+                            paused: messages.text.paused
                         },
-                        success: {
-                            endpoint: '/plugin/Formbuilder/ajax/chunk-done'
-                        }
-                    },
 
-                    request: {
-                        endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
-                        params: {
-                            _formConfig: formConfig,
-                            _fieldName: $element.data('field-name')
-                        }
-                    },
-
-                    deleteFile: {
-                        confirmMessage: messages.delete.confirmMessage,
-                        deletingStatusText: messages.delete.deletingStatusText,
-                        deletingFailedText: messages.delete.deletingFailedText,
-
-                        enabled: true,
-                        endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
-                        params: {
-                            _formConfig: formConfig,
-                            _fieldName: $element.data('field-name')
-                        }
-                    },
-
-                    validation: {
-                        sizeLimit: $element.data('size-limit'),
-                        allowedExtensions: $element.data('allowed-extensions').split(',')
-                    },
-
-                    callbacks: {
-
-                        onUpload : function() {
-                            $submitButton.attr('disabled', 'disabled');
+                        chunking: {
+                            enabled: true,
+                            concurrent: {
+                                enabled: true
+                            },
+                            success: {
+                                endpoint: '/plugin/Formbuilder/ajax/chunk-done'
+                            }
                         },
-                        onComplete : function() {
-                            $submitButton.attr('disabled', false);
-                        }
-                    }
 
-                });
+                        request: {
+                            endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
+                            params: {
+                                _formConfig: formConfig,
+                                _fieldName: $element.data('field-name')
+                            }
+                        },
+
+                        deleteFile: {
+                            confirmMessage: messages.delete.confirmMessage,
+                            deletingStatusText: messages.delete.deletingStatusText,
+                            deletingFailedText: messages.delete.deletingFailedText,
+
+                            enabled: true,
+                            endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
+                            params: {
+                                _formConfig: formConfig,
+                                _fieldName: $element.data('field-name')
+                            }
+                        },
+
+                        validation: {
+                            sizeLimit: $element.data('size-limit'),
+                            allowedExtensions: $element.data('allowed-extensions').split(',')
+                        },
+
+                        callbacks: {
+
+                            onUpload : function() {
+                                $submitButton.attr('disabled', 'disabled');
+                            },
+                            onComplete : function() {
+                                $submitButton.attr('disabled', false);
+                            }
+                        }
+
+                    });
+                }
 
             });
 
@@ -122,13 +125,17 @@ var formBuilder = (function () {
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
-                    formData = new FormData( $form[0] );
+                    formData = new FormData( $form[0] ),
+                    $fbHtmlFile = $form.find('.formbuilder-html5File');
 
                 ev.preventDefault();
 
                 $btns.attr('disabled', 'disabled');
 
-                $form.find('.qq-upload-delete').hide();
+                if( $fbHtmlFile.length > 0)
+                {
+                    $form.find('.qq-upload-delete').hide();
+                }
 
                 $.ajax({
                     type: 'POST',
@@ -140,12 +147,14 @@ var formBuilder = (function () {
 
                         $btns.attr('disabled', false);
 
-                        $form.find('.help-block').remove();
+                        $form.find('.help-block.validation').remove();
                         $form.find('.form-group').removeClass('has-error');
 
-                        if(response.success === false ) {
-
+                        if( $fbHtmlFile.length > 0) {
                             $form.find('.qq-upload-delete').show();
+                        }
+
+                        if(response.success === false ) {
 
                             if( response.validationData !== false ) {
 
@@ -163,10 +172,10 @@ var formBuilder = (function () {
                                         $.each( messages, function( validationType, message) {
 
                                             $formGroup.addClass('has-error');
-                                            $formGroup.find('span.help-block').remove();
+                                            $formGroup.find('span.help-block.validation').remove();
 
                                             //its a multiple field
-                                            $spanEl = $('<span/>', {'class' : 'help-block', 'text' : message});
+                                            $spanEl = $('<span/>', {'class' : 'help-block validation', 'text' : message});
 
                                             if( $fields.length > 1 ) {
                                                 $field.closest('label').before( $spanEl );
@@ -192,7 +201,10 @@ var formBuilder = (function () {
                             $form.trigger('formbuilder.success', [ response.message, response.redirect, $form ]);
                             $form.find('input[type=text], textarea').val('');
 
-                            $('form').find('.formbuilder-html5File').fineUploader('reset');
+                            if( $fbHtmlFile.length > 0)
+                            {
+                                $fbHtmlFile.fineUploader('reset');
+                            }
 
                             if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
                                 grecaptcha.reset();

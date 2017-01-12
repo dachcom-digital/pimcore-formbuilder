@@ -44,7 +44,3 @@ Vagrantfile
 .vagrant
 php-cgi.core
 .sass-cache
-
-/data/*.json
-/data/form
-/data/lang/*.csv

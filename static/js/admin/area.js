@@ -44,13 +44,26 @@ var formBuilderAreaWatcher = (function () {
 
         setupDropdownElement: function( $formPresetSelector, cmp ) {
 
-            var $parent = $formPresetSelector.closest( '.configWindow'),
+            var $parent = $formPresetSelector.closest( '.form-config-window'),
                 toggle = function(v) {
 
+                    var $previewFieldContainer = $parent.find('.preview-fields'),
+                        $previewFields = $previewFieldContainer.find('.preview-field'),
+                        $previewField = $previewFieldContainer.find('.preview-field[data-name="' + v + '"]');
+
                     if( v === 'custom') {
-                        $parent.find('.preset-toggle').show();
+
+                        $previewFields.hide();
+                        $previewFieldContainer.hide();
+                        $previewField.hide();
+
                     } else {
-                        $parent.find('.preset-toggle').hide();
+
+                        $previewFields.hide();
+                        $previewField.show();
+
+                        $previewFieldContainer.css('display', 'block');
+
                     }
 
                 };

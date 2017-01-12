@@ -9,6 +9,8 @@ Formbuilder.comp.type.base = Class.create({
 
     attributeSelector: null,
 
+    showTranslationTab: true,
+
     initialize: function(treeNode, initData) {
 
         this.treeNode = treeNode;
@@ -18,13 +20,13 @@ Formbuilder.comp.type.base = Class.create({
 
     getApiUrl: function() {
 
-        var name = this.getType();
-        var firstLetter = name.substr(0, 1);
+        var name = this.getType(),
+            firstLetter = name.substr(0, 1);
+
         name =  firstLetter.toUpperCase() + name.substr(1);
         name = this.apiPrefix + name;
 
-        var url = str_replace("{name}", name, this.apiUrl);
-        return url;
+        return str_replace("{name}", name, this.apiUrl);
 
     },
 
@@ -67,10 +69,9 @@ Formbuilder.comp.type.base = Class.create({
                     this.datax.translate = [];
                 }
             }
-            catch(e){
-
-            }
+            catch(e){}
         }
+
     },
 
     getType: function() {
@@ -78,6 +79,8 @@ Formbuilder.comp.type.base = Class.create({
     },
 
     getLayout: function() {
+
+        var items;
 
         this.layout = new Ext.Panel({
             title: t("Field type ") + this.getTypeName(),
@@ -87,20 +90,26 @@ Formbuilder.comp.type.base = Class.create({
 
         });
 
-        this.layout2 = new Ext.Panel({
-            title: t("Translate : ") + this.getTypeName(),
-            closable:false,
-            autoScroll:true,
-            listeners: {
-                activate: function(tab){
-                    this.applyData();
-                    this.layout2.removeAll();
-                    this.layout2.add(this.getTranslateForm());
-                }.bind(this)
-            },
-            items: [this.getTranslateForm()]
+        items = [this.layout];
 
-        });
+        if( this.showTranslationTab === true ) {
+            this.layout2 = new Ext.Panel({
+                title: t("Translate : ") + this.getTypeName(),
+                closable:false,
+                autoScroll:true,
+                listeners: {
+                    activate: function(tab){
+                        this.applyData();
+                        this.layout2.removeAll();
+                        this.layout2.add(this.getTranslateForm());
+                    }.bind(this)
+                },
+                items: [this.getTranslateForm()]
+
+            });
+
+            items.push( this.layout2 );
+        }
 
         this.tab = new Ext.TabPanel({
             tabPosition: "top",
@@ -108,7 +117,7 @@ Formbuilder.comp.type.base = Class.create({
             deferredRender:true,
             enableTabScroll:true,
             border: false,
-            items: [this.layout,this.layout2],
+            items: items,
             activeTab: 0
         });
 
@@ -253,64 +262,68 @@ Formbuilder.comp.type.base = Class.create({
         data.translate = {};
         var translateCouples = {};
 
-        var translationFormItems = this.transForm.queryBy(function() {
-            return true;
-        });
+        if( this.transForm ) {
 
-        for (var i = 0; i < translationFormItems.length; i++) {
+            var translationFormItems = this.transForm.queryBy(function() {
+                return true;
+            });
 
-            if (typeof translationFormItems[i].getValue == "function") {
+            for (var i = 0; i < translationFormItems.length; i++) {
 
-                var val = translationFormItems[i].getValue(),
-                    name = translationFormItems[i].name;
+                if (typeof translationFormItems[i].getValue == "function") {
 
-                if (name.substring(0, 10) == "translate_") {
+                    var val = translationFormItems[i].getValue(),
+                        name = translationFormItems[i].name;
 
-                    if( val !== "") {
+                    if (name.substring(0, 10) == "translate_") {
 
-                        var elements = name.split('_');
+                        if( val !== "") {
 
-                        var translateType = elements[1],
-                            type = elements[2],
-                            id = elements[3];
+                            var elements = name.split('_');
 
-                        //define translate type
-                        if( !translateCouples[translateType] ) {
-                            translateCouples[translateType] = {}
+                            var translateType = elements[1],
+                                type = elements[2],
+                                id = elements[3];
+
+                            //define translate type
+                            if( !translateCouples[translateType] ) {
+                                translateCouples[translateType] = {}
+                            }
+
+                            //define translate name
+                            if( !translateCouples[ translateType ][ id ] ) {
+                                translateCouples[ translateType ][ id ] = {'name' : null, 'value' : null, 'multiOption' : null}
+                            }
+
+                            //set data
+                            translateCouples[ translateType ][ id ][ type ] = val;
+
                         }
 
-                        //define translate name
-                        if( !translateCouples[ translateType ][ id ] ) {
-                            translateCouples[ translateType ][ id ] = {'name' : null, 'value' : null, 'multiOption' : null}
-                        }
+                    } else {
 
-                        //set data
-                        translateCouples[ translateType ][ id ][ type ] = val;
+                        data.translate[ name ] = val;
+                    }
+                }
+            }
+
+            if( Object.keys(translateCouples).length > 0) {
+
+                //each type
+                Ext.Object.each(translateCouples, function (name, translateValues) {
+
+                    //each object
+                    data["translate"][name] = [];
+                    if( Object.keys(translateValues).length > 0) {
+                        Ext.Object.each(translateValues, function (id, value) {
+                            data["translate"][name].push( value );
+                        });
 
                     }
 
-                } else {
-
-                    data.translate[ name ] = val;
-                }
+                });
             }
-        }
 
-        if( Object.keys(translateCouples).length > 0) {
-
-            //each type
-            Ext.Object.each(translateCouples, function (name, translateValues) {
-
-                //each object
-                data["translate"][name] = [];
-                if( Object.keys(translateValues).length > 0) {
-                    Ext.Object.each(translateValues, function (id, value) {
-                        data["translate"][name].push( value );
-                    });
-
-                }
-
-            });
         }
 
         data.fieldtype = this.getType();
@@ -349,11 +362,21 @@ Formbuilder.comp.type.base = Class.create({
                         enableKeyEvents: true
                     },
                     {
+                        xtype: "label",
+                        style:"display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;",
+                        text: t("Name: Do not use any spaces or special characters. Ideally you should use english as language.")
+                    },
+                    {
                         xtype: "textfield",
                         name: "label",
                         value: this.datax.label,
                         fieldLabel: t("label"),
                         anchor: "100%"
+                    },
+                    {
+                        xtype: "label",
+                        style:"display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;",
+                        text: t("Label: Ideally you should use english as language. Translate the Label in the translation tab.")
                     },
                     {
                         xtype: "textfield",
