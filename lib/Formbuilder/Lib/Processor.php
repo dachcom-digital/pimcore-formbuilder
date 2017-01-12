@@ -153,6 +153,7 @@ Class Processor {
         }
 
         $this->setMailRecipients( $attributes['data'], $mailTemplate );
+        $this->setMailSender( $attributes['data'], $mailTemplate );
 
         $disableDefaultMailBody = (bool) $mailTemplate->getProperty('mail_disable_default_mail_body');
         $ignoreFieldData = (string) $mailTemplate->getProperty('mail_ignore_fields');
@@ -213,6 +214,36 @@ Class Processor {
         $to = trim( implode(',', preg_split('@,@', $to, NULL, PREG_SPLIT_NO_EMPTY ) ) );
 
         $mailTemplate->setTo( $to );
+
+    }
+
+    private function setMailSender($data = [], $mailTemplate) {
+
+        $from = $mailTemplate->getFrom();
+
+        preg_match_all("/\%(.+?)\%/", $from, $matches);
+
+        if ( isset($matches[1]) && count($matches[1]) > 0 )
+        {
+            foreach ( $matches[1] as $key => $inputValue )
+            {
+                foreach( $data as $formFieldName => $formFieldValue )
+                {
+                    if( $formFieldName == $inputValue)
+                    {
+                        $from = str_replace( $matches[0][$key], $formFieldValue['value'], $from );
+                    }
+                }
+
+                //replace with '' if not found.
+                $from = str_replace( $matches[0][$key], '', $from );
+            }
+        }
+
+        //remove invalid commas
+        $from = trim( implode(',', preg_split('@,@', $from, NULL, PREG_SPLIT_NO_EMPTY ) ) );
+
+        $mailTemplate->setFrom( $from );
 
     }
 
