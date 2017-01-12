@@ -130,7 +130,7 @@ Class Processor {
         $disableDefaultMailBody = (bool) $mailTemplate->getProperty('mail_disable_default_mail_body');
         $ignoreFieldData = (string) $mailTemplate->getProperty('mail_ignore_fields');
 
-        $ignoreFields = explode(',', $ignoreFieldData);
+        $ignoreFields = array_map('trim', explode(',', $ignoreFieldData));
 
         $mail = new FormbuilderMail();
         $mail->setIgnoreFields( $ignoreFields );
