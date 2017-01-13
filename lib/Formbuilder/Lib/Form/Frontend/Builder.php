@@ -354,16 +354,15 @@ class Builder {
     {
         $translationFile = FORMBUILDER_DATA_PATH . '/lang/form_' . $id . '_' . $locale . '.json';
 
-        $trans = NULL;
+        $trans = new \Zend_Translate_Adapter_Array( [ 'disableNotices' => TRUE ] );
 
         if ( file_exists( $translationFile ) )
         {
             $transConfig = new \Zend_Config_Json( $translationFile );
 
-            $trans = new \Zend_Translate_Adapter_Array(
-                $transConfig->toArray(),
-                $locale
-            );
+            if ($transConfig->count() > 0) {
+                $trans->addTranslation( [ 'content' => $transConfig->toArray(), 'locale' => $locale ] );
+            }
 
         }
 
