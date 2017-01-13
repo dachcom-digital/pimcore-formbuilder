@@ -40,7 +40,15 @@ Class FormbuilderMail extends Mail {
      */
     private function parseHtml( $data )
     {
-        $html = '<table>';
+        $view = new \Pimcore\View();
+        $view->setScriptPath(
+            [
+                FORMBUILDER_PATH . '/views/scripts/',
+                PIMCORE_WEBSITE_PATH . '/views/scripts',
+            ]
+        );
+
+        $renderData = [];
 
         foreach( $data as $label => $fieldData )
         {
@@ -57,13 +65,10 @@ Class FormbuilderMail extends Mail {
                 continue;
             }
 
-            $html .= '<tr>' . "\n";
-            $html .= '<td width="20%"><strong>' . $fieldData['label'] . ':</strong></td>' . "\n";
-            $html .= '<td width="70%">' . $data . '</td>' . "\n";
-            $html .= '</tr>' . "\n";
+            $renderData[] = ['label' => $fieldData['label'], 'value' => $data];
         }
 
-        $html .= '</table>';
+        $html = $view->partial('formbuilder/form/partials/defaultFormData.php', ['data' => $renderData]);
 
         return $html;
 

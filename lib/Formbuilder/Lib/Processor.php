@@ -169,21 +169,14 @@ Class Processor {
         $ignoreFields = array_map('trim', explode(',', $ignoreFieldData));
 
         $mail = new FormbuilderMail();
+        $mail->setDocument( $mailTemplate );
+
         $mail->setIgnoreFields( $ignoreFields );
         $mail->parseSubject( $mailTemplate->getSubject(), $attributes['data'] );
         $mail->setMailPlaceholders( $attributes['data'], $disableDefaultMailBody );
 
-        $from = $mailTemplate->getFrom();
-
-        if( !empty($from) )
-        {
-            $mail->setFrom( $from );
-        }
-
         $mail->addCc( $mailTemplate->getCcAsArray() );
         $mail->addBcc( $mailTemplate->getBccAsArray() );
-
-        $mail->setDocument( $mailTemplate );
 
         $mail->send();
 
