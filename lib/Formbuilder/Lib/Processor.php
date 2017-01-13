@@ -27,6 +27,14 @@ Class Processor {
      */
     private $sendCopy = FALSE;
 
+    /**
+     * @param \Zend_Form $form
+     * @param Form       $formData
+     * @param null       $mailTemplateId
+     * @param null       $copyMailTemplateId
+     *
+     * @return bool
+     */
     public function parse( \Zend_Form $form, Form $formData, $mailTemplateId = NULL, $copyMailTemplateId = NULL )
     {
         if( empty($mailTemplateId) )
@@ -190,38 +198,38 @@ Class Processor {
     private function setMailRecipients($data = [], $mailTemplate) {
 
         $to = $mailTemplate->getTo();
+        $parsedTo = $this->extractPlaceHolder( $to, $data );
 
-        preg_match_all("/\%(.+?)\%/", $to, $matches);
-
-        if ( isset($matches[1]) && count($matches[1]) > 0 )
-        {
-            foreach ( $matches[1] as $key => $inputValue )
-            {
-                foreach( $data as $formFieldName => $formFieldValue )
-                {
-                    if( $formFieldName == $inputValue)
-                    {
-                        $to = str_replace( $matches[0][$key], $formFieldValue['value'], $to );
-                    }
-                }
-
-                //replace with '' if not found.
-                $to = str_replace( $matches[0][$key], '', $to );
-            }
-        }
-
-        //remove invalid commas
-        $to = trim( implode(',', preg_split('@,@', $to, NULL, PREG_SPLIT_NO_EMPTY ) ) );
-
-        $mailTemplate->setTo( $to );
+        $mailTemplate->setTo( $parsedTo );
 
     }
 
+    /**
+     * @param array $data
+     * @param \Pimcore\Model\Document\Email $mailTemplate
+     */
     private function setMailSender($data = [], $mailTemplate) {
 
         $from = $mailTemplate->getFrom();
+        $parsedFrom = $this->extractPlaceHolder( $from, $data );
 
-        preg_match_all("/\%(.+?)\%/", $from, $matches);
+        $mailTemplate->setFrom( $parsedFrom );
+
+    }
+
+    /**
+     * Extract Placeholder Data from given String like %email% and compare it with given form data.
+     *
+     * @param $str
+     * @param $data
+     *
+     * @return mixed|string
+     */
+    private function extractPlaceHolder($str, $data)
+    {
+        $extractedValue = $str;
+
+        preg_match_all("/\%(.+?)\%/", $str, $matches);
 
         if ( isset($matches[1]) && count($matches[1]) > 0 )
         {
@@ -231,37 +239,50 @@ Class Processor {
                 {
                     if( $formFieldName == $inputValue)
                     {
-                        $from = str_replace( $matches[0][$key], $formFieldValue['value'], $from );
+                        $str = str_replace( $matches[0][$key], $formFieldValue['value'], $str );
                     }
                 }
 
                 //replace with '' if not found.
-                $from = str_replace( $matches[0][$key], '', $from );
+                $extractedValue = str_replace( $matches[0][$key], '', $str );
             }
         }
 
         //remove invalid commas
-        $from = trim( implode(',', preg_split('@,@', $from, NULL, PREG_SPLIT_NO_EMPTY ) ) );
+        $extractedValue = trim( implode(',', preg_split('@,@', $extractedValue, NULL, PREG_SPLIT_NO_EMPTY ) ) );
 
-        $mailTemplate->setFrom( $from );
-
+        return $extractedValue;
     }
 
+    /**
+     * @param bool $state
+     */
     public function setSendCopy( $state = FALSE )
     {
         $this->sendCopy = $state;
     }
 
+    /**
+     * @return bool
+     */
     public function isValid()
     {
         return $this->isValid;
     }
 
+    /**
+     * @param bool $asArray
+     *
+     * @return array|string
+     */
     public function getMessages( $asArray = TRUE )
     {
         return $asArray ? $this->messages : implode( ',', $this->messages );
     }
 
+    /**
+     * @param string $message
+     */
     private function log( $message = '' )
     {
         $this->messages[] = $message;
@@ -340,4 +361,3 @@ Class Processor {
 
     }
 }
-
