@@ -54,6 +54,10 @@
     background: url(/plugins/Formbuilder/static/img/select.svg) left center no-repeat !important;
 }
 
+.Formbuilder_icon_country{
+    background: url(/plugins/Formbuilder/static/img/globe.svg) left center no-repeat !important;
+}
+
 .Formbuilder_icon_submit{
     background: url(/plugins/Formbuilder/static/img/submit.svg) left center no-repeat !important;
 }
