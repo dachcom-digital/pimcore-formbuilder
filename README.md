@@ -284,7 +284,10 @@ Use this Event to manipulate and extend Forms dynamically.
 ```
 
 **formbuilder.form.preSendData**  
-Use this Event to manipulate form data before they get submitted.
+Use this Event to manipulate form data before they get submitted to email document.
+
+**formbuilder.form.preSendMail**  
+Use this Event to manipulate email data before they get submitted via email.
 
 **formbuilder.form.label.placeholder**  
 Use this Event to manipulate label placeholder attributes. See Section *Backend* => *Label Placeholder*.

@@ -178,6 +178,24 @@ Class Processor {
         $mail->addCc( $mailTemplate->getCcAsArray() );
         $mail->addBcc( $mailTemplate->getBccAsArray() );
 
+        //allow 3rd parties to hook into processed email
+        $cmdEv = \Pimcore::getEventManager()->trigger(
+            'formbuilder.form.preSendMail',
+            NULL,
+            [
+                'formbuilderMail'  => $mail
+            ]
+        );
+
+        if ($cmdEv->stopped())
+        {
+            $customMail = $cmdEv->last();
+            if( $customMail instanceof \Formbuilder\Lib\Email\FormbuilderMail )
+            {
+                $mail = $customMail;
+            }
+        }
+
         $mail->send();
 
         return TRUE;
