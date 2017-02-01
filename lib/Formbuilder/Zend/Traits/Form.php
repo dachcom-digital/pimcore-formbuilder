@@ -241,7 +241,20 @@ trait Form
             return parent::createElement($type, $name, $options);
         }
 
-        if ( in_array( strtolower($type), $this->getValidHtml5Elements(TRUE)) )
+        //add for attribute to bootstrap checkbox label, if element is checkbox
+        if( $type === 'checkbox' && is_array( $options['decorators'] ) )
+        {
+            foreach( $options['decorators'] as &$decorator)
+            {
+                $clKey = array_search('CheckboxLabel', $decorator);
+                if( $clKey !== FALSE )
+                {
+                    $decorator[ $clKey +1 ] = [ 'for' => isset($options['id']) ? $options['id'] : $name ];
+                }
+            }
+        }
+
+        if ( in_array( strtolower($type), $this->getValidHtml5Elements(TRUE) ) )
         {
             if (null === $options)
             {
