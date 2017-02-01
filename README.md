@@ -197,7 +197,8 @@ return [
                 //for now, only form fields can be forced to be enabled/disabled
                 "fields" => [
 
-                    //if element is not available it will be shown. If it's set and given value is FALSE, it will be disabled.
+                    // If element is not available it will be shown.
+                    // If it's set and given value is FALSE, it will be disabled.
                     "captcha" => FALSE
                 ]
             ]
