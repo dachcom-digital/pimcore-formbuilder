@@ -1,14 +1,20 @@
 pimcore.registerNS("Formbuilder.settings");
 Formbuilder.settings = Class.create({
 
-    forbiddennames: ["abstract","class","data","folder","list","permissions","resource","concrete","interface",
-        "service", "fieldcollection", "localizedfield", "objectbrick"],
+    forbiddennames: [
+        "abstract","class","data","folder","list","permissions","resource","concrete","interface",
+        "service", "fieldcollection", "localizedfield", "objectbrick"
+    ],
 
     usedFormNames: [],
 
-    initialize: function () {
+    config: {},
+
+    initialize: function ( config ) {
 
         this.panels = {};
+
+        this.config = config;
 
         this.loading = false;
 
@@ -16,19 +22,22 @@ Formbuilder.settings = Class.create({
 
     },
 
+    getConfig: function() {
+        return this.config;
+    },
+
     getTabPanel: function () {
 
         if (!this.panel) {
 
             this.panel = new Ext.Panel({
-
                 id: "Formbuilder_settings",
                 title: t("Formbuilder_settings"),
                 border: false,
-                iconCls:"Formbuilder_icon_fbuilder",
+                iconCls: "Formbuilder_icon_fbuilder",
                 layout: "border",
-                closable:true,
-                items: [this.getMainTree(), this.getEditPanel()]
+                closable: true,
+                items: [ this.getMainTree(), this.getEditPanel() ]
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");

@@ -223,18 +223,26 @@ Formbuilder.comp.elem = Class.create({
 
     onTreeNodeContextMenu: function(tree, record, item, index, e, eOpts) {
 
+        var _ = this,
+            menu = new Ext.menu.Menu();
+
         e.stopEvent();
         tree.select();
 
-        var menu = new Ext.menu.Menu();
-
-        // specify which childs a layout can have
-        // the child-type "data" is a placehoder for all data components
+        // the child-type "data" is a placeholder for all data components
         var allowedTypes = {
             root: ["button","captcha","checkbox","country","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
             displayGroup: ["button","captcha","checkbox","country","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
             container: ["button","captcha","checkbox","country","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
         };
+
+        //check against config
+        var allowedFields = this.parentPanel.getConfig().activeElements;
+        Ext.Object.each(allowedTypes, function(name, elements) {
+            allowedTypes[ name ] = elements.filter(function(n) {
+                return !(n in allowedFields.fields) || allowedFields.fields[ n ] === true;
+            });
+        });
 
         var allowedFilters = {
             button: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
@@ -521,7 +529,7 @@ Formbuilder.comp.elem = Class.create({
             data : [["post","POST"],["get","GET"]]
 
         });
-        
+
         var html = new Ext.data.ArrayStore({
 
             fields: ["value","label"],
@@ -545,7 +553,7 @@ Formbuilder.comp.elem = Class.create({
             ]
 
         });
-        
+
         var encStore = new Ext.data.ArrayStore({
 
             fields: ["value","label"],
@@ -998,7 +1006,7 @@ Formbuilder.comp.elem = Class.create({
         this.addLayout();
         this.initLayoutFields();
     },
-    
+
     getExportFile: function() {
 
         location.href = "/plugin/Formbuilder/admin_Settings/get-export-file?id=" + this.data.id + "&name=" + this.data.name;

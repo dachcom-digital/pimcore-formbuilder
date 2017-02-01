@@ -181,15 +181,43 @@ return [
 ];
 ```
 
+### Admin Settings
+You may want to disable some elements for your project. To do so, just add the array block like in the example below:
+
+```php
+<?php
+
+return [
+    1 => [
+        "id" => 1,
+        "key" => "form.admin.settings",
+        "data" => [
+
+            "activeElements" => [
+
+                //for now, only form fields can be forced to be enabled/disabled
+                "fields" => [
+
+                    //if element is not available it will be shown. If it's set and given value is FALSE, it will be disabled.
+                    "captcha" => FALSE
+                ]
+            ]
+        ],
+        "creationDate" => 1480684113,
+        "modificationDate" => 1480684113
+    ]
+];
+```
+
 ## Styling
 If you want to add some fancy radio/checkbox styling, just implement [this] (https://github.com/gurde/b3scr/blob/master/assets/css/b3scr.css) css from [gurde/b3scr] (https://github.com/gurde/b3scr).
 
 ## Mail Template
 Place your form somewhere on your Website.
 If you want to submit the form to the user, you can use your field names as placeholders. Formbuilder automatically will transform the field into the given address.
-For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).  
+For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
 
-**Subject**  
+**Subject**
 You also may want to add some placeholder in the subject of your mail template. To do so, just add a placeholder like `%emailaddress%` to the subject field. They will get transformed automatically.
 
 ### Available Properties
@@ -201,16 +229,16 @@ Add those properties to your mail template.
 Use the `mail_successfully_sent` property to define a message after the form has been successfully sent.
 There are three options:
 
-*String*  
+*String*
 Use a String to return a simple text like "Thank you for your message".
 
-*Snippet*  
+*Snippet*
 Use a Snippet to return some complex html stuff.
 
-*Document*  
+*Document*
 Add a Document to redirect after your form has been successfully submitted.
 
-#### mail_disable_default_mail_body *(Checkbox)*  
+#### mail_disable_default_mail_body *(Checkbox)*
 
 If the `mail_disable_default_mail_body` property is defined and checked, you need to add your own data to the mail template.
 You can use all the field names as placeholder. For example:
@@ -228,7 +256,7 @@ Mail: %Text(mailaddress);
 #### mail_ignore_fields *(String)*
 
 In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user.
-To do so, just define the `mail_ignore_fields` property in your email template. Add one or multiple (comma separated) fields as string.  
+To do so, just define the `mail_ignore_fields` property in your email template. Add one or multiple (comma separated) fields as string.
 *Notice:* The field name needs be identical to the field name in your form configuration.
 
 ## Ajax Forms
@@ -247,22 +275,22 @@ $('form.ajax-form')
 
 ## Events
 
-**formbuilder.form.preCreateForm**  
-Use this Event to manipulate and extend Forms dynamically. 
+**formbuilder.form.preCreateForm**
+Use this Event to manipulate and extend Forms dynamically.
 
 *Example*
 
 ```php
 \Pimcore::getEventManager()->attach(
-    'formbuilder.form.preCreateForm', 
-    function( \Zend_EventManager_Event $e ) 
+    'formbuilder.form.preCreateForm',
+    function( \Zend_EventManager_Event $e )
     {
         $form = $e->getParam('form');
-        
+
         $frontController = \Zend_Controller_Front::getInstance();
         $var = $frontController->getRequest()->getParam('getVarOne');
-    
-        if ( !empty( $var) ) 
+
+        if ( !empty( $var) )
         {
             $form->addElement(
                 'hidden',
@@ -273,20 +301,20 @@ Use this Event to manipulate and extend Forms dynamically.
                     'order' => '-1'
                 ]
             );
-    
+
         }
-    
+
         $e->stopPropagation(true);
-    
+
         return $form;
     }
 );
 ```
 
-**formbuilder.form.preSendData**  
+**formbuilder.form.preSendData**
 Use this Event to manipulate form data before they get submitted to email document.
 
-**formbuilder.form.preSendMail**  
+**formbuilder.form.preSendMail**
 Use this Event to manipulate email data before they get submitted via email.
 
 **formbuilder.form.label.placeholder**  
