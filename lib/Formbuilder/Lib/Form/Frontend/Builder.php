@@ -312,6 +312,14 @@ class Builder {
 
         if( isset( $configData['useAjax']) && $configData['useAjax'] == TRUE )
         {
+            $language = '';
+            $urlHelper = new \Pimcore\View\Helper\Url();
+            if (\Zend_Registry::isRegistered('Zend_Locale'))
+            {
+                $language = (string)\Zend_Registry::get('Zend_Locale');
+            }
+
+            $form->setAttrib('data-ajax-url', rtrim($urlHelper->url(['lang' => $language, 'action' => ''], 'formbuilder_ajax'), '/') );
             $setFormClasses[] = 'ajax-form';
         }
 

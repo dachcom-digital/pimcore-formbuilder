@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<zend-config>
+    <routes>
+        <route>
+            <name>formbuilder_ajax</name>
+            <pattern>/(\w+)\/formbuilder\/request\/([A-Za-z0-9._-]+)/</pattern>
+            <reverse>/%lang/formbuilder/request/{%action}</reverse>
+            <module>Formbuilder</module>
+            <controller>ajax</controller>
+            <action>%action</action>
+            <variables>lang,action</variables>
+            <priority>0</priority>
+        </route>
+    </routes>
+</zend-config>

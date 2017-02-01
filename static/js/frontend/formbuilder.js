@@ -51,6 +51,7 @@ var formBuilder = (function () {
                     formConfig = $form.find('input[type="hidden"][name="_formConfig"]').val(),
                     $template = $el.find('.formbuilder-template:first'),
                     $element = $el.find('.formbuilder-content:first'),
+                    ajaxUrl = $form.data('ajax-url'),
                     messages = $template.find('input[name="js-messages"]').val();
 
                 messages = jQuery.parseJSON( messages );
@@ -76,12 +77,12 @@ var formBuilder = (function () {
                                 enabled: true
                             },
                             success: {
-                                endpoint: '/plugin/Formbuilder/ajax/chunk-done'
+                                endpoint: ajaxUrl + '/chunk-done'
                             }
                         },
 
                         request: {
-                            endpoint: '/plugin/Formbuilder/ajax/add-from-upload',
+                            endpoint: ajaxUrl + '/add-from-upload',
                             params: {
                                 _formConfig: formConfig,
                                 _fieldName: $element.data('field-name')
@@ -94,7 +95,7 @@ var formBuilder = (function () {
                             deletingFailedText: messages.delete.deletingFailedText,
 
                             enabled: true,
-                            endpoint: '/plugin/Formbuilder/ajax/delete-from-upload',
+                            endpoint: ajaxUrl + '/delete-from-upload',
                             params: {
                                 _formConfig: formConfig,
                                 _fieldName: $element.data('field-name')
@@ -125,6 +126,7 @@ var formBuilder = (function () {
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
+                    ajaxUrl = $form.data('ajax-url'),
                     formData = new FormData( $form[0] ),
                     $fbHtmlFile = $form.find('.formbuilder-html5File');
 
@@ -139,7 +141,7 @@ var formBuilder = (function () {
 
                 $.ajax({
                     type: 'POST',
-                    url: '/plugin/Formbuilder/ajax/parse',
+                    url: ajaxUrl + '/parse',
                     data: formData,
                     processData: false,
                     contentType: false,

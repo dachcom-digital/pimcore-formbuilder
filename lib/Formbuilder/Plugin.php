@@ -5,6 +5,7 @@ namespace Formbuilder;
 use Pimcore\Model\Tool\Setup;
 use Pimcore\Model\Property;
 use Pimcore\Model\Translation\Admin;
+use Pimcore\Model\Staticroute;
 use Pimcore\API\Plugin as PluginLib;
 
 use Formbuilder\Tool\File;
@@ -106,9 +107,46 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             mkdir(FORMBUILDER_DATA_PATH . '/form');
         }
 
+        self::installAdminTranslations();
+
+        self::installFormDataFolder();
+
+        self::installDefaultConfiguration();
+
+        self::installProperties();
+
+        self::installDocumentTypes();
+
+        self::installStaticRoutes();
+
+        if (self::isInstalled())
+        {
+            $statusMessage = 'Plugin has been successfully installed.<br>Please reload pimcore!';
+        }
+        else
+        {
+            $statusMessage = 'Formbuilder Plugin could not be installed.';
+        }
+
+        return $statusMessage;
+    }
+
+    /**
+     * @return bool
+     */
+    private static function installAdminTranslations()
+    {
         $csv = PIMCORE_PLUGINS_PATH . '/Formbuilder/install/translations/data.csv';
         Admin::importTranslationsFromFile($csv, true, \Pimcore\Tool\Admin::getLanguages());
 
+        return TRUE;
+    }
+
+    /**
+     * @return bool
+     */
+    private static function installFormDataFolder()
+    {
         //create folder for upload storage!
         $folderName = 'formdata';
 
@@ -124,26 +162,33 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             $folder->save();
         }
 
-        //set default config
-        Configuration::set('form.area.presets', []);
-
-        //install properties
-        self::installProperties();
-
-        self::installDocumentTypes();
-
-        if (self::isInstalled())
-        {
-            $statusMessage = 'Plugin has been successfully installed.<br>Please reload pimcore!';
-        }
-        else
-        {
-            $statusMessage = 'Formbuilder Plugin could not be installed.';
-        }
-
-        return $statusMessage;
+        return TRUE;
     }
 
+    /**
+     * @return bool
+     */
+    private static function installDefaultConfiguration()
+    {
+        //set default config
+        Configuration::set(
+            'form.area.presets', []
+        );
+
+        Configuration::set(
+            'form.admin.settings', [
+                'activeElements' => [
+                    'fields' => []
+                ]
+            ]
+        );
+
+        return TRUE;
+    }
+
+    /**
+     * @return bool
+     */
     private static function installProperties()
     {
         $properties = [
@@ -191,8 +236,13 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
         }
 
+        return TRUE;
+
     }
 
+    /**
+     * @return bool
+     */
     private static function installDocumentTypes()
     {
         // get list of types
@@ -233,9 +283,35 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
     }
 
+    /**
+     * @return bool
+     */
+    private static function installStaticRoutes()
+    {
+        $conf = new \Zend_Config_Xml(PIMCORE_PLUGINS_PATH . '/Formbuilder/install/staticroutes.xml');
+        foreach ($conf->routes as $def)
+        {
+            if (!Staticroute::getByName($def->name))
+            {
+                $route = Staticroute::create();
+                $route->setName($def->name);
+                $route->setPattern($def->pattern);
+                $route->setReverse($def->reverse);
+                $route->setModule($def->module);
+                $route->setController($def->controller);
+                $route->setAction($def->action);
+                $route->setVariables($def->variables);
+                $route->setPriority($def->priority);
+                $route->save();
+            }
+        }
+
+        return TRUE;
+    }
+
     public static function isInstalled()
     {
-        $result = null;
+        $result = NULL;
 
         $db = \Pimcore\Db::get();
 
