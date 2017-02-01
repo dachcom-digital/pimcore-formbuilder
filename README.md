@@ -18,7 +18,7 @@ It's totally rewritten, offers a lot of new features and requires Pimcore 4.0.
 ## Installation
 Some installation advices. 
 
-**Handcrafted Installation**    
+**Handcrafted Installation**
 1. Download Plugin  
 2. Rename it to `Formbuilder`  
 3. Place it in your plugin directory  
@@ -78,7 +78,6 @@ It's possible to define some form presets.
 In your /website/var/config/ folder you'll find a `formbuilder_configurations.php` file. You may want to add some presets there. For example:
 
 ```php
-
 <?php 
 
 return [
@@ -217,7 +216,7 @@ Place your form somewhere on your Website.
 If you want to submit the form to the user, you can use your field names as placeholders. Formbuilder automatically will transform the field into the given address.
 For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
 
-**Subject**
+**Subject**  
 You also may want to add some placeholder in the subject of your mail template. To do so, just add a placeholder like `%emailaddress%` to the subject field. They will get transformed automatically.
 
 ### Available Properties
@@ -229,20 +228,19 @@ Add those properties to your mail template.
 Use the `mail_successfully_sent` property to define a message after the form has been successfully sent.
 There are three options:
 
-*String*
+*String*  
 Use a String to return a simple text like "Thank you for your message".
 
-*Snippet*
+*Snippet*  
 Use a Snippet to return some complex html stuff.
 
-*Document*
+*Document*  
 Add a Document to redirect after your form has been successfully submitted.
 
 #### mail_disable_default_mail_body *(Checkbox)*
 
 If the `mail_disable_default_mail_body` property is defined and checked, you need to add your own data to the mail template.
 You can use all the field names as placeholder. For example:
-
 
 ```html
 Hello %Text(firstname);!
@@ -275,7 +273,7 @@ $('form.ajax-form')
 
 ## Events
 
-**formbuilder.form.preCreateForm**
+**formbuilder.form.preCreateForm**  
 Use this Event to manipulate and extend Forms dynamically.
 
 *Example*
@@ -311,17 +309,16 @@ Use this Event to manipulate and extend Forms dynamically.
 );
 ```
 
-**formbuilder.form.preSendData**
+**formbuilder.form.preSendData**  
 Use this Event to manipulate form data before they get submitted to email document.
 
-**formbuilder.form.preSendMail**
+**formbuilder.form.preSendMail**  
 Use this Event to manipulate email data before they get submitted via email.
 
 **formbuilder.form.label.placeholder**  
 Use this Event to manipulate label placeholder attributes. See Section *Backend* => *Label Placeholder*.
 
-*Example*
-
+*Example*  
 ```php
 \Pimcore::getEventManager()->attach(
     'formbuilder.label.placeholder',
