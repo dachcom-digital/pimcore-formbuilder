@@ -8,8 +8,8 @@
 1 => [
     "id" => 1,
     "name" => "formbuilder_ajax",
-    "pattern" => "/(\w+)\/formbuilder\/request\/([A-Za-z0-9._-]+)/",
-    "reverse" => "/%lang/formbuilder/request/{%action}",
+    "pattern" => "/(?:([\w+]*))\/formbuilder\/request\/([A-Za-z0-9._-]+)/",
+    "reverse" => "/{%lang/}formbuilder/request/{%action}",
     "module" => "Formbuilder",
     "controller" => "ajax",
     "action" => "%action",
