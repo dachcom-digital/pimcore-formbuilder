@@ -319,7 +319,7 @@ class Builder {
                 $language = (string)\Zend_Registry::get('Zend_Locale');
             }
 
-            $form->setAttrib('data-ajax-url', rtrim($urlHelper->url(['lang' => $language, 'action' => ''], 'formbuilder_ajax'), '/') );
+            $form->setAttrib('data-ajax-url', rtrim($urlHelper->url(['lang' => $language, 'action' => ''], 'formbuilder_ajax', TRUE), '/') );
             $setFormClasses[] = 'ajax-form';
         }
 
