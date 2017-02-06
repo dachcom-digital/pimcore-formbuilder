@@ -30,7 +30,7 @@ Some installation advices.
 
 ```json
 "require" : {
-    "dachcom-digital/pimcore-formbuilder" : "1.2.6",
+    "dachcom-digital/formbuilder" : "1.2.6",
 }
 ```
 
