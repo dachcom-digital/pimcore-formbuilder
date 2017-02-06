@@ -123,15 +123,25 @@ Class FormbuilderMail extends Mail {
         {
             foreach( $field as $f )
             {
-                $data .= $f . $separator;
+                $data .= $this->parseStringForOutput($f) . $separator;
             }
         }
         else
         {
-            $data = $field;
+            $data = $this->parseStringForOutput($field);
         }
 
         return $data;
+    }
+
+    private function parseStringForOutput( $string = '' )
+    {
+        if(strstr($string, "\n"))
+        {
+            return nl2br($string);
+        }
+
+        return $string;
     }
 
 }
