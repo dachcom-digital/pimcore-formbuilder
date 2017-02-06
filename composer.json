@@ -1,5 +1,5 @@
 {
-    "name": "dachcom-digital/pimcore-formbuilder",
+    "name": "dachcom-digital/formbuilder",
     "type": "pimcore-plugin",
     "license": "GPL-3.0+",
     "description": "Pimcore 4.0 Build Forms quickly and easily",
