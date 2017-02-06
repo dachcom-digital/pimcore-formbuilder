@@ -7,10 +7,8 @@ use Pimcore\Model;
 
 class Listing extends Model\Listing\JsonListing
 {
-
     /**
      * Contains the results of the list. They are all an instance of Configuration
-     *
      * @var array
      */
     public $configurations = NULL;
@@ -20,8 +18,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getConfigurations()
     {
-        if (is_null($this->configurations))
-        {
+        if (is_null($this->configurations)) {
             $this->load();
         }
 
@@ -30,6 +27,7 @@ class Listing extends Model\Listing\JsonListing
 
     /**
      * @param array $configurations
+     *
      * @return void
      */
     public function setConfigurations($configurations)

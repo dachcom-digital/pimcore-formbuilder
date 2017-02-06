@@ -2,12 +2,12 @@
 
 namespace Formbuilder\Zend\Form;
 
-class TwitterInlineSubForm extends TwitterInlineForm {
-
+class TwitterInlineSubForm extends TwitterInlineForm
+{
     /**
      * Whether or not form elements are members of an array
      * @var bool
      */
-    protected $_isArray = true;
+    protected $_isArray = TRUE;
 
 }

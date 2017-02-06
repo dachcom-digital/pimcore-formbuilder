@@ -2,12 +2,12 @@
 
 namespace Formbuilder\Tool;
 
-class File {
-
+class File
+{
     /**
      * @var string
      */
-    static protected $tmpFolder = '' ;
+    static protected $tmpFolder = '';
 
     /**
      * @var string
@@ -58,65 +58,57 @@ class File {
 
     /**
      * Removes a directory and all files contained inside
+     *
      * @param string $dir
      *
      * @return bool
      */
     public static function removeDir($dir)
     {
-        if( is_file( $dir ) )
-        {
-            unlink( $dir );
+        if (is_file($dir)) {
+            unlink($dir);
+
             return TRUE;
         }
 
-        foreach (scandir($dir) as $item)
-        {
-            if ($item == '.' || $item == '..')
+        foreach (scandir($dir) as $item) {
+            if ($item == '.' || $item == '..') {
                 continue;
-
-            if (is_dir($item))
-            {
-                return self::removeDir($item);
             }
-            else
-            {
-                unlink(join(DIRECTORY_SEPARATOR, array($dir, $item)));
+
+            if (is_dir($item)) {
+                return self::removeDir($item);
+            } else {
+                unlink(join(DIRECTORY_SEPARATOR, [$dir, $item]));
             }
         }
 
         return rmdir($dir);
-
     }
 
     /**
      * @param string $folder
-     * @param int $minStorageAge 86400 = 24h
+     * @param int    $minStorageAge 86400 = 24h
      *
      * @return array
      */
-    public static function getFolderContent( $folder = '', $minStorageAge = 0 )
+    public static function getFolderContent($folder = '', $minStorageAge = 0)
     {
         $now = time();
-        $data = array();
+        $data = [];
 
-        foreach(glob($folder . '/*') as $file)
-        {
-            if( $minStorageAge === 0 )
-            {
+        foreach (glob($folder . '/*') as $file) {
+            if ($minStorageAge === 0) {
                 $data[] = $file;
                 continue;
             }
 
-            if( ($now - filemtime($file)) >= $minStorageAge )
-            {
+            if (($now - filemtime($file)) >= $minStorageAge) {
                 $data[] = $file;
             }
-
         }
 
         return $data;
-
     }
 
     /**
@@ -129,27 +121,23 @@ class File {
         self::$filesFolder = self::$tmpFolder . '/' . 'files';
         self::$zipFolder = self::$tmpFolder . '/' . 'zip';
 
-        if( !is_dir( self::$tmpFolder ) )
-        {
-            mkdir( self::$tmpFolder );
+        if (!is_dir(self::$tmpFolder)) {
+            mkdir(self::$tmpFolder);
         }
 
-        if( !is_dir( self::$chunksFolder ) )
-        {
+        if (!is_dir(self::$chunksFolder)) {
             //make subfolder for files
-            mkdir( self::$chunksFolder );
+            mkdir(self::$chunksFolder);
         }
 
-        if( !is_dir( self::$filesFolder ) )
-        {
+        if (!is_dir(self::$filesFolder)) {
             //make subfolder for chunks
-            mkdir( self::$filesFolder );
+            mkdir(self::$filesFolder);
         }
 
-        if( !is_dir( self::$zipFolder ) )
-        {
+        if (!is_dir(self::$zipFolder)) {
             //make subfolder for zip
-            mkdir( self::$zipFolder );
+            mkdir(self::$zipFolder);
         }
 
         return self::$tmpFolder;

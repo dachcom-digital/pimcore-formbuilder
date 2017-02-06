@@ -6,7 +6,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\PhpArrayTable
 {
-
     /**
      *
      */
@@ -18,58 +17,48 @@ class Dao extends Model\Dao\PhpArrayTable
 
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = NULL)
     {
-        if ($id != NULL)
-        {
+        if ($id != NULL) {
             $this->model->setId($id);
         }
 
         $data = $this->db->getById($this->model->getId());
 
-        if (isset($data['id']))
-        {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
-        }
-        else
-        {
+        } else {
             throw new \Exception('Configuration with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 
     /**
      * @param null $key
-
+     *
      * @throws \Exception
      */
     public function getByKey($key = NULL)
     {
-        if ($key != NULL)
-        {
+        if ($key != NULL) {
             $this->model->setKey($key);
         }
 
         $key = $this->model->getKey();
 
-        $data = $this->db->fetchAll(function ($row) use ($key)
-        {
-            if ($row['key'] == $key)
-            {
+        $data = $this->db->fetchAll(function ($row) use ($key) {
+            if ($row['key'] == $key) {
                 return TRUE;
             }
 
             return FALSE;
-
         });
 
-        if (count($data) && $data[0]['id'])
-        {
+        if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
-        }
-        else
-        {
+        } else {
             throw new \Exception('Configuration with key: ' . $this->model->getKey() . ' does not exist');
         }
     }
@@ -80,42 +69,34 @@ class Dao extends Model\Dao\PhpArrayTable
     public function save()
     {
         $ts = time();
-        if (!$this->model->getCreationDate())
-        {
+        if (!$this->model->getCreationDate()) {
             $this->model->setCreationDate($ts);
         }
 
         $this->model->setModificationDate($ts);
 
-        try
-        {
+        try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ['id','key','data','creationDate','modificationDate'];
+            $allowedProperties = ['id', 'key', 'data', 'creationDate', 'modificationDate'];
 
-            foreach ($dataRaw as $key => $value)
-            {
-                if (in_array($key, $allowedProperties))
-                {
+            foreach ($dataRaw as $key => $value) {
+                if (in_array($key, $allowedProperties)) {
                     $data[$key] = $value;
                 }
             }
             $this->db->insertOrUpdate($data, $this->model->getId());
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             throw $e;
         }
 
-        if (!$this->model->getId())
-        {
+        if (!$this->model->getId()) {
             $this->model->setId($this->db->getLastInsertId());
         }
     }
 
     /**
      * Deletes object from database
-     *
      * @return void
      */
     public function delete()

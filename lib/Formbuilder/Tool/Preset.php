@@ -6,50 +6,52 @@ use Pimcore\Tool as PimcoreTool;
 use Pimcore\Model\Site;
 use Formbuilder\Model\Configuration;
 
-class Preset {
-
+class Preset
+{
+    /**
+     * @return array
+     */
     public static function getAvailablePresets()
     {
         $formPresets = Configuration::get('form.area.presets');
 
         $dat = [];
 
-        if( empty( $formPresets ) )
-        {
+        if (empty($formPresets)) {
             return $dat;
         }
 
-        foreach( $formPresets as $presetName => $presetConfig )
-        {
+        foreach ($formPresets as $presetName => $presetConfig) {
             //check for site restriction
-            if( PimcoreTool::isFrontentRequestByAdmin() && isset( $presetConfig['site'] ) && !empty( $presetConfig['site'] ) )
-            {
+            if (PimcoreTool::isFrontentRequestByAdmin() && isset($presetConfig['site']) && !empty($presetConfig['site'])) {
                 $currentSite = self::getCurrentSiteInAdminMode();
 
-                if( $currentSite !== NULL )
-                {
-                    $allowedSites = (array) $presetConfig['site'];
+                if ($currentSite !== NULL) {
+                    $allowedSites = (array)$presetConfig['site'];
 
-                    if( !in_array( $currentSite->getMainDomain(), $allowedSites ) )
-                    {
+                    if (!in_array($currentSite->getMainDomain(), $allowedSites)) {
                         continue;
                     }
                 }
             }
 
-            $dat[ $presetName ] = $presetConfig;
+            $dat[$presetName] = $presetConfig;
         }
 
         return $dat;
-
     }
 
-    public static function getDataForPreview( $presetName, $presetConfig )
+    /**
+     * @param $presetName
+     * @param $presetConfig
+     *
+     * @return array
+     */
+    public static function getDataForPreview($presetName, $presetConfig)
     {
-        $previewData = [ 'presetName' => $presetName, 'description' => '', 'fields' => [] ];
+        $previewData = ['presetName' => $presetName, 'description' => '', 'fields' => []];
 
-        if( isset( $presetConfig['adminDescription'] ) )
-        {
+        if (isset($presetConfig['adminDescription'])) {
             $previewData['description'] = strip_tags($presetConfig['adminDescription'], '<br><strong><em><p><span>');
         }
 
@@ -67,16 +69,13 @@ class Preset {
 
         $currentSite = NULL;
 
-        if ($originDocument)
-        {
+        if ($originDocument) {
             $site = PimcoreTool\Frontend::getSiteForDocument($originDocument);
 
-            if ($site)
-            {
+            if ($site) {
                 $siteId = $site->getId();
 
-                if( $siteId !== NULL )
-                {
+                if ($siteId !== NULL) {
                     $currentSite = $site;
                 }
             }

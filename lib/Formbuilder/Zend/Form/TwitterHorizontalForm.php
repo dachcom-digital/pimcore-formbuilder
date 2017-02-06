@@ -4,8 +4,8 @@ namespace Formbuilder\Zend\Form;
 
 use Formbuilder\Zend\Traits\Form;
 
-class TwitterHorizontalForm extends \Twitter_Bootstrap3_Form_Horizontal {
-
+class TwitterHorizontalForm extends \Twitter_Bootstrap3_Form_Horizontal
+{
     use Form;
 
     /**
@@ -13,7 +13,7 @@ class TwitterHorizontalForm extends \Twitter_Bootstrap3_Form_Horizontal {
      */
     public $isBootstrapForm = TRUE;
 
-    public function __construct( $formData )
+    public function __construct($formData)
     {
         $this->addPrefixes();
         parent::__construct($formData);
@@ -23,12 +23,12 @@ class TwitterHorizontalForm extends \Twitter_Bootstrap3_Form_Horizontal {
      * Retrieve a registered decorator for type element
      *
      * @param  string $type
+     *
      * @return array
      */
     public function getDefaultDecoratorsByElementType($type)
     {
-        if( $this->isValidFormBuilderElement( $type ) )
-        {
+        if ($this->isValidFormBuilderElement($type)) {
             return parent::getDefaultDecoratorsByElementType('text');
         }
 

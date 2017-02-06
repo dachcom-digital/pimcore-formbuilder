@@ -7,7 +7,6 @@ use Formbuilder\Model;
 
 class Dao extends Pimcore\Model\Dao\PhpArrayTable
 {
-
     public function configure()
     {
         parent::configure();
@@ -16,20 +15,19 @@ class Dao extends Pimcore\Model\Dao\PhpArrayTable
 
     /**
      * Loads a list of Configurations for the specicifies parameters, returns an array of Configuration elements
-     *
      * @return array
      */
     public function load()
     {
         $routesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
-        $routes = array();
-        foreach ($routesData as $routeData)
-        {
+        $routes = [];
+        foreach ($routesData as $routeData) {
             $routes[] = Model\Configuration::getById($routeData['id']);
         }
 
         $this->model->setConfigurations($routes);
+
         return $routes;
     }
 

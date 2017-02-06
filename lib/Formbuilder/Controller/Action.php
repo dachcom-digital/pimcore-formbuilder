@@ -1,4 +1,5 @@
 <?php
+
 namespace Formbuilder\Controller;
 
 use Pimcore\Controller\Action\Frontend;
@@ -12,6 +13,5 @@ class Action extends Frontend
         $this->view->addScriptPath(PIMCORE_WEBSITE_PATH . '/views/layouts');
 
         parent::init();
-
     }
 }

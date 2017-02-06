@@ -2,48 +2,54 @@
 
 namespace Formbuilder\Lib\Form\Frontend\Mapper;
 
-class Text extends MapAbstract {
-
+class Text extends MapAbstract
+{
     /**
-     * @param array $element
+     * @param array  $element
      * @param string $formType
      *
      * @return array
      */
-    public static function parse( $element = [], $formType = '' )
+    public static function parse($element = [], $formType = '')
     {
-        if( !self::isHtml5Element( $element ) )
-        {
+        if (!self::isHtml5Element($element)) {
             return $element;
         }
 
-        $element['type'] = self::getTypeName( $element['options']['inputType'] );
-        $element['options']['inputType'] =  $element['type'];
+        $element['type'] = self::getTypeName($element['options']['inputType']);
+        $element['options']['inputType'] = $element['type'];
 
         //set extended attributes
-        if( isset( $element['options'][ 'html5Options' ] ) )
-        {
-            $options = $element['options'][ 'html5Options'  ];
-            unset( $element['options'][ 'html5Options' ] );
+        if (isset($element['options']['html5Options'])) {
+            $options = $element['options']['html5Options'];
+            unset($element['options']['html5Options']);
 
-            if( is_array( $options ) && !empty( $options) )
-            {
-                $element['options'] = array_merge( $element['options'], $options );
+            if (is_array($options) && !empty($options)) {
+                $element['options'] = array_merge($element['options'], $options);
             }
         }
 
         return $element;
     }
 
-    private static function isHtml5Element( $element )
+    /**
+     * @param $element
+     *
+     * @return bool
+     */
+    private static function isHtml5Element($element)
     {
-        return  isset( $element['options']['inputType'] )
-            && !empty( $element['options']['inputType'] )
-                    && $element['options']['inputType'] !== 'default';
-
+        return isset($element['options']['inputType'])
+            && !empty($element['options']['inputType'])
+            && $element['options']['inputType'] !== 'default';
     }
 
-    private static function getTypeName( $name )
+    /**
+     * @param $name
+     *
+     * @return string
+     */
+    private static function getTypeName($name)
     {
         $parts = explode('-', $name);
         $parts = array_map('ucfirst', $parts);

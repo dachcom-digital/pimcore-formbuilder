@@ -6,8 +6,8 @@ use Pimcore\Tool;
 use Formbuilder\Model\Form;
 use Formbuilder\Lib\Form\Backend\Builder as BackendBuilder;
 
-class Builder {
-
+class Builder
+{
     /**
      * @var null
      */
@@ -53,10 +53,10 @@ class Builder {
 
     /**
      * @param bool $subForm
-
+     *
      * @return string
      */
-    public static function getDefaultFormClass( $subForm = FALSE )
+    public static function getDefaultFormClass($subForm = FALSE)
     {
         return $subForm ? self::$defaultSubFormClass : self::$defaultFormClass;
     }
@@ -74,16 +74,13 @@ class Builder {
      *
      * @return string
      */
-    public function getFormClass( $subForm = FALSE )
+    public function getFormClass($subForm = FALSE)
     {
         $formClass = $subForm ? 'subFormClass' : 'formClass';
 
-        if($this->$formClass !== NULL )
-        {
+        if ($this->$formClass !== NULL) {
             return $this->$formClass;
-        }
-        else
-        {
+        } else {
             return self::getDefaultFormClass($subForm);
         }
     }
@@ -94,39 +91,32 @@ class Builder {
      *
      * @return null|string|\Zend_Form|\Zend_Form_SubForm
      */
-    protected function getZendFormClass( $formClass, $subForm = FALSE )
+    protected function getZendFormClass($formClass, $subForm = FALSE)
     {
         $mappedClass = NULL;
 
-        if( is_string( $formClass ) )
-        {
-            $formClassName = $subForm ? ucfirst( $formClass ) . 'SubForm' : ucfirst( $formClass ) . 'Form';
+        if (is_string($formClass)) {
+            $formClassName = $subForm ? ucfirst($formClass) . 'SubForm' : ucfirst($formClass) . 'Form';
 
-            if(  class_exists( '\\Formbuilder\\Zend\\Form\\' . $formClassName ) )
-            {
+            if (class_exists('\\Formbuilder\\Zend\\Form\\' . $formClassName)) {
                 $mappedClass = '\\Formbuilder\\Zend\\Form\\' . $formClassName;
             }
-        }
-        else if( ($subForm == FALSE && $formClass instanceof \Zend_Form) || ( $subForm == TRUE && $formClass instanceof \Zend_Form_SubForm ))
-        {
+        } else if (($subForm == FALSE && $formClass instanceof \Zend_Form) || ($subForm == TRUE && $formClass instanceof \Zend_Form_SubForm)) {
             $mappedClass = $formClass;
-        }
-        else
-        {
-            $mappedClass = $this->getFormClass( $subForm );
+        } else {
+            $mappedClass = $this->getFormClass($subForm);
         }
 
         return $mappedClass;
-
     }
 
     /**
      * If $dynamic equal true, the form form is completely rebuild. It is useful if you need to interact to the form with hooks.
      *
-     * @param int       $formId
-     * @param string    $locale
+     * @param int              $formId
+     * @param string           $locale
      * @param string|\stdClass $formClass
-     * @param array     $params
+     * @param array            $params
      *
      * @return bool|\Zend_Form
      */
@@ -134,13 +124,11 @@ class Builder {
     {
         $this->getLanguages();
 
-        if ( !is_numeric($formId) )
-        {
+        if (!is_numeric($formId)) {
             return FALSE;
         }
 
-        if ( !file_exists(FORMBUILDER_DATA_PATH . '/main_' . $formId . '.json') )
-        {
+        if (!file_exists(FORMBUILDER_DATA_PATH . '/main_' . $formId . '.json')) {
             return FALSE;
         }
 
@@ -153,79 +141,76 @@ class Builder {
 
         $formData = $builder->buildDynamicForm($formId);
 
-        $subForms = isset( $formData['subForms'] ) && !empty( $formData['subForms'] ) ? $formData['subForms'] : FALSE;
+        $subForms = isset($formData['subForms']) && !empty($formData['subForms']) ? $formData['subForms'] : FALSE;
 
-        if( $subForms !== FALSE)
-        {
-            $formData['subForms'] = $this->parseSubForms( $subForms, $formClass, $formId, $locale );
+        if ($subForms !== FALSE) {
+            $formData['subForms'] = $this->parseSubForms($subForms, $formClass, $formId, $locale);
         }
 
-        $formData = $this->parseFormData( $formData, $formClass );
+        $formData = $this->parseFormData($formData, $formClass);
 
-        $mappedClass = $this->getZendFormClass( $formClass );
+        $mappedClass = $this->getZendFormClass($formClass);
 
-        return $this->instantiateForm( $formData, $mappedClass, $formId, $locale );
-
-    }
-
-    private function parseSubForms( $subForms, $formClass, $formId, $locale )
-    {
-        $forms = [];
-
-        foreach( $subForms as $formName => $subForm )
-        {
-            $subFormData = $subForm[0];
-            $subFormName = $subForm[1];
-
-            $subForms = isset( $subFormData['subForms'] ) && !empty( $subFormData['subForms'] ) ? $subFormData['subForms'] : FALSE;
-
-            if( $subForms !== FALSE )
-            {
-                $subFormData['subForms'] = $this->parseSubForms( $subFormData['subForms'], $formClass, $formId, $locale );
-            }
-
-            $formData = $this->parseFormData( $subFormData, $formClass );
-
-            $mappedClass = $this->getZendFormClass( $formClass, TRUE );
-
-            $form = $this->instantiateForm( $formData, $mappedClass, $formId, $locale );
-
-            if( isset( $subFormData['options']['order'] ))
-            {
-                $form->setOrder( $subFormData['options']['order'] );
-            }
-
-            $forms[] = $form;
-
-        }
-
-        return $forms;
-
+        return $this->instantiateForm($formData, $mappedClass, $formId, $locale);
     }
 
     /**
+     * @param $subForms
+     * @param $formClass
+     * @param $formId
+     * @param $locale
      *
-     * @param array $params
+     * @return array
+     */
+    private function parseSubForms($subForms, $formClass, $formId, $locale)
+    {
+        $forms = [];
+
+        foreach ($subForms as $formName => $subForm) {
+            $subFormData = $subForm[0];
+            $subFormName = $subForm[1];
+
+            $subForms = isset($subFormData['subForms']) && !empty($subFormData['subForms']) ? $subFormData['subForms'] : FALSE;
+
+            if ($subForms !== FALSE) {
+                $subFormData['subForms'] = $this->parseSubForms($subFormData['subForms'], $formClass, $formId, $locale);
+            }
+
+            $formData = $this->parseFormData($subFormData, $formClass);
+
+            $mappedClass = $this->getZendFormClass($formClass, TRUE);
+
+            $form = $this->instantiateForm($formData, $mappedClass, $formId, $locale);
+
+            if (isset($subFormData['options']['order'])) {
+                $form->setOrder($subFormData['options']['order']);
+            }
+
+            $forms[] = $form;
+        }
+
+        return $forms;
+    }
+
+    /**
+     * @param array      $params
      * @param \Zend_Form $form
      *
      * @return array
      */
-    public function parseFormParams( $params = [], $form )
+    public function parseFormParams($params = [], $form)
     {
         //no Recaptcha (v2) requested!
-        if( !isset( $params['g-recaptcha-response'] ) )
-        {
+        if (!isset($params['g-recaptcha-response'])) {
             return $params;
         }
 
-        foreach ($form->getElements() as $key => $element)
-        {
-            if($element instanceof \Cgsmith\Form\Element\Recaptcha )
-            {
+        foreach ($form->getElements() as $key => $element) {
+            if ($element instanceof \Cgsmith\Form\Element\Recaptcha) {
                 $element->setIgnore(TRUE);
                 $this->reCaptchaV2Key = $element->getName();
-                $params[ $this->reCaptchaV2Key ] = $params['g-recaptcha-response'];
-                unset( $params['g-recaptcha-response'] );
+                $params[$this->reCaptchaV2Key] = $params['g-recaptcha-response'];
+                unset($params['g-recaptcha-response']);
                 break;
             }
         }
@@ -238,7 +223,7 @@ class Builder {
      */
     public function hasRecaptchaV2()
     {
-        return !is_null( $this->reCaptchaV2Key );
+        return !is_null($this->reCaptchaV2Key);
     }
 
     /**
@@ -251,21 +236,21 @@ class Builder {
 
     /**
      * @param  \Zend_Form $form
-     * @param array $attributes
+     * @param array       $attributes
      *
      * @return \Zend_Form
      */
-    public function addDefaultValuesToForm( $form, $attributes = [] )
+    public function addDefaultValuesToForm($form, $attributes = [])
     {
         $defaults = [
-            'formData'              => NULL,
-            'formPreset'            => NULL,
-            'formId'                => NULL,
-            'locale'                => 'en',
-            'mailTemplateId'        => NULL,
-            'copyMailTemplateId'    => NULL,
-            'sendCopy'              => FALSE,
-            'ajaxForm'              => FALSE
+            'formData'           => NULL,
+            'formPreset'         => NULL,
+            'formId'             => NULL,
+            'locale'             => 'en',
+            'mailTemplateId'     => NULL,
+            'copyMailTemplateId' => NULL,
+            'sendCopy'           => FALSE,
+            'ajaxForm'           => FALSE
         ];
 
         $params = array_merge($defaults, $attributes);
@@ -274,12 +259,12 @@ class Builder {
             'text',
             'honeypot',
             [
-                'label'         => '',
-                'required'      => FALSE,
-                'ignore'        => TRUE,
-                'class'         => 'hon-hide',
-                'decorators'    => ['ViewHelper'],
-                'validators'    => [
+                'label'      => '',
+                'required'   => FALSE,
+                'ignore'     => TRUE,
+                'class'      => 'hon-hide',
+                'decorators' => ['ViewHelper'],
+                'validators' => [
                     [
                         'validator' => 'Honeypot'
                     ]
@@ -288,12 +273,12 @@ class Builder {
         );
 
         $formData = [
-            'formId'                => $params['formData']->getId(),
-            'formPreset'            => $params['formPreset'],
-            'language'              => $params['locale'],
-            'mailTemplateId'        => $params['mailTemplateId'],
-            'copyMailTemplateId'    => $params['copyMailTemplateId'],
-            'sendCopy'              => $params['sendCopy']
+            'formId'             => $params['formData']->getId(),
+            'formPreset'         => $params['formPreset'],
+            'language'           => $params['locale'],
+            'mailTemplateId'     => $params['mailTemplateId'],
+            'copyMailTemplateId' => $params['copyMailTemplateId'],
+            'sendCopy'           => $params['sendCopy']
         ];
 
         $form->addElement(
@@ -301,54 +286,48 @@ class Builder {
             '_formConfig',
             [
                 'ignore' => TRUE,
-                'value' => htmlentities( json_encode( $formData ) )
+                'value'  => htmlentities(json_encode($formData))
             ]
         );
 
         $configData = $this->config->toArray();
 
-        $setFormClasses = explode(' ', $form->getAttrib('class') );
+        $setFormClasses = explode(' ', $form->getAttrib('class'));
         $setFormClasses[] = 'formbuilder';
 
-        if( isset( $configData['useAjax']) && $configData['useAjax'] == TRUE )
-        {
+        if (isset($configData['useAjax']) && $configData['useAjax'] == TRUE) {
             $language = '';
             $urlHelper = new \Pimcore\View\Helper\Url();
-            if (\Zend_Registry::isRegistered('Zend_Locale'))
-            {
+            if (\Zend_Registry::isRegistered('Zend_Locale')) {
                 $language = (string)\Zend_Registry::get('Zend_Locale');
             }
 
-            $form->setAttrib('data-ajax-url', rtrim($urlHelper->url(['lang' => $language, 'action' => ''], 'formbuilder_ajax', TRUE), '/') );
+            $form->setAttrib('data-ajax-url', rtrim($urlHelper->url(['lang' => $language, 'action' => ''], 'formbuilder_ajax', TRUE), '/'));
             $setFormClasses[] = 'ajax-form';
         }
 
-        $form->setAttrib('class', implode(' ', $setFormClasses ) );
+        $form->setAttrib('class', implode(' ', $setFormClasses));
 
         $cmdEv = \Pimcore::getEventManager()->trigger(
             'formbuilder.form.preCreateForm',
             NULL,
             [
-                'form'          => $form,
-                'formPreset'    => $params['formPreset'],
-                'formId'        => $params['formData']->getId(),
-                'formName'      => $params['formData']->getName()
+                'form'       => $form,
+                'formPreset' => $params['formPreset'],
+                'formId'     => $params['formData']->getId(),
+                'formName'   => $params['formData']->getName()
             ]
         );
 
-        if ($cmdEv->stopped())
-        {
+        if ($cmdEv->stopped()) {
             $customForm = $cmdEv->last();
 
-            if( $customForm instanceof \Zend_Form )
-            {
+            if ($customForm instanceof \Zend_Form) {
                 $form = $customForm;
             }
-
         }
 
         return $form;
-
     }
 
     /**
@@ -358,28 +337,25 @@ class Builder {
      * @return \Zend_Translate_Adapter_Array
      * @throws \Zend_Translate_Exception
      */
-    protected function translateForm( $id, $locale)
+    protected function translateForm($id, $locale)
     {
         $translationFile = FORMBUILDER_DATA_PATH . '/lang/form_' . $id . '_' . $locale . '.json';
 
-        $trans = new \Zend_Translate_Adapter_Array( [ 'disableNotices' => TRUE ] );
+        $trans = new \Zend_Translate_Adapter_Array(['disableNotices' => TRUE]);
 
-        if ( file_exists( $translationFile ) )
-        {
-            $transConfig = new \Zend_Config_Json( $translationFile );
+        if (file_exists($translationFile)) {
+            $transConfig = new \Zend_Config_Json($translationFile);
 
             if ($transConfig->count() > 0) {
-                $trans->addTranslation( [ 'content' => $transConfig->toArray(), 'locale' => $locale ] );
+                $trans->addTranslation(['content' => $transConfig->toArray(), 'locale' => $locale]);
             }
-
         }
 
         $file = FORMBUILDER_DEFAULT_ERROR_PATH . '/' . $locale . '/Zend_Validate.php';
 
-        if ( file_exists($file) )
-        {
-            $arrTrans = new \Zend_Translate_Adapter_Array( [ 'disableNotices' => TRUE ] );
-            $arrTrans->addTranslation( [ 'content' => $file, 'locale' => $locale ] );
+        if (file_exists($file)) {
+            $arrTrans = new \Zend_Translate_Adapter_Array(['disableNotices' => TRUE]);
+            $arrTrans->addTranslation(['content' => $file, 'locale' => $locale]);
             $trans->addTranslation($arrTrans);
         }
 
@@ -392,32 +368,27 @@ class Builder {
      *
      * @return mixed
      */
-    protected function parseFormData( $form, $formType = 'Default' )
+    protected function parseFormData($form, $formType = 'Default')
     {
-        foreach( $form['elements'] as $elementName => &$element )
-        {
-            if( !is_array( $element ) )
-            {
+        foreach ($form['elements'] as $elementName => &$element) {
+            if (!is_array($element)) {
                 continue;
             }
 
             //set class to each field to allow ajax validation!
             $classes = '';
 
-            if( isset( $element['options']['class'] ) )
-            {
+            if (isset($element['options']['class'])) {
                 $classes = $element['options']['class'];
             }
 
             $element['options']['class'] = $classes . ' element-' . $elementName;
 
-            if( file_exists( FORMBUILDER_PATH . '/lib/Formbuilder/Lib/Form/Frontend/Mapper/' . ucfirst( $element['type'] ) . '.php' ) )
-            {
+            if (file_exists(FORMBUILDER_PATH . '/lib/Formbuilder/Lib/Form/Frontend/Mapper/' . ucfirst($element['type']) . '.php')) {
                 /** @var Mapper\MapAbstract $className */
-                $className = '\\Formbuilder\\Lib\\Form\\Frontend\\Mapper\\' . ucfirst( $element['type'] );
-                $element = $className::parse( $element, $formType);
+                $className = '\\Formbuilder\\Lib\\Form\\Frontend\\Mapper\\' . ucfirst($element['type']);
+                $element = $className::parse($element, $formType);
             }
-
         }
 
         return $form;
@@ -428,15 +399,13 @@ class Builder {
      */
     protected function getLanguages()
     {
-        if ($this->languages == NULL)
-        {
+        if ($this->languages == NULL) {
             $languages = Tool::getValidLanguages();
             $this->languages = $languages;
         }
 
         return $this->languages;
     }
-
 
     /**
      * @param \Zend_Form $form
@@ -448,34 +417,36 @@ class Builder {
      */
     protected function initTranslation(\Zend_Form $form, $id, $locale = NULL)
     {
-        if($locale === NULL)
-        {
+        if ($locale === NULL) {
             $locale = \Zend_Locale::findLocale();
         }
 
         $trans = $this->translateForm($id, $locale);
         \Zend_Form::setDefaultTranslator($trans);
 
-        if ($locale != NULL && $locale != '')
-        {
-            if($form->getTranslator() === NULL)
-            {
+        if ($locale != NULL && $locale != '') {
+            if ($form->getTranslator() === NULL) {
                 $form->setTranslator($trans);
-            }
-            else
-            {
+            } else {
                 $form->getTranslator()->addTranslation($trans);
             }
         }
     }
 
-    protected function instantiateForm( $formData = [], $mappedClass, $formId, $locale)
+    /**
+     * @param array $formData
+     * @param       $mappedClass
+     * @param       $formId
+     * @param       $locale
+     *
+     * @return mixed
+     */
+    protected function instantiateForm($formData = [], $mappedClass, $formId, $locale)
     {
         $form = $this->createInstance($formData, $mappedClass);
         $this->initTranslation($form, $formId, $locale);
 
-        return $this->onAfterFormInstance( $form );
-
+        return $this->onAfterFormInstance($form);
     }
 
     /**
@@ -489,8 +460,7 @@ class Builder {
     {
         $reflectionClass = new \ReflectionClass($className);
 
-        if( !($reflectionClass->isSubclassOf('Zend_Form') || $reflectionClass->name == 'Zend_Form') )
-        {
+        if (!($reflectionClass->isSubclassOf('Zend_Form') || $reflectionClass->name == 'Zend_Form')) {
             throw new \Exception('Form class must be a subclass of "Zend_Form"');
         }
 
@@ -502,21 +472,17 @@ class Builder {
      *
      * @return mixed
      */
-    protected function onAfterFormInstance( $form )
+    protected function onAfterFormInstance($form)
     {
         /** @var \Zend_Form_Element $element */
-        foreach( $form->getElements() as $element)
-        {
+        foreach ($form->getElements() as $element) {
             /**
-             *
-             *  @fixme: Maybe it's possible to extend the Label Decorator?
+             * @fixme: Maybe it's possible to extend the Label Decorator?
              *  Now transform Label Placeholder. Because the may get translated, we need to do this here.
-             *
              **/
             $label = $element->getLabel();
-            if( !empty( $label ) )
-            {
-                $element->setLabel( \Formbuilder\Tool\Placeholder::parse( $label ) );
+            if (!empty($label)) {
+                $element->setLabel(\Formbuilder\Tool\Placeholder::parse($label));
             }
         }
 

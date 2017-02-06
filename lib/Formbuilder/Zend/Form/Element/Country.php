@@ -9,11 +9,12 @@ class Country extends \Zend_Form_Element_Select
      * Constructor for element and adds validator
      *
      * @param array|string|Zend_Config $spec
-     * @param null $options
+     * @param null                     $options
+     *
      * @throws \Zend_Exception
      * @throws \Zend_Form_Exception
      */
-    public function __construct($spec, $options = null)
+    public function __construct($spec, $options = NULL)
     {
         parent::__construct($spec, $options);
 

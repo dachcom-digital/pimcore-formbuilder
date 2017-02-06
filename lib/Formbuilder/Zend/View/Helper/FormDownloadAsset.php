@@ -4,11 +4,20 @@ namespace Formbuilder\Zend\View\Helper;
 
 class FormDownloadAsset extends \Zend_View_Helper_FormElement
 {
-    public function formDownloadAsset($name, $value = null, $attribs = null, $options = null, $listsep = '')
+    /**
+     * @param        $name
+     * @param null   $value
+     * @param null   $attribs
+     * @param null   $options
+     * @param string $listsep
+     *
+     * @return mixed
+     */
+    public function formDownloadAsset($name, $value = NULL, $attribs = NULL, $options = NULL, $listsep = '')
     {
-        $filePath = isset( $attribs['asset'] ) ? $attribs['asset'] : FALSE;
+        $filePath = isset($attribs['asset']) ? $attribs['asset'] : FALSE;
 
-        $asset = \Pimcore\Model\Asset::getByPath( $filePath );
+        $asset = \Pimcore\Model\Asset::getByPath($filePath);
 
         $assetFile = NULL;
 
@@ -16,15 +25,13 @@ class FormDownloadAsset extends \Zend_View_Helper_FormElement
         $fileSize = '';
         $fileExtension = '';
 
-        if( $asset instanceof \Pimcore\Model\Asset )
-        {
+        if ($asset instanceof \Pimcore\Model\Asset) {
             $assetFile = $asset;
 
             $fileName = $assetFile->getMetadata('title') ? $assetFile->getMetadata('title') : $assetFile->getFilename();
             $fileSize = $assetFile->getFileSize('kb', 2);
             $fileExtension = \Pimcore\File::getFileExtension($assetFile->getFilename());
         }
-
 
         return $this->view->partial('formbuilder/form/elements/download/default.php', [
             'file' => $assetFile,

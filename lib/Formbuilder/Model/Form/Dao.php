@@ -12,14 +12,14 @@ class Dao extends AbstractDao
 
     /**
      * @param null $name
+     *
      * @throws \Exception
      */
     public function getByName($name = NULL)
     {
-        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName .' WHERE name = ?', $name);
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE name = ?', $name);
 
-        if (!$data['id'])
-        {
+        if (!$data['id']) {
             throw new \Exception('Form with ID ' . $name . ' doesn\'t exists');
         }
 
@@ -28,23 +28,20 @@ class Dao extends AbstractDao
 
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = NULL)
     {
-        if ($id != NULL)
-        {
+        if ($id != NULL) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM '. $this->tableName .' WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE id = ?', $this->model->getId());
 
-        if (isset($data['id']))
-        {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
-        }
-        else
-        {
+        } else {
             throw new \Exception('Form with id: ' . $this->model->getId() . ' doesn\'t exist');
         }
     }
@@ -60,41 +57,33 @@ class Dao extends AbstractDao
 
         $validColumns = $this->getValidTableColumns($this->tableName);
 
-        if ( count($vars) )
-        {
-            foreach ( $vars as $k => $v )
-            {
-                if( !in_array($k, $validColumns) )
-                {
+        if (count($vars)) {
+            foreach ($vars as $k => $v) {
+                if (!in_array($k, $validColumns)) {
                     continue;
                 }
 
                 $getter = 'get' . ucfirst($k);
 
-                if( !is_callable( [$this->model, $getter] ) )
-                {
+                if (!is_callable([$this->model, $getter])) {
                     continue;
                 }
 
                 $value = $this->model->$getter();
 
-                if( is_bool($value) )
-                {
+                if (is_bool($value)) {
                     $value = (int)$value;
                 }
 
-                if( is_array($value) )
-                {
+                if (is_array($value)) {
                     $value = serialize($value);
                 }
 
-                if($value instanceof AbstractObject || $value instanceof AbstractModel)
-                {
+                if ($value instanceof AbstractObject || $value instanceof AbstractModel) {
                     $value = $value->getId();
                 }
 
-                if( is_object($value) )
-                {
+                if (is_object($value)) {
                     $value = serialize($value);
                 }
 
@@ -102,29 +91,28 @@ class Dao extends AbstractDao
             }
         }
 
-        if ($this->model->getId() !== NULL)
-        {
-            $this->db->update($this->tableName, $buffer, $this->db->quoteInto('id = ?', (int) $this->model->getId()));
+        if ($this->model->getId() !== NULL) {
+            $this->db->update($this->tableName, $buffer, $this->db->quoteInto('id = ?', (int)$this->model->getId()));
+
             return;
         }
 
         $this->db->insert($this->tableName, $buffer);
         $this->model->setId($this->db->lastInsertId());
-
     }
 
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function delete()
     {
-        try
-        {
-            $this->db->delete($this->tableName, $this->db->quoteInto('id = ?', (int) $this->model->getId()));
-        }
-        catch (\Exception $e)
-        {
+        try {
+            $this->db->delete($this->tableName, $this->db->quoteInto('id = ?', (int)$this->model->getId()));
+        } catch (\Exception $e) {
             throw $e;
         }
 
         return TRUE;
-
     }
 }

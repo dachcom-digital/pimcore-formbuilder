@@ -11,27 +11,24 @@ class Html5Text extends \Zend_Form_Element_Text
     public $helper = 'html5FormText';
 
     /**
-     *
      * Constants that are used for types of elements
-     *
      * @var string
      */
-    const DEFAULT_TYPE              = 'Html5Text';
+    const DEFAULT_TYPE = 'Html5Text';
 
-    const FIELD_EMAIL               = 'Html5Email';
-    const FIELD_EMAIL_ADDRESS       = 'Html5EmailAddress';
-    const FIELD_URL                 = 'Html5Url';
-    const FIELD_NUMBER              = 'Html5Number';
-    const FIELD_RANGE               = 'Html5Range';
-    const FIELD_DATE                = 'Html5Date';
-    const FIELD_MONTH               = 'Html5Month';
-    const FIELD_WEEK                = 'Html5Week';
-    const FIELD_TIME                = 'Html5Time';
-    const FIELD_DATE_TIME_LOCAL     = 'Html5DatetimeLocal';
+    const FIELD_EMAIL = 'Html5Email';
+    const FIELD_EMAIL_ADDRESS = 'Html5EmailAddress';
+    const FIELD_URL = 'Html5Url';
+    const FIELD_NUMBER = 'Html5Number';
+    const FIELD_RANGE = 'Html5Range';
+    const FIELD_DATE = 'Html5Date';
+    const FIELD_MONTH = 'Html5Month';
+    const FIELD_WEEK = 'Html5Week';
+    const FIELD_TIME = 'Html5Time';
+    const FIELD_DATE_TIME_LOCAL = 'Html5DatetimeLocal';
 
     /**
      * Mapping of key => value pairs for the elements
-     *
      * @var array
      */
     protected static $_mapping = [
@@ -50,14 +47,12 @@ class Html5Text extends \Zend_Form_Element_Text
 
     /**
      * Check if the validators should be auto loaded
-     *
      * @var bool
      */
     private $_autoloadValidators = TRUE;
 
     /**
      * Check if the filters should be auto loaded
-     *
      * @var bool
      */
     private $_autoloadFilters = TRUE;
@@ -65,13 +60,14 @@ class Html5Text extends \Zend_Form_Element_Text
     /**
      * @param $spec
      * @param $options
+     *
      * @uses Zend_Form_Element
      */
-    public function __construct($spec, $options = null)
+    public function __construct($spec, $options = NULL)
     {
-        $options['type'] = $this->_getType( $options['inputType'] );
+        $options['type'] = $this->_getType($options['inputType']);
 
-        unset( $options['inputType'] );
+        unset($options['inputType']);
 
         parent::__construct($spec, $options);
     }
@@ -80,17 +76,18 @@ class Html5Text extends \Zend_Form_Element_Text
      * Flag if the the validators should be auto loaded
      *
      * @param bool $flag
+     *
      * @return Html5Text Provides a fluent interface
      */
     public function setAutoloadValidators($flag)
     {
-        $this->_autoloadValidators = (bool) $flag;
+        $this->_autoloadValidators = (bool)$flag;
+
         return $this;
     }
 
     /**
      * Flag if the the validators should be auto loaded
-     *
      * @return bool
      */
     public function isAutoloadValidators()
@@ -102,17 +99,18 @@ class Html5Text extends \Zend_Form_Element_Text
      * Flag if the the filters should be auto loaded
      *
      * @param bool $flag
+     *
      * @return Html5Text Provides a fluent interface
      */
     public function setAutoloadFilters($flag)
     {
-        $this->_autoloadFilters = (bool) $flag;
+        $this->_autoloadFilters = (bool)$flag;
+
         return $this;
     }
 
     /**
      * Flag if the the validators should be auto loaded
-     *
      * @return bool
      */
     public function isAutoloadFilters()
@@ -125,12 +123,12 @@ class Html5Text extends \Zend_Form_Element_Text
      * Else return the constant DEFAULT_TYPE value
      *
      * @param $spec
+     *
      * @return string
      */
     private function _getType($spec)
     {
-        if ( array_key_exists( $spec, self::$_mapping) )
-        {
+        if (array_key_exists($spec, self::$_mapping)) {
             return self::$_mapping[$spec];
         }
 

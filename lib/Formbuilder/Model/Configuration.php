@@ -7,7 +7,6 @@ use Pimcore\Model;
 
 class Configuration extends Model\AbstractModel
 {
-
     /**
      * @var integer
      */
@@ -35,39 +34,33 @@ class Configuration extends Model\AbstractModel
 
     /**
      * this is a small per request cache to know which configuration is which is, this info is used in self::getByKey()
-     *
      * @var array
      */
-    protected static $nameIdMappingCache = array();
-
+    protected static $nameIdMappingCache = [];
 
     /**
      * @param integer $id
+     *
      * @return Configuration
      */
     public static function getById($id)
     {
         $cacheKey = 'formbuilder_configuration_' . $id;
 
-        try
-        {
+        try {
             $configurationEntry = \Zend_Registry::get($cacheKey);
             if (!$configurationEntry) {
                 throw new \Exception('Configuration in registry is null');
             }
-        }
-        catch (\Exception $e)
-        {
-            try
-            {
+        } catch (\Exception $e) {
+            try {
                 $configurationEntry = new self();
                 \Zend_Registry::set($cacheKey, $configurationEntry);
                 $configurationEntry->setId(intval($id));
                 $configurationEntry->getDao()->getById();
-            }
-            catch (\Exception $e)
-            {
+            } catch (\Exception $e) {
                 \Pimcore\Logger::error($e);
+
                 return NULL;
             }
         }
@@ -76,16 +69,16 @@ class Configuration extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
+     * @param string  $key
      * @param boolean $returnObject
+     *
      * @return mixed|null
      */
     public static function get($key, $returnObject = FALSE)
     {
         $cacheKey = $key . '~~~';
 
-        if (array_key_exists($cacheKey, self::$nameIdMappingCache))
-        {
+        if (array_key_exists($cacheKey, self::$nameIdMappingCache)) {
             $entry = self::getById(self::$nameIdMappingCache[$cacheKey]);
 
             if ($returnObject) {
@@ -97,22 +90,17 @@ class Configuration extends Model\AbstractModel
 
         $configurationEntry = new self();
 
-        try
-        {
+        try {
             $configurationEntry->getDao()->getByKey($key);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return NULL;
         }
 
-        if ($configurationEntry->getId() > 0)
-        {
+        if ($configurationEntry->getId() > 0) {
             self::$nameIdMappingCache[$cacheKey] = $configurationEntry->getId();
             $entry = self::getById($configurationEntry->getId());
 
-            if ($returnObject)
-            {
+            if ($returnObject) {
                 return $entry;
             }
 
@@ -130,8 +118,7 @@ class Configuration extends Model\AbstractModel
     {
         $configEntry = self::get($key, TRUE);
 
-        if (!$configEntry)
-        {
+        if (!$configEntry) {
             $configEntry = new self();
             $configEntry->setKey($key);
         }

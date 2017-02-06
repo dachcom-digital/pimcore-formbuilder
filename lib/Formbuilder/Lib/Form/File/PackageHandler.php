@@ -5,157 +5,136 @@ namespace Formbuilder\Lib\Form\File;
 use \Formbuilder\Tool\File;
 use \Pimcore\Model\Asset;
 
-class PackageHandler {
-
+class PackageHandler
+{
     public function __construct()
     {
         File::setupTmpFolder();
     }
 
     /**
-     * @param $data
+     * @param        $data
      * @param string $formName
      * @param string $fieldName
-     * @param int $templateId
+     * @param int    $templateId
      *
      * @return bool|null|Asset
      */
-    public function createZipAsset( $data, $formName, $fieldName, $templateId )
+    public function createZipAsset($data, $formName, $fieldName, $templateId)
     {
-        if( !is_array( $data ) )
-        {
+        if (!is_array($data)) {
             return FALSE;
         }
 
-        $files = array();
+        $files = [];
 
         //Find all Files!
-        foreach( $data as $folderName => $fileName )
-        {
+        foreach ($data as $folderName => $fileName) {
             $fileDir = File::getFilesFolder() . '/' . $folderName;
-            if( is_dir( $fileDir ) )
-            {
+            if (is_dir($fileDir)) {
                 $dirFiles = glob($fileDir . '/*');
 
-                if( count( $dirFiles ) === 1 )
-                {
-                    $files[] = array('name' => $fileName, 'uuid' => $folderName, 'path' => $dirFiles[0] );
+                if (count($dirFiles) === 1) {
+                    $files[] = ['name' => $fileName, 'uuid' => $folderName, 'path' => $dirFiles[0]];
                 }
-
             }
-
         }
 
-        if( empty( $files ) )
-        {
+        if (empty($files)) {
             return FALSE;
         }
 
-        $zipFileName = uniqid('form-' . \Pimcore\File::getValidFilename( $fieldName ) . '-') . '.zip';
+        $zipFileName = uniqid('form-' . \Pimcore\File::getValidFilename($fieldName) . '-') . '.zip';
         $zipPath = File::getZipFolder() . '/' . $zipFileName;
 
-        try
-        {
+        try {
             $zip = new \ZipArchive();
-            $zip->open( $zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-            foreach ($files as $fileInfo)
-            {
+            foreach ($files as $fileInfo) {
                 $zip->addFile($fileInfo['path'], $fileInfo['name']);
             }
 
             $zip->close();
 
             //clean up!
-            foreach ($files as $fileInfo)
-            {
+            foreach ($files as $fileInfo) {
                 $targetFolder = File::getFilesFolder();
-                $target = join(DIRECTORY_SEPARATOR, array($targetFolder, $fileInfo['uuid']));
+                $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['uuid']]);
 
-                if ( is_dir($target) )
-                {
+                if (is_dir($target)) {
                     File::removeDir($target);
                 }
-
             }
-        }
-        catch( \Exception $e )
-        {
+        } catch (\Exception $e) {
             \Pimcore\Logger::log('Error while creating zip for Formbuilder (' . $zipPath . '): ' . $e->getMessage());
+
             return FALSE;
         }
 
-        if( !file_exists( $zipPath ) )
-        {
+        if (!file_exists($zipPath)) {
             \Pimcore\Logger::log('Zip Path does not exist (' . $zipPath . ')');
+
             return FALSE;
         }
 
         $formDataFolder = NULL;
-        $formDataParentFolder = Asset\Folder::getByPath( '/formdata' );
+        $formDataParentFolder = Asset\Folder::getByPath('/formdata');
 
-        if( !$formDataParentFolder instanceof Asset\Folder)
-        {
+        if (!$formDataParentFolder instanceof Asset\Folder) {
             \Pimcore\Logger::error('formDataParent Folder does not exist (/formdata)!');
+
             return FALSE;
         }
 
-        $formName = \Pimcore\File::getValidFilename( $formName );
-        $formFolderExists = Asset\Service::pathExists( '/formdata/' . $formName );
+        $formName = \Pimcore\File::getValidFilename($formName);
+        $formFolderExists = Asset\Service::pathExists('/formdata/' . $formName);
 
-        if( $formFolderExists === FALSE )
-        {
+        if ($formFolderExists === FALSE) {
             $formDataFolder = new Asset\Folder();
-            $formDataFolder->setCreationDate ( time() );
-            $formDataFolder->setLocked(true);
-            $formDataFolder->setUserOwner (1);
-            $formDataFolder->setUserModification (0);
+            $formDataFolder->setCreationDate(time());
+            $formDataFolder->setLocked(TRUE);
+            $formDataFolder->setUserOwner(1);
+            $formDataFolder->setUserModification(0);
             $formDataFolder->setParentId($formDataParentFolder->getId());
             $formDataFolder->setFilename($formName);
             $formDataFolder->save();
-        }
-        else
-        {
-            $formDataFolder = Asset\Folder::getByPath( '/formdata/' . $formName );
+        } else {
+            $formDataFolder = Asset\Folder::getByPath('/formdata/' . $formName);
         }
 
-        if( !$formDataFolder instanceof Asset\Folder)
-        {
+        if (!$formDataFolder instanceof Asset\Folder) {
             \Pimcore\Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
+
             return FALSE;
         }
 
-        $assetData = array(
+        $assetData = [
 
-            'data'      => file_get_contents( $zipPath ),
-            'filename'  => $zipFileName
+            'data'     => file_get_contents($zipPath),
+            'filename' => $zipFileName
 
-        );
+        ];
 
         $asset = NULL;
 
-        try
-        {
-            $mailTemplate = \Pimcore\Model\Document::getById( $templateId );
+        try {
+            $mailTemplate = \Pimcore\Model\Document::getById($templateId);
 
-            $asset = \Pimcore\Model\Asset::create( $formDataFolder->getId(), $assetData, FALSE );
-            $asset->setProperty('linkedForm', 'document', $mailTemplate );
+            $asset = \Pimcore\Model\Asset::create($formDataFolder->getId(), $assetData, FALSE);
+            $asset->setProperty('linkedForm', 'document', $mailTemplate);
             $asset->save();
 
-            if( file_exists( $zipPath ) )
-            {
-                unlink( $zipPath );
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
             }
-
-        }
-        catch( \Exception $e )
-        {
+        } catch (\Exception $e) {
             \Pimcore\Logger::log('Error while storing asset in Pimcore (' . $zipPath . '): ' . $e->getMessage());
+
             return FALSE;
         }
 
         return $asset;
-
     }
 
 }

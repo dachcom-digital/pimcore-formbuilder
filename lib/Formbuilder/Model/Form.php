@@ -6,7 +6,6 @@ use Pimcore\Model;
 
 class Form extends Model\AbstractModel
 {
-
     /**
      * @var
      */
@@ -41,8 +40,7 @@ class Form extends Model\AbstractModel
     {
         $id = intval($id);
 
-        if ($id < 1)
-        {
+        if ($id < 1) {
             return NULL;
         }
 
@@ -50,15 +48,13 @@ class Form extends Model\AbstractModel
         $obj->getDao()->getById($id);
 
         return $obj;
-
     }
 
     public static function getByName($name)
     {
-        $name = (string) $name;
+        $name = (string)$name;
 
-        if ( empty( $name ) )
-        {
+        if (empty($name)) {
             return NULL;
         }
 
@@ -71,19 +67,21 @@ class Form extends Model\AbstractModel
     public function getAll()
     {
         $list = new Form\Listing;
+
         return $list->getData();
     }
 
-    public function rename($newName )
+    public function rename($newName)
     {
         $this->setName($newName);
         $this->save();
-        return true;
+
+        return TRUE;
     }
 
     public function setId($id)
     {
-       $this->id = $id;
+        $this->id = $id;
     }
 
     public function getId()

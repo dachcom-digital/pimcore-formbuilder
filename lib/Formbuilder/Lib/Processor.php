@@ -10,8 +10,8 @@ use \Formbuilder\Lib\Form\File\PackageHandler;
 
 use Formbuilder\Tool\Session;
 
-Class Processor {
-
+Class Processor
+{
     /**
      * @var array
      */
@@ -35,35 +35,31 @@ Class Processor {
      *
      * @return bool
      */
-    public function parse( \Zend_Form $form, Form $formData, $mailTemplateId = NULL, $copyMailTemplateId = NULL )
+    public function parse(\Zend_Form $form, Form $formData, $mailTemplateId = NULL, $copyMailTemplateId = NULL)
     {
-        if( empty($mailTemplateId) )
-        {
+        if (empty($mailTemplateId)) {
             $this->log('no valid mail template given.');
+
             return FALSE;
         }
 
-        $data = $this->getFormValues( $form );
+        $data = $this->getFormValues($form);
 
         //set upload data!
         $packageHandler = new PackageHandler();
 
-        $boundedFieldFiles = Session::getFromTmpSession( $formData->getId() );
+        $boundedFieldFiles = Session::getFromTmpSession($formData->getId());
 
-        if( is_array( $boundedFieldFiles ) )
-        {
-            foreach( $boundedFieldFiles as $fieldName => $boundedFilePackage)
-            {
-                $asset = $packageHandler->createZipAsset( $boundedFilePackage, $formData->getName(), $fieldName, $mailTemplateId );
+        if (is_array($boundedFieldFiles)) {
+            foreach ($boundedFieldFiles as $fieldName => $boundedFilePackage) {
+                $asset = $packageHandler->createZipAsset($boundedFilePackage, $formData->getName(), $fieldName, $mailTemplateId);
 
                 //remove tmp element from session!
-                Session::removeFromTmpSession( $formData->getId(), $fieldName );
+                Session::removeFromTmpSession($formData->getId(), $fieldName);
 
-                if( $asset instanceof \Pimcore\Model\Asset )
-                {
+                if ($asset instanceof \Pimcore\Model\Asset) {
                     $http = 'http://';
-                    if ( !empty( $_SERVER['HTTPS'] ) )
-                    {
+                    if (!empty($_SERVER['HTTPS'])) {
                         $http = 'https://';
                     }
 
@@ -72,12 +68,11 @@ Class Processor {
                     //get translated label for files!
                     $fileLabel = $fieldName;
 
-                    if( isset( $data[ $fieldName ]))
-                    {
-                        $fileLabel = $data[ $fieldName ]['label'];
+                    if (isset($data[$fieldName])) {
+                        $fileLabel = $data[$fieldName]['label'];
                     }
 
-                    $data[ $fieldName ] = [ 'label' => $fileLabel, 'value' => $websiteUrl . $asset->getRealFullPath() ];
+                    $data[$fieldName] = ['label' => $fileLabel, 'value' => $websiteUrl . $asset->getRealFullPath()];
                 }
             }
         }
@@ -87,111 +82,93 @@ Class Processor {
             'formbuilder.form.preSendData',
             NULL,
             [
-                'formData'  => $formData,
-                'data'      => $data,
+                'formData' => $formData,
+                'data'     => $data,
             ]
         );
 
-        if ($cmdEv->stopped())
-        {
+        if ($cmdEv->stopped()) {
             $customData = $cmdEv->last();
 
-            if( is_array($customData) )
-            {
+            if (is_array($customData)) {
                 $data = $customData;
             }
         }
 
-        try
-        {
-            $send = $this->sendForm( $mailTemplateId, [ 'data' => $data ] );
+        try {
+            $send = $this->sendForm($mailTemplateId, ['data' => $data]);
 
-            if( $send === TRUE )
-            {
+            if ($send === TRUE) {
                 $this->isValid = TRUE;
 
                 //send copy!
-                if( $this->sendCopy === TRUE )
-                {
-                    try
-                    {
-                        $send = $this->sendForm( $copyMailTemplateId, [ 'data' => $data ] );
+                if ($this->sendCopy === TRUE) {
+                    try {
+                        $send = $this->sendForm($copyMailTemplateId, ['data' => $data]);
 
-                        if( $send !== TRUE )
-                        {
+                        if ($send !== TRUE) {
                             $this->log('copy mail not sent.');
                             $this->isValid = FALSE;
                         }
-
-                    } catch(\Exception $e)
-                    {
-                        $this->log( 'copy mail sent error: ' . $e->getMessage() );
+                    } catch (\Exception $e) {
+                        $this->log('copy mail sent error: ' . $e->getMessage());
                         $this->isValid = FALSE;
                     }
-
                 }
-            }
-            else
-            {
+            } else {
                 $this->log('mail not sent.');
             }
-
-        }
-        catch(\Exception $e)
-        {
-            $this->log( 'mail sent error: ' . $e->getMessage() );
+        } catch (\Exception $e) {
+            $this->log('mail sent error: ' . $e->getMessage());
             $this->isValid = FALSE;
         }
     }
 
     /**
-     * @param int    $mailTemplateId
+     * @param int   $mailTemplateId
      * @param array $attributes
      *
      * @throws \Exception
      * @returns bool
      */
-    private function sendForm( $mailTemplateId = 0, $attributes = [] )
+    private function sendForm($mailTemplateId = 0, $attributes = [])
     {
-        $mailTemplate = Model\Document::getById( $mailTemplateId );
+        $mailTemplate = Model\Document::getById($mailTemplateId);
 
-        if( !$mailTemplate instanceof Model\Document\Email )
-        {
+        if (!$mailTemplate instanceof Model\Document\Email) {
             return FALSE;
         }
 
-        $this->setMailRecipients( $attributes['data'], $mailTemplate );
-        $this->setMailSender( $attributes['data'], $mailTemplate );
+        $this->setMailRecipients($attributes['data'], $mailTemplate);
+        $this->setMailSender($attributes['data'], $mailTemplate);
 
-        $disableDefaultMailBody = (bool) $mailTemplate->getProperty('mail_disable_default_mail_body');
-        $ignoreFieldData = (string) $mailTemplate->getProperty('mail_ignore_fields');
+        $disableDefaultMailBody = (bool)$mailTemplate->getProperty('mail_disable_default_mail_body');
+        $ignoreFieldData = (string)$mailTemplate->getProperty('mail_ignore_fields');
 
         $ignoreFields = array_map('trim', explode(',', $ignoreFieldData));
 
         $mail = new FormbuilderMail();
-        $mail->setDocument( $mailTemplate );
+        $mail->setDocument($mailTemplate);
 
-        $mail->setIgnoreFields( $ignoreFields );
-        $mail->parseSubject( $mailTemplate->getSubject(), $attributes['data'] );
-        $mail->setMailPlaceholders( $attributes['data'], $disableDefaultMailBody );
+        $mail->setIgnoreFields($ignoreFields);
+        $mail->parseSubject($mailTemplate->getSubject(), $attributes['data']);
+        $mail->setMailPlaceholders($attributes['data'], $disableDefaultMailBody);
 
-        $mail->addCc( $mailTemplate->getCcAsArray() );
-        $mail->addBcc( $mailTemplate->getBccAsArray() );
+        $mail->addCc($mailTemplate->getCcAsArray());
+        $mail->addBcc($mailTemplate->getBccAsArray());
 
         //allow 3rd parties to hook into processed email
         $cmdEv = \Pimcore::getEventManager()->trigger(
             'formbuilder.form.preSendMail',
             NULL,
             [
-                'formbuilderMail'  => $mail
+                'formbuilderMail' => $mail
             ]
         );
 
-        if ($cmdEv->stopped())
-        {
+        if ($cmdEv->stopped()) {
             $customMail = $cmdEv->last();
-            if( $customMail instanceof \Formbuilder\Lib\Email\FormbuilderMail )
-            {
+            if ($customMail instanceof \Formbuilder\Lib\Email\FormbuilderMail) {
                 $mail = $customMail;
             }
         }
@@ -199,33 +176,32 @@ Class Processor {
         $mail->send();
 
         return TRUE;
-
     }
 
     /**
-     * @param array $data
+     * @param array                         $data
      * @param \Pimcore\Model\Document\Email $mailTemplate
      */
-    private function setMailRecipients($data = [], $mailTemplate) {
+    private function setMailRecipients($data = [], $mailTemplate)
+    {
 
         $to = $mailTemplate->getTo();
-        $parsedTo = $this->extractPlaceHolder( $to, $data );
+        $parsedTo = $this->extractPlaceHolder($to, $data);
 
-        $mailTemplate->setTo( $parsedTo );
-
+        $mailTemplate->setTo($parsedTo);
     }
 
     /**
-     * @param array $data
+     * @param array                         $data
      * @param \Pimcore\Model\Document\Email $mailTemplate
      */
-    private function setMailSender($data = [], $mailTemplate) {
+    private function setMailSender($data = [], $mailTemplate)
+    {
 
         $from = $mailTemplate->getFrom();
-        $parsedFrom = $this->extractPlaceHolder( $from, $data );
+        $parsedFrom = $this->extractPlaceHolder($from, $data);
 
-        $mailTemplate->setFrom( $parsedFrom );
-
+        $mailTemplate->setFrom($parsedFrom);
     }
 
     /**
@@ -242,25 +218,21 @@ Class Processor {
 
         preg_match_all("/\%(.+?)\%/", $str, $matches);
 
-        if ( isset($matches[1]) && count($matches[1]) > 0 )
-        {
-            foreach ( $matches[1] as $key => $inputValue )
-            {
-                foreach( $data as $formFieldName => $formFieldValue )
-                {
-                    if( $formFieldName == $inputValue)
-                    {
-                        $str = str_replace( $matches[0][$key], $formFieldValue['value'], $str );
+        if (isset($matches[1]) && count($matches[1]) > 0) {
+            foreach ($matches[1] as $key => $inputValue) {
+                foreach ($data as $formFieldName => $formFieldValue) {
+                    if ($formFieldName == $inputValue) {
+                        $str = str_replace($matches[0][$key], $formFieldValue['value'], $str);
                     }
                 }
 
                 //replace with '' if not found.
-                $extractedValue = str_replace( $matches[0][$key], '', $str );
+                $extractedValue = str_replace($matches[0][$key], '', $str);
             }
         }
 
         //remove invalid commas
-        $extractedValue = trim( implode(',', preg_split('@,@', $extractedValue, NULL, PREG_SPLIT_NO_EMPTY ) ) );
+        $extractedValue = trim(implode(',', preg_split('@,@', $extractedValue, NULL, PREG_SPLIT_NO_EMPTY)));
 
         return $extractedValue;
     }
@@ -268,7 +240,7 @@ Class Processor {
     /**
      * @param bool $state
      */
-    public function setSendCopy( $state = FALSE )
+    public function setSendCopy($state = FALSE)
     {
         $this->sendCopy = $state;
     }
@@ -286,89 +258,72 @@ Class Processor {
      *
      * @return array|string
      */
-    public function getMessages( $asArray = TRUE )
+    public function getMessages($asArray = TRUE)
     {
-        return $asArray ? $this->messages : implode( ',', $this->messages );
+        return $asArray ? $this->messages : implode(',', $this->messages);
     }
 
     /**
      * @param string $message
      */
-    private function log( $message = '' )
+    private function log($message = '')
     {
         $this->messages[] = $message;
     }
 
     /**
-     *
      * Flat all subForm values to single key value array.
      *
      * @param \Zend_form $form
-     * @param array $dat
-     * @param bool $allowEmptyValues
+     * @param array      $dat
+     * @param bool       $allowEmptyValues
      *
      * @return array
      */
     private function getFormValues($form, $dat = [], $allowEmptyValues = TRUE)
     {
-        foreach ($form->getElementsAndSubFormsOrdered() as $element)
-        {
-            if ($element instanceof \Zend_Form)
-            {
+        foreach ($form->getElementsAndSubFormsOrdered() as $element) {
+            if ($element instanceof \Zend_Form) {
                 $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
-            }
-            elseif ($element instanceof \Zend_Form_SubForm)
-            {
+            } elseif ($element instanceof \Zend_Form_SubForm) {
                 $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
-            }
-            elseif ($element instanceof \Zend_Form_Element)
-            {
+            } elseif ($element instanceof \Zend_Form_Element) {
                 $label = $element->getLabel();
                 $value = $element->getValue();
                 $name = $element->getName();
 
                 //skip private name convention
-                if( substr( $name, 0,1 ) === '_')
-                {
+                if (substr($name, 0, 1) === '_') {
                     continue;
                 }
 
-                if( empty( $label ) )
-                {
+                if (empty($label)) {
                     $label = $name;
                 }
 
-                if( empty( $value ) && $allowEmptyValues === FALSE )
-                {
+                if (empty($value) && $allowEmptyValues === FALSE) {
                     continue;
                 }
 
-                if( $element instanceof \Zend_Form_Element_Multi)
-                {
+                if ($element instanceof \Zend_Form_Element_Multi) {
                     $_multiValue = [];
 
-                    if( is_array( $value ) )
-                    {
-                        foreach( $value as $val )
-                        {
-                            $_multiValue[] = $element->getMultiOption( $val );
+                    if (is_array($value)) {
+                        foreach ($value as $val) {
+                            $_multiValue[] = $element->getMultiOption($val);
                         }
+                    } else {
+                        $_multiValue[] = $element->getMultiOption($value);
                     }
-                    else
-                    {
-                        $_multiValue[] = $element->getMultiOption( $value );
-                    }
-                    if( !empty( $_multiValue ) )
-                    {
-                        $value = implode(', ', $_multiValue );
+                    if (!empty($_multiValue)) {
+                        $value = implode(', ', $_multiValue);
                     }
                 }
 
-                $dat[ $name ] = [ 'label' => $label, 'value' => $value ];
+                $dat[$name] = ['label' => $label, 'value' => $value];
             }
         }
 
         return $dat;
-
     }
 }

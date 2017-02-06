@@ -4,12 +4,14 @@ namespace Formbuilder\Zend\Form\Element\Html5Text;
 
 class Html5Week extends \Formbuilder\Zend\Form\Element\Html5Text
 {
+    /**
+     *
+     */
     public function init()
     {
-        if ($this->isAutoloadValidators())
-        {
+        if ($this->isAutoloadValidators()) {
             //@todo: base week numbers on Zend_Locale
-            $this->addValidator('Between', false, array('min' => 1, 'max' => 52));
+            $this->addValidator('Between', FALSE, ['min' => 1, 'max' => 52]);
         }
     }
 }
