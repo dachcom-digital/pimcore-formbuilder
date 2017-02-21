@@ -144,7 +144,8 @@ class Formbuilder_AjaxController extends Action
 
             );
 
-            $params = $frontendLib->parseFormParams($this->getAllParams(), $form);
+            $requestData = $form->getAttrib('method') === 'post' ? $this->getRequest()->getPost() : $this->getRequest()->getQuery();
+            $params = $frontendLib->parseFormParams($requestData, $form);
 
             $formValid = TRUE;
             $valid = FALSE;

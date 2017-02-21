@@ -127,7 +127,6 @@ var formBuilder = (function () {
                 var $form = $(this),
                     $btns = $form.find('.btn'),
                     ajaxUrl = $form.data('ajax-url'),
-                    formData = new FormData( $form[0] ),
                     $fbHtmlFile = $form.find('.formbuilder-html5File');
 
                 ev.preventDefault();
@@ -140,11 +139,11 @@ var formBuilder = (function () {
                 }
 
                 $.ajax({
-                    type: 'POST',
+                    type: $form.attr('method'),
                     url: ajaxUrl + '/parse',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
+                    data: ($form.attr('method') === 'get') ? $form.serialize() : new FormData( $form[0] ),
+                    processData: ($form.attr('method') === 'get'),
+                    contentType: ($form.attr('method') === 'get') ? $form.attr('enctype') : false,
                     success: function ( response ) {
 
                         $btns.attr('disabled', false);
