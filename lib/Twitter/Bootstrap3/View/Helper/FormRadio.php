@@ -169,7 +169,7 @@ class Twitter_Bootstrap3_View_Helper_FormRadio extends Zend_View_Helper_FormRadi
 
             // Wrap the radios in labels
             $radio = '<label'
-                        . $this->_htmlAttribs($label_attribs) . '>'
+                        . $this->_htmlAttribs($label_attribs) . ' for="' . $optId . '">'
                         . (('prepend' == $labelPlacement) ? $opt_label . ' ' : '')
                         . '<input type="' . $this->_inputType . '"'
                         . ' name="' . $name . '"'

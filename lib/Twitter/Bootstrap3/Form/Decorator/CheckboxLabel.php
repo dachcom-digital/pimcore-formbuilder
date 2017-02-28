@@ -34,7 +34,13 @@ class Twitter_Bootstrap3_Form_Decorator_CheckboxLabel extends Zend_Form_Decorato
         $tag     = $this->getTag();
         $options = $this->getOptions();
         $element = $this->getElement();
-        
+        $elementId = $element->getId();
+
+        //add for attribute
+        if (!isset($options['for']) || empty($options['for'])) {
+            $options['for'] = $elementId;
+        }
+
         $xhtml = $this->_getOpenTag($tag, $options)
                . $content
                . $this->getSeparator()
