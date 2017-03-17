@@ -714,7 +714,11 @@ Formbuilder.comp.type.base = Class.create({
                     allowBlank: false,
                     value : value,
                     flex: 1,
-                    listeners: combolisteners
+                    listeners: {
+                        blur : function(){
+                            this.setValue(this.getValue().trim());
+                        }
+                    }
                 }
             ];
 
