@@ -8,7 +8,8 @@ trait Form
         'download',
         'html5file',
         'imagetag',
-        'notice'
+        'notice',
+        'recaptcha'
     ];
 
     protected static $validHtml5Fields = [
@@ -165,9 +166,9 @@ trait Form
             }
 
             if (isset($data[$key]) && !$form->isArray()) {
-                $valid = $form->isValid($data[$key]) && $valid;
+                $valid = $form->isValid($data[$key], $suppressCaptchaValidation) && $valid;
             } else {
-                $valid = $form->isValid($data) && $valid;
+                $valid = $form->isValid($data, $suppressCaptchaValidation) && $valid;
             }
         }
 

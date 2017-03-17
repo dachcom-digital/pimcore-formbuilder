@@ -205,13 +205,23 @@ class Builder
             return $params;
         }
 
+        $found = FALSE;
+
         foreach ($form->getElements() as $key => $element) {
             if ($element instanceof \Cgsmith\Form\Element\Recaptcha) {
+                $found = TRUE;
                 $element->setIgnore(TRUE);
                 $this->reCaptchaV2Key = $element->getName();
                 $params[$this->reCaptchaV2Key] = $params['g-recaptcha-response'];
                 unset($params['g-recaptcha-response']);
                 break;
+            }
+        }
+
+        if ($found === FALSE) {
+            /** @var \Zend_Form_SubForm $form */
+            foreach ($form->getSubForms() as $key => $subForm) {
+                $params = $this->parseFormParams($params, $subForm);
             }
         }
 
