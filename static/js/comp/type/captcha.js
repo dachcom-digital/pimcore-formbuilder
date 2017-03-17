@@ -3,6 +3,8 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
 
     type: "captcha",
 
+    showTranslationTab: false,
+
     getTypeName: function () {
         return t("captcha");
     },
@@ -47,11 +49,11 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 reCaptchaFS.hide();
                 break;
         }
-        
+
         if(imageFS.hidden === false) {
             this.checkPath(imgDir.getValue(), imgDir);
         }
-        
+
     },
 
     addCaptchaFS: function() {
@@ -216,9 +218,41 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
 
     },
 
-    getForm: function($super){
+    getForm: function() {
 
-        $super();
+        this.form = new Ext.form.FormPanel({
+            bodyStyle: "padding: 10px;",
+            labelWidth: 150,
+            defaultType: 'textfield',
+            items: [ this.getHookForm() ,{
+                xtype:'fieldset',
+                title: t('base settings'),
+                collapsible: true,
+                autoHeight:true,
+                defaultType: 'textfield',
+                items:[
+                    {
+                        xtype:"button",
+                        text: t("View API"),
+                        iconCls: "pimcore_icon_api",
+                        handler: this.viewApi.bind(this),
+                        style:{marginBottom : "5px"}
+                    },
+                    {
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        name: "name",
+                        value: this.datax.name,
+                        allowBlank:false,
+                        anchor: "100%",
+                        enableKeyEvents: true
+                    }
+
+                ]
+
+            }]
+
+        });
 
         var _me = this,
             captchaStore = new Ext.data.ArrayStore(
@@ -228,71 +262,71 @@ Formbuilder.comp.type.captcha = Class.create(Formbuilder.comp.type.base,{
                 }
             ),
             thisNode = new Ext.form.FieldSet({
-                title: t("This node"),
-                collapsible: true,
-                defaultType: 'textfield',
-                items:[
-                    {
-                        xtype: "combo",
-                        name: "captcha",
-                        fieldLabel: t("captcha type"),
-                        queryDelay: 0,
-                        displayField:"label",
-                        valueField: "value",
-                        mode: 'local',
-                        store: captchaStore,
-                        editable: false,
-                        triggerAction: 'all',
-                        anchor:"100%",
-                        value:this.datax.captcha,
-                        allowBlank:false,
-                        listeners: {
-                            scope:this,
-                            select: function(combo,record,index) {
+                    title: t("This node"),
+                    collapsible: true,
+                    defaultType: 'textfield',
+                    items:[
+                        {
+                            xtype: "combo",
+                            name: "captcha",
+                            fieldLabel: t("captcha type"),
+                            queryDelay: 0,
+                            displayField:"label",
+                            valueField: "value",
+                            mode: 'local',
+                            store: captchaStore,
+                            editable: false,
+                            triggerAction: 'all',
+                            anchor:"100%",
+                            value:this.datax.captcha,
+                            allowBlank:false,
+                            listeners: {
+                                scope:this,
+                                select: function(combo,record,index) {
 
-                                var wordFS = _me.wordFS,
-                                    imageFS = _me.imageFS,
-                                    reCaptchaFS = _me.reCaptchaFS;
+                                    var wordFS = _me.wordFS,
+                                        imageFS = _me.imageFS,
+                                        reCaptchaFS = _me.reCaptchaFS;
 
-                                switch(record.data.value){
-                                    case "dumb" :
-                                        wordFS.show();
-                                        imageFS.hide();
-                                        reCaptchaFS.hide();
-                                        break;
-                                    case "figlet" :
-                                        wordFS.show();
-                                        imageFS.hide();
-                                        reCaptchaFS.hide();
-                                        break;
-                                    case "image" :
-                                        wordFS.show();
-                                        imageFS.show();
-                                        reCaptchaFS.hide();
-                                        break;
-                                    case "reCaptcha" :
-                                        wordFS.hide();
-                                        imageFS.hide();
-                                        reCaptchaFS.show();
-                                        break;
-                                    default:
-                                        wordFS.hide();
-                                        imageFS.hide();
-                                        reCaptchaFS.hide();
-                                        break;
+                                    switch(record.data.value){
+                                        case "dumb" :
+                                            wordFS.show();
+                                            imageFS.hide();
+                                            reCaptchaFS.hide();
+                                            break;
+                                        case "figlet" :
+                                            wordFS.show();
+                                            imageFS.hide();
+                                            reCaptchaFS.hide();
+                                            break;
+                                        case "image" :
+                                            wordFS.show();
+                                            imageFS.show();
+                                            reCaptchaFS.hide();
+                                            break;
+                                        case "reCaptcha" :
+                                            wordFS.hide();
+                                            imageFS.hide();
+                                            reCaptchaFS.show();
+                                            break;
+                                        default:
+                                            wordFS.hide();
+                                            imageFS.hide();
+                                            reCaptchaFS.hide();
+                                            break;
+                                    }
+
                                 }
-
                             }
                         }
-                    }
 
-                ]
-            }
-        );
+                    ]
+                }
+            );
 
         this.form.add(thisNode);
         this.addCaptchaFS();
-        
+
         return this.form;
     }
 
