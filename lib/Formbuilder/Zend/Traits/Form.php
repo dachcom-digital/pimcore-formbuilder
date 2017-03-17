@@ -7,7 +7,8 @@ trait Form
     protected static $validFields = [
         'download',
         'html5file',
-        'imagetag'
+        'imagetag',
+        'notice'
     ];
 
     protected static $validHtml5Fields = [

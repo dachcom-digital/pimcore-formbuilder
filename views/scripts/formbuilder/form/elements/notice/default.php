@@ -1,0 +1,1 @@
+<p class="form-builder-notice"><?= $this->content; ?></p>

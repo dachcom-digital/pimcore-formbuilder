@@ -231,9 +231,9 @@ Formbuilder.comp.elem = Class.create({
 
         // the child-type "data" is a placeholder for all data components
         var allowedTypes = {
-            root: ["button","captcha","checkbox","country","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
-            displayGroup: ["button","captcha","checkbox","country","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
-            container: ["button","captcha","checkbox","country","file","hash","hidden","image","download","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
+            root: ["button","captcha","checkbox","country","file","hash","hidden","image","download","notice","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
+            displayGroup: ["button","captcha","checkbox","country","file","hash","hidden","image","download","notice","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"],
+            container: ["button","captcha","checkbox","country","file","hash","hidden","image","download","notice","multiCheckbox","multiselect","password","radio","reset","select","submit","text","textarea"]
         };
 
         //check against config
@@ -252,6 +252,7 @@ Formbuilder.comp.elem = Class.create({
             hash: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             hidden: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             image: [],
+            notice: [],
             multiCheckbox: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             multiselect: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
             password: ["alnum","alpha","baseName","boolean","callback","digits","dir","htmlEntities","int","pregReplace","stringToLower","stringToUpper","stringTrim","stripNewlines","stripTags"],
@@ -271,6 +272,7 @@ Formbuilder.comp.elem = Class.create({
             hash: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             hidden: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             image: [],
+            notice: [],
             multiCheckbox: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             multiselect: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],
             password: ["alnum","alpha","between","callback","creditCard","date","digits","emailAddress","float","greaterThan","hex","hostname","iban","identical","inArray","int","ip","isbn","lessThan","postCode","regex","stringLength"],

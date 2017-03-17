@@ -43,6 +43,7 @@
             <path>/plugins/Formbuilder/static/js/comp/type/download.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/text.js</path>
             <path>/plugins/Formbuilder/static/js/comp/type/textarea.js</path>
+            <path>/plugins/Formbuilder/static/js/comp/type/notice.js</path>
             <path>/plugins/Formbuilder/static/js/comp/filter/base.js</path>
             <path>/plugins/Formbuilder/static/js/comp/filter/alnum.js</path>
             <path>/plugins/Formbuilder/static/js/comp/filter/alpha.js</path>
