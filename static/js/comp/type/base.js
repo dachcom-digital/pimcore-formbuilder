@@ -554,15 +554,7 @@ Formbuilder.comp.type.base = Class.create({
                 value = "";
             }
 
-            var count = this.attributeSelector.query("button").length+ 1,
-                combolisteners = {
-                "afterrender": function (el) {
-                    el.getEl().parent().applyStyles({
-                        float: "left",
-                        "margin-right": "5px"
-                    });
-                }
-            };
+            var count = this.attributeSelector.query("button").length+ 1;
 
             var compositeField = new Ext.form.FieldContainer({
                 layout: 'hbox',
@@ -585,7 +577,7 @@ Formbuilder.comp.type.base = Class.create({
                         summaryDisplay: true,
                         allowBlank: false,
                         flex: 1,
-                        listeners: combolisteners
+                        margin: '0 10px 0 0'
                     },
                     {
                         xtype: "textfield",
@@ -596,7 +588,7 @@ Formbuilder.comp.type.base = Class.create({
                         summaryDisplay: true,
                         allowBlank: false,
                         flex: 1,
-                        listeners: combolisteners
+                        margin: '0 10px 0 0'
                     }
                 ]
 
@@ -677,15 +669,6 @@ Formbuilder.comp.type.base = Class.create({
 
             var count = selector.query("button").length+1;
 
-            var combolisteners = {
-                "afterrender": function (el) {
-                    el.getEl().parent().applyStyles({
-                        float: "left",
-                        "margin-right": "5px"
-                    });
-                }
-            };
-
             var items = [
                 {
                     xtype: "combo",
@@ -703,7 +686,7 @@ Formbuilder.comp.type.base = Class.create({
                     summaryDisplay: true,
                     allowBlank: false,
                     flex: 1,
-                    listeners: combolisteners
+                    margin: '0 10px 0 0'
                 },
                 {
                     xtype: "textfield",
@@ -741,7 +724,7 @@ Formbuilder.comp.type.base = Class.create({
                     summaryDisplay: true,
                     allowBlank: false,
                     flex: 1,
-                    listeners: combolisteners
+                    margin: '0 10px 0 0'
                 });
             }
 
@@ -823,15 +806,6 @@ Formbuilder.comp.type.base = Class.create({
 
             var count = selector.query("button").length+1;
 
-            var combolisteners = {
-                "afterrender": function (el) {
-                    el.getEl().parent().applyStyles({
-                        float: "left",
-                        "margin-right": "5px"
-                    });
-                }
-            };
-
             var compositeField = new Ext.form.FieldContainer({
                 layout: 'hbox',
                 hideLabel: true,
@@ -846,7 +820,7 @@ Formbuilder.comp.type.base = Class.create({
                         allowBlank: false,
                         value : name,
                         flex: 1,
-                        listeners: combolisteners
+                        margin: '0 10px 0 0'
                     },
                     {
                         xtype: "textfield",
@@ -857,7 +831,7 @@ Formbuilder.comp.type.base = Class.create({
                         allowBlank: false,
                         value : value,
                         flex: 1,
-                        listeners: combolisteners
+                        margin: '0 10px 0 0'
                     }
                 ]
             });
