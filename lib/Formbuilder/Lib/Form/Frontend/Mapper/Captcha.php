@@ -7,10 +7,11 @@ class Captcha extends MapAbstract
     /**
      * @param array  $element
      * @param string $formType
+     * @param array  $formInfo
      *
      * @return array
      */
-    public static function parse($element = [], $formType = '')
+    public static function parse($element = [], $formType = '', $formInfo = [])
     {
         //rearrange reCaptcha (v2) config
         if ($element['options']['captcha'] == 'reCaptcha' && isset($element['options']['captchaOptions'])) {

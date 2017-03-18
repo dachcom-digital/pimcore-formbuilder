@@ -7,10 +7,11 @@ class Text extends MapAbstract
     /**
      * @param array  $element
      * @param string $formType
-     *
+     * @param array  $formInfo
+
      * @return array
      */
-    public static function parse($element = [], $formType = '')
+    public static function parse($element = [], $formType = '', $formInfo = [])
     {
         if (!self::isHtml5Element($element)) {
             return $element;

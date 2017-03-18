@@ -148,7 +148,6 @@ class Builder
         }
 
         $formData = $this->parseFormData($formData, $formClass);
-
         $mappedClass = $this->getZendFormClass($formClass);
 
         return $this->instantiateForm($formData, $mappedClass, $formId, $locale);
@@ -177,7 +176,6 @@ class Builder
             }
 
             $formData = $this->parseFormData($subFormData, $formClass);
-
             $mappedClass = $this->getZendFormClass($formClass, TRUE);
 
             $form = $this->instantiateForm($formData, $mappedClass, $formId, $locale);
@@ -380,6 +378,8 @@ class Builder
      */
     protected function parseFormData($form, $formType = 'Default')
     {
+        $formInfo = array_diff($form, ['elements' => []]);
+
         foreach ($form['elements'] as $elementName => &$element) {
             if (!is_array($element)) {
                 continue;
@@ -397,7 +397,7 @@ class Builder
             if (file_exists(FORMBUILDER_PATH . '/lib/Formbuilder/Lib/Form/Frontend/Mapper/' . ucfirst($element['type']) . '.php')) {
                 /** @var Mapper\MapAbstract $className */
                 $className = '\\Formbuilder\\Lib\\Form\\Frontend\\Mapper\\' . ucfirst($element['type']);
-                $element = $className::parse($element, $formType);
+                $element = $className::parse($element, $formType, $formInfo);
             }
         }
 

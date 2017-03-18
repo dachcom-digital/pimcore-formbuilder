@@ -2,7 +2,7 @@
 
 namespace Formbuilder\Lib\Form\Frontend\Mapper;
 
-abstract class MapAbstract
+class Hash extends MapAbstract
 {
     /**
      * @param array  $element
@@ -13,6 +13,10 @@ abstract class MapAbstract
      */
     public static function parse($element = [], $formType = '', $formInfo = [])
     {
+        if ($formInfo['useAjax'] === TRUE) {
+            $element['options']['ajax'] = TRUE;
+        }
+
         return $element;
     }
 }

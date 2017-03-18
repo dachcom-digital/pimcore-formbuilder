@@ -7,10 +7,11 @@ class File extends MapAbstract
     /**
      * @param array  $element
      * @param string $formType
-     *
+     * @param array  $formInfo
+
      * @return array
      */
-    public static function parse($element = [], $formType = '')
+    public static function parse($element = [], $formType = '', $formInfo = [])
     {
         $element['options']['destination'] = PIMCORE_WEBSITE_PATH . '/' . ltrim($element['options']['destination'], '/');
 

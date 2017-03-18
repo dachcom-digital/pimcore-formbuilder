@@ -65,6 +65,7 @@
 "maxFileSize","Maximale Dateigröße"
 "hash","Hash"
 "Salt","Salt"
+"We recommend using the salt option for the element - two hashes with same names and different salts would not collide","Wir emphehlen die Verwendung der salt Option für das Element- damit zwei Hashes mit dem gleichen Namen und unterschiedlichen Salts nicht kollidieren"
 "image","Bild"
 "multiCheckbox","Multi Checkbox"
 "Option","Option"
