@@ -21,23 +21,26 @@ Formbuilder.comp.type.radio = Class.create(Formbuilder.comp.type.base,{
             title: t("This node"),
             collapsible: true,
             defaultType: 'textfield',
-            items:[{
-                xtype: "textfield",
-                name: "separator",
-                fieldLabel: t("separator"),
-                anchor: "100%"
-            },
+            items:[
+                {
+                    xtype: "textfield",
+                    name: "separator",
+                    fieldLabel: t("separator"),
+                    anchor: "100%",
+                    value: this.datax.separator
+                },
                 {
                     xtype: "checkbox",
                     name: "registerInArrayValidator",
                     fieldLabel: t("registerInArrayValidator"),
-                    checked:false
+                    checked: false,
+                    value: this.datax.registerInArrayValidator
                 },
                 {
                     xtype: "checkbox",
                     name: "inline",
                     fieldLabel: t("show inline fields"),
-                    checked:false,
+                    checked: false,
                     value: this.datax.inline
                 },
 

@@ -168,7 +168,7 @@ Class Processor
 
         if ($cmdEv->stopped()) {
             $customMail = $cmdEv->last();
-            if ($customMail instanceof \Formbuilder\Lib\Email\FormbuilderMail) {
+            if ($customMail instanceof FormbuilderMail) {
                 $mail = $customMail;
             }
         }
@@ -276,17 +276,16 @@ Class Processor
      *
      * @param \Zend_form $form
      * @param array      $dat
-     * @param bool       $allowEmptyValues
      *
      * @return array
      */
-    private function getFormValues($form, $dat = [], $allowEmptyValues = TRUE)
+    private function getFormValues($form, $dat = [])
     {
         foreach ($form->getElementsAndSubFormsOrdered() as $element) {
             if ($element instanceof \Zend_Form) {
-                $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
+                $dat = $this->getFormValues($element, $dat);
             } elseif ($element instanceof \Zend_Form_SubForm) {
-                $dat = $this->getFormValues($element, $dat, $allowEmptyValues);
+                $dat = $this->getFormValues($element, $dat);
             } elseif ($element instanceof \Zend_Form_Element) {
                 $label = $element->getLabel();
                 $value = $element->getValue();
@@ -299,6 +298,13 @@ Class Processor
 
                 if (empty($label)) {
                     $label = $name;
+                }
+
+                $allowEmptyValues = FALSE;
+
+                //allow empty values from upload field: value is always empty at this state.
+                if ($element instanceof \Formbuilder\Zend\Form\Element\Html5File) {
+                    $allowEmptyValues = TRUE;
                 }
 
                 if (empty($value) && $allowEmptyValues === FALSE) {

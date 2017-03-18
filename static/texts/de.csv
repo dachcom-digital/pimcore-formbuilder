@@ -21,6 +21,7 @@
 "allowEmpty","Leeres Feld erlauben"
 "required","Benötigt"
 "value","Wert"
+"empty multiOption first value","Belassen Sie das 1. Optionsfeld leer um den Standardwert zu ignorieren."
 "attribute name","Attribut Name"
 "attribute value","Attribut Wert"
 "label translation","&raquo;Label&laquo; Übersetzung"
@@ -52,8 +53,9 @@
 "displayGroup","Fieldset"
 "container","Container"
 "legend","Legende"
-"single multiOption","Option",
-"translation","Übersetzung",
+"single multiOption","Option"
+"translation","Übersetzung"
+"multiOptions","Auswahlfelder"
 "multiOptions translation","MultiOptions Übersetzung"
 "legend translation","Legend Übersetzung"
 "original legend","Original Legende"

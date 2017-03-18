@@ -53,8 +53,9 @@
 "displayGroup","Fieldset"
 "Container","Container"
 "legend","Legend"
-"single multiOption","Option",
-"translation","Translation",
+"single multiOption","Option"
+"translation","Translation"
+"multiOptions","Multi Options"
 "multiOptions translation","MultiOptions translation"
 "legend translation","Legend translation"
 "original legend","Original legend"
@@ -71,6 +72,7 @@
 "multiCheckbox","Multi Checkbox"
 "Option","Option"
 "Value","Value"
+"empty multiOption first value","leave first row 'option' field empty to set default select option as blank"
 "multiSelect","Multi select"
 "radio","Radio"
 "select","Select"

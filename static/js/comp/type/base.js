@@ -793,7 +793,8 @@ Formbuilder.comp.type.base = Class.create({
 
     generateMultiOptionsRepeaterField: function( allowFirstOptionsEmpty ) {
 
-        var selector = null;
+        var selector = null,
+            metaDataCounter = 0;
 
         var addMetaData = function (name, value) {
 
@@ -817,7 +818,7 @@ Formbuilder.comp.type.base = Class.create({
                         fieldLabel: t("Option"),
                         anchor: "100%",
                         summaryDisplay: true,
-                        allowBlank: false,
+                        allowBlank: allowFirstOptionsEmpty === true && metaDataCounter === 0,
                         value : name,
                         flex: 1,
                         margin: '0 10px 0 0'
@@ -852,6 +853,8 @@ Formbuilder.comp.type.base = Class.create({
             selector.add(compositeField);
             selector.updateLayout();
 
+            metaDataCounter++;
+
         }.bind(this);
 
         var items = [
@@ -885,7 +888,7 @@ Formbuilder.comp.type.base = Class.create({
 
         selector = new Ext.form.FieldSet({
 
-            title: "multiOptions",
+            title: t("multiOptions"),
             collapsible: false,
             autoHeight:true,
             width: 700,

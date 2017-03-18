@@ -9,7 +9,12 @@ trait Form
         'html5file',
         'imagetag',
         'notice',
-        'recaptcha'
+        'recaptcha',
+        'country'
+    ];
+
+    protected static $bootstrapInjectionFields = [
+        'country'
     ];
 
     protected static $validHtml5Fields = [
@@ -76,9 +81,9 @@ trait Form
      *
      * @return array
      */
-    public function getValidHtml5Elements($forClasses = FALSE)
+    public function getValidBootstrapInjectionElements($forClasses = FALSE)
     {
-        $elements = self::$validHtml5Fields;
+        $elements = array_merge(self::$bootstrapInjectionFields, self::$validHtml5Fields);
 
         if ($forClasses == TRUE) {
             $elements = array_diff($elements, ['html5range']);
@@ -92,9 +97,9 @@ trait Form
      *
      * @return bool
      */
-    protected function isValidHtml5Element($type = '')
+    protected function isValidBootstrapInjectionElement($type = '')
     {
-        return in_array(strtolower($type), self::$validHtml5Fields);
+        return in_array(strtolower($type), array_merge(self::$bootstrapInjectionFields, self::$validHtml5Fields));
     }
 
     /**
@@ -216,11 +221,11 @@ trait Form
         }
 
         //finished if we're not a bootstrap form!
-        if (!$this->isBootstrapForm && !$this->isValidHtml5Element($type)) {
+        if (!$this->isBootstrapForm && !$this->isValidBootstrapInjectionElement($type)) {
             return parent::createElement($type, $name, $options);
         }
 
-        if (in_array(strtolower($type), $this->getValidHtml5Elements(TRUE))) {
+        if (in_array(strtolower($type), $this->getValidBootstrapInjectionElements(TRUE))) {
             if (NULL === $options) {
                 $options = ['class' => 'form-control'];
             } else if (array_key_exists('class', $options)) {
