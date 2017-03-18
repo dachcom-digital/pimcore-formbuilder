@@ -21,7 +21,8 @@ class Captcha extends MapAbstract
             $element['options'] = [
                 'secretKey' => $captchaOptions['secretKey'],
                 'siteKey'   => $captchaOptions['siteKey'],
-                'classes'   => [$element['options']['class']]
+                'classes'   => [$element['options']['class']],
+                'order'     => $element['options']['order']
             ];
 
             unset($element['options']['captchaOptions']);
