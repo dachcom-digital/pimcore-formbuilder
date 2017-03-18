@@ -109,7 +109,7 @@ trait Form
      */
     protected function isValidFormBuilderElement($type = '')
     {
-        return in_array(strtolower($type), self::$validFields) || in_array(strtolower($type), self::$validHtml5Fields);
+        return in_array(strtolower($type), array_merge(self::$validFields, self::$validHtml5Fields));
     }
 
     /**
