@@ -125,8 +125,3 @@
 .pimcore_icon_api{
     background: url(/plugins/Formbuilder/static/img/help.svg) left center no-repeat !important;
 }
-
-.pimcore_area_entry .pimcore_area_edit_button,
-.pimcore_tag_area .pimcore_area_edit_button {
-    z-index:99;
-}

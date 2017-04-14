@@ -57,3 +57,7 @@
     visibility: hidden;
     height: 0;
 }
+
+.pimcore_area_form .pimcore_area_edit_button {
+    top:-32px !important;
+}
