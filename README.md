@@ -18,11 +18,8 @@ It's totally rewritten, offers a lot of new features and requires Pimcore 4.0.
 ## Installation
 Some installation advices. 
 
-**Handcrafted Installation**
-1. Download Plugin  
-2. Rename it to `Formbuilder`  
-3. Place it in your plugin directory  
-4. Activate & install it through backend 
+**Handcrafted Installation**  
+Because of additional dependencies you need install this plugin via composer.
 
 **Composer Installation**  
 1. Add code below to your `composer.json`   
