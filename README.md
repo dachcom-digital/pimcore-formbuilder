@@ -29,17 +29,24 @@ Because of additional dependencies you need install this plugin via composer.
 "require" : {
     "dachcom-digital/formbuilder" : "1.2.6",
 }
+
 ```
 
+## Usage
+Just open a document and place the `Formular` area brick like any other bricks via drag and drop.
+Use the edit button at the right top corner to configure your form.
+
+## Misc
+
 **Ajax**  
-If you want to use Ajaxforms, you need to load the FormBuilder Javascript Library. 
+If you want to use ajax driven forms you need to load the FormBuilder Javascript Library. 
 For example in your `lib/Website/Controller/Action.php`:
 
 ```php
 $this->view->headScript()->appendFile('/plugins/Formbuilder/static/js/frontend/formbuilder.js');
 ```
 
-Of course it's up to you, to modify this file for your needs.  
+Of course it's up to you to modify this file for your needs.  
 **Attention:** Be sure that jQuery has been initialized, before you load formbuilder.js.
 
 **CSS**  
