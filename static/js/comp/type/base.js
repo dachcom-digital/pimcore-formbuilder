@@ -430,12 +430,14 @@ Formbuilder.comp.type.base = Class.create({
                 {
                     xtype: "textfield",
                     name: "custom_class",
+                    value: this.datax.custom_class,
                     fieldLabel: t("custom class"),
                     anchor: "100%"
                 },
                 {
                     xtype: "textfield",
                     name: "custom_action",
+                    value: this.datax.custom_action,
                     fieldLabel: t("static action"),
                     anchor: "100%"
                 }
