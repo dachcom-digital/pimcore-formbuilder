@@ -1,1 +1,0 @@
-<?= $this->template('formbuilder/form/form.php', ['form' => $this->form]); ?>

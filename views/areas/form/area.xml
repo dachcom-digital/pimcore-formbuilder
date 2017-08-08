@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<zend-config>
-    <id>form</id>
-    <name>Formular</name>
-    <description></description>
-    <author>dachcom.com</author>
-    <version>1.0</version>
-</zend-config>

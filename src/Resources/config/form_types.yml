@@ -1,0 +1,6 @@
+services:
+
+    form_builder.form_type.text:
+        class: FormBuilderBundle\Form\Type\TextType
+        tags:
+            - {name: form_builder.form_type, alias: text_type}

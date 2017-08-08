@@ -1,20 +1,32 @@
 {
     "name": "dachcom-digital/formbuilder",
-    "type": "pimcore-plugin",
+    "type": "pimcore-bundle",
     "license": "GPL-3.0+",
-    "description": "Pimcore 4.x Formbuilder - create forms easily!",
+    "description": "Pimcore 5.x FormBuilder - create forms easily!",
     "keywords": ["pimcore", "formbuilder"],
     "homepage": "https://github.com/dachcom-digital/pimcore-formbuilder",
     "authors": [
-       {
-            "name": "Stefan Hagspiel",
-            "homepage": "http://www.dachcom-digital.ch",
+        {
+            "name": "DACHCOM.DIGITAL Stefan Hagspiel",
+            "email": "shagspiel@dachcom.ch",
+            "homepage": "http://www.dachcom.com/",
             "role": "Developer"
-       }
+        }
     ],
 
+    "autoload": {
+        "psr-4": {
+            "FormBuilderBundle\\": "src/"
+        }
+    },
+
+    "extra": {
+        "pimcore": {
+            "bundles": [
+                "FormBuilderBundle\\FormBuilderBundle"
+            ]
+        }
+    },
     "require": {
-        "pimcore/installer-plugin": ">=1",
-        "cgsmith/zf1-recaptcha-2": "1.0.2"
     }
 }

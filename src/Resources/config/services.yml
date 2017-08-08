@@ -1,0 +1,86 @@
+imports:
+    - { resource: form_types.yml }
+
+services:
+
+    # tool installer
+    form_builder.tool.installer:
+        class: FormBuilderBundle\Tool\Install
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger }
+
+    # configuration
+    form_builder.configuration:
+        class: FormBuilderBundle\Configuration\Configuration
+
+    # session: configurator
+    form_builder.session.configurator:
+        class: FormBuilderBundle\Session\SessionConfigurator
+        tags:
+            - { name: pimcore.session.configurator }
+
+    # area brick
+    form_builder.area.brick.form:
+        class: FormBuilderBundle\Document\Areabrick\Form\Form
+        arguments:
+            - '@session'
+            - '@form_builder.manager.form'
+            - '@form_builder.manager.preset'
+            - '@form_builder.form_builder'
+            - '@form_builder.manager.template'
+        tags:
+            - { name: pimcore.area.brick, id: formbuilder_form }
+
+    # manager: form
+    form_builder.manager.form:
+        class: FormBuilderBundle\Manager\FormManager
+
+    # manager: preset
+    form_builder.manager.preset:
+        class: FormBuilderBundle\Manager\PresetManager
+        arguments:
+            - '@form_builder.configuration'
+
+    # manager: template (form themes, type templates)
+    form_builder.manager.template:
+        class: FormBuilderBundle\Manager\TemplateManager
+        arguments:
+            - '@form_builder.configuration'
+
+    # registry: form_types
+    form_builder.registry.form_type:
+        class: FormBuilderBundle\Registry\FormTypeRegistry
+        arguments:
+            - FormBuilderBundle\Form\FormTypeInterface
+
+    # form builder
+    form_builder.form_builder:
+        class: FormBuilderBundle\Form\Builder
+        arguments:
+            - '@request_stack'
+            - '@form_builder.manager.form'
+            - '@form.factory'
+            - '@form_builder.registry.form_type'
+
+    # event: form_types
+    form_builder.core_listener.request:
+        class: FormBuilderBundle\EventListener\Core\RequestListener
+        arguments:
+            - '@form_builder.form_builder'
+            - '@event_dispatcher'
+            - '@session'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    #
+    # BACKEND
+    #
+
+    # backend form builder
+    form_builder.backend.form_builder:
+        class: FormBuilderBundle\Backend\Form\Builder
+        arguments:
+            - '@form_builder.configuration'
+            - '@form_builder.registry.form_type'
+            - '@form_builder.manager.template'

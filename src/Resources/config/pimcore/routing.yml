@@ -1,0 +1,36 @@
+form_builder.controller.admin.get_tree:
+    path: /admin/formbuilder/settings/get-tree
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:getTree }
+form_builder.controller.admin.get_settings:
+    path: /admin/formbuilder/settings/get-settings
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:getSettings }
+
+form_builder.controller.admin.get_form:
+    path: /admin/formbuilder/settings/get-form
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:getForm }
+form_builder.controller.admin.add_form:
+    path: /admin/formbuilder/settings/add-form
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:addForm }
+form_builder.controller.admin.save_form:
+    path: /admin/formbuilder/settings/save-form
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:saveForm }
+form_builder.controller.admin.delete_form:
+    path: /admin/formbuilder/settings/delete-form
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:deleteForm }
+
+form_builder.controller.admin.get_export_file:
+    path: /admin/formbuilder/settings/get-export-file/{id}/{name}
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:getExportFile }
+form_builder.controller.admin.get_import_file:
+    path: /admin/formbuilder/settings/get-import/
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:getImportFile }
+form_builder.controller.admin.import_form:
+    path: /admin/formbuilder/settings/import-form/{id}/{admin_sid}
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:importForm }
+
+form_builder.controller.admin.check_path:
+    path: /admin/formbuilder/settings/check-path
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:checkPath }
+form_builder.controller.admin.get_group_templates:
+    path: /admin/formbuilder/settings/get-group-templates
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:getGroupTemplates }

@@ -1,0 +1,103 @@
+<div class="form-config-window">
+
+    <div class="row">
+
+        <div class="col-xs-6">
+
+            <div class="form-group">
+                <label for="form">{{'form'|trans({}, 'admin') }}</label><br>
+                {{ pimcore_select('formName', { width: 240, store: formStore }) }}
+            </div>
+
+        </div>
+
+        <div class="col-xs-6">
+
+            <div class="form-group">
+                <label for="formType">{{ 'form template'|trans({}, 'admin') }}</label><br>
+                {{ pimcore_select('formType', { width: 240, store: formTemplateStore }) }}
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if availableFormPresets is defined %}
+
+        <div class="row">
+
+            <div class="col-xs-6">
+
+                <div class="form-group">
+                    <label for="form">{{ 'form preset'|trans({}, 'admin') }}</label><br>
+                    {{ pimcore_select('formPreset', { width: 240, store: formPresetStore }) }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-12">
+
+                <div class="preview-fields clearfix">
+
+                    <h5>{{ 'Preset Info'|trans({}, 'admin') }}</h5>
+
+                    {% for formPresetPreview in formPresetsInfo %}
+
+                        <div class="preview-field" data-name="{{ formPresetPreview.presetName }}">
+
+                            {% if formPresetPreview.description is not empty %}
+                                <div class="description">{{ formPresetPreview.description }}</div>
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <div class="row">
+
+        <div class="col-xs-12">
+
+            <div class="form-group">
+                <label for="sendMailTemplate">{{ 'mail template'|trans({}, 'admin') }}</label><br>
+                {{ pimcore_href('sendMailTemplate', {'width': 505, 'types': ['document'], 'subtypes': { 'document': ['email'] } }) }}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-xs-6">
+
+            <div class="form-group">
+                <label for="userCopy">{{ 'send copy to user'|trans({}, 'admin') }}</label><br>
+                {{ pimcore_checkbox('userCopy') }}
+            </div>
+
+        </div>
+
+        <div class="col-xs-6">
+
+            <div class="form-group">
+                <label for="sendCopyMailTemplate">{{'copy mail template'|trans({}, 'admin') }}</label><br>
+                {{ pimcore_href('sendCopyMailTemplate', {'width': 240, 'types': ['document'], 'subtypes': { 'document': ['email'] } }) }}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

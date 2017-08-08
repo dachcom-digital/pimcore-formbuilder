@@ -1,0 +1,118 @@
+form_builder:
+
+    backend_base_field_type_groups:
+        -
+            id: text_fields
+            text: Text Fields
+            icon_class: form_builder_icon_container
+        -
+            id: choice_fields
+            text: Choice Fields
+            icon_class: form_builder_icon_container
+        -
+            id: datetime_fields
+            text: DateTime Fields
+            icon_class: form_builder_icon_container
+        -
+            id: other_fields
+            text: Other Fields
+            icon_class: form_builder_icon_container
+        -
+            id: field_groups
+            text: Field Groups
+            icon_class: form_builder_icon_container
+        -
+            id: hidden_fields
+            text: Hidden Fields
+            icon_class: form_builder_icon_container
+        -
+            id: buttons
+            text: Buttons
+            icon_class: form_builder_icon_container
+
+    backend_base_field_type_config:
+        tabs:
+            -
+                id: default
+                label: 'Default'
+        display_groups:
+            -
+                tab_id: default
+                id: base
+                label: 'Base'
+            -
+                tab_id: default
+                id: hook
+                label: 'Hook'
+            -
+                tab_id: default
+                id: attributes
+                label: 'Attributes'
+        fields:
+            -
+                display_group_id: base
+                id: label
+                type: textfield
+                label: 'Label'
+                config: ~
+            -
+                display_group_id: base
+                id: value
+                type: textfield
+                label: 'Value'
+                config: ~
+            -
+                display_group_id: base
+                id: required
+                type: checkbox
+                label: 'Required'
+                config: ~
+            -
+                display_group_id: base
+                id: allow_empty
+                type: checkbox
+                label: 'Allow Empty'
+                config: ~
+
+            -
+                display_group_id: hook
+                id: hook_custom_class
+                type: textfield
+                label: 'Custom Class'
+                config: ~
+            -
+                display_group_id: hook
+                id: hook_custom_action
+                type: textfield
+                label: 'Custom Action'
+                config: ~
+
+            -
+                display_group_id: hook
+                id: attr
+                type: options_repeater
+                label: 'Multi Options Repeater'
+                config:
+                    options:
+                        - ['class','class']
+                        - ['id','id']
+                        - ['style','style']
+                        - ['maxlegth','maxlength']
+                        - ['disabled','disabled']
+                        - ['readonly','readonly']
+                        - ['size','size']
+                        - ['title','title']
+                        - ['onchange','onchange']
+                        - ['onclick','onclick']
+                        - ['ondbclick','ondbclick']
+                        - ['onfocus','onfocus']
+                        - ['onkeydown','onkeydown']
+                        - ['onkeypress','onkeypress']
+                        - ['onkeyup','onkeyup']
+                        - ['onmousedown','onmousedown']
+                        - ['onmousemove','onmousemove']
+                        - ['onmouseout','onmouseout']
+                        - ['onmouseover','onmouseover']
+                        - ['onmouseup','onmouseup']
+                        - ['onselect','onselect']
+
