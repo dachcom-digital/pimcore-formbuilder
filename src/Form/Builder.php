@@ -87,9 +87,20 @@ class Builder
         $formOptions = array_merge($defaults, $userOptions);
 
         $request = $this->requestStack->getCurrentRequest();
-
         $formEntity = $this->formManager->getById($id);
-        $builder = $this->formFactory->createNamedBuilder('formbuilder_' . $formEntity->getId());
+        $formConfig = $formEntity->getConfig();
+
+        $formAttributes = [];
+        if($formConfig['noValidate'] === FALSE) {
+            $formAttributes['novalidate'] = 'novalidate';
+        }
+
+        $builder = $this->formFactory->createNamedBuilder(
+            'formbuilder_' . $formEntity->getId(),
+            'Symfony\Component\Form\Extension\Core\Type\FormType',
+            null,
+            ['attr' => $formAttributes]
+        );
 
         /** @var FormField $field */
         foreach ($formEntity->getFields() as $field) {

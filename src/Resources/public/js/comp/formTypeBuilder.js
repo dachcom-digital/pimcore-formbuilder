@@ -3,7 +3,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     form: null,
 
-    formIsValid: false,
+    formIsValid: true,
 
     formHandler: null,
 

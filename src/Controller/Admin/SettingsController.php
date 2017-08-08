@@ -29,7 +29,7 @@ class SettingsController extends AdminController
                 'text'          => $form->getName(),
                 'icon'          => '',
                 'leaf'          => TRUE,
-                'iconCls'       => 'Formbuilder_icon_root',
+                'iconCls'       => 'form_builder_icon_root',
                 'allowChildren' => FALSE
 
             ];

@@ -63,13 +63,21 @@ services:
             - '@form.factory'
             - '@form_builder.registry.form_type'
 
-    # event: form_types
+    # core event: request
     form_builder.core_listener.request:
         class: FormBuilderBundle\EventListener\Core\RequestListener
         arguments:
             - '@form_builder.form_builder'
             - '@event_dispatcher'
             - '@session'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # event: mail
+    form_builder.event_listener.mail:
+        class: FormBuilderBundle\EventListener\MailListener
+        arguments:
+            - '@templating'
         tags:
             - { name: kernel.event_subscriber }
 

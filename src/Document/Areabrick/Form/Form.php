@@ -120,7 +120,7 @@ class Form extends AbstractTemplateAreabrick
         $noteMessage = '';
         $noteError = FALSE;
 
-        $sendCopy = $this->getDocumentTag($info->getDocument(), 'checkbox', 'userCopy')->getData() === '1';
+        $sendCopy = $this->getDocumentTag($info->getDocument(), 'checkbox', 'userCopy')->getData() === TRUE;
         $formPreset = $formPresetSelection->getData();
 
         if (empty($formPreset) || is_null($formPreset)) {
@@ -175,21 +175,19 @@ class Form extends AbstractTemplateAreabrick
             return FALSE;
         }
 
-        $_mailTemplate = NULL;
-        $_copyMailTemplate = NULL;
 
-        $_mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();
-        $_copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendCopyMailTemplate')->getElement();
+        $mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();
+        $copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendCopyMailTemplate')->getElement();
 
         $mailTemplateId = NULL;
         $copyMailTemplateId = NULL;
 
-        if ($_mailTemplate instanceof Document\Email) {
-            $mailTemplateId = $_mailTemplate->getId();
+        if ($mailTemplate instanceof Document\Email) {
+            $mailTemplateId = $mailTemplate->getId();
         }
 
-        if ($sendCopy === TRUE && $_copyMailTemplate instanceof Document\Email) {
-            $copyMailTemplateId = $_copyMailTemplate->getId();
+        if ($sendCopy === TRUE && $copyMailTemplate instanceof Document\Email) {
+            $copyMailTemplateId = $copyMailTemplate->getId();
         } else { //disable copy!
             $sendCopy = FALSE;
         }

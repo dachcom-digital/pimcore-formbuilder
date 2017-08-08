@@ -100,7 +100,7 @@ class RequestListener implements EventSubscriberInterface
                 $sessionBag->remove('form_configuration_' . $formId);
             }
 
-            $submissionEvent = new SubmissionEvent($formConfiguration, $formData);
+            $submissionEvent = new SubmissionEvent($request, $formConfiguration, $formData);
             $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
             $response = new RedirectResponse('?send=true');

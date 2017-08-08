@@ -253,10 +253,10 @@ class Install extends AbstractInstaller
 
         $data = [
             'name'       => $elementName,
-            'module'     => 'FormbuilderBundle',
+            'module'     => 'FormBuilderBundle',
             'controller' => 'Email',
-            'action'     => 'default',
-            'template'   => 'FormbuilderBundle:Email:email.html.twig',
+            'action'     => 'email',
+            'template'   => 'FormBuilderBundle:Email:email.html.twig',
             'type'       => 'email',
             'priority'   => 0
         ];

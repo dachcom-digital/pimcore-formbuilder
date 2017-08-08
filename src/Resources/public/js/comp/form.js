@@ -53,7 +53,7 @@ Formbuilder.comp.form = Class.create({
 
         this.formDate = formData.date;
 
-        this.formConfig = formData.config;
+        this.formConfig = formData.config.length === 0 ? {} : formData.config;
 
         this.formFields = formData.fields;
 
@@ -917,7 +917,8 @@ Formbuilder.comp.form = Class.create({
                 return false;
             }
 
-            var formFields = Ext.encode(formData);
+            var formConfig = Ext.encode(this.formConfig),
+                formFields = Ext.encode(formData);
 
             Ext.Ajax.request({
                 url: '/admin/formbuilder/settings/save-form',
@@ -925,7 +926,7 @@ Formbuilder.comp.form = Class.create({
                 params: {
                     form_id: this.formId,
                     form_name: this.formName,
-                    form_config: Ext.encode(this.formConfig),
+                    form_config: formConfig,
                     form_fields: formFields
                 },
                 success: this.saveOnComplete.bind(this),
