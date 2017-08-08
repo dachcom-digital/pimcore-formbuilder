@@ -156,6 +156,7 @@ class Form extends AbstractTemplateAreabrick
             $viewVars = array_merge(
                 $viewVars,
                 [
+                    'form_template' => NULL,
                     'form'          => NULL,
                     'messages'      => NULL,
                     'formId'        => NULL,
