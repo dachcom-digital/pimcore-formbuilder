@@ -1,0 +1,17 @@
+{% macro form_builder_form_head() %}
+{% endmacro %}
+
+{% macro form_builder_form_foot() %}
+{% endmacro %}
+
+{% macro form_builder_form_message(flash_messages) %}
+
+    {% for label, messages in flash_messages %}
+        {% for message in messages %}
+            <div class="message message-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+{% endmacro %}

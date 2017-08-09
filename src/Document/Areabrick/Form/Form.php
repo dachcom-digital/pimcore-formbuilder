@@ -175,7 +175,6 @@ class Form extends AbstractTemplateAreabrick
             return FALSE;
         }
 
-
         $mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();
         $copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendCopyMailTemplate')->getElement();
 
@@ -214,7 +213,8 @@ class Form extends AbstractTemplateAreabrick
             $formTemplate = 'form_div_layout.html.twig';
         }
 
-        $viewVars['form_template'] = $formTemplate;
+        $viewVars['form_template'] = '@FormBuilder/Form/Theme/' . $formTemplate;
+        $viewVars['form_block_template'] = '@FormBuilder/Form/Theme/Macro/' . $formTemplate;
         $viewVars['form'] = $form->createView();
 
         $viewVars = array_merge(

@@ -226,7 +226,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
             //create "display name" field.
             form.add(new Ext.form.TextField({
-                fieldLabel: 'Display name',
+                fieldLabel: t('form_builder_field_display_name'),
                 name: 'display_name',
                 value: this.storeData.display_name ? this.storeData.display_name : this.typeName,
                 allowBlank: false,
@@ -236,7 +236,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
             //create "name" field.
             form.add(new Ext.form.TextField({
-                fieldLabel: 'Name',
+                fieldLabel:  t('form_builder_field_name'),
                 name: 'name',
                 value: this.storeData.name ? this.storeData.name : this.generateUniqueFieldName(),
                 allowBlank: false,
@@ -256,10 +256,11 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 data : this.formTypeTemplates
             });
 
+            //create "template" field
             form.add(new Ext.form.ComboBox({
-                fieldLabel: 'Width',
-                name: 'width',
-                value: this.storeData.width,
+                fieldLabel: t('form_builder_field_template'),
+                name: 'template',
+                value: this.storeData.template,
                 queryDelay: 0,
                 displayField: 'key',
                 valueField: 'value',

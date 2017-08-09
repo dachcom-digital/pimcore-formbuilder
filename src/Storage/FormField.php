@@ -24,7 +24,7 @@ class FormField
     /**
      * @var string
      */
-    private $width;
+    private $template;
 
     /**
      * @var int
@@ -116,13 +116,13 @@ class FormField
     }
 
     /**
-     * @param string $width
+     * @param string $template
      *
      * @return FormField
      */
-    public function setWidth($width)
+    public function setTemplate($template)
     {
-        $this->width = $width;
+        $this->template = $template;
 
         return $this;
     }
@@ -130,9 +130,9 @@ class FormField
     /**
      * @return string
      */
-    public function getWidth()
+    public function getTemplate()
     {
-        return $this->width;
+        return $this->template;
     }
 
     /**

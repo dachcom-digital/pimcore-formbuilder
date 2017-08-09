@@ -137,7 +137,7 @@ class FormManager
             $field->setDisplayName($fieldDisplayName);
             $field->setOrder($counter);
             $field->setType($fieldType);
-            $field->setWidth($this->getValue($fieldData, 'width', 'full'));
+            $field->setTemplate($this->getValue($fieldData, 'template', 'default'));
 
             $field->setOptions($this->getFieldOptions($fieldData));
 

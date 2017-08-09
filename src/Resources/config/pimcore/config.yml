@@ -9,10 +9,6 @@ form_builder:
                 key: 'form_div_layout'
                 default: false
             -
-                value: 'form_table_layout.html.twig'
-                key: 'form_table_layout'
-                default: false
-            -
                 value: 'bootstrap_3_layout.html.twig'
                 key: 'bootstrap_3_layout'
                 default: true
@@ -20,23 +16,11 @@ form_builder:
                 value: 'bootstrap_3_horizontal_layout.html.twig'
                 key: 'bootstrap_3_horizontal_layout'
                 default: false
-            -
-                value: 'foundation_5_layout.html.twig'
-                key: 'foundation_5_layout'
-                default: false
         field:
             templates:
                 -
-                    value: one_third
-                    key: 'One Third'
-                    default: false
-                -
-                    value: half
-                    key: 'Half'
-                    default: false
-                -
-                    value: full
-                    key: 'Full'
+                    value: default
+                    key: 'Default'
                     default: true
     admin:
         active_elements:

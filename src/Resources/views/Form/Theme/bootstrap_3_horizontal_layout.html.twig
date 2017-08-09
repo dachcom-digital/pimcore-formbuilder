@@ -1,0 +1,13 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block form_row -%}
+    <div class="{{ attr['field-template'] is defined ? attr['field-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock form_row %}
+
+{% block button_row -%}
+    <div class="{{ attr['field-template'] is defined ? attr['field-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock button_row %}

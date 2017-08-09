@@ -34,7 +34,7 @@ class TextType extends AbstractType
     public function build(FormBuilderInterface $builder, FormField $field)
     {
         $options = $this->parseOptions($field->getOptions());
-        $options['attr']['width'] = $field->getWidth();
+        $options['attr']['field-template'] = $field->getTemplate();
 
         $builder->add($field->getName(), TypeTextType::class, $options);
     }

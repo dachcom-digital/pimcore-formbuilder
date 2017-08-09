@@ -95,6 +95,9 @@ class Builder
             $formAttributes['novalidate'] = 'novalidate';
         }
 
+        //@todo: implement inline functionality.
+        //$formAttributes['class'] = 'form-inline';
+
         $builder = $this->formFactory->createNamedBuilder(
             'formbuilder_' . $formEntity->getId(),
             'Symfony\Component\Form\Extension\Core\Type\FormType',

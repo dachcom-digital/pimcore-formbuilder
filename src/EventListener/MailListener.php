@@ -68,7 +68,7 @@ class MailListener implements EventSubscriberInterface
         $sendCopy = $emailConfiguration['send_copy'];
         $flashBag = $this->session->getFlashBag();
 
-        if (!empty($emailConfiguration['mail_template_id'])) {
+        if (empty($emailConfiguration['mail_template_id'])) {
             $flashBag->add('error', 'no valid mail template given.');
             return;
         }
