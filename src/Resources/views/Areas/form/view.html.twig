@@ -1,9 +1,15 @@
-{% if form_template is not null %}
+{% extends '@FormBuilder/Form/default.html.twig' %}
 
-    {% form_theme form form_template %}
+{% block form_builder_form %}
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-    {{ form_end(form) }}
+    {% if form_template is not null %}
 
-{% endif %}
+        {% form_theme form form_template %}
+
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+        {{ form_end(form) }}
+
+    {% endif %}
+
+{% endblock form_builder_form %}

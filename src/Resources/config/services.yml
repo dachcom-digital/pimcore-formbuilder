@@ -54,6 +54,13 @@ services:
         arguments:
             - FormBuilderBundle\Form\FormTypeInterface
 
+    #parser: mail
+    form_builder.parser.mail:
+        shared: false
+        class: FormBuilderBundle\Parser\MailParser
+        arguments:
+            - '@templating'
+
     # form builder
     form_builder.form_builder:
         class: FormBuilderBundle\Form\Builder
@@ -77,7 +84,8 @@ services:
     form_builder.event_listener.mail:
         class: FormBuilderBundle\EventListener\MailListener
         arguments:
-            - '@templating'
+            - '@session'
+            - '@form_builder.parser.mail'
         tags:
             - { name: kernel.event_subscriber }
 

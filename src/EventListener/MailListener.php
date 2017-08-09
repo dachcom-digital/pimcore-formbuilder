@@ -5,16 +5,23 @@ namespace FormBuilderBundle\EventListener;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Mail\FormBuilderMail;
+use FormBuilderBundle\Parser\MailParser;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Templating\EngineInterface;
 
 class MailListener implements EventSubscriberInterface
 {
     /**
-     * @var EngineInterface
+     * @var Session
      */
-    protected $templating;
+    protected $session;
+
+    /**
+     * @var MailParser
+     */
+    protected $mailParser;
 
     /**
      * @var array
@@ -29,11 +36,13 @@ class MailListener implements EventSubscriberInterface
     /**
      * MailListener constructor.
      *
-     * @param EngineInterface $templating
+     * @param Session $session
+     * @param MailParser $mailParser
      */
-    public function __construct(EngineInterface $templating)
+    public function __construct(Session $session, MailParser $mailParser)
     {
-        $this->templating = $templating;
+        $this->session = $session;
+        $this->mailParser = $mailParser;
     }
 
     /**
@@ -57,9 +66,11 @@ class MailListener implements EventSubscriberInterface
         $formConfiguration = $event->getFormConfiguration();
         $emailConfiguration = $formConfiguration['email'];
         $sendCopy = $emailConfiguration['send_copy'];
+        $flashBag = $this->session->getFlashBag();
 
-        if (empty($emailConfiguration['mail_template_id'])) {
-            $this->log('no valid mail template given.');
+        if (!empty($emailConfiguration['mail_template_id'])) {
+            $flashBag->add('error', 'no valid mail template given.');
+            return;
         }
 
         try {
@@ -67,29 +78,23 @@ class MailListener implements EventSubscriberInterface
             $send = $this->sendForm($emailConfiguration['mail_template_id'], ['data' => $formData]);
 
             if ($send === TRUE) {
-                $this->isValid = TRUE;
-
                 //send copy!
                 if ($sendCopy === TRUE) {
                     try {
                         $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], ['data' => $formData]);
-
                         if ($send !== TRUE) {
-                            $this->log('copy mail not sent.');
-                            $this->isValid = FALSE;
+                            $flashBag->add('error', 'copy mail not sent.');
                         }
                     } catch (\Exception $e) {
-                        $this->log('copy mail sent error: ' . $e->getMessage());
-                        $this->isValid = FALSE;
+                        $flashBag->add('error', 'copy mail sent error: ' . $e->getMessage());
                     }
                 }
             } else {
-                $this->log('mail not sent.');
+                $flashBag->add('error', 'mail not sent.');
             }
 
         } catch (\Exception $e) {
-            $this->log('mail sent error: ' . $e->getMessage());
-            $this->isValid = FALSE;
+            $flashBag->add('error', 'error while sending mail: ' . $e->getMessage());
         }
     }
 
@@ -108,99 +113,10 @@ class MailListener implements EventSubscriberInterface
             return FALSE;
         }
 
-        $this->setMailRecipients($attributes['data'], $mailTemplate);
-        $this->setMailSender($attributes['data'], $mailTemplate);
-
-        $disableDefaultMailBody = (bool)$mailTemplate->getProperty('mail_disable_default_mail_body');
-        $ignoreFieldData = (string)$mailTemplate->getProperty('mail_ignore_fields');
-
-        $ignoreFields = array_map('trim', explode(',', $ignoreFieldData));
-
-        $mail = new FormbuilderMail();
-        $mail->setTemplateEngine($this->templating);
-
-        $mail->setDocument($mailTemplate);
-        $mail->setIgnoreFields($ignoreFields);
-        $mail->parseSubject($mailTemplate->getSubject(), $attributes['data']);
-        $mail->setMailPlaceholders($attributes['data'], $disableDefaultMailBody);
-
+        $mail = $this->mailParser->create($mailTemplate, $attributes);
         $mail->send();
 
         return TRUE;
     }
 
-    /**
-     * @param array                         $data
-     * @param \Pimcore\Model\Document\Email $mailTemplate
-     */
-    private function setMailRecipients($data = [], $mailTemplate)
-    {
-        $to = $mailTemplate->getTo();
-        $parsedTo = $this->extractPlaceHolder($to, $data);
-
-        $mailTemplate->setTo($parsedTo);
-    }
-
-    /**
-     * @param array                         $data
-     * @param \Pimcore\Model\Document\Email $mailTemplate
-     */
-    private function setMailSender($data = [], $mailTemplate)
-    {
-        $from = $mailTemplate->getFrom();
-        $parsedFrom = $this->extractPlaceHolder($from, $data);
-
-        $mailTemplate->setFrom($parsedFrom);
-    }
-
-    /**
-     * Extract Placeholder Data from given String like %email% and compare it with given form data.
-     *
-     * @param $str
-     * @param $data
-     *
-     * @return mixed|string
-     */
-    private function extractPlaceHolder($str, $data)
-    {
-        $extractedValue = $str;
-
-        preg_match_all("/\%(.+?)\%/", $str, $matches);
-
-        if (isset($matches[1]) && count($matches[1]) > 0) {
-            foreach ($matches[1] as $key => $inputValue) {
-                foreach ($data as $formFieldName => $formFieldValue) {
-                    if ($formFieldName == $inputValue) {
-                        $str = str_replace($matches[0][$key], $formFieldValue['value'], $str);
-                    }
-                }
-
-                //replace with '' if not found.
-                $extractedValue = str_replace($matches[0][$key], '', $str);
-            }
-        }
-
-        //remove invalid commas
-        $extractedValue = trim(implode(',', preg_split('@,@', $extractedValue, NULL, PREG_SPLIT_NO_EMPTY)));
-
-        return $extractedValue;
-    }
-
-    /**
-     * @param bool $asArray
-     *
-     * @return array|string
-     */
-    public function getMessages($asArray = TRUE)
-    {
-        return $asArray ? $this->messages : implode(',', $this->messages);
-    }
-
-    /**
-     * @param string $message
-     */
-    private function log($message = '')
-    {
-        $this->messages[] = $message;
-    }
 }
