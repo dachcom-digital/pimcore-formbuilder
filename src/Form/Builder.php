@@ -4,7 +4,7 @@ namespace FormBuilderBundle\Form;
 
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\FormTypeRegistry;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Storage\FormFieldInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactory;
@@ -56,6 +56,11 @@ class Builder
         $this->formTypeRegistry = $formTypeRegistry;
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return array
+     */
     public function buildByRequest(Request $request)
     {
         foreach ($request->request->all() as $key => $parameters) {
@@ -105,7 +110,7 @@ class Builder
             ['attr' => $formAttributes]
         );
 
-        /** @var FormField $field */
+        /** @var FormFieldInterface $field */
         foreach ($formEntity->getFields() as $field) {
             $this->formTypeRegistry->get($field->getType())->build($builder, $field);
         }

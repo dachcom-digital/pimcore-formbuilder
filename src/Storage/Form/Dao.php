@@ -11,8 +11,16 @@ use Symfony\Component\Yaml\Yaml;
 
 class Dao extends AbstractDao
 {
+    /**
+     * @var string
+     */
     protected $tableName = 'formbuilder_forms';
 
+    /**
+     * @param null $name
+     *
+     * @throws \Exception
+     */
     public function getByName($name = NULL)
     {
         $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE name = ?', $name);
@@ -24,6 +32,11 @@ class Dao extends AbstractDao
         $this->assignVariablesToModel($data);
     }
 
+    /**
+     * @param null $id
+     *
+     * @throws \Exception
+     */
     public function getById($id = NULL)
     {
         if ($id != NULL) {
@@ -39,6 +52,9 @@ class Dao extends AbstractDao
         }
     }
 
+    /**
+     *
+     */
     public function save()
     {
         $vars = get_object_vars($this->model);
@@ -108,19 +124,8 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @param array $data
+     *
      */
-    protected function assignVariablesToModel($data)
-    {
-        parent::assignVariablesToModel($data);
-
-        $formPath = Configuration::STORE_PATH . '/main_' . $this->model->getId() . '.yml';
-
-        if (file_exists($formPath)) {
-            $this->mapFormData(Yaml::parse(file_get_contents($formPath)));
-        }
-    }
-
     protected function storeFormData()
     {
         $data = [
@@ -131,6 +136,9 @@ class Dao extends AbstractDao
         return $this->storeYmlData($data);
     }
 
+    /**
+     * @return array
+     */
     protected function getFormFieldData()
     {
         $formFields = [];
@@ -141,6 +149,9 @@ class Dao extends AbstractDao
         return $formFields;
     }
 
+    /**
+     *
+     */
     protected function deleteFormData()
     {
         if (file_exists(Configuration::STORE_PATH . '/main_' . $this->model->getId() . '.yml')) {
@@ -148,33 +159,9 @@ class Dao extends AbstractDao
         }
     }
 
-    protected function mapFormData($data)
-    {
-        if (!empty($data['config'])) {
-            $this->model->setConfig($data['config']);
-        }
-
-        if (!empty($data['fields'])) {
-            $fields = [];
-            foreach ($data['fields'] as $field) {
-                $formField = new FormField();
-                foreach ($field as $fieldName => $fieldValue) {
-
-                    $setter = 'set' . $this->camelize($fieldName);
-                    if (!is_callable([$formField, $setter])) {
-                        continue;
-                    }
-
-                    $formField->$setter($fieldValue);
-                }
-
-                $fields[] = $formField;
-            }
-
-            $this->model->setFields($fields);
-        }
-    }
-
+    /**
+     * @param $data
+     */
     protected function storeYmlData($data)
     {
         if (file_exists(Configuration::STORE_PATH . '/main_' . $this->model->getId() . '.yml')) {
@@ -184,10 +171,4 @@ class Dao extends AbstractDao
         $yml = Yaml::dump($data);
         file_put_contents(Configuration::STORE_PATH . '/main_' . $this->model->getId() . '.yml', $yml);
     }
-
-    protected function camelize($input, $separator = '_')
-    {
-        return ucfirst(str_replace($separator, '', ucwords($input, $separator)));
-    }
-
 }

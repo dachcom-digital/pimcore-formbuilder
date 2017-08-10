@@ -3,8 +3,9 @@
 namespace FormBuilderBundle\Storage;
 
 use Pimcore\Model;
+use Pimcore\Translation\Translator;
 
-class Form extends Model\AbstractModel
+class Form extends Model\AbstractModel implements FormInterface
 {
     const ALLOWED_FORM_KEYS = [
         'action',
@@ -19,6 +20,11 @@ class Form extends Model\AbstractModel
      * @var
      */
     protected $table;
+
+    /**
+     * @var Translator
+     */
+    protected $translator;
 
     /**
      * @var null
@@ -84,6 +90,27 @@ class Form extends Model\AbstractModel
         return $list->getData();
     }
 
+    public static function getNameById($id)
+    {
+        $obj = new self;
+        $obj->getDao()->getById($id);
+
+        return $obj->name;
+    }
+
+    public static function getIdByName($name)
+    {
+        $obj = new self;
+        $obj->getDao()->getByName($name);
+
+        return $obj->id;
+    }
+
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
+
     public function rename($newName)
     {
         $this->setName($newName);
@@ -132,21 +159,6 @@ class Form extends Model\AbstractModel
         return $this->date;
     }
 
-    public function getNameById($id)
-    {
-        $obj = new self;
-        $obj->getDao()->getById($id);
-
-        return $obj->name;
-    }
-
-    public function getIdByName($name)
-    {
-        $obj = new self;
-        $obj->getDao()->getByName($name);
-
-        return $obj->id;
-    }
 
     public function getConfig()
     {
@@ -164,7 +176,6 @@ class Form extends Model\AbstractModel
     public function setFields(array $fields)
     {
         $this->fields = $fields;
-
         return $this;
     }
 

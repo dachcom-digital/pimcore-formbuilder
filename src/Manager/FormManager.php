@@ -2,19 +2,35 @@
 
 namespace FormBuilderBundle\Manager;
 
-use FormBuilderBundle\Storage\Form;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Factory\FormFactoryInterface;
+use FormBuilderBundle\Storage\FormFieldInterface;
+use FormBuilderBundle\Storage\FormInterface;
 
 class FormManager
 {
     /**
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
+     * FormManager constructor.
+     *
+     * @param FormFactoryInterface $formFactory
+     */
+    public function __construct(FormFactoryInterface $formFactory)
+    {
+        $this->formFactory = $formFactory;
+    }
+
+    /**
      * @param $id
      *
-     * @return Form|null
+     * @return FormInterface|null
      */
     public function getById($id)
     {
-        return Form::getById($id);
+        return $this->formFactory->getFormById($id);
     }
 
     /**
@@ -22,31 +38,31 @@ class FormManager
      */
     public function getAll()
     {
-        return Form::getAll();
+        return $this->formFactory->getAllForms();
     }
 
     /**
      * @param $name
      *
-     * @return Form|null
+     * @return FormInterface|null
      */
     public function getIdByName($name)
     {
-        return Form::getByName($name);
+        return $this->formFactory->getFormIdByName($name);
     }
 
     /**
      * @param array $data
      * @param int $id
      *
-     * @return Form
+     * @return FormInterface
      */
     public function save($data, $id = null)
     {
         if ($id) {
-            $form = Form::getById($id);
+            $form = $this->getById($id);
         } else {
-            $form = new Form();
+            $form = $this->formFactory->createForm();
         }
 
         $this->updateFormAttributes($data, $form);
@@ -59,11 +75,11 @@ class FormManager
     /**
      * @param int $id
      *
-     * @return Form|null
+     * @return FormInterface|null
      */
     public function delete($id)
     {
-        $object = Form::getById($id);
+        $object = $this->getById($id);
 
         if (!$object) {
             return null;
@@ -78,11 +94,11 @@ class FormManager
      * @param int $id
      * @param string $newName
      *
-     * @return Form|null
+     * @return FormInterface|null
      */
     public function rename($id, $newName)
     {
-        $object = Form::getById($id);
+        $object = $this->getById($id);
 
         if (!$object) {
             return null;
@@ -96,7 +112,7 @@ class FormManager
 
     /**
      * @param $data
-     * @param Form $form
+     * @param FormInterface $form
      */
     protected function updateFormAttributes($data, $form)
     {
@@ -112,7 +128,7 @@ class FormManager
      * Updates the contained fields in the form.
      *
      * @param array $data
-     * @param Form $form
+     * @param FormInterface $form
      */
     protected function updateFields($data, $form)
     {
@@ -125,10 +141,12 @@ class FormManager
             $fieldType = $this->getValue($fieldData, 'type');
             $fieldName = $this->getValue($fieldData, 'name');
             $fieldDisplayName = $this->getValue($fieldData, 'display_name');
+
+            /** @var FormFieldInterface $field */
             $field = $form->getField($fieldName);
 
             if (!$field) {
-                $field = new FormField();
+                $field = $this->formFactory->createFormField();
                 $field->setName($fieldName);
             } elseif ($field->getType() !== $fieldType || !$field->getName()) {
                 $field->setName($fieldName);

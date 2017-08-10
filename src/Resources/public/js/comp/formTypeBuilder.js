@@ -271,7 +271,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 name: 'template',
                 value: this.storeData.template ? this.storeData.template : templateDefaultValue,
                 queryDelay: 0,
-                displayField: 'key',
+                displayField: 'label',
                 valueField: 'value',
                 mode: 'local',
                 store: templateSelectStore,

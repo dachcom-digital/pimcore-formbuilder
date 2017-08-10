@@ -2,22 +2,25 @@
 
 namespace FormBuilderBundle\Form\Type;
 
-use FormBuilderBundle\Form\FormTypeInterface;
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Storage\FormFieldInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class AbstractType implements FormTypeInterface
+class AbstractType implements TypeInterface
 {
+    /**
+     * @var null
+     */
     protected $type = NULL;
 
-
+    /**
+     * @var null
+     */
     protected $template = NULL;
 
     /**
      * Returns type.
-     *
      * @return string
      */
     public function getType()
@@ -27,7 +30,6 @@ class AbstractType implements FormTypeInterface
 
     /**
      * Returns template.
-     *
      * @return string
      */
     public function getTemplate()
@@ -37,9 +39,10 @@ class AbstractType implements FormTypeInterface
 
     /**
      * @param FormBuilderInterface $builder
-     * @param FormField            $field
+     * @param FormFieldInterface   $field
      */
-    public function build(FormBuilderInterface $builder, FormField $field) {
+    public function build(FormBuilderInterface $builder, FormFieldInterface $field)
+    {
         $builder->add('field', TextType::class, $this->parseOptions($field->getOptions()));
     }
 
@@ -48,7 +51,8 @@ class AbstractType implements FormTypeInterface
      *
      * @return array
      */
-    public function parseOptions(FormTypeOptionsMapper $options) {
+    public function parseOptions(FormTypeOptionsMapper $options)
+    {
         return [];
     }
 }

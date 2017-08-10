@@ -3,11 +3,11 @@
 namespace FormBuilderBundle\Backend\Form;
 
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Form\FormTypeInterface;
+use FormBuilderBundle\Form\Type\TypeInterface;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Registry\FormTypeRegistry;
-use FormBuilderBundle\Storage\Form;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Storage\FormFieldInterface;
+use FormBuilderBundle\Storage\FormInterface;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Pimcore\Translation\Translator;
 
@@ -39,7 +39,7 @@ class Builder
      * @param Configuration    $configuration
      * @param FormTypeRegistry $formTypeRegistry
      * @param TemplateManager $templateManager
-     * @param TemplateManager $translator
+     * @param Translator $translator
      */
     public function __construct(
         Configuration $configuration,
@@ -56,11 +56,11 @@ class Builder
 
     /**
      * Generate array form with form attributes and available form types structure.
-     * @param Form $form
+     * @param FormInterface $form
      *
      * @return array
      */
-    public function generateExtJsForm(Form $form)
+    public function generateExtJsForm(FormInterface $form)
     {
         $data = [
             'id'     => $form->getId(),
@@ -69,7 +69,7 @@ class Builder
             'config' => $form->getConfig(),
         ];
 
-        /** @var FormField $field */
+        /** @var FormFieldInterface $field */
         foreach ($form->getFields() as $field) {
             $fieldData = $field->toArray();
             $fieldDataOptions = $fieldData['options'];
@@ -99,7 +99,7 @@ class Builder
 
         $fieldStructure = $this->getFieldTypeGroups();
 
-        /** @var FormTypeInterface $formTypeElement */
+        /** @var TypeInterface $formTypeElement */
         foreach ($formTypes as $formTypeElement) {
 
             $formType = $formTypeElement->getType();

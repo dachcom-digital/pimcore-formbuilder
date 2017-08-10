@@ -48,8 +48,6 @@ class Install extends AbstractInstaller
         $this->installFormDataFolder();
         $this->installProperties();
         $this->installDocumentTypes();
-
-
         return TRUE;
     }
 
@@ -74,7 +72,6 @@ class Install extends AbstractInstaller
     public function isInstalled()
     {
         $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-
         return $this->fileSystem->exists($target);
     }
 
@@ -84,7 +81,6 @@ class Install extends AbstractInstaller
     public function canBeInstalled()
     {
         $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-
         return !$this->fileSystem->exists($target);
     }
 
@@ -94,7 +90,6 @@ class Install extends AbstractInstaller
     public function canBeUninstalled()
     {
         $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-
         return $this->fileSystem->exists($target);
     }
 
@@ -140,7 +135,6 @@ class Install extends AbstractInstaller
     {
         $csv = $this->installSourcesPath . '/translations/data.csv';
         Admin::importTranslationsFromFile($csv, TRUE, \Pimcore\Tool\Admin::getLanguages());
-
         return TRUE;
     }
 
@@ -152,7 +146,6 @@ class Install extends AbstractInstaller
         $setup = new Setup();
         $setup->insertDump($this->installSourcesPath . '/sql/install.sql');
     }
-
 
     /**
      * @return bool

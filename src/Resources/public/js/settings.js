@@ -245,9 +245,7 @@ Formbuilder.settings = Class.create({
 
     addMainComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z]+/);
-
-        if (button === 'ok' && value.length > 2 && regresult == value && !in_array(value.toLowerCase(), this.forbiddennames)) {
+        if (button === 'ok' && value.length > 2 && !in_array(value.toLowerCase(), this.forbiddennames)) {
 
             if( in_array(value, this.usedFormNames) ) {
                 Ext.Msg.alert(t('error'), t('form_builder_some_fields_names_double'), 'error');

@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Storage\Form;
 
-use FormBuilderBundle\Storage\Form;
 use Pimcore\Model;
 
 class Listing extends Model\Listing\AbstractListing
@@ -37,9 +36,7 @@ class Listing extends Model\Listing\AbstractListing
         if ($this->data === NULL) {
             $entities = [];
             foreach ($this->load() as $o) {
-                if ($object = Form::getById($o['id'])) {
-                    $entities[] = $object;
-                }
+                $entities[] = $o;
             }
 
             $this->data = $entities;

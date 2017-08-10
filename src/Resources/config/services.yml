@@ -33,9 +33,17 @@ services:
         tags:
             - { name: pimcore.area.brick, id: formbuilder_form }
 
+    # factory: form
+    form_builder.factory.form:
+        class: FormBuilderBundle\Factory\FormFactory
+        arguments:
+            - '@pimcore.translator'
+
     # manager: form
     form_builder.manager.form:
         class: FormBuilderBundle\Manager\FormManager
+        arguments:
+            - '@form_builder.factory.form'
 
     # manager: preset
     form_builder.manager.preset:
@@ -53,7 +61,7 @@ services:
     form_builder.registry.form_type:
         class: FormBuilderBundle\Registry\FormTypeRegistry
         arguments:
-            - FormBuilderBundle\Form\FormTypeInterface
+            - FormBuilderBundle\Form\Type\TypeInterface
 
     #parser: mail
     form_builder.parser.mail:
@@ -89,10 +97,6 @@ services:
             - '@form_builder.parser.mail'
         tags:
             - { name: kernel.event_subscriber }
-
-    #
-    # BACKEND
-    #
 
     # backend form builder
     form_builder.backend.form_builder:

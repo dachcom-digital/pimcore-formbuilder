@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Storage\FormFieldInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType as SymfonyTextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -20,18 +20,13 @@ class TextType extends AbstractType
     /**
      * @var string
      */
-    protected $title = 'Text Type';
-
-    /**
-     * @var string
-     */
     protected $template = 'FormBuilderBundle:forms:fields/types/text.html.twig';
 
     /**
      * @param FormBuilderInterface $builder
-     * @param FormField            $field
+     * @param FormFieldInterface   $field
      */
-    public function build(FormBuilderInterface $builder, FormField $field)
+    public function build(FormBuilderInterface $builder, FormFieldInterface $field)
     {
         $options = $this->parseOptions($field->getOptions());
         $options['attr']['field-template'] = $field->getTemplate();
@@ -47,7 +42,7 @@ class TextType extends AbstractType
     public function parseOptions(FormTypeOptionsMapper $typeOptions)
     {
         $options = [
-            'attr' => [],
+            'attr'        => [],
             'constraints' => []
         ];
 
@@ -55,14 +50,13 @@ class TextType extends AbstractType
         $isRequired = $typeOptions->hasRequired() ? $typeOptions->isRequired() : FALSE;
 
         if ($isRequired) {
-           $options['constraints'][] = new NotBlank();
+            $options['constraints'][] = new NotBlank();
         }
 
         $options['required'] = $isRequired;
-        $options['label'] = $typeOptions->hasLabel(true) ? $typeOptions->getLabel() : FALSE;
+        $options['label'] = $typeOptions->hasLabel(TRUE) ? $typeOptions->getLabel() : FALSE;
         $options['attr']['placeholder'] = $typeOptions->hasPlaceholder() ? $typeOptions->getPlaceholder() : '';
 
         return $options;
-
     }
 }

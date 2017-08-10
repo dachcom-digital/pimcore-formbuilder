@@ -3,9 +3,15 @@
 namespace FormBuilderBundle\Storage;
 
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
+use Pimcore\Translation\Translator;
 
-class FormField
+class FormField implements FormFieldInterface
 {
+    /**
+     * @var Translator
+     */
+    protected $translator;
+
     /**
      * @var string
      */
@@ -36,6 +42,11 @@ class FormField
      */
     private $options;
 
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * @return int
      */
@@ -52,7 +63,6 @@ class FormField
     public function setOrder($order)
     {
         $this->order = $order;
-
         return $this;
     }
 
@@ -64,7 +74,6 @@ class FormField
     public function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -103,7 +112,6 @@ class FormField
     public function setType($type)
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -123,7 +131,6 @@ class FormField
     public function setTemplate($template)
     {
         $this->template = $template;
-
         return $this;
     }
 
@@ -148,10 +155,13 @@ class FormField
      */
     public function getOptions()
     {
-        $options = new FormTypeOptionsMapper($this->options);
+        $options = new FormTypeOptionsMapper($this->options, $this->translator);
         return $options;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $vars = get_object_vars($this);
@@ -160,6 +170,7 @@ class FormField
             $array[ltrim($key, '_')] = $value;
         }
 
-        return $array;
+        $removeKeys = ['translator'];
+        return array_diff_key($array, array_flip($removeKeys));
     }
 }
