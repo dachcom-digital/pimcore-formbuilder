@@ -334,27 +334,12 @@ Formbuilder.comp.form = Class.create({
             var copyType = this.copyData.data.type;
 
             if(parentType === 'root') {
-
-                if(copyType === 'displayGroup' || copyType === 'container') {
-                    showPaste = true;
-                } else if(in_array(copyType, allowedTypes[parentType])){
+                if(copyType !== 'validator') {
                     showPaste = true;
                 }
-
             } else {
-
-                if( !record.data.object.storeData.isValidator) {
-
-                    if(copyType === 'container' && parentType !== 'displayGroup') {
-                        showPaste = true;
-                    } else if(copyType === 'displayGroup' && parentType === 'container') {
-                        showPaste = true;
-                    } else if(in_array(copyType, allowedTypes[parentType])){
-                        showPaste = true;
-                    } else if(in_array(copyType, allowedValidators[parentType])){
-                        showPaste = true;
-                    }
-                }
+                //@todo: check additional types.
+                //showPaste = true;
             }
         }
 
@@ -688,7 +673,19 @@ Formbuilder.comp.form = Class.create({
 
     createFormField: function(tree, formType, formTypeValues) {
 
-        var newNode = {
+        var newNode = this.createFormFieldNode(formType, formTypeValues);
+
+        newNode = tree.appendChild(newNode);
+        newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(this, newNode, formType, this.availableFormFieldTemplates, formTypeValues));
+
+        tree.expand();
+
+        return newNode;
+    },
+
+    createFormFieldNode: function(formType, formTypeValues) {
+
+        var node = {
             text: formTypeValues ? formTypeValues.display_name : formType.label,
             type: 'layout',
             draggable: true,
@@ -699,14 +696,9 @@ Formbuilder.comp.form = Class.create({
             expanded: true
         };
 
-        newNode = tree.appendChild(newNode);
-        newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(this, newNode, formType, this.availableFormFieldTemplates, formTypeValues));
+        return node;
 
-        tree.expand();
-
-        return newNode;
     },
-
     createFormFieldConstraint: function(type) {
 
         var newNode = {
@@ -728,8 +720,7 @@ Formbuilder.comp.form = Class.create({
     copyFormField: function(tree, record) {
 
         this.copyData = {};
-
-        var newNode = this.cloneChild(tree, record);
+        var newNode = this.cloneChild(tree, record, true);
         this.copyData = newNode;
 
     },
@@ -737,7 +728,7 @@ Formbuilder.comp.form = Class.create({
     pasteFormField: function(tree, record) {
 
         var node = this.copyData;
-        var newNode = this.cloneChild(tree, node);
+        var newNode = this.cloneChild(tree, node, false);
 
         record.appendChild(newNode);
         tree.updateLayout();
@@ -757,48 +748,34 @@ Formbuilder.comp.form = Class.create({
         }
     },
 
-    cloneChild: function(tree, node) {
+    cloneChild: function(tree, node, isCopy) {
 
-        var theReference = this,
-            nodeLabel = node.data.text,
-            nodeType = node.data.object.type,
-            config = {
-                text: nodeLabel,
-                type: nodeType,
-                leaf: false,
-                expandable: nodeType === 'container' || nodeType === 'displayGroup',
-                expanded: true
-            };
+        var formFieldObject = node.data.object,
+            formTypeValues = Ext.apply({}, formFieldObject.getData()),
+            nodeType = {
+                'icon_class' : node.data.iconCls,
+                'label' : formTypeValues.display_name,
+                'configuration_layout' : formFieldObject.configurationLayout
+            },
+            newNode = {},
+            config = {};
 
-        config.listeners = theReference.getTreeNodeListeners();
+        //reset name
+        formTypeValues.name = Ext.id(null, 'field_');
 
-        if (node.data.object) {
-            config.iconCls = node.data.object.getIconClass();
-        }
+        config = this.createFormFieldNode(nodeType, formTypeValues)
+        config.listeners = this.getTreeNodeListeners();
 
-        var newNode = node.createNode(config),
-            theData = {};
-
-        if (node.data.object) {
-            theData = Ext.apply(theData, node.data.object.storeData);
-        }
-
-        var newObjectClass = null;
-
-        if( node.data.object.storeData.isValidator === true) {
-            newObjectClass = Formbuilder.comp.validator[nodeType];
-        } else {
-            newObjectClass = Formbuilder.comp.type[nodeType];
-        }
-
-        newNode.data.object = new newObjectClass(newNode, theData);
+        newNode = node.createNode(config);
+        newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(
+            this, newNode, nodeType, this.availableFormFieldTemplates, formTypeValues));
 
         var len = node.childNodes ? node.childNodes.length : 0;
 
         // Move child nodes across to the copy if required
         for (var i = 0; i < len; i++) {
             var childNode = node.childNodes[i];
-            var clonedChildNode = this.cloneChild(tree, childNode);
+            var clonedChildNode = this.cloneChild(tree, childNode, isCopy);
             newNode.appendChild(clonedChildNode);
         }
 
