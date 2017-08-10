@@ -10,8 +10,6 @@ interface FormTypeInterface
 {
     public function getType();
 
-    public function getTitle();
-
     public function getTemplate();
 
     public function build(FormBuilderInterface $builder, FormField $field);

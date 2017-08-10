@@ -5,27 +5,27 @@ namespace FormBuilderBundle\Form\Type;
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
 use FormBuilderBundle\Storage\FormField;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType as SymfonyTextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType as SymfonyIntegerType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class TextType extends AbstractType
+class IntegerType extends AbstractType
 {
     use SimpleTypeTrait;
 
     /**
      * @var string
      */
-    protected $type = 'text_type';
+    protected $type = 'integer_type';
 
     /**
      * @var string
      */
-    protected $title = 'Text Type';
+    protected $title = 'Integer Type';
 
     /**
      * @var string
      */
-    protected $template = 'FormBuilderBundle:forms:fields/types/text.html.twig';
+    protected $template = 'FormBuilderBundle:forms:fields/types/integer.html.twig';
 
     /**
      * @param FormBuilderInterface $builder
@@ -36,7 +36,7 @@ class TextType extends AbstractType
         $options = $this->parseOptions($field->getOptions());
         $options['attr']['field-template'] = $field->getTemplate();
 
-        $builder->add($field->getName(), SymfonyTextType::class, $options);
+        $builder->add($field->getName(), SymfonyIntegerType::class, $options);
     }
 
     /**

@@ -63,9 +63,14 @@ class SettingsController extends AdminController
         /** @var Builder $backendFormBuilder */
         $backendFormBuilder = $this->get('form_builder.backend.form_builder');
 
+        $data = [
+            'success' => TRUE,
+            'message' => NULL
+        ];
+
         try {
             $form = $this->get('form_builder.manager.form')->getById($id);
-            $data = $backendFormBuilder->generateExtJsForm($form);
+            $data['data'] = $backendFormBuilder->generateExtJsForm($form);
         } catch (\Exception $e) {
             $data = ['success' => FALSE, 'message' => $e->getMessage()];
         }

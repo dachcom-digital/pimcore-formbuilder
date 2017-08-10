@@ -293,17 +293,17 @@ Formbuilder.comp.form = Class.create({
 
                 for (var groupI = 0; groupI < formGroup.fields.length; groupI++) {
 
-                    var formGroupElement = formGroup.fields[i];
+                    var formGroupElement = formGroup.fields[groupI];
 
                     formGroupElements.push({
-                        text: formGroupElement.text,
+                        text: formGroupElement.label,
                         iconCls: formGroupElement.icon_class,
                         handler: this.createFormField.bind(_, record, formGroupElement, null)
                     });
                 }
 
                 layoutElem.push(new Ext.menu.Item({
-                    text: formGroup.text,
+                    text: formGroup.label,
                     iconCls: formGroup.icon_class,
                     hideOnClick: false,
                     menu: formGroupElements
@@ -579,7 +579,7 @@ Formbuilder.comp.form = Class.create({
 
         this.metaDataPanel = new Ext.form.FieldSet({
 
-            title:  t('attribute name') + ' & ' + t('attribute value'),
+            title:  t('form_builder_form_attribute_name') + ' & ' + t('form_builder_form_attribute_value'),
             collapsible: false,
             autoHeight:true,
             width: '100%',
@@ -689,7 +689,7 @@ Formbuilder.comp.form = Class.create({
     createFormField: function(tree, formType, formTypeValues) {
 
         var newNode = {
-            text: formTypeValues ? formTypeValues.display_name : formType.text,
+            text: formTypeValues ? formTypeValues.display_name : formType.label,
             type: 'layout',
             draggable: true,
             iconCls: formType.icon_class,
@@ -998,7 +998,7 @@ Formbuilder.comp.form = Class.create({
         for (var i = 0; i < this.availableFormFields.length; i++) {
             var formGroup = this.availableFormFields[i];
             for (var groupI = 0; groupI < formGroup.fields.length; groupI++) {
-                var formGroupElement = formGroup.fields[i];
+                var formGroupElement = formGroup.fields[groupI];
                 if(formGroupElement.type === typeId) {
                     formTypeElement = formGroupElement;
                     break;

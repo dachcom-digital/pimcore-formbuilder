@@ -7,6 +7,7 @@ use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Manager\PresetManager;
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
+use Pimcore\Translation\Translator;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
@@ -39,6 +40,11 @@ class Form extends AbstractTemplateAreabrick
     protected $templateManager;
 
     /**
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * Form constructor.
      *
      * @param Session         $session
@@ -46,19 +52,22 @@ class Form extends AbstractTemplateAreabrick
      * @param PresetManager   $presetManager
      * @param Builder         $formBuilder
      * @param TemplateManager $templateManager
+     * @param Translator      $translator
      */
     public function __construct(
         Session $session,
         FormManager $formManager,
         PresetManager $presetManager,
         Builder $formBuilder,
-        TemplateManager $templateManager
+        TemplateManager $templateManager,
+        Translator $translator
     ) {
         $this->session = $session;
         $this->formManager = $formManager;
         $this->presetManager = $presetManager;
         $this->formBuilder = $formBuilder;
         $this->templateManager = $templateManager;
+        $this->translator = $translator;
     }
 
     /**
@@ -89,14 +98,21 @@ class Form extends AbstractTemplateAreabrick
             }
 
             $viewVars['formStore'] = $availableForms;
-            $viewVars['formTemplateStore'] = $this->templateManager->getFormTemplates(TRUE);
+
+            $formTemplateStore = [];
+            foreach ($this->templateManager->getFormTemplates(TRUE) as $template) {
+                $template[1] = $this->translator->trans($template[1], [], 'admin');
+                $formTemplateStore[] = $template;
+            }
+
+            $viewVars['formTemplateStore'] = $formTemplateStore;
 
             if ($formTemplateSelection->isEmpty()) {
                 $formTemplateSelection->setDataFromResource($this->templateManager->getDefaultFormTemplate());
             }
 
             if (!empty($formPresets)) {
-                $formPresetsStore[] = ['custom', 'no form preset']; //$this->view->translateAdmin('no form preset')];
+                $formPresetsStore[] = ['custom', $this->view->trans('form_builder.area.no_form_preset', [], 'admin')];
 
                 foreach ($formPresets as $presetName => $preset) {
                     $formPresetsStore[] = [$presetName, $preset['niceName']];
@@ -279,5 +295,4 @@ class Form extends AbstractTemplateAreabrick
     {
         return '';
     }
-
 }

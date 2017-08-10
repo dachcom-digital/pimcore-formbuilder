@@ -153,7 +153,7 @@ Formbuilder.settings = Class.create({
         return {
 
             itemclick : this.onTreeNodeClick.bind(this),
-            itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
+            itemcontextmenu: this.onTreeNodeContextMenu.bind(this),
             render: function () {
                 this.getRootNode().expand();
             },
@@ -201,12 +201,19 @@ Formbuilder.settings = Class.create({
 
     addMainPanel: function (response) {
 
-        var formPanel,
-            data = Ext.decode(response.responseText),
-            formPanelKey = 'form_' + data.id;
+        var responseData = Ext.decode(response.responseText);
 
         this.loading = false;
         this.tree.enable();
+
+        if(responseData.success === false) {
+            Ext.MessageBox.alert(t('error'), t('form_builder_invalid_form_type_configuration') + responseData.message);
+            return;
+        }
+
+        var formPanel,
+            data = responseData.data,
+            formPanelKey = 'form_' + data.id;
 
         formPanel = new Formbuilder.comp.form(data, this);
         this.panels[formPanelKey] = formPanel;
@@ -215,7 +222,7 @@ Formbuilder.settings = Class.create({
 
     },
 
-    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
+    onTreeNodeContextMenu: function (tree, record, item, index, e, eOpts) {
 
         e.stopEvent();
         tree.select();

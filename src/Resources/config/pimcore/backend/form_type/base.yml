@@ -1,97 +1,78 @@
 form_builder:
 
     backend_base_field_type_groups:
-        -
-            id: text_fields
-            text: Text Fields
+        text_fields:
+            label: 'form_builder_type_group.text_fields'
             icon_class: form_builder_icon_container
-        -
-            id: choice_fields
-            text: Choice Fields
+        choice_fields:
+            label: 'form_builder_type_group.choice_fields'
             icon_class: form_builder_icon_container
-        -
-            id: datetime_fields
-            text: DateTime Fields
+        datetime_fields:
+            label: 'form_builder_type_group.datetime_fields'
             icon_class: form_builder_icon_container
-        -
-            id: other_fields
-            text: Other Fields
+        other_fields:
+            label: 'form_builder_type_group.other_fields'
             icon_class: form_builder_icon_container
-        -
-            id: field_groups
-            text: Field Groups
+        field_groups:
+            label: 'form_builder_type_group.field_groups'
             icon_class: form_builder_icon_container
-        -
-            id: hidden_fields
-            text: Hidden Fields
+        hidden_fields:
+            label: 'form_builder_type_group.hidden_fields'
             icon_class: form_builder_icon_container
-        -
-            id: buttons
-            text: Buttons
+        buttons:
+            label: 'form_builder_type_group.buttons'
             icon_class: form_builder_icon_container
 
     backend_base_field_type_config:
         tabs:
-            -
-                id: default
+            default:
                 label: 'Default'
         display_groups:
-            -
+            base:
                 tab_id: default
-                id: base
-                label: 'Base'
-            -
+                label: 'form_builder_type_display_group.base'
+            hook:
                 tab_id: default
-                id: hook
-                label: 'Hook'
-            -
+                label: 'form_builder_type_display_group.hook'
+                collapsed: true
+            attributes:
                 tab_id: default
-                id: attributes
-                label: 'Attributes'
+                label: 'form_builder_type_display_group.attributes'
         fields:
-            -
+            label:
                 display_group_id: base
-                id: label
                 type: textfield
-                label: 'Label'
+                label: 'form_builder_type_field_base.label'
                 config: ~
-            -
+            value:
                 display_group_id: base
-                id: value
                 type: textfield
-                label: 'Value'
+                label: 'form_builder_type_field_base.value'
                 config: ~
-            -
+            required:
                 display_group_id: base
-                id: required
                 type: checkbox
-                label: 'Required'
+                label: 'form_builder_type_field_base.required'
                 config: ~
-            -
+            allow_empty:
                 display_group_id: base
-                id: allow_empty
                 type: checkbox
-                label: 'Allow Empty'
+                label: 'form_builder_type_field_base.allow_empty'
                 config: ~
-
-            -
+            hook_custom_class:
                 display_group_id: hook
-                id: hook_custom_class
                 type: textfield
-                label: 'Custom Class'
+                label: 'form_builder_type_field_base.hook_custom_class'
                 config: ~
-            -
+            hook_custom_action:
                 display_group_id: hook
-                id: hook_custom_action
                 type: textfield
-                label: 'Custom Action'
+                label: 'form_builder_type_field_base.hook_custom_action'
                 config: ~
-
-            -
+            attributes:
                 display_group_id: hook
-                id: attr
                 type: options_repeater
-                label: 'Multi Options Repeater'
+                label: 'form_builder_type_field_base.attributes'
                 config:
                     options:
                         - ['class','class']

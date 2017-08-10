@@ -4,3 +4,14 @@ services:
         class: FormBuilderBundle\Form\Type\TextType
         tags:
             - {name: form_builder.form_type, alias: text_type}
+
+    form_builder.form_type.number:
+        class: FormBuilderBundle\Form\Type\IntegerType
+        tags:
+            - {name: form_builder.form_type, alias: integer_type}
+
+    form_builder.form_type.textarea:
+        class: FormBuilderBundle\Form\Type\TextAreaType
+        tags:
+            - {name: form_builder.form_type, alias: textarea_type}
+

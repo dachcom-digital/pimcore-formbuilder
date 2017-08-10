@@ -27,7 +27,15 @@ class TemplateManager
     public function getFieldTemplates()
     {
         $areaConfig = $this->configuration->getConfig('form');
-        return $areaConfig['field']['templates'];
+        $templates = $areaConfig['field']['templates'];
+
+        $templateData = [];
+        foreach($templates as $templateId => $template) {
+            $template['id'] = $templateId;
+            $templateData[] = $template;
+        }
+
+        return $templateData;
     }
 
     /**
@@ -57,16 +65,21 @@ class TemplateManager
         $areaConfig = $this->configuration->getConfig('form');
         $templates = $areaConfig['templates'];
 
-        if($parseForExtJsStore) {
+        $templateData = [];
+        foreach($templates as $templateId => $template) {
+            $template['id'] = $templateId;
+            $templateData[] = $template;
+        }
 
+        if($parseForExtJsStore) {
             $storeTemplates = [];
-            foreach($templates as $template) {
-                $storeTemplates[] = [$template['value'], $template['key']];
+            foreach($templateData as $template) {
+                $storeTemplates[] = [$template['value'], $template['label']];
             }
             return $storeTemplates;
         }
 
-        return $templates;
+        return $templateData;
     }
 
     /**

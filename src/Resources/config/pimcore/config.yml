@@ -1,31 +1,29 @@
 form_builder:
     area:
         presets: []
-
     form:
         templates:
-            -
+            form_div_layout:
                 value: 'form_div_layout.html.twig'
-                key: 'form_div_layout'
+                label: 'form_builder_form_template.form_div_layout'
                 default: false
-            -
+            bootstrap_3_layout:
                 value: 'bootstrap_3_layout.html.twig'
-                key: 'bootstrap_3_layout'
+                label: 'form_builder_form_template.bootstrap_3_layout'
                 default: true
-            -
+            bootstrap_3_horizontal_layout:
                 value: 'bootstrap_3_horizontal_layout.html.twig'
-                key: 'bootstrap_3_horizontal_layout'
+                label: 'form_builder_form_template.bootstrap_3_horizontal_layout'
                 default: false
         field:
             templates:
-                -
-                    value: default
-                    key: 'Default'
+                default:
+                    value: 'default'
+                    label: 'form_builder_type_template.default'
                     default: true
     admin:
         active_elements:
             fields: []
-
 
 imports:
     - { resource: backend/form_type/*.yml }

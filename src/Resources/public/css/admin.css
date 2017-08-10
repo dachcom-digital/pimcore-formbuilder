@@ -1,127 +1,114 @@
-.form_builder_icon_button{
-    background: url(/bundles/formbuilder/img/button.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_captcha{
-    background: url(/bundles/formbuilder/img/captcha.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_checkbox{
-    background: url(/bundles/formbuilder/img/checkbox.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_file{
-    background: url(/bundles/formbuilder/img/file.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_hash{
-    background: url(/bundles/formbuilder/img/hash.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_hidden{
-    background: url(/bundles/formbuilder/img/hidden.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_image{
-    background: url(/bundles/formbuilder/img/picture.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_download{
-    background: url(/bundles/formbuilder/img/download.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_multiCheckbox{
-    background: url(/bundles/formbuilder/img/multicheckbox.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_multiselect{
-    background: url(/bundles/formbuilder/img/multicheckbox.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_password{
-    background: url(/bundles/formbuilder/img/password.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_radio{
-    background: url(/bundles/formbuilder/img/radio.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_reset{
-    background: url(/bundles/formbuilder/img/reset.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_select{
-    background: url(/bundles/formbuilder/img/select.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_country{
-    background: url(/bundles/formbuilder/img/globe.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_submit{
-    background: url(/bundles/formbuilder/img/submit.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_text{
-    background: url(/bundles/formbuilder/img/textfield.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_textarea{
-    background: url(/bundles/formbuilder/img/textarea.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_notice{
-    background: url(/bundles/formbuilder/img/notice.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_filter{
-    background: url(/bundles/formbuilder/img/filter.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_validator{
-    background: url(/bundles/formbuilder/img/bool.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_root{
+.form_builder_icon_root {
     background: url(/bundles/formbuilder/img/application_form.svg) left center no-repeat !important;
 }
 
-.form_builder_icon_fbuilder{
+.form_builder_icon_fbuilder {
     background: url(/bundles/formbuilder/img/formBuilder.svg) left center no-repeat !important;
 }
 
-.form_builder_icon_filter_add{
-    background: url(/bundles/formbuilder/img/filter_add.svg) left center no-repeat !important;
+.pimcore_icon_api {
+    background: url(/bundles/formbuilder/img/help.svg) left center no-repeat !important;
 }
 
-.form_builder_icon_validator_add{
-    background: url(/bundles/formbuilder/img/bool_add.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_item_add{
-    background: url(/bundles/formbuilder/img/elem_add.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_root_add{
-    background: url(/bundles/formbuilder/img/application_form_add.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_displayGroup{
-    background: url(/bundles/formbuilder/img/fieldset.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_displayGroup_add{
-    background: url(/bundles/formbuilder/img/fieldset_add.svg) left center no-repeat !important;
-}
-
-.form_builder_icon_container{
+.form_builder_icon_container {
     background: url(/bundles/formbuilder/img/container.svg) left center no-repeat !important;
 }
 
-.form_builder_icon_container_add{
+.form_builder_icon_container_add {
     background: url(/bundles/formbuilder/img/container_add.svg) left center no-repeat !important;
 }
 
-.pimcore_icon_api{
-    background: url(/bundles/formbuilder/img/help.svg) left center no-repeat !important;
+.form_builder_icon_filter {
+    background: url(/bundles/formbuilder/img/filter.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_filter_add {
+    background: url(/bundles/formbuilder/img/filter_add.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_item_add {
+    background: url(/bundles/formbuilder/img/elem_add.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_root_add {
+    background: url(/bundles/formbuilder/img/application_form_add.svg) left center no-repeat !important;
+}
+
+/*
+    Fields
+*/
+.form_builder_icon_text {
+    background: url(/bundles/formbuilder/img/textfield.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_integer {
+    background: url(/bundles/formbuilder/img/textfield.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_button {
+    background: url(/bundles/formbuilder/img/button.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_captcha {
+    background: url(/bundles/formbuilder/img/captcha.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_checkbox {
+    background: url(/bundles/formbuilder/img/checkbox.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_file {
+    background: url(/bundles/formbuilder/img/file.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_hidden {
+    background: url(/bundles/formbuilder/img/hidden.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_image {
+    background: url(/bundles/formbuilder/img/picture.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_download {
+    background: url(/bundles/formbuilder/img/download.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_multi_checkbox {
+    background: url(/bundles/formbuilder/img/multicheckbox.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_multi_select {
+    background: url(/bundles/formbuilder/img/multicheckbox.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_password {
+    background: url(/bundles/formbuilder/img/password.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_radio {
+    background: url(/bundles/formbuilder/img/radio.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_reset {
+    background: url(/bundles/formbuilder/img/reset.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_select {
+    background: url(/bundles/formbuilder/img/select.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_country {
+    background: url(/bundles/formbuilder/img/globe.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_submit {
+    background: url(/bundles/formbuilder/img/submit.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_textarea {
+    background: url(/bundles/formbuilder/img/textarea.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_notice {
+    background: url(/bundles/formbuilder/img/notice.svg) left center no-repeat !important;
 }

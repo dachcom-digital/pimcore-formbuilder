@@ -186,6 +186,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 fieldSet = new Ext.form.FieldSet({
                     title: fieldSetConfig.label,
                     collapsible: true,
+                    collapsed: fieldSetConfig.collapsed,
                     autoHeight :true,
                     defaultType: 'textfield'
                 });
@@ -252,26 +253,33 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 }
             }));
 
-            var widthSelectStore = new Ext.data.Store({
+            var templateSelectStore = new Ext.data.Store({
                 data : this.formTypeTemplates
+            });
+
+            var templateDefaultValue = undefined;
+            Ext.iterate(this.formTypeTemplates, function(data, value) {
+                if(data.default === true) {
+                    templateDefaultValue = data.value;
+                    return false;
+                }
             });
 
             //create "template" field
             form.add(new Ext.form.ComboBox({
                 fieldLabel: t('form_builder_field_template'),
                 name: 'template',
-                value: this.storeData.template,
+                value: this.storeData.template ? this.storeData.template : templateDefaultValue,
                 queryDelay: 0,
                 displayField: 'key',
                 valueField: 'value',
                 mode: 'local',
-                store: widthSelectStore,
+                store: templateSelectStore,
                 editable: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 allowBlank: true
             }));
-
         }
 
         return form;
@@ -288,7 +296,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
                 field = new Ext.form.Label({
                     style: 'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
-                    text: fieldConfig.text
+                    text: fieldConfig.label
                 });
 
                 break;

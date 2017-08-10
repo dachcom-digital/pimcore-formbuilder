@@ -1,9 +1,9 @@
 form_builder:
     backend_field_type_config:
-        text_type:
+        integer_type:
             form_type_group: text_fields
-            label: 'form_builder_type.text_type'
-            icon_class: 'form_builder_icon_text'
+            label: 'form_builder_type.integer_type'
+            icon_class: 'form_builder_icon_integer'
             tabs: ~
             display_groups: ~
             fields: ~

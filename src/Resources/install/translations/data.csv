@@ -1,12 +1,49 @@
-"key";"en";"de";"creationDate";"modificationDate";
-"form";"Form";"Formular";1460395362;1460395362;
-"form type";"Form Type";"Form Typ";1460395362;1460395362;
-"send copy to user";"Send Copy to User";"Kopie an User versenden";1460395362;1460395362;
-"copy mail template";"Copy Mail Template";"Mail Vorlage für Kopie";1460395362;1460395362;
-"mail template";"Mail Template";"Mail Vorlage";1460395362;1460395362;
-"form preset";"Form Preset";"Formular Vorlage";1460395362;1460395362;
-"no form preset";"No Form Preset";"Ohne Vorlage";1460395362;1460395362;
-"Form data will be rendered automatically.";"Form data will be rendered automatically.";"Formular-Inhalt wird automatisch in dieses E-Mail eingefügt.";1460395362;1460395362;
-"Custom style mode has been activated. Please use placeholder like %s to display form value fields.";"Custom style mode has been activated. Please use placeholder like %s to display form value fields.";"Benutzerdefiniertes Formular-Layout wurde aktiviert. Bitte benutzen Sie Platzhalter (zb. %s), um Formular-Elemente im E-Mail anzuzeigen.";1460395362;1460395362;
-"Your form content will be placed here.";"Your form content will be placed here.";"Formular-Inhalt wird hier angezeigt.";1460395362;1460395362;"Depending on your selected form, some placeholder like %s are available.";"Depending on your selected form, some placeholder like %s are available.";"Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung.";1460395362;1460395362;
-"Depending on your selected form, some placeholder like %s are available.";"Depending on your selected form, some placeholder like %s are available.";"Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung.";1460395362;1460395362;
+"key";"en";"de"
+"form_builder.area.form";"Form";"Formular";
+"form_builder.area.form_type";"Form Type";"Formular Typ";
+"form_builder.area.form_template";"Form Template";"Formular Template";
+"form_builder.area.send_copy_to_user";"Send Copy to User";"Kopie an User versenden";
+"form_builder.area.copy_mail_template";"Copy Mail Template";"Mail Vorlage für Kopie";
+"form_builder.area.mail_template";"Mail Template";"Mail Vorlage";
+"form_builder.area.form_preset";"Form Preset";"Formular Vorlage";
+"form_builder.area.form_preset_info";"Form Preset Info";"Formular Vorlage Informationen";
+"form_builder.area.no_form_preset";"No Form Preset";"Ohne Vorlage";
+
+"form_builder.email.form_renders_automatically";"Form data will be rendered automatically.";"Formular-Inhalt wird automatisch in dieses E-Mail eingefügt.";
+"form_builder.email.custom_style_activated_use_placeholder";"Custom style mode has been activated. Please use placeholder like %s to display form value fields.";"Benutzerdefiniertes Formular-Layout wurde aktiviert. Bitte benutzen Sie Platzhalter (zb. %s), um Formular-Elemente im E-Mail anzuzeigen.";
+"form_builder.email.form_will_placed_here";"Your form content will be placed here.";"Formular-Inhalt wird hier angezeigt.";1460395362;1460395362;"Depending on your selected form, some placeholder like %s are available.";"Depending on your selected form, some placeholder like %s are available.";"Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung.";
+"form_builder.email.placeholder_list_available";"Depending on your selected form, some placeholder like %s are available.";"Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung.";
+
+"form_builder_type_group.text_fields";"Text Fields";"Text Fields";
+"form_builder_type_group.choice_fields";"Choice Fields";"Choice Fields";
+"form_builder_type_group.datetime_fields";"DateTime Fields";"DateTime Fields";
+"form_builder_type_group.other_fields";"Other Fields";"Other Fields";
+"form_builder_type_group.field_groups";"Field Groups";"Field Groups";
+"form_builder_type_group.hidden_fields";"Hidden Fields";"Hidden Fields";
+"form_builder_type_group.buttons";"Buttons";"Buttons";
+
+"form_builder_type.text_type";"Text Type";"Text Type";
+"form_builder_type.integer_type";"Integer Type";"Integer Type";
+"form_builder_type.textarea_type";"Textarea Type";"Textarea Type";
+
+"form_builder_type_tab.default";"Default";"Default";
+
+"form_builder_type_display_group.base";"Base";"Base";
+"form_builder_type_display_group.hook";"Hook";"Hook";
+"form_builder_type_display_group.attributes";"Attributes";"Attributes";
+
+"form_builder_type_field_base.label";"Label";"Label";
+"form_builder_type_field_base.value";"Value";"Value";
+"form_builder_type_field_base.required";"Required";"Required";
+"form_builder_type_field_base.allow_empty";"Allow Empty";"Allow Empty";
+"form_builder_type_field_base.hook_custom_class";"Custom Class";"Custom Class";
+"form_builder_type_field_base.hook_custom_action";"Custom Action";"Custom Action";
+"form_builder_type_field_base.attributes";"Attributes";"Attributes";
+
+"form_builder_type_field.allow_empty";"Allow Empty";"Allow Empty";
+
+"form_builder_type_template.default";"Default";"Default";
+
+"form_builder_form_template.bootstrap_3_horizontal_layout";"Bootstrap 3 Horizontal Layout";"Bootstrap 3 Horizontal Layout";
+"form_builder_form_template.bootstrap_3_layout";"Bootstrap 3 Layout";"Bootstrap 3 Layout";
+"form_builder_form_template.form_div_layout";"Form Div Layout";"Form Div Layout";

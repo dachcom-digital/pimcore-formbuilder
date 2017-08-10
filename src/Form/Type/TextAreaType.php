@@ -5,22 +5,22 @@ namespace FormBuilderBundle\Form\Type;
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
 use FormBuilderBundle\Storage\FormField;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType as SymfonyTextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType as SymfonyTextareaType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class TextType extends AbstractType
+class TextAreaType extends AbstractType
 {
     use SimpleTypeTrait;
 
     /**
      * @var string
      */
-    protected $type = 'text_type';
+    protected $type = 'textarea_type';
 
     /**
      * @var string
      */
-    protected $title = 'Text Type';
+    protected $title = 'Textarea Type';
 
     /**
      * @var string
@@ -36,7 +36,7 @@ class TextType extends AbstractType
         $options = $this->parseOptions($field->getOptions());
         $options['attr']['field-template'] = $field->getTemplate();
 
-        $builder->add($field->getName(), SymfonyTextType::class, $options);
+        $builder->add($field->getName(), SymfonyTextareaType::class, $options);
     }
 
     /**

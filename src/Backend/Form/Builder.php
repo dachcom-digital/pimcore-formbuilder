@@ -8,6 +8,8 @@ use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Registry\FormTypeRegistry;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormField;
+use Symfony\Component\Form\Exception\InvalidConfigurationException;
+use Pimcore\Translation\Translator;
 
 class Builder
 {
@@ -27,17 +29,29 @@ class Builder
     protected $templateManager;
 
     /**
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * Builder constructor.
      *
      * @param Configuration    $configuration
      * @param FormTypeRegistry $formTypeRegistry
      * @param TemplateManager $templateManager
+     * @param TemplateManager $translator
      */
-    public function __construct(Configuration $configuration, FormTypeRegistry $formTypeRegistry, TemplateManager $templateManager)
+    public function __construct(
+        Configuration $configuration,
+        FormTypeRegistry $formTypeRegistry,
+        TemplateManager $templateManager,
+        Translator $translator
+    )
     {
         $this->configuration = $configuration;
         $this->formTypeRegistry = $formTypeRegistry;
         $this->templateManager = $templateManager;
+        $this->translator = $translator;
     }
 
     /**
@@ -76,6 +90,9 @@ class Builder
         return $data;
     }
 
+    /**
+     * @return array
+     */
     private function generateExtJsFormTypesStructure()
     {
         $formTypes = $this->formTypeRegistry->getAll();
@@ -89,7 +106,7 @@ class Builder
 
             $fieldStructureElement = [
                 'type'                 => $formType,
-                'text'                 => $formTypeElement->getTitle(),
+                'label'                => $this->getFormTypeLabel($formType),
                 'icon_class'           => $this->getFormTypeIcon($formType),
                 'configuration_layout' => $this->getFormTypeBackendConfiguration($formType)
             ];
@@ -107,17 +124,29 @@ class Builder
         return $fieldStructure;
     }
 
+    /**
+     * @return array
+     */
     private function getFieldTypeGroups()
     {
         $groups = $this->configuration->getBackendConfig('backend_base_field_type_groups');
 
-        foreach ($groups as &$group) {
+        $groupData = [];
+        foreach ($groups as $groupId => &$group) {
+            $group['id'] = $groupId;
+            $group['label'] = $this->translator->trans($group['label'], [], 'admin');
             $group['fields'] = [];
+            $groupData[] = $group;
         }
 
-        return $groups;
+        return $groupData;
     }
 
+    /**
+     * @param $formType
+     *
+     * @return array
+     */
     private function getFormTypeBackendConfiguration($formType)
     {
         $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
@@ -125,21 +154,28 @@ class Builder
 
         $formTypeConfig = $formConfig[$formType];
 
+        if(is_null($formTypeConfig)) {
+            throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
+        }
+
         $tabs = array_merge($baseConfig['tabs'], $formTypeConfig['tabs']);
         $displayGroups = array_merge($baseConfig['display_groups'], $formTypeConfig['display_groups']);
         $fields = array_merge($baseConfig['fields'], $formTypeConfig['fields']);
 
         $data = [];
 
-        foreach ($tabs as $tab) {
+        foreach ($tabs as $tabId => $tab) {
             $tabData = $tab;
+            $tabData['id'] = $tabId;
             $tabData['fields'] = [];
             $data[] = $tabData;
         }
 
-        foreach ($displayGroups as $displayGroup) {
+        foreach ($displayGroups as $displayGroupId => $displayGroup) {
 
             $displayGroupData = $displayGroup;
+            $displayGroupData['id'] = $displayGroupId;
+            $displayGroupData['label'] = $this->translator->trans($displayGroupData['label'], [], 'admin');
             $displayGroupData['fields'] = [];
 
             foreach ($data as &$tabRow) {
@@ -151,13 +187,21 @@ class Builder
             }
         }
 
-        foreach ($fields as $field) {
+        foreach ($fields as $fieldId => $field) {
+
+            if($field === FALSE) {
+                continue;
+            }
+
+            $fieldData = $field;
+            $fieldData['id'] = $fieldId;
+            $fieldData['label'] = $this->translator->trans($fieldData['label'], [], 'admin');
+            unset($fieldData['display_group_id']);
 
             foreach ($data as &$tabRow) {
                 foreach ($tabRow['fields'] as &$displayGroupRow) {
                     if ($displayGroupRow['id'] === $field['display_group_id']) {
-                        unset($field['display_group_id']);
-                        $displayGroupRow['fields'][] = $field;
+                        $displayGroupRow['fields'][] = $fieldData;
                         break;
                     }
                 }
@@ -167,20 +211,52 @@ class Builder
         return $data;
     }
 
+    /**
+     * @param $formType
+     *
+     * @return mixed
+     */
     private function getFormTypeGroup($formType)
     {
         $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
         return $formConfig[$formType]['form_type_group'];
     }
 
+    /**
+     * @param $formType
+     *
+     * @return mixed
+     */
     private function getFormTypeIcon($formType)
     {
         $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
         return $formConfig[$formType]['icon_class'];
     }
 
+    /**
+     * @param $formType
+     *
+     * @return mixed
+     */
+    private function getFormTypeLabel($formType)
+    {
+        $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
+        return $this->translator->trans($formConfig[$formType]['label'], [], 'admin');
+    }
+
+    /**
+     * Get translated Form Type Templates
+     * @return array
+     */
     private function getFormTypeTemplates()
     {
-        return $this->templateManager->getFieldTemplates();
+        $templates = $this->templateManager->getFieldTemplates();
+        $typeTemplates = [];
+        foreach($templates as $template) {
+            $template['label'] = $this->translator->trans($template['label'], [], 'admin');
+            $typeTemplates[] = $template;
+        }
+
+        return $typeTemplates;
     }
 }

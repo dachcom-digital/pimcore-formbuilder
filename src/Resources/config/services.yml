@@ -29,6 +29,7 @@ services:
             - '@form_builder.manager.preset'
             - '@form_builder.form_builder'
             - '@form_builder.manager.template'
+            - '@pimcore.translator'
         tags:
             - { name: pimcore.area.brick, id: formbuilder_form }
 
@@ -100,3 +101,4 @@ services:
             - '@form_builder.configuration'
             - '@form_builder.registry.form_type'
             - '@form_builder.manager.template'
+            - '@pimcore.translator'

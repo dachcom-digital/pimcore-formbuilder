@@ -12,28 +12,17 @@ class AbstractType implements FormTypeInterface
 {
     protected $type = NULL;
 
-    protected $title = NULL;
 
     protected $template = NULL;
 
     /**
-     * Returns title.
+     * Returns type.
      *
      * @return string
      */
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * Returns title.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
