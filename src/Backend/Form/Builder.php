@@ -38,16 +38,15 @@ class Builder
      *
      * @param Configuration    $configuration
      * @param FormTypeRegistry $formTypeRegistry
-     * @param TemplateManager $templateManager
-     * @param Translator $translator
+     * @param TemplateManager  $templateManager
+     * @param Translator       $translator
      */
     public function __construct(
         Configuration $configuration,
         FormTypeRegistry $formTypeRegistry,
         TemplateManager $templateManager,
         Translator $translator
-    )
-    {
+    ) {
         $this->configuration = $configuration;
         $this->formTypeRegistry = $formTypeRegistry;
         $this->templateManager = $templateManager;
@@ -56,6 +55,7 @@ class Builder
 
     /**
      * Generate array form with form attributes and available form types structure.
+     *
      * @param FormInterface $form
      *
      * @return array
@@ -96,7 +96,6 @@ class Builder
     private function generateExtJsFormTypesStructure()
     {
         $formTypes = $this->formTypeRegistry->getAll();
-
         $fieldStructure = $this->getFieldTypeGroups();
 
         /** @var TypeInterface $formTypeElement */
@@ -134,7 +133,7 @@ class Builder
         $groupData = [];
         foreach ($groups as $groupId => &$group) {
             $group['id'] = $groupId;
-            $group['label'] = $this->translator->trans($group['label'], [], 'admin');
+            $group['label'] = $this->translate($group['label']);
             $group['fields'] = [];
             $groupData[] = $group;
         }
@@ -154,7 +153,7 @@ class Builder
 
         $formTypeConfig = $formConfig[$formType];
 
-        if(is_null($formTypeConfig)) {
+        if (is_null($formTypeConfig)) {
             throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
         }
 
@@ -175,7 +174,7 @@ class Builder
 
             $displayGroupData = $displayGroup;
             $displayGroupData['id'] = $displayGroupId;
-            $displayGroupData['label'] = $this->translator->trans($displayGroupData['label'], [], 'admin');
+            $displayGroupData['label'] = $this->translate($displayGroupData['label']);
             $displayGroupData['fields'] = [];
 
             foreach ($data as &$tabRow) {
@@ -189,13 +188,13 @@ class Builder
 
         foreach ($fields as $fieldId => $field) {
 
-            if($field === FALSE) {
+            if ($field === FALSE) {
                 continue;
             }
 
             $fieldData = $field;
             $fieldData['id'] = $fieldId;
-            $fieldData['label'] = $this->translator->trans($fieldData['label'], [], 'admin');
+            $fieldData['label'] = $this->translate($fieldData['label']);
             unset($fieldData['display_group_id']);
 
             foreach ($data as &$tabRow) {
@@ -241,7 +240,7 @@ class Builder
     private function getFormTypeLabel($formType)
     {
         $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
-        return $this->translator->trans($formConfig[$formType]['label'], [], 'admin');
+        return $this->translate($formConfig[$formType]['label']);
     }
 
     /**
@@ -252,11 +251,25 @@ class Builder
     {
         $templates = $this->templateManager->getFieldTemplates();
         $typeTemplates = [];
-        foreach($templates as $template) {
-            $template['label'] = $this->translator->trans($template['label'], [], 'admin');
+        foreach ($templates as $template) {
+            $template['label'] = $this->translate($template['label']);
             $typeTemplates[] = $template;
         }
 
         return $typeTemplates;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    private function translate($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        return $this->translator->trans($value, [], 'admin');
     }
 }

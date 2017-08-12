@@ -128,42 +128,21 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         return this.formIsValid;
     },
 
+    /**
+     * THANKS!
+     * https://github.com/Gigzolo/dataobject-parser
+     *
+     * @param data
+     * @returns {{}}
+     */
+    parseFormFields: function (data) {
+        var transposedData = DataObjectParser.transpose(data);
+        return transposedData.data();
+    },
+
     applyData: function() {
 
-        var storeData = {},
-            formValues = this.form.getValues();
-
-        Ext.Object.each(formValues, function(key, value) {
-
-            if (key.substring(0, 10) === 'repeater__') {
-
-                var keys = key.split('__');
-
-                var name = keys[1],
-                    index = parseInt(keys[2]),
-                    data = keys[3]; //'option'|'value'
-
-                //skip value since its already stored in option loop.
-                if(data === 'value') {
-                    return;
-                }
-
-                var fieldValue = formValues['repeater__' + name + '__' + index + '__value'];
-
-                if(!storeData[name]) {
-                    storeData[name] = [];
-                }
-
-                storeData[name].push({
-                    option: value,
-                    value: fieldValue
-                });
-
-            } else {
-                storeData[key] = value;
-            }
-
-        });
+        var storeData = this.parseFormFields(this.form.getValues());
 
         this.formIsValid = this.form.isValid();
         this.storeData = storeData;
@@ -390,15 +369,11 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 break;
 
             case 'key_value_repeater' :
-
                 field = this.getRepeaterWithKeyValue(fieldConfig);
-
                 break;
 
             case 'options_repeater' :
-
                 field = this.getRepeaterWithOptions(fieldConfig);
-
                 break;
         }
 
@@ -408,242 +383,30 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     getRepeaterWithKeyValue: function(fieldConfig) {
 
-        var keyValueRepeater = null,
-            metaDataCounter = 0,
-            allowFirstOptionsEmpty = false;
+        var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
+            fieldConfig,
+            this.storeData[fieldConfig.id]
+        );
 
-        var addMetaData = function (name, value) {
-
-            if(typeof name !== 'string') {
-                name = '';
-            }
-            if(typeof value !== 'string') {
-                value = '';
-            }
-
-            var count = keyValueRepeater.query('button').length;
-
-            var compositeField = new Ext.form.FieldContainer({
-                layout: 'hbox',
-                hideLabel: true,
-                style: 'padding-bottom:5px;',
-                items: [
-                    {
-                        xtype: 'textfield',
-                        name: 'repeater__' + fieldConfig.id + '__' + count + '__option',
-                        fieldLabel: t('form_builder_option'),
-                        anchor: '100%',
-                        summaryDisplay: true,
-                        allowBlank: allowFirstOptionsEmpty === true && metaDataCounter === 0,
-                        value : name,
-                        flex: 1,
-                        margin: '0 10px 0 0'
-                    },
-                    {
-                        xtype: 'textfield',
-                        name: 'repeater__' + fieldConfig.id + '__' + count + '__value',
-                        fieldLabel: t('form_builder_value'),
-                        anchor: '100%',
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        value : value,
-                        flex: 1,
-                        margin: '0 10px 0 0'
-                    }
-                ]
-            });
-
-            compositeField.add([{
-                xtype: 'button',
-                iconCls: 'pimcore_icon_delete',
-                style: 'float:left;',
-                handler: function (compositeField, el) {
-                    keyValueRepeater.remove(compositeField);
-                    keyValueRepeater.updateLayout();
-                }.bind(this, compositeField)
-            },{
-                xtype: 'box',
-                style: 'clear:both;'
-            }]);
-
-            keyValueRepeater.add(compositeField);
-            keyValueRepeater.updateLayout();
-
-            metaDataCounter++;
-
-        }.bind(this);
-
-        var items = [
-            '->',
-            {
-                xtype: 'button',
-                text: t('add'),
-                iconCls: 'pimcore_icon_add',
-                handler: addMetaData,
-                tooltip: {
-                    title:'',
-                    text: t('form_builder_add_metadata')
-                }
-            }
-        ];
-
-        if( allowFirstOptionsEmpty ) {
-            items.unshift( {
-                xtype: 'panel',
-                name: 'multiOptionsInfo',
-                fieldLabel: '',
-                submitValue : false,
-                frame: false,
-                border: false,
-                bodyStyle: 'background:transparent;',
-                flex: 1,
-                html: t('form_builder_empty_multi_option_first_value')
-            });
-        }
-
-        keyValueRepeater = new Ext.form.FieldSet({
-
-            title: fieldConfig.label,
-            collapsible: false,
-            autoHeight:true,
-            width: '100%',
-            style: 'margin-top: 20px;',
-            items: [{
-                xtype: 'toolbar',
-                style: 'margin-bottom: 10px;',
-                items: items
-            }]
-        });
-
-        try {
-
-            if(typeof this.storeData[fieldConfig.id] === 'object' && this.storeData[fieldConfig.id].length > 0) {
-                this.storeData[fieldConfig.id].forEach(function(field) {
-                    addMetaData(field['option'], field['value']);
-                });
-            }
-
-        } catch (e) {}
-
-
-        return keyValueRepeater;
+        return keyValueRepeater.getRepeater();
 
     },
 
     getRepeaterWithOptions: function(fieldConfig) {
 
-        var optionsRepeater = null,
-            metaDataCounter = 0,
-            optionsStore = new Ext.data.ArrayStore({
-            fields: ['label','value'],
-            data : fieldConfig.config.options
-        });
+        var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
+            fieldConfig,
+            this.storeData[fieldConfig.id],
+            fieldConfig.config.options
+        );
 
-        var addMetaData = function (name, value) {
+        return keyValueRepeater.getRepeater();
 
-            if(typeof name !== 'string') {
-                name = '';
-            }
-            if(typeof value !== 'string') {
-                value = '';
-            }
-
-            var count = optionsRepeater.query('button').length;
-
-            var compositeField = new Ext.form.FieldContainer({
-                layout: 'hbox',
-                hideLabel: true,
-                style: 'padding-bottom:5px;',
-                items: [
-                    {
-                        xtype: 'combo',
-                        name: 'repeater__' + fieldConfig.id + '__' + count + '__option',
-                        fieldLabel: t('form_builder_option'),
-                        queryDelay: 0,
-                        displayField: 'label',
-                        valueField: 'value',
-                        mode: 'local',
-                        store: optionsStore,
-                        editable: true,
-                        triggerAction: 'all',
-                        anchor: "100%",
-                        value: name,
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        flex: 1,
-                        margin: '0 10px 0 0'
-                    },
-                    {
-                        xtype: 'textfield',
-                        name: 'repeater__' + fieldConfig.id + '__' + count + '__value',
-                        fieldLabel: t('form_builder_value'),
-                        anchor: '100%',
-                        value: value,
-                        summaryDisplay: true,
-                        allowBlank: false,
-                        flex: 1,
-                        margin: '0 10px 0 0'
-                    }
-                ]
-
-            });
-
-            compositeField.add([{
-                xtype: 'button',
-                iconCls: 'pimcore_icon_delete',
-                style: 'float:left;',
-                handler: function (compositeField, el) {
-                    optionsRepeater.remove(compositeField);
-                    optionsRepeater.updateLayout();
-                }.bind(this, compositeField)
-            },{
-                xtype: 'box',
-                style: 'clear:both;'
-            }]);
-
-            optionsRepeater.add(compositeField);
-            optionsRepeater.updateLayout();
-
-            metaDataCounter++;
-
-        }.bind(this);
-
-        optionsRepeater = new Ext.form.FieldSet({
-
-            title: fieldConfig.label,
-            collapsible: false,
-            autoHeight:true,
-            width: '100%',
-            style: 'margin-top: 20px;',
-            items: [{
-                xtype: 'toolbar',
-                style: 'margin-bottom: 10px;',
-                items: ['->', {
-                    xtype: 'button',
-                    text: t('add'),
-                    iconCls: 'pimcore_icon_add',
-                    handler: addMetaData,
-                    tooltip: {
-                        title:'',
-                        text: t('form_builder_add_metadata')
-                    }
-                }]
-            }]
-        });
-
-        try {
-
-            if(typeof this.storeData[fieldConfig.id] === 'object' && this.storeData[fieldConfig.id].length > 0) {
-                this.storeData[fieldConfig.id].forEach(function(field) {
-                    addMetaData(field['option'], field['value'] );
-                });
-            }
-
-        } catch (e) {}
-
-        return optionsRepeater;
     },
 
+    /**
+     * @returns {String}
+     */
     generateUniqueFieldName: function() {
         return Ext.id(null, 'field_');
     },
@@ -710,13 +473,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         var ret = Ext.decode(response.responseText);
 
         if(ret.success === true) {
-
             this.clearInvalid();
-
         } else {
-
             this.markInvalid( t("Path doesn't exist") );
-
         }
 
     }

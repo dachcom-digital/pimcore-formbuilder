@@ -32,6 +32,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         return [
            '/bundles/formbuilder/js/plugin.js',
             '/bundles/formbuilder/js/settings.js',
+            '/bundles/formbuilder/js/dataObject.js',
+            '/bundles/formbuilder/js/types/keyValueRepeater.js',
             '/bundles/formbuilder/js/comp/importer.js',
             '/bundles/formbuilder/js/comp/form.js',
             '/bundles/formbuilder/js/comp/formTypeBuilder.js'

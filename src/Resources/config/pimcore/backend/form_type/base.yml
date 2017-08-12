@@ -70,7 +70,7 @@ form_builder:
                 label: 'form_builder_type_field_base.hook_custom_action'
                 config: ~
             attributes:
-                display_group_id: hook
+                display_group_id: attributes
                 type: options_repeater
                 label: 'form_builder_type_field_base.attributes'
                 config:

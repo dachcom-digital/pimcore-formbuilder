@@ -1,0 +1,10 @@
+form_builder:
+    backend_field_type_config:
+        checkbox_type:
+            form_type_group: other_fields
+            label: 'form_builder_type.checkbox_type'
+            icon_class: 'form_builder_icon_checkbox'
+            tabs: ~
+            display_groups: ~
+            fields:
+                allow_empty: ~

@@ -155,7 +155,7 @@ class FormField implements FormFieldInterface
      */
     public function getOptions()
     {
-        $options = new FormTypeOptionsMapper($this->options, $this->translator);
+        $options = new FormTypeOptionsMapper($this->options);
         return $options;
     }
 

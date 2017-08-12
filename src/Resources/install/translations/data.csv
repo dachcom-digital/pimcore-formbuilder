@@ -25,6 +25,8 @@
 "form_builder_type.text_type";"Text Type";"Text Type";
 "form_builder_type.integer_type";"Integer Type";"Integer Type";
 "form_builder_type.textarea_type";"Textarea Type";"Textarea Type";
+"form_builder_type.checkbox_type";"Checkbox Type";"Checkbox Type";
+"form_builder_type.choice_type";"Choice Type";"Choice Type";
 
 "form_builder_type_tab.default";"Default";"Default";
 
@@ -40,7 +42,7 @@
 "form_builder_type_field_base.hook_custom_action";"Custom Action";"Custom Action";
 "form_builder_type_field_base.attributes";"Attributes";"Attributes";
 
-"form_builder_type_field.allow_empty";"Allow Empty";"Allow Empty";
+"form_builder_type_field.choices";"Choices";"Choices";
 
 "form_builder_type_template.default";"Default";"Default";
 

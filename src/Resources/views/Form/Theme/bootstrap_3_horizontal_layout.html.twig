@@ -11,3 +11,15 @@
         {{ parent() }}
     </div>
 {%- endblock button_row %}
+
+{% block checkbox_row -%}
+    <div class="{{ attr['field-template'] is defined ? attr['field-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock checkbox_row %}
+
+{% block radio_row -%}
+    <div class="{{ attr['field-template'] is defined ? attr['field-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock radio_row %}

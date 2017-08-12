@@ -54,7 +54,6 @@ class IntegerType extends AbstractType
         }
 
         $options['required'] = $isRequired;
-        $options['translation_domain'] = FALSE;
         $options['label'] = $typeOptions->hasLabel(TRUE) ? $typeOptions->getLabel(TRUE) : FALSE;
         $options['attr']['placeholder'] = $typeOptions->hasPlaceholder() ? $typeOptions->getPlaceholder() : '';
 

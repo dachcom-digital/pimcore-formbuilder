@@ -277,7 +277,7 @@ Formbuilder.settings = Class.create({
         } else if (button === 'cancel') {
             return false;
         } else {
-            Ext.Msg.alert(t('add_elem'), t('form_builder_problem_creating_new_elem'));
+            Ext.Msg.alert(t('error'), t('form_builder_problem_creating_new_elem'));
         }
 
     },

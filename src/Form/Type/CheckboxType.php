@@ -5,22 +5,22 @@ namespace FormBuilderBundle\Form\Type;
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType as SymfonyTextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType as SymfonyCheckboxType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class TextType extends AbstractType
+class CheckboxType extends AbstractType
 {
     use SimpleTypeTrait;
 
     /**
      * @var string
      */
-    protected $type = 'text_type';
+    protected $type = 'checkbox_type';
 
     /**
      * @var string
      */
-    protected $template = 'FormBuilderBundle:forms:fields/types/text.html.twig';
+    protected $template = 'FormBuilderBundle:forms:fields/types/checkbox.html.twig';
 
     /**
      * @param FormBuilderInterface $builder
@@ -31,7 +31,7 @@ class TextType extends AbstractType
         $options = $this->parseOptions($field->getOptions());
         $options['attr']['field-template'] = $field->getTemplate();
 
-        $builder->add($field->getName(), SymfonyTextType::class, $options);
+        $builder->add($field->getName(), SymfonyCheckboxType::class, $options);
     }
 
     /**
@@ -55,7 +55,6 @@ class TextType extends AbstractType
 
         $options['required'] = $isRequired;
         $options['label'] = $typeOptions->hasLabel(TRUE) ? $typeOptions->getLabel(TRUE) : FALSE;
-        $options['attr']['placeholder'] = $typeOptions->hasPlaceholder() ? $typeOptions->getPlaceholder() : '';
 
         return $options;
     }

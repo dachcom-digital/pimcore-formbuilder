@@ -5,22 +5,20 @@ namespace FormBuilderBundle\Form\Type;
 use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType as SymfonyTextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType as SymfonyChoiceType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class TextType extends AbstractType
+class ChoiceType extends AbstractType
 {
-    use SimpleTypeTrait;
+    /**
+     * @var string
+     */
+    protected $type = 'choice_type';
 
     /**
      * @var string
      */
-    protected $type = 'text_type';
-
-    /**
-     * @var string
-     */
-    protected $template = 'FormBuilderBundle:forms:fields/types/text.html.twig';
+    protected $template = 'FormBuilderBundle:forms:fields/types/checkbox.html.twig';
 
     /**
      * @param FormBuilderInterface $builder
@@ -31,7 +29,7 @@ class TextType extends AbstractType
         $options = $this->parseOptions($field->getOptions());
         $options['attr']['field-template'] = $field->getTemplate();
 
-        $builder->add($field->getName(), SymfonyTextType::class, $options);
+        $builder->add($field->getName(), SymfonyChoiceType::class, $options);
     }
 
     /**
@@ -54,9 +52,31 @@ class TextType extends AbstractType
         }
 
         $options['required'] = $isRequired;
-        $options['label'] = $typeOptions->hasLabel(TRUE) ? $typeOptions->getLabel(TRUE) : FALSE;
-        $options['attr']['placeholder'] = $typeOptions->hasPlaceholder() ? $typeOptions->getPlaceholder() : '';
+        $options['label'] = $typeOptions->hasLabel(TRUE) ? $typeOptions->getLabel() : FALSE;
+        $options['expanded'] = $typeOptions->getExpanded();
+        $options['multiple'] = $typeOptions->getMultiple();
+        $options['choices'] = $this->parseChoices($typeOptions->getChoices());
 
         return $options;
+    }
+
+    public function parseChoices($choices)
+    {
+        $parsedChoices = [];
+        foreach($choices as $choice) {
+
+            //groups
+            if(isset($choice[0])) {
+                $groupName = $choice[0]['name'];
+                foreach($choice as $index => $choiceGroup) {
+                    $parsedChoices[$groupName][$choiceGroup['option']] = $choiceGroup['value'];
+                }
+            } else {
+                $parsedChoices[$choice['option']] = $choice['value'];
+            }
+        }
+
+        return $parsedChoices;
+
     }
 }

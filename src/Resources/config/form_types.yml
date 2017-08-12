@@ -15,3 +15,13 @@ services:
         tags:
             - {name: form_builder.form_type, alias: textarea_type}
 
+    form_builder.form_type.checkbox:
+        class: FormBuilderBundle\Form\Type\CheckboxType
+        tags:
+            - {name: form_builder.form_type, alias: checkbox_type}
+
+    form_builder.form_type.choice:
+        class: FormBuilderBundle\Form\Type\ChoiceType
+        tags:
+            - {name: form_builder.form_type, alias: choice_type}
+

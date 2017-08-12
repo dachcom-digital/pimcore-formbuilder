@@ -1,0 +1,24 @@
+form_builder:
+    backend_field_type_config:
+        choice_type:
+            form_type_group: choice_fields
+            label: 'form_builder_type.choice_type'
+            icon_class: 'form_builder_icon_multi_select'
+            tabs: ~
+            display_groups: ~
+            fields:
+                expanded:
+                    display_group_id: attributes
+                    type: checkbox
+                    label: 'form_builder_type_field.expanded'
+                    config: ~
+                multiple:
+                    display_group_id: attributes
+                    type: checkbox
+                    label: 'form_builder_type_field.multiple'
+                    config: ~
+                choices:
+                    display_group_id: attributes
+                    type: key_value_repeater
+                    label: 'form_builder_type_field.choices'
+                    config: ~
