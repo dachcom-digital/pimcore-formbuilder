@@ -35,6 +35,7 @@
 "form_builder_type_display_group.attributes";"Attributes";"Attributes";
 
 "form_builder_type_field_base.label";"Label";"Label";
+"form_builder_type_field_base.email_label";"Email Label";"E-Mail Label";
 "form_builder_type_field_base.value";"Value";"Value";
 "form_builder_type_field_base.required";"Required";"Required";
 "form_builder_type_field_base.allow_empty";"Allow Empty";"Allow Empty";

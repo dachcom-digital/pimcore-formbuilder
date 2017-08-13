@@ -8,7 +8,6 @@ use FormBuilderBundle\Form\Builder;
 use FormBuilderBundle\FormBuilderEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -79,7 +78,7 @@ class RequestListener implements EventSubscriberInterface
             /** @var FormInterface $form */
             list($formId, $form) =  $this->formBuilder->buildByRequest($request);
 
-            if (!$form instanceof Form) {
+            if (!$form instanceof FormInterface) {
                 return;
             }
 
@@ -88,8 +87,6 @@ class RequestListener implements EventSubscriberInterface
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $formData = $form->getData();
 
             /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
             $sessionBag = $this->session->getBag('form_builder_session');
@@ -100,7 +97,7 @@ class RequestListener implements EventSubscriberInterface
                 $sessionBag->remove('form_configuration_' . $formId);
             }
 
-            $submissionEvent = new SubmissionEvent($request, $formConfiguration, $formData);
+            $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
             $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
             $response = new RedirectResponse('?send=true');

@@ -4,12 +4,11 @@ namespace FormBuilderBundle\EventListener;
 
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Mail\FormBuilderMail;
 use FormBuilderBundle\Parser\MailParser;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Templating\EngineInterface;
 
 class MailListener implements EventSubscriberInterface
 {
@@ -24,16 +23,6 @@ class MailListener implements EventSubscriberInterface
     protected $mailParser;
 
     /**
-     * @var array
-     */
-    private $messages = [];
-
-    /**
-     * @var bool
-     */
-    private $isValid = FALSE;
-
-    /**
      * MailListener constructor.
      *
      * @param Session $session
@@ -46,7 +35,7 @@ class MailListener implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public static function getSubscribedEvents()
     {
@@ -61,7 +50,7 @@ class MailListener implements EventSubscriberInterface
     public function onFormSubmit(SubmissionEvent $event)
     {
         $request = $event->getRequest();
-        $formData = $event->getFormData();
+        $form = $event->getForm();
 
         $formConfiguration = $event->getFormConfiguration();
         $emailConfiguration = $formConfiguration['email'];
@@ -75,13 +64,13 @@ class MailListener implements EventSubscriberInterface
 
         try {
 
-            $send = $this->sendForm($emailConfiguration['mail_template_id'], ['data' => $formData]);
+            $send = $this->sendForm($emailConfiguration['mail_template_id'], $form, $request->getLocale());
 
             if ($send === TRUE) {
                 //send copy!
                 if ($sendCopy === TRUE) {
                     try {
-                        $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], ['data' => $formData]);
+                        $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $form, $request->getLocale());
                         if ($send !== TRUE) {
                             $flashBag->add('error', 'copy mail not sent.');
                         }
@@ -100,20 +89,19 @@ class MailListener implements EventSubscriberInterface
 
     /**
      * @param int   $mailTemplateId
-     * @param array $attributes
-     *
+     * @param FormInterface $form
+     * @param $locale
      * @throws \Exception
      * @returns bool
      */
-    private function sendForm($mailTemplateId = 0, $attributes = [])
+    private function sendForm($mailTemplateId = 0, FormInterface $form, $locale)
     {
         $mailTemplate = Email::getById($mailTemplateId);
-
         if (!$mailTemplate instanceof Email) {
             return FALSE;
         }
 
-        $mail = $this->mailParser->create($mailTemplate, $attributes);
+        $mail = $this->mailParser->create($mailTemplate, $form, $locale);
         $mail->send();
 
         return TRUE;

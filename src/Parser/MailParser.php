@@ -2,8 +2,10 @@
 
 namespace FormBuilderBundle\Parser;
 
+use FormBuilderBundle\Form\FormValuesTransformer;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class MailParser
@@ -18,35 +20,45 @@ class MailParser
      */
     protected $mailTemplate;
 
+    /**
+     * @var FormValuesTransformer
+     */
+    protected $formValuesTransformer;
 
     /**
      * MailParser constructor.
      *
      * @param EngineInterface $templating
+     * @param FormValuesTransformer $formValuesTransformer
      */
-    public function __construct(EngineInterface $templating)
+    public function __construct(EngineInterface $templating, FormValuesTransformer $formValuesTransformer)
     {
         $this->templating = $templating;
+        $this->formValuesTransformer = $formValuesTransformer;
     }
 
     /**
-     * @param Email $mailTemplate
-     * @param       $attributes
+     * @param Email               $mailTemplate
+     * @param       FormInterface $form
      *
      * @return Mail
      */
-    public function create(Email $mailTemplate, $attributes)
+    public function create(Email $mailTemplate, FormInterface $form, $locale)
     {
         $mail = new Mail();
 
         $disableDefaultMailBody = (bool)$mailTemplate->getProperty('mail_disable_default_mail_body');
+
         $ignoreFields = (string)$mailTemplate->getProperty('mail_ignore_fields');
+        $ignoreFields = array_map('trim', explode(',', $ignoreFields));
 
-        $this->parseMailRecipients($mailTemplate, $attributes['data']);
-        $this->parseMailSender($mailTemplate, $attributes['data']);
-        $this->parseSubject($mailTemplate, $attributes['data']);
+        $fieldData = $form->getData()->getFields($ignoreFields);
+        $fieldValues = $this->formValuesTransformer->transformData($form, $fieldData, $locale);
 
-        $this->setMailPlaceholders($mail, $attributes['data'], $disableDefaultMailBody, $ignoreFields);
+        $this->parseMailRecipients($mailTemplate, $fieldValues);
+        $this->parseMailSender($mailTemplate, $fieldValues);
+        $this->parseSubject($mailTemplate, $fieldValues);
+        $this->setMailPlaceholders($mail, $fieldValues, $disableDefaultMailBody);
 
         $mail->setDocument($mailTemplate);
 
@@ -79,9 +91,9 @@ class MailParser
 
     /**
      * @param Email $mailTemplate
-     * @param array $data
+     * @param array $fieldValues
      */
-    private function parseSubject(Email $mailTemplate,  $data = [])
+    private function parseSubject(Email $mailTemplate, $fieldValues = [])
     {
         $realSubject = $mailTemplate->getSubject();
 
@@ -89,13 +101,17 @@ class MailParser
 
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
-                foreach ($data as $formFieldName => $formFieldValue) {
-                    if (empty($formFieldValue['value'])) {
+                foreach ($fieldValues as $formField) {
+                    if (empty($formField['value'])) {
                         continue;
                     }
 
-                    if ($formFieldName == $inputValue) {
-                        $realSubject = str_replace($matches[0][$key], $this->getSingleRenderedValue($formFieldValue['value'], ', '), $realSubject);
+                    if ($formField['name'] == $inputValue) {
+                        $realSubject = str_replace(
+                            $matches[0][$key],
+                            $this->getSingleRenderedValue($formField['value'], ', '),
+                            $realSubject
+                        );
                     }
                 }
 
@@ -105,62 +121,40 @@ class MailParser
         }
 
         $mailTemplate->setSubject($realSubject);
-
     }
 
     /**
      * @param Mail $mail
      * @param      $data
      * @param      $disableDefaultMailBody
-     * @param      $ignoreFields
      */
-    private function setMailPlaceholders(Mail $mail, $data, $disableDefaultMailBody, $ignoreFields)
+    private function setMailPlaceholders(Mail $mail, $data, $disableDefaultMailBody)
     {
-        $ignoreFields = array_map('trim', explode(',', $ignoreFields));
-
         //allow access to all form placeholders
         foreach ($data as $label => $field) {
-            //ignore fields!
-            if (in_array($label, $ignoreFields) || empty($field['value'])) {
+
+            if (empty($field['value'])) {
                 continue;
             }
 
-            $mail->setParam($label, $this->getSingleRenderedValue($field['value']));
+            $mail->setParam(!empty($field['email_label']) ? $field['email_label'] : $field['label'], $this->getSingleRenderedValue($field['value']));
         }
 
         if ($disableDefaultMailBody === FALSE) {
-            $mail->setParam('body', $this->parseHtml($data, $ignoreFields));
+            $mail->setParam('body', $this->getBodyTemplate($data));
         }
     }
 
     /**
      * @param $data
-     * @param $ignoreFields
      *
      * @return string
      */
-    private function parseHtml($data, $ignoreFields)
+    private function getBodyTemplate($data)
     {
-        $renderData = [];
-
-        foreach ($data as $label => $fieldData) {
-            //ignore fields!
-            if (in_array($label, $ignoreFields)) {
-                continue;
-            }
-
-            //@todo: implement form translations.
-            //$data = $this->getSingleRenderedValue($fieldData['value']);
-            $data = $fieldData;
-
-            if (empty($data)) {
-                continue;
-            }
-
-            $renderData[] = ['label' => $label, 'value' => $fieldData];
-        }
-
-        $html = $this->templating->render('@FormBuilder/Email/formData.html.twig', ['data' => $renderData]);
+        $html = $this->templating->render(
+            '@FormBuilder/Email/formData.html.twig',
+            ['fields' => $data]);
 
         return $html;
     }
@@ -169,11 +163,11 @@ class MailParser
      * Extract Placeholder Data from given String like %email% and compare it with given form data.
      *
      * @param $str
-     * @param $data
+     * @param $fieldValues
      *
      * @return mixed|string
      */
-    private function extractPlaceHolder($str, $data)
+    private function extractPlaceHolder($str, $fieldValues)
     {
         $extractedValue = $str;
 
@@ -181,9 +175,9 @@ class MailParser
 
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
-                foreach ($data as $formFieldName => $formFieldValue) {
-                    if ($formFieldName == $inputValue) {
-                        $str = str_replace($matches[0][$key], $formFieldValue['value'], $str);
+                foreach ($fieldValues as $formField) {
+                    if ($formField['name'] == $inputValue) {
+                        $str = str_replace($matches[0][$key], $formField['value'], $str);
                     }
                 }
 

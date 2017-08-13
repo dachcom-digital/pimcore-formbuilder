@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Form;
 
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\FormTypeRegistry;
+use FormBuilderBundle\Storage\Dynamic;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -69,12 +70,12 @@ class Builder
                 continue;
             }
 
-            if(isset($parameters['formId'])) {
+            if (isset($parameters['formId'])) {
                 return [$parameters['formId'], $this->buildForm($parameters['formId'])];
             }
         }
 
-        return [null, null];
+        return [NULL, NULL];
     }
 
     /**
@@ -96,7 +97,7 @@ class Builder
         $formConfig = $formEntity->getConfig();
 
         $formAttributes = [];
-        if($formConfig['noValidate'] === FALSE) {
+        if ($formConfig['noValidate'] === FALSE) {
             $formAttributes['novalidate'] = 'novalidate';
         }
 
@@ -106,7 +107,7 @@ class Builder
         $builder = $this->formFactory->createNamedBuilder(
             'formbuilder_' . $formEntity->getId(),
             'Symfony\Component\Form\Extension\Core\Type\FormType',
-            null,
+            new Dynamic($formEntity),
             ['attr' => $formAttributes]
         );
 

@@ -44,6 +44,11 @@ form_builder:
                 type: textfield
                 label: 'form_builder_type_field_base.label'
                 config: ~
+            email_label:
+                display_group_id: base
+                type: textfield
+                label: 'form_builder_type_field_base.email_label'
+                config: ~
             value:
                 display_group_id: base
                 type: textfield

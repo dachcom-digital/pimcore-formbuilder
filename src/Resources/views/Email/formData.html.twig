@@ -1,8 +1,14 @@
-<table>
-    {% for fieldData in data %}
+{% for field in fields|default([]) %}
+    {% set value = field.value %}
+
+    {% if value is iterable %}
+        {% set value = value|join(', ') %}
+    {% endif %}
+
+    {% if value is not empty %}
         <tr>
-            <td width="50%" valign="top"><strong>{{ fieldData.label }}:</strong></td>
-            <td width="50%" valign="top">{{ fieldData.value }}</td>
+            <td width="50%" valign="top"><strong>{{ field.email_label|default(field.label)|raw }}:</strong></td>
+            <td width="50%" valign="top">{{ value }}</td>
         </tr>
-    {% endfor %}
-</table>
+    {% endif %}
+{% endfor %}

@@ -69,6 +69,7 @@ services:
         class: FormBuilderBundle\Parser\MailParser
         arguments:
             - '@templating'
+            - '@form_builder.form_values_transformer'
 
     # form builder
     form_builder.form_builder:
@@ -78,6 +79,12 @@ services:
             - '@form_builder.manager.form'
             - '@form.factory'
             - '@form_builder.registry.form_type'
+
+    #form values transformer
+    form_builder.form_values_transformer:
+        class: FormBuilderBundle\Form\FormValuesTransformer
+        arguments:
+            - '@pimcore.translator'
 
     # core event: request
     form_builder.core_listener.request:

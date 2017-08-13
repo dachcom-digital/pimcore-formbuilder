@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class SubmissionEvent extends Event
@@ -20,18 +21,18 @@ class SubmissionEvent extends Event
     /**
      * @var array
      */
-    private $formData;
+    private $form;
 
     /**
-     * @param Request $request
-     * @param array $formConfiguration
-     * @param array  $formData
+     * @param Request       $request
+     * @param array         $formConfiguration
+     * @param FormInterface $form
      */
-    public function __construct(Request $request, $formConfiguration = [], $formData = [])
+    public function __construct(Request $request, $formConfiguration = [], FormInterface $form)
     {
         $this->request = $request;
         $this->formConfiguration = $formConfiguration;
-        $this->formData = $formData;
+        $this->form = $form;
     }
 
     /**
@@ -51,11 +52,11 @@ class SubmissionEvent extends Event
     }
 
     /**
-     * @return array
+     * @return FormInterface
      */
-    public function getFormData()
+    public function getForm()
     {
-        return $this->formData;
+        return $this->form;
     }
 
 }
