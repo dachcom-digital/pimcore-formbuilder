@@ -8,11 +8,6 @@ interface FormInterface
 {
     public function setTranslator(Translator $translator);
 
-    /**
-     * @return Translator
-     */
-    public function getTranslator();
-
     public function rename($newName);
 
     public function delete();
