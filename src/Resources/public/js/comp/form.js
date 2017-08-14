@@ -278,17 +278,13 @@ Formbuilder.comp.form = Class.create({
     onTreeNodeContextMenu: function(tree, record, item, index, e, eOpts) {
 
         var _ = this,
-            parentType = 'root',
+            parentType = record.data.fbType,
             deleteAllowed,
             showPaste = false,
             menu = new Ext.menu.Menu();
 
         e.stopEvent();
         tree.select();
-
-        if (record.data.object) {
-            parentType = record.data.object.type;
-        }
 
         deleteAllowed = parentType !== 'root';
 
@@ -339,6 +335,7 @@ Formbuilder.comp.form = Class.create({
             }));
         }
 
+        //delete menu
         if (parentType !== 'root') {
 
             menu.add(new Ext.menu.Item({
@@ -348,7 +345,11 @@ Formbuilder.comp.form = Class.create({
                 handler: this.copyFormField.bind(this, tree, record)
             }));
 
-            //constraint menu
+        }
+
+        //constraint menu
+        if (parentType === 'field') {
+
             var constraintElements = [];
 
             for (var i = 0; i < _.availableConstraints.length; i++) {
