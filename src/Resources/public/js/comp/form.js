@@ -22,25 +22,13 @@ Formbuilder.comp.form = Class.create({
     rootFields: [],
 
     allowedMoveElements: {
-        'root' : [
-            'container',
-            'displayGroup',
-            'element'
+        'root': [
+            'field'
         ],
-        'container' : [
-            'displayGroup',
-            'container',
-            'element'
+        'field': [
+            'constraint'
         ],
-        'displayGroup' : [
-            'element'
-        ],
-        'element' : [
-            'validator'
-        ],
-        'validator' : [
-            'element'
-        ]
+        'constraint': []
     },
 
     initialize: function(formData, parentPanel) {
@@ -239,7 +227,7 @@ Formbuilder.comp.form = Class.create({
         var targetType = newParent.data.fbType,
             elementType = node.data.fbType;
 
-        return Ext.Array.contains(this.allowedMoveElements[ targetType ], elementType  );
+        return Ext.Array.contains(this.allowedMoveElements[targetType], elementType);
 
     },
 
