@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Storage;
 
-use FormBuilderBundle\Mapper\FormTypeOptionsMapper;
 use Pimcore\Translation\Translator;
 
 class FormField implements FormFieldInterface
@@ -28,19 +27,24 @@ class FormField implements FormFieldInterface
     private $type;
 
     /**
-     * @var string
-     */
-    private $template;
-
-    /**
      * @var int
      */
     private $order;
 
     /**
+     * @var
+     */
+    private $constraints = [];
+
+    /**
      * @var array
      */
-    private $options;
+    private $options = [];
+
+    /**
+     * @var
+     */
+    private $optional = [];
 
     public function setTranslator(Translator $translator)
     {
@@ -124,25 +128,6 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param string $template
-     *
-     * @return FormField
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
      * @param array $options
      */
     public function setOptions($options = [])
@@ -150,13 +135,49 @@ class FormField implements FormFieldInterface
         $this->options = $options;
     }
 
-    /**
-     * @return FormTypeOptionsMapper
-     */
     public function getOptions()
     {
-        $options = new FormTypeOptionsMapper($this->options);
-        return $options;
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptional($options = [])
+    {
+        if(!is_array($options)) {
+            $options = [];
+        }
+
+        $this->optional = $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptional()
+    {
+        return $this->optional;
+    }
+
+    /**
+     * @param array $constraints
+     */
+    public function setConstraints($constraints = [])
+    {
+        if(!is_array($constraints)) {
+            $constraints = [];
+        }
+
+        $this->constraints = $constraints;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConstraints()
+    {
+        return $this->constraints;
     }
 
     /**

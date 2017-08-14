@@ -2,11 +2,10 @@
 
 namespace FormBuilderBundle\Form;
 
+use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Registry\FormTypeRegistry;
-use FormBuilderBundle\Storage\Dynamic;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +16,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class Builder
 {
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
+
     /**
      * @var RequestStack
      */
@@ -33,28 +37,23 @@ class Builder
     protected $formFactory;
 
     /**
-     * @var FormTypeRegistry
-     */
-    protected $formTypeRegistry;
-
-    /**
      * Builder constructor.
      *
-     * @param RequestStack     $requestStack
-     * @param FormManager      $formManager
-     * @param FormFactory      $formFactory
-     * @param FormTypeRegistry $formTypeRegistry
+     * @param Configuration $configuration
+     * @param RequestStack  $requestStack
+     * @param FormManager   $formManager
+     * @param FormFactory   $formFactory
      */
     public function __construct(
+        Configuration $configuration,
         RequestStack $requestStack,
         FormManager $formManager,
-        FormFactory $formFactory,
-        FormTypeRegistry $formTypeRegistry
+        FormFactory $formFactory
     ) {
+        $this->configuration = $configuration;
         $this->requestStack = $requestStack;
         $this->formManager = $formManager;
         $this->formFactory = $formFactory;
-        $this->formTypeRegistry = $formTypeRegistry;
     }
 
     /**
@@ -96,6 +95,9 @@ class Builder
         $formEntity = $this->formManager->getById($id);
         $formConfig = $formEntity->getConfig();
 
+        $formTypes = $this->configuration->getConfig('types');
+        $formConstraints = $this->configuration->getConfig('validation_constraints');
+
         $formAttributes = [];
         if ($formConfig['noValidate'] === FALSE) {
             $formAttributes['novalidate'] = 'novalidate';
@@ -106,20 +108,40 @@ class Builder
 
         $builder = $this->formFactory->createNamedBuilder(
             'formbuilder_' . $formEntity->getId(),
-            'Symfony\Component\Form\Extension\Core\Type\FormType',
-            new Dynamic($formEntity),
-            ['attr' => $formAttributes]
+            DynamicFormType::class,
+            $formEntity,
+            [
+                'current_form_id' => $formEntity->getId(),
+                'attr'            => $formAttributes
+            ]
         );
+
 
         /** @var FormFieldInterface $field */
         foreach ($formEntity->getFields() as $field) {
-            $this->formTypeRegistry->get($field->getType())->build($builder, $field);
+
+            $options = $field->getOptions();
+
+            $constraints = [];
+            foreach ($field->getConstraints() as $constraint) {
+
+                if(!isset($formConstraints[$constraint['type']])) {
+                    continue;
+                }
+
+                $class = $formConstraints[$constraint['type']]['class'];
+                $constraints[] = new $class();
+            }
+
+            $options['constraints'] = $constraints;
+
+            $builder->add(
+                $field->getName(),
+                $formTypes[$field->getType()]['class'],
+                $options
+            );
         }
 
-        //@todo: encrypt?
-        $builder->add('formId', HiddenType::class, [
-            'data' => $formEntity->getId(),
-        ]);
 
         // Add submit button.
         $builder->add('submit', SubmitType::class, ['label' => 'submit']);

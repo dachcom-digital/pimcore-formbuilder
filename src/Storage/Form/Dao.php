@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Storage\Form;
 
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Storage\FormFieldInterface;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\AbstractModel;
@@ -142,6 +142,8 @@ class Dao extends AbstractDao
     protected function getFormFieldData()
     {
         $formFields = [];
+
+        /** @var FormFieldInterface $field */
         foreach ($this->model->getFields() as $field) {
             $formFields[] = $field->toArray();
         }

@@ -38,4 +38,5 @@ interface FormInterface
 
     public function getFieldType($name);
 
+    public function getFieldValue($name);
 }

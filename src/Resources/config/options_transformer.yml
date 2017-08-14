@@ -1,0 +1,5 @@
+services:
+    form_builder.options_transformer.choices:
+        class: FormBuilderBundle\Transformer\ChoicesTransformer
+        tags:
+            - {name: form_builder.transformer.options}

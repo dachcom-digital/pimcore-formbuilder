@@ -60,6 +60,9 @@ class SettingsController extends AdminController
     {
         $id = $request->query->get('id');
 
+        /** @var FormManager $formManager */
+        $formManager = $this->get('form_builder.manager.form');
+
         /** @var Builder $backendFormBuilder */
         $backendFormBuilder = $this->get('form_builder.backend.form_builder');
 
@@ -69,10 +72,10 @@ class SettingsController extends AdminController
         ];
 
         try {
-            $form = $this->get('form_builder.manager.form')->getById($id);
+            $form = $formManager->getById($id);
             $data['data'] = $backendFormBuilder->generateExtJsForm($form);
         } catch (\Exception $e) {
-            $data = ['success' => FALSE, 'message' => $e->getMessage()];
+            $data = ['success' => FALSE, 'message' => $e->getMessage() . ' (' . $e->getFile() . ': ' . $e->getLine() . ')'];
         }
 
         return $this->json($data);
@@ -154,6 +157,9 @@ class SettingsController extends AdminController
         /** @var FormManager $formManager */
         $formManager = $this->get('form_builder.manager.form');
 
+        /** @var Builder $backendFormBuilder */
+        $backendFormBuilder = $this->get('form_builder.backend.form_builder');
+
         $formEntity = $formManager->getById($id);
         $storedFormName = $formEntity->getName();
 
@@ -169,7 +175,7 @@ class SettingsController extends AdminController
         $data = [
             'form_name'   => $formName,
             //'form_date'   => time(),
-            'form_fields' => $formFields,
+            'form_fields' => $backendFormBuilder->generateStoreFields($formFields),
             'form_config' => $formConfig,
         ];
 

@@ -3,11 +3,11 @@
 namespace FormBuilderBundle\Backend\Form;
 
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Form\Type\TypeInterface;
 use FormBuilderBundle\Manager\TemplateManager;
-use FormBuilderBundle\Registry\FormTypeRegistry;
+use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Transformer\OptionsTransformerInterface;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Pimcore\Translation\Translator;
 
@@ -19,12 +19,7 @@ class Builder
     protected $configuration;
 
     /**
-     * @var FormTypeRegistry
-     */
-    protected $formTypeRegistry;
-
-    /**
-     * @var FormTypeRegistry
+     * @var OptionsTransformerRegistry
      */
     protected $templateManager;
 
@@ -34,23 +29,28 @@ class Builder
     protected $translator;
 
     /**
+     * @var OptionsTransformerRegistry
+     */
+    protected $optionsTransformerRegistry;
+
+    /**
      * Builder constructor.
      *
-     * @param Configuration    $configuration
-     * @param FormTypeRegistry $formTypeRegistry
-     * @param TemplateManager  $templateManager
-     * @param Translator       $translator
+     * @param Configuration              $configuration
+     * @param TemplateManager            $templateManager
+     * @param Translator                 $translator
+     * @param OptionsTransformerRegistry $optionsTransformerRegistry
      */
     public function __construct(
         Configuration $configuration,
-        FormTypeRegistry $formTypeRegistry,
         TemplateManager $templateManager,
-        Translator $translator
+        Translator $translator,
+        OptionsTransformerRegistry $optionsTransformerRegistry
     ) {
         $this->configuration = $configuration;
-        $this->formTypeRegistry = $formTypeRegistry;
         $this->templateManager = $templateManager;
         $this->translator = $translator;
+        $this->optionsTransformerRegistry = $optionsTransformerRegistry;
     }
 
     /**
@@ -71,21 +71,22 @@ class Builder
 
         /** @var FormFieldInterface $field */
         foreach ($form->getFields() as $field) {
-            $fieldData = $field->toArray();
-            $fieldDataOptions = $fieldData['options'];
-
-            unset($fieldData['options']);
-
-            //flatten form options array.
-            foreach ($fieldDataOptions as $optionKey => $optionName) {
-                $fieldData[$optionKey] = $optionName;
-            }
-
+            $fieldData = $this->transformOptions($field->toArray(), TRUE);
             $data['fields'][] = $fieldData;
         }
 
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
+        $data['validation_constraints'] = $this->getValidationConstraints();
+
+        return $data;
+    }
+
+    public function generateStoreFields(array $data)
+    {
+        foreach ($data['fields'] as &$fieldData) {
+            $fieldData = $this->transformOptions($fieldData);
+        }
 
         return $data;
     }
@@ -95,22 +96,20 @@ class Builder
      */
     private function generateExtJsFormTypesStructure()
     {
-        $formTypes = $this->formTypeRegistry->getAll();
+        $formTypes = $this->configuration->getConfig('types');
         $fieldStructure = $this->getFieldTypeGroups();
 
-        /** @var TypeInterface $formTypeElement */
-        foreach ($formTypes as $formTypeElement) {
+        foreach ($formTypes as $formType => $formTypeConfiguration) {
 
-            $formType = $formTypeElement->getType();
-
+            $beConfig = $formTypeConfiguration['backend'];
             $fieldStructureElement = [
                 'type'                 => $formType,
-                'label'                => $this->getFormTypeLabel($formType),
-                'icon_class'           => $this->getFormTypeIcon($formType),
-                'configuration_layout' => $this->getFormTypeBackendConfiguration($formType)
+                'label'                => $this->getFormTypeLabel($formType, $beConfig),
+                'icon_class'           => $this->getFormTypeIcon($formType, $beConfig),
+                'configuration_layout' => $this->getFormTypeBackendConfiguration($formType, $beConfig)
             ];
 
-            $groupIndex = array_search($this->getFormTypeGroup($formType), array_column($fieldStructure, 'id'));
+            $groupIndex = array_search($this->getFormTypeGroup($formType, $beConfig), array_column($fieldStructure, 'id'));
 
             if ($groupIndex !== FALSE) {
                 $fieldStructure[$groupIndex]['fields'][] = $fieldStructureElement;
@@ -141,25 +140,37 @@ class Builder
         return $groupData;
     }
 
+    private function getValidationConstraints()
+    {
+        $constraints = $this->configuration->getConfig('validation_constraints');
+
+        $constraintData = [];
+        foreach ($constraints as $constraintId => &$constraint) {
+            $constraint['id'] = $constraintId;
+            $constraint['label'] = $this->translate($constraint['label']);
+            $constraintData[] = $constraint;
+        }
+
+        return $constraintData;
+    }
+
     /**
      * @param $formType
+     * @param $formTypeBackendConfig
      *
      * @return array
      */
-    private function getFormTypeBackendConfiguration($formType)
+    private function getFormTypeBackendConfiguration($formType, $formTypeBackendConfig)
     {
         $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
-        $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
 
-        $formTypeConfig = $formConfig[$formType];
-
-        if (is_null($formTypeConfig)) {
+        if (is_null($formTypeBackendConfig)) {
             throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
         }
 
-        $tabs = array_merge($baseConfig['tabs'], $formTypeConfig['tabs']);
-        $displayGroups = array_merge($baseConfig['display_groups'], $formTypeConfig['display_groups']);
-        $fields = array_merge($baseConfig['fields'], $formTypeConfig['fields']);
+        $tabs = array_merge($baseConfig['tabs'], $formTypeBackendConfig['tabs']);
+        $displayGroups = array_merge($baseConfig['display_groups'], $formTypeBackendConfig['display_groups']);
+        $fields = array_merge($baseConfig['fields'], $formTypeBackendConfig['fields']);
 
         $data = [];
 
@@ -195,6 +206,16 @@ class Builder
             $fieldData = $field;
             $fieldData['id'] = $fieldId;
             $fieldData['label'] = $this->translate($fieldData['label']);
+
+            //print_r($fieldData);
+
+            if (!empty($fieldData['options_transformer'])) {
+                //send data to transformer.
+                //$fieldData['options'][$optionName] = $this->optionsTransformerRegistry
+                //    ->get($optionConfig['options_transformer'])
+                //    ->transform($optionValue);
+            }
+
             unset($fieldData['display_group_id']);
 
             foreach ($data as &$tabRow) {
@@ -212,35 +233,35 @@ class Builder
 
     /**
      * @param $formType
+     * @param $formTypeBackendConfig
      *
      * @return mixed
      */
-    private function getFormTypeGroup($formType)
+    private function getFormTypeGroup($formType, $formTypeBackendConfig)
     {
-        $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
-        return $formConfig[$formType]['form_type_group'];
+        return $formTypeBackendConfig['form_type_group'];
     }
 
     /**
      * @param $formType
+     * @param $formTypeBackendConfig
      *
      * @return mixed
      */
-    private function getFormTypeIcon($formType)
+    private function getFormTypeIcon($formType, $formTypeBackendConfig)
     {
-        $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
-        return $formConfig[$formType]['icon_class'];
+        return $formTypeBackendConfig['icon_class'];
     }
 
     /**
      * @param $formType
+     * @param $formTypeBackendConfig
      *
-     * @return mixed
+     * @return string
      */
-    private function getFormTypeLabel($formType)
+    private function getFormTypeLabel($formType, $formTypeBackendConfig)
     {
-        $formConfig = $this->configuration->getBackendConfig('backend_field_type_config');
-        return $this->translate($formConfig[$formType]['label']);
+        return $this->translate($formTypeBackendConfig['label']);
     }
 
     /**
@@ -271,5 +292,50 @@ class Builder
         }
 
         return $this->translator->trans($value, [], 'admin');
+    }
+
+    /**
+     * @param      $fieldData
+     * @param bool $reverse
+     *
+     * @return mixed
+     */
+    private function transformOptions($fieldData, $reverse = FALSE)
+    {
+        $formTypes = $this->configuration->getConfig('types');
+
+        if (!isset($fieldData['options']) || !is_array($fieldData['options'])) {
+            return $fieldData;
+        }
+
+        $formTypeConfig = $formTypes[$fieldData['type']];
+        $backendConfig = $formTypeConfig['backend'];
+
+        if (!isset($backendConfig['fields'])) {
+            return $fieldData;
+        }
+
+        foreach ($fieldData['options'] as $optionName => $optionValue) {
+
+            if (!isset($backendConfig['fields']['options.' . $optionName])) {
+                continue;
+            }
+
+            $optionConfig = $backendConfig['fields']['options.' . $optionName];
+            if (!empty($optionConfig['options_transformer'])) {
+
+                /** @var OptionsTransformerInterface $transformer */
+                $transformer =  $fieldData['options'][$optionName] = $this->optionsTransformerRegistry
+                    ->get($optionConfig['options_transformer']);
+
+                if($reverse === FALSE) {
+                    $fieldData['options'][$optionName] = $transformer ->transform($optionValue);
+                } else {
+                    $fieldData['options'][$optionName] = $transformer ->reverseTransform($optionValue);
+                }
+            }
+        }
+
+        return $fieldData;
     }
 }

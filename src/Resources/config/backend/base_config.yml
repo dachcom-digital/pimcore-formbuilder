@@ -31,50 +31,31 @@ form_builder:
             base:
                 tab_id: default
                 label: 'form_builder_type_display_group.base'
-            hook:
-                tab_id: default
-                label: 'form_builder_type_display_group.hook'
-                collapsed: true
             attributes:
                 tab_id: default
                 label: 'form_builder_type_display_group.attributes'
         fields:
-            label:
+            options.label:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.label'
                 config: ~
-            email_label:
+            optional.email_label:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.email_label'
                 config: ~
-            value:
+            options.data:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.value'
                 config: ~
-            required:
+            options.required:
                 display_group_id: base
                 type: checkbox
                 label: 'form_builder_type_field_base.required'
                 config: ~
-            allow_empty:
-                display_group_id: base
-                type: checkbox
-                label: 'form_builder_type_field_base.allow_empty'
-                config: ~
-            hook_custom_class:
-                display_group_id: hook
-                type: textfield
-                label: 'form_builder_type_field_base.hook_custom_class'
-                config: ~
-            hook_custom_action:
-                display_group_id: hook
-                type: textfield
-                label: 'form_builder_type_field_base.hook_custom_action'
-                config: ~
-            attributes:
+            options.attr:
                 display_group_id: attributes
                 type: options_repeater
                 label: 'form_builder_type_field_base.attributes'
@@ -83,7 +64,7 @@ form_builder:
                         - ['class','class']
                         - ['id','id']
                         - ['style','style']
-                        - ['maxlegth','maxlength']
+                        - ['maxlength','maxlength']
                         - ['disabled','disabled']
                         - ['readonly','readonly']
                         - ['size','size']
@@ -102,3 +83,8 @@ form_builder:
                         - ['onmouseup','onmouseup']
                         - ['onselect','onselect']
 
+    validation_constraints:
+        not_blank:
+            class: Symfony\Component\Validator\Constraints\NotBlank
+            label: 'form_builder_validation_constraint.not_blank'
+            icon_class: form_builder_icon_validation

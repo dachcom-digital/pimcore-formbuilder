@@ -1,5 +1,6 @@
 imports:
-    - { resource: form_types.yml }
+    - { resource: forms.yml }
+    - { resource: options_transformer.yml }
 
 services:
 
@@ -57,11 +58,11 @@ services:
         arguments:
             - '@form_builder.configuration'
 
-    # registry: form_types
-    form_builder.registry.form_type:
-        class: FormBuilderBundle\Registry\FormTypeRegistry
+    # registry: options transformer
+    form_builder.registry.options_transformer:
+        class: FormBuilderBundle\Registry\OptionsTransformerRegistry
         arguments:
-            - FormBuilderBundle\Form\Type\TypeInterface
+            - FormBuilderBundle\Transformer\OptionsTransformerInterface
 
     #parser: mail
     form_builder.parser.mail:
@@ -69,20 +70,20 @@ services:
         class: FormBuilderBundle\Parser\MailParser
         arguments:
             - '@templating'
-            - '@form_builder.form_values_transformer'
+            - '@form_builder.form_values_beautifier'
 
     # form builder
     form_builder.form_builder:
         class: FormBuilderBundle\Form\Builder
         arguments:
+            - '@form_builder.configuration'
             - '@request_stack'
             - '@form_builder.manager.form'
             - '@form.factory'
-            - '@form_builder.registry.form_type'
 
-    #form values transformer
-    form_builder.form_values_transformer:
-        class: FormBuilderBundle\Form\FormValuesTransformer
+    #form values beatuifier
+    form_builder.form_values_beautifier:
+        class: FormBuilderBundle\Form\FormValuesBeautifier
         arguments:
             - '@pimcore.translator'
 
@@ -110,6 +111,6 @@ services:
         class: FormBuilderBundle\Backend\Form\Builder
         arguments:
             - '@form_builder.configuration'
-            - '@form_builder.registry.form_type'
             - '@form_builder.manager.template'
             - '@pimcore.translator'
+            - '@form_builder.registry.options_transformer'

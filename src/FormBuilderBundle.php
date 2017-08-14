@@ -3,6 +3,7 @@
 namespace FormBuilderBundle;
 
 use FormBuilderBundle\DependencyInjection\CompilerPass\FormTypePass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -13,7 +14,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new FormTypePass());
+        $container->addCompilerPass(new OptionsTransformerPass());
     }
 
     /**
@@ -36,7 +37,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/types/keyValueRepeater.js',
             '/bundles/formbuilder/js/comp/importer.js',
             '/bundles/formbuilder/js/comp/form.js',
-            '/bundles/formbuilder/js/comp/formTypeBuilder.js'
+            '/bundles/formbuilder/js/comp/formTypeBuilder.js',
+            '/bundles/formbuilder/js/comp/formFieldConstraint.js'
         ];
     }
 

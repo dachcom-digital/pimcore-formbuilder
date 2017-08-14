@@ -1,0 +1,41 @@
+services:
+
+    form_builder.form.dynamic_form:
+        class: FormBuilderBundle\Form\Type\DynamicFormType
+        tags:
+          - { name: form.type }
+
+    form_builder.form.constraint:
+        class: FormBuilderBundle\Form\Type\ConstraintType
+        tags:
+          - { name: form.type }
+
+    form_builder.form.constraint_collection:
+        class: FormBuilderBundle\Form\Type\ConstraintsCollectionType
+        tags:
+          - { name: form.type }
+
+#    form_builder.form_type.text:
+#        class: FormBuilderBundle\Form\Type\TextType
+#        tags:
+#            - {name: form_builder.form_type, alias: text_type}
+#
+#    form_builder.form_type.number:
+#        class: FormBuilderBundle\Form\Type\IntegerType
+#        tags:
+#            - {name: form_builder.form_type, alias: integer_type}
+#
+#    form_builder.form_type.textarea:
+#        class: FormBuilderBundle\Form\Type\TextAreaType
+#        tags:
+#            - {name: form_builder.form_type, alias: textarea_type}
+#
+#    form_builder.form_type.checkbox:
+#        class: FormBuilderBundle\Form\Type\CheckboxType
+#        tags:
+#            - {name: form_builder.form_type, alias: checkbox_type}
+#
+#    form_builder.form_type.choice:
+#        class: FormBuilderBundle\Form\Type\ChoiceType
+#        tags:
+#            - {name: form_builder.form_type, alias: choice_type}

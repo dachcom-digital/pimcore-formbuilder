@@ -24,13 +24,17 @@ interface FormFieldInterface
 
     public function getType();
 
-    public function setTemplate($template);
-
-    public function getTemplate();
-
     public function setOptions($options = []);
 
     public function getOptions();
+
+    public function setOptional($options = []);
+
+    public function getOptional();
+
+    public function setConstraints($constraints = []);
+
+    public function getConstraints();
 
     public function toArray();
 }

@@ -40,6 +40,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
         this.typeSelector = new Ext.form.ComboBox({
             width: 300,
             triggerAction:'all',
+            submitValue: false,
             store: [
                 ['default', t('form_builder_repeater_default')],
                 ['grouped', t('form_builder_repeater_grouped')]

@@ -139,8 +139,11 @@ class FormManager
 
             $counter++;
             $fieldType = $this->getValue($fieldData, 'type');
+
+            $optionsParameter = $this->getValue($fieldData, 'options');
+            $optionalParameter = $this->getValue($fieldData, 'optional');
             $fieldName = $this->getValue($fieldData, 'name');
-            $fieldDisplayName = $this->getValue($fieldData, 'display_name');
+            $constraints = $this->getValue($fieldData, 'constraints');
 
             /** @var FormFieldInterface $field */
             $field = $form->getField($fieldName);
@@ -152,12 +155,13 @@ class FormManager
                 $field->setName($fieldName);
             }
 
-            $field->setDisplayName($fieldDisplayName);
+            $field->setDisplayName($this->getValue($fieldData, 'display_name'));
             $field->setOrder($counter);
             $field->setType($fieldType);
-            $field->setTemplate($this->getValue($fieldData, 'template', 'default'));
 
-            $field->setOptions($this->getFieldOptions($fieldData));
+            $field->setOptions($optionsParameter);
+            $field->setOptional($optionalParameter);
+            $field->setConstraints($constraints);
 
             $fields[] = $field;
         }
@@ -180,11 +184,4 @@ class FormManager
 
         return $default;
     }
-
-    protected function getFieldOptions($data)
-    {
-        $removeKeys = ['display_name', 'name', 'width', 'type', 'fields'];
-        return array_diff_key($data, array_flip($removeKeys));
-    }
-
 }

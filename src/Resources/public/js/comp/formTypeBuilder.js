@@ -19,8 +19,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     attributeSelector: null,
 
-    showTranslationTab: true,
-
     storeData : {},
 
     forbiddenFieldNames: [
@@ -44,6 +42,10 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     getType: function() {
         return this.type;
+    },
+
+    getName: function() {
+        return this.getData().name;
     },
 
     getTypeName: function() {
@@ -128,24 +130,10 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         return this.formIsValid;
     },
 
-    /**
-     * THANKS!
-     * https://github.com/Gigzolo/dataobject-parser
-     *
-     * @param data
-     * @returns {{}}
-     */
-    parseFormFields: function (data) {
-        var transposedData = DataObjectParser.transpose(data);
-        return transposedData.data();
-    },
-
     applyData: function() {
 
-        var storeData = this.parseFormFields(this.form.getValues());
-
         this.formIsValid = this.form.isValid();
-        this.storeData = storeData;
+        this.storeData =  this.transposeFormFields(this.form.getValues());
         this.storeData.type = this.getType();
 
     },
@@ -205,20 +193,22 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         if(isMainTab === true) {
 
             //create "display name" field.
+            var displayNameValue = this.getFieldValue('display_name');
             form.add(new Ext.form.TextField({
                 fieldLabel: t('form_builder_field_display_name'),
                 name: 'display_name',
-                value: this.storeData.display_name ? this.storeData.display_name : this.typeName,
+                value: displayNameValue ? displayNameValue : this.typeName,
                 allowBlank: false,
                 anchor: '100%',
                 enableKeyEvents: true
             }));
 
             //create "name" field.
+            var nameValue = this.getFieldValue('name');
             form.add(new Ext.form.TextField({
                 fieldLabel:  t('form_builder_field_name'),
                 name: 'name',
-                value: this.storeData.name ? this.storeData.name : this.generateUniqueFieldName(),
+                value: nameValue ? nameValue : this.generateUniqueFieldName(),
                 allowBlank: false,
                 anchor: '100%',
                 enableKeyEvents: true,
@@ -245,10 +235,11 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             });
 
             //create "template" field
+            var templateValue = this.getFieldValue('optional.template');
             form.add(new Ext.form.ComboBox({
                 fieldLabel: t('form_builder_field_template'),
-                name: 'template',
-                value: this.storeData.template ? this.storeData.template : templateDefaultValue,
+                name: 'optional.template',
+                value: templateValue ? templateValue : templateDefaultValue,
                 queryDelay: 0,
                 displayField: 'label',
                 valueField: 'value',
@@ -291,7 +282,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                     name: fieldConfig.id,
                     fieldLabel: fieldConfig.label,
                     store: tagStore,
-                    value: this.storeData[fieldConfig.id],
+                    value: this.getFieldValue(fieldConfig.id),
                     createNewOnEnter: true,
                     createNewOnBlur: true,
                     filterPickList: true,
@@ -311,7 +302,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                     fieldLabel: fieldConfig.label,
                     allowDecimals: false,
                     anchor: '100%',
-                    value: this.storeData[fieldConfig.id],
+                    value: this.getFieldValue(fieldConfig.id)
                 });
 
                 break;
@@ -319,13 +310,12 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             case 'checkbox':
 
                 field = new Ext.form.Checkbox({
-
                     fieldLabel: fieldConfig.label,
                     name: fieldConfig.id,
                     checked: false,
                     uncheckedValue: false,
                     inputValue: true,
-                    value: this.storeData[fieldConfig.id]
+                    value: this.getFieldValue(fieldConfig.id)
                 });
 
                 break;
@@ -333,10 +323,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             case 'textfield':
 
                 field = new Ext.form.TextField({
-
                     fieldLabel: fieldConfig.label,
                     name: fieldConfig.id,
-                    value: this.storeData[fieldConfig.id],
+                    value: this.getFieldValue(fieldConfig.id),
                     allowBlank: true,
                     anchor: '100%',
                     enableKeyEvents: true
@@ -354,7 +343,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 field = new Ext.form.ComboBox({
                     fieldLabel: fieldConfig.label,
                     name: fieldConfig.id,
-                    value: this.storeData[fieldConfig.id],
+                    value: this.getFieldValue(fieldConfig.id),
                     queryDelay: 0,
                     displayField: 'label',
                     valueField: 'value',
@@ -385,7 +374,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
             fieldConfig,
-            this.storeData[fieldConfig.id]
+            this.getFieldValue(fieldConfig.id)
         );
 
         return keyValueRepeater.getRepeater();
@@ -396,7 +385,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
             fieldConfig,
-            this.storeData[fieldConfig.id],
+            this.getFieldValue(fieldConfig.id),
             fieldConfig.config.options
         );
 
@@ -426,7 +415,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     checkFieldLabelName: function(field) {
 
         var labelField = this.form.queryBy(function (component) {
-            return in_array(component.name, ['label']);
+            return in_array(component.name, ['options.label']);
         });
 
         if(!labelField[0]) {
@@ -475,9 +464,38 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         if(ret.success === true) {
             this.clearInvalid();
         } else {
-            this.markInvalid( t("Path doesn't exist") );
+            this.markInvalid( t('form_builder_path_does_not_exists') );
         }
 
-    }
+    },
 
+    /**
+     * THANKS!
+     * https://github.com/Gigzolo/dataobject-parser
+     *
+     * @param data
+     * @returns {{}}
+     */
+    transposeFormFields: function (data) {
+        var transposedData = DataObjectParser.transpose(data);
+        return transposedData.data();
+    },
+
+    unTransposeFormFields: function (data) {
+        var unTransposedData = DataObjectParser.untranspose(data);
+        return unTransposedData;
+    },
+
+    getFieldValue(id)
+    {
+        if(id.indexOf('options.') !== -1) {
+            return this.storeData['options'][id.replace(/^(options\.)/,'')];
+        } else if(id.indexOf('optional.') !== -1) {
+            return this.storeData['optional'][id.replace(/^(optional\.)/,'')];
+        } else if(this.storeData[id]) {
+            return this.storeData[id];
+        }
+
+        return undefined;
+    }
 });

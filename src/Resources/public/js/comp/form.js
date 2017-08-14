@@ -59,6 +59,8 @@ Formbuilder.comp.form = Class.create({
 
         this.availableFormFields = formData.fields_structure
 
+        this.availableConstraints = formData.validation_constraints
+
         this.availableFormFieldTemplates = formData.fields_template
 
         this.addLayout();
@@ -83,6 +85,7 @@ Formbuilder.comp.form = Class.create({
                 text: t('form_builder_base'),
                 iconCls:'form_builder_icon_root',
                 fbType: 'root',
+                fbTypeContainer: 'root',
                 isTarget: true,
                 leaf:true,
                 root: true
@@ -166,7 +169,7 @@ Formbuilder.comp.form = Class.create({
         }
 
         for (var i = 0; i < this.formFields.length; i++) {
-            var node = this.recursiveAddNode(this.formFields[i], this.tree.getRootNode());
+            var node = this.recursiveAddNode(this.tree.getRootNode(), this.formFields[i], 'formType');
             if(node !== null) {
                 this.tree.getRootNode().appendChild(node);
             }
@@ -176,27 +179,44 @@ Formbuilder.comp.form = Class.create({
 
     },
 
-    recursiveAddNode: function(formTypeValues, scope) {
+    recursiveAddNode: function(scope, formTypeValues, type) {
 
         var stype = null, fn = null, newNode = null;
 
-        if( formTypeValues.isValidator === true) {
-            stype = 'validator';
+        if(type === 'formType') {
+
+            var formGroupElement = this.getFormTypeStructure(formTypeValues.type);
+
+            if(formGroupElement === false) {
+                Ext.MessageBox.alert(t('error'), 'Form type structure for type "' + formTypeValues.type + '" not found.');
+                return null;
+            }
+
+            fn = this.createFormField.bind(this, scope, formGroupElement, formTypeValues);
+            newNode = fn();
+
+        } else if(type === 'constraint') {
+
+            var constraintElement = this.getFormTypeConstraintStructure(formTypeValues.type);
+
+            if(constraintElement === false) {
+                Ext.MessageBox.alert(t('error'), 'Form type constraint structure for type "' + formTypeValues.type + '" not found.');
+                return null;
+            }
+
+            fn = this.createFormFieldConstraint.bind(this, scope, constraintElement, formTypeValues);
+            newNode = fn();
         }
 
-        var formGroupElement = this.getFormTypeStructure(formTypeValues.type);
-
-        if(formGroupElement === false) {
-            Ext.MessageBox.alert(t('error'), 'Form type structure for type "' + formTypeValues.type + '" not found.');
-            return null;
+        if (formTypeValues.constraints) {
+            for (var i = 0; i < formTypeValues.constraints.length; i++) {
+                this.recursiveAddNode(newNode, formTypeValues.constraints[i], 'constraint');
+            }
         }
-
-        fn = this.createFormField.bind(this, scope, formGroupElement, formTypeValues);
-        newNode = fn();
 
         if (formTypeValues.fields) {
             for (var i = 0; i < formTypeValues.fields.length; i++) {
-                this.recursiveAddNode(formTypeValues.fields[i], newNode);
+                this.recursiveAddNode(newNode, formTypeValues.fields[i], 'formType');
             }
         }
 
@@ -327,6 +347,29 @@ Formbuilder.comp.form = Class.create({
                 hideOnClick: true,
                 handler: this.copyFormField.bind(this, tree, record)
             }));
+
+            //constraint menu
+            var constraintElements = [];
+
+            for (var i = 0; i < _.availableConstraints.length; i++) {
+
+                var constraint = _.availableConstraints[i];
+
+                constraintElements.push(new Ext.menu.Item({
+                    text: constraint.label,
+                    iconCls: constraint.icon_class,
+                    hideOnClick: true,
+                    handler: this.createFormFieldConstraint.bind(_, record, constraint, null)
+                }));
+
+            }
+
+            menu.add(new Ext.menu.Item({
+                text: t('form_builder_add_validation'),
+                iconCls: 'form_builder_icon_validation_add',
+                hideOnClick: false,
+                menu: constraintElements
+            }));
         }
 
         if (this.copyData !== null) {
@@ -436,13 +479,13 @@ Formbuilder.comp.form = Class.create({
 
         this.currentNode.applyData();
 
-        var c = 0, n = this.currentNode.getData().name;
+        var c = 0, n = this.currentNode.treeNode.data.fbType + '.' + this.currentNode.getName();
         Ext.each(this.getUsedFieldNames(this.tree.getRootNode(), []), function(name) {
             if(name === n) { c++; }
         });
 
         if(c > 1) {
-            throw 'field name is already in use.';
+            throw 'field name "' + n + '" is already in use.';
         }
 
     },
@@ -690,31 +733,44 @@ Formbuilder.comp.form = Class.create({
             type: 'layout',
             draggable: true,
             iconCls: formType.icon_class,
-            fbType: formType === 'container' ? 'container' : ( formType === 'displayGroup' ? 'displayGroup' : 'element' ),
+            fbType: 'field',
+            fbTypeContainer: 'fields',
             leaf: false,
-            expandable: formType === 'container' || formType === 'displayGroup',
+            expandable: false,
             expanded: true
         };
 
         return node;
 
     },
-    createFormFieldConstraint: function(type) {
 
-        var newNode = {
+    createFormFieldConstraint: function(tree, constraint, constraintValues) {
+
+        var newNode = this.createFormFieldConstraintNode(constraint);
+
+        newNode = tree.appendChild(newNode);
+        newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(this, newNode, constraint, constraintValues));
+
+        tree.expand();
+
+        return newNode;
+    },
+
+    createFormFieldConstraintNode: function(constraintType) {
+
+        var node = {
+            text: constraintType.label,
             type: 'layout',
             draggable: true,
-            iconCls: 'form_builder_icon_validator',
-            fbType: 'validator',
-            text: nodeLabel,
+            iconCls: constraintType.icon_class,
+            fbType: 'constraint',
+            fbTypeContainer: 'constraints',
             leaf: false,
             expandable: false,
             expanded: true
         };
 
-        newNode = this.appendChild(newNode);
-        newNode.set('object', new Formbuilder.comp.validator[type](newNode, initData, this) );
-
+        return node;
     },
 
     copyFormField: function(tree, record) {
@@ -795,13 +851,8 @@ Formbuilder.comp.form = Class.create({
 
             formFieldData = node.data.object.getData();
 
-            var fieldName = formFieldData.name,
-                view = this.tree.getView(),
+            var view = this.tree.getView(),
                 nodeEl = Ext.fly(view.getNodeByRecord(node));
-
-            if(formFieldData.isValidator === true ) {
-                fieldName = 'v.' + fieldName;
-            }
 
             if(nodeEl) {
                 nodeEl.removeCls('tree_node_error');
@@ -813,12 +864,21 @@ Formbuilder.comp.form = Class.create({
             }
         }
 
-        formFieldData.fields = null;
+        if(formFieldData['fields']) {
+            delete formFieldData['fields'];
+        }
+
+        if(formFieldData['constraints']) {
+            delete formFieldData['constraints'];
+        }
 
         if (node.childNodes.length > 0) {
-            formFieldData.fields = [];
             for (var i = 0; i < node.childNodes.length; i++) {
-                formFieldData.fields.push(this.getNodeData(node.childNodes[i]));
+                var type = node.childNodes[i].data.fbTypeContainer;
+                if(!formFieldData[type]) {
+                    formFieldData[type] = [];
+                }
+                formFieldData[type].push(this.getNodeData(node.childNodes[i]));
             }
         }
 
@@ -941,19 +1001,14 @@ Formbuilder.comp.form = Class.create({
      */
     getUsedFieldNames: function(node, nodeNames) {
 
-        var formFieldData = {},
-            nodeNames = nodeNames ? nodeNames : [];
+        var nodeNames = nodeNames ? nodeNames : [];
 
         if(node.data.object) {
 
-            formFieldData = node.data.object.getData();
-            var fieldName = formFieldData.name;
-
-            if(formFieldData.isValidator === true ) {
-                fieldName = 'v.' + fieldName;
+            var fieldName = node.data.fbType + '.' + node.data.object.getName();
+            if(node.data.fbType !== 'constraint') {
+                nodeNames.push(fieldName);
             }
-
-            nodeNames.push(fieldName);
         }
 
         if (node.childNodes.length > 0) {
@@ -984,6 +1039,23 @@ Formbuilder.comp.form = Class.create({
         }
 
         return formTypeElement;
-    }
+    },
 
+    getFormTypeConstraintStructure: function(constraintId) {
+
+        var formTypeConstraint = false;
+        if (this.availableConstraints.length === 0) {
+            return formTypeConstraint;
+        }
+
+        for (var i = 0; i < this.availableConstraints.length; i++) {
+            var formConstraint = this.availableConstraints[i];
+            if(formConstraint.id === constraintId) {
+                formTypeConstraint = formConstraint;
+                break;
+            }
+        }
+
+        return formTypeConstraint;
+    }
 });

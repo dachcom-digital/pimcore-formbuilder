@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
  * @method getProperty($option)
  * @method hasProperty($option)
  */
-class FormValuesTransformer
+class FormValuesBeautifier
 {
     /**
      * @var Translator
@@ -18,7 +18,7 @@ class FormValuesTransformer
     protected $translator;
 
     /**
-     * FormTypeOptionsMapper constructor.
+     * FormValuesTransformer constructor.
      *
      * @param Translator $translator
      */
@@ -28,15 +28,14 @@ class FormValuesTransformer
     }
 
     /**
-     * @param $field
+     * @param $value
      * @param $formField
      * @param $locale
      *
      * @return mixed
      */
-    public function getFieldValue($field, $formField, $locale)
+    public function getFieldValue($value, $formField, $locale)
     {
-        $value = $field['value'];
         if ($formField->getConfig()->hasOption('choices')) {
             $choices = $formField->getConfig()->getOption('choices');
             $arrayIterator = new \RecursiveArrayIterator($choices);
@@ -55,28 +54,36 @@ class FormValuesTransformer
 
     /**
      * @param FormInterface $form
-     * @param               $formData
+     * @param               $ignoreFields
      * @param               $locale
      *
      * @return array
      */
-    public function transformData(FormInterface $form, $formData, $locale)
+    public function transformData(FormInterface $form, $ignoreFields = [], $locale)
     {
         $fields = [];
 
-        foreach ($formData as $field) {
+        /** @var \FormBuilderBundle\Storage\FormInterface $formEntity */
+        $formEntity = $form->getData();
 
-            /** @var FormFieldInterface $entityField */
-            $entityField = $field['entity_field'];
-            $formField = $form->get($entityField->getName());
+        /** @var FormFieldInterface $field */
+        foreach ($formEntity->getFields() as $field) {
 
-            $fieldOptions = $entityField->getOptions();
-            $fields[$entityField->getOrder()] = [
-                'name'        => $entityField->getName(),
-                'type'        => $entityField->getType(),
-                'label'       => $fieldOptions->hasLabel() ? $this->translator->trans($fieldOptions->getLabel(), [], NULL, $locale) : $entityField->getName(),
-                'email_label' => $fieldOptions->hasEmailLabel() ? $this->translator->trans($fieldOptions->getEmailLabel(), [], NULL, $locale) : NULL,
-                'value'       => $this->getFieldValue($field, $formField, $locale),
+            if (in_array($field->getName(), $ignoreFields)) {
+                continue;
+            }
+
+            $formField = $form->get($field->getName());
+
+            $fieldOptions = $field->getOptions();
+            $optionalOptions = $field->getOptional();
+
+            $fields[$field->getOrder()] = [
+                'name'        => $field->getName(),
+                'type'        => $field->getType(),
+                'label'       => isset($fieldOptions['label']) ? $this->translator->trans($fieldOptions['label'], [], NULL, $locale) : $field->getName(),
+                'email_label' => isset($optionalOptions['email_label']) ? $this->translator->trans($optionalOptions['email_label'], [], NULL, $locale) : NULL,
+                'value'       => $this->getFieldValue($formEntity->getFieldValue($field->getName()), $formField, $locale),
             ];
         }
 

@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Parser;
 
-use FormBuilderBundle\Form\FormValuesTransformer;
+use FormBuilderBundle\Form\FormValuesBeautifier;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
@@ -21,20 +21,20 @@ class MailParser
     protected $mailTemplate;
 
     /**
-     * @var FormValuesTransformer
+     * @var FormValuesBeautifier
      */
-    protected $formValuesTransformer;
+    protected $formValuesBeautifier;
 
     /**
      * MailParser constructor.
      *
      * @param EngineInterface $templating
-     * @param FormValuesTransformer $formValuesTransformer
+     * @param FormValuesBeautifier $formValuesBeautifier
      */
-    public function __construct(EngineInterface $templating, FormValuesTransformer $formValuesTransformer)
+    public function __construct(EngineInterface $templating, FormValuesBeautifier $formValuesBeautifier)
     {
         $this->templating = $templating;
-        $this->formValuesTransformer = $formValuesTransformer;
+        $this->formValuesBeautifier = $formValuesBeautifier;
     }
 
     /**
@@ -52,8 +52,7 @@ class MailParser
         $ignoreFields = (string)$mailTemplate->getProperty('mail_ignore_fields');
         $ignoreFields = array_map('trim', explode(',', $ignoreFields));
 
-        $fieldData = $form->getData()->getFields($ignoreFields);
-        $fieldValues = $this->formValuesTransformer->transformData($form, $fieldData, $locale);
+        $fieldValues = $this->formValuesBeautifier->transformData($form, $ignoreFields, $locale);
 
         $this->parseMailRecipients($mailTemplate, $fieldValues);
         $this->parseMailSender($mailTemplate, $fieldValues);

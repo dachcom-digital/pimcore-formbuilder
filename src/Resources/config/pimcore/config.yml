@@ -26,4 +26,5 @@ form_builder:
             fields: []
 
 imports:
-    - { resource: backend/form_type/*.yml }
+    - { resource: '../backend/base_config.yml' }
+    - { resource: '../types/types.yml' }

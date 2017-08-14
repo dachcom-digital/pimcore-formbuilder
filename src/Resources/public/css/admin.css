@@ -18,11 +18,11 @@
     background: url(/bundles/formbuilder/img/container_add.svg) left center no-repeat !important;
 }
 
-.form_builder_icon_filter {
+.form_builder_icon_validation {
     background: url(/bundles/formbuilder/img/filter.svg) left center no-repeat !important;
 }
 
-.form_builder_icon_filter_add {
+.form_builder_icon_validation_add {
     background: url(/bundles/formbuilder/img/filter_add.svg) left center no-repeat !important;
 }
 

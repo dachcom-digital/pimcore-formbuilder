@@ -1,9 +1,9 @@
 {% extends '@FormBuilder/Form/default.html.twig' %}
-{% import form_block_template as form_builder_theme_macro %}
-
 {% block form_builder_form %}
 
     {% if form_template is not null %}
+
+        {% import form_block_template as form_builder_theme_macro %}
 
         {% form_theme form form_template %}
 
