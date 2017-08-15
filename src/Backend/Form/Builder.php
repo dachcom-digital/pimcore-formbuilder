@@ -106,6 +106,7 @@ class Builder
                 'type'                 => $formType,
                 'label'                => $this->getFormTypeLabel($formType, $beConfig),
                 'icon_class'           => $this->getFormTypeIcon($formType, $beConfig),
+                'constraints'          => $this->getFormTypeAllowedConstraints($formType, $beConfig),
                 'configuration_layout' => $this->getFormTypeBackendConfiguration($formType, $beConfig)
             ];
 
@@ -162,26 +163,18 @@ class Builder
      */
     private function getFormTypeBackendConfiguration($formType, $formTypeBackendConfig)
     {
-        $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
-
-        if (is_null($formTypeBackendConfig)) {
-            throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
-        }
-
-        $tabs = array_merge($baseConfig['tabs'], $formTypeBackendConfig['tabs']);
-        $displayGroups = array_merge($baseConfig['display_groups'], $formTypeBackendConfig['display_groups']);
-        $fields = array_merge($baseConfig['fields'], $formTypeBackendConfig['fields']);
+        $fieldConfigFields = $this->getMergedFormTypeConfig($formType, $formTypeBackendConfig);
 
         $data = [];
 
-        foreach ($tabs as $tabId => $tab) {
+        foreach ($fieldConfigFields['tabs'] as $tabId => $tab) {
             $tabData = $tab;
             $tabData['id'] = $tabId;
             $tabData['fields'] = [];
             $data[] = $tabData;
         }
 
-        foreach ($displayGroups as $displayGroupId => $displayGroup) {
+        foreach ($fieldConfigFields['displayGroups'] as $displayGroupId => $displayGroup) {
 
             $displayGroupData = $displayGroup;
             $displayGroupData['id'] = $displayGroupId;
@@ -197,7 +190,7 @@ class Builder
             }
         }
 
-        foreach ($fields as $fieldId => $field) {
+        foreach ($fieldConfigFields['fields'] as $fieldId => $field) {
 
             if ($field === FALSE) {
                 continue;
@@ -206,15 +199,6 @@ class Builder
             $fieldData = $field;
             $fieldData['id'] = $fieldId;
             $fieldData['label'] = $this->translate($fieldData['label']);
-
-            //print_r($fieldData);
-
-            if (!empty($fieldData['options_transformer'])) {
-                //send data to transformer.
-                //$fieldData['options'][$optionName] = $this->optionsTransformerRegistry
-                //    ->get($optionConfig['options_transformer'])
-                //    ->transform($optionValue);
-            }
 
             unset($fieldData['display_group_id']);
 
@@ -229,6 +213,21 @@ class Builder
         }
 
         return $data;
+    }
+
+    private function getMergedFormTypeConfig($formType, $formTypeBackendConfig)
+    {
+        $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
+
+        if (is_null($formTypeBackendConfig)) {
+            throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
+        }
+
+        $tabs = array_merge($baseConfig['tabs'], $formTypeBackendConfig['tabs']);
+        $displayGroups = array_merge($baseConfig['display_groups'], $formTypeBackendConfig['display_groups']);
+        $fields = array_merge($baseConfig['fields'], $formTypeBackendConfig['fields']);
+
+        return ['tabs' => $tabs, 'displayGroups' => $displayGroups, 'fields' => $fields];
     }
 
     /**
@@ -251,6 +250,17 @@ class Builder
     private function getFormTypeIcon($formType, $formTypeBackendConfig)
     {
         return $formTypeBackendConfig['icon_class'];
+    }
+
+    /**
+     * @param $formType
+     * @param $formTypeBackendConfig
+     *
+     * @return mixed
+     */
+    private function getFormTypeAllowedConstraints($formType, $formTypeBackendConfig)
+    {
+        return $formTypeBackendConfig['constraints'];
     }
 
     /**
@@ -309,7 +319,7 @@ class Builder
         }
 
         $formTypeConfig = $formTypes[$fieldData['type']];
-        $backendConfig = $formTypeConfig['backend'];
+        $backendConfig = $this->getMergedFormTypeConfig($fieldData['type'], $formTypeConfig['backend']);
 
         if (!isset($backendConfig['fields'])) {
             return $fieldData;
@@ -325,13 +335,13 @@ class Builder
             if (!empty($optionConfig['options_transformer'])) {
 
                 /** @var OptionsTransformerInterface $transformer */
-                $transformer =  $fieldData['options'][$optionName] = $this->optionsTransformerRegistry
+                $transformer = $fieldData['options'][$optionName] = $this->optionsTransformerRegistry
                     ->get($optionConfig['options_transformer']);
 
-                if($reverse === FALSE) {
-                    $fieldData['options'][$optionName] = $transformer ->transform($optionValue);
+                if ($reverse === FALSE) {
+                    $fieldData['options'][$optionName] = $transformer->transform($optionValue);
                 } else {
-                    $fieldData['options'][$optionName] = $transformer ->reverseTransform($optionValue);
+                    $fieldData['options'][$optionName] = $transformer->reverseTransform($optionValue);
                 }
             }
         }

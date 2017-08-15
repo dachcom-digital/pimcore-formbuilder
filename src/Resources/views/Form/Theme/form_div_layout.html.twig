@@ -1,13 +1,13 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {% block form_row -%}
-    <div class="{{ attr['field-template'] is defined ? attr['field-template'] : '' }}">
+    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : '' }}">
         {{ parent() }}
     </div>
 {%- endblock form_row %}
 
 {% block button_row -%}
-    <div class="{{ attr['field-template'] is defined ? attr['field-template'] : '' }}">
+    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : '' }}">
         {{ parent() }}
     </div>
 {%- endblock button_row %}

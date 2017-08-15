@@ -336,21 +336,18 @@ Formbuilder.comp.form = Class.create({
         }
 
         //constraint menu
-        if (parentType === 'field') {
+        if (parentType === 'field' && record.data.object.allowedConstraints === true) {
 
             var constraintElements = [];
-
             for (var i = 0; i < _.availableConstraints.length; i++) {
 
                 var constraint = _.availableConstraints[i];
-
                 constraintElements.push(new Ext.menu.Item({
                     text: constraint.label,
                     iconCls: constraint.icon_class,
                     hideOnClick: true,
                     handler: this.createFormFieldConstraint.bind(_, record, constraint, null)
                 }));
-
             }
 
             menu.add(new Ext.menu.Item({

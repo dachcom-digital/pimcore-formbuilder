@@ -121,6 +121,12 @@ class Builder
         foreach ($formEntity->getFields() as $field) {
 
             $options = $field->getOptions();
+            $optional = $field->getOptional();
+
+            //set optional template
+            if(isset($optional['template'])) {
+                $options['attr']['data-template'] = $optional['template'];
+            }
 
             $constraints = [];
             foreach ($field->getConstraints() as $constraint) {
@@ -133,7 +139,9 @@ class Builder
                 $constraints[] = new $class();
             }
 
-            $options['constraints'] = $constraints;
+            if(!empty($constraints)) {
+                $options['constraints'] = $constraints;
+            }
 
             $builder->add(
                 $field->getName(),
@@ -141,10 +149,6 @@ class Builder
                 $options
             );
         }
-
-
-        // Add submit button.
-        $builder->add('submit', SubmitType::class, ['label' => 'submit']);
 
         $form = $builder->getForm();
 

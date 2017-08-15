@@ -17,6 +17,8 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     configurationLayout: [],
 
+    allowedConstraints: true,
+
     attributeSelector: null,
 
     storeData : {},
@@ -31,6 +33,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         this.treeNode = treeNode;
         this.formTypeTemplates = availableFormFieldTemplates;
         this.configurationLayout = initData.configuration_layout;
+        this.allowedConstraints = initData.constraints;
 
         this.iconClass = initData.icon_class;
         this.type = initData.type;
@@ -489,9 +492,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     getFieldValue(id)
     {
         if(id.indexOf('options.') !== -1) {
-            return this.storeData['options'][id.replace(/^(options\.)/,'')];
+            return this.storeData['options'] ? this.storeData['options'][id.replace(/^(options\.)/,'')] : undefined;
         } else if(id.indexOf('optional.') !== -1) {
-            return this.storeData['optional'][id.replace(/^(optional\.)/,'')];
+            return this.storeData['optional'] ? this.storeData['optional'][id.replace(/^(optional\.)/,'')] : undefined;
         } else if(this.storeData[id]) {
             return this.storeData[id];
         }

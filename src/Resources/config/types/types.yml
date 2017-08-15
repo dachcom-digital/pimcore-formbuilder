@@ -6,45 +6,41 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.text_type'
                 icon_class: 'form_builder_icon_text'
-                tabs: ~
-                display_groups: ~
-                fields: ~
         textarea:
             class: Symfony\Component\Form\Extension\Core\Type\TextareaType
             backend:
                 form_type_group: text_fields
                 label: 'form_builder_type.textarea_type'
                 icon_class: 'form_builder_icon_textarea'
-                tabs: ~
-                display_groups: ~
-                fields: ~
         integer:
             class: Symfony\Component\Form\Extension\Core\Type\IntegerType
             backend:
                 form_type_group: text_fields
                 label: 'form_builder_type.integer_type'
                 icon_class: 'form_builder_icon_integer'
-                tabs: ~
-                display_groups: ~
-                fields: ~
         checkbox:
             class: Symfony\Component\Form\Extension\Core\Type\CheckboxType
             backend:
                 form_type_group: other_fields
                 label: 'form_builder_type.checkbox_type'
                 icon_class: 'form_builder_icon_checkbox'
-                tabs: ~
-                display_groups: ~
+        submit:
+            class: Symfony\Component\Form\Extension\Core\Type\SubmitType
+            backend:
+                form_type_group: buttons
+                label: 'form_builder_type.submit_type'
+                icon_class: 'form_builder_icon_button'
+                constraints: false
                 fields:
-                    allow_empty: ~
+                    options.required: ~
+                    optional.email_label: ~
+                    options.data: ~
         choice:
             class: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             backend:
                 form_type_group: choice_fields
                 label: 'form_builder_type.choice_type'
                 icon_class: 'form_builder_icon_multi_select'
-                tabs: ~
-                display_groups: ~
                 fields:
                     options.expanded:
                         display_group_id: attributes

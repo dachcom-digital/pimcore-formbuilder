@@ -29,6 +29,7 @@
 "form_builder_type.textarea_type";"Textarea Type";"Textarea Type";
 "form_builder_type.checkbox_type";"Checkbox Type";"Checkbox Type";
 "form_builder_type.choice_type";"Choice Type";"Choice Type";
+"form_builder_type.submit_type";"Submit Type";"Submit Type";
 
 "form_builder_type_tab.default";"Default";"Default";
 

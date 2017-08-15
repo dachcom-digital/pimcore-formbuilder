@@ -180,6 +180,7 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('form_type_group')->isRequired()->end()
                                     ->scalarNode('label')->isRequired()->end()
                                     ->scalarNode('icon_class')->end()
+                                    ->booleanNode('constraints')->defaultTrue()->end()
 
                                     ->arrayNode('tabs')
                                         ->useAttributeAsKey('name')

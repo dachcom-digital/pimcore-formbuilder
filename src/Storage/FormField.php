@@ -132,7 +132,7 @@ class FormField implements FormFieldInterface
      */
     public function setOptions($options = [])
     {
-        $this->options = $options;
+        $this->options = array_filter($options);
     }
 
     public function getOptions()
@@ -149,7 +149,7 @@ class FormField implements FormFieldInterface
             $options = [];
         }
 
-        $this->optional = $options;
+        $this->optional = array_filter($options);
     }
 
     /**
