@@ -24,6 +24,11 @@ class SubmissionEvent extends Event
     private $form;
 
     /**
+     * @var null
+     */
+    private $redirectUri = NULL;
+
+    /**
      * @param Request       $request
      * @param array         $formConfiguration
      * @param FormInterface $form
@@ -33,6 +38,30 @@ class SubmissionEvent extends Event
         $this->request = $request;
         $this->formConfiguration = $formConfiguration;
         $this->form = $form;
+    }
+
+    /**
+     * @param $uri
+     */
+    public function setRedirectUri($uri)
+    {
+        $this->redirectUri = $uri;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRedirectUri()
+    {
+        return !is_null($this->redirectUri);
     }
 
     /**

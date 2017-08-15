@@ -9,7 +9,7 @@
     {% for label, messages in flash_messages %}
         {% for message in messages %}
             <div class="message message-{{ label }}">
-                {{ message }}
+                {{ message|raw }}
             </div>
         {% endfor %}
     {% endfor %}

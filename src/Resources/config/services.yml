@@ -103,6 +103,7 @@ services:
         arguments:
             - '@session'
             - '@form_builder.parser.mail'
+            - '@pimcore.templating.include_renderer'
         tags:
             - { name: kernel.event_subscriber }
 

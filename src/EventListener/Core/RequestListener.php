@@ -100,7 +100,12 @@ class RequestListener implements EventSubscriberInterface
             $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
             $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
-            $response = new RedirectResponse('?send=true');
+            $uri = '?send=true';
+            if($submissionEvent->hasRedirectUri()) {
+                $uri = $submissionEvent->getRedirectUri();
+            }
+
+            $response = new RedirectResponse($uri);
             $event->setResponse($response);
         }
     }
