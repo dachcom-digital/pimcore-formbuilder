@@ -1,18 +1,10 @@
-/*
-        __           __                                ___       _ __        __
-   ____/ /___ ______/ /_  _________  ____ ___     ____/ (_)___ _(_) /_____ _/ /
-  / __  / __ `/ ___/ __ \/ ___/ __ \/ __ `__ \   / __  / / __ `/ / __/ __ `/ /
- / /_/ / /_/ / /__/ / / / /__/ /_/ / / / / / /  / /_/ / / /_/ / / /_/ /_/ / /
- \__,_/\__,_/\___/_/ /_/\___/\____/_/ /_/ /_/   \__,_/_/\__, /_/\__/\__,_/_/
-                                                       /____/
- copyright @ 2016, dachcom digital
-
- */
 var formBuilder = (function () {
 
     'use strict';
 
     var self = {
+
+        ajaxUrls: {},
 
         init: function () {
 
@@ -22,11 +14,14 @@ var formBuilder = (function () {
 
         startSystem: function () {
 
+            this.setAjaxFileStructureUrls();
             this.loadForms();
 
         },
 
         loadForms: function() {
+
+            var _ = this;
 
             /*
 
@@ -42,7 +37,7 @@ var formBuilder = (function () {
 
              */
 
-            //add multiuploads
+            //add multi uploads
             $('form.formbuilder.ajax-form .formbuilder-html5File').each(function() {
 
                 var $el = $(this),
@@ -51,7 +46,7 @@ var formBuilder = (function () {
                     formConfig = $form.find('input[type="hidden"][name="_formConfig"]').val(),
                     $template = $el.find('.formbuilder-template:first'),
                     $element = $el.find('.formbuilder-content:first'),
-                    ajaxUrl = $form.data('ajax-url'),
+                    structureUrl = $form.data('ajax-structure-url'),
                     messages = $template.find('input[name="js-messages"]').val();
 
                 messages = jQuery.parseJSON( messages );
@@ -77,12 +72,12 @@ var formBuilder = (function () {
                                 enabled: true
                             },
                             success: {
-                                endpoint: ajaxUrl + '/chunk-done'
+                                endpoint: _.getAjaxFileUrl('file_chunk_done'),
                             }
                         },
 
                         request: {
-                            endpoint: ajaxUrl + '/add-from-upload',
+                            endpoint: _.getAjaxFileUrl('file_add'),
                             params: {
                                 _formConfig: formConfig,
                                 _fieldName: $element.data('field-name')
@@ -95,7 +90,7 @@ var formBuilder = (function () {
                             deletingFailedText: messages.delete.deletingFailedText,
 
                             enabled: true,
-                            endpoint: ajaxUrl + '/delete-from-upload',
+                            endpoint: _.getAjaxFileUrl('file_delete'),
                             params: {
                                 _formConfig: formConfig,
                                 _fieldName: $element.data('field-name')
@@ -122,55 +117,58 @@ var formBuilder = (function () {
 
             });
 
-            $('form.formbuilder.ajax-form').on('submit', function( ev ) {
+            $('form.formbuilder.ajax-form').on('submit', function(ev) {
+
+                if(_.ajaxUrls.length === 0) {
+                    alert('formbuilder ajax url structure missing.');
+                }
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
-                    ajaxUrl = $form.data('ajax-url'),
+                    structureUrl = $form.data('ajax-structure-url'),
                     $fbHtmlFile = $form.find('.formbuilder-html5File');
 
                 ev.preventDefault();
 
                 $btns.attr('disabled', 'disabled');
 
-                if( $fbHtmlFile.length > 0)
-                {
+                if($fbHtmlFile.length > 0) {
                     $form.find('.qq-upload-delete').hide();
                 }
 
                 $.ajax({
                     type: $form.attr('method'),
-                    url: ajaxUrl + '/parse',
+                    url: _.getAjaxFileUrl('form_parser'),
                     data: ($form.attr('method') === 'get') ? $form.serialize() : new FormData( $form[0] ),
                     processData: ($form.attr('method') === 'get'),
                     contentType: ($form.attr('method') === 'get') ? $form.attr('enctype') : false,
-                    success: function ( response ) {
+                    success: function (response) {
 
                         $btns.attr('disabled', false);
 
                         $form.find('.help-block.validation').remove();
                         $form.find('.form-group').removeClass('has-error');
 
-                        if( $fbHtmlFile.length > 0) {
+                        if($fbHtmlFile.length > 0) {
                             $form.find('.qq-upload-delete').show();
                         }
 
-                        if(response.success === false ) {
+                        if(response.success === false) {
 
-                            if( response.validationData !== false ) {
+                            if(response.validation_errors !== false) {
 
-                                $.each( response.validationData, function( fieldId, messages) {
+                                $.each(response.validation_errors, function(fieldId, messages) {
 
-                                    var $fields = $form.find('.element-' +fieldId),
+                                    var $fields = $form.find('*[name*="' +fieldId +'"]'),
                                         $field = $fields.first(),
                                         $formGroup = null,
                                         $spanEl = null;
 
-                                    if( $field.length > 0) {
+                                    if($field.length > 0) {
 
                                         $formGroup = $field.closest('.form-group');
 
-                                        $.each( messages, function( validationType, message) {
+                                        $.each(messages, function(validationType, message) {
 
                                             $formGroup.addClass('has-error');
                                             $formGroup.find('span.help-block.validation').remove();
@@ -178,7 +176,7 @@ var formBuilder = (function () {
                                             //its a multiple field
                                             $spanEl = $('<span/>', {'class' : 'help-block validation', 'text' : message});
 
-                                            if( $fields.length > 1 ) {
+                                            if($fields.length > 1 ) {
                                                 $field.closest('label').before( $spanEl );
                                             } else {
                                                 $field.before( $spanEl );
@@ -186,48 +184,58 @@ var formBuilder = (function () {
 
                                         });
 
-                                        $form.trigger('formbuilder.error-field', [ { 'field': $field, 'messages' : messages }, $form ]);
-
+                                        $form.trigger('formbuilder.error-field', [{ 'field': $field, 'messages' : messages }, $form]);
                                     }
 
                                 });
 
                             } else {
-
-                                $form.trigger('formbuilder.error', [ response.message, $form ]);
+                                $form.trigger('formbuilder.error', [response.messages, $form]);
                             }
 
                         } else {
 
-                            $form.trigger('formbuilder.success', [ response.message, response.redirect, $form ]);
+                            $form.trigger('formbuilder.success', [response.messages, response.redirect, $form]);
                             $form.find('input[type=text], textarea').val('');
 
-                            if( $fbHtmlFile.length > 0)
-                            {
+                            if($fbHtmlFile.length > 0) {
                                 $fbHtmlFile.fineUploader('reset');
                             }
 
-                            if( typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
+                            if(typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
                                 grecaptcha.reset();
                             }
-
                         }
-
                     }
-
                 });
-
             });
+        },
 
+        setAjaxFileStructureUrls: function() {
+
+            var $form = $('form.formbuilder.ajax-form:first');
+
+            if($form.length === 0 || this.ajaxUrls.length > 0) {
+                return;
+            }
+
+            $.ajax({
+                type: 'post',
+                url: $form.data('ajax-structure-url'),
+                success: function (response) {
+                    this.ajaxUrls = response;
+                }.bind(this)
+            });
+        },
+
+        getAjaxFileUrl: function(section) {
+            return this.ajaxUrls[section];
         }
-
     };
 
     // API
     return {
-
         init: self.init
-
     };
 
 })();

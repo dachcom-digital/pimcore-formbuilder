@@ -80,6 +80,7 @@ services:
             - '@request_stack'
             - '@form_builder.manager.form'
             - '@form.factory'
+            - '@router'
 
     #form values beatuifier
     form_builder.form_values_beautifier:

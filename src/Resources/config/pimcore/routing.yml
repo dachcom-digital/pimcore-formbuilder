@@ -34,3 +34,25 @@ form_builder.controller.admin.check_path:
 form_builder.controller.admin.get_group_templates:
     path: /admin/formbuilder/settings/get-group-templates
     defaults: { _controller: FormBuilderBundle:Admin/Settings:getGroupTemplates }
+
+form_builder.controller.ajax.url_structure:
+    path: /{_locale}/form-control/get-url-structure
+    defaults: { _controller: FormBuilderBundle:Ajax:getAjaxUrlStructure }
+    methods: [POST]
+form_builder.controller.ajax.parse_form:
+    path: /{_locale}/form-control/parse
+    defaults: { _controller: FormBuilderBundle:Ajax:parse }
+    methods: [POST]
+form_builder.controller.ajax.file_chunk_done:
+    path: /{_locale}/form-control/file-chunk
+    defaults: { _controller: FormBuilderBundle:Ajax:fileChunkDone }
+    methods: [POST]
+form_builder.controller.ajax.file_add:
+    path: /{_locale}/form-control/file-add
+    defaults: { _controller: FormBuilderBundle:Ajax:fileAdd }
+    methods: [POST]
+form_builder.controller.ajax.file_delete:
+    path: /{_locale}/form-control/file-delete
+    defaults: { _controller: FormBuilderBundle:Ajax:fileDelete }
+    methods: [POST]
+

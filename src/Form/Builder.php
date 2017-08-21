@@ -6,10 +6,10 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Builds a dynamic form.
@@ -39,21 +39,24 @@ class Builder
     /**
      * Builder constructor.
      *
-     * @param Configuration $configuration
-     * @param RequestStack  $requestStack
-     * @param FormManager   $formManager
-     * @param FormFactory   $formFactory
+     * @param Configuration         $configuration
+     * @param RequestStack          $requestStack
+     * @param FormManager           $formManager
+     * @param FormFactory           $formFactory
+     * @param UrlGeneratorInterface $router
      */
     public function __construct(
         Configuration $configuration,
         RequestStack $requestStack,
         FormManager $formManager,
-        FormFactory $formFactory
+        FormFactory $formFactory,
+        UrlGeneratorInterface $router
     ) {
         $this->configuration = $configuration;
         $this->requestStack = $requestStack;
         $this->formManager = $formManager;
         $this->formFactory = $formFactory;
+        $this->router = $router;
     }
 
     /**
@@ -103,6 +106,11 @@ class Builder
             $formAttributes['novalidate'] = 'novalidate';
         }
 
+        if ($formConfig['useAjax'] === TRUE) {
+            $formAttributes['data-ajax-structure-url'] = $this->router->generate('form_builder.controller.ajax.url_structure');
+            $formAttributes['class'] = 'formbuilder ajax-form';
+        }
+
         //@todo: implement inline functionality.
         //$formAttributes['class'] = 'form-inline';
 
@@ -111,11 +119,12 @@ class Builder
             DynamicFormType::class,
             $formEntity,
             [
+                'method'          => $formConfig['method'],
+                'action'          => $formConfig['action'] === '/' ? $request->getUri() : $formConfig['action'],
                 'current_form_id' => $formEntity->getId(),
-                'attr'            => $formAttributes
+                'attr'            => $formAttributes,
             ]
         );
-
 
         /** @var FormFieldInterface $field */
         foreach ($formEntity->getFields() as $field) {
@@ -124,14 +133,14 @@ class Builder
             $optional = $field->getOptional();
 
             //set optional template
-            if(isset($optional['template'])) {
+            if (isset($optional['template'])) {
                 $options['attr']['data-template'] = $optional['template'];
             }
 
             $constraints = [];
             foreach ($field->getConstraints() as $constraint) {
 
-                if(!isset($formConstraints[$constraint['type']])) {
+                if (!isset($formConstraints[$constraint['type']])) {
                     continue;
                 }
 
@@ -139,7 +148,7 @@ class Builder
                 $constraints[] = new $class();
             }
 
-            if(!empty($constraints)) {
+            if (!empty($constraints)) {
                 $options['constraints'] = $constraints;
             }
 
