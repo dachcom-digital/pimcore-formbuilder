@@ -7,10 +7,10 @@ use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Manager\PresetManager;
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
+use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Translation\Translator;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 class Form extends AbstractTemplateAreabrick
 {
@@ -71,9 +71,9 @@ class Form extends AbstractTemplateAreabrick
     }
 
     /**
-     * @param Document\Tag\Area\Info $info
+     * @param Info $info
      */
-    public function action(Document\Tag\Area\Info $info)
+    public function action(Info $info)
     {
         $view = $info->getView();
         $viewVars = [];
@@ -292,6 +292,22 @@ class Form extends AbstractTemplateAreabrick
      * @return string
      */
     public function getDescription()
+    {
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHtmlTagOpen(Info $info)
+    {
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHtmlTagClose(Info $info)
     {
         return '';
     }
