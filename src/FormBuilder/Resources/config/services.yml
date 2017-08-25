@@ -7,9 +7,6 @@ services:
     # tool installer
     form_builder.tool.installer:
         class: FormBuilderBundle\Tool\Install
-        arguments: ['@logger']
-        tags:
-            - { name: monolog.logger }
 
     # configuration
     form_builder.configuration:

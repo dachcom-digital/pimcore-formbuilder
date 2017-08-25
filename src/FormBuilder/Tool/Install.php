@@ -11,15 +11,9 @@ use Pimcore\Model\Tool\Setup;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Translation\Admin;
 use Symfony\Component\Filesystem\Filesystem;
-use Psr\Log\LoggerInterface;
 
 class Install extends AbstractInstaller
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     /**
      * @var string
      */
@@ -30,11 +24,15 @@ class Install extends AbstractInstaller
      */
     private $fileSystem;
 
-    public function __construct(LoggerInterface $logger)
+    /**
+     * Install constructor.
+     */
+    public function __construct()
     {
-        $this->logger = $logger;
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->fileSystem = new Filesystem();
+
+        parent::__construct();
     }
 
     /**
@@ -42,6 +40,7 @@ class Install extends AbstractInstaller
      */
     public function install()
     {
+
         $this->copyConfigFile();
         $this->injectDbData();
         $this->installAdminTranslations();

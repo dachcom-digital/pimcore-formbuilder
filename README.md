@@ -2,7 +2,7 @@
 Pimcore 5.0 FormBuilder.
 
 #### Requirements
-* Pimcore 5
+* Pimcore 5. Only with Build 96 or greater.
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)

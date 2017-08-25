@@ -2,18 +2,18 @@
 
 namespace FormBuilderBundle;
 
-use FormBuilderBundle\DependencyInjection\CompilerPass\FormTypePass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
-
+    /**
+     * @param ContainerBuilder $container
+     */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
-
         $container->addCompilerPass(new OptionsTransformerPass());
     }
 
@@ -42,6 +42,9 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getCssPaths()
     {
         return [
