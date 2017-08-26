@@ -23,12 +23,14 @@ There is a css example in `/Resources/public/css/formbuilder.css` (honeypot hide
 Feel free to copy its content into your main style.
 
 ### Overriding Templates
-Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templating/overriding.html) stanard.
-
+Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templating/overriding.html) standard.
 
 ### Further Information
 - [Mail Template Configuration](docs/10_MailTemplates.md)
 - [Ajax Forms](docs/20_AjaxForms.md)
+- [Available Form Types](docs/30_FormTypes.md)
+- [Create Custom Form Type](docs/40_CustomFormType.md)
+- [Create Custom Form Type Group](docs/50_CustomFormTypeGroup.md)
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
