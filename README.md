@@ -30,7 +30,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Ajax Forms](docs/20_AjaxForms.md)
 - [Available Form Types](docs/30_FormTypes.md)
 - [Create Custom Form Type](docs/40_CustomFormType.md)
-- [Create Custom Form Type Group](docs/50_CustomFormTypeGroup.md)
+- [Custom Form Type Backend Layout](docs/50_CustomFormTypeBackendLayout.md)
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
