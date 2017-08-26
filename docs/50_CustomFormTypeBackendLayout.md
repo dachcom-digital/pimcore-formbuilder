@@ -15,10 +15,10 @@ Render different configuration types for ExtJs:
 | options_repeater | -- |
 
 
-# Custom Form Type Group
+### Custom Form Type Group
 TBD.
 
-## Tabs
+### Tabs
 TBD.
 
 ### Display Groups
