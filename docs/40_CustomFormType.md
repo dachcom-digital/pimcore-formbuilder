@@ -40,7 +40,8 @@ form_builder:
                     options.expanded:
                     
                         # display_group_id defines in which display group extjs should render this field
-                        # it's possible to create custom display groups or even new tabs for the backend configuration layout
+                        # it's possible to create custom display groups 
+                        # or even new tabs for the backend configuration layout
                         display_group_id: attributes
                         
                         # there are several types available. readmore about the backend types below
@@ -65,7 +66,8 @@ form_builder:
                         type: key_value_repeater
                         label: 'form_builder_type_field.choices'
                         
-                        # we need a options transformer. it transforms backend values into a valid symfony choice values and back.
+                        # we need a options transformer. 
+                        # it transforms backend values into a valid symfony choice values and back.
                         options_transformer: 'form_builder.options_transformer.choices'
                         config: ~
 ```
