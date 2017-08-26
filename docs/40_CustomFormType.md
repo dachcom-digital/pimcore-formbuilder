@@ -68,21 +68,11 @@ form_builder:
                         
                         # we need a options transformer. 
                         # it transforms backend values into a valid symfony choice values and back.
+                        # create your custom transformer, if you need to.
                         options_transformer: 'form_builder.options_transformer.choices'
                         config: ~
 ```
 
+### Backend Field Configuration
 
-### Available Backend Types
-
-Render different configuration types for ExtJs:
-
-| Name | Description |
-|------|-------|
-| label | -- |
-| tagfield | -- |
-| numberfield | -- |
-| textfield | -- |
-| select | -- |
-| key_value_repeater | -- |
-| options_repeater | -- |
+Learn how to [configure the backend fields](50_CustomFormTypeBackendLayout.md).
