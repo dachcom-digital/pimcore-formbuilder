@@ -132,7 +132,9 @@ class FormField implements FormFieldInterface
      */
     public function setOptions($options = [])
     {
-        $this->options = array_filter($options);
+        $this->options = array_filter($options, function ($option) {
+            return $option !== '';
+        });
     }
 
     public function getOptions()
@@ -145,11 +147,13 @@ class FormField implements FormFieldInterface
      */
     public function setOptional($options = [])
     {
-        if(!is_array($options)) {
+        if (!is_array($options)) {
             $options = [];
         }
 
-        $this->optional = array_filter($options);
+        $this->optional = array_filter($options, function ($option) {
+            return $option !== '';
+        });
     }
 
     /**
@@ -165,7 +169,7 @@ class FormField implements FormFieldInterface
      */
     public function setConstraints($constraints = [])
     {
-        if(!is_array($constraints)) {
+        if (!is_array($constraints)) {
             $constraints = [];
         }
 

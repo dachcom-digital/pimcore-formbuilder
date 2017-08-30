@@ -47,6 +47,8 @@
 "form_builder_type_field_base.attributes";"Attributes";"Attributes";
 
 "form_builder_type_field.choices";"Choices";"Choices";
+"form_builder_type_field.expanded";"Expanded";"Expanded";
+"form_builder_type_field.multiple";"Multiple";"Multiple";
 
 "form_builder_type_template.default";"Default";"Default";
 
