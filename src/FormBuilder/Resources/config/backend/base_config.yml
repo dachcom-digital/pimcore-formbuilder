@@ -70,6 +70,7 @@ form_builder:
                         - ['readonly','readonly']
                         - ['size','size']
                         - ['title','title']
+                        - ['placeholder','placeholder']
                         - ['onchange','onchange']
                         - ['onclick','onclick']
                         - ['ondbclick','ondbclick']
