@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\EventListener;
 
+use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Parser\MailParser;
@@ -113,6 +114,12 @@ class MailListener implements EventSubscriberInterface
         }
 
         $mail = $this->mailParser->create($mailTemplate, $form, $locale);
+
+        $mailEvent = new MailEvent($form, $mail);
+        \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
+
+        $mail = $mailEvent->getEmail();
+
         $mail->send();
 
         return TRUE;
