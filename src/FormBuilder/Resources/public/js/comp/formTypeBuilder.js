@@ -24,7 +24,22 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     storeData : {},
 
     forbiddenFieldNames: [
-        'abstract','class','data','folder','list','permissions','resource','concrete','interface','service', 'fieldcollection', 'localizedfield', 'objectbrick'
+        'name',
+        'inputusername',
+        'formid',
+        'abstract',
+        'class',
+        'data',
+        'folder',
+        'list',
+        'permissions',
+        'resource',
+        'concrete',
+        'interface',
+        'service',
+        'fieldcollection',
+        'localizedfield',
+        'objectbrick'
     ],
 
     initialize: function(formHandler, treeNode, initData, availableFormFieldTemplates, values) {

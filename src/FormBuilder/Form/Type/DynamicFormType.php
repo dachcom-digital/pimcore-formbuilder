@@ -19,7 +19,8 @@ class DynamicFormType extends AbstractType
         $builder
             ->add('formId', HiddenType::class, [
                 'data' => $options['current_form_id'],
-            ]);
+            ])
+            ->add('inputUserName', HoneypotType::class);
     }
 
     /**
