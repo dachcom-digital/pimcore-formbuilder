@@ -5,7 +5,7 @@ It's possible to add some custom fields to every form.
 1. Register a Listener:
 ```yaml
 services:
-    dachcom.event_listener.form_builder.listener:
+    app.event_listener.form_builder.listener:
         class: AppBundle\EventListener\FormListener
         tags:
             - { name: kernel.event_subscriber }
