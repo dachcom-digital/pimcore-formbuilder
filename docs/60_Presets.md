@@ -11,7 +11,7 @@ From now on, your customer is able to choose between presets within the dropped 
 
 ### Things to know
 - If a preset gets selected, form builder will change the layout view to `Form/Presets/your_preset_name.html.twig` instead of `Form/default.html.twig`.
-- [Create a EventListener](70_Events.md) and add some specific data depending on the selected presets - regardless of the configured form.
+- [Create a EventListener](70_Events.md) and add some specific data depending on the selected preset - regardless of the configured form.
 
 ### Configuration
 
@@ -20,7 +20,7 @@ form_builder:
     area:
         presets:
             -
-            jobs: # keep it short and simply :)
+            jobs: # keep it short and simple :)
                 nice_name: 'Short Name'
                 admin_description: 'Description of your Preset'
                 sites:
