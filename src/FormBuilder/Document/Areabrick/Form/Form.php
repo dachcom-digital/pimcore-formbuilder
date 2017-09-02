@@ -143,12 +143,12 @@ class Form extends AbstractTemplateAreabrick
             $formPreset = 'custom';
         }
 
+        $viewVars['form_layout'] = $this->getFormLayout($formPreset);
+
         $formNameElement = $this->getDocumentTag($info->getDocument(), 'select', 'formName');
         if (!$formNameElement->isEmpty()) {
             $formId = $formNameElement->getData();
         }
-
-        $copyMailTemplate = NULL;
 
         if (!empty($formId)) {
             try {
@@ -173,14 +173,8 @@ class Form extends AbstractTemplateAreabrick
                 $viewVars,
                 [
                     'form_template' => NULL,
-                    'form'          => NULL,
-                    'messages'      => NULL,
-                    'form_id'       => NULL,
                     'form_preset'   => NULL,
-                    'notifications' => [
-                        'error'   => $noteError,
-                        'message' => $noteMessage
-                    ],
+                    'message' => $noteMessage,
                 ]
             );
 
@@ -249,6 +243,20 @@ class Form extends AbstractTemplateAreabrick
         foreach ($viewVars as $var => $varValue) {
             $view->{$var} = $varValue;
         }
+    }
+
+    /**
+     * @param $formPreset
+     *
+     * @return string
+     */
+    private function getFormLayout($formPreset = 'custom')
+    {
+        $path = '@FormBuilder/Form/%s.html.twig';
+
+        $template = $formPreset === 'custom' ? 'default' : 'Presets/' . $formPreset;
+
+        return sprintf($path, $template);
     }
 
     /**

@@ -1,4 +1,4 @@
-{% extends '@FormBuilder/Form/default.html.twig' %}
+{% extends form_layout %}
 {% block form_builder_form %}
 
     {% if form_template is not null %}
@@ -17,6 +17,8 @@
 
         {{ form_builder_theme_macro.form_builder_form_foot() }}
 
+    {% elseif message is defined and editmode == true %}
+        {{ 'form builder error: ' ~ message }}
     {% endif %}
 
 {% endblock form_builder_form %}

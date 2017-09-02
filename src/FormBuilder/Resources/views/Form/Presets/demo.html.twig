@@ -1,6 +1,12 @@
-{#
+{# if preset is defined and called demo, this layout will get loaded #}
+{%  block form_builder_layout %}#}
 
-Preset: Demo
-Use custom preset header files for form areas.
+    {# use preset layouts to add additional data to specific forms #}
+    {{ dump(form_preset) }}
 
-#}
+    <div class="form-builder-wrapper">
+        {% block form_builder_form %}
+        {% endblock form_builder_form %}
+    </div>
+
+{% endblock form_builder_layout %}
