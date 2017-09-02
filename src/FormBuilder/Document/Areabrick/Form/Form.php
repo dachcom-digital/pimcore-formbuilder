@@ -84,7 +84,7 @@ class Form extends AbstractTemplateAreabrick
         if ($view->get('editmode') === TRUE) {
 
             $mains = $this->formManager->getAll();
-            $formPresets = $this->presetManager->getAll();
+            $formPresets = $this->presetManager->getAll($info->getDocument());
 
             $formPresetsStore = [];
             $formPresetsInfo = [];
@@ -112,10 +112,10 @@ class Form extends AbstractTemplateAreabrick
             }
 
             if (!empty($formPresets)) {
-                $formPresetsStore[] = ['custom', $this->view->trans('form_builder.area.no_form_preset', [], 'admin')];
+                $formPresetsStore[] = ['custom', $this->translator->trans('form_builder.area.no_form_preset', [], 'admin')];
 
                 foreach ($formPresets as $presetName => $preset) {
-                    $formPresetsStore[] = [$presetName, $preset['niceName']];
+                    $formPresetsStore[] = [$presetName, $preset['nice_name']];
                     $formPresetsInfo[] = $this->presetManager->getDataForPreview($presetName, $preset);
                 }
 
@@ -175,8 +175,8 @@ class Form extends AbstractTemplateAreabrick
                     'form_template' => NULL,
                     'form'          => NULL,
                     'messages'      => NULL,
-                    'formId'        => NULL,
-                    'formPreset'    => NULL,
+                    'form_id'       => NULL,
+                    'form_preset'   => NULL,
                     'notifications' => [
                         'error'   => $noteError,
                         'message' => $noteMessage
@@ -207,8 +207,12 @@ class Form extends AbstractTemplateAreabrick
             $sendCopy = FALSE;
         }
 
+        $options = [
+            'formPreset' => $formPreset
+        ];
+
         /** @var \Symfony\Component\Form\Form $form */
-        $form = $this->formBuilder->buildForm($formId);
+        $form = $this->formBuilder->buildForm($formId, $options);
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
@@ -236,10 +240,9 @@ class Form extends AbstractTemplateAreabrick
         $viewVars = array_merge(
             $viewVars,
             [
-                'messages'      => $messageHtml,
-                'formId'        => $formId,
-                'formPreset'    => $formPreset,
-                'notifications' => [],
+                'messages'    => $messageHtml,
+                'form_id'     => $formId,
+                'form_preset' => $formPreset,
             ]
         );
 

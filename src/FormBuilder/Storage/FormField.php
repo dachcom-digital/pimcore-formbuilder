@@ -7,6 +7,11 @@ use Pimcore\Translation\Translator;
 class FormField implements FormFieldInterface
 {
     /**
+     * @var bool
+     */
+    protected $isDynamic = FALSE;
+
+    /**
      * @var Translator
      */
     protected $translator;
@@ -45,6 +50,11 @@ class FormField implements FormFieldInterface
      * @var
      */
     private $optional = [];
+
+    public function __construct($isDynamic = FALSE)
+    {
+        $this->isDynamic = $isDynamic;
+    }
 
     public function setTranslator(Translator $translator)
     {
@@ -195,7 +205,7 @@ class FormField implements FormFieldInterface
             $array[ltrim($key, '_')] = $value;
         }
 
-        $removeKeys = ['translator'];
+        $removeKeys = ['translator', 'isDynamic'];
         return array_diff_key($array, array_flip($removeKeys));
     }
 }

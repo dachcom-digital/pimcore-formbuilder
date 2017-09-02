@@ -31,6 +31,8 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Available Form Types](docs/30_FormTypes.md)
 - [Create Custom Form Type](docs/40_CustomFormType.md)
 - [Custom Form Type Backend Layout](docs/50_CustomFormTypeBackendLayout.md)
+- [Using Presets](docs/60_Presets.md)
+- [Events](docs/70_Events.md)
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)

@@ -28,6 +28,8 @@ interface FormInterface
 
     public function getConfig();
 
+    public function addDynamicField($name, $type, $options, $optional = []);
+
     public function setFields(array $fields);
 
     public function getFields();

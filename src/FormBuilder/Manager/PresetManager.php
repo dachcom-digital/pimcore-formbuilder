@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Manager;
 
 use FormBuilderBundle\Configuration\Configuration;
+use Pimcore\Model\Document;
 use Pimcore\Tool;
 
 class PresetManager
@@ -12,26 +13,25 @@ class PresetManager
      */
     protected $configuration;
 
+    /**
+     * PresetManager constructor.
+     *
+     * @param Configuration $configuration
+     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
     /**
+     * @param Document $document
+     *
      * @return array
      */
-    public function getAll()
+    public function getAll(Document $document)
     {
         $areaConfig = $this->configuration->getConfig('area');
-        return $areaConfig['presets'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAvailablePresets()
-    {
-        $formPresets = $this->getAll();
+        $formPresets = $areaConfig['presets'];
 
         $dat = [];
 
@@ -41,11 +41,11 @@ class PresetManager
 
         foreach ($formPresets as $presetName => $presetConfig) {
             //check for site restriction
-            if (Tool::isFrontendRequestByAdmin() && isset($presetConfig['site']) && !empty($presetConfig['site'])) {
-                $currentSite = $this->getCurrentSiteInAdminMode();
+            if (Tool::isFrontendRequestByAdmin() && isset($presetConfig['sites']) && !empty($presetConfig['sites'])) {
+                $currentSite = $this->getCurrentSiteInAdminMode($document);
 
                 if ($currentSite !== NULL) {
-                    $allowedSites = (array)$presetConfig['site'];
+                    $allowedSites = (array)$presetConfig['sites'];
 
                     if (!in_array($currentSite->getMainDomain(), $allowedSites)) {
                         continue;
@@ -67,10 +67,14 @@ class PresetManager
      */
     public function getDataForPreview($presetName, $presetConfig)
     {
-        $previewData = ['presetName' => $presetName, 'description' => '', 'fields' => []];
+        $previewData = [
+            'presetName'  => $presetName,
+            'description' => '',
+            'fields'      => []
+        ];
 
-        if (isset($presetConfig['adminDescription'])) {
-            $previewData['description'] = strip_tags($presetConfig['adminDescription'], '<br><strong><em><p><span>');
+        if (isset($presetConfig['admin_description'])) {
+            $previewData['description'] = strip_tags($presetConfig['admin_description'], '<br><strong><em><p><span>');
         }
 
         return $previewData;
@@ -78,21 +82,18 @@ class PresetManager
 
     /**
      * Get Site Id in EditMode if SiteRequest is available
+     *
+     * @param Document $originDocument
      * @return null|\Pimcore\Model\Site
      */
-    private function getCurrentSiteInAdminMode()
+    private function getCurrentSiteInAdminMode($originDocument)
     {
-        $front = \Zend_Controller_Front::getInstance();
-        $originDocument = $front->getRequest()->getParam('document');
-
         $currentSite = NULL;
 
         if ($originDocument) {
             $site = Tool\Frontend::getSiteForDocument($originDocument);
-
             if ($site) {
                 $siteId = $site->getId();
-
                 if ($siteId !== NULL) {
                     $currentSite = $site;
                 }

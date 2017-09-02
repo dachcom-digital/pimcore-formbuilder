@@ -231,7 +231,26 @@ class Form extends Model\AbstractModel implements FormInterface
     {
         $validConfig = array_intersect_key($config, array_flip( self::ALLOWED_FORM_KEYS));
         $this->config = $validConfig;
+        return $this;
+    }
 
+    /**
+     * @param       $name
+     * @param       $type
+     * @param       $options
+     * @param array $optional
+     *
+     * @return $this
+     * @throws \Exception
+     */
+    public function addDynamicField($name, $type, $options, $optional = [])
+    {
+        if(isset($this->fields[$name])) {
+            throw new \Exception(sprintf('"%s" as form field name is already in use', $name));
+        }
+
+        $d = new FormFieldDynamic($name, $type, $options, $optional);
+        $this->fields[$name] = $d;
         return $this;
     }
 

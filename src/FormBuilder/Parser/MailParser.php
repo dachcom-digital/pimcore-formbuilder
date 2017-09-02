@@ -28,7 +28,7 @@ class MailParser
     /**
      * MailParser constructor.
      *
-     * @param EngineInterface $templating
+     * @param EngineInterface      $templating
      * @param FormValuesBeautifier $formValuesBeautifier
      */
     public function __construct(EngineInterface $templating, FormValuesBeautifier $formValuesBeautifier)
@@ -38,8 +38,9 @@ class MailParser
     }
 
     /**
-     * @param Email               $mailTemplate
-     * @param       FormInterface $form
+     * @param Email         $mailTemplate
+     * @param FormInterface $form
+     * @param               $locale
      *
      * @return Mail
      */

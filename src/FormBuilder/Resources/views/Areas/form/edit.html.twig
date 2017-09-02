@@ -22,7 +22,7 @@
 
     </div>
 
-    {% if availableFormPresets is defined %}
+    {% if formPresetStore is defined %}
 
         <div class="row">
 
@@ -46,13 +46,11 @@
                     <h5>{{ 'form_builder.area.form_preset_info'|trans({}, 'admin') }}</h5>
 
                     {% for formPresetPreview in formPresetsInfo %}
-
                         <div class="preview-field" data-name="{{ formPresetPreview.presetName }}">
                             {% if formPresetPreview.description is not empty %}
                                 <div class="description">{{ formPresetPreview.description }}</div>
                             {% endif %}
                         </div>
-
                     {% endfor %}
 
                 </div>

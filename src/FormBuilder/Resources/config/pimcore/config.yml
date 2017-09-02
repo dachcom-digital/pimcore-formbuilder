@@ -1,6 +1,6 @@
 form_builder:
     area:
-        presets: []
+        presets: ~
     form:
         templates:
             form_div_layout:

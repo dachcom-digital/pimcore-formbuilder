@@ -137,7 +137,9 @@ class FormManager
 
         foreach ($this->getValue($data, 'fields', []) as $fieldData) {
 
-            $counter++;
+            //allow some space for dynamic fields.
+            $counter += 100;
+
             $fieldType = $this->getValue($fieldData, 'type');
 
             $optionsParameter = $this->getValue($fieldData, 'options');
