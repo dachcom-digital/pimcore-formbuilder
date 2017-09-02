@@ -52,6 +52,7 @@ class FormListener implements EventSubscriberInterface
         // get form options like the selected form preset
         $formOptions = $event->getFormOptions();
 
+        //add dynamic fields depending on custom presets, is available.
         var_dump($formOptions['formPreset']);
 
         // add your fields
