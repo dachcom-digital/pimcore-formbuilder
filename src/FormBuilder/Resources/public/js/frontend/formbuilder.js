@@ -6,8 +6,11 @@ var formBuilder = (function () {
 
         ajaxUrls: {},
 
-        init: function () {
+        $container : null,
 
+        init: function ($container) {
+
+            self.$container = $container !== undefined ? $container : $('form.formbuilder.ajax-form');
             self.startSystem();
 
         },
@@ -38,7 +41,7 @@ var formBuilder = (function () {
              */
 
             //add multi uploads
-            $('form.formbuilder.ajax-form .formbuilder-html5File').each(function() {
+            this.$container.find('.formbuilder-html5File').each(function() {
 
                 var $el = $(this),
                     $form = $el.closest('form'),
@@ -46,7 +49,6 @@ var formBuilder = (function () {
                     formConfig = $form.find('input[type="hidden"][name="_formConfig"]').val(),
                     $template = $el.find('.formbuilder-template:first'),
                     $element = $el.find('.formbuilder-content:first'),
-                    structureUrl = $form.data('ajax-structure-url'),
                     messages = $template.find('input[name="js-messages"]').val();
 
                 messages = jQuery.parseJSON( messages );
@@ -117,7 +119,7 @@ var formBuilder = (function () {
 
             });
 
-            $('form.formbuilder.ajax-form').on('submit', function(ev) {
+            this.$container.on('submit', function(ev) {
 
                 if(_.ajaxUrls.length === 0) {
                     alert('formbuilder ajax url structure missing.');
@@ -125,7 +127,6 @@ var formBuilder = (function () {
 
                 var $form = $(this),
                     $btns = $form.find('.btn'),
-                    structureUrl = $form.data('ajax-structure-url'),
                     $fbHtmlFile = $form.find('.formbuilder-html5File');
 
                 ev.preventDefault();
@@ -213,7 +214,7 @@ var formBuilder = (function () {
 
         setAjaxFileStructureUrls: function() {
 
-            var $form = $('form.formbuilder.ajax-form:first');
+            var $form = this.$container.first();
 
             if($form.length === 0 || this.ajaxUrls.length > 0) {
                 return;
