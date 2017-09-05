@@ -252,7 +252,7 @@ class Form extends AbstractTemplateAreabrick
      */
     private function getFormLayout($formPreset = 'custom')
     {
-        $path = '@FormBuilder/Form/%s.html.twig';
+        $path = '@FormBuilder/form/%s.html.twig';
 
         $template = $formPreset === 'custom' ? 'default' : 'Presets/' . $formPreset;
 
