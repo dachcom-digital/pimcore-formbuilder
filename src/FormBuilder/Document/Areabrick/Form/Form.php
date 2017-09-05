@@ -252,7 +252,7 @@ class Form extends AbstractTemplateAreabrick
      */
     private function getFormLayout($formPreset = 'custom')
     {
-        $path = '@FormBuilder/form/%s.html.twig';
+        $path = '@FormBuilder/Form/%s.html.twig';
 
         $template = $formPreset === 'custom' ? 'default' : 'Presets/' . $formPreset;
 
@@ -272,7 +272,7 @@ class Form extends AbstractTemplateAreabrick
      */
     public function getViewTemplate()
     {
-        return 'FormBuilderBundle:Areas/Form:view.' . $this->getTemplateSuffix();
+        return 'FormBuilderBundle:Areas/form:view.' . $this->getTemplateSuffix();
     }
 
     /**
@@ -280,7 +280,7 @@ class Form extends AbstractTemplateAreabrick
      */
     public function getEditTemplate()
     {
-        return 'FormBuilderBundle:Areas/Form:edit.' . $this->getTemplateSuffix();
+        return 'FormBuilderBundle:Areas/form:edit.' . $this->getTemplateSuffix();
     }
 
     /**
