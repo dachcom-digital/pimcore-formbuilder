@@ -2,7 +2,10 @@
 Pimcore 5.0 FormBuilder.
 
 #### Requirements
-* Pimcore 5. Only with Build 96 or greater.
+* Pimcore 5. Only with Build 105 or greater.
+
+#### Pimcore 4 
+Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).
 
 ## Installation
 

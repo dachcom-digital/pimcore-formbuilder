@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use Pimcore\Model\Dao\AbstractDao;
-use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\AbstractModel;
 use Symfony\Component\Yaml\Yaml;
 
