@@ -6,12 +6,16 @@
 
 {% macro form_builder_form_message(flash_messages) %}
 
-    {% for label, messages in flash_messages %}
-        {% for message in messages %}
-            <div class="message message-{{ label }}">
-                {{ message|raw }}
-            </div>
+    {% if flash_messages not empty %}
+
+        {% for label, messages in flash_messages %}
+            {% for message in messages %}
+                <div class="message message-{{ label }}">
+                    {{ message|raw }}
+                </div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+
+    {% endif %}
 
 {% endmacro %}

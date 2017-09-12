@@ -8,14 +8,18 @@
 
 {% macro form_builder_form_message(flash_messages) %}
 
-    <div class="col-xs-12">
-        {% for label, messages in flash_messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }}">
-                    {{ message|raw }}
-                </div>
+    {% if flash_messages not empty %}
+
+        <div class="col-xs-12">
+            {% for label, messages in flash_messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }}">
+                        {{ message|raw }}
+                    </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-    </div>
+        </div>
+
+    {% endif %}
 
 {% endmacro %}
