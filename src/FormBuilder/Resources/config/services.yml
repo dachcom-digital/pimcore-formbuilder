@@ -1,6 +1,7 @@
 imports:
-    - { resource: forms.yml }
-    - { resource: options_transformer.yml }
+    - { resource: services/forms/*.yml }
+    - { resource: services/transformer/*.yml }
+    - { resource: services/*.yml }
 
 services:
 
@@ -84,26 +85,6 @@ services:
         class: FormBuilderBundle\Form\FormValuesBeautifier
         arguments:
             - '@pimcore.translator'
-
-    # core event: request
-    form_builder.core_listener.request:
-        class: FormBuilderBundle\EventListener\Core\RequestListener
-        arguments:
-            - '@form_builder.form_builder'
-            - '@event_dispatcher'
-            - '@session'
-        tags:
-            - { name: kernel.event_subscriber }
-
-    # event: mail
-    form_builder.event_listener.mail:
-        class: FormBuilderBundle\EventListener\MailListener
-        arguments:
-            - '@session'
-            - '@form_builder.parser.mail'
-            - '@pimcore.templating.include_renderer'
-        tags:
-            - { name: kernel.event_subscriber }
 
     # backend form builder
     form_builder.backend.form_builder:

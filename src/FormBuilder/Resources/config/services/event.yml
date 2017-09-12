@@ -1,0 +1,16 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # core event: request
+    FormBuilderBundle\EventListener\Core\RequestListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # event: mail
+    FormBuilderBundle\EventListener\MailListener:
+        tags:
+            - { name: kernel.event_subscriber }
