@@ -794,23 +794,38 @@ Formbuilder.comp.form = Class.create({
 
         var formFieldObject = node.data.object,
             formTypeValues = Ext.apply({}, formFieldObject.getData()),
-            nodeType = {
-                'icon_class' : node.data.iconCls,
-                'label' : formTypeValues.display_name,
-                'configuration_layout' : formFieldObject.configurationLayout
-            },
+            config = {},
             newNode = {},
-            config = {};
+            nodeType = {
+                'icon_class' : formFieldObject.iconClass
+            };
 
-        //reset name
-        formTypeValues.name = Ext.id(null, 'field_');
-
-        config = this.createFormFieldNode(nodeType, formTypeValues)
         config.listeners = this.getTreeNodeListeners();
 
-        newNode = node.createNode(config);
-        newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(
-            this, newNode, nodeType, this.availableFormFieldTemplates, formTypeValues));
+        if(node.data.fbType === 'field') {
+
+            //reset name
+            formTypeValues.name = Ext.id(null, 'field_');
+
+            nodeType.type = formTypeValues.type;
+            nodeType.label = formTypeValues.display_name;
+            nodeType.configuration_layout = formFieldObject.configurationLayout;
+            config = this.createFormFieldNode(nodeType, formTypeValues)
+            newNode = node.createNode(config);
+            newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(
+                this, newNode, nodeType, this.availableFormFieldTemplates, formTypeValues));
+
+        } else if(node.data.fbType === 'constraint') {
+
+            nodeType.label = formFieldObject.typeName;
+            config = this.createFormFieldConstraintNode(nodeType, formTypeValues);
+            newNode = node.createNode(config);
+            newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(
+                this, newNode, nodeType, formTypeValues));
+
+        } else {
+            Ext.MessageBox.alert(t('error'), 'invalid field type: ' + node.data.fbType);
+        }
 
         var len = node.childNodes ? node.childNodes.length : 0;
 

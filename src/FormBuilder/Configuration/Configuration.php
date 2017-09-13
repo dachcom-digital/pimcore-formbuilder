@@ -28,6 +28,9 @@ class Configuration
      */
     private $config;
 
+    /**
+     * @var array
+     */
     private $backendConfig;
 
     /**
