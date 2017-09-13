@@ -6,6 +6,12 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.text_type'
                 icon_class: 'form_builder_icon_text'
+        hidden:
+            class: Symfony\Component\Form\Extension\Core\Type\HiddenType
+            backend:
+                form_type_group: hidden_fields
+                label: 'form_builder_type.hidden_type'
+                icon_class: 'form_builder_icon_hidden'
         textarea:
             class: Symfony\Component\Form\Extension\Core\Type\TextareaType
             backend:

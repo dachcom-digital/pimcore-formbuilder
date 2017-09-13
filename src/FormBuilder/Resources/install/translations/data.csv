@@ -23,8 +23,10 @@
 "form_builder_type_group.buttons";"Buttons";"Buttons";
 
 "form_builder_validation_constraint.not_blank";"Not Blank";"Not Blank";
+"form_builder_validation_constraint.email";"Email";"Email";
 
 "form_builder_type.text_type";"Text Type";"Text Type";
+"form_builder_type.hidden_type";"Hidden Type";"Hidden Type";
 "form_builder_type.integer_type";"Integer Type";"Integer Type";
 "form_builder_type.textarea_type";"Textarea Type";"Textarea Type";
 "form_builder_type.checkbox_type";"Checkbox Type";"Checkbox Type";

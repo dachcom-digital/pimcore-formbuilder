@@ -8,7 +8,7 @@
 
 {% macro form_builder_form_message(flash_messages) %}
 
-    {% if flash_messages not empty %}
+    {% if flash_messages is not empty %}
 
         <div class="col-xs-12">
             {% for label, messages in flash_messages %}
