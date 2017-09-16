@@ -5,7 +5,6 @@ Formbuilder.comp.importer = Class.create({
     initialize: function (parentPanel) {
        this.parentPanel = parentPanel;
        this.importId = uniqid();
-
     },
 
     showPanel: function() {
@@ -36,9 +35,9 @@ Formbuilder.comp.importer = Class.create({
             width: 400,
             items: [{
                 xtype: 'fileuploadfield',
-                emptyText: t('select_a_file'),
-                fieldLabel: t('file'),
-                width: 230,
+                emptyText: t('form_builder_upload_configuration_file'),
+                fieldLabel: t('form_builder_file'),
+                width: 300,
                 name: 'Filedata',
                 buttonText: '',
                 buttonConfig: {
@@ -51,12 +50,10 @@ Formbuilder.comp.importer = Class.create({
                             url: url,
                             waitMsg: t('please_wait'),
                             success: function (el, res) {
-
                                 fbClass.getImport();
                                 uploadWindowCompatible.close();
                             },
                             failure: function (el, res) {
-
                                 failure(res);
                                 uploadWindowCompatible.close();
                             }
@@ -73,7 +70,6 @@ Formbuilder.comp.importer = Class.create({
 
     },
     getImport: function () {
-
         Ext.Ajax.request({
             url: '/admin/formbuilder/settings/get-import',
             params: {

@@ -8,6 +8,10 @@ use FormBuilderBundle\Manager\FormManager;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Yaml\Yaml;
 
 class SettingsController extends AdminController
 {
@@ -189,9 +193,9 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @fixme: pimcore5
-     *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function importFormAction(Request $request)
     {
@@ -203,11 +207,11 @@ class SettingsController extends AdminController
             $data = iconv($encoding, 'UTF-8', $data);
         }
 
-        if (!is_dir(FORMBUILDER_DATA_PATH . '/import/')) {
-            mkdir(FORMBUILDER_DATA_PATH . '/import/');
+        if (!is_dir(Configuration::IMPORT_PATH)) {
+            mkdir(Configuration::IMPORT_PATH);
         }
 
-        $importFile = FORMBUILDER_DATA_PATH . '/import/import_' . $this->getParam('id');
+        $importFile = Configuration::IMPORT_PATH . '/import_' . $request->get('id');
 
         file_put_contents($importFile, $data);
 
@@ -216,7 +220,7 @@ class SettingsController extends AdminController
         $res = [];
         $res['success'] = TRUE;
 
-        $this->_helper->json(
+        return $this->json(
             [
                 'success' => TRUE,
                 'msg'     => $res['success'] ? 'Success' : 'Error',
@@ -225,50 +229,60 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @fixme: pimcore5
-     *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function getImportFileAction(Request $request)
     {
-        $id = $this->_getParam('id');
+        $formId = $request->get('id');
 
-        if (file_exists(FORMBUILDER_DATA_PATH . '/import/import_' . $id)) {
-            $config = new Zend_Config_Json(FORMBUILDER_DATA_PATH . '/import/import_' . $id);
+        /** @var Builder $backendFormBuilder */
+        $backendFormBuilder = $this->get('form_builder.backend.form_builder');
 
-            unlink(FORMBUILDER_DATA_PATH . '/import/import_' . $id);
-
-            $data = $config->toArray();
-            unset($data['name'], $data['id']);
-
-            $this->_helper->json($data);
-        } else {
-            $this->_helper->json(NULL);
+        if (!file_exists(Configuration::IMPORT_PATH . '/import_' . $formId)) {
+            throw new NotFoundHttpException('no import form with id ' . $formId . ' found.');
         }
+
+        $data = file_get_contents(Configuration::IMPORT_PATH . '/import_' . $formId);
+        $formContent = Yaml::parse($data);
+        $formContent['fields'] = $backendFormBuilder->generateExtJsFields($formContent['fields']);
+
+        unlink(Configuration::IMPORT_PATH . '/import_' . $formId);
+
+        return $this->json([
+            'data' => $formContent
+        ]);
     }
 
     /**
-     * @fixme: pimcore5
-     *
      * @param Request $request
+     *
+     * @return Response
      */
     public function getExportFileAction(Request $request)
     {
-        $id = $this->getParam('id');
-        $name = $this->getParam('name');
+        $formId = $request->get('id');
 
-        if (is_numeric($id)) {
-            $exportName = 'export_' . $name;
-
-            $exportFile = FORMBUILDER_DATA_PATH . '/main_' . $id . '.json';
-
-            $this->getResponse()->setHeader('Content-Type', 'application/json', TRUE);
-            $this->getResponse()->setHeader('Content-Disposition', 'attachment; filename="form_' . $exportName . '.json"');
-
-            echo file_get_contents($exportFile);
+        if (!is_numeric($formId)) {
+            throw new NotFoundHttpException('no form with id ' . $formId . ' found.');
         }
 
-        $this->removeViewRenderer();
+        $exportName = 'form_export_' . $formId . '.yml';
+        $exportFile = Configuration::STORE_PATH . '/main_' . $formId . '.yml';
+        if (!file_exists($exportFile)) {
+            throw new NotFoundHttpException('no form configuration with id ' . $formId . ' found.');
+        }
+
+        $response = new Response(file_get_contents($exportFile));
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $exportName
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
     /**

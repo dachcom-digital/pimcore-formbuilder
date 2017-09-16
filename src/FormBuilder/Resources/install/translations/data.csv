@@ -14,26 +14,26 @@
 "form_builder.email.form_will_placed_here";"Your form content will be placed here.";"Formular-Inhalt wird hier angezeigt.";1460395362;1460395362;"Depending on your selected form, some placeholder like %s are available.";"Depending on your selected form, some placeholder like %s are available.";"Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung.";
 "form_builder.email.placeholder_list_available";"Depending on your selected form, some placeholder like %s are available.";"Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung.";
 
-"form_builder_type_group.text_fields";"Text Fields";"Text Fields";
-"form_builder_type_group.choice_fields";"Choice Fields";"Choice Fields";
-"form_builder_type_group.datetime_fields";"DateTime Fields";"DateTime Fields";
-"form_builder_type_group.other_fields";"Other Fields";"Other Fields";
-"form_builder_type_group.field_groups";"Field Groups";"Field Groups";
-"form_builder_type_group.hidden_fields";"Hidden Fields";"Hidden Fields";
-"form_builder_type_group.buttons";"Buttons";"Buttons";
+"form_builder_type_group.text_fields";"Text Fields";"Textfelder";
+"form_builder_type_group.choice_fields";"Choice Fields";"Auswahlfelder";
+"form_builder_type_group.datetime_fields";"DateTime Fields";"Datumsfelder";
+"form_builder_type_group.other_fields";"Other Fields";"Andere Felder";
+"form_builder_type_group.field_groups";"Field Groups";"Feldgruppen";
+"form_builder_type_group.hidden_fields";"Hidden Fields";"Versteckte Felder";
+"form_builder_type_group.buttons";"Buttons";"Schaltflächen";
 
-"form_builder_validation_constraint.not_blank";"Not Blank";"Not Blank";
-"form_builder_validation_constraint.email";"Email";"Email";
+"form_builder_validation_constraint.not_blank";"Not Blank";"NotBlank-Einschränkung";
+"form_builder_validation_constraint.email";"Email-Validation";"Email-Validierung";
 
-"form_builder_type.text_type";"Text Type";"Text Type";
-"form_builder_type.hidden_type";"Hidden Type";"Hidden Type";
-"form_builder_type.integer_type";"Integer Type";"Integer Type";
-"form_builder_type.textarea_type";"Textarea Type";"Textarea Type";
-"form_builder_type.checkbox_type";"Checkbox Type";"Checkbox Type";
-"form_builder_type.choice_type";"Choice Type";"Choice Type";
-"form_builder_type.submit_type";"Submit Type";"Submit Type";
+"form_builder_type.text_type";"Text Type";"Text Element";
+"form_builder_type.hidden_type";"Hidden Type";"Verstecktes Element";
+"form_builder_type.integer_type";"Integer Type";"Numerisches Element";
+"form_builder_type.textarea_type";"Textarea Type";"Textfeld Element";
+"form_builder_type.checkbox_type";"Checkbox Type";"Checkbox Element";
+"form_builder_type.choice_type";"Choice Type";"Auswahl Element";
+"form_builder_type.submit_type";"Submit Type";"Absenden Element";
 
-"form_builder_type_tab.default";"Default";"Default";
+"form_builder_type_tab.default";"Default";"Standard";
 
 "form_builder_type_display_group.base";"Base";"Base";
 "form_builder_type_display_group.hook";"Hook";"Hook";
@@ -41,19 +41,19 @@
 
 "form_builder_type_field_base.label";"Label";"Label";
 "form_builder_type_field_base.email_label";"Email Label";"E-Mail Label";
-"form_builder_type_field_base.value";"Value";"Value";
-"form_builder_type_field_base.required";"Required";"Required";
-"form_builder_type_field_base.allow_empty";"Allow Empty";"Allow Empty";
-"form_builder_type_field_base.hook_custom_class";"Custom Class";"Custom Class";
-"form_builder_type_field_base.hook_custom_action";"Custom Action";"Custom Action";
-"form_builder_type_field_base.attributes";"Attributes";"Attributes";
+"form_builder_type_field_base.value";"Value";"Wert";
+"form_builder_type_field_base.required";"Mark field as required";"Feld als erforderlich markieren";
+"form_builder_type_field_base.allow_empty";"Allow Empty";"Leerer Wert erlauben";
+"form_builder_type_field_base.hook_custom_class";"Custom Class";"Benutzerdefinierte Klasse";
+"form_builder_type_field_base.hook_custom_action";"Custom Action";"Benutzerdefinierte Aktion";
+"form_builder_type_field_base.attributes";"Attributes";"Attribute";
 
-"form_builder_type_field.choices";"Choices";"Choices";
-"form_builder_type_field.expanded";"Expanded";"Expanded";
-"form_builder_type_field.multiple";"Multiple";"Multiple";
+"form_builder_type_field.choices";"Choices";"Auswahl";
+"form_builder_type_field.expanded";"Expanded";"Ausgeklappt";
+"form_builder_type_field.multiple";"Multiple";"Mehrfach";
 
 "form_builder_type_template.default";"Default";"Default";
 
-"form_builder_form_template.bootstrap_3_horizontal_layout";"Bootstrap 3 Horizontal Layout";"Bootstrap 3 Horizontal Layout";
+"form_builder_form_template.bootstrap_3_horizontal_layout";"Bootstrap 3 Horizontal Layout";"Bootstrap 3 Horizontales Layout";
 "form_builder_form_template.bootstrap_3_layout";"Bootstrap 3 Layout";"Bootstrap 3 Layout";
 "form_builder_form_template.form_div_layout";"Form Div Layout";"Form Div Layout";

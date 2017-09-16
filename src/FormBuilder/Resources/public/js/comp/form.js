@@ -897,17 +897,15 @@ Formbuilder.comp.form = Class.create({
 
         this.parentPanel.getEditPanel().removeAll();
 
-        this.formId = importedFormData.id;
-        this.formName = importedFormData.name;
-        this.formDate = importedFormData.date;
-        this.formConfig = array_merge(this.formConfig, importedFormData.config);
+        this.formConfig = importedFormData.data.config;
+        this.formFields = importedFormData.data.fields;
 
         this.addLayout();
         this.initLayoutFields();
     },
 
     exportForm: function() {
-        location.href = '/admin/formbuilder/settings/get-export-file/' + this.formId + '/' + this.formName;
+        location.href = '/admin/formbuilder/settings/get-export-file/' + this.formId;
     },
 
     rootFormIsValid : function() {

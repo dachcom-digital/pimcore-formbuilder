@@ -19,7 +19,7 @@ form_builder.controller.admin.delete_form:
     defaults: { _controller: FormBuilderBundle:Admin/Settings:deleteForm }
 
 form_builder.controller.admin.get_export_file:
-    path: /admin/formbuilder/settings/get-export-file/{id}/{name}
+    path: /admin/formbuilder/settings/get-export-file/{id}
     defaults: { _controller: FormBuilderBundle:Admin/Settings:getExportFile }
 form_builder.controller.admin.get_import_file:
     path: /admin/formbuilder/settings/get-import/

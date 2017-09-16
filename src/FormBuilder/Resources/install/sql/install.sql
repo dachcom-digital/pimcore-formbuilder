@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS `formbuilder_forms`;
 CREATE TABLE IF NOT EXISTS `formbuilder_forms` (
 `id` INT NOT NULL AUTO_INCREMENT,
 `name` varchar(255) DEFAULT NULL ,

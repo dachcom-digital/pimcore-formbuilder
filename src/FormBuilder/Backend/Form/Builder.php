@@ -69,12 +69,13 @@ class Builder
             'config' => $form->getConfig(),
         ];
 
+        $fieldData = [];
         /** @var FormFieldInterface $field */
         foreach ($form->getFields() as $field) {
-            $fieldData = $this->transformOptions($field->toArray(), TRUE);
-            $data['fields'][] = $fieldData;
+            $fieldData[] = $field->toArray();
         }
 
+        $data['fields'] = $this->generateExtJsFields($fieldData);
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
         $data['validation_constraints'] = $this->getValidationConstraints();
@@ -82,6 +83,26 @@ class Builder
         return $data;
     }
 
+    /**
+     * @param array $fields
+     *
+     * @return array
+     */
+    public function generateExtJsFields(array $fields)
+    {
+        $formFields = [];
+        foreach ($fields as $field) {
+            $formFields[] = $this->transformOptions($field, TRUE);
+        }
+
+        return $formFields;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function generateStoreFields(array $data)
     {
         foreach ($data['fields'] as &$fieldData) {
