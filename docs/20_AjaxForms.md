@@ -15,10 +15,11 @@ If you want to hook into the ajax form events, you may use this example:
 $('form.ajax-form')
    .on('formbuilder.success', function(ev, message, redirect, $form) {
          console.log(message, redirect);
- }).on('formbuilder.error', function(ev, message, $form) {
+ }).on('formbuilder.error', function(ev, messages, $form) {
          console.log(messages);
  }).on('formbuilder.error-field', function(ev, data, $form) {
-         console.log(messages);
+         console.log(data.field, data.messages);
+ });
 ```
 
 Of course it's up to you to modify this file for your needs.

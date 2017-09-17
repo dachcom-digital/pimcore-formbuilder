@@ -9,10 +9,8 @@ var formBuilder = (function () {
         $container : null,
 
         init: function ($container) {
-
             self.$container = $container !== undefined ? $container : $('form.formbuilder.ajax-form');
             self.startSystem();
-
         },
 
         startSystem: function () {
@@ -30,12 +28,13 @@ var formBuilder = (function () {
 
              // Use those Events in your Project!
 
-             $('form.ajax-form').on('formbuilder.success', function(ev, message, redirect, $form) {
-             console.log(messages);
-             }).on('formbuilder.error', function(ev, message, $form) {
-             console.log(messages);
+             $('form.ajax-form')
+               .on('formbuilder.success', function(ev, messages, redirect, $form) {
+                     console.log(messages, redirect);
+             }).on('formbuilder.error', function(ev, messages, $form) {
+                     console.log(messages);
              }).on('formbuilder.error-field', function(ev, data, $form) {
-             console.log(messages);
+                     console.log(data.field, data.messages);
              });
 
              */
