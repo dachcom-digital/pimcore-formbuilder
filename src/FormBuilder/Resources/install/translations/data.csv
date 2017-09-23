@@ -31,6 +31,7 @@
 "form_builder_type.textarea_type";"Textarea Type";"Textfeld Element";
 "form_builder_type.checkbox_type";"Checkbox Type";"Checkbox Element";
 "form_builder_type.choice_type";"Choice Type";"Auswahl Element";
+"form_builder_type.dynamic_multi_file";"Dynamic Multi File";"Dynamic Multi-Datei Element";
 "form_builder_type.submit_type";"Submit Type";"Absenden Element";
 
 "form_builder_type_tab.default";"Default";"Standard";
@@ -51,6 +52,10 @@
 "form_builder_type_field.choices";"Choices";"Auswahl";
 "form_builder_type_field.expanded";"Expanded";"Ausgeklappt";
 "form_builder_type_field.multiple";"Multiple";"Mehrfach";
+"form_builder_type_field.allowed_extensions";"Allowed Extensions";"Erlaubte Dateitypen";
+"form_builder_type_field.allowed_extensions_desc";"Add some extensions and confirm with enter.";"Fügen Sie erlaubte Dateierweiterungen hinzu und bestätigen Sie mit der Enter-Taste.";
+"form_builder_type_field.max_file_size";"Max File Size";"Max. Dateigröße";
+"form_builder_type_field.max_file_size_desc";"Max file size will be calculated in MB. Empty or Zero means no Limit!";"Maximale Dateigröße wird in MB verarbeitet. Leer oder 0 bedeutet kein Limit!";
 
 "form_builder_type_template.default";"Default";"Default";
 

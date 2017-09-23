@@ -119,7 +119,6 @@ class MailListener implements EventSubscriberInterface
         \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
 
         $mail = $mailEvent->getEmail();
-
         $mail->send();
 
         return TRUE;

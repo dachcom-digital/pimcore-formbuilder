@@ -68,16 +68,13 @@ class RequestListener implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-
         if (!$request->isMethod('POST')) {
             return;
         }
 
         try {
-
             /** @var FormInterface $form */
             list($formId, $form) = $this->formBuilder->buildByRequest($request);
-
             if (!$form instanceof FormInterface) {
                 return;
             }

@@ -52,7 +52,6 @@ form_builder.controller.ajax.file_add:
     defaults: { _controller: FormBuilderBundle:Ajax:fileAdd }
     methods: [POST]
 form_builder.controller.ajax.file_delete:
-    path: /{_locale}/form-control/file-delete
-    defaults: { _controller: FormBuilderBundle:Ajax:fileDelete }
-    methods: [POST]
-
+    path: /{_locale}/form-control/file-delete/{uuid}
+    defaults: { _controller: FormBuilderBundle:Ajax:fileDelete, uuid: '' }
+    methods: [POST, DELETE]

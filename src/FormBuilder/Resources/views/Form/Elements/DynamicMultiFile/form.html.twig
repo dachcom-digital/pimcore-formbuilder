@@ -1,0 +1,73 @@
+{% block qq_progress_bar %}
+<div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+    <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+</div>
+{% endblock %}
+
+{% block qq_drop_area %}
+<div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+    <span class="qq-upload-drop-area-text-selector"></span>
+</div>
+{% endblock %}
+
+{% block qq_upload_button %}
+<div class="qq-upload-button-selector qq-upload-button">
+    <div>{{ 'formbuilder.dynamic_multi_file.upload_a_file'|trans }}</div>
+</div>
+{% endblock %}
+
+{% block qq_proccessing %}
+<span class="qq-drop-processing-selector qq-drop-processing">
+    <span>Processing dropped files...</span>
+    <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+</span>
+{% endblock %}
+
+{% block qq_list_selector %}
+<ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="{{ 'formbuilder.dynamic_multi_file.additions_removals'|trans }}">
+    <li>
+        <div class="qq-progress-bar-container-selector">
+            <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+        </div>
+        <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+        <span class="qq-upload-file-selector qq-upload-file"></span>
+        <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="{{ 'formbuilder.dynamic_multi_file.edit_filename'|trans }}"></span>
+        <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+        <span class="qq-upload-size-selector qq-upload-size"></span>
+        <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">{{ 'formbuilder.dynamic_multi_file.cancel'|trans }}</button>
+        <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">{{ 'formbuilder.dynamic_multi_file.retry'|trans }}</button>
+        <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">{{ 'formbuilder.dynamic_multi_file.delete'|trans }}</button>
+        <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+    </li>
+</ul>
+{% endblock %}
+
+{% block qq_dialog_alert %}
+<dialog class="qq-alert-dialog-selector">
+    <div class="qq-dialog-message-selector"></div>
+    <div class="qq-dialog-buttons">
+        <button type="button" class="qq-cancel-button-selector">{{ 'formbuilder.dynamic_multi_file.close'|trans }}</button>
+    </div>
+</dialog>
+{% endblock %}
+
+{% block qq_dialog_confirm %}
+<dialog class="qq-confirm-dialog-selector">
+    <div class="qq-dialog-message-selector"></div>
+    <div class="qq-dialog-buttons">
+        <button type="button" class="qq-cancel-button-selector">{{ 'formbuilder.dynamic_multi_file.no'|trans }}</button>
+        <button type="button" class="qq-ok-button-selector">{{ 'formbuilder.dynamic_multi_file.yes'|trans }}</button>
+    </div>
+</dialog>
+{% endblock %}
+
+{% block qq_dialog_prompt %}
+<dialog class="qq-prompt-dialog-selector">
+    <div class="qq-dialog-message-selector"></div>
+    <input type="text">
+    <div class="qq-dialog-buttons">
+        <button type="button" class="qq-cancel-button-selector">{{ 'formbuilder.dynamic_multi_file.cancel'|trans }}</button>
+        <button type="button" class="qq-ok-button-selector">{{ 'formbuilder.dynamic_multi_file.ok'|trans }}</button>
+    </div>
+</dialog>
+{% endblock %}

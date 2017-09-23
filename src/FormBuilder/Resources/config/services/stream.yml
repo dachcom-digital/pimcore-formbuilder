@@ -1,0 +1,14 @@
+services:
+
+     # stream: files
+    form_builder.stream.file:
+        class: FormBuilderBundle\Stream\FileStream
+        arguments:
+            - '@form_builder.tool.file_locator'
+            - '@request_stack'
+
+     # stream: packages
+    form_builder.stream.package:
+        class: FormBuilderBundle\Stream\PackageStream
+        arguments:
+            - '@form_builder.tool.file_locator'

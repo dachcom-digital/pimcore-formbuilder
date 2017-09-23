@@ -9,6 +9,12 @@ services:
     form_builder.tool.installer:
         class: FormBuilderBundle\Tool\Install
 
+    # tool: file locator
+    form_builder.tool.file_locator:
+        class: FormBuilderBundle\Tool\FileLocator
+        arguments:
+            - '@filesystem'
+
     # configuration
     form_builder.configuration:
         class: FormBuilderBundle\Configuration\Configuration
@@ -38,24 +44,6 @@ services:
         arguments:
             - '@pimcore.translator'
 
-    # manager: form
-    form_builder.manager.form:
-        class: FormBuilderBundle\Manager\FormManager
-        arguments:
-            - '@form_builder.factory.form'
-
-    # manager: preset
-    form_builder.manager.preset:
-        class: FormBuilderBundle\Manager\PresetManager
-        arguments:
-            - '@form_builder.configuration'
-
-    # manager: template (form themes, type templates)
-    form_builder.manager.template:
-        class: FormBuilderBundle\Manager\TemplateManager
-        arguments:
-            - '@form_builder.configuration'
-
     # registry: options transformer
     form_builder.registry.options_transformer:
         class: FormBuilderBundle\Registry\OptionsTransformerRegistry
@@ -70,10 +58,16 @@ services:
             - '@templating'
             - '@form_builder.form_values_beautifier'
 
+    # alias for formbuilder subscriber.
+    form_builder.event_subscriber.builder:
+        alias: FormBuilderBundle\EventSubscriber\FormBuilderSubscriber
+        public: true
+
     # form builder
     form_builder.form_builder:
         class: FormBuilderBundle\Form\Builder
         arguments:
+            - '@form_builder.event_subscriber.builder'
             - '@form_builder.configuration'
             - '@request_stack'
             - '@form_builder.manager.form'

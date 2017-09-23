@@ -1,7 +1,8 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
-{% block form_row -%}
+{% use '@FormBuilder/Form/Theme/Type/dynamic_multi_file.html.twig' %}
 
+{% block form_row -%}
     <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' }}">
         {{ parent() }}
     </div>

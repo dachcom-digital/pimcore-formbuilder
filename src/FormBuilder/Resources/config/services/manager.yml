@@ -1,0 +1,19 @@
+services:
+
+    # manager: form
+    form_builder.manager.form:
+        class: FormBuilderBundle\Manager\FormManager
+        arguments:
+            - '@form_builder.factory.form'
+
+    # manager: preset
+    form_builder.manager.preset:
+        class: FormBuilderBundle\Manager\PresetManager
+        arguments:
+            - '@form_builder.configuration'
+
+    # manager: template (form themes, type templates)
+    form_builder.manager.template:
+        class: FormBuilderBundle\Manager\TemplateManager
+        arguments:
+            - '@form_builder.configuration'

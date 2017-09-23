@@ -11,6 +11,7 @@ There are several form types available (updated continuously).
 | Checkbox | Other Fields |
 | Submit | Buttons |
 | Choice | Choice Fields |
+| [Dynamic Multi File](80_FileUpload.md) | Other Fields |
 
 ## Constraints
 

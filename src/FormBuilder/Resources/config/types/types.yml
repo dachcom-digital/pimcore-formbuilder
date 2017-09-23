@@ -41,6 +41,31 @@ form_builder:
                     options.required: ~
                     optional.email_label: ~
                     options.data: ~
+        dynamic_multi_file:
+            class: FormBuilderBundle\Form\Type\DynamicMultiFileType
+            backend:
+                form_type_group: other_fields
+                label: 'form_builder_type.dynamic_multi_file'
+                icon_class: 'form_builder_icon_file'
+                fields:
+                    options.allowed_extensions:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.allowed_extensions'
+                        config: ~
+                    options.allowed_extensions_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.allowed_extensions_desc'
+                    options.max_file_size:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.max_file_size'
+                        config: ~
+                    options.max_file_size_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.max_file_size_desc'
         choice:
             class: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             backend:
