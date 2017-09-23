@@ -144,6 +144,7 @@ var formBuilder = (function () {
                     $template = $el.find('.qq-uploader-wrapper:first'),
                     $element = $el.find('.qq-upload-container'),
                     fieldName = $el.data('field-name'),
+                    $storeField = $el.find('input[type="hidden"]'),
                     formId = parseInt($form.find('input[name*="formId"]').val()),
                     config = window[fieldName + '_dmf_config'];
 
@@ -196,8 +197,14 @@ var formBuilder = (function () {
                             onUpload : function() {
                                 $submitButton.attr('disabled', 'disabled');
                             },
-                            onComplete : function() {
+                            onComplete : function(id, name, data) {
+                                $storeField.val($storeField.val() + ',' + data.uuid);
                                 $submitButton.attr('disabled', false);
+                            },
+                            onDeleteComplete: function(id, xhr, isError){
+                                var data = jQuery.parseJSON(xhr.responseText);
+                                $storeField.val($storeField.val().replace(',' + data.uuid, ''));
+
                             }
                         }
                     });
