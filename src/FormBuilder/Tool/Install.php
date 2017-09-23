@@ -9,7 +9,8 @@ use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Property;
 use Pimcore\Model\Tool\Setup;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Translation\Admin;
+use Pimcore\Model\Translation;
+use Pimcore\Tool\Admin;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Install extends AbstractInstaller
@@ -43,7 +44,7 @@ class Install extends AbstractInstaller
 
         $this->copyConfigFile();
         $this->injectDbData();
-        $this->installAdminTranslations();
+        $this->installTranslations();
         $this->installFormDataFolder();
         $this->installProperties();
         $this->installDocumentTypes();
@@ -130,10 +131,14 @@ class Install extends AbstractInstaller
     /**
      * @return bool
      */
-    private function installAdminTranslations()
+    private function installTranslations()
     {
-        $csv = $this->installSourcesPath . '/translations/data.csv';
-        Admin::importTranslationsFromFile($csv, TRUE, \Pimcore\Tool\Admin::getLanguages());
+        $csv = $this->installSourcesPath . '/translations/fronted.csv';
+        $csvAdmin = $this->installSourcesPath . '/translations/admin.csv';
+
+        Translation\Website::importTranslationsFromFile($csv, TRUE, Admin::getLanguages());
+        Translation\Admin::importTranslationsFromFile($csvAdmin, TRUE, Admin::getLanguages());
+
         return TRUE;
     }
 

@@ -1,5 +1,11 @@
 services:
-    form_builder.form.dynamic_form:
-        class: FormBuilderBundle\Form\Type\DynamicFormType
+    FormBuilderBundle\Form\Type\DynamicFormType:
+        public: false
         tags:
-          - { name: form.type }
+            - { name: form.type }
+    FormBuilderBundle\Form\Type\DynamicMultiFileType:
+        public: false
+        arguments:
+            - '@translator'
+        tags:
+            - { name: form.type }

@@ -7,9 +7,24 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class DynamicMultiFileType extends AbstractType
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * DynamicMultiFileType constructor.
+     *
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
     /**
      * {@inheritdoc}
      */
@@ -57,35 +72,38 @@ class DynamicMultiFileType extends AbstractType
         return TextType::class;
     }
 
+    /**
+     * @return array
+     */
     private function getInterfaceTranslations()
     {
         $coreMessages = [
-            'typeError'                    => '{file} has an invalid extension. Valid extension(s): {extensions}.',
-            'sizeError'                    => '{file} is too large, maximum file size is {sizeLimit}.',
-            'minSizeError'                 => '{file} is too small, minimum file size is {minSizeLimit}.',
-            'emptyError'                   => '{file} is empty, please select files again without it.',
-            'noFilesError'                 => 'No files to upload.',
-            'tooManyItemsError'            => 'Too many items ({netItems}) would be uploaded.  Item limit is {itemLimit}.',
-            'maxHeightImageError'          => 'Image is too tall.',
-            'maxWidthImageError'           => 'Image is too wide.',
-            'minHeightImageError'          => 'Image is not tall enough.',
-            'minWidthImageError'           => 'Image is not wide enough.',
-            'retryFailTooManyItems'        => 'Retry failed - you have reached your file limit.',
-            'onLeave'                      => 'The files are being uploaded, if you leave now the upload will be canceled.',
-            'unsupportedBrowserIos8Safari' => 'Unrecoverable error - this browser does not permit file uploading of any kind due to serious bugs in iOS8 Safari. Please use iOS8 Chrome until Apple fixes these issues.'
+            'typeError'                    => $this->translator->trans('form_builder.dynamic_multi_file.file_invalid_extension'),
+            'sizeError'                    => $this->translator->trans('form_builder.dynamic_multi_file.file_is_too_large'),
+            'minSizeError'                 => $this->translator->trans('form_builder.dynamic_multi_file.file_is_too_small'),
+            'emptyError'                   => $this->translator->trans('form_builder.dynamic_multi_file.file_is_empty'),
+            'noFilesError'                 => $this->translator->trans('form_builder.dynamic_multi_file.no_files_to_upload'),
+            'tooManyItemsError'            => $this->translator->trans('form_builder.dynamic_multi_file.too_many_items'),
+            'maxHeightImageError'          => $this->translator->trans('form_builder.dynamic_multi_file.image_too_tall'),
+            'maxWidthImageError'           => $this->translator->trans('form_builder.dynamic_multi_file.image_too_wide'),
+            'minHeightImageError'          => $this->translator->trans('form_builder.dynamic_multi_file.image_not_tall_enough'),
+            'minWidthImageError'           => $this->translator->trans('form_builder.dynamic_multi_file.image_not_wide_enough'),
+            'retryFailTooManyItems'        => $this->translator->trans('form_builder.dynamic_multi_file.retry_failed_limit'),
+            'onLeave'                      => $this->translator->trans('form_builder.dynamic_multi_file.files_uploaded'),
+            'unsupportedBrowserIos8Safari' => $this->translator->trans('form_builder.dynamic_multi_file.unrecoverable_error')
         ];
 
         $deleteMessages = [
-            'confirmMessage'     => 'Are you sure you want to delete {filename}?',
-            'deletingStatusText' => 'Deleting...',
-            'deletingFailedText' => 'Delete failed'
+            'confirmMessage'     => $this->translator->trans('form_builder.dynamic_multi_file.sure_to_delete'),
+            'deletingStatusText' => $this->translator->trans('form_builder.dynamic_multi_file.deleting'),
+            'deletingFailedText' => $this->translator->trans('form_builder.dynamic_multi_file.delete_failed')
         ];
 
         $interfacesText = [
-            'formatProgress'     => '{percent}% of {total_size}',
-            'failUpload'         => 'Upload failed',
-            'waitingForResponse' => 'Processing...',
-            'paused'             => 'Paused'
+            'formatProgress'     => $this->translator->trans('form_builder.dynamic_multi_file.percent_of_size'),
+            'failUpload'         => $this->translator->trans('form_builder.dynamic_multi_file.upload_failed'),
+            'waitingForResponse' => $this->translator->trans('form_builder.dynamic_multi_file.processing'),
+            'paused'             => $this->translator->trans('form_builder.dynamic_multi_file.paused')
         ];
 
         $messages = [
