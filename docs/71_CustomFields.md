@@ -68,6 +68,7 @@ class FormListener implements EventSubscriberInterface
             [
                 //no need to add translations here, fb will do this for you.
                 'label'       => 'Your Field Label',
+                'help_text'   => 'Help Text for your Custom Field',
                 'constraints' => [
                     new NotBlank(),
                 ]

@@ -1,7 +1,6 @@
 # Custom Form Type Backend Layout
 
 ### Available Backend Types
-
 Render different configuration types for ExtJs:
 
 | Name | Description |
@@ -13,7 +12,6 @@ Render different configuration types for ExtJs:
 | select | -- |
 | key_value_repeater | -- |
 | options_repeater | -- |
-
 
 ### Custom Form Type Group
 TBD.
