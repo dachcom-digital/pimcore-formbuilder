@@ -19,16 +19,10 @@ Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formb
 Just open a document and place the form area brick like any other bricks via drag and drop. 
 Use the edit button at the right top corner to configure your form.
 
-## Misc
-
-### CSS
-There is a css example in `/Resources/public/css/formbuilder.css` (honeypot hide for example). 
-Feel free to copy its content into your main style.
-
-### Overriding Templates
+## Overriding Templates
 Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templating/overriding.html) standard.
 
-### Further Information
+## Further Information
 - [Mail Template Configuration](docs/10_MailTemplates.md)
 - [Ajax Forms](docs/20_AjaxForms.md)
 - [Available Form Types](docs/30_FormTypes.md)
@@ -37,6 +31,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Using Presets](docs/60_Presets.md)
 - [Events](docs/70_Events.md)
 - [Mastering File Uploads](docs/80_FileUpload.md)
+- [Frontend Tips](docs/90_FrontendTips.md)
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
