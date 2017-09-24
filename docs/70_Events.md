@@ -1,105 +1,67 @@
 # Events
 
-It's possible to add some custom fields to every form.
+It's possible to add some events to every form submission.
 
-1. Register a Listener:
-```yaml
-services:
-    app.event_listener.form_builder.listener:
-        class: AppBundle\EventListener\FormListener
-        tags:
-            - { name: kernel.event_subscriber }
-```
+## Pre Set Data Event
+The `FORM_PRE_SET_DATA` event is dispatched at the beginning of the Form::setData() method.
+It contains the form event and also some form builder settings
 
-2. To add custom fields, you need to listen to the form pre set data event.
-
-> **Important!** Do not add fields to the symfony form directly! 
-> Form Builder will add additional data to your field, like template, order, email label and so on.
-
+@see \FormBuilderBundle\Event\Form\PreSetDataEvent
+https://symfony.com/doc/current/form/events.html#a-the-formevents-pre-set-data-event
+     
+**Example**  
 ```php
 <?php
 
-namespace AppBundle\EventListener;
-
-use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
-class FormListener implements EventSubscriberInterface
-{
-    public static function getSubscribedEvents()
-        {
-            return [
-                FormBuilderEvents::FORM_PRE_SET_DATA => 'formPreSetData'
-            ];
-        }
-        
-    public function formPreSetData(PreSetDataEvent $event)
-    {
-        $formEvent = $event->getFormEvent();
+[
+    FormBuilderEvents::FORM_PRE_SET_DATA => 'formPreSetData'
+];
+```
 
-        /** @var FormBuilderFormInterface $dataClass */
-        $dataClass = $formEvent->getData();
+## Pre Submit Event
+The `FORM_PRE_SUBMIT` event is dispatched at the end of the Form::setData() method. 
+This event is mostly here for reading data after having pre-populated the form. It contains the form event and also some form builder settings
 
-        // get the form id/name from backend
-        $formId = $dataClass->getId();
-        $formName = $dataClass->getName();
+@see \FormBuilderBundle\Event\Form\PreSubmitEvent
+https://symfony.com/doc/current/form/events.html#a-the-formevents-pre-submit-event
+     
+**Example**  
+```php
+<?php
 
-        // get form options like the selected form preset
-        $formOptions = $event->getFormOptions();
+use FormBuilderBundle\FormBuilderEvents;
 
-        //add dynamic fields depending on custom presets, is available.
-        var_dump($formOptions['formPreset']);
+[
+    FormBuilderEvents::FORM_PRE_SUBMIT => 'formPreSubmitEvent'
+];
+```
 
-        // add your fields
-        $dataClass->addDynamicField(
-            
-            //field name
-            'your_dynamic_field_name',
-            
-            //field type
-            EmailType::class,
-            
-            //all the field options
-            [
-                //no need to add translations here, fb will do this for you.
-                'label'       => 'Your Field Label',
-                'constraints' => [
-                    new NotBlank(),
-                ]
-            ],
-            
-            //optional options
-            [
-                //add a template
-                'template' => 'col-xs-6',
-                
-                //set the order of your field
-                'order' => 10,
-                
-                //no need to add translations here, fb will do this for you.
-                'email_label' => 'Your Field Email Label',
+## Submit Success
+The `FORM_SUBMIT_SUCCESS` event occurs when a frontend form submission was successful.
 
-                // form builder usually tries to render the value for the email by itself.
-                
-                // 1. if you need to transform the value: use a closure
-                //'email_value_transformer' => function(FormInterface $field, $value, $locale) {
-                //    return 'YOUR_TRANSFORMED_VALUE'
-                //},
+**Example**  
+```php
+<?php
 
-                // 2. or a class method
-                //'email_value_transformer' => [$this, 'checkValue']
-            ]
-        );
-    }
+use FormBuilderBundle\FormBuilderEvents;
 
-    public function checkValue(FormInterface $field, $value, $locale)
-    {
-        return 'YOUR_TRANSFORMED_VALUE';
-    }
-}
+[
+    FormBuilderEvents::FORM_SUBMIT_SUCCESS => 'formSubmitSuccess'
+];
+```
+
+## Mail Pre Submit
+The `FORM_MAIL_PRE_SUBMIT` event occurs before sending an email.
+
+**Example**  
+```php
+<?php
+
+use FormBuilderBundle\FormBuilderEvents;
+
+[
+    FormBuilderEvents::FORM_MAIL_PRE_SUBMIT => 'formMailPreSubmit'
+];
 ```

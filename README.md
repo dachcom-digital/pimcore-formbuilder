@@ -30,6 +30,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Custom Form Type Backend Layout](docs/50_CustomFormTypeBackendLayout.md)
 - [Using Presets](docs/60_Presets.md)
 - [Events](docs/70_Events.md)
+- [Custom Fields with Events](docs/71_CustomFields.md)
 - [Mastering File Uploads](docs/80_FileUpload.md)
 - [Frontend Tips](docs/90_FrontendTips.md)
 
