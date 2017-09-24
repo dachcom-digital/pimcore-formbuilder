@@ -43,17 +43,17 @@ class CleanUpListener implements EventSubscriberInterface
     public function onMaintenance(MaintenanceEvent $ev)
     {
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {
-            Logger::log('Remove formbuilder file: ' . $file);
+            Logger::log('Remove form builder files folder: ' . $file);
             $this->fileLocator->removeDir($file->getPathname());
         }
 
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getChunksFolder()) as $file) {
-            Logger::log('Remove formbuilder file: ' . $file);
+            Logger::log('Remove form builder chunk folder: ' . $file);
             $this->fileLocator->removeDir($file->getPathname());
         }
 
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getZipFolder()) as $file) {
-            Logger::log('Remove formbuilder file: ' . $file);
+            Logger::log('Remove form builder zip folder: ' . $file);
             $this->fileLocator->removeDir($file->getPathname());
         }
     }

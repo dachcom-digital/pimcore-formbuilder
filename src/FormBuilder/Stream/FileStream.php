@@ -49,16 +49,6 @@ class FileStream
     public $inputName = 'qqfile';
 
     /**
-     * @var float
-     */
-    public $chunksCleanupProbability = 0.001; // Once in 1000 requests on avg
-
-    /**
-     * @var int
-     */
-    public $chunksExpireIn = 604800; // One wee
-
-    /**
      * @var
      */
     protected $uploadName;
@@ -182,11 +172,6 @@ class FileStream
     {
         $masterRequest = $this->requestStack->getMasterRequest();
 
-        if (is_writable($this->fileLocator->getChunksFolder()) && 1 == mt_rand(1, 1 / $this->chunksCleanupProbability)) {
-            // Run garbage collection
-            $this->cleanupChunks();
-        }
-
         // Check that the max upload size specified in class configuration does not
         // exceed size allowed by server config
         if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit || $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
@@ -297,9 +282,7 @@ class FileStream
     }
 
     /**
-     * Process a delete.
-     *
-     * @params integer $uuid
+     * @param $uuid
      *
      * @return array
      */
@@ -429,7 +412,7 @@ class FileStream
 
         try {
             $mailTemplate = \Pimcore\Model\Document::getById($templateId);
-            $asset = \Pimcore\Model\Asset::create($formDataFolder->getId(), $assetData, FALSE);
+            $asset = Asset::create($formDataFolder->getId(), $assetData, FALSE);
             $asset->setProperty('linkedForm', 'document', $mailTemplate);
             $asset->save();
 
@@ -443,77 +426,6 @@ class FileStream
         }
 
         return $asset;
-    }
-
-    /**
-     * Returns a path to use with this upload. Check that the name does not exist,
-     * and appends a suffix otherwise.
-     *
-     * @param string $uploadDirectory Target directory
-     * @param string $filename        The name of the file to use.
-     *
-     * @return bool|string
-     */
-    protected function getUniqueTargetPath($uploadDirectory, $filename)
-    {
-        // Allow only one process at the time to get a unique file name, otherwise
-        // if multiple people would upload a file with the same name at the same time
-        // only the latest would be saved.
-        if (function_exists('sem_acquire')) {
-            $lock = sem_get(ftok(__FILE__, 'u'));
-            sem_acquire($lock);
-        }
-
-        $pathinfo = pathinfo($filename);
-        $base = $pathinfo['filename'];
-        $ext = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
-        $ext = $ext == '' ? $ext : '.' . $ext;
-        $unique = $base;
-        $suffix = 0;
-
-        // Get unique file name for the file, by appending random suffix.
-        while (file_exists($uploadDirectory . DIRECTORY_SEPARATOR . $unique . $ext)) {
-            $suffix += rand(1, 999);
-            $unique = $base . '-' . $suffix;
-        }
-
-        $result = $uploadDirectory . DIRECTORY_SEPARATOR . $unique . $ext;
-        // Create an empty target file
-        if (!touch($result)) {
-            // Failed
-            $result = FALSE;
-        }
-
-        if (function_exists('sem_acquire')) {
-            sem_release($lock);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @todo: move this to maintenance event
-     *
-     * Deletes all file parts in the chunks folder for files uploaded
-     * more than chunksExpireIn seconds ago
-     */
-    protected function cleanupChunks()
-    {
-        foreach (scandir($this->fileLocator->getChunksFolder()) as $item) {
-            if ($item == '.' || $item == '..') {
-                continue;
-            }
-
-            $path = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $item;
-
-            if (!is_dir($path)) {
-                continue;
-            }
-
-            if (time() - filemtime($path) > $this->chunksExpireIn) {
-                $this->fileLocator->removeDir($path);
-            }
-        }
     }
 
     /**

@@ -75,7 +75,6 @@ class PackageStream
             foreach ($files as $fileInfo) {
                 $targetFolder =  $this->fileLocator->getFilesFolder();
                 $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['uuid']]);
-
                 if (is_dir($target)) {
                     $this->fileLocator->removeDir($target);
                 }
@@ -87,7 +86,7 @@ class PackageStream
         }
 
         if (!file_exists($zipPath)) {
-            Logger::log('Zip Path does not exist (' . $zipPath . ')');
+            Logger::log('zip path does not exist (' . $zipPath . ')');
             return FALSE;
         }
 
@@ -95,7 +94,7 @@ class PackageStream
         $formDataParentFolder = Asset\Folder::getByPath('/formdata');
 
         if (!$formDataParentFolder instanceof Asset\Folder) {
-            Logger::error('formDataParent Folder does not exist (/formdata)!');
+            Logger::error('parent folder does not exist (/formdata)!');
             return FALSE;
         }
 
@@ -127,11 +126,8 @@ class PackageStream
 
         $asset = NULL;
         try {
-            //$mailTemplate = \Pimcore\Model\Document::getById($templateId);
-            $asset = \Pimcore\Model\Asset::create($formDataFolder->getId(), $assetData, FALSE);
-            //$asset->setProperty('form_attachment', 'document', $mailTemplate);
+            $asset = Asset::create($formDataFolder->getId(), $assetData, FALSE);
             $asset->save();
-
             if (file_exists($zipPath)) {
                 unlink($zipPath);
             }

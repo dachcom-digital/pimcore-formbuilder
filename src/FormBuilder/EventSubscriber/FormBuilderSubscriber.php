@@ -101,6 +101,15 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * @param FormEvent $event
      */
+    public function onPreSetData(FormEvent $event)
+    {
+        $preSetDataEvent = new PreSetDataEvent($event, $this->formOptions);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SET_DATA, $preSetDataEvent);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -119,15 +128,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 $this->addFormBuilderField($form, $field);
             }
         }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPreSetData(FormEvent $event)
-    {
-        $preSetDataEvent = new PreSetDataEvent($event, $this->formOptions);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SET_DATA, $preSetDataEvent);
     }
 
     /**
