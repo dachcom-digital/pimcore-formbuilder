@@ -93,7 +93,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         return [
             FormEvents::PRE_SET_DATA  => ['onPreSetData'],
             FormEvents::POST_SET_DATA => ['onPostSetData'],
-            FormEvents::PRE_SUBMIT    => ['onPreSubmit']
+            FormEvents::PRE_SUBMIT    => ['onPreSubmit'],
+            FormEvents::POST_SUBMIT   => ['onPostSubmit']
         ];
     }
 
@@ -134,37 +135,45 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     public function onPreSubmit(FormEvent $event)
     {
+        $preSubmitEvent = new PreSubmitEvent($event, $this->formOptions);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onPostSubmit(FormEvent $event)
+    {
         $form = $event->getForm();
-        $data = $event->getData();
+        $eventData = $event->getData();
         $formEntity = $form->getData();
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
 
-        //handle linked assets.
-        $fileData = [];
-        foreach ($sessionBag->getIterator() as $key => $sessionValue) {
-            $formKey = 'file_' . $formEntity->getId();
-            if (substr($key, 0, strlen($formKey)) !== $formKey) {
-                continue;
+        if ($form->isValid()) {
+
+            //handle linked assets.
+            $fileData = [];
+            foreach ($sessionBag->getIterator() as $key => $sessionValue) {
+                $formKey = 'file_' . $formEntity->getId();
+                if (substr($key, 0, strlen($formKey)) !== $formKey) {
+                    continue;
+                }
+                $fileData[$sessionValue['fieldName']][] = $sessionValue;
+                $sessionBag->remove($key);
             }
-            $fileData[$sessionValue['fieldName']][] = $sessionValue;
-            $sessionBag->remove($key);
-        }
 
-        foreach ($fileData as $fieldName => $files) {
-            $asset = $this->packageStream->createZipAsset($files, $formEntity->getName());
-            if ($asset instanceof Asset) {
-                $hostUrl = \Pimcore\Tool::getHostUrl();
-                $data[$fieldName] = $hostUrl . $asset->getRealFullPath();
+            foreach ($fileData as $fieldName => $files) {
+                $asset = $this->packageStream->createZipAsset($files, $formEntity->getName());
+                if ($asset instanceof Asset) {
+                    $hostUrl = \Pimcore\Tool::getHostUrl();
+                    $eventData->$fieldName = $hostUrl . $asset->getRealFullPath();
+                }
             }
+
+            $event->setData($eventData);
         }
-
-        //update form data.
-        $event->setData($data);
-
-        $preSubmitEvent = new PreSubmitEvent($event, $this->formOptions);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
     }
 
     /**

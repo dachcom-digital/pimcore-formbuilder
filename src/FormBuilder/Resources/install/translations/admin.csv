@@ -44,6 +44,7 @@
 "form_builder_type_field_base.label","Label","Label"
 "form_builder_type_field_base.email_label","Email Label","E-Mail Label"
 "form_builder_type_field_base.value","Value","Wert"
+"form_builder_type_field_base.help_text","Help Text","Hilfetext"
 "form_builder_type_field_base.required","Mark field as required","Feld als erforderlich markieren"
 "form_builder_type_field_base.allow_empty","Allow Empty","Leerer Wert erlauben"
 "form_builder_type_field_base.hook_custom_class","Custom Class","Benutzerdefinierte Klasse"

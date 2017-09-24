@@ -313,15 +313,12 @@ class FileStream
         $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $uuid]);
 
         if (is_dir($target)) {
-
             $this->fileLocator->removeDir($target);
-
             return [
                 'success' => TRUE,
                 'uuid'    => $uuid
             ];
         } else {
-
             return [
                 'success' => FALSE,
                 'error'   => 'File not found! Unable to delete. UUID: ' . $uuid,

@@ -12,6 +12,8 @@ form_builder:
                 form_type_group: hidden_fields
                 label: 'form_builder_type.hidden_type'
                 icon_class: 'form_builder_icon_hidden'
+                fields:
+                    options.help_text: ~
         textarea:
             class: Symfony\Component\Form\Extension\Core\Type\TextareaType
             backend:

@@ -1,7 +1,6 @@
 {% block dynamicmultifile_widget %}
     {% spaceless %}
         <div class="dynamic-multi-file element-{{ name }}" data-field-name="{{ name }}">
-            <input type="hidden" name="{{ full_name }}" value="">
             <div class="qq-upload-container">
                 {% set translationVarName = name ~ '_dmf_config' %}
                 <script class="js-options">var {{ translationVarName }} = {{ engine_options|json_encode|raw }};</script>
@@ -11,6 +10,7 @@
                     {% include '@FormBuilder/Form/Elements/DynamicMultiFile/form.html.twig' %}
                 </div>
             </div>
+            {{ block('form_widget') }}
         </div>
     {% endspaceless %}
 {% endblock %}

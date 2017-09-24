@@ -50,6 +50,11 @@ form_builder:
                 type: textfield
                 label: 'form_builder_type_field_base.value'
                 config: ~
+            options.help_text:
+                display_group_id: base
+                type: textfield
+                label: 'form_builder_type_field_base.help_text'
+                config: ~
             options.required:
                 display_group_id: base
                 type: checkbox

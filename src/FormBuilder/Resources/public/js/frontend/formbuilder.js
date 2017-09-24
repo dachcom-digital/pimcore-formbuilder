@@ -203,8 +203,13 @@ var formBuilder = (function () {
                             },
                             onDeleteComplete: function(id, xhr, isError){
                                 var data = jQuery.parseJSON(xhr.responseText);
-                                $storeField.val($storeField.val().replace(',' + data.uuid, ''));
+                                if(data.success == true) {
+                                    $storeField.val($storeField.val().replace(',' + data.uuid, ''));
+                                } else {
+                                    console.log(data.path)
+                                    $storeField.val($storeField.val().replace(',' + data.path, ''));
 
+                                }
                             }
                         }
                     });

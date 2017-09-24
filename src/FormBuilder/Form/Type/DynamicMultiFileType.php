@@ -31,8 +31,8 @@ class DynamicMultiFileType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars = array_merge_recursive($view->vars, [
-            'type'           => 'text',
-            'value'          => '',
+            'type'           => 'hidden',
+            'data'          => '',
             'attr'           => [
                 'class' => 'formbuilder-dynamic-multifile'
             ],

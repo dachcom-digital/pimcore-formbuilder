@@ -28,3 +28,4 @@ form_builder:
 imports:
     - { resource: '../backend/base_config.yml' }
     - { resource: '../types/types.yml' }
+    - { resource: '../extension/extension.yml' }
