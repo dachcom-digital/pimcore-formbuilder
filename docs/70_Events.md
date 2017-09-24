@@ -4,7 +4,7 @@ It's possible to add some events to every form submission.
 
 ## Pre Set Data Event
 The `FORM_PRE_SET_DATA` event is dispatched at the beginning of the Form::setData() method.
-It contains the form event and also some form builder settings
+It contains the form event and also some form builder settings.
 
 @see \FormBuilderBundle\Event\Form\PreSetDataEvent
 https://symfony.com/doc/current/form/events.html#a-the-formevents-pre-set-data-event
@@ -22,7 +22,7 @@ use FormBuilderBundle\FormBuilderEvents;
 
 ## Pre Submit Event
 The `FORM_PRE_SUBMIT` event is dispatched at the end of the Form::setData() method. 
-This event is mostly here for reading data after having pre-populated the form. It contains the form event and also some form builder settings
+This event is mostly here for reading data after having pre-populated the form. It contains the form event and also some form builder settings.
 
 @see \FormBuilderBundle\Event\Form\PreSubmitEvent
 https://symfony.com/doc/current/form/events.html#a-the-formevents-pre-submit-event
