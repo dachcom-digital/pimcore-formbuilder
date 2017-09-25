@@ -15,6 +15,7 @@ Render different configuration types for ExtJs.
 
 ### Custom Form Type Groups
 Add your form type to one of these group fields (Context-Menu).
+
 | Name | Description |
 |------|-------|
 | text_fields | -- |
