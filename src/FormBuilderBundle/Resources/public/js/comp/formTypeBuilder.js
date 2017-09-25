@@ -342,7 +342,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
                 field = new Ext.form.TextField({
                     fieldLabel: fieldConfig.label,
-                    emptyText: false,
                     name: fieldConfig.id,
                     value: this.getFieldValue(fieldConfig.id),
                     allowBlank: true,
