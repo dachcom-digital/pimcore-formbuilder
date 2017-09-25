@@ -48,7 +48,7 @@ Render your form type to a specific display group.
 Options Transformer will help you to generate valid options for backend and frontend.
 For example, the (complex) [choices options](http://symfony.com/doc/current/reference/forms/types/choice.html#grouping-options) need to be transformed for the ExtJs context for backend configuration. 
 
-## Choices Transformer
+### Choices Transformer
 This transformer will transform the options array into a valid backend configuration array and back.
 
 **Example**  
@@ -61,7 +61,7 @@ options.choices:
     config: ~
 ```
 
-## Default Value Transformer
+### Default Value Transformer
 If you want to define a default value, if the user leaves the field empty, you need the default value transformer.
 In this example the field `placeholder` needs to be a boolean if left empty. Also it should stay empty, if it's get reopened in backend.
 
