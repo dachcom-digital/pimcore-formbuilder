@@ -1,0 +1,55 @@
+<?php
+
+namespace FormBuilderBundle\Form\Type;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class HtmlTagType extends AbstractType
+{
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'tag'      => 'label',
+            'mapped'   => FALSE,
+            'label'    => FALSE,
+            'required' => FALSE
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars = array_merge_recursive($view->vars, [
+            'data' => '',
+            'attr' => [
+                'class' => 'form-builder-html-tag-element'
+            ],
+            'tag'  => empty($options['tag']) ? 'label' : $options['tag']
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getParent()
+    {
+        return TextType::class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBlockPrefix()
+    {
+        return 'form_builder_html_tag_type';
+    }
+}

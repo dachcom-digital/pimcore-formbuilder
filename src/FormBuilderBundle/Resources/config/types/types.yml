@@ -69,6 +69,25 @@ form_builder:
                         display_group_id: attributes
                         type: label
                         label: 'form_builder_type_field.max_file_size_desc'
+        html_tag:
+            class: FormBuilderBundle\Form\Type\HtmlTagType
+            backend:
+                form_type_group: other_fields
+                label: 'form_builder_type.html_tag_type'
+                icon_class: 'form_builder_icon_html_tag'
+                constraints: false
+                fields:
+                    options.required: ~
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.tag:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.tag_element'
+                        config:
+                            options: '%form_builder_html_tag_elements%'
+
         choice:
             class: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             backend:

@@ -25,6 +25,7 @@ class DynamicMultiFileType extends AbstractType
     {
         $this->translator = $translator;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -61,7 +62,7 @@ class DynamicMultiFileType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'dynamicmultifile';
+        return 'form_builder_dynamicmultifile';
     }
 
     /**

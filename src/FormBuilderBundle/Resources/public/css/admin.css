@@ -112,3 +112,7 @@
 .form_builder_icon_notice {
     background: url(/bundles/formbuilder/img/notice.svg) left center no-repeat !important;
 }
+
+.form_builder_icon_html_tag {
+    background: url(/bundles/formbuilder/img/html.svg) left center no-repeat !important;
+}

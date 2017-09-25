@@ -1,3 +1,7 @@
+parameters:
+    form_builder_html_tag_elements:
+        - ['label','label']
+
 form_builder:
     area:
         presets: ~
