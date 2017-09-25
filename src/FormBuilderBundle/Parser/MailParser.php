@@ -125,23 +125,23 @@ class MailParser
 
     /**
      * @param Mail $mail
-     * @param      $data
+     * @param      $fieldValues
      * @param      $disableDefaultMailBody
      */
-    private function setMailPlaceholders(Mail $mail, $data, $disableDefaultMailBody)
+    private function setMailPlaceholders(Mail $mail, $fieldValues, $disableDefaultMailBody)
     {
         //allow access to all form placeholders
-        foreach ($data as $label => $field) {
+        foreach ($fieldValues as $formField) {
 
-            if (empty($field['value'])) {
+            if (empty($formField['value'])) {
                 continue;
             }
 
-            $mail->setParam(!empty($field['email_label']) ? $field['email_label'] : $field['label'], $this->getSingleRenderedValue($field['value']));
+            $mail->setParam($formField['name'], $this->getSingleRenderedValue($formField['value']));
         }
 
         if ($disableDefaultMailBody === FALSE) {
-            $mail->setParam('body', $this->getBodyTemplate($data));
+            $mail->setParam('body', $this->getBodyTemplate($fieldValues));
         }
     }
 
