@@ -31,11 +31,15 @@ class DynamicMultiFileType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars = array_merge_recursive($view->vars, [
+        $vars = array_merge_recursive($view->vars, [
             'type'           => 'hidden',
-            'data'          => '',
+            'data'           => '',
             'attr'           => [
-                'class' => 'formbuilder-dynamic-multifile'
+                'data-field-name' => $view->vars['name'],
+                'class'           => [
+                    'dynamic-multi-file',
+                    'element-' . $view->vars['name']
+                ]
             ],
             'engine_options' => [
                 'messages'           => $this->getInterfaceTranslations(),
@@ -44,6 +48,10 @@ class DynamicMultiFileType extends AbstractType
                 'allowed_extensions' => is_array($options['allowed_extensions']) ? $options['allowed_extensions'] : []
             ]
         ]);
+
+        $vars['attr']['class'] = join(' ', (array)$vars['attr']['class']);
+
+        $view->vars = $vars;
     }
 
     /**

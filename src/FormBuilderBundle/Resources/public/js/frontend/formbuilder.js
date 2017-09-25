@@ -121,6 +121,7 @@ var formBuilder = (function () {
 
                             if($fbHtmlFile.length > 0) {
                                 $fbHtmlFile.fineUploader('reset');
+                                $fbHtmlFile.find('input[type="hidden"]').val('');
                             }
 
                             if(typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
