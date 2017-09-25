@@ -86,6 +86,17 @@ form_builder:
                         type: checkbox
                         label: 'form_builder_type_field.multiple'
                         config: ~
+                    options.placeholder:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.placeholder'
+                        options_transformer: 'form_builder.options_transformer.default_value'
+                        config:
+                            default_value: false
+                    options.placeholder_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.placeholder_desc'
                     options.choices:
                         display_group_id: attributes
                         type: key_value_repeater

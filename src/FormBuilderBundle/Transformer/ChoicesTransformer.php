@@ -8,10 +8,11 @@ class ChoicesTransformer implements OptionsTransformerInterface {
      * Transform ExtJs Array to valid symfony choices array.
      *
      * @param $choices
+     * @param $optionConfig
      *
      * @return array
      */
-    public function transform($choices)
+    public function transform($choices, $optionConfig = NULL)
     {
         $parsedChoices = [];
         foreach($choices as $choice) {
@@ -34,10 +35,11 @@ class ChoicesTransformer implements OptionsTransformerInterface {
      * Transform symfony choices array into valid ExtJs Array
      *
      * @param $choices
+     * @param $optionConfig
      *
      * @return array
      */
-    public function reverseTransform($choices)
+    public function reverseTransform($choices, $optionConfig = NULL)
     {
         $parsedChoices = [];
         foreach($choices as $choiceKey => $choiceValue) {

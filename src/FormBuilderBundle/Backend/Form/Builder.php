@@ -360,9 +360,9 @@ class Builder
                     ->get($optionConfig['options_transformer']);
 
                 if ($reverse === FALSE) {
-                    $fieldData['options'][$optionName] = $transformer->transform($optionValue);
+                    $fieldData['options'][$optionName] = $transformer->transform($optionValue, $optionConfig);
                 } else {
-                    $fieldData['options'][$optionName] = $transformer->reverseTransform($optionValue);
+                    $fieldData['options'][$optionName] = $transformer->reverseTransform($optionValue, $optionConfig);
                 }
             }
         }

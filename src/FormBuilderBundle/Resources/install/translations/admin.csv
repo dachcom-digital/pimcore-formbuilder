@@ -54,6 +54,8 @@
 "form_builder_type_field.choices","Choices","Auswahl"
 "form_builder_type_field.expanded","Expanded","Ausgeklappt"
 "form_builder_type_field.multiple","Multiple","Mehrfach"
+"form_builder_type_field.placeholder","Default Option","Standardwert"
+"form_builder_type_field.placeholder_desc","This option determines whether or not a special 'empty' option (e.g. 'Choose an option') will appear at the top of a select field. This option only applies if the multiple option is set to false. Leave empty for no default option.","Diese Option legt fest, ob eine spezielle 'leere' Option (z. B. 'Wählen Sie eine Option') am oberen Rand eines Auswahlfeldes erscheinen soll. Diese Option gilt nur, wenn die Option 'Mehrfach' nicht aktiv ist. Leer lassen für keine Standardoption."
 "form_builder_type_field.allowed_extensions","Allowed Extensions","Erlaubte Dateitypen"
 "form_builder_type_field.allowed_extensions_desc","Add some extensions and confirm with enter.","Fügen Sie erlaubte Dateierweiterungen hinzu und bestätigen Sie mit der Enter-Taste."
 "form_builder_type_field.max_file_size","Max File Size","Max. Dateigröße"

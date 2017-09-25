@@ -3,3 +3,7 @@ services:
         class: FormBuilderBundle\Transformer\ChoicesTransformer
         tags:
             - {name: form_builder.transformer.options}
+    form_builder.options_transformer.default_value:
+        class: FormBuilderBundle\Transformer\DefaultValueTransformer
+        tags:
+            - {name: form_builder.transformer.options}
