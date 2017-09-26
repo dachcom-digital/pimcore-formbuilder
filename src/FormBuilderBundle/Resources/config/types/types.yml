@@ -143,9 +143,3 @@ form_builder:
                         label: 'form_builder_type_field.choices'
                         options_transformer: 'form_builder.options_transformer.choices'
                         config: ~
-        hidden:
-            class: Symfony\Component\Form\Extension\Core\Type\HiddenType
-            backend:
-                form_type_group: hidden_fields
-                label: 'form_builder_type.hidden_type'
-                icon_class: 'form_builder_icon_hidden'
