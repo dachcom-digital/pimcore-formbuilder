@@ -2,6 +2,6 @@
 
 {% block form_builder_html_tag_type_widget %}
     {% spaceless %}
-        <{{ tag }} {{ block('attributes') }}>{{ label }}</{{ tag }}>
+        <{{ tag }} {{ block('attributes') }}>{{ label|trans }}</{{ tag }}>
     {% endspaceless %}
 {% endblock %}
