@@ -12,6 +12,7 @@ Render different configuration types for ExtJs.
 | select | -- |
 | key_value_repeater | -- |
 | options_repeater | -- |
+| href | -- |
 
 ### Custom Form Type Groups
 Add your form type to one of these group fields (Context-Menu).

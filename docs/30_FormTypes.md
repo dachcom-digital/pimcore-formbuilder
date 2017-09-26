@@ -12,6 +12,7 @@ There are several form types available (updated continuously).
 | Submit | Buttons |
 | Choice | Choice Fields |
 | Html Tag | Other Fields |
+| Snippet | Other Fields |
 | [Dynamic Multi File](80_FileUpload.md) | Other Fields |
 
 ## Constraints
