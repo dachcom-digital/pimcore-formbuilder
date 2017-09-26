@@ -144,22 +144,34 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         }
     },
 
+    /**
+     *
+     * @returns {boolean}
+     */
     isValid: function() {
         return this.formIsValid;
     },
 
     applyData: function() {
-
         this.formIsValid = this.form.isValid();
         this.storeData =  this.transposeFormFields(this.form.getValues());
         this.storeData.type = this.getType();
-
     },
 
+    /**
+     *
+     * @returns {Formbuilder.comp.type.formTypeBuilder.storeData|{}}
+     */
     getData: function() {
         return this.storeData;
     },
 
+    /**
+     *
+     * @param formConfig
+     * @param isMainTab
+     * @returns {*}
+     */
     getForm: function(formConfig, isMainTab) {
 
         var form = this.createBaseForm(isMainTab);
@@ -382,6 +394,10 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             case 'options_repeater' :
                 field = this.getRepeaterWithOptions(fieldConfig);
                 break;
+
+            case 'href' :
+                field = this.getHrefElement(fieldConfig);
+
         }
 
         return field;
@@ -408,6 +424,20 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         );
 
         return keyValueRepeater.getRepeater();
+
+    },
+
+    getHrefElement: function(fieldConfig) {
+
+        var keyValueRepeater = new Formbuilder.comp.types.href(
+            fieldConfig,
+            {
+                'path': this.getFieldValue(fieldConfig.id),
+                'hrefType': this.getFieldValue('options.href_type')
+            }
+        );
+
+        return keyValueRepeater.getHref();
 
     },
 

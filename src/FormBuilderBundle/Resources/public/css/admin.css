@@ -116,3 +116,6 @@
 .form_builder_icon_html_tag {
     background: url(/bundles/formbuilder/img/html.svg) left center no-repeat !important;
 }
+.form_builder_icon_snippet_tag {
+    background: url(/bundles/formbuilder/img/snippet.svg) left center no-repeat !important;
+}

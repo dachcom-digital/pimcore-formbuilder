@@ -6,6 +6,8 @@ use FormBuilderBundle\Backend\Form\Builder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -296,6 +298,30 @@ class SettingsController extends AdminController
         $pathIsValid = is_dir(PIMCORE_PUBLIC_VAR . '/' . ltrim($path, '/'));
 
         return $this->json(['success' => $pathIsValid]);
+    }
+
+    public function getElementByPathAction(Request $request)
+    {
+        $path = $request->query->get('path');
+        $type = $request->query->get('hrefType');
+
+        $element = Service::getElementByPath($type, $path);
+
+        $data = [
+            'id'      => NULL,
+            'type'    => NULL,
+            'subtype' => NULL
+        ];
+
+        if ($element instanceof AbstractElement) {
+            $data = [
+                'id'      => $element->getId(),
+                'type'    => $type,
+                'subtype' => $element->getType()
+            ];
+        }
+
+        return $this->json($data);
     }
 
     /**

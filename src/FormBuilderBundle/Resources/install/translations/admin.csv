@@ -33,6 +33,7 @@
 "form_builder_type.checkbox_type","Checkbox Type","Checkbox Element"
 "form_builder_type.choice_type","Choice Type","Auswahl Element"
 "form_builder_type.html_tag_type","HTML Tag Type","HTML Tag Element"
+"form_builder_type.snippet_type","Snippet Type","Snippet Element"
 "form_builder_type.dynamic_multi_file","Dynamic Multi File","Dynamic Multi-Datei Element"
 "form_builder_type.submit_type","Submit Type","Absenden Element"
 
@@ -53,6 +54,7 @@
 "form_builder_type_field_base.attributes","Attributes","Attribute"
 
 "form_builder_type_field.tag_element","Tag Element","Tag Element"
+"form_builder_type_field.snippet_path","Snippet Path","Snippet Pfad"
 "form_builder_type_field.choices","Choices","Auswahl"
 "form_builder_type_field.expanded","Expanded","Ausgeklappt"
 "form_builder_type_field.multiple","Multiple","Mehrfach"

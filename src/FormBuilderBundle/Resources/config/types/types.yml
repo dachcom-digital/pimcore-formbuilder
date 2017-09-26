@@ -87,7 +87,28 @@ form_builder:
                         label: 'form_builder_type_field.tag_element'
                         config:
                             options: '%form_builder_html_tag_elements%'
-
+        snippet:
+            class: FormBuilderBundle\Form\Type\SnippetType
+            backend:
+                form_type_group: other_fields
+                label: 'form_builder_type.snippet_type'
+                icon_class: 'form_builder_icon_snippet_tag'
+                constraints: false
+                fields:
+                    options.required: ~
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.path:
+                        display_group_id: attributes
+                        type: href
+                        label: 'form_builder_type_field.snippet_path'
+                        config:
+                            types:
+                                - 'document'
+                            subtypes:
+                                document:
+                                    - 'snippet'
         choice:
             class: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             backend:
