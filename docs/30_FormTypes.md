@@ -2,18 +2,18 @@
 
 There are several form types available (updated continuously).
 
-| Name | Group |
-|------|-------|
-| Text | Text Fields |
-| Hidden | Hidden Fields |
-| Text Area | Text Fields |
-| Integer | Text Fields |
-| Checkbox | Other Fields |
-| Submit | Buttons |
-| Choice | Choice Fields |
-| Html Tag | Other Fields |
-| Snippet | Other Fields |
-| [Dynamic Multi File](80_FileUpload.md) | Other Fields |
+| Name | Group | Description |
+|------|-------|-------------|
+| Text | Text Fields | Default input text field. |
+| Hidden | Hidden Fields | A hidden input field. |
+| Text Area | Text Fields | Default textarea field. |
+| Integer | Text Fields | HTML5 Number field. |
+| Checkbox | Other Fields | Defualt (single) checkbox field. |
+| Submit | Buttons | Submit Button. |
+| Choice | Choice Fields | Create a dropdown, multi-dropdown, multi-checkboxes, multi-radios |
+| Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
+| Snippet | Other Fields | Place a custom snippet in your form. |
+| [Dynamic Multi File](80_FileUpload.md) | Other Fields | Multi-File Upload field. |
 
 ## Constraints
 
@@ -21,3 +21,17 @@ There are several form types available (updated continuously).
 |------|-------|
 | NotBlank | Validates that a value is not blank - meaning not equal to a blank string, a blank array or null |
 | Email | Validates that a value is a valid email address. The underlying value is cast to a string before being validated. |
+
+## Extended Type Configuration
+
+### Html Tag Type
+To define your custom html tags, add this to your `app/config/config.yml':
+
+```yaml
+parameters:
+    form_builder_html_tag_elements:
+        - ['h1','h1']
+        - ['h2','h2']
+        - ['label','label']
+        - ['p','p']
+```
