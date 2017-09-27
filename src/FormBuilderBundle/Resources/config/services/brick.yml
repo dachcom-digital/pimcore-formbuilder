@@ -1,0 +1,11 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # area brick
+    FormBuilderBundle\Document\Areabrick\Form\Form:
+        tags:
+            - { name: pimcore.area.brick, id: formbuilder_form }

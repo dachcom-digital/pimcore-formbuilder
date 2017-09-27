@@ -69,7 +69,7 @@ form_builder:
                         # we need a options transformer. 
                         # it transforms backend values into a valid symfony choice values and back.
                         # create your custom transformer, if you need to.
-                        options_transformer: 'form_builder.options_transformer.choices'
+                        options_transformer: FormBuilderBundle\Transformer\ChoicesTransformer
                         config: ~
 ```
 

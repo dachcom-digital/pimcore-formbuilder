@@ -24,7 +24,7 @@ class SettingsController extends AdminController
      */
     public function getTreeAction(Request $request)
     {
-        $forms = $this->get('form_builder.manager.form')->getAll();
+        $forms = $this->get(FormManager::class)->getAll();
 
         $mainItems = [];
         /** @var \FormBuilderBundle\Storage\Form $form */
@@ -52,7 +52,7 @@ class SettingsController extends AdminController
     public function getSettingsAction(Request $request)
     {
         /** @var Configuration $configuration */
-        $configuration = $this->container->get('form_builder.configuration');
+        $configuration = $this->container->get(Configuration::class);
 
         return $this->json(['settings' => $configuration->getConfigArray()]);
     }
@@ -67,10 +67,10 @@ class SettingsController extends AdminController
         $id = $request->query->get('id');
 
         /** @var FormManager $formManager */
-        $formManager = $this->get('form_builder.manager.form');
+        $formManager = $this->get(FormManager::class);
 
         /** @var Builder $backendFormBuilder */
-        $backendFormBuilder = $this->get('form_builder.backend.form_builder');
+        $backendFormBuilder = $this->get(Builder::class);
 
         $data = [
             'success' => TRUE,
@@ -95,7 +95,7 @@ class SettingsController extends AdminController
     public function addFormAction(Request $request)
     {
         /** @var FormManager $formManager */
-        $formManager = $this->get('form_builder.manager.form');
+        $formManager = $this->get(FormManager::class);
 
         $name = $this->getSaveName($request->query->get('form_name'));
 
@@ -120,7 +120,7 @@ class SettingsController extends AdminController
                 'form_date' => time()
             ];
 
-            $formEntity = $this->get('form_builder.manager.form')->save($data);
+            $formEntity = $formManager->save($data);
             $id = $formEntity->getId();
         }
 
@@ -141,7 +141,7 @@ class SettingsController extends AdminController
     public function deleteFormAction(Request $request)
     {
         $id = $request->get('id');
-        $this->get('form_builder.manager.form')->delete($id);
+        $this->get(FormManager::class)->delete($id);
 
         return $this->json(
             [
@@ -161,10 +161,10 @@ class SettingsController extends AdminController
         $id = $request->get('form_id');
 
         /** @var FormManager $formManager */
-        $formManager = $this->get('form_builder.manager.form');
+        $formManager = $this->get(FormManager::class);
 
         /** @var Builder $backendFormBuilder */
-        $backendFormBuilder = $this->get('form_builder.backend.form_builder');
+        $backendFormBuilder = $this->get(Builder::class);
 
         $formEntity = $formManager->getById($id);
         $storedFormName = $formEntity->getName();
@@ -240,7 +240,7 @@ class SettingsController extends AdminController
         $formId = $request->get('id');
 
         /** @var Builder $backendFormBuilder */
-        $backendFormBuilder = $this->get('form_builder.backend.form_builder');
+        $backendFormBuilder = $this->get(Builder::class);
 
         if (!file_exists(Configuration::IMPORT_PATH . '/import_' . $formId)) {
             throw new NotFoundHttpException('no import form with id ' . $formId . ' found.');
@@ -332,7 +332,7 @@ class SettingsController extends AdminController
     public function getGroupTemplatesAction(Request $request)
     {
         /** @var Configuration $configuration */
-        $configuration = $this->container->get('form_builder.configuration');
+        $configuration = $this->container->get(Configuration::class);
         $areaConfig = $configuration->getConfig('area');
 
         $templates = [['key' => NULL, 'label' => '--']];

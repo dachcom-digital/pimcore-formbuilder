@@ -1,0 +1,19 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # registry: options transformer
+    FormBuilderBundle\Registry\OptionsTransformerRegistry:
+        arguments:
+            $interface: 'FormBuilderBundle\Transformer\OptionsTransformerInterface'
+
+    FormBuilderBundle\Transformer\ChoicesTransformer:
+        tags:
+            - {name: form_builder.transformer.options}
+
+    FormBuilderBundle\Transformer\DefaultValueTransformer:
+        tags:
+            - {name: form_builder.transformer.options}

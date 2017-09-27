@@ -1,14 +1,12 @@
 services:
 
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
      # stream: files
-    form_builder.stream.file:
-        class: FormBuilderBundle\Stream\FileStream
-        arguments:
-            - '@form_builder.tool.file_locator'
-            - '@request_stack'
+    FormBuilderBundle\Stream\FileStream: ~
 
      # stream: packages
-    form_builder.stream.package:
-        class: FormBuilderBundle\Stream\PackageStream
-        arguments:
-            - '@form_builder.tool.file_locator'
+    FormBuilderBundle\Stream\PackageStream: ~

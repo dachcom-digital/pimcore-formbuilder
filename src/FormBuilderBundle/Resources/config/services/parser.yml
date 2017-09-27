@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #parser: mail
+    FormBuilderBundle\Parser\MailParser:
+        shared: false

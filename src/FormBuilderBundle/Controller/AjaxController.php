@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Controller;
 
+use FormBuilderBundle\Stream\FileStream;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,7 @@ class AjaxController extends FrontendController
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->container->get('form_builder.stream.file');
+        $fileStream = $this->container->get(FileStream::class);
 
         if ($method === 'POST') {
             $result = $fileStream->handleUpload();
@@ -62,7 +63,7 @@ class AjaxController extends FrontendController
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->container->get('form_builder.stream.file');
+        $fileStream = $this->container->get(FileStream::class);
 
         //remove tmp element from session!
         $sessionKey = 'file_' . $formId . '_' . $uuid;
@@ -85,7 +86,7 @@ class AjaxController extends FrontendController
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->container->get('form_builder.stream.file');
+        $fileStream = $this->container->get(FileStream::class);
 
         $result = $fileStream->combineChunks();
 

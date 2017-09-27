@@ -1,0 +1,21 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # tool installer
+    FormBuilderBundle\Tool\Install: ~
+
+    # tool: file locator
+    FormBuilderBundle\Tool\FileLocator: ~
+
+    # configuration
+    FormBuilderBundle\Configuration\Configuration: ~
+
+    # session: configurator
+    FormBuilderBundle\Session\SessionConfigurator:
+        tags:
+            - { name: pimcore.session.configurator }
+

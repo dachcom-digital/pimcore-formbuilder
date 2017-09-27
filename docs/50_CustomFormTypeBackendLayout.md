@@ -58,7 +58,7 @@ options.choices:
     display_group_id: attributes
     type: key_value_repeater
     label: 'form_builder_type_field.choices'
-    options_transformer: 'form_builder.options_transformer.choices'
+    options_transformer: FormBuilderBundle\Transformer\ChoicesTransformer
     config: ~
 ```
 
@@ -72,7 +72,7 @@ options.placeholder:
     display_group_id: attributes
     type: textfield
     label: 'form_builder_type_field.placeholder'
-    options_transformer: 'form_builder.options_transformer.default_value'
+    options_transformer: FormBuilderBundle\Transformer\DefaultValueTransformer
     config:
         default_value: false
 ```

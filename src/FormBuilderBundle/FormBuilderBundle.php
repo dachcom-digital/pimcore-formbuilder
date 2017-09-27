@@ -3,6 +3,7 @@
 namespace FormBuilderBundle;
 
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
+use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -22,7 +23,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
      */
     public function getInstaller()
     {
-        return $this->container->get('form_builder.tool.installer');
+        return $this->container->get(Install::class);
     }
 
     /**

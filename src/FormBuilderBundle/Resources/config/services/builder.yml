@@ -1,0 +1,15 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # form builder
+    FormBuilderBundle\Form\Builder: ~
+
+    # backend form builder
+    FormBuilderBundle\Backend\Form\Builder: ~
+
+    #form values beatuifier
+    FormBuilderBundle\Form\FormValuesBeautifier: ~

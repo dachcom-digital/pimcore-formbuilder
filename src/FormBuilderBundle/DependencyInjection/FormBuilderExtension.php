@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use FormBuilderBundle\Configuration\Configuration as BundleConfiguration;
 
 class FormBuilderExtension extends Extension
 {
@@ -21,7 +22,7 @@ class FormBuilderExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__.'/../Resources/config']));
         $loader->load('services.yml');
 
-        $configManagerDefinition = $container->getDefinition('form_builder.configuration');
+        $configManagerDefinition = $container->getDefinition(BundleConfiguration::class);
         $configManagerDefinition->addMethodCall('setConfig', [ $config ]);
 
     }
