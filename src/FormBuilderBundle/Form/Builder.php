@@ -6,7 +6,7 @@ use FormBuilderBundle\EventSubscriber\FormBuilderSubscriber;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Manager\FormManager;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -37,7 +37,7 @@ class Builder
     protected $formManager;
 
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     protected $formFactory;
 
@@ -53,7 +53,7 @@ class Builder
      * @param Configuration         $configuration
      * @param RequestStack          $requestStack
      * @param FormManager           $formManager
-     * @param FormFactory           $formFactory
+     * @param FormFactoryInterface  $formFactory
      * @param UrlGeneratorInterface $router
      */
     public function __construct(
@@ -61,7 +61,7 @@ class Builder
         Configuration $configuration,
         RequestStack $requestStack,
         FormManager $formManager,
-        FormFactory $formFactory,
+        FormFactoryInterface $formFactory,
         UrlGeneratorInterface $router
     ) {
         $this->formBuilderSubscriber = $formBuilderSubscriber;

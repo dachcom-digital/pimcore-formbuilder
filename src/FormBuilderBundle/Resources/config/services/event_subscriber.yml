@@ -5,5 +5,5 @@ services:
         autoconfigure: true
         public: true
 
-    # alias for formbuilder subscriber.
+    # alias for form builder subscriber.
     FormBuilderBundle\EventSubscriber\FormBuilderSubscriber: ~

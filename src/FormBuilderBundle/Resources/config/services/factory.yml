@@ -6,4 +6,5 @@ services:
         public: false
 
     # factory: form
+    FormBuilderBundle\Factory\FormFactoryInterface: '@FormBuilderBundle\Factory\FormFactory'
     FormBuilderBundle\Factory\FormFactory: ~

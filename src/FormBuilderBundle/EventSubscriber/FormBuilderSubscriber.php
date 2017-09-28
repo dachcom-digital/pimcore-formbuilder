@@ -10,12 +10,12 @@ use FormBuilderBundle\Storage\FormFieldDynamicInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Stream\PackageStream;
 use Pimcore\Model\Asset;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
@@ -35,12 +35,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $packageStream;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     protected $session;
 
@@ -57,16 +57,16 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * FormListener constructor.
      *
-     * @param Configuration   $configuration
-     * @param PackageStream   $packageStream
-     * @param EventDispatcher $eventDispatcher
-     * @param Session         $session
+     * @param Configuration            $configuration
+     * @param PackageStream            $packageStream
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param SessionInterface         $session
      */
     public function __construct(
         Configuration $configuration,
         PackageStream $packageStream,
-        EventDispatcher $eventDispatcher,
-        Session $session
+        EventDispatcherInterface $eventDispatcher,
+        SessionInterface $session
     ) {
         $this->configuration = $configuration;
         $this->packageStream = $packageStream;

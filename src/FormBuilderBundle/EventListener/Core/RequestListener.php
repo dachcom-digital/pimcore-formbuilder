@@ -10,7 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -27,7 +27,7 @@ class RequestListener implements EventSubscriberInterface
     protected $eventDispatcher;
 
     /**
-     * @var Session
+     * @var SessionInterface
      */
     protected $session;
 
@@ -36,12 +36,12 @@ class RequestListener implements EventSubscriberInterface
      *
      * @param Builder                  $formBuilder
      * @param EventDispatcherInterface $eventDispatcher
-     * @param Session                  $session
+     * @param SessionInterface         $session
      */
     public function __construct(
         Builder $formBuilder,
         EventDispatcherInterface $eventDispatcher,
-        Session $session
+        SessionInterface $session
     ) {
         $this->formBuilder = $formBuilder;
         $this->eventDispatcher = $eventDispatcher;

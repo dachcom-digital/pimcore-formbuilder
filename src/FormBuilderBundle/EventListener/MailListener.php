@@ -11,12 +11,12 @@ use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class MailListener implements EventSubscriberInterface
 {
     /**
-     * @var Session
+     * @var SessionInterface
      */
     protected $session;
 
@@ -33,12 +33,15 @@ class MailListener implements EventSubscriberInterface
     /**
      * MailListener constructor.
      *
-     * @param Session         $session
+     * @param SessionInterface         $session
      * @param MailParser      $mailParser
      * @param IncludeRenderer $includeRenderer
      */
-    public function __construct(Session $session, MailParser $mailParser, IncludeRenderer $includeRenderer)
-    {
+    public function __construct(
+        SessionInterface $session,
+        MailParser $mailParser,
+        IncludeRenderer $includeRenderer
+    ) {
         $this->session = $session;
         $this->mailParser = $mailParser;
         $this->includeRenderer = $includeRenderer;

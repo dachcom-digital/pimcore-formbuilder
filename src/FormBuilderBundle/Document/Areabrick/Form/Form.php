@@ -10,12 +10,12 @@ use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Translation\Translator;
 use Pimcore\Model\Document;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Form extends AbstractTemplateAreabrick
 {
     /**
-     * @var Session
+     * @var SessionInterface
      */
     private $session;
 
@@ -47,15 +47,15 @@ class Form extends AbstractTemplateAreabrick
     /**
      * Form constructor.
      *
-     * @param Session         $session
-     * @param FormManager     $formManager
-     * @param PresetManager   $presetManager
-     * @param Builder         $formBuilder
-     * @param TemplateManager $templateManager
-     * @param Translator      $translator
+     * @param SessionInterface $session
+     * @param FormManager      $formManager
+     * @param PresetManager    $presetManager
+     * @param Builder          $formBuilder
+     * @param TemplateManager  $templateManager
+     * @param Translator       $translator
      */
     public function __construct(
-        Session $session,
+        SessionInterface $session,
         FormManager $formManager,
         PresetManager $presetManager,
         Builder $formBuilder,
@@ -174,7 +174,7 @@ class Form extends AbstractTemplateAreabrick
                 [
                     'form_template' => NULL,
                     'form_preset'   => NULL,
-                    'message' => $noteMessage,
+                    'message'       => $noteMessage,
                 ]
             );
 
