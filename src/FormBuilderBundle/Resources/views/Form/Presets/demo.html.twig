@@ -1,3 +1,4 @@
+{% extends main_layout is not empty ? main_layout : '@FormBuilder/layout.html.twig' %}
 {# if preset is defined and called demo, this layout will get loaded #}
 {% block form_builder_layout %}
 

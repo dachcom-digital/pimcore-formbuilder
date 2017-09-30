@@ -223,8 +223,8 @@ class FileStream
         }
 
         // Validate file extension
-        $pathinfo = pathinfo($this->getName());
-        $ext = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
+        $pathInfo = pathinfo($this->getName());
+        $ext = isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
 
         if ($this->allowedExtensions && !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))) {
             $these = implode(', ', $this->allowedExtensions);
@@ -269,10 +269,8 @@ class FileStream
 
                 if ($file->move($target)) {
                     return [
-
                         'success' => TRUE,
                         'uuid'    => $uuid
-
                     ];
                 }
             }
@@ -330,7 +328,6 @@ class FileStream
             $fileDir = $this->fileLocator->getFilesFolder() . '/' . $folderName;
             if (is_dir($fileDir)) {
                 $dirFiles = glob($fileDir . '/*');
-
                 if (count($dirFiles) === 1) {
                     $files[] = ['name' => $fileName, 'uuid' => $folderName, 'path' => $dirFiles[0]];
                 }
@@ -360,13 +357,11 @@ class FileStream
             }
         } catch (\Exception $e) {
             Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
-
             return FALSE;
         }
 
         if (!file_exists($zipPath)) {
             Logger::log('Zip Path does not exist (' . $zipPath . ')');
-
             return FALSE;
         }
 
@@ -375,7 +370,6 @@ class FileStream
 
         if (!$formDataParentFolder instanceof Asset\Folder) {
             Logger::error('formDataParent Folder does not exist (/formdata)!');
-
             return FALSE;
         }
 
@@ -397,19 +391,15 @@ class FileStream
 
         if (!$formDataFolder instanceof Asset\Folder) {
             Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
-
             return FALSE;
         }
 
         $assetData = [
-
             'data'     => file_get_contents($zipPath),
             'filename' => $zipFileName
-
         ];
 
         $asset = NULL;
-
         try {
             $mailTemplate = \Pimcore\Model\Document::getById($templateId);
             $asset = Asset::create($formDataFolder->getId(), $assetData, FALSE);

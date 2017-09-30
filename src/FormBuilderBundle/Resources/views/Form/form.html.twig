@@ -9,11 +9,11 @@
 
         {{ form_builder_theme_macro.form_builder_form_head() }}
 
-            {{ form_builder_theme_macro.form_builder_form_message(app.flashes) }}
+        {{ form_builder_theme_macro.form_builder_form_message(app.flashes) }}
 
-            {{ form_start(form) }}
-                {{ form_widget(form) }}
-            {{ form_end(form) }}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
 
         {{ form_builder_theme_macro.form_builder_form_foot() }}
 

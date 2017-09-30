@@ -2,23 +2,17 @@
 
 namespace FormBuilderBundle\Document\Areabrick\Form;
 
-use FormBuilderBundle\Form\Builder;
+use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Manager\PresetManager;
+use FormBuilderBundle\Assembler\FormAssembler;
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Translation\Translator;
-use Pimcore\Model\Document;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Form extends AbstractTemplateAreabrick
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
-
     /**
      * @var FormManager
      */
@@ -30,9 +24,9 @@ class Form extends AbstractTemplateAreabrick
     protected $presetManager;
 
     /**
-     * @var Builder
+     * @var FormAssembler
      */
-    protected $formBuilder;
+    protected $formAssembler;
 
     /**
      * @var TemplateManager
@@ -47,25 +41,22 @@ class Form extends AbstractTemplateAreabrick
     /**
      * Form constructor.
      *
-     * @param SessionInterface $session
      * @param FormManager      $formManager
      * @param PresetManager    $presetManager
-     * @param Builder          $formBuilder
+     * @param FormAssembler          $formAssembler
      * @param TemplateManager  $templateManager
      * @param Translator       $translator
      */
     public function __construct(
-        SessionInterface $session,
         FormManager $formManager,
         PresetManager $presetManager,
-        Builder $formBuilder,
+        FormAssembler $formAssembler,
         TemplateManager $templateManager,
         Translator $translator
     ) {
-        $this->session = $session;
         $this->formManager = $formManager;
         $this->presetManager = $presetManager;
-        $this->formBuilder = $formBuilder;
+        $this->formAssembler = $formAssembler;
         $this->templateManager = $templateManager;
         $this->translator = $translator;
     }
@@ -76,7 +67,7 @@ class Form extends AbstractTemplateAreabrick
     public function action(Info $info)
     {
         $view = $info->getView();
-        $viewVars = [];
+        $editViewVars = [];
 
         $formPresetSelection = $this->getDocumentTag($info->getDocument(), 'select', 'formPreset');
         $formTemplateSelection = $this->getDocumentTag($info->getDocument(), 'select', 'formType');
@@ -97,7 +88,7 @@ class Form extends AbstractTemplateAreabrick
                 }
             }
 
-            $viewVars['formStore'] = $availableForms;
+            $editViewVars['formStore'] = $availableForms;
 
             $formTemplateStore = [];
             foreach ($this->templateManager->getFormTemplates(TRUE) as $template) {
@@ -105,7 +96,7 @@ class Form extends AbstractTemplateAreabrick
                 $formTemplateStore[] = $template;
             }
 
-            $viewVars['formTemplateStore'] = $formTemplateStore;
+            $editViewVars['formTemplateStore'] = $formTemplateStore;
 
             if ($formTemplateSelection->isEmpty()) {
                 $formTemplateSelection->setDataFromResource($this->templateManager->getDefaultFormTemplate());
@@ -123,140 +114,38 @@ class Form extends AbstractTemplateAreabrick
                     $formPresetSelection->setDataFromResource('custom');
                 }
 
-                $viewVars['formPresetStore'] = $formPresetsStore;
-                $viewVars['formPresetsInfo'] = $formPresetsInfo;
+                $editViewVars['formPresetStore'] = $formPresetsStore;
+                $editViewVars['formPresetsInfo'] = $formPresetsInfo;
             }
         }
 
-        $formData = NULL;
         $formId = NULL;
-        $formHtml = NULL;
-        $messageHtml = NULL;
-
-        $noteMessage = '';
-        $noteError = FALSE;
-
+        $formTemplate = $formTemplateSelection->getValue();
         $sendCopy = $this->getDocumentTag($info->getDocument(), 'checkbox', 'userCopy')->getData() === TRUE;
         $formPreset = $formPresetSelection->getData();
-
-        if (empty($formPreset) || is_null($formPreset)) {
-            $formPreset = 'custom';
-        }
-
-        $viewVars['form_layout'] = $this->getFormLayout($formPreset);
 
         $formNameElement = $this->getDocumentTag($info->getDocument(), 'select', 'formName');
         if (!$formNameElement->isEmpty()) {
             $formId = $formNameElement->getData();
         }
 
-        if (!empty($formId)) {
-            try {
-                $formData = $this->formManager->getById($formId);
-
-                if (!$formData instanceof \FormBuilderBundle\Storage\Form) {
-                    $noteMessage = 'Form (' . $formId . ') is not a valid FormBuilder Element.';
-                    $noteError = TRUE;
-                }
-            } catch (\Exception $e) {
-                $noteMessage = $e->getMessage();
-                $noteError = TRUE;
-            }
-        } else {
-            $noteMessage = 'No valid form selected.';
-            $noteError = TRUE;
-        }
-
-        if ($noteError === TRUE) {
-
-            $viewVars = array_merge(
-                $viewVars,
-                [
-                    'form_template' => NULL,
-                    'form_preset'   => NULL,
-                    'message'       => $noteMessage,
-                ]
-            );
-
-            foreach ($viewVars as $var => $varValue) {
-                $view->{$var} = $varValue;
-            }
-
-            return FALSE;
-        }
-
         $mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();
         $copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendCopyMailTemplate')->getElement();
 
-        $mailTemplateId = NULL;
-        $copyMailTemplateId = NULL;
+        $optionBuilder = new FormOptionsResolver();
+        $optionBuilder->setFormId($formId);
+        $optionBuilder->setFormTemplate($formTemplate);
+        $optionBuilder->setSendCopy($sendCopy);
+        $optionBuilder->setMailTemplate($mailTemplate);
+        $optionBuilder->setCopyMailTemplate($copyMailTemplate);
+        $optionBuilder->setFormPreset($formPreset);
 
-        if ($mailTemplate instanceof Document\Email) {
-            $mailTemplateId = $mailTemplate->getId();
-        }
+        $this->formAssembler->setFormOptionsResolver($optionBuilder);
+        $assemblerViewVars = $this->formAssembler->assembleViewVars();
 
-        if ($sendCopy === TRUE && $copyMailTemplate instanceof Document\Email) {
-            $copyMailTemplateId = $copyMailTemplate->getId();
-        } else { //disable copy!
-            $sendCopy = FALSE;
-        }
-
-        $options = [
-            'formPreset' => $formPreset
-        ];
-
-        /** @var \Symfony\Component\Form\Form $form */
-        $form = $this->formBuilder->buildForm($formId, $options);
-
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->session->getBag('form_builder_session');
-
-        //store current configuration for further events.
-        $sessionBag->set('form_configuration_' . $formId, [
-            'form_preset' => $formPreset,
-            'email'       => [
-                'send_copy'             => $sendCopy,
-                'mail_template_id'      => $mailTemplateId,
-                'copy_mail_template_id' => $copyMailTemplateId
-            ]
-        ]);
-
-        $formTemplate = $formTemplateSelection->getValue();
-
-        if (empty($formTemplate)) {
-            $formTemplate = 'form_div_layout.html.twig';
-        }
-
-        $viewVars['form_template'] = '@FormBuilder/Form/Theme/' . $formTemplate;
-        $viewVars['form_block_template'] = '@FormBuilder/Form/Theme/Macro/' . $formTemplate;
-        $viewVars['form'] = $form->createView();
-
-        $viewVars = array_merge(
-            $viewVars,
-            [
-                'messages'    => $messageHtml,
-                'form_id'     => $formId,
-                'form_preset' => $formPreset,
-            ]
-        );
-
-        foreach ($viewVars as $var => $varValue) {
+        foreach (array_merge($editViewVars, $assemblerViewVars) as $var => $varValue) {
             $view->{$var} = $varValue;
         }
-    }
-
-    /**
-     * @param $formPreset
-     *
-     * @return string
-     */
-    private function getFormLayout($formPreset = 'custom')
-    {
-        $path = '@FormBuilder/Form/%s.html.twig';
-
-        $template = $formPreset === 'custom' ? 'default' : 'Presets/' . $formPreset;
-
-        return sprintf($path, $template);
     }
 
     /**
@@ -272,7 +161,7 @@ class Form extends AbstractTemplateAreabrick
      */
     public function getViewTemplate()
     {
-        return 'FormBuilderBundle:Areas/form:view.' . $this->getTemplateSuffix();
+        return 'FormBuilderBundle:Form:form.' . $this->getTemplateSuffix();
     }
 
     /**
