@@ -26,8 +26,8 @@ Create a Form using the Twig Extension.
 <div class="form-wrapper">
     <h2>Static Form via Twig</h2>
     {% set config = {
-        'form_id' : 3,
-        'form_template' : 'bootstrap_3_layout.html.twig',
+        'form_id': 3,
+        'form_template': 'bootstrap_3_layout.html.twig',
         'mail_template': 178,
         'copy_mail_template': 179,
         'send_copy': true
@@ -55,7 +55,7 @@ class DefaultController extends AbstractController
         $options = [
             'form_id'             => 3,
             'form_template'       => 'bootstrap_3_layout.html.twig',
-            'main_layout'         => 'layout_form.html.twig', //placed in app/Resources/views/layout.html.twig
+            'main_layout'         => 'layout_form.html.twig', //app/Resources/views/layout.html.twig
             'send_copy'           => FALSE,
             'mail_template'       => 178,
             'copy_mail_template'  => NULL,
@@ -75,7 +75,10 @@ class DefaultController extends AbstractController
         $assembler = $this->container->get(FormAssembler::class);
         $assembler->setFormOptionsResolver($optionBuilder);
 
-        return $this->renderTemplate('@FormBuilder/Form/form.html.twig', $assembler->assembleViewVars());
+        return $this->renderTemplate(
+            '@FormBuilder/Form/form.html.twig', 
+            $assembler->assembleViewVars()
+        );
     }
 }
 ```
