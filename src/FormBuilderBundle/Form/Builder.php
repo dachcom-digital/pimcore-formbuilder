@@ -75,9 +75,9 @@ class Builder
     /**
      * @param Request $request
      *
-     * @return array
+     * @return null|integer
      */
-    public function buildByRequest(Request $request)
+    public function detectedFormIdByRequest(Request $request)
     {
         foreach ($request->request->all() as $key => $parameters) {
 
@@ -86,11 +86,11 @@ class Builder
             }
 
             if (isset($parameters['formId'])) {
-                return [$parameters['formId'], $this->buildForm($parameters['formId'])];
+                return $parameters['formId'];
             }
         }
 
-        return [NULL, NULL];
+        return NULL;
     }
 
     /**
@@ -102,7 +102,7 @@ class Builder
     public function buildForm($id, $userOptions = [])
     {
         $defaults = [
-            'formPreset' => NULL
+            'form_preset' => NULL
         ];
 
         $formOptions = array_merge($defaults, $userOptions);

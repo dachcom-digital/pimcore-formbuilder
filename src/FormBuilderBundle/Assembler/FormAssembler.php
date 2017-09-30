@@ -90,19 +90,21 @@ class FormAssembler
 
         if($builderError === FALSE) {
 
-            $builderOptions = [
-                'formPreset' => $this->optionsResolver->getFormPreset()
+            $userOptions = [
+                'form_preset' => $this->optionsResolver->getFormPreset()
             ];
 
             /** @var \Symfony\Component\Form\Form $form */
-            $form = $this->formBuilder->buildForm($this->optionsResolver->getFormId(), $builderOptions);
+            $form = $this->formBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
 
             /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
             $sessionBag = $this->session->getBag('form_builder_session');
 
             //store current configuration for further events.
             $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
-                'form_preset' => $this->optionsResolver->getFormPreset(),
+                'user_options' => [
+                    'form_preset' => $this->optionsResolver->getFormPreset()
+                ],
                 'email'       => [
                     'send_copy'             => $this->optionsResolver->getSendCopy(),
                     'mail_template_id'      => $this->optionsResolver->getMailTemplateId(),

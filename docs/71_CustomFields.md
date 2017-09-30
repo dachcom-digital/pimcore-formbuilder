@@ -53,7 +53,7 @@ class FormListener implements EventSubscriberInterface
         $formOptions = $event->getFormOptions();
 
         //add dynamic fields depending on custom presets, is available.
-        var_dump($formOptions['formPreset']);
+        var_dump($formOptions['form_preset']);
 
         // add your fields
         $dataClass->addDynamicField(

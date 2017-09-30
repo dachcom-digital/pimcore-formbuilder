@@ -63,6 +63,10 @@ class RequestListener implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        $sessionBag = $this->session->getBag('form_builder_session');
+        $formConfiguration = [];
+
         if (!$event->isMasterRequest()) {
             return;
         }
@@ -72,26 +76,30 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
+        $formId = $this->formBuilder->detectedFormIdByRequest($request);
+        if (is_null($formId)) {
+            return;
+        }
+
+        if ($sessionBag->has('form_configuration_' . $formId)) {
+            $formConfiguration = $sessionBag->get('form_configuration_' . $formId);
+        }
+
         try {
-            /** @var FormInterface $form */
-            list($formId, $form) = $this->formBuilder->buildByRequest($request);
-            if (!$form instanceof FormInterface) {
-                return;
-            }
-        } catch (\Exception $e) {
+            $userOptions = isset($formConfiguration['user_options']) ? $formConfiguration['user_options'] : [];
+            $form = $this->formBuilder->buildForm($formId, $userOptions);
+        } catch(\Exception $e) {
+            return;
+        }
+
+        if (!$form instanceof FormInterface) {
             return;
         }
 
         if ($form->isSubmitted()) {
-
-            /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
-            $sessionBag = $this->session->getBag('form_builder_session');
-
             if ($form->isValid()) {
 
-                $formConfiguration = [];
                 if ($sessionBag->has('form_configuration_' . $formId)) {
-                    $formConfiguration = $sessionBag->get('form_configuration_' . $formId);
                     $sessionBag->remove('form_configuration_' . $formId);
                 }
 
