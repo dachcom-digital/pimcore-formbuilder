@@ -3,7 +3,7 @@
 First, check 'Ajax Submission' in your form configuration.
 
 If you want to use ajax driven forms you need to load the FormBuilder Javascript Library. 
-For example in your `app/Resources/views/layout.html.twig:
+For example in your `app/Resources/views/layout.html.twig`:
 
 ```html
 <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/formbuilder.js') }}"></script>
