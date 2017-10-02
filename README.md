@@ -11,7 +11,7 @@ Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formb
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "dev-master",
+    "dachcom-digital/formbuilder" : "~2.0.0"
 }
 ```
 
