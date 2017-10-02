@@ -36,6 +36,10 @@
     {% endif %}
 {%- endblock checkbox_widget %}
 
+{% block form_builder_honeypot_row -%}
+    {{- form_widget(form) -}}
+{%- endblock form_builder_honeypot_row %}
+
 {% block form_row -%}
     <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' }}">
         {{ parent() }}
