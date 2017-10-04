@@ -1,8 +1,7 @@
 # Using Presets
+Presets are here to set some additional data for your custom forms ([custom fields](71_CustomFields.md) for example).
 
-Presets are here to set some additional data for your custom forms.
-
-### Example:
+### Example
 Your customer want's to add a special value (mostly dynamic data) to one or more but specific forms he has just made. 
 Since all forms are dynamically created, you don't know the specific ids where to add all those values.
 
@@ -19,12 +18,10 @@ From now on, your customer is able to choose between presets within the dropped 
 form_builder:
     area:
         presets:
-            -
             jobs: # keep it short and simple :)
                 nice_name: 'Short Name'
                 admin_description: 'Description of your Preset'
                 sites:
                     - 'domain1.com'
                     - 'domain2.com'
-
 ```

@@ -2,11 +2,12 @@
 
 It's possible to add some custom fields to every form.
 
+> Info: It's always a good idea to use [presets](60_Presets.md) if you're using custom fields.
+
 1. Register a Listener:
 ```yaml
 services:
-    app.event_listener.form_builder.listener:
-        class: AppBundle\EventListener\FormListener
+    AppBundle\EventListener\FormListener:
         tags:
             - { name: kernel.event_subscriber }
 ```
