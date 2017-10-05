@@ -133,7 +133,7 @@ class Install extends AbstractInstaller
      */
     private function installTranslations()
     {
-        $csv = $this->installSourcesPath . '/translations/fronted.csv';
+        $csv = $this->installSourcesPath . '/translations/frontend.csv';
         $csvAdmin = $this->installSourcesPath . '/translations/admin.csv';
 
         Translation\Website::importTranslationsFromFile($csv, TRUE, Admin::getLanguages());
