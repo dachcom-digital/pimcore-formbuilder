@@ -136,7 +136,7 @@ class FormValuesBeautifier
      */
     private function beautifyDynamicField(FormFieldDynamicInterface $field, FormBuilderFormInterface $formEntity, FormInterface $formField, $locale)
     {
-        $label = $formField->getConfig()->hasOption('label') ? $formField->getConfig()->hasOption('label') : $field->getName();
+        $label = $formField->getConfig()->hasOption('label') ? $formField->getConfig()->getOption('label') : $field->getName();
         $optionalOptions = $field->getOptional();
 
         $valueTransformer = isset($optionalOptions['email_value_transformer']) && is_callable($optionalOptions['email_value_transformer'])
