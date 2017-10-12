@@ -1,4 +1,4 @@
-{% extends main_layout is not empty ? main_layout : '@FormBuilder/layout.html.twig' %}
+{% extends main_layout is defined and main_layout is not empty ? main_layout : '@FormBuilder/layout.html.twig' %}
 {% block form_builder_layout %}
     <div class="form-builder-wrapper">
         {% block form_builder_form %}
