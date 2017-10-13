@@ -241,16 +241,11 @@ class Form extends Model\AbstractModel implements FormInterface
      * @param array $optional
      *
      * @return $this
-     * @throws \Exception
      */
     public function addDynamicField($name, $type, $options, $optional = [])
     {
-        if(isset($this->fields[$name])) {
-            throw new \Exception(sprintf('"%s" as form field name is already in use', $name));
-        }
-
-        $d = new FormFieldDynamic($name, $type, $options, $optional);
-        $this->fields[$name] = $d;
+        $dynamicField = new FormFieldDynamic($name, $type, $options, $optional);
+        $this->fields[$name] = $dynamicField;
         return $this;
     }
 
