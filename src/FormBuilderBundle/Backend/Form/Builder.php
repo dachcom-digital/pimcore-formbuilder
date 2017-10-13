@@ -122,6 +122,10 @@ class Builder
 
         foreach ($formTypes as $formType => $formTypeConfiguration) {
 
+            if(!$this->isAllowedFormType($formType)) {
+                continue;
+            }
+
             $beConfig = $formTypeConfiguration['backend'];
             $fieldStructureElement = [
                 'type'                 => $formType,
@@ -309,6 +313,31 @@ class Builder
         }
 
         return $typeTemplates;
+    }
+
+    /**
+     * @param string $formType
+     * @return bool
+     */
+    private function isAllowedFormType($formType = NULL)
+    {
+        $adminSettings = $this->configuration->getConfig('admin');
+        $activeFields = $adminSettings['active_elements']['fields'];
+        $inactiveFields = $adminSettings['inactive_elements']['fields'];
+
+        if(empty($activeFields) && empty($inactiveFields)) {
+            return TRUE;
+        }
+
+        if(!empty($inactiveFields) && in_array($formType, $inactiveFields)) {
+            return FALSE;
+        }
+
+        if(!empty($activeFields) && !in_array($formType, $activeFields)) {
+            return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**
