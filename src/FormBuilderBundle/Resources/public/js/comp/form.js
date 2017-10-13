@@ -167,6 +167,13 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param scope
+     * @param formTypeValues
+     * @param type
+     * @returns {*}
+     */
     recursiveAddNode: function(scope, formTypeValues, type) {
 
         var stype = null, fn = null, newNode = null;
@@ -211,6 +218,10 @@ Formbuilder.comp.form = Class.create({
         return newNode;
     },
 
+    /**
+     *
+     * @returns {{beforeselect, select, itemcontextmenu, beforeitemmove}}
+     */
     getTreeNodeListeners: function() {
 
         return {
@@ -222,6 +233,14 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param node
+     * @param oldParent
+     * @param newParent
+     * @param index
+     * @param eOpts
+     */
     onTreeNodeBeforeMove: function(node, oldParent, newParent, index, eOpts){
 
         var targetType = newParent.data.fbType,
@@ -231,6 +250,11 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param tree
+     * @returns {boolean}
+     */
     onTreeNodeBeforeSelect: function(tree) {
         try {
             this.saveCurrentNode();
@@ -240,6 +264,15 @@ Formbuilder.comp.form = Class.create({
         }
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     * @param item
+     * @param index
+     * @param e
+     * @param eOpts
+     */
     onTreeNodeSelect: function(tree, record, item, index, e, eOpts) {
 
         this.editPanel.removeAll();
@@ -263,6 +296,15 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     * @param item
+     * @param index
+     * @param e
+     * @param eOpts
+     */
     onTreeNodeContextMenu: function(tree, record, item, index, e, eOpts) {
 
         var _ = this,
@@ -476,6 +518,10 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @returns {Ext.form.FormPanel}
+     */
     getRootPanel: function() {
 
         var methodStore = new Ext.data.ArrayStore({
@@ -700,6 +746,13 @@ Formbuilder.comp.form = Class.create({
         return this.rootPanel;
     },
 
+    /**
+     *
+     * @param tree
+     * @param formType
+     * @param formTypeValues
+     * @returns {*|{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
+     */
     createFormField: function(tree, formType, formTypeValues) {
 
         var newNode = this.createFormFieldNode(formType, formTypeValues);
@@ -712,6 +765,12 @@ Formbuilder.comp.form = Class.create({
         return newNode;
     },
 
+    /**
+     *
+     * @param formType
+     * @param formTypeValues
+     * @returns {{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
+     */
     createFormFieldNode: function(formType, formTypeValues) {
 
         var node = {
@@ -730,6 +789,13 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param tree
+     * @param constraint
+     * @param constraintValues
+     * @returns {*|{text, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
+     */
     createFormFieldConstraint: function(tree, constraint, constraintValues) {
 
         var newNode = this.createFormFieldConstraintNode(constraint);
@@ -742,6 +808,11 @@ Formbuilder.comp.form = Class.create({
         return newNode;
     },
 
+    /**
+     *
+     * @param constraintType
+     * @returns {{text, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
+     */
     createFormFieldConstraintNode: function(constraintType) {
 
         var node = {
@@ -759,14 +830,22 @@ Formbuilder.comp.form = Class.create({
         return node;
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     */
     copyFormField: function(tree, record) {
-
         this.copyData = {};
         var newNode = this.cloneChild(tree, record, true);
         this.copyData = newNode;
-
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     */
     pasteFormField: function(tree, record) {
 
         var node = this.copyData;
@@ -777,6 +856,11 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     */
     removeFormField: function(tree, record) {
 
         if (this.id !== 0) {
@@ -790,6 +874,13 @@ Formbuilder.comp.form = Class.create({
         }
     },
 
+    /**
+     *
+     * @param tree
+     * @param node
+     * @param isCopy
+     * @returns {{}}
+     */
     cloneChild: function(tree, node, isCopy) {
 
         var formFieldObject = node.data.object,
@@ -840,10 +931,19 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @returns {*|{}}
+     */
     getData: function() {
         return this.getNodeData(this.tree.getRootNode());
     },
 
+    /**
+     *
+     * @param node
+     * @returns {{}}
+     */
     getNodeData: function(node) {
 
         var formFieldData = {};
@@ -908,10 +1008,13 @@ Formbuilder.comp.form = Class.create({
         location.href = '/admin/formbuilder/settings/get-export-file/' + this.formId;
     },
 
+    /**
+     *
+     * @returns {boolean}
+     */
     rootFormIsValid : function() {
 
         var isValid = true;
-
         if( this.rootFields.length > 0 ) {
             this.rootFields.each(function(field) {
                 if( typeof field.getValue === 'function') {
@@ -928,7 +1031,7 @@ Formbuilder.comp.form = Class.create({
             });
         }
 
-        if( this.formName.length <= 2 || in_array(this.formName.toLowerCase(), this.parentPanel.forbiddennames)) {
+        if( this.formName.length <= 2 || in_array(this.formName.toLowerCase(), this.parentPanel.getConfig().forbidden_form_field_names)) {
             isValid = false;
         }
 
@@ -936,6 +1039,11 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     *
+     * @param ev
+     * @returns {boolean}
+     */
     save: function(ev) {
 
         var formData = {};
@@ -975,6 +1083,10 @@ Formbuilder.comp.form = Class.create({
         }
     },
 
+    /**
+     *
+     * @param response
+     */
     saveOnComplete: function(response) {
 
         var res = Ext.decode(response.responseText);
@@ -1019,6 +1131,11 @@ Formbuilder.comp.form = Class.create({
         return nodeNames;
     },
 
+    /**
+     *
+     * @param typeId
+     * @returns {boolean}
+     */
     getFormTypeStructure: function(typeId) {
 
         var formTypeElement = false;
@@ -1040,6 +1157,11 @@ Formbuilder.comp.form = Class.create({
         return formTypeElement;
     },
 
+    /**
+     *
+     * @param constraintId
+     * @returns {boolean}
+     */
     getFormTypeConstraintStructure: function(constraintId) {
 
         var formTypeConstraint = false;

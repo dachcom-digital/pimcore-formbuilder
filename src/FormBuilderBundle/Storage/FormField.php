@@ -51,11 +51,19 @@ class FormField implements FormFieldInterface
      */
     private $optional = [];
 
+    /**
+     * FormField constructor.
+     *
+     * @param bool $isDynamic
+     */
     public function __construct($isDynamic = FALSE)
     {
         $this->isDynamic = $isDynamic;
     }
 
+    /**
+     * @param Translator $translator
+     */
     public function setTranslator(Translator $translator)
     {
         $this->translator = $translator;

@@ -1,35 +1,24 @@
 pimcore.registerNS('Formbuilder.settings');
 Formbuilder.settings = Class.create({
 
-    forbiddennames: [
-        'abstract','class','data','folder','list','permissions','resource','concrete','interface',
-        'service', 'fieldcollection', 'localizedfield', 'objectbrick'
-    ],
-
     usedFormNames: [],
 
     config: {},
 
-    initialize: function ( config ) {
-
+    initialize: function (config) {
         this.panels = {};
-
-        this.config = config;
-
+        this.config = config.settings;
         this.loading = false;
-
         this.getTabPanel();
-
     },
 
-    getConfig: function() {
-        return this.config.settings;
+    getConfig: function () {
+        return this.config;
     },
 
     getTabPanel: function () {
 
         if (!this.panel) {
-
             this.panel = new Ext.Panel({
                 id: 'form_builder_settings',
                 title: t('form_builder_settings'),
@@ -37,7 +26,7 @@ Formbuilder.settings = Class.create({
                 iconCls: 'form_builder_icon_fbuilder',
                 layout: 'border',
                 closable: true,
-                items: [ this.getMainTree(), this.getEditPanel() ]
+                items: [this.getMainTree(), this.getEditPanel()]
             });
 
             var tabPanel = Ext.getCmp('pimcore_panel_tabs');
@@ -66,35 +55,32 @@ Formbuilder.settings = Class.create({
                     url: '/admin/formbuilder/settings/get-tree'
                 },
 
-                listeners : {
-                    load : function(tree, records, success, opt) {
+                listeners: {
+                    load: function (tree, records, success, opt) {
 
-                        Ext.each(records, function(record){
-                            if( !in_array(record.data.text, _self.usedFormNames)) {
-                                _self.usedFormNames.push( record.data.text );
+                        Ext.each(records, function (record) {
+                            if (!in_array(record.data.text, _self.usedFormNames)) {
+                                _self.usedFormNames.push(record.data.text);
                             }
                         }, this);
 
                         //new form added, mark es selected!
-                        if( opt.formId !== undefined ) {
+                        if (opt.formId !== undefined) {
 
-                            var record = _self.tree.getRootNode().findChild('id',opt.formId,true);
+                            var record = _self.tree.getRootNode().findChild('id', opt.formId, true);
                             _self.tree.getSelectionModel().select(record);
 
                         }
-
                     }
-
                 }
-
             });
 
             this.tree = new Ext.tree.TreePanel({
                 id: 'form_builder_panel_settings_tree',
                 region: 'west',
                 store: store,
-                autoScroll:true,
-                animate:true,
+                autoScroll: true,
+                animate: true,
                 containerScroll: true,
                 split: true,
                 width: 200,
@@ -118,11 +104,9 @@ Formbuilder.settings = Class.create({
                     ]
                 }
             });
-
         }
 
         this.tree.getRootNode().expand();
-
         return this.tree;
     },
 
@@ -135,11 +119,9 @@ Formbuilder.settings = Class.create({
                 region: 'center',
                 layout: 'fit',
                 listeners: {
-                    tabchange: function(tabpanel, tab) {
-
-                        var record = this.tree.getRootNode().findChild('id',tab.id,true);
+                    tabchange: function (tabpanel, tab) {
+                        var record = this.tree.getRootNode().findChild('id', tab.id, true);
                         this.tree.getSelectionModel().select(record);
-
                     }.bind(this)
                 }
             });
@@ -148,45 +130,52 @@ Formbuilder.settings = Class.create({
         return this.editPanel;
     },
 
+    /**
+     *
+     * @returns {{itemclick, itemcontextmenu, render: render, beforeitemappend: beforeitemappend}}
+     */
     getTreeNodeListeners: function () {
 
         return {
-
-            itemclick : this.onTreeNodeClick.bind(this),
+            itemclick: this.onTreeNodeClick.bind(this),
             itemcontextmenu: this.onTreeNodeContextMenu.bind(this),
             render: function () {
                 this.getRootNode().expand();
             },
             beforeitemappend: function (thisNode, newChildNode, index, eOpts) {
-                newChildNode.data.qtip = t('id') +  ': ' + newChildNode.data.id;
+                newChildNode.data.qtip = t('id') + ': ' + newChildNode.data.id;
             }
-
         };
-
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     */
     onTreeNodeClick: function (tree, record) {
         this.openFormConfig(record.data.id);
     },
 
-    openFormConfig: function(id) {
+    /**
+     *
+     * @param id
+     * @returns {boolean}
+     */
+    openFormConfig: function (id) {
 
         var formPanelKey = 'form_' + id;
 
-        if( this.loading === true ) {
+        if (this.loading === true) {
             return false;
         }
 
         //its already loaded
-        if( this.panels[formPanelKey] ) {
-
+        if (this.panels[formPanelKey]) {
             this.panels[formPanelKey].activate();
-
         } else {
-
             this.loading = true;
             this.tree.disable();
-
             Ext.Ajax.request({
                 url: '/admin/formbuilder/settings/get-form',
                 params: {
@@ -195,10 +184,12 @@ Formbuilder.settings = Class.create({
                 success: this.addMainPanel.bind(this)
             });
         }
-
-
     },
 
+    /**
+     *
+     * @param response
+     */
     addMainPanel: function (response) {
 
         var responseData = Ext.decode(response.responseText);
@@ -206,7 +197,7 @@ Formbuilder.settings = Class.create({
         this.loading = false;
         this.tree.enable();
 
-        if(responseData.success === false) {
+        if (responseData.success === false) {
             Ext.MessageBox.alert(t('error'), t('form_builder_invalid_form_type_configuration') + responseData.message);
             return;
         }
@@ -222,13 +213,21 @@ Formbuilder.settings = Class.create({
 
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     * @param item
+     * @param index
+     * @param e
+     * @param eOpts
+     */
     onTreeNodeContextMenu: function (tree, record, item, index, e, eOpts) {
 
         e.stopEvent();
         tree.select();
 
         var menu = new Ext.menu.Menu();
-
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: 'pimcore_icon_delete',
@@ -243,11 +242,18 @@ Formbuilder.settings = Class.create({
         Ext.MessageBox.prompt(t('form_builder_add_elem'), t('form_builder_enter_name_of_new_elem'), this.addMainComplete.bind(this), null, null, '');
     },
 
+    /**
+     *
+     * @param button
+     * @param value
+     * @param object
+     * @returns {boolean}
+     */
     addMainComplete: function (button, value, object) {
 
-        if (button === 'ok' && value.length > 2 && !in_array(value.toLowerCase(), this.forbiddennames)) {
+        if (button === 'ok' && value.length > 2 && !in_array(value.toLowerCase(), this.getConfig().forbidden_form_field_names)) {
 
-            if( in_array(value, this.usedFormNames) ) {
+            if (in_array(value, this.usedFormNames)) {
                 Ext.Msg.alert(t('error'), t('form_builder_some_fields_names_double'), 'error');
             } else {
 
@@ -258,12 +264,12 @@ Formbuilder.settings = Class.create({
                     params: {
                         form_name: value
                     },
-                    success: function(response) {
+                    success: function (response) {
 
                         var data = Ext.decode(response.responseText);
-                        this.tree.getStore().load({ 'formId' : data.id });
+                        this.tree.getStore().load({'formId': data.id});
 
-                        if(!data || !data.success) {
+                        if (!data || !data.success) {
                             Ext.Msg.alert(t('form_builder_add_elem'), data.message);
                         } else {
                             this.openFormConfig(intval(data.id));
@@ -279,17 +285,21 @@ Formbuilder.settings = Class.create({
         } else {
             Ext.Msg.alert(t('error'), t('form_builder_problem_creating_new_elem'));
         }
-
     },
 
+    /**
+     *
+     * @param tree
+     * @param record
+     */
     deleteMain: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), t('form_builder_delete_form_warn'), function(btn){
+        Ext.Msg.confirm(t('delete'), t('form_builder_delete_form_warn'), function (btn) {
 
             if (btn === 'yes') {
 
-                var i = this.usedFormNames.indexOf( record.data.text );
-                if(i != -1) {
+                var i = this.usedFormNames.indexOf(record.data.text);
+                if (i != -1) {
                     this.usedFormNames.splice(i, 1);
                 }
 
@@ -300,13 +310,12 @@ Formbuilder.settings = Class.create({
                     }
                 });
 
-                this.getEditPanel().remove( record.id );
+                this.getEditPanel().remove(record.id);
                 record.remove();
 
             }
 
         }.bind(this));
-
     },
 
     activate: function () {

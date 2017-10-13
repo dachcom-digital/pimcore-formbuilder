@@ -6,19 +6,31 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Configuration
 {
-    const STATE_DEFAULT_VALUES = [
-        'forceStart' => FALSE,
-        'forceStop'  => FALSE,
-        'running'    => FALSE,
-        'started'    => NULL,
-        'finished'   => NULL
-    ];
-
     const SYSTEM_CONFIG_FILE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
 
     const STORE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/forms';
 
     const IMPORT_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/import';
+
+    const INVALID_FIELD_NAMES = [
+        'name',
+        'date',
+        'inputusername',
+        'formid',
+        'abstract',
+        'class',
+        'data',
+        'folder',
+        'list',
+        'permissions',
+        'resource',
+        'concrete',
+        'interface',
+        'service',
+        'fieldcollection',
+        'localizedfield',
+        'objectbrick'
+    ];
 
     /**
      * @var Filesystem

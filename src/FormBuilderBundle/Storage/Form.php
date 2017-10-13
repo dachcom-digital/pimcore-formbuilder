@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Storage;
 
+use FormBuilderBundle\Configuration\Configuration;
 use Pimcore\Model;
 use Pimcore\Translation\Translator;
 
@@ -239,11 +240,15 @@ class Form extends Model\AbstractModel implements FormInterface
      * @param       $type
      * @param       $options
      * @param array $optional
-     *
      * @return $this
+     * @throws \Exception
      */
     public function addDynamicField($name, $type, $options, $optional = [])
     {
+        if(in_array($name, Configuration::INVALID_FIELD_NAMES)) {
+            throw new \Exception(sprintf('\'%s\' is a reserved form field name used by the form builder bundle and cannot be used.', $name));
+        }
+
         $dynamicField = new FormFieldDynamic($name, $type, $options, $optional);
         $this->fields[$name] = $dynamicField;
         return $this;

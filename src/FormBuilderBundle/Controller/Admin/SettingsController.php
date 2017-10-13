@@ -53,8 +53,9 @@ class SettingsController extends AdminController
     {
         /** @var Configuration $configuration */
         $configuration = $this->container->get(Configuration::class);
-
-        return $this->json(['settings' => $configuration->getConfigArray()]);
+        $settings = $configuration->getConfigArray();
+        $settings['forbidden_form_field_names'] = Configuration::INVALID_FIELD_NAMES;
+        return $this->json(['settings' => $settings]);
     }
 
     /**

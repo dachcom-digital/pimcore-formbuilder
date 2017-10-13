@@ -23,25 +23,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     storeData : {},
 
-    forbiddenFieldNames: [
-        'name',
-        'inputusername',
-        'formid',
-        'abstract',
-        'class',
-        'data',
-        'folder',
-        'list',
-        'permissions',
-        'resource',
-        'concrete',
-        'interface',
-        'service',
-        'fieldcollection',
-        'localizedfield',
-        'objectbrick'
-    ],
-
     initialize: function(formHandler, treeNode, initData, availableFormFieldTemplates, values) {
 
         this.formHandler = formHandler;
@@ -97,7 +78,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         for (var i = 0; i < this.configurationLayout.length; i++) {
 
             var tabLayout = this.configurationLayout[i];
-
             var item = new Ext.Panel({
                 title: tabLayout.label,
                 closable: false,
@@ -243,7 +223,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 anchor: '100%',
                 enableKeyEvents: true,
                 validator: function(v) {
-                    if(in_array(v.toLowerCase(), _.forbiddenFieldNames)) {
+                    if(in_array(v.toLowerCase(), _.formHandler.parentPanel.getConfig().forbidden_form_field_names)) {
                         this.setValue('');
                         Ext.MessageBox.alert(t('error'), t('form_builder_forbidden_file_name'));
                         return false;

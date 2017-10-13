@@ -27,8 +27,7 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
 
         Ext.Ajax.request({
             url: '/admin/formbuilder/settings/get-settings',
-            success: function (response)
-            {
+            success: function (response) {
                 _.config = Ext.decode(response.responseText);
 
                 var formBuilderMenu = new Ext.Action({
