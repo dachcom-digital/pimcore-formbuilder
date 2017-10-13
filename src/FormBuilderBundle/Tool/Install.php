@@ -3,8 +3,8 @@
 namespace FormBuilderBundle\Tool;
 
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\FormBuilderBundle;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
-
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Property;
 use Pimcore\Model\Tool\Setup;
@@ -12,6 +12,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 
 class Install extends AbstractInstaller
 {
@@ -41,14 +42,21 @@ class Install extends AbstractInstaller
      */
     public function install()
     {
-
-        $this->copyConfigFile();
+        $this->installOrUpdateConfigFile();
         $this->injectDbData();
         $this->installTranslations();
         $this->installFormDataFolder();
         $this->installProperties();
         $this->installDocumentTypes();
-        return TRUE;
+    }
+
+    /**
+     * For now, just update the config file to the current version.
+     * {@inheritdoc}
+     */
+    public function update()
+    {
+        $this->installOrUpdateConfigFile();
     }
 
     /**
@@ -71,8 +79,7 @@ class Install extends AbstractInstaller
      */
     public function isInstalled()
     {
-        $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-        return $this->fileSystem->exists($target);
+        return $this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH);
     }
 
     /**
@@ -80,8 +87,7 @@ class Install extends AbstractInstaller
      */
     public function canBeInstalled()
     {
-        $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-        return !$this->fileSystem->exists($target);
+        return !$this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH);
     }
 
     /**
@@ -89,8 +95,7 @@ class Install extends AbstractInstaller
      */
     public function canBeUninstalled()
     {
-        $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-        return $this->fileSystem->exists($target);
+        return $this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH);
     }
 
     /**
@@ -106,26 +111,33 @@ class Install extends AbstractInstaller
      */
     public function canBeUpdated()
     {
-        return FALSE;
+        $needUpdate = FALSE;
+        if ($this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH)) {
+            $config = Yaml::parse(file_get_contents(Configuration::SYSTEM_CONFIG_FILE_PATH));
+            if($config['version'] !== FormBuilderBundle::BUNDLE_VERSION) {
+                $needUpdate = TRUE;
+            }
+        }
+
+        return $needUpdate;
     }
 
     /**
-     * copy sample config file - if not exists.
+     * install or update config file
      */
-    private function copyConfigFile()
+    private function installOrUpdateConfigFile()
     {
-        $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-
-        if (!$this->fileSystem->exists($target)) {
-            $this->fileSystem->copy(
-                $this->installSourcesPath . '/config.yml',
-                $target
-            );
+        if(!$this->fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
+            $this->fileSystem->mkdir(Configuration::SYSTEM_CONFIG_DIR_PATH);
         }
 
         if (!$this->fileSystem->exists(Configuration::STORE_PATH)) {
             $this->fileSystem->mkdir(Configuration::STORE_PATH, 0755);
         }
+
+        $config = ['version' => FormBuilderBundle::BUNDLE_VERSION];
+        $yml = Yaml::dump($config);
+        file_put_contents(Configuration::SYSTEM_CONFIG_FILE_PATH, $yml);
     }
 
     /**

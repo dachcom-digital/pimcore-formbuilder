@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
+    const BUNDLE_VERSION = '2.0.2';
+
     /**
      * @param ContainerBuilder $container
      */
@@ -16,6 +18,14 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     {
         parent::build($container);
         $container->addCompilerPass(new OptionsTransformerPass());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVersion()
+    {
+        return self::BUNDLE_VERSION;
     }
 
     /**
@@ -73,5 +83,4 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/css/admin-editmode.css',
         ];
     }
-
 }
