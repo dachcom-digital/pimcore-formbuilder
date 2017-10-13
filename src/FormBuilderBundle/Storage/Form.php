@@ -255,6 +255,19 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
+     * @param string $name
+     * @return $this
+     */
+    public function removeDynamicField($name)
+    {
+        if(isset($this->fields[$name]) && $this->fields[$name] instanceof FormFieldDynamicInterface) {
+            unset($this->fields[$name]);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param array $fields
      *
      * @return $this

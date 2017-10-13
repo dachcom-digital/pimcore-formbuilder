@@ -3,10 +3,12 @@
 namespace FormBuilderBundle\EventSubscriber;
 
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Event\Form\PostSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Storage\FormFieldDynamicInterface;
+use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Stream\PackageStream;
 use Pimcore\Model\Asset;
@@ -112,22 +114,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     public function onPostSetData(FormEvent $event)
     {
+        $postSetDataEvent = new PostSetDataEvent($event, $this->formOptions);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_POST_SET_DATA, $postSetDataEvent);
+
         $form = $event->getForm();
         $formEntity = $event->getData();
-
-        $orderedFields = $formEntity->getFields();
-        usort($orderedFields, function ($a, $b) {
-            return ($a->getOrder() < $b->getOrder()) ? -1 : 1;
-        });
-
-        /** @var FormFieldInterface $field */
-        foreach ($orderedFields as $field) {
-            if ($field instanceof FormFieldDynamicInterface) {
-                $this->addDynamicField($form, $field);
-            } else {
-                $this->addFormBuilderField($form, $field);
-            }
-        }
+        $this->populateForm($form, $formEntity);
     }
 
     /**
@@ -137,6 +129,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     {
         $preSubmitEvent = new PreSubmitEvent($event, $this->formOptions);
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
+
+        $form = $event->getForm();
+        $formEntity = $form->getData();
+        $this->populateForm($form, $formEntity);
     }
 
     /**
@@ -173,6 +169,27 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             }
 
             $event->setData($eventData);
+        }
+    }
+
+    /**
+     * @param FormInterface            $form
+     * @param FormBuilderFormInterface $formEntity
+     */
+    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity)
+    {
+        $orderedFields = $formEntity->getFields();
+        usort($orderedFields, function ($a, $b) {
+            return ($a->getOrder() < $b->getOrder()) ? -1 : 1;
+        });
+
+        /** @var FormFieldInterface $field */
+        foreach ($orderedFields as $field) {
+            if ($field instanceof FormFieldDynamicInterface) {
+                $this->addDynamicField($form, $field);
+            } else {
+                $this->addFormBuilderField($form, $field);
+            }
         }
     }
 

@@ -15,6 +15,16 @@ final class FormBuilderEvents
     const FORM_PRE_SET_DATA = 'form_builder.pre_set_data';
 
     /**
+     * The FormEvents::POST_SET_DATA event is dispatched at the end of the Form::setData() method.
+     * This event is mostly here for reading data after having pre-populated the form.
+     *
+     * @see \FormBuilderBundle\Event\Form\PostSetDataEvent
+     *
+     * http://symfony.com/doc/current/form/events.html#b-the-formevents-post-set-data-event
+     */
+    const FORM_POST_SET_DATA = 'form_builder.post_set_data';
+
+    /**
      * The FORM_PRE_SUBMIT event is dispatched at the end of the Form::setData() method.
      * This event is mostly here for reading data after having pre-populated the form.
      * It contains the form event and also some form builder settings
