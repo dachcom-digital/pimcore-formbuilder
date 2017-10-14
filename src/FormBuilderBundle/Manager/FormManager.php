@@ -165,7 +165,7 @@ class FormManager
             $field->setOptional($optionalParameter);
             $field->setConstraints($constraints);
 
-            $fields[] = $field;
+            $fields[$fieldName] = $field;
         }
 
         $form->setFields($fields);

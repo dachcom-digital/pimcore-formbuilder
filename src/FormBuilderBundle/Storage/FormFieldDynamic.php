@@ -15,6 +15,11 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     protected $type;
 
     /**
+     * @var bool
+     */
+    protected $update = FALSE;
+
+    /**
      * @var string
      */
     protected $options;
@@ -31,13 +36,15 @@ class FormFieldDynamic implements FormFieldDynamicInterface
      * @param $type
      * @param $options
      * @param $optional
+     * @param $update
      */
-    public function __construct($name, $type, $options, $optional = [])
+    public function __construct($name, $type, $options, $optional = [], $update = FALSE)
     {
         $this->name = $name;
         $this->type = $type;
         $this->options = $options;
         $this->optional = $optional;
+        $this->update = $update;
     }
 
     /**
@@ -54,6 +61,14 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUpdated()
+    {
+        return $this->update;
     }
 
     /**

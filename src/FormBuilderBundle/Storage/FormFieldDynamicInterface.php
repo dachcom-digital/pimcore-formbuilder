@@ -13,4 +13,6 @@ interface FormFieldDynamicInterface
     public function getOptional();
 
     public function getOrder();
+
+    public function isUpdated();
 }

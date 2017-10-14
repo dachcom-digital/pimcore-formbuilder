@@ -37,4 +37,7 @@ interface FormFieldInterface
     public function getConstraints();
 
     public function toArray();
+
+    public function isUpdated();
+
 }

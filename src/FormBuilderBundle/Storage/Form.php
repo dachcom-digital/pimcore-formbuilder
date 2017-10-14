@@ -249,7 +249,16 @@ class Form extends Model\AbstractModel implements FormInterface
             throw new \Exception(sprintf('\'%s\' is a reserved form field name used by the form builder bundle and cannot be used.', $name));
         }
 
-        $dynamicField = new FormFieldDynamic($name, $type, $options, $optional);
+        $update = FALSE;
+        if(isset($this->fields[$name])) {
+            if(!$this->fields[$name] instanceof FormFieldDynamicInterface) {
+                throw new \Exception(sprintf('"%s" as field name is already used by form builder fields.', $name));
+            } else {
+                $update = TRUE;
+            }
+        }
+
+        $dynamicField = new FormFieldDynamic($name, $type, $options, $optional, $update);
         $this->fields[$name] = $dynamicField;
         return $this;
     }
@@ -335,7 +344,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getData()
     {

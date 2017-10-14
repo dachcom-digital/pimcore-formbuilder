@@ -114,7 +114,7 @@ class FormFactory implements FormFactoryInterface {
                     $formField->$setter($fieldValue);
                 }
 
-                $fields[] = $formField;
+                $fields[$field['name']] = $formField;
             }
 
             $formEntity->setFields($fields);

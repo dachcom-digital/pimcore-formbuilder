@@ -119,7 +119,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         $form = $event->getForm();
         $formEntity = $event->getData();
-        $this->populateForm($form, $formEntity);
+        $this->populateForm($form, $formEntity, TRUE);
     }
 
     /**
@@ -175,8 +175,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * @param FormInterface            $form
      * @param FormBuilderFormInterface $formEntity
+     * @param bool                     $initial
      */
-    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity)
+    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = FALSE)
     {
         $orderedFields = $formEntity->getFields();
         usort($orderedFields, function ($a, $b) {
@@ -185,6 +186,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         /** @var FormFieldInterface $field */
         foreach ($orderedFields as $field) {
+
+            if ($initial === FALSE && !$field->isUpdated()) {
+                continue;
+            }
+
             if ($field instanceof FormFieldDynamicInterface) {
                 $this->addDynamicField($form, $field);
             } else {
