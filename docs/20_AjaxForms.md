@@ -64,7 +64,7 @@ class FormBuilderListener implements EventSubscriberInterface
     public function formPreSetData(PreSetDataEvent $event)
     {
         $formEvent = $event->getFormEvent();
-            $formOptions = $event->getFormOptions();
+        $formOptions = $event->getFormOptions();
         $formData = $formEvent->getData();
         
         //create some choices based on a request value.
