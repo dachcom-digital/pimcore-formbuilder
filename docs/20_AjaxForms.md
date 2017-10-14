@@ -65,7 +65,7 @@ class FormBuilderListener implements EventSubscriberInterface
     {
         $formEvent = $event->getFormEvent();
         $formOptions = $event->getFormOptions();
-        $formData = $formEvent->getData();
+        $dataClass = $formEvent->getData();
         
         //create some choices based on a request value.
         $entryId = $this->requestStack->getMasterRequest()->get('entry');
@@ -77,7 +77,7 @@ class FormBuilderListener implements EventSubscriberInterface
 
         // 1. Add a hidden field to keep the value
         // since the request value gets lost during the ajax request.
-        $formData->addDynamicField(
+        $dataClass->addDynamicField(
             'entry_id',
             HiddenType::class,
             [
@@ -86,7 +86,7 @@ class FormBuilderListener implements EventSubscriberInterface
         );
 
         // 2. Add the dynamic choice field.
-        $formData->addDynamicField(
+        $dataClass->addDynamicField(
             'event_date',
             ChoiceType::class,
             [
@@ -109,14 +109,14 @@ class FormBuilderListener implements EventSubscriberInterface
         }
 
         $formEvent = $event->getFormEvent();
-        $form = $formEvent->getForm();
-        $formData = $formEvent->getData();
+        $formData = $formEvent->getData();        
+        $dataClass = $formEvent->getForm()->getData();
 
         //remove the entry id field, since we don't need it anymore!
-        $form->getData()->removeDynamicField('entry_id');
+        $dataClass->removeDynamicField('entry_id');
         
         //re-add the event date and populate it again!
-        $form->getData()->addDynamicField(
+        $dataClass->addDynamicField(
             'event_date',
             ChoiceType::class,
             [
