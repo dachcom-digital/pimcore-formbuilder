@@ -1,6 +1,6 @@
 # Custom Fields with Events
 
-It's possible to add some custom fields to every form.
+It's possible to add some custom fields (we call them dynamic fields) to every form.
 
 > Info: It's always a good idea to use [presets](60_Presets.md) if you're using custom fields.
 
@@ -8,6 +8,7 @@ It's possible to add some custom fields to every form.
 ```yaml
 services:
     AppBundle\EventListener\FormListener:
+        autowire: true
         tags:
             - { name: kernel.event_subscriber }
 ```
@@ -105,3 +106,4 @@ class FormListener implements EventSubscriberInterface
     }
 }
 ```
+> Info: Checkout the [ajax form example](20_AjaxForms.md) to learn how to combine dynamic fields with ajax forms.
