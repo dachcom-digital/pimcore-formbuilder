@@ -88,7 +88,14 @@ class RequestListener implements EventSubscriberInterface
         try {
             $userOptions = isset($formConfiguration['user_options']) ? $formConfiguration['user_options'] : [];
             $form = $this->formBuilder->buildForm($formId, $userOptions);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
+            if ($request->isXmlHttpRequest()) {
+                $response = new JsonResponse([
+                    'success' => FALSE,
+                    'error'   => $e->getMessage(),
+                ]);
+                $event->setResponse($response);
+            }
             return;
         }
 

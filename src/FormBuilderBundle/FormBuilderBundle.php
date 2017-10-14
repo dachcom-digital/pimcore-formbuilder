@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
-    const BUNDLE_VERSION = '2.0.2';
+    const BUNDLE_VERSION = '2.0.3';
 
     /**
      * @param ContainerBuilder $container

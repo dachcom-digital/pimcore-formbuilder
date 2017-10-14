@@ -264,11 +264,16 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param string $name
+     * @param $name
      * @return $this
+     * @throws \Exception
      */
     public function removeDynamicField($name)
     {
+        if(!isset($this->fields[$name])) {
+            throw new \Exception(sprintf('cannot remove dynamic field, "%s" does not exists', $name));
+        }
+
         if(isset($this->fields[$name]) && $this->fields[$name] instanceof FormFieldDynamicInterface) {
             unset($this->fields[$name]);
         }
