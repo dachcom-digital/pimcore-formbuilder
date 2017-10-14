@@ -37,7 +37,7 @@ form_builder:
 ```
 
 ### Disable specific Elements
-All Fields except the `hidden` Element is available.
+All Fields except the `hidden` Element are available.
 
 ```yaml
 form_builder:
