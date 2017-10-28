@@ -669,6 +669,10 @@ Formbuilder.comp.form = Class.create({
 
         } catch (e) {}
 
+        //add conditional logic field
+        var clBuilder = new Formbuilder.comp.conditionalLogic.builder();
+        this.clBuilder = clBuilder.getLayout();
+
         this.rootPanel = new Ext.form.FormPanel({
 
             title: t('form_builder_form_configuration'),
@@ -736,7 +740,8 @@ Formbuilder.comp.form = Class.create({
                     value: this.formConfig.useAjax
                 },
 
-                this.metaDataPanel
+                this.metaDataPanel,
+                this.clBuilder
 
             ]
         });

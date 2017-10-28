@@ -41,3 +41,13 @@ form_builder_invalid_form_type_configuration: 'Es wurden Fehler bei der Form-Kon
 form_builder_upload_configuration_file: 'Konfigurationsdatei'
 form_builder_file: 'Datei wählen'
 formbuilder_permission_settings: 'Form Builder'
+
+# conditional WIP
+form_builder_conditional_logic: 'Conditional Logic'
+form_builder_condition_fields: 'Felder'
+form_builder_condition_type: 'Typ'
+form_builder_condition_value: 'Wert'
+formbuilder_conditional_section: 'Conditional Section'
+formbuilder_delete_conditional_section: 'Conditional Section entfernen'
+form_builder_constraint_type: 'Validierungs-Typ'
+form_builder_toggle_type: 'Element-Status'
