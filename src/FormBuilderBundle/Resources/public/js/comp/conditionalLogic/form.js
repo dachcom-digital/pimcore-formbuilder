@@ -9,9 +9,13 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
     actionsContainer: null,
 
+    sectionId: 0,
+
     currentIndex: 0,
 
-    initialize: function (formData) {
+    initialize: function (sectionData, sectionId, parentPanel) {
+        this.parent = parentPanel;
+        this.sectionId = sectionId;
         this.currentIndex = 0;
         this.panel = new Ext.form.FieldContainer({
             width: '100%',
@@ -116,7 +120,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param data
      */
     addCondition: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](this, data),
+        var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](this, data, this.sectionId, this.currentIndex),
             item = itemClass.getItem();
         this.conditionsContainer.add(item);
         item.updateLayout();
@@ -125,10 +129,18 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     },
 
     addAction: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data),
+        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data, this.sectionId, this.currentIndex),
             item = itemClass.getItem();
         this.actionsContainer.add(item);
         item.updateLayout();
         this.actionsContainer.updateLayout();
     },
+
+    removeField: function(type, index) {
+        if(type === 'condition') {
+            this.conditionsContainer.remove(Ext.getCmp(index));
+        } else if(type === 'action') {
+            this.actionsContainer.remove(Ext.getCmp(index));
+        }
+    }
 });

@@ -6,9 +6,15 @@ Formbuilder.comp.conditionalLogic.action.abstract = Class.create({
 
     data: null,
 
-    initialize: function (panel, data) {
+    sectionId: 0,
+
+    index: 0,
+
+    initialize: function (panel, data, sectionId, index) {
         this.panel = panel;
         this.data = data;
+        this.sectionId = sectionId;
+        this.index = index;
     },
 
     getItem: function () {
@@ -30,7 +36,7 @@ Formbuilder.comp.conditionalLogic.action.abstract = Class.create({
             {
                 iconCls: 'pimcore_icon_delete',
                 handler: function (index, parent) {
-                    _.panel.actionsContainer.remove(Ext.getCmp(index));
+                    _.panel.removeField('action', index);
                 }.bind(window, index, parent)
             }];
     },

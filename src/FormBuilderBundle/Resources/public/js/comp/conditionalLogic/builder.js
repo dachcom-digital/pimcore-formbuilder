@@ -5,8 +5,13 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
 
     tabPanel: null,
 
-    initialize: function (formData) {
+    sectionId: 0,
+
+    conditionalData: [],
+
+    initialize: function (conditionalData) {
         var _ = this;
+        this.conditionalData = conditionalData;
         this.panel = new Ext.form.FieldSet({
             title: t('form_builder_conditional_logic'),
             collapsible: false,
@@ -36,7 +41,7 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
 
     addConditionalSection: function () {
 
-        var clFieldClass = new Formbuilder.comp.conditionalLogic.form(),
+        var clFieldClass = new Formbuilder.comp.conditionalLogic.form(this.conditionalData, this.sectionId, this.panel),
             layout = clFieldClass.getLayout();
 
         var conditionFieldSet = new Ext.form.FieldSet({
@@ -50,12 +55,13 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
             xtype: 'button',
             text: t('formbuilder_delete_conditional_section'),
             iconCls: 'pimcore_icon_delete',
-            style: '',
             handler: function(conditionFieldSet, el) {
                 this.panel.remove(conditionFieldSet);
                 this.panel.updateLayout();
             }.bind(this, conditionFieldSet)
         }]);
+
+        this.sectionId++;
 
         this.panel.add(conditionFieldSet);
         this.panel.updateLayout();

@@ -172,6 +172,7 @@ class SettingsController extends AdminController
 
         $formName = $request->get('form_name');
         $formConfig = json_decode($request->get('form_config'), TRUE);
+        $formConditionalLogic = json_decode($request->get('form_cl'), TRUE);
         $formFields = json_decode($request->get('form_fields'), TRUE);
 
         if ($formName != $storedFormName) {

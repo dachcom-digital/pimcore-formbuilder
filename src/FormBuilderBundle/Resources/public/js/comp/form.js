@@ -13,6 +13,8 @@ Formbuilder.comp.form = Class.create({
 
     formConfig: null,
 
+    formConditions: {},
+
     formFields: null,
 
     formIsValid: false,
@@ -457,37 +459,40 @@ Formbuilder.comp.form = Class.create({
     saveRootNode: function() {
 
         // save root node data
+        this.rootFields = this.rootPanel.getForm().getFields();
+        this.formConditions = {};
+
         var items = this.rootPanel.queryBy(function() {
             return true;
         });
 
         var attrCouples = {};
+
         for (var i = 0; i < items.length; i++) {
+
             if (typeof items[i].getValue === 'function') {
 
                 var val = items[i].getValue(),
                     fieldName = items[i].name;
 
-                if (fieldName.substring(0, 7) == 'attrib_') {
-
-                    if( val !== '') {
-
-                        var elements = fieldName.split('_');
-
-                        if( !attrCouples[elements[2]] ) {
-                            attrCouples[elements[2]] = {'name' : null, 'value' : null}
+                if(fieldName) {
+                    if (fieldName.substring(0, 11) == 'conditions.') {
+                        this.formConditions[fieldName] = val;
+                    } else if (fieldName.substring(0, 7) == 'attrib_') {
+                        if( val !== '') {
+                            var elements = fieldName.split('_');
+                            if( !attrCouples[elements[2]] ) {
+                                attrCouples[elements[2]] = {'name' : null, 'value' : null}
+                            }
+                            attrCouples[ elements[2] ][ elements[1] ] = val;
                         }
-
-                        attrCouples[ elements[2] ][ elements[1] ] = val;
-
+                    } else if (fieldName === 'name') {
+                        this.formName = val;
+                    } else if (fieldName === 'date') {
+                        this.formDate = val;
+                    } else {
+                        this.formConfig[fieldName] = val;
                     }
-
-                } else if (fieldName === 'name') {
-                    this.formName = val;
-                } else if (fieldName === 'date') {
-                    this.formDate = val;
-                } else {
-                    this.formConfig[fieldName] = val;
                 }
             }
         }
@@ -670,9 +675,10 @@ Formbuilder.comp.form = Class.create({
         } catch (e) {}
 
         //add conditional logic field
-        var clBuilder = new Formbuilder.comp.conditionalLogic.builder();
+        //todo: pass cl data
+        var conditionalData = [];
+        var clBuilder = new Formbuilder.comp.conditionalLogic.builder(conditionalData);
         this.clBuilder = clBuilder.getLayout();
-
         this.rootPanel = new Ext.form.FormPanel({
 
             title: t('form_builder_form_configuration'),
@@ -745,8 +751,6 @@ Formbuilder.comp.form = Class.create({
 
             ]
         });
-
-        this.rootFields = this.rootPanel.getForm().getFields();
 
         return this.rootPanel;
     },
@@ -1051,7 +1055,8 @@ Formbuilder.comp.form = Class.create({
      */
     save: function(ev) {
 
-        var formData = {};
+        var formData = {},
+            formConditionData = {};
 
         this.saveCurrentNode();
 
@@ -1061,12 +1066,15 @@ Formbuilder.comp.form = Class.create({
 
             try {
                 formData = this.getData();
+                formConditionData = DataObjectParser.transpose(this.formConditions);
+
             } catch (e) {
                 Ext.MessageBox.alert(t('error'), e);
                 return false;
             }
 
             var formConfig = Ext.encode(this.formConfig),
+                formConditionalLogic = Ext.encode(formConditionData.data()),
                 formFields = Ext.encode(formData);
 
             Ext.Ajax.request({
@@ -1076,6 +1084,7 @@ Formbuilder.comp.form = Class.create({
                     form_id: this.formId,
                     form_name: this.formName,
                     form_config: formConfig,
+                    form_cl: formConditionalLogic,
                     form_fields: formFields
                 },
                 success: this.saveOnComplete.bind(this),

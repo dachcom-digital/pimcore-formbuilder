@@ -25,7 +25,7 @@ Formbuilder.comp.conditionalLogic.condition.field = Class.create(Formbuilder.com
 
         var items = [{
             xtype: 'combo',
-            name: 'fields',
+            name: 'conditions.condition.' + this.sectionId + '.field.' + this.index + '.field',
             fieldLabel: t('form_builder_condition_fields'),
             queryDelay: 0,
             displayField: 'label',
@@ -38,12 +38,12 @@ Formbuilder.comp.conditionalLogic.condition.field = Class.create(Formbuilder.com
             anchor: '100%',
             //value: todo,
             summaryDisplay: true,
-            allowBlank: false,
+            allowBlank: true,
             flex: 1,
             //listeners: null
         }, {
             xtype: 'combo',
-            name: 'condition_type',
+            name: 'conditions.condition.' + this.sectionId + '.field.' + this.index + '.type',
             fieldLabel: t('form_builder_condition_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -56,21 +56,21 @@ Formbuilder.comp.conditionalLogic.condition.field = Class.create(Formbuilder.com
             anchor: '100%',
             //value: todo,
             summaryDisplay: true,
-            allowBlank: false,
+            allowBlank: true,
             flex: 1,
             //listeners: null
         },
-            {
-                xtype: 'textfield',
-                name: 'condition_value',
-                fieldLabel: t('form_builder_condition_value'),
-                anchor: '100%',
-                labelAlign: 'top',
-                summaryDisplay: true,
-                allowBlank: false,
-                //value: todo,
-                flex: 1,
-            }
+        {
+            xtype: 'textfield',
+            name: 'conditions.condition.' + this.sectionId + '.field.' + this.index + '.value',
+            fieldLabel: t('form_builder_condition_value'),
+            anchor: '100%',
+            labelAlign: 'top',
+            summaryDisplay: true,
+            allowBlank: true,
+            //value: todo,
+            flex: 1,
+        }
         ];
 
         var compositeField = new Ext.form.FieldContainer({

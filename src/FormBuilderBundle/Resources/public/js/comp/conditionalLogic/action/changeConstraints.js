@@ -13,7 +13,7 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
 
         var items = [{
             xtype: 'combo',
-            name: 'condition_type',
+            name: 'conditions.action.' + this.sectionId + '.change_constraint.' + this.index + '.validation',
             fieldLabel: t('form_builder_constraint_type'),
             queryDelay: 0,
             displayField: 'label',

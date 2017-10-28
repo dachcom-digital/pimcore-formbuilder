@@ -20,6 +20,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
         var items = [{
             xtype: 'combo',
             name: 'condition_type',
+            name: 'conditions.action.' + this.sectionId + '.toggle.' + this.index + '.type',
             fieldLabel: t('form_builder_toggle_type'),
             queryDelay: 0,
             displayField: 'label',
