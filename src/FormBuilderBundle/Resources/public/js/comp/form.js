@@ -13,7 +13,9 @@ Formbuilder.comp.form = Class.create({
 
     formConfig: null,
 
-    formConditions: {},
+    formConditionals: {},
+
+    formConditionalsStructured: {},
 
     formFields: null,
 
@@ -44,6 +46,8 @@ Formbuilder.comp.form = Class.create({
         this.formDate = formData.date;
 
         this.formConfig = formData.config.length === 0 ? {} : formData.config;
+
+        this.formConditionalsStructured = formData.conditional_logic;
 
         this.formFields = formData.fields;
 
@@ -460,7 +464,7 @@ Formbuilder.comp.form = Class.create({
 
         // save root node data
         this.rootFields = this.rootPanel.getForm().getFields();
-        this.formConditions = {};
+        this.formConditionals = {};
 
         var items = this.rootPanel.queryBy(function() {
             return true;
@@ -476,8 +480,8 @@ Formbuilder.comp.form = Class.create({
                     fieldName = items[i].name;
 
                 if(fieldName) {
-                    if (fieldName.substring(0, 11) == 'conditions.') {
-                        this.formConditions[fieldName] = val;
+                    if (fieldName.substring(0, 3) == 'cl.') {
+                        this.formConditionals[fieldName] = val;
                     } else if (fieldName.substring(0, 7) == 'attrib_') {
                         if( val !== '') {
                             var elements = fieldName.split('_');
@@ -496,6 +500,12 @@ Formbuilder.comp.form = Class.create({
                 }
             }
         }
+
+        //parse conditional logic to add them later again and also to send them to server well formatted.
+        var formConditionals = DataObjectParser.transpose(this.formConditionals);
+        this.formConditionalsStructured = formConditionals.data();
+
+        console.log(this.formConditionalsStructured);
 
         this.formConfig['attributes'] = [];
         if( Object.keys(attrCouples).length > 0) {
@@ -675,9 +685,7 @@ Formbuilder.comp.form = Class.create({
         } catch (e) {}
 
         //add conditional logic field
-        //todo: pass cl data
-        var conditionalData = [];
-        var clBuilder = new Formbuilder.comp.conditionalLogic.builder(conditionalData);
+        var clBuilder = new Formbuilder.comp.conditionalLogic.builder(this.formConditionalsStructured, this);
         this.clBuilder = clBuilder.getLayout();
         this.rootPanel = new Ext.form.FormPanel({
 
@@ -1066,15 +1074,13 @@ Formbuilder.comp.form = Class.create({
 
             try {
                 formData = this.getData();
-                formConditionData = DataObjectParser.transpose(this.formConditions);
-
             } catch (e) {
                 Ext.MessageBox.alert(t('error'), e);
                 return false;
             }
 
             var formConfig = Ext.encode(this.formConfig),
-                formConditionalLogic = Ext.encode(formConditionData.data()),
+                formConditionalLogic = Ext.encode(this.formConditionalsStructured),
                 formFields = Ext.encode(formData);
 
             Ext.Ajax.request({

@@ -1,6 +1,6 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.condition');
-pimcore.registerNS('Formbuilder.comp.conditionalLogic.condition.field');
-Formbuilder.comp.conditionalLogic.condition.field = Class.create(Formbuilder.comp.conditionalLogic.condition.abstract, {
+pimcore.registerNS('Formbuilder.comp.conditionalLogic.condition.value');
+Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.comp.conditionalLogic.condition.abstract, {
 
     name: 'field value',
 
@@ -23,27 +23,36 @@ Formbuilder.comp.conditionalLogic.condition.field = Class.create(Formbuilder.com
             }]
         });
 
+        var fieldStore = Ext.create('Ext.data.Store', {
+            fields: ['name', 'display_name'],
+            data: this.panel.getFormFields().fields
+        });
+
         var items = [{
-            xtype: 'combo',
-            name: 'conditions.condition.' + this.sectionId + '.field.' + this.index + '.field',
+            xtype: 'hidden',
+            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.type',
+            value: 'value'
+        },
+        {
+            xtype: 'tagfield',
+            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.fields',
             fieldLabel: t('form_builder_condition_fields'),
             queryDelay: 0,
-            displayField: 'label',
-            valueField: 'value',
+            stacked: true,
+            displayField: 'display_name',
+            valueField: 'name',
             mode: 'local',
             labelAlign: 'top',
-            //store: attributeStore,
-            editable: true,
+            store: fieldStore,
+            editable: false,
             triggerAction: 'all',
             anchor: '100%',
-            //value: todo,
-            summaryDisplay: true,
+            //value: this.data ? this.data.fields : null,
             allowBlank: true,
-            flex: 1,
-            //listeners: null
+            flex: 1
         }, {
             xtype: 'combo',
-            name: 'conditions.condition.' + this.sectionId + '.field.' + this.index + '.type',
+            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.comparator',
             fieldLabel: t('form_builder_condition_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -54,22 +63,21 @@ Formbuilder.comp.conditionalLogic.condition.field = Class.create(Formbuilder.com
             editable: true,
             triggerAction: 'all',
             anchor: '100%',
-            //value: todo,
+            value: this.data ? this.data.comparator : null,
             summaryDisplay: true,
             allowBlank: true,
-            flex: 1,
-            //listeners: null
+            flex: 1
         },
         {
             xtype: 'textfield',
-            name: 'conditions.condition.' + this.sectionId + '.field.' + this.index + '.value',
+            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.value',
             fieldLabel: t('form_builder_condition_value'),
             anchor: '100%',
             labelAlign: 'top',
             summaryDisplay: true,
             allowBlank: true,
-            //value: todo,
-            flex: 1,
+            value: this.data ? this.data.value : null,
+            flex: 1
         }
         ];
 

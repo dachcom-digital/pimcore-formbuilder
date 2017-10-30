@@ -50,6 +50,11 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var array
      */
+    public $conditionalLogic = [];
+
+    /**
+     * @var array
+     */
     public $fields = [];
 
     /**
@@ -232,6 +237,25 @@ class Form extends Model\AbstractModel implements FormInterface
     {
         $validConfig = array_intersect_key($config, array_flip( self::ALLOWED_FORM_KEYS));
         $this->config = $validConfig;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConditionalLogic()
+    {
+        return $this->conditionalLogic;
+    }
+
+    /**
+     * @param $config
+     *
+     * @return $this
+     */
+    public function setConditionalLogic($config)
+    {
+        $this->conditionalLogic = $config;
         return $this;
     }
 

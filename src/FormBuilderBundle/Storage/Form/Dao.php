@@ -129,8 +129,9 @@ class Dao extends AbstractDao
     protected function storeFormData()
     {
         $data = [
-            'config' => $this->model->getConfig(),
-            'fields' => $this->getFormFieldData()
+            'config'            => $this->model->getConfig(),
+            'conditional_logic' => $this->model->getConditionalLogic(),
+            'fields'            => $this->getFormFieldData()
         ];
 
         return $this->storeYmlData($data);

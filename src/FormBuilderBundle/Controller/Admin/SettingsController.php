@@ -82,7 +82,10 @@ class SettingsController extends AdminController
             $form = $formManager->getById($id);
             $data['data'] = $backendFormBuilder->generateExtJsForm($form);
         } catch (\Exception $e) {
-            $data = ['success' => FALSE, 'message' => $e->getMessage() . ' (' . $e->getFile() . ': ' . $e->getLine() . ')'];
+            $data = [
+                'success' => FALSE,
+                'message' => $e->getMessage() . ' (' . $e->getFile() . ': ' . $e->getLine() . ')'
+            ];
         }
 
         return $this->json($data);
@@ -181,10 +184,11 @@ class SettingsController extends AdminController
         }
 
         $data = [
-            'form_name'   => $formName,
+            'form_name'              => $formName,
             //'form_date'   => time(),
-            'form_fields' => $backendFormBuilder->generateStoreFields($formFields),
-            'form_config' => $formConfig,
+            'form_fields'            => $backendFormBuilder->generateStoreFields($formFields),
+            'form_config'            => $formConfig,
+            'form_conditional_logic' => $formConditionalLogic,
         ];
 
         $formEntity = $formManager->save($data, $id);

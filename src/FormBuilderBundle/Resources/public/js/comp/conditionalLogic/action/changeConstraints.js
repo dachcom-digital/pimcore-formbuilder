@@ -12,8 +12,13 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
         });
 
         var items = [{
+            xtype: 'hidden',
+            name: 'cl.' + this.sectionId + '.action.' + this.index + '.type',
+            value: 'changeConstraints'
+        },
+        {
             xtype: 'combo',
-            name: 'conditions.action.' + this.sectionId + '.change_constraint.' + this.index + '.validation',
+            name: 'cl.' + this.sectionId + '.action.' + this.index + '.validation',
             fieldLabel: t('form_builder_constraint_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -24,11 +29,10 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
             editable: true,
             triggerAction: 'all',
             anchor: '100%',
-            //value: todo,
+            value: this.data ? this.data.validation : null,
             summaryDisplay: true,
             allowBlank: false,
             flex: 1,
-            //listeners: null
         }
         ];
 

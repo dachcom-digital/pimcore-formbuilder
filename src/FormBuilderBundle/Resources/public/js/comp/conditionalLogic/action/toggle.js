@@ -17,10 +17,38 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             }]
         });
 
+        var fieldStore = Ext.create('Ext.data.Store', {
+            fields: ['name', 'display_name'],
+            data: this.panel.getFormFields().fields
+        });
+
         var items = [{
+            xtype: 'hidden',
+            name: 'cl.' + this.sectionId + '.action.' + this.index + '.type',
+            value: 'toggle'
+        },
+        {
+            xtype: 'tagfield',
+            name: 'cl.' + this.sectionId + '.action.' + this.index + '.fields',
+            fieldLabel: t('form_builder_toggle_fields'),
+            queryDelay: 0,
+            stacked: true,
+            displayField: 'display_name',
+            valueField: 'name',
+            mode: 'local',
+            labelAlign: 'top',
+            store: fieldStore,
+            editable: false,
+            triggerAction: 'all',
+            anchor: '100%',
+            //value: this.data ? this.data.fields : null,
+            allowBlank: true,
+            flex: 1
+        },
+        {
             xtype: 'combo',
             name: 'condition_type',
-            name: 'conditions.action.' + this.sectionId + '.toggle.' + this.index + '.type',
+            name: 'cl.' + this.sectionId + '.action.' + this.index + '.state',
             fieldLabel: t('form_builder_toggle_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -31,11 +59,10 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             editable: true,
             triggerAction: 'all',
             anchor: '100%',
-            //value: todo,
+            value: this.data ? this.data.state : null,
             summaryDisplay: true,
             allowBlank: false,
-            flex: 1,
-            //listeners: null
+            flex: 1
         }];
 
         var compositeField = new Ext.form.FieldContainer({

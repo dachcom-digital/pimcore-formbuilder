@@ -63,10 +63,11 @@ class Builder
     public function generateExtJsForm(FormInterface $form)
     {
         $data = [
-            'id'     => $form->getId(),
-            'name'   => $form->getName(),
-            'date'   => $form->getDate(),
-            'config' => $form->getConfig(),
+            'id'                => $form->getId(),
+            'name'              => $form->getName(),
+            'date'              => $form->getDate(),
+            'config'            => $form->getConfig(),
+            'conditional_logic' => $form->getConditionalLogic()
         ];
 
         $fieldData = [];
@@ -122,7 +123,7 @@ class Builder
 
         foreach ($formTypes as $formType => $formTypeConfiguration) {
 
-            if(!$this->isAllowedFormType($formType)) {
+            if (!$this->isAllowedFormType($formType)) {
                 continue;
             }
 
@@ -301,6 +302,7 @@ class Builder
 
     /**
      * Get translated Form Type Templates
+     *
      * @return array
      */
     private function getFormTypeTemplates()
@@ -325,15 +327,15 @@ class Builder
         $activeFields = $adminSettings['active_elements']['fields'];
         $inactiveFields = $adminSettings['inactive_elements']['fields'];
 
-        if(empty($activeFields) && empty($inactiveFields)) {
+        if (empty($activeFields) && empty($inactiveFields)) {
             return TRUE;
         }
 
-        if(!empty($inactiveFields) && in_array($formType, $inactiveFields)) {
+        if (!empty($inactiveFields) && in_array($formType, $inactiveFields)) {
             return FALSE;
         }
 
-        if(!empty($activeFields) && !in_array($formType, $activeFields)) {
+        if (!empty($activeFields) && !in_array($formType, $activeFields)) {
             return FALSE;
         }
 

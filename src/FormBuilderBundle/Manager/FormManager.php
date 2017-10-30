@@ -122,6 +122,10 @@ class FormManager
         if(isset($data['form_config'])) {
             $form->setConfig($data['form_config']);
         }
+
+        if(isset($data['form_conditional_logic'])) {
+            $form->setConditionalLogic($data['form_conditional_logic']);
+        }
     }
 
     /**

@@ -1,6 +1,8 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.builder');
 Formbuilder.comp.conditionalLogic.builder = Class.create({
 
+    formBuilder: null,
+
     panel: null,
 
     tabPanel: null,
@@ -9,8 +11,9 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
 
     conditionalData: [],
 
-    initialize: function (conditionalData) {
+    initialize: function (conditionalData, formBuilder) {
         var _ = this;
+        this.formBuilder = formBuilder;
         this.conditionalData = conditionalData;
         this.panel = new Ext.form.FieldSet({
             title: t('form_builder_conditional_logic'),
@@ -27,21 +30,27 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
                     iconCls: 'pimcore_icon_add',
                     handler: _.addConditionalSection.bind(_),
                     tooltip: {
-                        title:'',
+                        title: '',
                         text: t('form_builder_add_metadata')
                     }
                 }]
             }]
         });
+
+        if (this.conditionalData.cl && this.conditionalData.cl.length > 0) {
+            Ext.Array.each(this.conditionalData.cl, function (group) {
+                this.addConditionalSection(group);
+            }.bind(this));
+        }
     },
 
     getLayout: function () {
         return this.panel;
     },
 
-    addConditionalSection: function () {
+    addConditionalSection: function (data) {
 
-        var clFieldClass = new Formbuilder.comp.conditionalLogic.form(this.conditionalData, this.sectionId, this.panel),
+        var clFieldClass = new Formbuilder.comp.conditionalLogic.form(data, this.sectionId, this.formBuilder),
             layout = clFieldClass.getLayout();
 
         var conditionFieldSet = new Ext.form.FieldSet({
@@ -55,7 +64,7 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
             xtype: 'button',
             text: t('formbuilder_delete_conditional_section'),
             iconCls: 'pimcore_icon_delete',
-            handler: function(conditionFieldSet, el) {
+            handler: function (conditionFieldSet, el) {
                 this.panel.remove(conditionFieldSet);
                 this.panel.updateLayout();
             }.bind(this, conditionFieldSet)

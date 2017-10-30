@@ -3,20 +3,30 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
     panel: null,
 
+    formBuilder: null,
+
     tabPanel: null,
 
     conditionsContainer: null,
 
     actionsContainer: null,
 
+    sectionData: null,
+
     sectionId: 0,
 
     currentIndex: 0,
 
-    initialize: function (sectionData, sectionId, parentPanel) {
-        this.parent = parentPanel;
+    initialize: function (sectionData, sectionId, formBuilder) {
+
+        this.formBuilder = formBuilder;
         this.sectionId = sectionId;
         this.currentIndex = 0;
+
+        if (sectionData) {
+            this.sectionData = sectionData;
+        }
+
         this.panel = new Ext.form.FieldContainer({
             width: '100%',
             style: 'margin-top: 10px; border: 1px solid #565d56;',
@@ -47,8 +57,8 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         var conditionMenu = []
         conditions = [
             {
-                name: 'field',
-                method: 'field',
+                name: 'Field Value',
+                method: 'value',
                 icon: 'form_builder_icon_text',
             }
         ];
@@ -111,6 +121,18 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
             border: false
         });
 
+        if(this.sectionData && this.sectionData.condition && this.sectionData.condition.length > 0) {
+            Ext.Array.each(this.sectionData.condition, function (condition) {
+                this.addCondition(condition.type, condition);
+            }.bind(this));
+        }
+
+        if(this.sectionData && this.sectionData.action && this.sectionData.action.length > 0) {
+            Ext.Array.each(this.sectionData.action, function (action) {
+                this.addAction(action.type, action);
+            }.bind(this));
+        }
+
         return this.actionsContainer;
     },
 
@@ -128,19 +150,36 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         this.currentIndex++;
     },
 
+    /**
+     *
+     * @param type
+     * @param data
+     */
     addAction: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data, this.sectionId, this.currentIndex),
+        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data, this.sectionId, this.currentIndex - 1),
             item = itemClass.getItem();
         this.actionsContainer.add(item);
         item.updateLayout();
         this.actionsContainer.updateLayout();
     },
 
-    removeField: function(type, index) {
-        if(type === 'condition') {
+    /**
+     *
+     * @param type
+     * @param index
+     */
+    removeField: function (type, index) {
+        if (type === 'condition') {
             this.conditionsContainer.remove(Ext.getCmp(index));
-        } else if(type === 'action') {
+        } else if (type === 'action') {
             this.actionsContainer.remove(Ext.getCmp(index));
         }
+    },
+
+    /**
+     *
+     */
+    getFormFields: function () {
+        return this.formBuilder.getData();
     }
 });
