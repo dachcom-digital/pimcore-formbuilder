@@ -18,6 +18,7 @@ Before we start, check out the available options. Those are needed for the twig 
 ## Area Brick
 This is the most used one. Just place a form element (Area Brick) somewhere on your document. 
 Configure it via the available edit button.
+Note: You need to have the Pimcore Toolbox (https://github.com/dachcom-digital/pimcore-toolbox) installed and activated in order to see the edit button and thus make this work.
 
 ## Twig
 Create a Form using the Twig Extension.
