@@ -66,14 +66,10 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
             iconCls: 'pimcore_icon_delete',
             handler: function (conditionFieldSet, el) {
                 this.panel.remove(conditionFieldSet);
-                this.panel.updateLayout();
             }.bind(this, conditionFieldSet)
         }]);
 
         this.sectionId++;
-
         this.panel.add(conditionFieldSet);
-        this.panel.updateLayout();
-
     }
 });

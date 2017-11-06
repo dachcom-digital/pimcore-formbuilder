@@ -47,7 +47,7 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
             editable: false,
             triggerAction: 'all',
             anchor: '100%',
-            //value: this.data ? this.data.fields : null,
+            value: this.data ? this.data.fields : null,
             allowBlank: true,
             flex: 1
         }, {

@@ -41,7 +41,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             editable: false,
             triggerAction: 'all',
             anchor: '100%',
-            //value: this.data ? this.data.fields : null,
+            value: this.data ? this.data.fields : null,
             allowBlank: true,
             flex: 1
         },

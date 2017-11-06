@@ -65,7 +65,6 @@ Formbuilder.comp.form = Class.create({
     addLayout: function() {
 
         this.tree = Ext.create('Ext.tree.Panel', {
-
             region: 'west',
             autoScroll: true,
             listeners: this.getTreeNodeListeners(),
@@ -73,7 +72,6 @@ Formbuilder.comp.form = Class.create({
             split: true,
             enableDD: true,
             width: 300,
-
             root: {
                 id: '0',
                 text: t('form_builder_base'),
@@ -83,7 +81,6 @@ Formbuilder.comp.form = Class.create({
                 isTarget: true,
                 leaf:true,
                 root: true
-
             },
             viewConfig: {
                 plugins: {
@@ -142,12 +139,9 @@ Formbuilder.comp.form = Class.create({
 
         }.bind(this));
 
-        this.parentPanel.getEditPanel().add(this.panel);
-        this.editPanel.add(this.getRootPanel());
-
         this.setCurrentNode('root');
+        this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
-
         pimcore.layout.refresh();
 
     },
@@ -170,6 +164,8 @@ Formbuilder.comp.form = Class.create({
         }
 
         this.tree.getRootNode().expand();
+        // select root node "base"
+        this.tree.getSelectionModel().select(this.tree.getRootNode(), true);
 
     },
 
@@ -234,7 +230,7 @@ Formbuilder.comp.form = Class.create({
             'beforeselect'      : this.onTreeNodeBeforeSelect.bind(this),
             'select'            : this.onTreeNodeSelect.bind(this),
             'itemcontextmenu'   : this.onTreeNodeContextMenu.bind(this),
-            'beforeitemmove'    : this.onTreeNodeBeforeMove.bind(this),
+            'beforeitemmove'    : this.onTreeNodeBeforeMove.bind(this)
         };
 
     },
@@ -462,6 +458,11 @@ Formbuilder.comp.form = Class.create({
 
     saveRootNode: function() {
 
+        if(this.rootPanel === undefined) {
+            //root panel not initialized yet.
+            return true;
+        }
+
         // save root node data
         this.rootFields = this.rootPanel.getForm().getFields();
         this.formConditionals = {};
@@ -504,8 +505,6 @@ Formbuilder.comp.form = Class.create({
         //parse conditional logic to add them later again and also to send them to server well formatted.
         var formConditionals = DataObjectParser.transpose(this.formConditionals);
         this.formConditionalsStructured = formConditionals.data();
-
-        console.log(this.formConditionalsStructured);
 
         this.formConfig['attributes'] = [];
         if( Object.keys(attrCouples).length > 0) {
@@ -653,7 +652,6 @@ Formbuilder.comp.form = Class.create({
         }.bind(this);
 
         this.metaDataPanel = new Ext.form.FieldSet({
-
             title:  t('form_builder_form_attribute_name') + ' & ' + t('form_builder_form_attribute_value'),
             collapsible: false,
             autoHeight:true,
@@ -1032,6 +1030,7 @@ Formbuilder.comp.form = Class.create({
     rootFormIsValid : function() {
 
         var isValid = true;
+
         if( this.rootFields.length > 0 ) {
             this.rootFields.each(function(field) {
                 if( typeof field.getValue === 'function') {
