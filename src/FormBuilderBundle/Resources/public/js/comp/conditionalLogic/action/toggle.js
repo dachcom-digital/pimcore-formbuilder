@@ -5,7 +5,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
     name: 'toggle field',
 
     getItem: function () {
-
+        var _ = this;
         var toggleTypesStore = Ext.create('Ext.data.Store', {
             fields: ['label', 'value'],
             data: [{
@@ -24,12 +24,17 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
 
         var items = [{
             xtype: 'hidden',
-            name: 'cl.' + this.sectionId + '.action.' + this.index + '.type',
-            value: 'toggle'
+            name: _.generateFieldName(this.index, 'type'),
+            value: 'toggle',
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'type');
+                }
+            }
         },
         {
             xtype: 'tagfield',
-            name: 'cl.' + this.sectionId + '.action.' + this.index + '.fields',
+            name: _.generateFieldName(this.index, 'fields'),
             fieldLabel: t('form_builder_toggle_fields'),
             queryDelay: 0,
             stacked: true,
@@ -42,13 +47,18 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.fields : null,
-            allowBlank: true,
-            flex: 1
+            allowBlank: false,
+            flex: 1,
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'fields');
+                }
+            }
         },
         {
             xtype: 'combo',
             name: 'condition_type',
-            name: 'cl.' + this.sectionId + '.action.' + this.index + '.state',
+            name: _.generateFieldName(this.index, 'state'),
             fieldLabel: t('form_builder_toggle_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -62,7 +72,12 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             value: this.data ? this.data.state : null,
             summaryDisplay: true,
             allowBlank: false,
-            flex: 1
+            flex: 1,
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'state');
+                }
+            }
         }];
 
         var compositeField = new Ext.form.FieldContainer({

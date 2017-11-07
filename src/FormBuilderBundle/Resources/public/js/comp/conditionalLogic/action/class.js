@@ -1,16 +1,11 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.action');
-pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.changeConstraints');
-Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
+pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.class');
+Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
 
-    name: 'change field validation',
+    name: 'toggle class',
 
     getItem: function () {
         var _ = this;
-        var constraintTypesStore = Ext.create('Ext.data.Store', {
-            fields: ['label', 'value'],
-            data: []
-        });
-
         var fieldStore = Ext.create('Ext.data.Store', {
             fields: ['name', 'display_name'],
             data: this.panel.getFormFields().fields
@@ -19,7 +14,7 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
         var items = [{
             xtype: 'hidden',
             name: _.generateFieldName(this.index, 'type'),
-            value: 'changeConstraints',
+            value: 'class',
             listeners: {
                 updateIndexName: function(index) {
                     this.name = _.generateFieldName(index, 'type');
@@ -29,7 +24,7 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
         {
             xtype: 'tagfield',
             name: _.generateFieldName(this.index, 'fields'),
-            fieldLabel: t('form_builder_toggle_fields'),
+            fieldLabel: t('form_builder_toggle_class_fields'),
             queryDelay: 0,
             stacked: true,
             displayField: 'display_name',
@@ -38,7 +33,7 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
             labelAlign: 'top',
             store: fieldStore,
             editable: false,
-            filterPickList: true,
+            triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.fields : null,
             allowBlank: false,
@@ -50,29 +45,21 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
             }
         },
         {
-            xtype: 'combo',
-            name: _.generateFieldName(this.index, 'validation'),
-            fieldLabel: t('form_builder_constraint_type'),
-            queryDelay: 0,
-            displayField: 'label',
-            valueField: 'value',
-            mode: 'local',
-            labelAlign: 'top',
-            store: constraintTypesStore,
-            editable: true,
-            triggerAction: 'all',
+            xtype: 'textfield',
+            name: _.generateFieldName(this.index, 'class'),
+            fieldLabel: t('form_builder_toggle_class_value'),
             anchor: '100%',
-            value: this.data ? this.data.validation : null,
+            labelAlign: 'top',
             summaryDisplay: true,
             allowBlank: false,
+            value: this.data ? this.data.class : null,
             flex: 1,
             listeners: {
                 updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'validation');
+                    this.name = _.generateFieldName(index, 'class');
                 }
             }
-        }
-        ];
+        }];
 
         var compositeField = new Ext.form.FieldContainer({
             layout: 'hbox',

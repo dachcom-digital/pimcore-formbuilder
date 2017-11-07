@@ -129,10 +129,11 @@ class Builder
             DynamicFormType::class,
             $formEntity,
             [
-                'method'          => $formConfig['method'],
-                'action'          => $formConfig['action'] === '/' ? $request->getUri() : $formConfig['action'],
-                'current_form_id' => $formEntity->getId(),
-                'attr'            => $formAttributes,
+                'method'            => $formConfig['method'],
+                'action'            => $formConfig['action'] === '/' ? $request->getUri() : $formConfig['action'],
+                'current_form_id'   => $formEntity->getId(),
+                'conditional_logic' => $formEntity->getConditionalLogic(),
+                'attr'              => $formAttributes,
             ]
         );
 

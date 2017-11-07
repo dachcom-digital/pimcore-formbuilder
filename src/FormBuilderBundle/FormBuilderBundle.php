@@ -56,6 +56,9 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/comp/conditionalLogic/action/abstract.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/action/changeConstraints.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/action/toggle.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/value.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/event.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/class.js',
             '/bundles/formbuilder/js/comp/formTypeBuilder.js',
             '/bundles/formbuilder/js/comp/formFieldConstraint.js'
         ];

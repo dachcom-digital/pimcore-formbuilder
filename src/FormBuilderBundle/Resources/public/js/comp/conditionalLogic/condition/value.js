@@ -5,7 +5,7 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
     name: 'field value',
 
     getItem: function () {
-
+        var _ = this;
         var conditionTypesStore = Ext.create('Ext.data.Store', {
             fields: ['label', 'value'],
             data: [{
@@ -30,12 +30,17 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
 
         var items = [{
             xtype: 'hidden',
-            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.type',
-            value: 'value'
+            name: _.generateFieldName(this.index, 'type'),
+            value: 'value',
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'type');
+                }
+            }
         },
         {
             xtype: 'tagfield',
-            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.fields',
+            name: _.generateFieldName(this.index, 'fields'),
             fieldLabel: t('form_builder_condition_fields'),
             queryDelay: 0,
             stacked: true,
@@ -48,11 +53,16 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
             triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.fields : null,
-            allowBlank: true,
-            flex: 1
+            allowBlank: false,
+            flex: 1,
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'fields');
+                }
+            }
         }, {
             xtype: 'combo',
-            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.comparator',
+            name: _.generateFieldName(this.index, 'comparator'),
             fieldLabel: t('form_builder_condition_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -65,19 +75,29 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
             anchor: '100%',
             value: this.data ? this.data.comparator : null,
             summaryDisplay: true,
-            allowBlank: true,
-            flex: 1
+            allowBlank: false,
+            flex: 1,
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'comparator');
+                }
+            }
         },
         {
             xtype: 'textfield',
-            name: 'cl.' + this.sectionId + '.condition.' + this.index + '.value',
+            name: _.generateFieldName(this.index, 'value'),
             fieldLabel: t('form_builder_condition_value'),
             anchor: '100%',
             labelAlign: 'top',
             summaryDisplay: true,
             allowBlank: true,
             value: this.data ? this.data.value : null,
-            flex: 1
+            flex: 1,
+            listeners: {
+                updateIndexName: function(index) {
+                    this.name = _.generateFieldName(index, 'value');
+                }
+            }
         }
         ];
 

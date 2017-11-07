@@ -15,13 +15,10 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
     sectionId: 0,
 
-    currentIndex: 0,
-
     initialize: function (sectionData, sectionId, formBuilder) {
 
         this.formBuilder = formBuilder;
         this.sectionId = sectionId;
-        this.currentIndex = 0;
 
         if (sectionData) {
             this.sectionData = sectionData;
@@ -99,6 +96,21 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
                 name: 'change validation',
                 method: 'changeConstraints',
                 icon: 'form_builder_icon_text',
+            },
+            {
+                name: 'change value',
+                method: 'value',
+                icon: 'form_builder_icon_text',
+            },
+            {
+                name: 'trigger event',
+                method: 'event',
+                icon: 'form_builder_icon_text',
+            },
+            {
+                name: 'change class',
+                method: 'class',
+                icon: 'form_builder_icon_text',
             }
         ];
 
@@ -123,12 +135,18 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
         if(this.sectionData && this.sectionData.condition && this.sectionData.condition.length > 0) {
             Ext.Array.each(this.sectionData.condition, function (condition) {
+                if(condition === null) {
+                    return;
+                }
                 this.addCondition(condition.type, condition);
             }.bind(this));
         }
 
         if(this.sectionData && this.sectionData.action && this.sectionData.action.length > 0) {
             Ext.Array.each(this.sectionData.action, function (action) {
+                if(action === null) {
+                    return;
+                }
                 this.addAction(action.type, action);
             }.bind(this));
         }
@@ -142,12 +160,11 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param data
      */
     addCondition: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](this, data, this.sectionId, this.currentIndex),
+        var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](this, data, this.sectionId, this.conditionsContainer.items.getCount()),
             item = itemClass.getItem();
         this.conditionsContainer.add(item);
         item.updateLayout();
         this.conditionsContainer.updateLayout();
-        this.currentIndex++;
     },
 
     /**
@@ -156,7 +173,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param data
      */
     addAction: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data, this.sectionId, this.currentIndex - 1),
+        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data, this.sectionId, this.actionsContainer.items.getCount()),
             item = itemClass.getItem();
         this.actionsContainer.add(item);
         item.updateLayout();
@@ -169,10 +186,30 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param index
      */
     removeField: function (type, index) {
+
+        //we need to re-add all elements to avoid index gaps on saving.
         if (type === 'condition') {
             this.conditionsContainer.remove(Ext.getCmp(index));
+            this.conditionsContainer.items.each(function(component, index) {
+                component.items.each(function(condition){
+                    if(condition.items.items.length > 0) {
+                        Ext.Array.each(condition.items.items, function (field) {
+                            field.fireEvent('updateIndexName', index);
+                        });
+                    }
+                });
+            });
         } else if (type === 'action') {
             this.actionsContainer.remove(Ext.getCmp(index));
+            this.actionsContainer.items.each(function(component, index) {
+                component.items.each(function(action){
+                    if(action.items.items.length > 0) {
+                        Ext.Array.each(action.items.items, function (field) {
+                            field.fireEvent('updateIndexName', index);
+                        });
+                    }
+                });
+            });
         }
     },
 
