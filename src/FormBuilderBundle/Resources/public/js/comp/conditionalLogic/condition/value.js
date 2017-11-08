@@ -30,17 +30,17 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
 
         var items = [{
             xtype: 'hidden',
-            name: _.generateFieldName(this.index, 'type'),
+            name: _.generateFieldName(this.sectionId, this.index, 'type'),
             value: 'value',
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'type');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'type');
                 }
             }
         },
         {
             xtype: 'tagfield',
-            name: _.generateFieldName(this.index, 'fields'),
+            name: _.generateFieldName(this.sectionId, this.index, 'fields'),
             fieldLabel: t('form_builder_condition_fields'),
             queryDelay: 0,
             stacked: true,
@@ -56,13 +56,13 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'fields');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'fields');
                 }
             }
         }, {
             xtype: 'combo',
-            name: _.generateFieldName(this.index, 'comparator'),
+            name: _.generateFieldName(this.sectionId, this.index, 'comparator'),
             fieldLabel: t('form_builder_condition_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -78,14 +78,14 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'comparator');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'comparator');
                 }
             }
         },
         {
             xtype: 'textfield',
-            name: _.generateFieldName(this.index, 'value'),
+            name: _.generateFieldName(this.sectionId, this.index, 'value'),
             fieldLabel: t('form_builder_condition_value'),
             anchor: '100%',
             labelAlign: 'top',
@@ -94,8 +94,8 @@ Formbuilder.comp.conditionalLogic.condition.value = Class.create(Formbuilder.com
             value: this.data ? this.data.value : null,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'value');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value');
                 }
             }
         }

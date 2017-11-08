@@ -13,17 +13,17 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
 
         var items = [{
             xtype: 'hidden',
-            name:  _.generateFieldName(this.index, 'type'),
+            name:  _.generateFieldName(this.sectionId, this.index, 'type'),
             value: 'event',
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'type');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'type');
                 }
             }
         },
         {
             xtype: 'tagfield',
-            name: _.generateFieldName(this.index, 'fields'),
+            name: _.generateFieldName(this.sectionId, this.index, 'fields'),
             fieldLabel: t('form_builder_trigger_event_fields'),
             queryDelay: 0,
             stacked: true,
@@ -39,14 +39,14 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'fields');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'fields');
                 }
             }
         },
         {
             xtype: 'textfield',
-            name:  _.generateFieldName(this.index, 'event'),
+            name:  _.generateFieldName(this.sectionId, this.index, 'event'),
             fieldLabel: t('form_builder_trigger_event_event'),
             anchor: '100%',
             labelAlign: 'top',
@@ -56,8 +56,8 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
             value: this.data ? this.data.event : null,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'event');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'event');
                 }
             }
         }];

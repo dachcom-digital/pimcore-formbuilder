@@ -21,8 +21,8 @@ Formbuilder.comp.conditionalLogic.action.abstract = Class.create({
         return [];
     },
 
-    generateFieldName: function (index, name) {
-        return 'cl.' + this.sectionId + '.action.' + index + '.' + name;
+    generateFieldName: function (sectionId, index, name) {
+        return 'cl.' + sectionId + '.action.' + index + '.' + name;
     },
 
     getTopBar: function (name, index, parent, data, iconCls) {

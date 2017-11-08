@@ -24,17 +24,17 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
 
         var items = [{
             xtype: 'hidden',
-            name: _.generateFieldName(this.index, 'type'),
+            name: _.generateFieldName(this.sectionId, this.index, 'type'),
             value: 'toggle',
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'type');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'type');
                 }
             }
         },
         {
             xtype: 'tagfield',
-            name: _.generateFieldName(this.index, 'fields'),
+            name: _.generateFieldName(this.sectionId, this.index, 'fields'),
             fieldLabel: t('form_builder_toggle_fields'),
             queryDelay: 0,
             stacked: true,
@@ -50,15 +50,15 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'fields');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'fields');
                 }
             }
         },
         {
             xtype: 'combo',
             name: 'condition_type',
-            name: _.generateFieldName(this.index, 'state'),
+            name: _.generateFieldName(this.sectionId, this.index, 'state'),
             fieldLabel: t('form_builder_toggle_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -74,8 +74,8 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'state');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'state');
                 }
             }
         }];

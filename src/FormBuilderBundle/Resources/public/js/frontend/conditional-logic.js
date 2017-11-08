@@ -40,7 +40,6 @@ var formBuilderConditionalLogic = (function () {
                 }
 
                 $.each(data, function (blockId, block) {
-
                     var dependingStructure = [];
                     var actions = block.action;
                     $.each(actions, function (i, action) {

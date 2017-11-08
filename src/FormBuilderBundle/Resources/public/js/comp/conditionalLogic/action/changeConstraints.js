@@ -18,17 +18,17 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
 
         var items = [{
             xtype: 'hidden',
-            name: _.generateFieldName(this.index, 'type'),
+            name: _.generateFieldName(this.sectionId, this.index, 'type'),
             value: 'changeConstraints',
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'type');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'type');
                 }
             }
         },
         {
             xtype: 'tagfield',
-            name: _.generateFieldName(this.index, 'fields'),
+            name: _.generateFieldName(this.sectionId, this.index, 'fields'),
             fieldLabel: t('form_builder_toggle_fields'),
             queryDelay: 0,
             stacked: true,
@@ -44,14 +44,14 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'fields');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'fields');
                 }
             }
         },
         {
             xtype: 'combo',
-            name: _.generateFieldName(this.index, 'validation'),
+            name: _.generateFieldName(this.sectionId, this.index, 'validation'),
             fieldLabel: t('form_builder_constraint_type'),
             queryDelay: 0,
             displayField: 'label',
@@ -67,8 +67,8 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
             allowBlank: false,
             flex: 1,
             listeners: {
-                updateIndexName: function(index) {
-                    this.name = _.generateFieldName(index, 'validation');
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'validation');
                 }
             }
         }

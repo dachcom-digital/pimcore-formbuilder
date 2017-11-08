@@ -16,7 +16,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     sectionId: 0,
 
     initialize: function (sectionData, sectionId, formBuilder) {
-
+        var _ = this;
         this.formBuilder = formBuilder;
         this.sectionId = sectionId;
 
@@ -27,6 +27,12 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         this.panel = new Ext.form.FieldContainer({
             width: '100%',
             style: 'margin-top: 10px; border: 1px solid #565d56;',
+            listeners: {
+                updateSectionId: function(index) {
+                    _.sectionId = index;
+                    _.updateIndex();
+                }
+            }
         });
     },
 
@@ -190,27 +196,33 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         //we need to re-add all elements to avoid index gaps on saving.
         if (type === 'condition') {
             this.conditionsContainer.remove(Ext.getCmp(index));
-            this.conditionsContainer.items.each(function(component, index) {
-                component.items.each(function(condition){
-                    if(condition.items.items.length > 0) {
-                        Ext.Array.each(condition.items.items, function (field) {
-                            field.fireEvent('updateIndexName', index);
-                        });
-                    }
-                });
-            });
+            this.updateIndex();
         } else if (type === 'action') {
             this.actionsContainer.remove(Ext.getCmp(index));
-            this.actionsContainer.items.each(function(component, index) {
-                component.items.each(function(action){
-                    if(action.items.items.length > 0) {
-                        Ext.Array.each(action.items.items, function (field) {
-                            field.fireEvent('updateIndexName', index);
-                        });
-                    }
-                });
-            });
+            this.updateIndex();
         }
+    },
+
+    updateIndex: function() {
+        var _ = this;
+        this.conditionsContainer.items.each(function(component, index) {
+            component.items.each(function(condition){
+                if(condition.items.items.length > 0) {
+                    Ext.Array.each(condition.items.items, function (field) {
+                        field.fireEvent('updateIndexName', _.sectionId, index);
+                    });
+                }
+            });
+        });
+        this.actionsContainer.items.each(function(component, index) {
+            component.items.each(function(action){
+                if(action.items.items.length > 0) {
+                    Ext.Array.each(action.items.items, function (field) {
+                        field.fireEvent('updateIndexName', _.sectionId, index);
+                    });
+                }
+            });
+        });
     },
 
     /**
