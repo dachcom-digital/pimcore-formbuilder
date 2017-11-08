@@ -6,9 +6,10 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
 
     getItem: function () {
         var _ = this;
+
         var constraintTypesStore = Ext.create('Ext.data.Store', {
-            fields: ['label', 'value'],
-            data: []
+            fields: ['label', 'id'],
+            data: this.panel.getFormConstraints()
         });
 
         var fieldStore = Ext.create('Ext.data.Store', {
@@ -50,20 +51,20 @@ Formbuilder.comp.conditionalLogic.action.changeConstraints = Class.create(Formbu
             }
         },
         {
-            xtype: 'combo',
+            xtype: 'tagfield',
             name: _.generateFieldName(this.sectionId, this.index, 'validation'),
             fieldLabel: t('form_builder_constraint_type'),
             queryDelay: 0,
+            stacked: true,
             displayField: 'label',
-            valueField: 'value',
+            valueField: 'id',
             mode: 'local',
             labelAlign: 'top',
             store: constraintTypesStore,
-            editable: true,
-            triggerAction: 'all',
+            editable: false,
+            filterPickList: true,
             anchor: '100%',
             value: this.data ? this.data.validation : null,
-            summaryDisplay: true,
             allowBlank: false,
             flex: 1,
             listeners: {

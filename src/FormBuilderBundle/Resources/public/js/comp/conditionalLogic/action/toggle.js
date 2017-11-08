@@ -66,7 +66,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             mode: 'local',
             labelAlign: 'top',
             store: toggleTypesStore,
-            editable: true,
+            editable: false,
             triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.state : null,

@@ -230,5 +230,12 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      */
     getFormFields: function () {
         return this.formBuilder.getData();
+    },
+
+    /**
+     *
+     */
+    getFormConstraints: function () {
+        return this.formBuilder.availableConstraints;
     }
 });
