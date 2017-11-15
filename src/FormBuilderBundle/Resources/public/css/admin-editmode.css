@@ -11,6 +11,51 @@
 }
 
 /* Form Edit Window */
+
+/* Grid */
+.x-window .form-config-window .fb-row {
+    margin-left: -10px;
+    margin-right: -10px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.x-window .form-config-window .fb-form-group {
+    padding-bottom:5px;
+}
+
+.x-window .form-config-window .fb-form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+}
+
+.x-window .form-config-window .fb-row:before {
+    content: " ";
+    display: table;
+}
+
+
+.x-window .form-config-window .fb-col {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom:5px;
+    position: relative;
+}
+
+.x-window .form-config-window .fb-col-full {
+    width: 100%;
+}
+.x-window .form-config-window .fb-col-half {
+    width: 50%;
+}
+
+
+/* Others */
 .x-window .form-config-window {
     padding:0;
 }
