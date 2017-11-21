@@ -35,6 +35,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Events](docs/70_Events.md)
 - [Custom Fields with Events](docs/71_CustomFields.md)
 - [Mastering File Uploads](docs/80_FileUpload.md)
+- [Conditional Logic](docs/81_ConditionalLogic.md)
 - [Frontend Tips](docs/90_FrontendTips.md)
 
 ## Upgrade Info
