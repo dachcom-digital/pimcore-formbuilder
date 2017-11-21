@@ -257,6 +257,32 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+
+                ->arrayNode('conditional_logic')
+                    ->children()
+                        ->arrayNode('action')
+                        ->useAttributeAsKey('id')
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('class')->defaultValue(NULL)->end()
+                                    ->scalarNode('name')->isRequired()->end()
+                                    ->scalarNode('icon')->isRequired()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('condition')
+                        ->useAttributeAsKey('id')
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('class')->defaultValue(NULL)->end()
+                                    ->scalarNode('name')->isRequired()->end()
+                                    ->scalarNode('icon')->isRequired()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+
             ->end();
 
         return $treeBuilder;

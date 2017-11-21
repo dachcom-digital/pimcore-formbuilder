@@ -1,8 +1,6 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.action');
-pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.class');
-Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
-
-    name: 'toggle class',
+pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.changeValue');
+Formbuilder.comp.conditionalLogic.action.changeValue = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
 
     getItem: function () {
         var _ = this;
@@ -14,7 +12,7 @@ Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.c
         var items = [{
             xtype: 'hidden',
             name: _.generateFieldName(this.sectionId, this.index, 'type'),
-            value: 'class',
+            value: this.fieldConfiguration.identifier,
             listeners: {
                 updateIndexName: function(sectionId, index) {
                     this.name = _.generateFieldName(sectionId, index, 'type');
@@ -24,7 +22,8 @@ Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.c
         {
             xtype: 'tagfield',
             name: _.generateFieldName(this.sectionId, this.index, 'fields'),
-            fieldLabel: t('form_builder_toggle_class_fields'),
+            fieldLabel: t('form_builder_change_value_fields'),
+            style: 'margin: 0 5px 0 0',
             queryDelay: 0,
             stacked: true,
             displayField: 'display_name',
@@ -36,7 +35,7 @@ Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.c
             triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.fields : null,
-            allowBlank: false,
+            allowBlank: true,
             flex: 1,
             listeners: {
                 updateIndexName: function(sectionId, index) {
@@ -46,17 +45,17 @@ Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.c
         },
         {
             xtype: 'textfield',
-            name: _.generateFieldName(this.sectionId, this.index, 'class'),
-            fieldLabel: t('form_builder_toggle_class_value'),
+            name: _.generateFieldName(this.sectionId, this.index, 'value'),
+            fieldLabel: t('form_builder_change_value_value'),
             anchor: '100%',
             labelAlign: 'top',
             summaryDisplay: true,
-            allowBlank: false,
-            value: this.data ? this.data.class : null,
+            allowBlank: true,
+            value: this.data ? this.data.value : null,
             flex: 1,
             listeners: {
                 updateIndexName: function(sectionId, index) {
-                    this.name = _.generateFieldName(sectionId, index, 'class');
+                    this.name = _.generateFieldName(sectionId, index, 'value');
                 }
             }
         }];
@@ -76,7 +75,7 @@ Formbuilder.comp.conditionalLogic.action.class = Class.create(Formbuilder.comp.c
                 forceLayout: true,
                 style: 'margin: 10px 0 0 0',
                 bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
-                tbar: this.getTopBar(_.name, myId, 'form_builder_icon_text'),
+                tbar: this.getTopBar(myId),
                 items: compositeField,
                 listeners: {}
             });

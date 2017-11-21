@@ -2,7 +2,9 @@
 
 namespace FormBuilderBundle\DependencyInjection;
 
+use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -21,6 +23,20 @@ class FormBuilderExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__.'/../Resources/config']));
         $loader->load('services.yml');
+
+        $conditionalLogicDefinition = $container->getDefinition(ConditionalLogicRegistry::class);
+
+        foreach($config['conditional_logic']['action'] as $identifier => $action) {
+            $class = !is_null($action['class']) ? new Reference($action['class']) : NULL;
+            unset($action['class']);
+            $conditionalLogicDefinition->addMethodCall('register', [$identifier, $class, 'action', $action]);
+        }
+
+        foreach($config['conditional_logic']['condition'] as $identifier => $condition) {
+            $class = !is_null($condition['class']) ? new Reference($condition['class']) : NULL;
+            unset($condition['class']);
+            $conditionalLogicDefinition->addMethodCall('register', [$identifier, $class, 'condition', $condition]);
+        }
 
         $configManagerDefinition = $container->getDefinition(BundleConfiguration::class);
         $configManagerDefinition->addMethodCall('setConfig', [ $config ]);

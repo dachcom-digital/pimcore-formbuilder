@@ -41,6 +41,12 @@ var formBuilderConditionalLogic = (function () {
 
                 $.each(data, function (blockId, block) {
                     var dependingStructure = [];
+
+                    //invalid conditional logic stack.
+                    if(block === null) {
+                        return true;
+                    }
+
                     var actions = block.action;
                     $.each(actions, function (i, action) {
                         var actionFields = action.fields;
@@ -51,7 +57,6 @@ var formBuilderConditionalLogic = (function () {
                         dependingStructure.push({'action': action, 'condition': block.condition, 'fields': dependFields});
                     }.bind(this))
 
-                    //console.log(dependingStructure);
                     //create dependency structure for each group.
                     var formSelector = 'form[name="' + $form.prop('name') + '"]';
                     $.each(dependingStructure, function (i, dependency) {
@@ -65,9 +70,14 @@ var formBuilderConditionalLogic = (function () {
                         }
 
                         var actionOptions = _.generateActionOptions(dependency.action);
+
+                        //no valid action found - skip field!
+                        if(actionOptions === false) {
+                            return true;
+                        }
                         var $conditionField = $form.find(formDependingSelector.join(',')).dependsOn(conditionSelector, actionOptions);
 
-                        console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:' , actionOptions);
+                        //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:' , actionOptions);
 
                     });
 
@@ -88,7 +98,7 @@ var formBuilderConditionalLogic = (function () {
                 var conditionType = condition.type,
                     qualifiers = {};
                 switch (conditionType) {
-                    case 'value':
+                    case 'elementValue':
                         switch (condition.comparator) {
                             case 'is_greater':
                                 qualifiers['greater'] = function (val) {
@@ -115,7 +125,7 @@ var formBuilderConditionalLogic = (function () {
                         el = $(fieldSelector);
 
                     //it's probably a checkbox/radio. get the one with valid value - if given!
-                    if (el.length > 1 && condition.type === 'value' && condition.value !== '') {
+                    if (el.length > 1 && condition.type === 'elementValue' && condition.value !== '') {
                         fieldSelector += '[value="' + condition.value + '"]';
                     }
 
@@ -127,49 +137,59 @@ var formBuilderConditionalLogic = (function () {
         },
 
         generateActionOptions: function (action) {
-            var options = {};
-            var actionType = action.type;
+            var options = false,
+                actionType = action.type;
             switch (actionType) {
-                case 'toggle':
+                case 'toggleElement':
                     options = {
                         hide: false,
                         disable: false,
                         onEnable: function (ev, $el, prevObject) {
-                            $el.show().prev('label').show().parent('label').show();
+                            if(action.state === 'hide') {
+                                $el.val('');
+                                $el.hide().prev('label').hide().parent('label').hide();
+                            } else {
+                                $el.show().prev('label').show().parent('label').show();
+                            }
                         },
                         onDisable: function (ev, $el, prevObject) {
-                            $el.hide().prev('label').hide().parent('label').hide();
+                            if(action.state === 'show') {
+                                $el.val('');
+                                $el.hide().prev('label').hide().parent('label').hide();
+                            } else {
+                                $el.show().prev('label').show().parent('label').show();
+                            }
                         }
                     }
                     break;
-                case 'value':
+                case 'changeValue':
                     options = {
                         hide: false,
                         disable: false,
                         valueOnEnable: action.value
                     }
                     break;
-                case 'event':
+                case 'triggerEvent':
                     options = {
                         hide: false,
                         disable: false,
                         onEnable: function (ev, $el) {
-                            console.log('formbuilder.cl.event.enable.' + action.event, $el);
-                            $el.trigger('formbuilder.cl.event.enable.' + action.event);
+                            $el.trigger(action.event + '.enable');
                         },
                         onDisable: function (ev, $el) {
-                            console.log('formbuilder.cl.event.disable.' + action.event, $el);
-                            $el.trigger('formbuilder.cl.event.disable.' + action.event);
+                            $el.trigger(action.event + '.disable');
                         }
                     }
                     break;
-                case 'class':
+                case 'toggleClass':
                     options = {
                         hide: false,
                         disable: false,
                         toggleClass: action.class
                     }
                     break;
+                default:
+                    options = false
             }
 
             return options;

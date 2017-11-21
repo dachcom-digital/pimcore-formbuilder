@@ -1,0 +1,16 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # registry: action and condition classes
+    FormBuilderBundle\Registry\ConditionalLogicRegistry:
+        arguments:
+            $actionInterface: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ActionInterface'
+            $conditionInterface: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ConditionInterface'
+
+    FormBuilderBundle\Validation\ConditionalLogic\Processor\ConditionalLogicProcessor: ~
+
+    FormBuilderBundle\Validation\ConstraintConnector: ~

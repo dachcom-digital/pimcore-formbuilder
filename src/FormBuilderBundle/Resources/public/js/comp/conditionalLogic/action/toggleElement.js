@@ -1,18 +1,16 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.action');
-pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.toggle');
-Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
-
-    name: 'toggle field',
+pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.toggleElement');
+Formbuilder.comp.conditionalLogic.action.toggleElement = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
 
     getItem: function () {
         var _ = this;
         var toggleTypesStore = Ext.create('Ext.data.Store', {
             fields: ['label', 'value'],
             data: [{
-                label: 'Show',
+                label: t('form_builder_toggle_element_show'),
                 value: 'show'
             }, {
-                label: 'Hide',
+                label: t('form_builder_toggle_element_hide'),
                 value: 'hide'
             }]
         });
@@ -25,7 +23,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
         var items = [{
             xtype: 'hidden',
             name: _.generateFieldName(this.sectionId, this.index, 'type'),
-            value: 'toggle',
+            value: this.fieldConfiguration.identifier,
             listeners: {
                 updateIndexName: function(sectionId, index) {
                     this.name = _.generateFieldName(sectionId, index, 'type');
@@ -35,7 +33,8 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
         {
             xtype: 'tagfield',
             name: _.generateFieldName(this.sectionId, this.index, 'fields'),
-            fieldLabel: t('form_builder_toggle_fields'),
+            fieldLabel: t('form_builder_toggle_element_fields'),
+            style: 'margin: 0 5px 0 0',
             queryDelay: 0,
             stacked: true,
             displayField: 'display_name',
@@ -59,7 +58,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
             xtype: 'combo',
             name: 'condition_type',
             name: _.generateFieldName(this.sectionId, this.index, 'state'),
-            fieldLabel: t('form_builder_toggle_type'),
+            fieldLabel: t('form_builder_toggle_element_state'),
             queryDelay: 0,
             displayField: 'label',
             valueField: 'value',
@@ -95,7 +94,7 @@ Formbuilder.comp.conditionalLogic.action.toggle = Class.create(Formbuilder.comp.
                 forceLayout: true,
                 style: 'margin: 10px 0 0 0',
                 bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
-                tbar: this.getTopBar(_.name, myId, 'form_builder_icon_text'),
+                tbar: this.getTopBar(myId),
                 items: compositeField,
                 listeners: {}
             });

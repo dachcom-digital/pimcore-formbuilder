@@ -175,8 +175,11 @@ class SettingsController extends AdminController
 
         $formName = $request->get('form_name');
         $formConfig = json_decode($request->get('form_config'), TRUE);
-        $formConditionalLogic = json_decode($request->get('form_cl'), TRUE);
         $formFields = json_decode($request->get('form_fields'), TRUE);
+        $formConditionalLogic = json_decode($request->get('form_cl'), TRUE);
+        if (isset($formConditionalLogic['cl'])) {
+            $formConditionalLogic = $formConditionalLogic['cl'];
+        }
 
         if ($formName != $storedFormName) {
             $formName = $this->getSaveName($formName);
@@ -185,7 +188,7 @@ class SettingsController extends AdminController
 
         $data = [
             'form_name'              => $formName,
-            //'form_date'   => time(),
+            //'form_date'            => time(),
             'form_fields'            => $backendFormBuilder->generateStoreFields($formFields),
             'form_config'            => $formConfig,
             'form_conditional_logic' => $formConditionalLogic,

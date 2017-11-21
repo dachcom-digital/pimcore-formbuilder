@@ -1,0 +1,8 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ElementValueCondition: ~

@@ -17,6 +17,8 @@ Formbuilder.comp.form = Class.create({
 
     formConditionalsStructured: {},
 
+    formConditionalsStore: {},
+
     formFields: null,
 
     formIsValid: false,
@@ -48,6 +50,8 @@ Formbuilder.comp.form = Class.create({
         this.formConfig = formData.config.length === 0 ? {} : formData.config;
 
         this.formConditionalsStructured = formData.conditional_logic;
+
+        this.formConditionalsStore = formData.conditional_logic_store;
 
         this.formFields = formData.fields;
 
@@ -683,7 +687,7 @@ Formbuilder.comp.form = Class.create({
         } catch (e) {}
 
         //add conditional logic field
-        var clBuilder = new Formbuilder.comp.conditionalLogic.builder(this.formConditionalsStructured, this);
+        var clBuilder = new Formbuilder.comp.conditionalLogic.builder(this.formConditionalsStructured, this.formConditionalsStore, this);
         this.clBuilder = clBuilder.getLayout();
         this.rootPanel = new Ext.form.FormPanel({
 

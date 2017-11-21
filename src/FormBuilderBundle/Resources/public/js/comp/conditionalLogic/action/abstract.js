@@ -10,11 +10,14 @@ Formbuilder.comp.conditionalLogic.action.abstract = Class.create({
 
     index: 0,
 
-    initialize: function (panel, data, sectionId, index) {
+    fieldConfiguration: {},
+
+    initialize: function (panel, data, sectionId, index, fieldConfiguration) {
         this.panel = panel;
         this.data = data;
         this.sectionId = sectionId;
         this.index = index;
+        this.fieldConfiguration = fieldConfiguration;
     },
 
     getItem: function () {
@@ -25,16 +28,16 @@ Formbuilder.comp.conditionalLogic.action.abstract = Class.create({
         return 'cl.' + sectionId + '.action.' + index + '.' + name;
     },
 
-    getTopBar: function (name, index, parent, data, iconCls) {
+    getTopBar: function (index) {
         var _ = this;
         return [
             {
-                iconCls: iconCls,
+                iconCls: this.fieldConfiguration.icon,
                 disabled: true
             },
             {
                 xtype: 'tbtext',
-                text: "<b>" + name + "</b>"
+                text: "<b>" + t(this.fieldConfiguration.name) + "</b>"
             },
             '->',
             {

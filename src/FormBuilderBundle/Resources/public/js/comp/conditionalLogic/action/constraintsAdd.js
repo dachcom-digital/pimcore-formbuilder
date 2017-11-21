@@ -1,11 +1,15 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.action');
-pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.event');
-Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
-
-    name: 'event',
+pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.constraintsAdd');
+Formbuilder.comp.conditionalLogic.action.constraintsAdd = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
 
     getItem: function () {
         var _ = this;
+
+        var constraintTypesStore = Ext.create('Ext.data.Store', {
+            fields: ['label', 'id'],
+            data: this.panel.getFormConstraints()
+        });
+
         var fieldStore = Ext.create('Ext.data.Store', {
             fields: ['name', 'display_name'],
             data: this.panel.getFormFields().fields
@@ -13,8 +17,8 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
 
         var items = [{
             xtype: 'hidden',
-            name:  _.generateFieldName(this.sectionId, this.index, 'type'),
-            value: 'event',
+            name: _.generateFieldName(this.sectionId, this.index, 'type'),
+            value: this.fieldConfiguration.identifier,
             listeners: {
                 updateIndexName: function(sectionId, index) {
                     this.name = _.generateFieldName(sectionId, index, 'type');
@@ -24,7 +28,8 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
         {
             xtype: 'tagfield',
             name: _.generateFieldName(this.sectionId, this.index, 'fields'),
-            fieldLabel: t('form_builder_trigger_event_fields'),
+            fieldLabel: t('form_builder_constraints_fields'),
+            style: 'margin: 0 5px 0 0',
             queryDelay: 0,
             stacked: true,
             displayField: 'display_name',
@@ -33,7 +38,7 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
             labelAlign: 'top',
             store: fieldStore,
             editable: false,
-            triggerAction: 'all',
+            filterPickList: true,
             anchor: '100%',
             value: this.data ? this.data.fields : null,
             allowBlank: false,
@@ -45,22 +50,29 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
             }
         },
         {
-            xtype: 'textfield',
-            name:  _.generateFieldName(this.sectionId, this.index, 'event'),
-            fieldLabel: t('form_builder_trigger_event_event'),
-            anchor: '100%',
+            xtype: 'tagfield',
+            name: _.generateFieldName(this.sectionId, this.index, 'validation'),
+            fieldLabel: t('form_builder_constraints_type'),
+            queryDelay: 0,
+            stacked: true,
+            displayField: 'label',
+            valueField: 'id',
+            mode: 'local',
             labelAlign: 'top',
-            summaryDisplay: true,
+            store: constraintTypesStore,
+            editable: false,
+            filterPickList: true,
+            anchor: '100%',
+            value: this.data ? this.data.validation : null,
             allowBlank: false,
-            maskRe: /[a-zA-Z0-9.]+/,
-            value: this.data ? this.data.event : null,
             flex: 1,
             listeners: {
                 updateIndexName: function(sectionId, index) {
-                    this.name = _.generateFieldName(sectionId, index, 'event');
+                    this.name = _.generateFieldName(sectionId, index, 'validation');
                 }
             }
-        }];
+        }
+        ];
 
         var compositeField = new Ext.form.FieldContainer({
             layout: 'hbox',
@@ -77,7 +89,7 @@ Formbuilder.comp.conditionalLogic.action.event = Class.create(Formbuilder.comp.c
                 forceLayout: true,
                 style: 'margin: 10px 0 0 0',
                 bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
-                tbar: this.getTopBar(_.name, myId, 'form_builder_icon_text'),
+                tbar: this.getTopBar(myId),
                 items: compositeField,
                 listeners: {}
             });

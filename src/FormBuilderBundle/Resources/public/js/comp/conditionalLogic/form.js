@@ -15,10 +15,13 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
     sectionId: 0,
 
-    initialize: function (sectionData, sectionId, formBuilder) {
+    conditionalStore: [],
+
+    initialize: function (sectionData, sectionId, conditionalStore, formBuilder) {
         var _ = this;
         this.formBuilder = formBuilder;
         this.sectionId = sectionId;
+        this.conditionalStore = conditionalStore;
 
         if (sectionData) {
             this.sectionData = sectionData;
@@ -26,6 +29,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
         this.panel = new Ext.form.FieldContainer({
             width: '100%',
+            cls: 'form_builder_delete_conditional_section_container',
             style: 'margin-top: 10px; border: 1px solid #565d56;',
             listeners: {
                 updateSectionId: function(index) {
@@ -57,20 +61,13 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     getConditionContainer: function () {
 
         var _ = this;
-        var conditionMenu = []
-        conditions = [
-            {
-                name: 'Field Value',
-                method: 'value',
-                icon: 'form_builder_icon_text',
-            }
-        ];
+        var conditionMenu = [];
 
-        Ext.each(conditions, function (condition) {
+        Ext.Array.each(this.conditionalStore.conditions, function (condition) {
             conditionMenu.push({
                 iconCls: condition.icon,
-                text: condition.name,
-                handler: _.addCondition.bind(_, condition.method)
+                text: t(condition.name),
+                handler: _.addCondition.bind(_, condition.identifier)
             });
         });
 
@@ -91,40 +88,13 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     getActionContainer: function () {
 
         var _ = this;
-        var actionMenu = []
-        conditions = [
-            {
-                name: 'show / hide element',
-                method: 'toggle',
-                icon: 'form_builder_icon_text',
-            },
-            {
-                name: 'change validation',
-                method: 'changeConstraints',
-                icon: 'form_builder_icon_text',
-            },
-            {
-                name: 'change value',
-                method: 'value',
-                icon: 'form_builder_icon_text',
-            },
-            {
-                name: 'trigger event',
-                method: 'event',
-                icon: 'form_builder_icon_text',
-            },
-            {
-                name: 'change class',
-                method: 'class',
-                icon: 'form_builder_icon_text',
-            }
-        ];
+        var actionMenu = [];
 
-        Ext.each(conditions, function (action) {
+        Ext.Array.each(this.conditionalStore.actions, function (action) {
             actionMenu.push({
                 iconCls: action.icon,
-                text: action.name,
-                handler: _.addAction.bind(_, action.method)
+                text: t(action.name),
+                handler: _.addAction.bind(_, action.identifier)
             });
         });
 
@@ -166,11 +136,27 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param data
      */
     addCondition: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](this, data, this.sectionId, this.conditionsContainer.items.getCount()),
-            item = itemClass.getItem();
-        this.conditionsContainer.add(item);
-        item.updateLayout();
-        this.conditionsContainer.updateLayout();
+        try {
+
+            var configuration = Ext.Array.filter(this.conditionalStore.conditions, function(item) {
+                return item.identifier === type;
+            });
+
+            if(configuration.length !== 1) {
+                throw 'invalid or no configuration found';
+            }
+
+            console.log(this.conditionsContainer.items.getCount());
+            var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](
+                this, data, this.sectionId, this.conditionsContainer.items.getCount(), configuration[0]
+                ),
+                item = itemClass.getItem();
+            this.conditionsContainer.add(item);
+            item.updateLayout();
+            this.conditionsContainer.updateLayout();
+        } catch(e) {
+            console.error('condition type "' + type + '" error:', e);
+        }
     },
 
     /**
@@ -179,11 +165,26 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param data
      */
     addAction: function (type, data) {
-        var itemClass = new Formbuilder.comp.conditionalLogic.action[type](this, data, this.sectionId, this.actionsContainer.items.getCount()),
-            item = itemClass.getItem();
-        this.actionsContainer.add(item);
-        item.updateLayout();
-        this.actionsContainer.updateLayout();
+        try {
+
+            var configuration = Ext.Array.filter(this.conditionalStore.actions, function(item) {
+                return item.identifier === type;
+            });
+
+            if(configuration.length !== 1) {
+                throw 'invalid or no configuration found';
+            }
+
+            var itemClass = new Formbuilder.comp.conditionalLogic.action[type](
+                this, data, this.sectionId, this.actionsContainer.items.getCount(), configuration[0]
+                ),
+                item = itemClass.getItem();
+            this.actionsContainer.add(item);
+            item.updateLayout();
+            this.actionsContainer.updateLayout();
+        } catch(e) {
+            console.error('action type "' + type + '" error:', e);
+        }
     },
 
     /**
@@ -192,7 +193,6 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      * @param index
      */
     removeField: function (type, index) {
-
         //we need to re-add all elements to avoid index gaps on saving.
         if (type === 'condition') {
             this.conditionsContainer.remove(Ext.getCmp(index));
@@ -225,16 +225,10 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         });
     },
 
-    /**
-     *
-     */
     getFormFields: function () {
         return this.formBuilder.getData();
     },
 
-    /**
-     *
-     */
     getFormConstraints: function () {
         return this.formBuilder.availableConstraints;
     }

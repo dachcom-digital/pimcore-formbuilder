@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Backend\Form;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
+use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
@@ -32,6 +33,10 @@ class Builder
      * @var OptionsTransformerRegistry
      */
     protected $optionsTransformerRegistry;
+    /**
+     * @var ConditionalLogicRegistry
+     */
+    protected $conditionalLogicRegistry;
 
     /**
      * Builder constructor.
@@ -40,17 +45,20 @@ class Builder
      * @param TemplateManager            $templateManager
      * @param Translator                 $translator
      * @param OptionsTransformerRegistry $optionsTransformerRegistry
+     * @param ConditionalLogicRegistry   $conditionalLogicRegistry
      */
     public function __construct(
         Configuration $configuration,
         TemplateManager $templateManager,
         Translator $translator,
-        OptionsTransformerRegistry $optionsTransformerRegistry
+        OptionsTransformerRegistry $optionsTransformerRegistry,
+        ConditionalLogicRegistry $conditionalLogicRegistry
     ) {
         $this->configuration = $configuration;
         $this->templateManager = $templateManager;
         $this->translator = $translator;
         $this->optionsTransformerRegistry = $optionsTransformerRegistry;
+        $this->conditionalLogicRegistry = $conditionalLogicRegistry;
     }
 
     /**
@@ -63,11 +71,10 @@ class Builder
     public function generateExtJsForm(FormInterface $form)
     {
         $data = [
-            'id'                => $form->getId(),
-            'name'              => $form->getName(),
-            'date'              => $form->getDate(),
-            'config'            => $form->getConfig(),
-            'conditional_logic' => $form->getConditionalLogic()
+            'id'     => $form->getId(),
+            'name'   => $form->getName(),
+            'date'   => $form->getDate(),
+            'config' => $form->getConfig(),
         ];
 
         $fieldData = [];
@@ -80,6 +87,8 @@ class Builder
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
         $data['validation_constraints'] = $this->getValidationConstraints();
+        $data['conditional_logic'] = $this->generateConditionalLogicStructure($form->getConditionalLogic());
+        $data['conditional_logic_store'] = $this->generateConditionalLogicStore();
 
         return $data;
     }
@@ -147,6 +156,51 @@ class Builder
         }
 
         return $fieldStructure;
+    }
+
+    /**
+     * @param $conditionalData
+     * @return array
+     */
+    private function generateConditionalLogicStructure($conditionalData)
+    {
+        $formConditionalLogicData = [];
+        if (!empty($conditionalData)) {
+            $formConditionalLogicData['cl'] = $conditionalData;
+        }
+
+        return $formConditionalLogicData;
+    }
+
+    /**
+     * @return array
+     */
+    private function generateConditionalLogicStore()
+    {
+        $actions = [];
+        foreach ($this->conditionalLogicRegistry->getAllConfiguration('action') as $actionName => $action) {
+            $actions[] = [
+                'identifier' => $actionName,
+                'name'       => $action['name'],
+                'icon'       => $action['icon'],
+            ];
+        }
+
+        $conditions = [];
+        foreach ($this->conditionalLogicRegistry->getAllConfiguration('condition') as $conditionName => $condition) {
+            $conditions[] = [
+                'identifier' => $conditionName,
+                'name'       => $condition['name'],
+                'icon'       => $condition['icon'],
+            ];
+        }
+
+        $formConditionalLogicData = [
+            'actions'    => $actions,
+            'conditions' => $conditions,
+        ];
+
+        return $formConditionalLogicData;
     }
 
     /**

@@ -21,7 +21,7 @@ class DynamicFormType extends AbstractType
                 'data' => $options['current_form_id'],
             ])
             ->add('formCl', HiddenType::class, [
-                'data' => isset($options['conditional_logic']['cl']) ? json_encode($options['conditional_logic']['cl']) : NULL,
+                'data' => !empty($options['conditional_logic']) ? json_encode($options['conditional_logic']) : NULL,
             ])
             ->add('inputUserName', HoneypotType::class);
     }

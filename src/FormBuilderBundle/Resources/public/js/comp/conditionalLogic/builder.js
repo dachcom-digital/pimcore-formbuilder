@@ -11,10 +11,13 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
 
     conditionalData: [],
 
-    initialize: function (conditionalData, formBuilder) {
+    conditionalStore: [],
+
+    initialize: function (conditionalData, conditionalStore, formBuilder) {
         var _ = this;
         this.formBuilder = formBuilder;
         this.conditionalData = conditionalData;
+        this.conditionalStore = conditionalStore;
         this.panel = new Ext.form.FieldSet({
             title: t('form_builder_conditional_logic'),
             collapsible: false,
@@ -50,25 +53,31 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
 
     addConditionalSection: function (data) {
 
-        var clFieldClass = new Formbuilder.comp.conditionalLogic.form(data, this.sectionId, this.formBuilder),
+        var clFieldClass = new Formbuilder.comp.conditionalLogic.form(data, this.sectionId, this.conditionalStore, this.formBuilder),
             layout = clFieldClass.getLayout();
 
         var conditionFieldSet = new Ext.form.FieldSet({
             hideLabel: false,
-            title: t('formbuilder_conditional_section'),
+            cls: 'form_builder_conditional_section',
+            title: t('form_builder_conditional_section'),
             style: 'padding-bottom:5px; margin-bottom:30px; background: rgba(117, 139, 181, 0.2);',
             items: [layout]
         });
 
         conditionFieldSet.add([{
             xtype: 'button',
-            text: t('formbuilder_delete_conditional_section'),
+            text: t('form_builder_delete_conditional_section'),
             iconCls: 'pimcore_icon_delete',
             handler: function (conditionFieldSet, el) {
                 this.panel.remove(conditionFieldSet);
-                this.panel.items.items[1].items.each(function (item, index) {
-                    item.fireEvent('updateSectionId', index);
-                });
+                var sectionFieldSets = this.panel.query('fieldset[cls=form_builder_conditional_section]');
+                this.sectionId = sectionFieldSets.length;
+                Ext.Array.each(sectionFieldSets, function(fieldSet, sIndex) {
+                    var sectionFieldContainer = fieldSet.query('fieldcontainer[cls=form_builder_delete_conditional_section_container]');
+                    Ext.Array.each(sectionFieldContainer, function(container, cIndex) {
+                        container.fireEvent('updateSectionId', sIndex);
+                    });
+                })
             }.bind(this, conditionFieldSet)
         }]);
 

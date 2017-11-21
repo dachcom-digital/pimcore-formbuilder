@@ -1,8 +1,6 @@
 pimcore.registerNS('Formbuilder.comp.conditionalLogic.action');
-pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.value');
-Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
-
-    name: 'value',
+pimcore.registerNS('Formbuilder.comp.conditionalLogic.action.triggerEvent');
+Formbuilder.comp.conditionalLogic.action.triggerEvent = Class.create(Formbuilder.comp.conditionalLogic.action.abstract, {
 
     getItem: function () {
         var _ = this;
@@ -13,8 +11,8 @@ Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.c
 
         var items = [{
             xtype: 'hidden',
-            name: _.generateFieldName(this.sectionId, this.index, 'type'),
-            value: 'value',
+            name:  _.generateFieldName(this.sectionId, this.index, 'type'),
+            value: this.fieldConfiguration.identifier,
             listeners: {
                 updateIndexName: function(sectionId, index) {
                     this.name = _.generateFieldName(sectionId, index, 'type');
@@ -24,7 +22,8 @@ Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.c
         {
             xtype: 'tagfield',
             name: _.generateFieldName(this.sectionId, this.index, 'fields'),
-            fieldLabel: t('form_builder_change_value_fields'),
+            fieldLabel: t('form_builder_trigger_event_fields'),
+            style: 'margin: 0 5px 0 0',
             queryDelay: 0,
             stacked: true,
             displayField: 'display_name',
@@ -36,7 +35,7 @@ Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.c
             triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.fields : null,
-            allowBlank: true,
+            allowBlank: false,
             flex: 1,
             listeners: {
                 updateIndexName: function(sectionId, index) {
@@ -46,17 +45,18 @@ Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.c
         },
         {
             xtype: 'textfield',
-            name: _.generateFieldName(this.sectionId, this.index, 'value'),
-            fieldLabel: t('form_builder_change_value_value'),
+            name:  _.generateFieldName(this.sectionId, this.index, 'event'),
+            fieldLabel: t('form_builder_trigger_event_event'),
             anchor: '100%',
             labelAlign: 'top',
             summaryDisplay: true,
-            allowBlank: true,
-            value: this.data ? this.data.value : null,
+            allowBlank: false,
+            maskRe: /[a-zA-Z0-9.]+/,
+            value: this.data ? this.data.event : null,
             flex: 1,
             listeners: {
                 updateIndexName: function(sectionId, index) {
-                    this.name = _.generateFieldName(sectionId, index, 'value');
+                    this.name = _.generateFieldName(sectionId, index, 'event');
                 }
             }
         }];
@@ -68,6 +68,13 @@ Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.c
             items: items
         });
 
+        var descriptionField = new Ext.form.Label({
+            xtype: 'label',
+            anchor: '100%',
+            style: 'display:block; padding:5px; background:#f5f5f5; border:1px solid #eee; font-weight: 300;',
+            html: t('form_builder_trigger_event_description')
+        });
+
         var _ = this,
             myId = Ext.id(),
             item = new Ext.form.FormPanel({
@@ -76,8 +83,8 @@ Formbuilder.comp.conditionalLogic.action.value = Class.create(Formbuilder.comp.c
                 forceLayout: true,
                 style: 'margin: 10px 0 0 0',
                 bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
-                tbar: this.getTopBar(_.name, myId, 'form_builder_icon_text'),
-                items: compositeField,
+                tbar: this.getTopBar(myId),
+                items: [compositeField, descriptionField],
                 listeners: {}
             });
 

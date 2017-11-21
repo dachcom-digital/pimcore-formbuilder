@@ -11,6 +11,7 @@ use FormBuilderBundle\Storage\FormFieldDynamicInterface;
 use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Stream\PackageStream;
+use FormBuilderBundle\Validation\ConstraintConnector;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -47,6 +48,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $session;
 
     /**
+     * @var ConstraintConnector
+     */
+    protected $constraintConnector;
+
+    /**
      * @var
      */
     private $availableConstraints;
@@ -63,17 +69,20 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param PackageStream            $packageStream
      * @param EventDispatcherInterface $eventDispatcher
      * @param SessionInterface         $session
+     * @param ConstraintConnector         $constraintConnector
      */
     public function __construct(
         Configuration $configuration,
         PackageStream $packageStream,
         EventDispatcherInterface $eventDispatcher,
-        SessionInterface $session
+        SessionInterface $session,
+        ConstraintConnector $constraintConnector
     ) {
         $this->configuration = $configuration;
         $this->packageStream = $packageStream;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
+        $this->constraintConnector = $constraintConnector;
 
         $this->availableConstraints = $this->configuration->getConfig('validation_constraints');
         $this->availableFormTypes = $this->configuration->getConfig('types');
@@ -132,7 +141,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         $form = $event->getForm();
         $formEntity = $form->getData();
-        $this->populateForm($form, $formEntity);
+        $this->populateForm($form, $formEntity, FALSE, $event->getData());
     }
 
     /**
@@ -176,8 +185,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param FormInterface            $form
      * @param FormBuilderFormInterface $formEntity
      * @param bool                     $initial
+     * @param array                    $data
      */
-    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = FALSE)
+    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = FALSE, $data = [])
     {
         $orderedFields = $formEntity->getFields();
         usort($orderedFields, function ($a, $b) {
@@ -186,15 +196,15 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         /** @var FormFieldInterface $field */
         foreach ($orderedFields as $field) {
-
-            if ($initial === FALSE && !$field->isUpdated()) {
-                continue;
-            }
-
             if ($field instanceof FormFieldDynamicInterface) {
-                $this->addDynamicField($form, $field);
+                // do not initialize dynamic fields twice since there is also no conditional logic!
+                if ($initial === FALSE && !$field->isUpdated()) {
+                    continue;
+                }
+                $this->addDynamicField($form, $field, $data);
             } else {
-                $this->addFormBuilderField($form, $field);
+                // since we apply conditional logic here, we need to add fields multiple times (post-set-data and pre-submit). :(
+                $this->addFormBuilderField($form, $field, $data);
             }
         }
     }
@@ -202,8 +212,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * @param FormInterface      $form
      * @param FormFieldInterface $field
+     * @param mixed              $formData
      */
-    private function addFormBuilderField(FormInterface $form, FormFieldInterface $field)
+    private function addFormBuilderField(FormInterface $form, FormFieldInterface $field, $formData = NULL)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -213,16 +224,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $options['attr']['data-template'] = $optional['template'];
         }
 
-        $constraints = [];
-        foreach ($field->getConstraints() as $constraint) {
-
-            if (!isset($this->availableConstraints[$constraint['type']])) {
-                continue;
-            }
-
-            $class = $this->availableConstraints[$constraint['type']]['class'];
-            $constraints[] = new $class();
-        }
+        $constraints = $this->constraintConnector->connect(
+            $formData,
+            $field,
+            $this->availableConstraints,
+            $form->getData()->getConditionalLogic()
+        );
 
         if (!empty($constraints)) {
             $options['constraints'] = $constraints;
@@ -238,8 +245,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * @param FormInterface             $form
      * @param FormFieldDynamicInterface $field
+     * @param mixed                     $formData
      */
-    private function addDynamicField(FormInterface $form, FormFieldDynamicInterface $field)
+    private function addDynamicField(FormInterface $form, FormFieldDynamicInterface $field, $formData = NULL)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();

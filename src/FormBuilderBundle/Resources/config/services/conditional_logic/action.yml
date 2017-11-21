@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ConstraintsAddAction: ~
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ConstraintsRemoveAction: ~

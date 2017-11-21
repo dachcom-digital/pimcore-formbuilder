@@ -1,4 +1,5 @@
 imports:
     - { resource: services/forms/*.yml }
     - { resource: services/transformer/*.yml }
+    - { resource: services/conditional_logic/*.yml }
     - { resource: services/*.yml }

@@ -3,13 +3,14 @@
 namespace FormBuilderBundle;
 
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\ValidationPass;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
-    const BUNDLE_VERSION = '2.0.3';
+    const BUNDLE_VERSION = '2.1.0';
 
     /**
      * @param ContainerBuilder $container
@@ -52,13 +53,14 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/comp/conditionalLogic/builder.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/form.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/condition/abstract.js',
-            '/bundles/formbuilder/js/comp/conditionalLogic/condition/value.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/condition/elementValue.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/action/abstract.js',
-            '/bundles/formbuilder/js/comp/conditionalLogic/action/changeConstraints.js',
-            '/bundles/formbuilder/js/comp/conditionalLogic/action/toggle.js',
-            '/bundles/formbuilder/js/comp/conditionalLogic/action/value.js',
-            '/bundles/formbuilder/js/comp/conditionalLogic/action/event.js',
-            '/bundles/formbuilder/js/comp/conditionalLogic/action/class.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/constraintsAdd.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/constraintsRemove.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/toggleElement.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/changeValue.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/triggerEvent.js',
+            '/bundles/formbuilder/js/comp/conditionalLogic/action/toggleClass.js',
             '/bundles/formbuilder/js/comp/formTypeBuilder.js',
             '/bundles/formbuilder/js/comp/formFieldConstraint.js'
         ];
