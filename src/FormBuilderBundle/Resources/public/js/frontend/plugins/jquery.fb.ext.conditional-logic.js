@@ -40,16 +40,23 @@
             'bootstrap4': {}
         };
 
-        this.transform = function (action, $el) {
+        this.transform = function () {
+
+            var args = Array.prototype.slice.call(arguments),
+                action = args.shift();
 
             if (typeof this.userMethods[action] === 'function') {
-                return this.userMethods[action]($el)
+                return this.userMethods[action].apply(null, args);
             }
 
             switch (this.formTemplate) {
                 case 'bootstrap_3_layout':
                 case 'bootstrap_3_horizontal_layout':
-                    return this.themeTransform.bootstrap3[action]($el);
+                    return this.themeTransform.bootstrap3[action].apply(null, args);
+                    break;
+                case 'bootstrap_4_layout':
+                case 'bootstrap_5_horizontal_layout':
+                    return this.themeTransform.bootstrap4[action].apply(null, args);
                     break;
                 default:
                     console.warn('unknown element transformer action found!', action);

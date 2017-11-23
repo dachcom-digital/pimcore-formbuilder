@@ -15,11 +15,69 @@
     'use strict';
     var clName = 'FormBuilderAjaxManager';
 
+    function ValidationTransformer(options, formTemplate) {
+        this.formTemplate = formTemplate;
+        this.userMethods = options;
+        this.themeTransform = {
+            'bootstrap3': {
+                addValidationMessage: function ($fields, messages) {
+                    var $field = $fields.first(),
+                        $formGroup = $field.closest('.form-group');
+
+                    $.each(messages, function (validationType, message) {
+
+                        $formGroup.addClass('has-error');
+                        $formGroup.find('span.help-block.validation').remove();
+
+                        //it's a multiple field
+                        var $spanEl = $('<span/>', {'class': 'help-block validation', 'text': message});
+
+                        if ($fields.length > 1) {
+                            $field.closest('label').before($spanEl);
+                        } else {
+                            $field.before($spanEl);
+                        }
+                    });
+                },
+                removeFormValidations: function ($form) {
+                    $form.find('.help-block.validation').remove();
+                    $form.find('.form-group').removeClass('has-error');
+                }
+            },
+            'bootstrap4': {}
+        };
+
+        this.transform = function () {
+
+            var args = Array.prototype.slice.call(arguments),
+                action = args.shift();
+
+            if (typeof this.userMethods[action] === 'function') {
+                return this.userMethods[action].apply(null, args);
+            }
+
+            switch (this.formTemplate) {
+                case 'bootstrap_3_layout':
+                case 'bootstrap_3_horizontal_layout':
+                    return this.themeTransform.bootstrap3[action].apply(null, args);
+                    break;
+                case 'bootstrap_4_layout':
+                case 'bootstrap_5_horizontal_layout':
+                    return this.themeTransform.bootstrap4[action].apply(null, args);
+                    break;
+                default:
+                    console.warn('unknown element transformer action found!', action);
+                    break;
+            }
+        }
+    }
+
     function FormBuilderAjaxManager(form, options) {
         this.$form = $(form);
         this.formTemplate = this.$form.data('template');
         this.options = $.extend({}, $.fn.formBuilderAjaxManager.defaults, options);
         this.ajaxUrls = {};
+        this.validationTransformer = new ValidationTransformer(this.options.validationTransformer, this.formTemplate);
 
         window.formBuilderGlobalContext = {}
 
@@ -66,46 +124,28 @@
 
                         $btns.attr('disabled', false);
 
-                        $form.find('.help-block.validation').remove();
-                        $form.find('.form-group').removeClass('has-error');
+                        _.validationTransformer.transform('removeFormValidations', $form);
 
                         if ($fbHtmlFile.length > 0) {
                             $form.find('.qq-upload-delete').show();
                         }
 
                         if (response.success === false) {
-
                             if (response.validation_errors !== false) {
-
                                 $.each(response.validation_errors, function (fieldId, messages) {
-
-                                    var $fields = $form.find('*[name*="' + fieldId + '"]'),
-                                        $field = $fields.first();
-
+                                    var $fields = $form.find('*[name*="' + fieldId + '"]');
                                     //fallback for custom fields (like ajax file)
                                     if($fields.length === 0) {
                                         $fields = $form.find('*[data-field-name*="' + fieldId + '"]');
-                                        $field = $fields.first();
                                     }
 
-                                    if ($field.length > 0) {
-
-                                        switch (_.formTemplate) {
-                                            case 'bootstrap_3_layout':
-                                            case 'bootstrap_3_horizontal_layout':
-                                                _.setupBootstrap3Validation($fields, messages);
-                                                break;
-                                            default:
-                                                console.warn('unknown template for template:', _.formTemplate);
-                                                break;
-                                        }
-
+                                    if ($fields.length > 0) {
+                                        _.validationTransformer.transform('addValidationMessage', $fields, messages);
                                         $form.trigger('formbuilder.error-field', [{
-                                            'field': $field,
+                                            'field': $fields.first(),
                                             'messages': messages
                                         }, $form]);
                                     }
-
                                 });
 
                             } else {
@@ -252,24 +292,7 @@
 
         setupBootstrap3Validation: function ($fields, messages) {
 
-            var $formGroup = $fields.closest('.form-group'),
-                $field = $field = $fields.first();
-            console.log($fields);
 
-            $.each(messages, function (validationType, message) {
-
-                $formGroup.addClass('has-error');
-                $formGroup.find('span.help-block.validation').remove();
-
-                //it's a multiple field
-                var $spanEl = $('<span/>', {'class': 'help-block validation', 'text': message});
-
-                if ($fields.length > 1) {
-                    $field.closest('label').before($spanEl);
-                } else {
-                    $field.before($spanEl);
-                }
-            });
         }
     });
 
@@ -283,7 +306,10 @@
     };
 
     $.fn.formBuilderAjaxManager.defaults = {
-        setupFileUpload: true
+        setupFileUpload: true,
+        validationTransformer: {
+
+        }
     };
 
 })(jQuery, window, document);
