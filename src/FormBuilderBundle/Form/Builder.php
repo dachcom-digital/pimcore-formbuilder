@@ -119,6 +119,7 @@ class Builder
         if ($formConfig['useAjax'] === TRUE) {
             $formAttributes['data-ajax-structure-url'] = $this->router->generate('form_builder.controller.ajax.url_structure');
             $formAttributes['class'] = 'formbuilder ajax-form';
+            $formAttributes['data-template'] = $formOptions['form_template'];
         }
 
         //@todo: implement inline functionality.

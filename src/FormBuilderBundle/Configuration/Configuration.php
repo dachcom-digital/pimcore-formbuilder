@@ -66,10 +66,10 @@ class Configuration
         $this->backendConfig = [
             'backend_base_field_type_groups' => $config['backend_base_field_type_groups'],
             'backend_base_field_type_config' => $config['backend_base_field_type_config'],
-            'backend_field_type_config' => $config['backend_field_type_config']
+            'backend_field_type_config'      => $config['backend_field_type_config']
         ];
 
-        unset($config['backend_base_field_type_groups'],$config['backend_base_field_type_config'],$config['backend_field_type_config']);
+        unset($config['backend_base_field_type_groups'], $config['backend_base_field_type_config'], $config['backend_field_type_config']);
 
         $this->config = $config;
     }
@@ -98,6 +98,16 @@ class Configuration
     public function getConfig($slot)
     {
         return $this->config[$slot];
+    }
+
+    /**
+     * @param $type
+     *
+     * @return mixed
+     */
+    public function getFieldTypeConfig($type)
+    {
+        return $this->config['types'][$type];
     }
 
     /**

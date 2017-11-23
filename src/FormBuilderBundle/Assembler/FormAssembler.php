@@ -91,7 +91,8 @@ class FormAssembler
         if($builderError === FALSE) {
 
             $userOptions = [
-                'form_preset' => $this->optionsResolver->getFormPreset()
+                'form_preset' => $this->optionsResolver->getFormPreset(),
+                'form_template' => $this->optionsResolver->getFormTemplateName()
             ];
 
             /** @var \Symfony\Component\Form\Form $form */
@@ -103,7 +104,8 @@ class FormAssembler
             //store current configuration for further events.
             $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
                 'user_options' => [
-                    'form_preset' => $this->optionsResolver->getFormPreset()
+                    'form_preset' => $this->optionsResolver->getFormPreset(),
+                    'form_template' => $this->optionsResolver->getFormTemplateName()
                 ],
                 'email'       => [
                     'send_copy'             => $this->optionsResolver->getSendCopy(),

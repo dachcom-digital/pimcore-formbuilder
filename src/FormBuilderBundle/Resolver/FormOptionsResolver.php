@@ -120,6 +120,18 @@ class FormOptionsResolver
     }
 
     /**
+     * @return null|string
+     */
+    function getFormTemplateName()
+    {
+        if (empty($this->formTemplate)) {
+            return 'form_div_layout';
+        }
+
+        return substr($this->formTemplate, 0, strpos($this->formTemplate, '.'));
+    }
+
+    /**
      * @return string
      */
     function getFormBlockTemplate()

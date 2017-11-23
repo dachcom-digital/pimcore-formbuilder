@@ -1,15 +1,31 @@
-# Ajax Forms
+# Javascript Plugins
+We're providing some helpful Javascript Plugins to simplify your daily work with FormBuilder.
+Of course it's up to you to copy those files into your project and modify them as required.
 
-First, check 'Ajax Submission' in your form configuration.
+> Note: Be sure that jQuery has been initialized, before you load formbuilder.js.
 
-If you want to use ajax driven forms you need to load the FormBuilder Javascript Library. 
-For example in your `app/Resources/views/layout.html.twig`:
+## Core Plugin
+This Plugin will enable the ajax functionality and also the multi file handling:
+
+### Enable Plugin
 
 ```html
-<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/formbuilder.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
 ```
 
-If you want to hook into the ajax form events, you may use this example:
+```javascript
+$(function () {
+    $('form.formbuilder.ajax-form').formBuilderAjaxManager();
+});
+```
+### Extended Usage
+```javascript
+$('form.formbuilder.ajax-form').formBuilderConditionalLogic({
+    setupFileUpload: true
+});
+```
+
+### Events
 
 ```javascript
 $('form.ajax-form')
@@ -22,121 +38,37 @@ $('form.ajax-form')
  });
 ```
 
-Of course it's up to you to modify this file for your needs.
 
-> Note: Be sure that jQuery has been initialized, before you load formbuilder.js.
+## Conditional Logic Plugin
+This Plugin will enable the conditional logic functionality.
 
-## Custom Fields and Data in Ajax Forms
-For example, if you want to add a [dynamic choice field](71_CustomFields.md) and fill it with data based on some request information.
-If you're also using the ajax mode the data gets lost since the ajax request does not contain your special data anymore.
-To fix this, you need to add some more form events:
+### Enable Plugin
 
-```php
-<?php
+```html
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.conditional-logic.js') }}"></script>
+```
 
-namespace AppBundle\EventListener;
+```javascript
+$(function () {
+    $('form.formbuilder').formBuilderConditionalLogic();
+});
+```
 
-use FormBuilderBundle\Event\Form\PreSetDataEvent;
-use FormBuilderBundle\Event\Form\PreSubmitEvent;
-use FormBuilderBundle\FormBuilderEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-class FormBuilderListener implements EventSubscriberInterface
-{
-    protected $requestStack;
-    
-    public function __construct(RequestStack $requestStack)
-    {
-        $this->requestStack = $requestStack;
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            FormBuilderEvents::FORM_PRE_SET_DATA  => 'formPreSetData',
-            FormBuilderEvents::FORM_PRE_SUBMIT    => 'formPreSubmit'
-        ];
-    }
-
-    public function formPreSetData(PreSetDataEvent $event)
-    {
-        $formEvent = $event->getFormEvent();
-        $formOptions = $event->getFormOptions();
-        $dataClass = $formEvent->getData();
-        
-        //create some choices based on a request value.
-        $entryId = $this->requestStack->getMasterRequest()->get('entry');
-
-        //only apply this to a special preset
-        if ($formOptions['form_preset'] !== 'dynamic_form') {
-            return;
+### Extended Usage
+```javascript
+$('form.formbuilder').formBuilderConditionalLogic({
+    conditions: {},
+    actions: {
+        toggleElement: {
+            onEnable: function (action, ev, $el) {
+                console.log(action, ev, $el);
+            }
         }
-
-        // 1. Add a hidden field to keep the value
-        // since the request value gets lost during the ajax request.
-        $dataClass->addDynamicField(
-            'entry_id',
-            HiddenType::class,
-            [
-                'data' => $entryId
-            ]
-        );
-
-        // 2. Add the dynamic choice field.
-        $dataClass->addDynamicField(
-            'event_date',
-            ChoiceType::class,
-            [
-                'label'   => 'Date',
-                'choices' => $this->getChoices($entryId)
-            ],
-            [
-                'template' => 'col-xs-6',
-                'order'    => 10
-            ]
-        );
-
-    }
-    
-    public function formPreSubmit(PreSubmitEvent $event)
-    {
-        $formOptions = $event->getFormOptions();
-        if ($formOptions['form_preset'] !== 'dynamic_form') {
-            return;
+    },
+    elementTransformer: {
+        hide: function($el) {
+            $el.hide();
         }
-
-        $formEvent = $event->getFormEvent();
-        $formData = $formEvent->getData();        
-        $dataClass = $formEvent->getForm()->getData();
-
-        //remove the entry id field, since we don't need it anymore!
-        $dataClass->removeDynamicField('entry_id');
-        
-        //re-add the event date and populate it again!
-        $dataClass->addDynamicField(
-            'event_date',
-            ChoiceType::class,
-            [
-                'label'   => 'Date',
-                'choices' => $this->getChoices($formData['entry_id'])
-            ]
-        );
     }
-
-    private function getChoices($id = NULL)
-    {
-        if (empty($id)) {
-            return [];
-        }
-
-        return [
-            'Test 1' => 'test1',
-            'Test 2' => 'test2',
-            'Test 3' => 'test3'
-        ];
-    }
-}
+});
 ```
