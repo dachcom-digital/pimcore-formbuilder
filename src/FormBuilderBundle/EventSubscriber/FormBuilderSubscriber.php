@@ -18,7 +18,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormRegistry;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
@@ -53,6 +55,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $constraintConnector;
 
     /**
+     * @var FormRegistry
+     */
+    protected $formRegistry;
+
+    /**
      * @var
      */
     private $availableConstraints;
@@ -69,20 +76,23 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param PackageStream            $packageStream
      * @param EventDispatcherInterface $eventDispatcher
      * @param SessionInterface         $session
-     * @param ConstraintConnector         $constraintConnector
+     * @param ConstraintConnector      $constraintConnector
+     * @param FormRegistry $formRegistry
      */
     public function __construct(
         Configuration $configuration,
         PackageStream $packageStream,
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
-        ConstraintConnector $constraintConnector
+        ConstraintConnector $constraintConnector,
+        FormRegistry $formRegistry
     ) {
         $this->configuration = $configuration;
         $this->packageStream = $packageStream;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
         $this->constraintConnector = $constraintConnector;
+        $this->formRegistry = $formRegistry;
 
         $this->availableConstraints = $this->configuration->getConfig('validation_constraints');
         $this->availableFormTypes = $this->configuration->getConfig('types');
@@ -218,21 +228,34 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
+        $object = $this->formRegistry->getType($this->availableFormTypes[$field->getType()]['class'])->getOptionsResolver();
+        $availableOptions = $object->getDefinedOptions();
 
         //set optional template
         if (isset($optional['template'])) {
             $options['attr']['data-template'] = $optional['template'];
         }
 
-        $constraints = $this->constraintConnector->connect(
-            $formData,
-            $field,
-            $this->availableConstraints,
-            $form->getData()->getConditionalLogic()
-        );
+        $constraints = [];
+        if (in_array('constraints', $availableOptions)) {
+            $constraints = $this->constraintConnector->connect(
+                $formData,
+                $field,
+                $this->availableConstraints,
+                $form->getData()->getConditionalLogic()
+            );
 
-        if (!empty($constraints)) {
-            $options['constraints'] = $constraints;
+            if (!empty($constraints)) {
+                $options['constraints'] = $constraints;
+            }
+        }
+
+        if (in_array('required', $availableOptions)) {
+            $options['required'] = count(
+                    array_filter($constraints, function ($constraint) {
+                        return $constraint instanceof NotBlank;
+                    })
+                ) === 1;
         }
 
         $form->add(

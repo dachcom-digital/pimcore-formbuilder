@@ -55,11 +55,6 @@ form_builder:
                 type: textfield
                 label: 'form_builder_type_field_base.help_text'
                 config: ~
-            options.required:
-                display_group_id: base
-                type: checkbox
-                label: 'form_builder_type_field_base.required'
-                config: ~
             options.attr:
                 display_group_id: attributes
                 type: options_repeater

@@ -40,7 +40,6 @@ form_builder:
                 icon_class: 'form_builder_icon_button'
                 constraints: false
                 fields:
-                    options.required: ~
                     optional.email_label: ~
                     options.help_text: ~
                     options.data: ~
@@ -77,7 +76,6 @@ form_builder:
                 icon_class: 'form_builder_icon_html_tag'
                 constraints: false
                 fields:
-                    options.required: ~
                     optional.email_label: ~
                     options.help_text: ~
                     options.data: ~
@@ -95,7 +93,6 @@ form_builder:
                 icon_class: 'form_builder_icon_snippet_tag'
                 constraints: false
                 fields:
-                    options.required: ~
                     optional.email_label: ~
                     options.help_text: ~
                     options.data: ~
