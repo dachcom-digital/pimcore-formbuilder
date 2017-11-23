@@ -307,9 +307,7 @@
 
     $.fn.formBuilderAjaxManager.defaults = {
         setupFileUpload: true,
-        validationTransformer: {
-
-        }
+        validationTransformer: {}
     };
 
 })(jQuery, window, document);

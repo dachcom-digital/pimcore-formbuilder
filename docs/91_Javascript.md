@@ -21,7 +21,15 @@ $(function () {
 ### Extended Usage
 ```javascript
 $('form.formbuilder.ajax-form').formBuilderConditionalLogic({
-    setupFileUpload: true
+    setupFileUpload: true,
+    validationTransformer: {
+        addValidationMessage: function($fields, messages) {
+            console.log($fields, messages);
+        },
+        removeFormValidations: function($form) {
+            console.log($form);
+        }
+    }
 });
 ```
 
@@ -37,7 +45,6 @@ $('form.ajax-form')
          console.log(data.field, data.messages);
  });
 ```
-
 
 ## Conditional Logic Plugin
 This Plugin will enable the conditional logic functionality.
