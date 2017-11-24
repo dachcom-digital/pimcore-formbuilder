@@ -6,6 +6,8 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.text_type'
                 icon_class: 'form_builder_icon_text'
+                fields:
+                    options.value: ~
         hidden:
             class: Symfony\Component\Form\Extension\Core\Type\HiddenType
             backend:
@@ -13,6 +15,7 @@ form_builder:
                 label: 'form_builder_type.hidden_type'
                 icon_class: 'form_builder_icon_hidden'
                 fields:
+                    options.value: ~
                     options.help_text: ~
         textarea:
             class: Symfony\Component\Form\Extension\Core\Type\TextareaType
@@ -20,18 +23,28 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.textarea_type'
                 icon_class: 'form_builder_icon_textarea'
+                fields:
+                    options.value: ~
         integer:
             class: Symfony\Component\Form\Extension\Core\Type\IntegerType
             backend:
                 form_type_group: text_fields
                 label: 'form_builder_type.integer_type'
                 icon_class: 'form_builder_icon_integer'
+                fields:
+                    options.value: ~
         checkbox:
             class: Symfony\Component\Form\Extension\Core\Type\CheckboxType
             backend:
                 form_type_group: other_fields
                 label: 'form_builder_type.checkbox_type'
                 icon_class: 'form_builder_icon_checkbox'
+                fields:
+                    options.data:
+                        display_group_id: base
+                        type: checkbox
+                        label: 'form_builder_type_field_base.data'
+                        config: ~
         submit:
             class: Symfony\Component\Form\Extension\Core\Type\SubmitType
             backend:
@@ -43,6 +56,7 @@ form_builder:
                     optional.email_label: ~
                     options.help_text: ~
                     options.data: ~
+                    options.value: ~
         dynamic_multi_file:
             class: FormBuilderBundle\Form\Type\DynamicMultiFileType
             backend:
@@ -50,6 +64,8 @@ form_builder:
                 label: 'form_builder_type.dynamic_multi_file'
                 icon_class: 'form_builder_icon_file'
                 fields:
+                    options.data: ~
+                    options.value: ~
                     options.allowed_extensions:
                         display_group_id: attributes
                         type: tagfield
@@ -79,6 +95,7 @@ form_builder:
                     optional.email_label: ~
                     options.help_text: ~
                     options.data: ~
+                    options.value: ~
                     options.tag:
                         display_group_id: attributes
                         type: select
@@ -96,6 +113,7 @@ form_builder:
                     optional.email_label: ~
                     options.help_text: ~
                     options.data: ~
+                    options.value: ~
                     options.path:
                         display_group_id: attributes
                         type: href
@@ -113,6 +131,12 @@ form_builder:
                 label: 'form_builder_type.choice_type'
                 icon_class: 'form_builder_icon_multi_select'
                 fields:
+                    options.value: ~
+                    options.data:
+                        display_group_id: base
+                        type: tagfield
+                        label: 'form_builder_type_field_base.data'
+                        config: ~
                     options.expanded:
                         display_group_id: attributes
                         type: checkbox

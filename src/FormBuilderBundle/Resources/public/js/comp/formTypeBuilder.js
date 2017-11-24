@@ -283,23 +283,26 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
             case 'tagfield':
 
-                var tagStore = new Ext.data.ArrayStore({
-                    fields: ['elements'],
-                    data : fieldConfig.options
+                var hasStore = fieldConfig.config && Ext.isArray(fieldConfig.config.store),
+                    tagStore = new Ext.data.ArrayStore({
+                    fields: ['index', 'name'],
+                    data : hasStore ? fieldConfig.config.store : []
                 });
 
                 field = new Ext.form.field.Tag({
                     name: fieldConfig.id,
                     fieldLabel: fieldConfig.label,
+                    queryDelay: 0,
                     store: tagStore,
                     value: this.getFieldValue(fieldConfig.id),
-                    createNewOnEnter: true,
-                    createNewOnBlur: true,
-                    filterPickList: true,
-                    queryMode: 'elements',
-                    displayField: 'elements',
-                    valueField: 'elements',
+                    createNewOnEnter: !hasStore,
+                    createNewOnBlur: !hasStore,
+                    filterPickList: hasStore,
+                    mode: 'local',
+                    displayField: 'name',
+                    valueField: 'index',
                     hideTrigger: true,
+                    editable: !hasStore,
                     anchor: '100%'
                 });
 

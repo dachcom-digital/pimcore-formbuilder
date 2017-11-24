@@ -5,14 +5,49 @@ Render different configuration types for ExtJs.
 
 | Name | Description |
 |------|-------|
-| label | -- |
-| tagfield | -- |
-| numberfield | -- |
-| textfield | -- |
-| select | -- |
-| key_value_repeater | -- |
-| options_repeater | -- |
-| href | -- |
+| label | Default Label Field |
+| tagfield | Create a Tagfield with optional predefined options |
+| numberfield | Default Number Field. |
+| textfield | Simple Input Field |
+| select | Dropdown with predefined options |
+| key_value_repeater | Key-Value Repeater |
+| options_repeater | Options Repeater |
+| href | Href-Element for PIMCORE Documents |
+
+#### Label
+--
+
+#### Tagfield
+Example
+```yaml
+options.data:
+    display_group_id: base
+    type: tagfield
+    label: 'your label'
+    config: # optional. add a store for customer
+        store:
+            - ['val1', 'Value1']
+            - ['val2', 'Value2']
+            - ['val3', 'Value3']
+```
+
+#### Numberfield
+--
+
+#### Textfield
+--
+
+#### Select
+--
+
+#### Key-Value Repeater
+--
+
+#### Options Repeater
+--
+
+#### Href
+--
 
 ### Custom Form Type Groups
 Add your form type to one of these group fields (Context-Menu).

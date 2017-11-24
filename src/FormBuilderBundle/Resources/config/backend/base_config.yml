@@ -45,10 +45,15 @@ form_builder:
                 type: textfield
                 label: 'form_builder_type_field_base.email_label'
                 config: ~
-            options.data:
+            options.value:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.value'
+                config: ~
+            options.data:
+                display_group_id: base
+                type: textfield
+                label: 'form_builder_type_field_base.data'
                 config: ~
             options.help_text:
                 display_group_id: base
