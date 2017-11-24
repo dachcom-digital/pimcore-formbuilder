@@ -375,6 +375,7 @@
                         actionId = 'action_' + blockId + '_' + i;
                     $.each(dependency.fields, function (fieldIndex, fieldName) {
                         formDependingSelector.push('*[name*="' + fieldName + '"]');
+                        formDependingSelector.push('*[data-field-name*="' + fieldName + '"]');
                     });
 
                     if (dependency.condition && dependency.condition.length > 0) {
@@ -382,14 +383,18 @@
                     }
 
                     var actionOptions = _.generateActionOptions(dependency.action, actionId);
-
                     //no valid action found - skip field!
                     if (actionOptions === false) {
                         return true;
                     }
 
-                    var $conditionField = _.$form.find(formDependingSelector.join(',')).dependsOn(conditionSelector, actionOptions);
-                    //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:' , actionOptions);
+                    var $dependencies =  _.$form.find(formDependingSelector.join(','));
+                    if ($dependencies.length === 0) {
+                        console.warn('no dependencies found. query was:', formDependingSelector);
+                        return true;
+                    }
+                    var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
+                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:' , actionOptions);
 
                 });
 

@@ -31,6 +31,7 @@ class HtmlTagType extends AbstractType
         $vars = array_merge_recursive($view->vars, [
             'data' => '',
             'attr' => [
+                'data-field-name' => $view->vars['name'],
                 'class' => 'form-builder-html-tag-element'
             ],
             'tag'  => empty($options['tag']) ? 'label' : $options['tag']

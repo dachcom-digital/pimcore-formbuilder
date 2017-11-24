@@ -32,6 +32,7 @@ class SnippetType extends AbstractType
         $vars = array_merge_recursive($view->vars, [
             'data' => '',
             'attr' => [
+                'data-field-name' => $view->vars['name'],
                 'class' => 'form-builder-snippet-element'
             ],
             'path' => $options['path']

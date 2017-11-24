@@ -138,7 +138,7 @@
                             if (response.validation_errors !== false) {
                                 $.each(response.validation_errors, function (fieldId, messages) {
                                     var $fields = $form.find('*[name*="' + fieldId + '"]');
-                                    //fallback for custom fields (like ajax file)
+                                    //fallback for custom fields (like ajax file, headline or snippet type)
                                     if ($fields.length === 0) {
                                         $fields = $form.find('*[data-field-name*="' + fieldId + '"]');
                                     }
