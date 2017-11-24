@@ -67,14 +67,14 @@ $('form.formbuilder').formBuilderConditionalLogic({
     conditions: {},
     actions: {
         toggleElement: {
-            onEnable: function (action, ev, $el) {
+            onEnable: function (action, actionId, ev, $el) {
                 console.log(action, ev, $el);
             }
         }
     },
     elementTransformer: {
-        hide: function($el) {
-            $el.hide();
+        hide: function($els) {
+            $els.hide();
         }
     }
 });

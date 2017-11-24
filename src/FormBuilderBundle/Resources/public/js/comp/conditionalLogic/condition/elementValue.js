@@ -18,6 +18,9 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
             }, {
                 label: t('form_builder_element_value_type_is_value'),
                 value: 'is_value'
+            }, {
+                label: t('form_builder_element_value_type_is_not_value'),
+                value: 'is_not_value'
             }]
         });
 

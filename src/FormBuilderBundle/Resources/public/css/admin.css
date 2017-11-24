@@ -142,7 +142,10 @@
     background: url(/bundles/formbuilder/img/cl_toggle_class.svg) left center no-repeat !important;
 }
 .form_builder_cl_element_value {
-     background: url(/bundles/formbuilder/img/cl_element_value.svg) left center no-repeat !important;
+    background: url(/bundles/formbuilder/img/cl_element_value.svg) left center no-repeat !important;
+}
+.form_builder_cl_toggle_availability {
+    background: url(/bundles/formbuilder/img/cl_toggle_availability.svg) left center no-repeat !important;
 }
 
 

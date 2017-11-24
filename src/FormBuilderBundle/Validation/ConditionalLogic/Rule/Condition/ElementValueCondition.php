@@ -42,6 +42,8 @@ class ElementValueCondition implements ConditionInterface
                 return $this->getValue() < $fieldValue;
             } elseif ($this->getComparator() === 'is_value') {
                 return $this->getValue() == $fieldValue;
+            } elseif ($this->getComparator() === 'is_not_value') {
+                return $this->getValue() != $fieldValue;
             }
         }
 

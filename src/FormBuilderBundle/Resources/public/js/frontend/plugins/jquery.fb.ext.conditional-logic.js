@@ -1,3 +1,12 @@
+/*
+ *  Project: PIMCORE FormBuilder
+ *  Extension: Conditional Logic
+ *  Version: 2.1
+ *  Author: DACHCOM.DIGITAL
+ *  License: GPLv3
+ *
+ * Todo: Multiple
+*/
 ;(function ($, window, document) {
     'use strict';
     var clName = 'ConditionalLogic';
@@ -16,25 +25,67 @@
         this.userMethods = options;
         this.themeTransform = {
             'bootstrap3': {
-                show: function ($el) {
-                    $el.show();
-                    $el.prev('label').show().parent('label').show();
+                show: function ($els) {
+                    $els.show();
+                    $els.each(function () {
+                        var $el = $(this);
+                        if ($el.parent('label').length > 0) {
+                            var $label = $el.parent('label');
+                            $label.parentsUntil('.form-group').parent().show();
+                        } else {
+                            $el.prev('label').show().parent('label').show();
+                        }
+                    });
+
                 },
-                hide: function ($el) {
-                    $el.val('');
-                    $el.hide();
-                    $el.prev('.help-block').remove();
-                    $el.prev('label').hide().parent('label').hide();
+                hide: function ($els) {
+                    $els.val('').prop('selectedIndex', 0);
+                    $els.hide();
+                    $els.each(function () {
+                        var $el = $(this);
+                        if ($el.parent('label').length > 0) {
+                            var $label = $el.parent('label');
+                            $label.parentsUntil('.form-group').parent().hide();
+                        } else {
+                            $el.prev('.help-block').remove();
+                            $el.prev('label').hide().parent('label').hide();
+                        }
+                    });
                 },
-                addRequiredState: function ($el) {
-                    $el.attr('required', 'required');
-                    $el.prev('label').addClass('required');
+                enable: function ($els) {
+                    $els.removeAttr('disabled');
                 },
-                removeRequiredState: function ($el) {
-                    $el.removeAttr('required');
-                    $el.prev('.help-block').remove();
-                    $el.prev('label').removeClass('required');
-                    $el.parent().removeClass('has-error');
+                disable: function ($els) {
+                    $els.attr('disabled', 'disabled');
+                },
+                addRequiredState: function ($els) {
+                    $els.attr('required', 'required');
+                    $els.each(function () {
+                        var $el = $(this);
+                        //its a form-group field
+                        if ($el.parent('label').length > 0) {
+                            var $label = $el.parent('label');
+                            $label.parentsUntil('.form-group').parent().find('.control-label').addClass('required');
+                        } else {
+                            $el.prev('label').addClass('required');
+                        }
+                    });
+                },
+                removeRequiredState: function ($els) {
+                    $els.removeAttr('required');
+                    $els.each(function () {
+                        var $el = $(this);
+                        //its a form-group field
+                        if ($el.parent('label').length > 0) {
+                            var $label = $el.parent('label');
+                            $label.prev('.help-block').remove();
+                            $label.parentsUntil('.form-group').parent().removeClass('has-error').find('.control-label').removeClass('required');
+                        } else {
+                            $el.prev('.help-block').remove();
+                            $el.prev('label').removeClass('required');
+                            $el.parent().removeClass('has-error');
+                        }
+                    });
                 }
             },
             'bootstrap4': {}
@@ -59,7 +110,7 @@
                     return this.themeTransform.bootstrap4[action].apply(null, args);
                     break;
                 default:
-                    console.warn('unknown element transformer action found!', action);
+                    console.warn('unknown element transformer action found.', action);
                     break;
             }
         }
@@ -70,7 +121,6 @@
         this.formTemplate = this.$form.data('template');
         this.options = $.extend({}, $.fn.formBuilderConditionalLogic.defaults, options);
         this.logic = {};
-
         this.actions = {};
         this.conditions = {};
         this.elementTransformer = new ElementTransformer(this.options.elementTransformer, this.formTemplate);
@@ -102,6 +152,11 @@
                         case 'is_value':
                             qualifiers['values'] = [condition.value]
                             break;
+                        case 'is_not_value':
+                            qualifiers['is_not_value'] = function (val) {
+                                return val != condition.value;
+                            }
+                            break;
                         case 'is_selected':
                             qualifiers['checked'] = true
                             break;
@@ -122,14 +177,14 @@
             var _ = this;
 
             var toggleElement = new ActionApplier({
-                enable: function (action, ev, $el) {
+                enable: function (action, actionId, ev, $el) {
                     if (action.state === 'hide') {
                         _.elementTransformer.transform('hide', $el);
                     } else {
                         _.elementTransformer.transform('show', $el);
                     }
                 },
-                disable: function (action, ev, $el) {
+                disable: function (action, actionId, ev, $el) {
                     if (action.state === 'show') {
                         _.elementTransformer.transform('hide', $el);
                     } else {
@@ -138,22 +193,15 @@
                 }
             }, this.options.actions.toggleElement);
 
-            var processor = {
-                enable: function (action, ev, $el) {
-                },
-                disable: function (action, ev, $el) {
-                }
-            };
-
             var changeValue = new ActionApplier({
-                enable: function (action, ev, $el) {
+                enable: function (action, actionId, ev, $el) {
                 },
-                disable: function (action, ev, $el) {
+                disable: function (action, actionId, ev, $el) {
                 }
             }, this.options.actions.changeValue);
 
             var triggerEvent = new ActionApplier({
-                enable: function (action, ev, $el) {
+                enable: function (action, actionId, ev, $el) {
                     $el.trigger(action.event + '.enable');
                 },
                 disable: function (action, ev, $el) {
@@ -162,45 +210,70 @@
             }, this.options.actions.triggerEvent);
 
             var toggleClass = new ActionApplier({
-                enable: function (action, ev, $el) {
+                enable: function (action, actionId, ev, $el) {
                 },
                 disable: function (action, ev, $el) {
                 }
             }, this.options.actions.toggleClass);
 
-            var constraintsAdd = new ActionApplier({
-                enable: function (action, ev, $el) {
-                    if (!$el.data('cl-had-add-required-state')) {
-                        $el.data('cl-had-add-required-state', $el.attr('required') !== undefined);
+            var toggleAvailability = new ActionApplier({
+                enable: function (action, actionId, ev, $el) {
+                    if (action.state === 'disable') {
+                        _.elementTransformer.transform('disable', $el);
+                    } else {
+                        _.elementTransformer.transform('enable', $el);
                     }
-
-                    _.elementTransformer.transform('addRequiredState', $el);
-
                 },
-                disable: function (action, ev, $el) {
-                    if (!$el.data('cl-had-add-required-state')) {
-                        $el.data('cl-had-add-required-state', $el.attr('required') !== undefined);
+                disable: function (action, actionId, ev, $el) {
+                    if (action.state === 'enable') {
+                        _.elementTransformer.transform('disable', $el);
+                    } else {
+                        _.elementTransformer.transform('enable', $el);
                     }
-                    if ($el.data('cl-had-add-required-state') === false) {
+                }
+            }, this.options.actions.toggleAvailability);
+
+            var constraintsAdd = new ActionApplier({
+                enable: function (action, actionId, ev, $el) {
+                    // initial constraints
+                    var hic = $el.data('fb.cl.has-initial-required-constraint'),
+                        ic = $el.data('fb.cl.initial-constraints');
+
+                    if ($.isArray(action.validation) && $.inArray('not_blank', action.validation) !== -1) {
+                        _.elementTransformer.transform('addRequiredState', $el);
+                    }
+                },
+                disable: function (action, actionId, ev, $el) {
+                    // initial constraints
+                    var hic = $el.data('fb.cl.has-initial-required-constraint'),
+                        ic = $el.data('fb.cl.initial-constraints');
+
+                    if (hic === true) {
+                        _.elementTransformer.transform('addRequiredState', $el);
+                    } else if ($.isArray(action.validation) && $.inArray('not_blank', action.validation) !== -1) {
                         _.elementTransformer.transform('removeRequiredState', $el);
                     }
                 }
             }, this.options.actions.constraintsAdd);
 
             var constraintsRemove = new ActionApplier({
-                enable: function (action, ev, $el) {
-                    if (!$el.data('cl-had-remove-required-state')) {
-                        $el.data('cl-had-remove-required-state', $el.attr('required') !== undefined);
-                    }
+                enable: function (action, actionId, ev, $el) {
+                    // initial constraints
+                    var hic = $el.data('fb.cl.has-initial-required-constraint'),
+                        ic = $el.data('fb.cl.initial-constraints');
+
                     if (action.removeAllValidations === true) {
+                        _.elementTransformer.transform('removeRequiredState', $el);
+                    } else if ($.isArray(action.validation) && $.inArray('not_blank', action.validation) !== -1) {
                         _.elementTransformer.transform('removeRequiredState', $el);
                     }
                 },
-                disable: function (action, ev, $el) {
-                    if (!$el.data('cl-had-remove-required-state')) {
-                        $el.data('cl-had-remove-required-state', $el.attr('required') !== undefined);
-                    }
-                    if (action.removeAllValidations === true && $el.data('cl-had-remove-required-state') === true) {
+                disable: function (action, actionId, ev, $el) {
+                    // initial constraints
+                    var hic = $el.data('fb.cl.has-initial-required-constraint'),
+                        ic = $el.data('fb.cl.initial-constraints');
+
+                    if (hic === true) {
                         _.elementTransformer.transform('addRequiredState', $el);
                     }
                 }
@@ -211,6 +284,7 @@
                 'changeValue': changeValue,
                 'triggerEvent': triggerEvent,
                 'toggleClass': toggleClass,
+                'toggleAvailability': toggleAvailability,
                 'constraintsAdd': constraintsAdd,
                 'constraintsRemove': constraintsRemove,
             };
@@ -237,7 +311,38 @@
                 return;
             }
 
+            this.setupInitialFields();
             this.parseConditions();
+        },
+
+        setupInitialFields: function () {
+
+            var _ = this;
+
+            //parse initial constraints
+            _.$form.find('*[data-initial-constraints]').each(function () {
+                var constraintString = $(this).data('initial-constraints'),
+                    constraints,
+                    $field,
+                    hasCoreRequireField = false;
+
+                if (constraintString) {
+                    constraints = constraintString.split(',');
+                }
+
+                //append info to each checkbox/radio since the action also triggers on each checkbox/radio element!
+                var $subFields = _.$form.find('*[id^=' + $(this).attr('id') + '_]');
+                if ($subFields.length > 0) {
+                    $field = $subFields;
+                } else {
+                    $field = $(this);
+                }
+
+                $(this).removeAttr('data-initial-constraints');
+                $field
+                    .data('fb.cl.initial-constraints', constraints)
+                    .data('fb.cl.has-initial-required-constraint', $.inArray('not_blank', constraints) !== -1);
+            })
         },
 
         /**
@@ -266,7 +371,8 @@
                 //create dependency structure for each group.
                 var formSelector = 'form[name="' + _.$form.prop('name') + '"]';
                 $.each(dependingStructure, function (i, dependency) {
-                    var formDependingSelector = [];
+                    var formDependingSelector = [],
+                        actionId = 'action_' + blockId + '_' + i;
                     $.each(dependency.fields, function (fieldIndex, fieldName) {
                         formDependingSelector.push('*[name*="' + fieldName + '"]');
                     });
@@ -275,7 +381,7 @@
                         var conditionSelector = _.generateQualifiersSelector(dependency.condition, formSelector);
                     }
 
-                    var actionOptions = _.generateActionOptions(dependency.action);
+                    var actionOptions = _.generateActionOptions(dependency.action, actionId);
 
                     //no valid action found - skip field!
                     if (actionOptions === false) {
@@ -331,7 +437,7 @@
          * @param action
          * @returns {boolean}
          */
-        generateActionOptions: function (action) {
+        generateActionOptions: function (action, actionId) {
             var _ = this,
                 options = false,
                 actionType = action.type;
@@ -340,8 +446,8 @@
                     options = {
                         hide: false,
                         disable: false,
-                        onEnable: _.actions.toggleElement.onEnable.bind(null, action),
-                        onDisable: _.actions.toggleElement.onDisable.bind(null, action)
+                        onEnable: _.actions.toggleElement.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.toggleElement.onDisable.bind(null, action, actionId)
                     }
                     break;
                 case 'changeValue':
@@ -349,16 +455,16 @@
                         hide: false,
                         disable: false,
                         valueOnEnable: action.value,
-                        onEnable: _.actions.changeValue.onEnable.bind(null, action),
-                        onDisable: _.actions.changeValue.onDisable.bind(null, action)
+                        onEnable: _.actions.changeValue.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.changeValue.onDisable.bind(null, action, actionId)
                     }
                     break;
                 case 'triggerEvent':
                     options = {
                         hide: false,
                         disable: false,
-                        onEnable: _.actions.triggerEvent.onEnable.bind(null, action),
-                        onDisable: _.actions.triggerEvent.onDisable.bind(null, action)
+                        onEnable: _.actions.triggerEvent.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.triggerEvent.onDisable.bind(null, action, actionId)
                     }
                     break;
                 case 'toggleClass':
@@ -366,24 +472,32 @@
                         hide: false,
                         disable: false,
                         toggleClass: action.class,
-                        onEnable: _.actions.toggleClass.onEnable.bind(null, action),
-                        onDisable: _.actions.toggleClass.onDisable.bind(null, action)
+                        onEnable: _.actions.toggleClass.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.toggleClass.onDisable.bind(null, action, actionId)
+                    }
+                    break;
+                case 'toggleAvailability':
+                    options = {
+                        hide: false,
+                        disable: false,
+                        onEnable: _.actions.toggleAvailability.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.toggleAvailability.onDisable.bind(null, action, actionId)
                     }
                     break;
                 case 'constraintsAdd':
                     options = {
                         hide: false,
                         disable: false,
-                        onEnable: _.actions.constraintsAdd.onEnable.bind(null, action),
-                        onDisable: _.actions.constraintsAdd.onDisable.bind(null, action)
+                        onEnable: _.actions.constraintsAdd.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.constraintsAdd.onDisable.bind(null, action, actionId)
                     }
                     break;
                 case 'constraintsRemove':
                     options = {
                         hide: false,
                         disable: false,
-                        onEnable: _.actions.constraintsRemove.onEnable.bind(null, action),
-                        onDisable: _.actions.constraintsRemove.onDisable.bind(null, action)
+                        onEnable: _.actions.constraintsRemove.onEnable.bind(null, action, actionId),
+                        onDisable: _.actions.constraintsRemove.onDisable.bind(null, action, actionId)
                     }
                     break;
                 default:
@@ -391,7 +505,6 @@
             }
             return options;
         }
-
     });
 
     $.fn.formBuilderConditionalLogic = function (options) {

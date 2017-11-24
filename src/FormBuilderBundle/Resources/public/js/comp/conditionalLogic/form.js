@@ -146,7 +146,6 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
                 throw 'invalid or no configuration found';
             }
 
-            console.log(this.conditionsContainer.items.getCount());
             var itemClass = new Formbuilder.comp.conditionalLogic.condition[type](
                 this, data, this.sectionId, this.conditionsContainer.items.getCount(), configuration[0]
                 ),

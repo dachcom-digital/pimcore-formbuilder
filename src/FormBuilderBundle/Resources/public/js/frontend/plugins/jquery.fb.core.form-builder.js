@@ -1,16 +1,20 @@
-/**
-
- Use those Events in your Project!
-
- $('form.ajax-form').on('formbuilder.success', function(ev, messages, redirect, $form) {
-         console.log(messages, redirect);
- }).on('formbuilder.error', function(ev, messages, $form) {
-         console.log(messages);
- }).on('formbuilder.error-field', function(ev, data, $form) {
-         console.log(data.field, data.messages);
- });
-
- */
+/*
+ *  Project: PIMCORE FormBuilder
+ *  Extension: Core
+ *  Version: 2.1
+ *  Author: DACHCOM.DIGITAL
+ *  License: GPLv3
+ *
+ * Event Usage
+ *
+ * $('form.ajax-form').on('formbuilder.success', function(ev, messages, redirect, $form) {
+ *     console.log(messages, redirect);
+ * }).on('formbuilder.error', function(ev, messages, $form) {
+ *     console.log(messages);
+ * }).on('formbuilder.error-field', function(ev, data, $form) {
+ *     console.log(data.field, data.messages);
+ * });
+*/
 ;(function ($, window, document) {
     'use strict';
     var clName = 'FormBuilderAjaxManager';
@@ -66,7 +70,7 @@
                     return this.themeTransform.bootstrap4[action].apply(null, args);
                     break;
                 default:
-                    console.warn('unknown element transformer action found!', action);
+                    console.warn('unknown validation transformer action.', action);
                     break;
             }
         }
@@ -135,7 +139,7 @@
                                 $.each(response.validation_errors, function (fieldId, messages) {
                                     var $fields = $form.find('*[name*="' + fieldId + '"]');
                                     //fallback for custom fields (like ajax file)
-                                    if($fields.length === 0) {
+                                    if ($fields.length === 0) {
                                         $fields = $form.find('*[data-field-name*="' + fieldId + '"]');
                                     }
 
@@ -288,11 +292,6 @@
 
         getAjaxFileUrl: function (section) {
             return this.ajaxUrls[section];
-        },
-
-        setupBootstrap3Validation: function ($fields, messages) {
-
-
         }
     });
 

@@ -51,6 +51,9 @@ form_builder:
             toggleClass:
                 name: 'form_builder.cl.action.toggle_class'
                 icon: 'form_builder_cl_toggle_class'
+            toggleAvailability:
+                name: 'form_builder.cl.action.toggle_availability'
+                icon: 'form_builder_cl_toggle_availability'
         condition:
             elementValue:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ElementValueCondition'

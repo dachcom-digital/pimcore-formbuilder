@@ -77,7 +77,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param EventDispatcherInterface $eventDispatcher
      * @param SessionInterface         $session
      * @param ConstraintConnector      $constraintConnector
-     * @param FormRegistry $formRegistry
+     * @param FormRegistry             $formRegistry
      */
     public function __construct(
         Configuration $configuration,
@@ -237,6 +237,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         $constraints = [];
+        $constraintNames = [];
+
         if (in_array('constraints', $availableOptions)) {
             $constraints = $this->constraintConnector->connect(
                 $formData,
@@ -245,10 +247,17 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 $form->getData()->getConditionalLogic()
             );
 
+            // add field constraints to data attribute since we need them for the frontend cl applier.
+            foreach ($field->getConstraints() as $constraint) {
+                $constraintNames[] = $constraint['type'];
+            }
+
             if (!empty($constraints)) {
                 $options['constraints'] = $constraints;
             }
         }
+
+        $options['attr']['data-initial-constraints'] = join(',', $constraintNames);
 
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
