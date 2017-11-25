@@ -48,9 +48,12 @@ form_builder_delete_conditional_section: 'Remove Conditional Section'
 
 form_builder_change_value_fields: 'Fields'
 form_builder_change_value_value: 'Value'
+form_builder_change_value_description: 'Please keep in mind that you only can modify text and number fields respectively change the selected value of drop downs.'
+
 form_builder_element_value_fields: 'Fields'
 form_builder_element_value_type: 'Type'
 form_builder_element_value_type_is_selected: 'Selected'
+form_builder_element_value_type_is_checked: 'Checked'
 form_builder_element_value_type_is_greater: 'Greater than'
 form_builder_element_value_type_is_less: 'Less than'
 form_builder_element_value_type_is_value: 'Is equal'

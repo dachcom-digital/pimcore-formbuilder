@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle;
 
+use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
-use FormBuilderBundle\DependencyInjection\CompilerPass\ValidationPass;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,6 +19,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     {
         parent::build($container);
         $container->addCompilerPass(new OptionsTransformerPass());
+        $container->addCompilerPass(new DispatcherPass());
     }
 
     /**

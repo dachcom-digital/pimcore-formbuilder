@@ -338,10 +338,11 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 field = new Ext.form.TextField({
                     fieldLabel: fieldConfig.label,
                     name: fieldConfig.id,
-                    value: this.getFieldValue(fieldConfig.id),
+                    value: fieldConfig.config && fieldConfig.config.data ? fieldConfig.config.data : this.getFieldValue(fieldConfig.id),
                     allowBlank: true,
                     anchor: '100%',
-                    enableKeyEvents: true
+                    enableKeyEvents: true,
+                    disabled: fieldConfig.config ? (fieldConfig.config.disabled === true) : false
                 });
 
                 break;

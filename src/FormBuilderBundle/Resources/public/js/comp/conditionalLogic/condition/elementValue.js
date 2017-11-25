@@ -10,6 +10,9 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
                 label: t('form_builder_element_value_type_is_selected'),
                 value: 'is_selected'
             }, {
+                label: t('form_builder_element_value_type_is_checked'),
+                value: 'is_checked'
+            }, {
                 label: t('form_builder_element_value_type_is_greater'),
                 value: 'is_greater'
             }, {

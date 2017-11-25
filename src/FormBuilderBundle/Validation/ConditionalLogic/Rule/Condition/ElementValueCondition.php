@@ -36,6 +36,8 @@ class ElementValueCondition implements ConditionInterface
 
             if ($this->getComparator() === 'is_selected') {
                 return in_array($this->getValue(), (array)$fieldValue);
+            } elseif ($this->getComparator() === 'is_checked') {
+                return $this->getValue() == $fieldValue;
             } elseif ($this->getComparator() === 'is_greater') {
                 return $this->getValue() > $fieldValue;
             } elseif ($this->getComparator() === 'is_less') {

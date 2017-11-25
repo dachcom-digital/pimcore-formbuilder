@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Constraints:
+        tags:
+            - { name: 'form_builder.dispatcher', type: 'constraints' }
+
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\FormTypeClasses:
+        tags:
+            - { name: 'form_builder.dispatcher', type: 'form_type_classes' }

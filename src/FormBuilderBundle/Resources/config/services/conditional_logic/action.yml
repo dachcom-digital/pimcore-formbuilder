@@ -8,3 +8,7 @@ services:
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ConstraintsAddAction: ~
 
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ConstraintsRemoveAction: ~
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleClassAction: ~
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleElementAction: ~

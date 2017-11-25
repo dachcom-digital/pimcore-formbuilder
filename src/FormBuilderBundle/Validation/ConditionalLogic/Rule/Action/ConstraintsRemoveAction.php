@@ -26,20 +26,23 @@ class ConstraintsRemoveAction implements ActionInterface
     protected $removeAllValidations = FALSE;
 
     /**
+     * @param               $validationState
      * @param               $formData
      * @param               $ruleId
      * @return ReturnStackInterface
      */
-    public function apply($formData, $ruleId)
+    public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
-        foreach ($this->getFields() as $conditionFieldName) {
-            $data[$conditionFieldName] = [];
-            if ($this->getRemoveAllValidations() === TRUE) {
-                $data[$conditionFieldName] = 'all';
-            } else {
-                foreach ($this->getValidation() as $constraint) {
-                    $data[$conditionFieldName][] = $constraint;
+        if($validationState === TRUE) {
+            foreach ($this->getFields() as $conditionFieldName) {
+                $data[$conditionFieldName] = [];
+                if ($this->getRemoveAllValidations() === TRUE) {
+                    $data[$conditionFieldName] = 'all';
+                } else {
+                    foreach ($this->getValidation() as $constraint) {
+                        $data[$conditionFieldName][] = $constraint;
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Validation\ConditionalLogic\Processor;
 
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
+use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 
@@ -25,7 +26,7 @@ class ConditionalLogicProcessor
 
     /**
      * Cycle through each cl block.
-     * If $filterField is not NULL, the action applier requets a FieldReturnStack with valid $fielderField field in return data.
+     * If $filterField is not NULL, the action applier requests a FieldReturnStack with valid $fielderField field in return data.
      *
      * @param $formData
      * @param $conditionalLogic
@@ -46,9 +47,8 @@ class ConditionalLogicProcessor
                 continue;
             }
 
-            if ($this->checkValidity($ruleData['condition'], $formData, $ruleId)) {
-                $actionData = array_merge($actionData, $this->applyActions($ruleData['action'], $formData, $ruleId, $fieldFilter));
-            }
+            $validationState = $this->checkValidity($ruleData['condition'], $formData, $ruleId);
+            $actionData = array_merge($actionData, $this->applyActions($validationState, $ruleData['action'], $formData, $ruleId, $fieldFilter));
         }
 
         return $actionData;
@@ -80,6 +80,7 @@ class ConditionalLogicProcessor
     }
 
     /**
+     * @param $validationState
      * @param $actions
      * @param $formData
      * @param $ruleId
@@ -87,7 +88,7 @@ class ConditionalLogicProcessor
      *
      * @return array
      */
-    public function applyActions($actions, $formData, $ruleId, $fieldFilter)
+    public function applyActions($validationState, $actions, $formData, $ruleId, $fieldFilter)
     {
         $returnContainer = [];
         foreach ($actions as $action) {
@@ -96,10 +97,10 @@ class ConditionalLogicProcessor
                 continue;
             }
 
-            $appliedData = $this->conditionalLogicRegistry->getAction($action['type'])->setValues($action)->apply($formData, $ruleId);
+            $appliedData = $this->conditionalLogicRegistry->getAction($action['type'])->setValues($action)->apply($validationState, $formData, $ruleId);
 
             //Field Filter is active: only add affected field data to return container!
-            if ($fieldFilter !== NULL) {
+            if ($fieldFilter instanceof FormFieldInterface) {
 
                 if (!$appliedData instanceof FieldReturnStack) {
                     continue;
@@ -107,10 +108,11 @@ class ConditionalLogicProcessor
 
                 $filterData = [];
                 foreach ($appliedData->getData() as $fieldName => $data) {
-                    if ($fieldName === $fieldFilter) {
+                    if ($fieldName === $fieldFilter->getName()) {
                         $filterData = $data;
                     }
                 }
+
                 $appliedData->updateData($filterData);
                 $returnContainer[] = $appliedData;
             } else {
@@ -119,7 +121,6 @@ class ConditionalLogicProcessor
                 }
             }
         }
-
         return $returnContainer;
     }
 }

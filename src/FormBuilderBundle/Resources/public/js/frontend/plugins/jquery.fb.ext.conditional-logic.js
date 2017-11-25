@@ -25,31 +25,25 @@
         this.userMethods = options;
         this.themeTransform = {
             'bootstrap3': {
-                show: function ($els) {
-                    $els.show();
+                show: function ($els, className) {
                     $els.each(function () {
-                        var $el = $(this);
-                        if ($el.parent('label').length > 0) {
-                            var $label = $el.parent('label');
-                            $label.parentsUntil('.form-group').parent().show();
-                        } else {
-                            $el.prev('label').show().parent('label').show();
-                        }
+                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
                     });
-
                 },
-                hide: function ($els) {
+                hide: function ($els, className) {
                     $els.val('').prop('selectedIndex', 0);
-                    $els.hide();
                     $els.each(function () {
-                        var $el = $(this);
-                        if ($el.parent('label').length > 0) {
-                            var $label = $el.parent('label');
-                            $label.parentsUntil('.form-group').parent().hide();
-                        } else {
-                            $el.prev('.help-block').remove();
-                            $el.prev('label').hide().parent('label').hide();
-                        }
+                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                    });
+                },
+                addClass: function ($els, className) {
+                    $els.each(function () {
+                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                    });
+                },
+                removeClass: function ($els, className) {
+                    $els.each(function () {
+                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
                     });
                 },
                 enable: function ($els) {
@@ -129,6 +123,7 @@
         this.setupActionProcessor();
         this.init();
 
+        this.$form.addClass('fb-cl-initialized');
     }
 
     $.extend(ConditionalLogic.prototype, {
@@ -153,11 +148,12 @@
                             qualifiers['values'] = [condition.value]
                             break;
                         case 'is_not_value':
-                            qualifiers['is_not_value'] = function (val) {
-                                return val != condition.value;
-                            }
+                            qualifiers['not'] = [condition.value]
                             break;
                         case 'is_selected':
+                            qualifiers['values'] = [condition.value]
+                            break;
+                        case 'is_checked':
                             qualifiers['checked'] = true
                             break;
                     }
@@ -179,24 +175,38 @@
             var toggleElement = new ActionApplier({
                 enable: function (action, actionId, ev, $el) {
                     if (action.state === 'hide') {
-                        _.elementTransformer.transform('hide', $el);
+                        _.elementTransformer.transform('hide', $el, 'fb-cl-hide-element');
                     } else {
-                        _.elementTransformer.transform('show', $el);
+                        _.elementTransformer.transform('show', $el, 'fb-cl-hide-element');
                     }
                 },
                 disable: function (action, actionId, ev, $el) {
                     if (action.state === 'show') {
-                        _.elementTransformer.transform('hide', $el);
+                        _.elementTransformer.transform('hide', $el, 'fb-cl-hide-element');
                     } else {
-                        _.elementTransformer.transform('show', $el);
+                        _.elementTransformer.transform('show', $el, 'fb-cl-hide-element');
                     }
                 }
             }, this.options.actions.toggleElement);
 
             var changeValue = new ActionApplier({
                 enable: function (action, actionId, ev, $el) {
+                    $el.each(function () {
+                        if ($(this).is('input[type="text"]') || $(this).is('input[type="number"]')) {
+                            $el.val(action.value);
+                        } else if($(this).is('select') && $el.find('option[value="' + action.value + '"]').length > 0) {
+                            $el.val(action.value);
+                        }
+                    });
                 },
                 disable: function (action, actionId, ev, $el) {
+                    $el.each(function () {
+                        if ($(this).is('input[type="text"]') || $(this).is('input[type="number"]')) {
+                            $el.val('');
+                        } else if($(this).is('select')) {
+                            $el.prop('selectedIndex', 0);
+                        }
+                    });
                 }
             }, this.options.actions.changeValue);
 
@@ -204,15 +214,17 @@
                 enable: function (action, actionId, ev, $el) {
                     $el.trigger(action.event + '.enable');
                 },
-                disable: function (action, ev, $el) {
+                disable: function (action, actionId, ev, $el) {
                     $el.trigger(action.event + '.disable');
                 }
             }, this.options.actions.triggerEvent);
 
             var toggleClass = new ActionApplier({
                 enable: function (action, actionId, ev, $el) {
+                    _.elementTransformer.transform('addClass', $el, action.class);
                 },
-                disable: function (action, ev, $el) {
+                disable: function (action, actionId, ev, $el) {
+                    _.elementTransformer.transform('removeClass', $el, action.class);
                 }
             }, this.options.actions.toggleClass);
 
@@ -388,13 +400,13 @@
                         return true;
                     }
 
-                    var $dependencies =  _.$form.find(formDependingSelector.join(','));
+                    var $dependencies = _.$form.find(formDependingSelector.join(','));
                     if ($dependencies.length === 0) {
                         console.warn('no dependencies found. query was:', formDependingSelector);
                         return true;
                     }
                     var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
-                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:' , actionOptions);
+                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
 
                 });
 
@@ -459,7 +471,6 @@
                     options = {
                         hide: false,
                         disable: false,
-                        valueOnEnable: action.value,
                         onEnable: _.actions.changeValue.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.changeValue.onDisable.bind(null, action, actionId)
                     }
@@ -476,7 +487,6 @@
                     options = {
                         hide: false,
                         disable: false,
-                        toggleClass: action.class,
                         onEnable: _.actions.toggleClass.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.toggleClass.onDisable.bind(null, action, actionId)
                     }

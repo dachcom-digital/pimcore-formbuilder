@@ -51,6 +51,7 @@ Formbuilder.comp.conditionalLogic.action.toggleClass = Class.create(Formbuilder.
             labelAlign: 'top',
             summaryDisplay: true,
             allowBlank: false,
+            maskRe: /[a-zA-Z0-9-]+/,
             value: this.data ? this.data.class : null,
             flex: 1,
             listeners: {

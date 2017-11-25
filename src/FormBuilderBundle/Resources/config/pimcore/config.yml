@@ -32,6 +32,7 @@ form_builder:
     conditional_logic:
         action:
             toggleElement:
+                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleElementAction'
                 name: 'form_builder.cl.action.toggle_element'
                 icon: 'form_builder_cl_toggle_element'
             constraintsAdd:
@@ -49,6 +50,7 @@ form_builder:
                 name: 'form_builder.cl.action.trigger_event'
                 icon: 'form_builder_cl_trigger_event'
             toggleClass:
+                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleClassAction'
                 name: 'form_builder.cl.action.toggle_class'
                 icon: 'form_builder_cl_toggle_class'
             toggleAvailability:

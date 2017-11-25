@@ -1,20 +1,15 @@
 <?php
 
-namespace FormBuilderBundle\Validation;
+namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
-use FormBuilderBundle\Validation\ConditionalLogic\Processor\ConditionalLogicProcessor;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ConstraintConnector
+class Constraints implements ModuleInterface
 {
-    /**
-     * @var ConditionalLogicProcessor
-     */
-    protected $conditionalLogicProcessor;
-
     /**
      * @var FormInterface
      */
@@ -38,31 +33,37 @@ class ConstraintConnector
     /**
      * @var array
      */
-    protected $conditionalLogic;
+    protected $appliedConditions;
 
     /**
-     * ConstraintConnector constructor.
-     *
-     * @param ConditionalLogicProcessor $conditionalLogicProcessor
+     * @param OptionsResolver $resolver
      */
-    public function __construct(ConditionalLogicProcessor $conditionalLogicProcessor)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $this->conditionalLogicProcessor = $conditionalLogicProcessor;
+        $resolver->setDefaults([
+            'formData'             => [],
+            'field'                => NULL,
+            'availableConstraints' => [],
+            'appliedConditions'    => []
+        ]);
+
+        $resolver->setRequired(['formData', 'field', 'availableConstraints', 'appliedConditions']);
+        $resolver->setAllowedTypes('field',FormFieldInterface::class);
+        $resolver->setAllowedTypes('formData',['array', 'null']);
+        $resolver->setAllowedTypes('availableConstraints','array');
+        $resolver->setAllowedTypes('appliedConditions','array');
     }
 
     /**
-     * @param                    $formData
-     * @param FormFieldInterface $field
-     * @param                    $availableConstraints
-     * @param                    $conditionalLogic
+     * @param $options
      * @return array
      */
-    public function connect($formData, FormFieldInterface $field, $availableConstraints, $conditionalLogic)
+    public function apply($options)
     {
-        $this->formData = $formData;
-        $this->field = $field;
-        $this->availableConstraints = $availableConstraints;
-        $this->conditionalLogic = $conditionalLogic;
+        $this->formData = $options['formData'];
+        $this->field = $options['field'];
+        $this->availableConstraints = $options['availableConstraints'];
+        $this->appliedConditions = $options['appliedConditions'];
 
         //add defaults
         $constraints = [];
@@ -80,16 +81,14 @@ class ConstraintConnector
      * @param $defaultFieldConstraints
      * @return array
      */
-    public function checkConditionalLogicConstraints($defaultFieldConstraints)
+    private function checkConditionalLogicConstraints($defaultFieldConstraints)
     {
-        if (empty($this->conditionalLogic)) {
+        if (empty($this->appliedConditions)) {
             return $defaultFieldConstraints;
         }
 
-        $conditionActions = $this->conditionalLogicProcessor->process($this->formData, $this->conditionalLogic, $this->field->getName());
-
         /** @var ReturnStackInterface $returnStack */
-        foreach ($conditionActions as $ruleId => $returnStack) {
+        foreach ($this->appliedConditions as $ruleId => $returnStack) {
 
             if (!$returnStack instanceof FieldReturnStack || !in_array($returnStack->getActionType(), [
                     'addConstraints',
@@ -120,7 +119,7 @@ class ConstraintConnector
      * @param $constraints
      * @return array
      */
-    public function appendConstraintsData($constraints)
+    private function appendConstraintsData($constraints)
     {
         $constraintData = [];
         foreach ($constraints as $constraint) {

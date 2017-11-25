@@ -7,12 +7,13 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterfa
 interface ActionInterface
 {
     /**
+     * @param $validationState
      * @param $formData
      * @param $ruleId
      *
      * @return ReturnStackInterface
      */
-    public function apply($formData, $ruleId);
+    public function apply($validationState, $formData, $ruleId);
 
     /**
      * @param array $values

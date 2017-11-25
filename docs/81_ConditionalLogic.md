@@ -3,11 +3,15 @@
 
 Use the conditional logic to hide/show fields, toggle classes, change validation and more, depending on given field values.
 
+## Preparation
+- Include the [conditional logic](91_Javascript.md#Conditional-logic-plugin) plugin
+- Add the `fb-cl-hide-element` class with a `display:none;` property to your project style
+
 ## Conditions
 
 | Name | Description | Options |
 |------|-------------|---------|
-| Element Value | Select fields which should have a conditional logic | Types: `selected`, `greater than`, `less than`, `equal`, `is not` |
+| Element Value | Select fields which should have a conditional logic | Types: `selected`, `greater than`, `less than`, `equal`, `is not`, `checked` |
 
 ## Actions
 

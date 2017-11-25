@@ -6,7 +6,7 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ActionTrait;
 
-class ConstraintsAddAction implements ActionInterface
+class ToggleClassAction implements ActionInterface
 {
     use ActionTrait;
 
@@ -16,9 +16,9 @@ class ConstraintsAddAction implements ActionInterface
     protected $fields = [];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $validation = [];
+    protected $class = NULL;
 
     /**
      * @param               $validationState
@@ -29,25 +29,16 @@ class ConstraintsAddAction implements ActionInterface
     public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
-        if($validationState === TRUE) {
+        $class = $this->getClass();
+
+        if ($validationState === TRUE) {
             foreach ($this->getFields() as $conditionFieldName) {
-                $data[$conditionFieldName] = [];
-                foreach ($this->getValidation() as $constraint) {
-                    $data[$conditionFieldName][] = $constraint;
-                }
+                $data[$conditionFieldName] = $class;
             }
         }
 
-        return new FieldReturnStack('addConstraints', $data);
+        return new FieldReturnStack('toggleClass', $data);
 
-    }
-
-    /**
-     * @return array
-     */
-    public function getFields()
-    {
-        return $this->fields;
     }
 
     /**
@@ -61,16 +52,24 @@ class ConstraintsAddAction implements ActionInterface
     /**
      * @return array
      */
-    public function getValidation()
+    public function getFields()
     {
-        return $this->validation;
+        return $this->fields;
     }
 
     /**
-     * @param array
+     * @param string
      */
-    public function setValidation($validation)
+    public function setClass($class)
     {
-        $this->validation = $validation;
+        $this->class = $class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->class;
     }
 }

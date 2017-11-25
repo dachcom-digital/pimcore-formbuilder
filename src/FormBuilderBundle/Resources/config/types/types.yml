@@ -40,6 +40,13 @@ form_builder:
                 label: 'form_builder_type.checkbox_type'
                 icon_class: 'form_builder_icon_checkbox'
                 fields:
+                    options.value:
+                        display_group_id: base
+                        type: textfield
+                        label: 'form_builder_type_field_base.value'
+                        config:
+                            disabled: true
+                            data: '1'
                     options.data:
                         display_group_id: base
                         type: checkbox

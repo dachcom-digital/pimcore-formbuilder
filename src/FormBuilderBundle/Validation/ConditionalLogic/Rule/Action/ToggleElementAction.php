@@ -6,7 +6,7 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ActionTrait;
 
-class ConstraintsAddAction implements ActionInterface
+class ToggleElementAction implements ActionInterface
 {
     use ActionTrait;
 
@@ -16,9 +16,9 @@ class ConstraintsAddAction implements ActionInterface
     protected $fields = [];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $validation = [];
+    protected $state = NULL;
 
     /**
      * @param               $validationState
@@ -29,17 +29,13 @@ class ConstraintsAddAction implements ActionInterface
     public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
-        if($validationState === TRUE) {
-            foreach ($this->getFields() as $conditionFieldName) {
-                $data[$conditionFieldName] = [];
-                foreach ($this->getValidation() as $constraint) {
-                    $data[$conditionFieldName][] = $constraint;
-                }
-            }
+        $state = $this->getState();
+        foreach ($this->getFields() as $conditionFieldName) {
+            $toggleState = $validationState === TRUE ? 'hide' : 'show';
+            $data[$conditionFieldName] = $state === $toggleState ? 'fb-cl-hide-element' : '';
         }
 
-        return new FieldReturnStack('addConstraints', $data);
-
+        return new FieldReturnStack('toggleElement', $data);
     }
 
     /**
@@ -59,18 +55,18 @@ class ConstraintsAddAction implements ActionInterface
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getValidation()
+    public function getState()
     {
-        return $this->validation;
+        return $this->state;
     }
 
     /**
-     * @param array
+     * @param string
      */
-    public function setValidation($validation)
+    public function setState($state)
     {
-        $this->validation = $validation;
+        $this->state = $state;
     }
 }

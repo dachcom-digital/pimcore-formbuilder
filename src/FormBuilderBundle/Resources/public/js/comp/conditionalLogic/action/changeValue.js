@@ -67,6 +67,13 @@ Formbuilder.comp.conditionalLogic.action.changeValue = Class.create(Formbuilder.
             items: items
         });
 
+        var descriptionField = new Ext.form.Label({
+            xtype: 'label',
+            anchor: '100%',
+            style: 'display:block; padding:5px; background:#f5f5f5; border:1px solid #eee; font-weight: 300;',
+            html: t('form_builder_change_value_description')
+        });
+
         var _ = this,
             myId = Ext.id(),
             item = new Ext.form.FormPanel({
@@ -76,7 +83,7 @@ Formbuilder.comp.conditionalLogic.action.changeValue = Class.create(Formbuilder.
                 style: 'margin: 10px 0 0 0',
                 bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
                 tbar: this.getTopBar(myId),
-                items: compositeField,
+                items: [compositeField, descriptionField],
                 listeners: {}
             });
 

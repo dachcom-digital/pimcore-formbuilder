@@ -11,7 +11,7 @@ use FormBuilderBundle\Storage\FormFieldDynamicInterface;
 use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Stream\PackageStream;
-use FormBuilderBundle\Validation\ConstraintConnector;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -50,9 +50,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $session;
 
     /**
-     * @var ConstraintConnector
+     * @var Dispatcher
      */
-    protected $constraintConnector;
+    protected $dispatcher;
 
     /**
      * @var FormRegistry
@@ -76,7 +76,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param PackageStream            $packageStream
      * @param EventDispatcherInterface $eventDispatcher
      * @param SessionInterface         $session
-     * @param ConstraintConnector      $constraintConnector
+     * @param Dispatcher               $dispatcher
      * @param FormRegistry             $formRegistry
      */
     public function __construct(
@@ -84,14 +84,14 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         PackageStream $packageStream,
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
-        ConstraintConnector $constraintConnector,
+        Dispatcher $dispatcher,
         FormRegistry $formRegistry
     ) {
         $this->configuration = $configuration;
         $this->packageStream = $packageStream;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
-        $this->constraintConnector = $constraintConnector;
+        $this->dispatcher = $dispatcher;
         $this->formRegistry = $formRegistry;
 
         $this->availableConstraints = $this->configuration->getConfig('validation_constraints');
@@ -204,6 +204,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             return ($a->getOrder() < $b->getOrder()) ? -1 : 1;
         });
 
+        $data = $this->prefillData($orderedFields, $data);
+
         /** @var FormFieldInterface $field */
         foreach ($orderedFields as $field) {
             if ($field instanceof FormFieldDynamicInterface) {
@@ -231,21 +233,23 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $object = $this->formRegistry->getType($this->availableFormTypes[$field->getType()]['class'])->getOptionsResolver();
         $availableOptions = $object->getDefinedOptions();
 
-        //set optional template
-        if (isset($optional['template'])) {
-            $options['attr']['data-template'] = $optional['template'];
-        }
-
         $constraints = [];
         $constraintNames = [];
+        $templateClasses = [];
+
+        //set optional template
+        if (isset($optional['template'])) {
+            $templateClasses[] = $optional['template'];
+        }
 
         if (in_array('constraints', $availableOptions)) {
-            $constraints = $this->constraintConnector->connect(
-                $formData,
-                $field,
-                $this->availableConstraints,
-                $form->getData()->getConditionalLogic()
-            );
+            $constraints = $this->dispatcher->runFieldDispatcher('constraints', [
+                'formData'         => $formData,
+                'field'            => $field,
+                'conditionalLogic' => $form->getData()->getConditionalLogic()
+            ], [
+                'availableConstraints' => $this->availableConstraints
+            ]);
 
             // add field constraints to data attribute since we need them for the frontend cl applier.
             foreach ($field->getConstraints() as $constraint) {
@@ -265,6 +269,21 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                         return $constraint instanceof NotBlank;
                     })
                 ) === 1;
+        }
+
+        //classes
+        $classes = $this->dispatcher->runFieldDispatcher('form_type_classes', [
+            'formData'         => $formData,
+            'field'            => $field,
+            'conditionalLogic' => $form->getData()->getConditionalLogic()
+        ]);
+
+        if (!empty($classes)) {
+            $templateClasses = array_merge($templateClasses, $classes);
+        }
+
+        if (!empty($templateClasses)) {
+            $options['attr']['data-template'] = join(' ', $templateClasses);
         }
 
         $form->add(
@@ -294,5 +313,30 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $field->getType(),
             $options
         );
+    }
+
+    /**
+     * Add pre-filled data to value store
+     *
+     * @param $fields
+     * @param $data
+     * @return mixed
+     */
+    private function prefillData($fields, $data)
+    {
+        /** @var FormFieldInterface $field */
+        foreach ($fields as $field) {
+
+            if (!empty($data[$field->getName()])) {
+                continue;
+            }
+
+            $fieldOptions = $field->getOptions();
+            if (isset($fieldOptions['data'])) {
+                $data[$field->getName()] = $fieldOptions['data'];
+            }
+        }
+
+        return $data;
     }
 }
