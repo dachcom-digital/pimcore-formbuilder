@@ -131,6 +131,45 @@ form_builder:
                             subtypes:
                                 document:
                                     - 'snippet'
+        country:
+            class: Symfony\Component\Form\Extension\Core\Type\CountryType
+            backend:
+                form_type_group: choice_fields
+                label: 'form_builder_type.country_type'
+                icon_class: 'form_builder_icon_country'
+                fields:
+                    options.value: ~
+                    options.data:
+                        display_group_id: base
+                        type: tagfield
+                        label: 'form_builder_type_field_base.data'
+                        config: ~
+                    options.preferred_choices:
+                        display_group_id: base
+                        type: tagfield
+                        label: 'form_builder_type_field_base.preferred_choices'
+                        config: ~
+                    options.expanded:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.expanded'
+                        config: ~
+                    options.multiple:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.multiple'
+                        config: ~
+                    options.placeholder:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.placeholder'
+                        options_transformer: FormBuilderBundle\Transformer\DefaultValueTransformer
+                        config:
+                            default_value: false
+                    options.placeholder_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.placeholder_desc'
         choice:
             class: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             backend:
@@ -143,6 +182,11 @@ form_builder:
                         display_group_id: base
                         type: tagfield
                         label: 'form_builder_type_field_base.data'
+                        config: ~
+                    options.preferred_choices:
+                        display_group_id: base
+                        type: tagfield
+                        label: 'form_builder_type_field_base.preferred_choices'
                         config: ~
                     options.expanded:
                         display_group_id: attributes

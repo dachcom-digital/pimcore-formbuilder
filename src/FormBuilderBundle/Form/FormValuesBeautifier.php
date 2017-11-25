@@ -6,7 +6,10 @@ use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 use FormBuilderBundle\Storage\FormFieldDynamicInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use Pimcore\Translation\Translator;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Intl\Intl;
 
 /**
  * @method getProperty($option)
@@ -34,11 +37,26 @@ class FormValuesBeautifier
      * @param FormInterface $formField
      * @param string        $locale
      *
-     * @return mixed
+     * @return string|array
      */
     public function getFieldValue($value, $formField, $locale)
     {
-        if ($formField->getConfig()->hasOption('choices')) {
+        if(empty($value)) {
+            return $value;
+        }
+
+        $fieldType = $formField->getConfig()->getType()->getInnerType();
+        if ($fieldType instanceof CountryType) {
+            if (is_array($value)) {
+                $choices = [];
+                foreach ($value as $val) {
+                    $choices[] = Intl::getRegionBundle()->getCountryName($val, $locale);
+                }
+            } else {
+                $choices = Intl::getRegionBundle()->getCountryName($value, $locale);
+            }
+            return $choices;
+        } elseif ($fieldType instanceof ChoiceType) {
             $choices = $formField->getConfig()->getOption('choices');
             $arrayIterator = new \RecursiveArrayIterator($choices);
             $choices = [];
@@ -148,9 +166,9 @@ class FormValuesBeautifier
 
         if ($valueTransformer === FALSE) {
             $value = $this->getFieldValue($fieldValue, $formField, $locale);
-        } else if ($valueTransformer instanceof \Closure) {
+        } elseif ($valueTransformer instanceof \Closure) {
             $value = call_user_func_array($valueTransformer, [$formField, $fieldValue, $locale]);
-        } else if (is_array($valueTransformer)) {
+        } elseif (is_array($valueTransformer)) {
             $value = call_user_func_array($valueTransformer, [$formField, $fieldValue, $locale]);
         }
 

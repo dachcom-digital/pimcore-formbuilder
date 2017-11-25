@@ -10,7 +10,8 @@ There are several form types available (updated continuously).
 | Integer | Text Fields | HTML5 Number field. |
 | Checkbox | Other Fields | Default (single) checkbox field. |
 | Submit | Buttons | Submit Button. |
-| Choice | Choice Fields | Create a dropdown, multi-dropdown, multi-checkboxes, multi-radios |
+| Country | Choice Fields| Create a drop down with a default country selection. |
+| Choice | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios |
 | Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
 | Snippet | Other Fields | Place a custom snippet in your form. |
 | [Dynamic Multi File](80_FileUpload.md) | Other Fields | Multi-File Upload field. |
