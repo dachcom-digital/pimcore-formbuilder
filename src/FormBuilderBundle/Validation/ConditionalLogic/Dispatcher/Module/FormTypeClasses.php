@@ -35,6 +35,9 @@ class FormTypeClasses implements ModuleInterface
      */
     protected $appliedConditions;
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -44,9 +47,9 @@ class FormTypeClasses implements ModuleInterface
         ]);
 
         $resolver->setRequired(['formData', 'field', 'appliedConditions']);
-        $resolver->setAllowedTypes('field',FormFieldInterface::class);
-        $resolver->setAllowedTypes('formData',['array', 'null']);
-        $resolver->setAllowedTypes('appliedConditions','array');
+        $resolver->setAllowedTypes('field', FormFieldInterface::class);
+        $resolver->setAllowedTypes('formData', ['array', 'null']);
+        $resolver->setAllowedTypes('appliedConditions', 'array');
     }
 
     /**
@@ -62,6 +65,9 @@ class FormTypeClasses implements ModuleInterface
         return $this->checkConditionData();
     }
 
+    /**
+     * @return array
+     */
     private function checkConditionData()
     {
         if (empty($this->appliedConditions)) {

@@ -4,7 +4,6 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher;
 
 use FormBuilderBundle\Registry\DispatcherRegistry;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\ModuleInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Processor\ConditionalLogicProcessor;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

@@ -8,7 +8,6 @@ interface ModuleInterface
 {
     /**
      * @param OptionsResolver $resolver
-     * @return mixed
      */
     public function configureOptions(OptionsResolver $resolver);
 
