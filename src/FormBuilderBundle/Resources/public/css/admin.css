@@ -81,6 +81,10 @@
     background: url(/bundles/formbuilder/img/multicheckbox.svg) left center no-repeat !important;
 }
 
+.form_builder_icon_dynamic_multi_select {
+    background: url(/bundles/formbuilder/img/dynamic_multicheck.svg) left center no-repeat !important;
+}
+
 .form_builder_icon_password {
     background: url(/bundles/formbuilder/img/password.svg) left center no-repeat !important;
 }

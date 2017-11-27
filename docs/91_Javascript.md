@@ -21,7 +21,8 @@ $(function () {
 ### Extended Usage
 ```javascript
 $('form.formbuilder.ajax-form').formBuilderConditionalLogic({
-    setupFileUpload: true,
+    setupFileUpload: true, // initialize upload fields
+    resetFormMethod: null, // reset method after success
     validationTransformer: {
         addValidationMessage: function($fields, messages) {
             console.log($fields, messages);

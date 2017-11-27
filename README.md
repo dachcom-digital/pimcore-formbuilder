@@ -29,6 +29,8 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Mail Template Configuration](docs/10_MailTemplates.md)
 - [Dynamic Fields](docs/20_AjaxForms.md)
 - [Available Form Types](docs/30_FormTypes.md)
+  - [Dynamic Choice Type](docs/82_DynamicChoice.md)
+  - [Dynamic Multi File Type](docs/80_FileUpload.md)
 - [Create Custom Form Type](docs/40_CustomFormType.md)
 - [Custom Form Type Backend Layout](docs/50_CustomFormTypeBackendLayout.md)
 - [Using Presets](docs/60_Presets.md)

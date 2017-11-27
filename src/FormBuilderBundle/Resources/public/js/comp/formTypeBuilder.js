@@ -21,9 +21,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     attributeSelector: null,
 
-    storeData : {},
+    storeData: {},
 
-    initialize: function(formHandler, treeNode, initData, availableFormFieldTemplates, values) {
+    initialize: function (formHandler, treeNode, initData, availableFormFieldTemplates, values) {
 
         this.formHandler = formHandler;
         this.treeNode = treeNode;
@@ -39,27 +39,27 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    getType: function() {
+    getType: function () {
         return this.type;
     },
 
-    getName: function() {
+    getName: function () {
         return this.getData().name;
     },
 
-    getTypeName: function() {
+    getTypeName: function () {
         return this.typeName;
     },
 
-    getIconClass: function() {
+    getIconClass: function () {
         return this.iconClass;
     },
 
-    initData: function(values) {
+    initData: function (values) {
 
         this.valid = true;
 
-        if(values) {
+        if (values) {
             this.storeData = values;
         } else {
             this.storeData = {
@@ -71,7 +71,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    renderLayout: function() {
+    renderLayout: function () {
 
         var items = [];
 
@@ -96,7 +96,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             items: {
                 xtype: 'tabpanel',
                 tabPosition: 'top',
-                region:'center',
+                region: 'center',
                 deferredRender: true,
                 enableTabScroll: true,
                 border: false,
@@ -110,9 +110,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         return this.form;
     },
 
-    layoutRendered: function() {
+    layoutRendered: function () {
 
-        var items = this.form.queryBy(function(component) {
+        var items = this.form.queryBy(function (component) {
             return in_array(component.name, ['display_name']);
         });
 
@@ -128,13 +128,13 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
      *
      * @returns {boolean}
      */
-    isValid: function() {
+    isValid: function () {
         return this.formIsValid;
     },
 
-    applyData: function() {
+    applyData: function () {
         this.formIsValid = this.form.isValid();
-        this.storeData =  this.transposeFormFields(this.form.getValues());
+        this.storeData = this.transposeFormFields(this.form.getValues());
         this.storeData.type = this.getType();
     },
 
@@ -142,7 +142,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
      *
      * @returns {Formbuilder.comp.type.formTypeBuilder.storeData|{}}
      */
-    getData: function() {
+    getData: function () {
         return this.storeData;
     },
 
@@ -152,7 +152,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
      * @param isMainTab
      * @returns {*}
      */
-    getForm: function(formConfig, isMainTab) {
+    getForm: function (formConfig, isMainTab) {
 
         var form = this.createBaseForm(isMainTab);
 
@@ -164,7 +164,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                     title: fieldSetConfig.label,
                     collapsible: true,
                     collapsed: fieldSetConfig.collapsed,
-                    autoHeight :true,
+                    autoHeight: true,
                     defaultType: 'textfield'
                 });
 
@@ -174,7 +174,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 var fieldConfig = fieldSetConfig.fields[fieldsIndex],
                     field = this.generateField(fieldConfig);
 
-                if(field !== null) {
+                if (field !== null) {
                     fieldSetFields.push(field);
                 }
             }
@@ -191,7 +191,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    createBaseForm: function(isMainTab) {
+    createBaseForm: function (isMainTab) {
 
         var _ = this,
             form = new Ext.form.Panel({
@@ -200,7 +200,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 defaultType: 'textfield',
             });
 
-        if(isMainTab === true) {
+        if (isMainTab === true) {
 
             //create "display name" field.
             var displayNameValue = this.getFieldValue('display_name');
@@ -216,14 +216,14 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             //create "name" field.
             var nameValue = this.getFieldValue('name');
             form.add(new Ext.form.TextField({
-                fieldLabel:  t('form_builder_field_name'),
+                fieldLabel: t('form_builder_field_name'),
                 name: 'name',
                 value: nameValue ? nameValue : this.generateUniqueFieldName(),
                 allowBlank: false,
                 anchor: '100%',
                 enableKeyEvents: true,
-                validator: function(v) {
-                    if(in_array(v.toLowerCase(), _.formHandler.parentPanel.getConfig().forbidden_form_field_names)) {
+                validator: function (v) {
+                    if (in_array(v.toLowerCase(), _.formHandler.parentPanel.getConfig().forbidden_form_field_names)) {
                         this.setValue('');
                         Ext.MessageBox.alert(t('error'), t('form_builder_forbidden_file_name'));
                         return false;
@@ -233,12 +233,12 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             }));
 
             var templateSelectStore = new Ext.data.Store({
-                data : this.formTypeTemplates
+                data: this.formTypeTemplates
             });
 
             var templateDefaultValue = undefined;
-            Ext.iterate(this.formTypeTemplates, function(data, value) {
-                if(data.default === true) {
+            Ext.iterate(this.formTypeTemplates, function (data, value) {
+                if (data.default === true) {
                     templateDefaultValue = data.value;
                     return false;
                 }
@@ -266,11 +266,11 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    generateField: function(fieldConfig) {
+    generateField: function (fieldConfig) {
 
         var field = null;
 
-        switch(fieldConfig.type) {
+        switch (fieldConfig.type) {
 
             case 'label':
 
@@ -285,9 +285,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
                 var hasStore = fieldConfig.config && Ext.isArray(fieldConfig.config.store),
                     tagStore = new Ext.data.ArrayStore({
-                    fields: ['index', 'name'],
-                    data : hasStore ? fieldConfig.config.store : []
-                });
+                        fields: ['index', 'name'],
+                        data: hasStore ? fieldConfig.config.store : []
+                    });
 
                 field = new Ext.form.field.Tag({
                     name: fieldConfig.id,
@@ -349,10 +349,26 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
             case 'select' :
 
-                var selectStore = new Ext.data.ArrayStore({
-                    fields: ['label','value'],
-                    data : fieldConfig.config.options
-                });
+                var selectStore;
+
+                if (fieldConfig.config.store_url) {
+                    selectStore = new Ext.data.JsonStore({
+                        autoLoad: true,
+                        fields: ['label', 'value'],
+                        proxy: {
+                            type: 'ajax',
+                            url: fieldConfig.config.store_url,
+                            reader: {
+                                type: 'json'
+                            }
+                        }
+                    });
+                } else {
+                    selectStore = new Ext.data.ArrayStore({
+                        fields: ['label', 'value'],
+                        data: fieldConfig.config.options
+                    });
+                }
 
                 field = new Ext.form.ComboBox({
                     fieldLabel: fieldConfig.label,
@@ -366,7 +382,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                     editable: false,
                     triggerAction: 'all',
                     anchor: '100%',
-                    allowBlank: true
+                    allowBlank: false
                 });
 
                 break;
@@ -388,7 +404,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    getRepeaterWithKeyValue: function(fieldConfig) {
+    getRepeaterWithKeyValue: function (fieldConfig) {
 
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
             fieldConfig,
@@ -399,7 +415,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    getRepeaterWithOptions: function(fieldConfig) {
+    getRepeaterWithOptions: function (fieldConfig) {
 
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
             fieldConfig,
@@ -411,7 +427,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     },
 
-    getHrefElement: function(fieldConfig) {
+    getHrefElement: function (fieldConfig) {
 
         var keyValueRepeater = new Formbuilder.comp.types.href(
             fieldConfig,
@@ -428,14 +444,14 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     /**
      * @returns {String}
      */
-    generateUniqueFieldName: function() {
+    generateUniqueFieldName: function () {
         return Ext.id(null, 'field_');
     },
 
     /**
      * @param field
      */
-    checkFieldDisplayName: function(field) {
+    checkFieldDisplayName: function (field) {
         if (this.treeNode) {
             this.treeNode.set('text', field.getValue());
         }
@@ -444,13 +460,13 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     /**
      * @param field
      */
-    checkFieldLabelName: function(field) {
+    checkFieldLabelName: function (field) {
 
         var labelField = this.form.queryBy(function (component) {
             return in_array(component.name, ['options.label']);
         });
 
-        if(!labelField[0]) {
+        if (!labelField[0]) {
             return;
         }
 
@@ -464,39 +480,39 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
      * @param path
      * @param field
      */
-    checkPath: function(path, field) {
+    checkPath: function (path, field) {
 
-            if( path === '' ) {
-                return;
-            }
+        if (path === '') {
+            return;
+        }
 
-            Ext.Ajax.request({
-                url: '/admin/formbuilder/settings/check-path',
-                method: 'post',
-                params: {
-                    path: path
-                },
-                success: this.pathChecked.bind(field)
-            });
+        Ext.Ajax.request({
+            url: '/admin/formbuilder/settings/check-path',
+            method: 'post',
+            params: {
+                path: path
+            },
+            success: this.pathChecked.bind(field)
+        });
 
-        },
+    },
 
     /**
      * @param response
      */
-    pathChecked: function(response) {
+    pathChecked: function (response) {
 
         //maybe layout is not available anymore => return!
-        if( this.el === null ) {
+        if (this.el === null) {
             return;
         }
 
         var ret = Ext.decode(response.responseText);
 
-        if(ret.success === true) {
+        if (ret.success === true) {
             this.clearInvalid();
         } else {
-            this.markInvalid( t('form_builder_path_does_not_exists') );
+            this.markInvalid(t('form_builder_path_does_not_exists'));
         }
 
     },
@@ -518,13 +534,12 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         return unTransposedData;
     },
 
-    getFieldValue(id)
-    {
-        if(id.indexOf('options.') !== -1) {
-            return this.storeData['options'] ? this.storeData['options'][id.replace(/^(options\.)/,'')] : undefined;
-        } else if(id.indexOf('optional.') !== -1) {
-            return this.storeData['optional'] ? this.storeData['optional'][id.replace(/^(optional\.)/,'')] : undefined;
-        } else if(this.storeData[id]) {
+    getFieldValue(id) {
+        if (id.indexOf('options.') !== -1) {
+            return this.storeData['options'] ? this.storeData['options'][id.replace(/^(options\.)/, '')] : undefined;
+        } else if (id.indexOf('optional.') !== -1) {
+            return this.storeData['optional'] ? this.storeData['optional'][id.replace(/^(optional\.)/, '')] : undefined;
+        } else if (this.storeData[id]) {
             return this.storeData[id];
         }
 

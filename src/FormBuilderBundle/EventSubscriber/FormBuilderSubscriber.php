@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistry;
+use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -55,7 +56,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $dispatcher;
 
     /**
-     * @var FormRegistry
+     * @var FormRegistryInterface
      */
     protected $formRegistry;
 
@@ -77,7 +78,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param EventDispatcherInterface $eventDispatcher
      * @param SessionInterface         $session
      * @param Dispatcher               $dispatcher
-     * @param FormRegistry             $formRegistry
+     * @param FormRegistryInterface    $formRegistry
      */
     public function __construct(
         Configuration $configuration,
@@ -85,7 +86,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
         Dispatcher $dispatcher,
-        FormRegistry $formRegistry
+        FormRegistryInterface $formRegistry
     ) {
         $this->configuration = $configuration;
         $this->packageStream = $packageStream;
@@ -269,6 +270,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                         return $constraint instanceof NotBlank;
                     })
                 ) === 1;
+        }
+
+        if (in_array('conditionalLogic', $availableOptions)) {
+            //$options['conditionalLogic'] = NULL;
         }
 
         //classes

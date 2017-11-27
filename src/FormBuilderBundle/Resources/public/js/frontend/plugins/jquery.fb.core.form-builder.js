@@ -159,16 +159,24 @@
                         } else {
 
                             $form.trigger('formbuilder.success', [response.messages, response.redirect, $form]);
-                            $form.find('input[type=text], textarea').val('');
+
+                            if (typeof _.options.resetFormMethod === 'function') {
+                                _.options.resetFormMethod.apply(null, $form);
+                            } else {
+                                $form.trigger('reset');
+                                // in case conditional logic is active.
+                                $form.find('input, textarea').trigger('change');
+                            }
 
                             if ($fbHtmlFile.length > 0) {
                                 $fbHtmlFile.fineUploader('reset');
                                 $fbHtmlFile.find('input[type="hidden"]').val('');
                             }
 
-                            if (typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
-                                grecaptcha.reset();
-                            }
+                            //@todo: recaptcha is currently not implemented
+                            //if (typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
+                            //    grecaptcha.reset();
+                            //}
                         }
                     }
                 });
@@ -306,7 +314,8 @@
 
     $.fn.formBuilderAjaxManager.defaults = {
         setupFileUpload: true,
-        validationTransformer: {}
+        validationTransformer: {},
+        resetFormMethod: null
     };
 
 })(jQuery, window, document);

@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Controller\Admin;
 use FormBuilderBundle\Backend\Form\Builder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
@@ -56,6 +57,22 @@ class SettingsController extends AdminController
         $settings = $configuration->getConfigArray();
         $settings['forbidden_form_field_names'] = Configuration::INVALID_FIELD_NAMES;
         return $this->json(['settings' => $settings]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getDynamicChoiceBuilderAction(Request $request)
+    {
+        $registry = $this->container->get(ChoiceBuilderRegistry::class);
+        $services = $registry->getAll();
+        $data = [];
+        foreach ($services as $identifier => $service) {
+            $data[] = ['label' => $service['label'], 'value' => $identifier];
+        }
+        return $this->json($data);
     }
 
     /**

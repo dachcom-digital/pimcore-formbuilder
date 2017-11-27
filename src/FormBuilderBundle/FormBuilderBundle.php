@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle;
 
+use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\Tool\Install;
@@ -20,6 +21,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         parent::build($container);
         $container->addCompilerPass(new OptionsTransformerPass());
         $container->addCompilerPass(new DispatcherPass());
+        $container->addCompilerPass(new ChoiceBuilderPass());
     }
 
     /**

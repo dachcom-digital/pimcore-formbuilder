@@ -9,3 +9,21 @@ services:
             - '@translator'
         tags:
             - { name: form.type }
+    FormBuilderBundle\Form\Type\HoneypotType:
+        public: false
+        tags:
+            - { name: form.type }
+    FormBuilderBundle\Form\Type\HtmlTagType:
+        public: false
+        tags:
+            - { name: form.type }
+    FormBuilderBundle\Form\Type\SnippetType:
+        public: false
+        tags:
+            - { name: form.type }
+    FormBuilderBundle\Form\Type\DynamicChoiceType:
+        public: false
+        arguments:
+            - '@FormBuilderBundle\Registry\ChoiceBuilderRegistry'
+        tags:
+            - { name: form.type }

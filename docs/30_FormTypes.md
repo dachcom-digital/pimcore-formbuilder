@@ -12,6 +12,7 @@ There are several form types available (updated continuously).
 | Submit | Buttons | Submit Button. |
 | Country | Choice Fields| Create a drop down with a default country selection. |
 | Choice | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios |
+| [Dynamic Choice](82_DynamicChoice.md) | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios. Populate Data from a custom Service.|
 | Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
 | Snippet | Other Fields | Place a custom snippet in your form. |
 | [Dynamic Multi File](80_FileUpload.md) | Other Fields | Multi-File Upload field. |

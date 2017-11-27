@@ -5,7 +5,6 @@
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
  *
- * Todo: Multiple
 */
 ;(function ($, window, document) {
     'use strict';

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48" version="1.1">
+<g id="surface1">
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:#B0BEC5;stroke-opacity:1;stroke-miterlimit:10;" d="M 12 24 C 12 14 19 9 30 9 "/>
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:#B0BEC5;stroke-opacity:1;stroke-miterlimit:10;" d="M 12 24 C 12 34 19 39 30 39 "/>
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:#B0BEC5;stroke-opacity:1;stroke-miterlimit:10;" d="M 30 19 C 30 19 19 19 12 24 "/>
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:#B0BEC5;stroke-opacity:1;stroke-miterlimit:10;" d="M 30 29 C 30 29 19 29 12 24 "/>
+<path style=" fill:#B0BEC5;" d="M 30 4.855469 L 30 13 L 34.070313 8.929688 Z "/>
+<path style=" fill:#B0BEC5;" d="M 30 15 L 30 23.144531 L 34.070313 19.070313 Z "/>
+<path style=" fill:#B0BEC5;" d="M 30 25 L 30 33.144531 L 34.070313 29.070313 Z "/>
+<path style=" fill:#B0BEC5;" d="M 30 35 L 30 43.144531 L 34.070313 39.070313 Z "/>
+<path style=" fill:#00BCD4;" d="M 42 9 C 42 11.210938 40.210938 13 38 13 C 35.789063 13 34 11.210938 34 9 C 34 6.789063 35.789063 5 38 5 C 40.210938 5 42 6.789063 42 9 Z "/>
+<path style=" fill:#00BCD4;" d="M 42 19 C 42 21.210938 40.210938 23 38 23 C 35.789063 23 34 21.210938 34 19 C 34 16.789063 35.789063 15 38 15 C 40.210938 15 42 16.789063 42 19 Z "/>
+<path style=" fill:#00BCD4;" d="M 42 29 C 42 31.210938 40.210938 33 38 33 C 35.789063 33 34 31.210938 34 29 C 34 26.789063 35.789063 25 38 25 C 40.210938 25 42 26.789063 42 29 Z "/>
+<path style=" fill:#00BCD4;" d="M 42 39 C 42 41.210938 40.210938 43 38 43 C 35.789063 43 34 41.210938 34 39 C 34 36.789063 35.789063 35 38 35 C 40.210938 35 42 36.789063 42 39 Z "/>
+<path style=" fill:#0097A7;" d="M 18 24 C 18 27.3125 15.3125 30 12 30 C 8.6875 30 6 27.3125 6 24 C 6 20.6875 8.6875 18 12 18 C 15.3125 18 18 20.6875 18 24 Z "/>
+</g>
+</svg>

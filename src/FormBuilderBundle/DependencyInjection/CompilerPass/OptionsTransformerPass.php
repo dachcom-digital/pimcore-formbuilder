@@ -16,9 +16,7 @@ final class OptionsTransformerPass implements CompilerPassInterface
     {
         $definition = $container->getDefinition(OptionsTransformerRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.transformer.options') as $id => $tags) {
-            foreach ($tags as $attributes) {
-                $definition->addMethodCall('register', [$id, new Reference($id)]);
-            }
+            $definition->addMethodCall('register', [$id, new Reference($id)]);
         }
     }
 }

@@ -11,5 +11,5 @@ services:
     # backend form builder
     FormBuilderBundle\Backend\Form\Builder: ~
 
-    #form values beatuifier
+    #form values beautifier
     FormBuilderBundle\Form\FormValuesBeautifier: ~
