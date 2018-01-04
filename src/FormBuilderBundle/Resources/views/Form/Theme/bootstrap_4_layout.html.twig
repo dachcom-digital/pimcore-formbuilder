@@ -1,0 +1,119 @@
+{% extends 'bootstrap_4_layout.html.twig' %}
+
+{% use '@FormBuilder/Form/Theme/Type/dynamic_multi_file.html.twig' %}
+{% use '@FormBuilder/Form/Theme/Type/html_tag.html.twig' %}
+{% use '@FormBuilder/Form/Theme/Type/snippet.html.twig' %}
+
+{%- block form_widget_compound -%}
+    {% if form.parent is not empty %}
+        <div {{ block('widget_container_attributes') }}>
+    {% endif %}
+    {%- if form.parent is empty -%}
+        {{ form_errors(form) }}
+    {%- endif -%}
+    {{- block('form_rows') -}}
+    {{- form_rest(form) -}}
+    {% if form.parent is not empty %}
+        </div>
+    {% endif %}
+{%- endblock form_widget_compound -%}
+
+{% block help_text_label %}
+    <small class="text-muted">{{ help_text|trans }}</small>
+{% endblock help_text_label %}
+
+{% block form_widget_simple -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock form_widget_simple %}
+
+{% block textarea_widget -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock textarea_widget %}
+
+{% block choice_widget -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock choice_widget %}
+
+{#
+
+    {% block checkbox_widget -%}
+        {{ parent() }}
+        {% if help_text %}
+            {{ block('help_text_label') }}
+        {% endif %}
+    {%- endblock checkbox_widget %}
+
+#}
+
+{% block checkbox_widget -%}
+    {%- set id = 'cb-' ~ random() -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {%- set attr = attr|merge({class: attr.class|default('custom-control-input'), id: attr.id|default(id)}) -%}
+    {%- if 'checkbox-inline' in parent_label_class -%}
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
+        </div>
+    {%- else -%}
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
+        </div>
+    {%- endif -%}
+{%- endblock checkbox_widget %}
+
+{% block radio_widget -%}
+    {%- set id = 'rb-' ~ random() -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {%- set attr = attr|merge({class: attr.class|default('custom-control-input'), id: attr.id|default(id)}) -%}
+    {%- if 'radio-inline' in parent_label_class -%}
+        <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
+        </div>
+    {%- else -%}
+        <div class="custom-control custom-radio">
+            <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
+        </div>
+    {%- endif -%}
+{%- endblock radio_widget %}
+
+{% block form_builder_honeypot_row -%}
+    {{- form_widget(form) -}}
+{%- endblock form_builder_honeypot_row %}
+
+{% block form_row -%}
+    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock form_row %}
+
+{% block button_row -%}
+    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock button_row %}
+
+{% block checkbox_row -%}
+    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-12' }}">
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock checkbox_row %}
+
+{% block radio_row -%}
+    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-12' }}">
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock radio_row %}

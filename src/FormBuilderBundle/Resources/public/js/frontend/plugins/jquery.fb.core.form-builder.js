@@ -1,7 +1,7 @@
 /*
  *  Project: PIMCORE FormBuilder
  *  Extension: Core
- *  Version: 2.1
+ *  Version: 2.2
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
  *
@@ -48,7 +48,36 @@
                     $form.find('.form-group').removeClass('has-error');
                 }
             },
-            'bootstrap4': {}
+            'bootstrap4': {
+                addValidationMessage: function ($fields, messages) {
+                    var $field = $fields.first(),
+                        $formGroup = $field.closest('.form-group'),
+                        $spanEl,
+                        isMultiple = $fields.length > 1;
+
+                    $fields.addClass('is-invalid');
+                    $field.closest('form').addClass('was-validated');
+                    $.each(messages, function(validationType, message) {
+                        $formGroup.find('span.invalid-feedback.validation').remove();
+                        $spanEl = $('<span/>', {'class' : 'invalid-feedback validation', 'text' : message});
+
+                        if($field.attr('type') === 'checkbox' || $field.attr('type') === 'radio') {
+                            $fields.attr('required', 'required');
+                        }
+
+                        if (isMultiple) {
+                           $fields.last().next('label').after($spanEl);
+                        } else {
+                            $fields.after( $spanEl );
+                        }
+                    });
+                },
+                removeFormValidations: function ($form) {
+                    $form.removeClass('was-validated');
+                    $form.find('.is-invalid').removeClass('is-invalid');
+                    $form.find('.span.invalid-feedback.validation').remove();
+                }
+            }
         };
 
         this.transform = function () {
@@ -66,7 +95,7 @@
                     return this.themeTransform.bootstrap3[action].apply(null, args);
                     break;
                 case 'bootstrap_4_layout':
-                case 'bootstrap_5_horizontal_layout':
+                case 'bootstrap_4_horizontal_layout':
                     return this.themeTransform.bootstrap4[action].apply(null, args);
                     break;
                 default:

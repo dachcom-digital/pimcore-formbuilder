@@ -243,6 +243,18 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $templateClasses[] = $optional['template'];
         }
 
+        //tweak preferred choice options.
+        if ($field->getType() === 'choice') {
+            if (
+                $options['multiple'] === FALSE
+                && isset($options['data'])
+                && is_array($options['data'])
+                && !empty($options['data'])
+            ) {
+                $options['data'] = $options['data'][0];
+            }
+        }
+
         if (in_array('constraints', $availableOptions)) {
             $constraints = $this->dispatcher->runFieldDispatcher('constraints', [
                 'formData'         => $formData,

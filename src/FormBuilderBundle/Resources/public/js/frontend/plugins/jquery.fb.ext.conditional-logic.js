@@ -1,7 +1,7 @@
 /*
  *  Project: PIMCORE FormBuilder
  *  Extension: Conditional Logic
- *  Version: 2.1
+ *  Version: 2.2
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
  *
@@ -81,7 +81,66 @@
                     });
                 }
             },
-            'bootstrap4': {}
+            'bootstrap4': {
+                show: function ($els, className) {
+                    $els.each(function () {
+                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
+                    });
+                },
+                hide: function ($els, className) {
+                    $els.val('').prop('selectedIndex', 0);
+                    $els.each(function () {
+                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                    });
+                },
+                addClass: function ($els, className) {
+                    $els.each(function () {
+                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                    });
+                },
+                removeClass: function ($els, className) {
+                    $els.each(function () {
+                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
+                    });
+                },
+                enable: function ($els) {
+                    $els.removeAttr('disabled');
+                },
+                disable: function ($els) {
+                    $els.attr('disabled', 'disabled');
+                },
+                addRequiredState: function ($els) {
+                    $els.attr('required', 'required');
+                    console.log($els);
+                    $els.each(function () {
+                        var $el = $(this);
+                        $el.addClass('is-invalid');
+                        // default
+                        if ($el.prev('label').length > 0) {
+                            $el.prev('label').addClass('required');
+                            // custom control type
+                        } else if ($el.next('label').length > 0) {
+                            $el.closest('.form-group').find('.col-form-legend').addClass('required');
+                        }
+                    });
+                },
+                removeRequiredState: function ($els) {
+                    $els.removeAttr('required');
+                    $els.each(function () {
+                        var $el = $(this);
+                        $el.removeClass('is-invalid');
+                        // default
+                        if ($el.prev('label').length > 0) {
+                            $el.next('.invalid-feedback').remove();
+                            $el.prev('label').removeClass('required');
+                            // custom control type
+                        } else if ($el.next('label').length > 0) {
+                            $el.closest('.form-group').find('.col-form-legend').addClass('required');
+                            $el.parentsUntil('.form-group').parent().find('.invalid-feedback').remove();
+                        }
+                    });
+                }
+            }
         };
 
         this.transform = function () {
@@ -99,7 +158,7 @@
                     return this.themeTransform.bootstrap3[action].apply(null, args);
                     break;
                 case 'bootstrap_4_layout':
-                case 'bootstrap_5_horizontal_layout':
+                case 'bootstrap_4_horizontal_layout':
                     return this.themeTransform.bootstrap4[action].apply(null, args);
                     break;
                 default:
@@ -193,7 +252,7 @@
                     $el.each(function () {
                         if ($(this).is('input[type="text"]') || $(this).is('input[type="number"]')) {
                             $el.val(action.value);
-                        } else if($(this).is('select') && $el.find('option[value="' + action.value + '"]').length > 0) {
+                        } else if ($(this).is('select') && $el.find('option[value="' + action.value + '"]').length > 0) {
                             $el.val(action.value);
                         }
                     });
@@ -202,7 +261,7 @@
                     $el.each(function () {
                         if ($(this).is('input[type="text"]') || $(this).is('input[type="number"]')) {
                             $el.val('');
-                        } else if($(this).is('select')) {
+                        } else if ($(this).is('select')) {
                             $el.prop('selectedIndex', 0);
                         }
                     });
