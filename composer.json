@@ -28,5 +28,6 @@
         }
     },
     "require": {
+        "pimcore/core-version": "^5.1.0"
     }
 }

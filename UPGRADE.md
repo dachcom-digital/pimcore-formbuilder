@@ -3,6 +3,10 @@
 ***
 After every update you should check the pimcore extension manager. Just click the "update" button to finish the bundle update.
 
+#### Update from Version 2.1.x to Version 2.2.0
+- **[DEPENDENCY]**: FormBuilder now requires Pimcore 5.1
+- **[DEPENDENCY]**: We're using the [custom controls](https://getbootstrap.com/docs/4.0/components/forms/#custom-forms) functionality for checkboxes and radios (Bootstrap v4 Beta3).
+
 #### Update from Version 2.x to Version 2.1.0
 - **[NEW FEATURE]**: [Conditional Logic](docs/81_ConditionalLogic.md) implemented
 - **[NEW FEATURE]**: Field *Country* Field added
