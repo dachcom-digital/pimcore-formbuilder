@@ -1,8 +1,8 @@
 # Pimcore FormBuilder
-Pimcore 5.0 FormBuilder.
+Pimcore 5 FormBuilder.
 
 #### Requirements
-* Pimcore 5.
+* Pimcore 5.1
 
 #### Pimcore 4 
 Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).
@@ -11,7 +11,7 @@ Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formb
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~2.0.0"
+    "dachcom-digital/formbuilder" : "~2.2.0"
 }
 ```
 
