@@ -1,7 +1,7 @@
 /*
  *  Project: PIMCORE FormBuilder
  *  Extension: Conditional Logic
- *  Version: 2.2
+ *  Version: 2.2.1
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
  *
