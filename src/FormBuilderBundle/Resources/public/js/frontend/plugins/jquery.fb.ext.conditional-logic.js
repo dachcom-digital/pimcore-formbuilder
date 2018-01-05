@@ -103,10 +103,10 @@
                         $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
                     });
                 },
-                enable: function ($els) {
+                enable: function ($els) { console.log($els);
                     $els.removeAttr('disabled');
                 },
-                disable: function ($els) {
+                disable: function ($els) { console.log($els);
                     $els.attr('disabled', 'disabled');
                 },
                 addRequiredState: function ($els) {
@@ -464,7 +464,7 @@
                         return true;
                     }
                     var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
-                    //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
+                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
 
                 });
 
@@ -494,11 +494,6 @@
                 $.each(condition.fields, function (fieldIndex, field) {
                     var fieldSelector = formSelector + ' *[name*="' + field + '"]',
                         el = $(fieldSelector);
-
-                    //it's probably a checkbox/radio. get the one with valid value - if given!
-                    if (el.length > 1 && condition.type === 'elementValue' && condition.value !== '') {
-                        fieldSelector += '[value="' + condition.value + '"]';
-                    }
 
                     conditionSelector[fieldSelector] = qualifiers
                 });
