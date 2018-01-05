@@ -103,15 +103,14 @@
                         $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
                     });
                 },
-                enable: function ($els) { console.log($els);
+                enable: function ($els) {
                     $els.removeAttr('disabled');
                 },
-                disable: function ($els) { console.log($els);
+                disable: function ($els) {
                     $els.attr('disabled', 'disabled');
                 },
                 addRequiredState: function ($els) {
                     $els.attr('required', 'required');
-                    console.log($els);
                     $els.each(function () {
                         var $el = $(this);
                         $el.addClass('is-invalid');
@@ -208,11 +207,12 @@
                         case 'is_not_value':
                             qualifiers['not'] = [condition.value]
                             break;
-                        case 'is_selected':
-                            qualifiers['values'] = [condition.value]
+                        case 'contains':
+                            qualifiers['contains'] = condition.value.split(',')
                             break;
                         case 'is_checked':
-                            qualifiers['checked'] = true
+                            qualifiers['not'] = [undefined];
+                            qualifiers['checked'] = true;
                             break;
                     }
 
@@ -448,8 +448,9 @@
                         formDependingSelector.push('*[data-field-name*="' + fieldName + '"]');
                     });
 
+                    var conditionSelector = {};
                     if (dependency.condition && dependency.condition.length > 0) {
-                        var conditionSelector = _.generateQualifiersSelector(dependency.condition, formSelector);
+                        conditionSelector = _.generateQualifiersSelector(dependency.condition, formSelector);
                     }
 
                     var actionOptions = _.generateActionOptions(dependency.action, actionId);
@@ -464,7 +465,7 @@
                         return true;
                     }
                     var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
-                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
+                    //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
 
                 });
 
@@ -493,7 +494,13 @@
 
                 $.each(condition.fields, function (fieldIndex, field) {
                     var fieldSelector = formSelector + ' *[name*="' + field + '"]',
-                        el = $(fieldSelector);
+                        $el = $(fieldSelector);
+
+                    //if strict value is in comparator and element is a (maybe multiple) checkbox, stet selector to field with given value!
+                    if ($el.length > 1 && $el.first().attr('type') === 'checkbox' && condition.comparator === 'is_value' && condition.value !== '') {
+                        qualifiers['checked'] = true;
+                        fieldSelector += '[value="' + condition.value + '"]';
+                    }
 
                     conditionSelector[fieldSelector] = qualifiers
                 });

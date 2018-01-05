@@ -17,7 +17,7 @@ class Dispatcher
     /**
      * @var OptionsResolver
      */
-    protected $dispatcherOptions = NULL;
+    protected $dispatcherOptions = null;
 
     /**
      * @var DispatcherRegistry
@@ -39,48 +39,21 @@ class Dispatcher
     {
         $this->dispatcherRegistry = $dispatcherRegistry;
         $this->conditionalLogicProcessor = $conditionalLogicProcessor;
-        $this->dispatcherOptions = new OptionsResolver();
-        $this->dispatcherOptions->setDefaults([
-            'formData'         => [],
-            'conditionalLogic' => []
-        ]);
-
-        $this->dispatcherOptions->setRequired(['formData', 'conditionalLogic']);
-
     }
 
     /**
-     * @param $dispatcherModule
-     * @param $options
-     * @param $moduleOptions
-     *
+     * @param       $dispatcherModule
+     * @param       $options
+     * @param array $moduleOptions
      * @return mixed
+     * @throws \Exception
      */
     public function runFieldDispatcher($dispatcherModule, $options, $moduleOptions = [])
     {
-        $this->dispatcherOptions->setDefaults(['field' => NULL]);
-        $this->dispatcherOptions->setRequired(['field']);
-        $this->dispatcherOptions->setAllowedTypes('field', FormFieldInterface::class);
-        $this->dispatcherOptions->resolve($options);
+        $dispatcherOptions = $this->createOptionsResolver('field');
+        $dispatcherOptions->resolve($options);
 
         $conditionActions = $this->conditionalLogicProcessor->process($options['formData'], $options['conditionalLogic'], $options['field']);
-        $moduleOptions['appliedConditions'] = $conditionActions;
-
-        return $this->run($dispatcherModule, $options, $moduleOptions);
-    }
-
-    /**
-     * @param $dispatcherModule
-     * @param $options
-     * @param $moduleOptions
-     *
-     * @return mixed
-     */
-    public function runFormDispatcher($dispatcherModule, $options, $moduleOptions = [])
-    {
-        $this->dispatcherOptions->resolve($options);
-
-        $conditionActions = $this->conditionalLogicProcessor->process($options['formData'], $options['conditionalLogic']);
         $moduleOptions['appliedConditions'] = $conditionActions;
 
         return $this->run($dispatcherModule, $options, $moduleOptions);
@@ -91,6 +64,25 @@ class Dispatcher
      * @param       $options
      * @param array $moduleOptions
      * @return mixed
+     * @throws \Exception
+     */
+    public function runFormDispatcher($dispatcherModule, $options, $moduleOptions = [])
+    {
+        $dispatcherOptions = $this->createOptionsResolver('form');
+        $dispatcherOptions->resolve($options);
+
+        $conditionActions = $this->conditionalLogicProcessor->process($options['formData'], $options['conditionalLogic']);
+        $moduleOptions['appliedConditions'] = $conditionActions;
+
+        return $this->run($dispatcherModule, $options, $moduleOptions);
+    }
+
+    /**
+     * @param $dispatcherModule
+     * @param $options
+     * @param $moduleOptions
+     * @return mixed
+     * @throws \Exception
      */
     private function run($dispatcherModule, $options, $moduleOptions)
     {
@@ -113,5 +105,28 @@ class Dispatcher
 
         $moduleOptions = $optionsResolver->resolve($moduleOptions);
         return $dispatcherModuleClass->apply($moduleOptions);
+    }
+
+    /**
+     * @param string $type
+     * @return OptionsResolver
+     */
+    private function createOptionsResolver($type = 'field')
+    {
+        $dispatcherOptions = new OptionsResolver();
+        $dispatcherOptions->setDefaults([
+            'formData'         => [],
+            'conditionalLogic' => []
+        ]);
+
+        $dispatcherOptions->setRequired(['formData', 'conditionalLogic']);
+
+        if ($type === 'field') {
+            $dispatcherOptions->setDefaults(['field' => null]);
+            $dispatcherOptions->setRequired(['field']);
+            $dispatcherOptions->setAllowedTypes('field', FormFieldInterface::class);
+        }
+
+        return $dispatcherOptions;
     }
 }

@@ -34,16 +34,17 @@ class ElementValueCondition implements ConditionInterface
         foreach ($this->getFields() as $conditionFieldName) {
             $fieldValue = isset($formData[$conditionFieldName]) ? $formData[$conditionFieldName] : NULL;
 
-            if ($this->getComparator() === 'is_selected') {
-                return in_array($this->getValue(), (array)$fieldValue);
+            if ($this->getComparator() === 'contains') {
+                return !empty(array_intersect(explode(',', $this->getValue()), (array)$fieldValue));
             } elseif ($this->getComparator() === 'is_checked') {
-                return $this->getValue() == $fieldValue;
+                return in_array($conditionFieldName, $formData);
             } elseif ($this->getComparator() === 'is_greater') {
                 return $this->getValue() > $fieldValue;
             } elseif ($this->getComparator() === 'is_less') {
                 return $this->getValue() < $fieldValue;
             } elseif ($this->getComparator() === 'is_value') {
-                return $this->getValue() == $fieldValue;
+                //could be an array (multiple)
+                return $this->getValue() == $fieldValue || in_array($this->getValue(),(array)$fieldValue);
             } elseif ($this->getComparator() === 'is_not_value') {
                 return $this->getValue() != $fieldValue;
             }

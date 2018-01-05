@@ -1039,7 +1039,7 @@ Formbuilder.comp.form = Class.create({
             this.rootFields.each(function(field) {
                 if( typeof field.getValue === 'function') {
                     try {
-                        if(field.getValue() === '') {
+                        if(field.allowBlank !== true && field.getValue() === '') {
                             isValid = false;
                             return false;
                         }

@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Parser;
 
 use FormBuilderBundle\Form\FormValuesBeautifier;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
@@ -26,23 +27,33 @@ class MailParser
     protected $formValuesBeautifier;
 
     /**
+     * @var Dispatcher
+     */
+    protected $dispatcher;
+
+    /**
      * MailParser constructor.
      *
      * @param EngineInterface      $templating
      * @param FormValuesBeautifier $formValuesBeautifier
+     * @param Dispatcher           $dispatcher
      */
-    public function __construct(EngineInterface $templating, FormValuesBeautifier $formValuesBeautifier)
-    {
+    public function __construct(
+        EngineInterface $templating,
+        FormValuesBeautifier $formValuesBeautifier,
+        Dispatcher $dispatcher
+    ) {
         $this->templating = $templating;
         $this->formValuesBeautifier = $formValuesBeautifier;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
      * @param Email         $mailTemplate
      * @param FormInterface $form
      * @param               $locale
-     *
      * @return Mail
+     * @throws \Exception
      */
     public function create(Email $mailTemplate, FormInterface $form, $locale)
     {
@@ -55,7 +66,18 @@ class MailParser
 
         $fieldValues = $this->formValuesBeautifier->transformData($form, $ignoreFields, $locale);
 
-        $this->parseMailRecipients($mailTemplate, $fieldValues);
+        //handle form conditions
+        $mailCondition = $this->dispatcher->runFormDispatcher('mail_behaviour', [
+            'formData'         => $form->getData()->getData(),
+            'conditionalLogic' => $form->getData()->getConditionalLogic()
+        ]);
+
+        $conditionRecipient = null;
+        if (isset($mailCondition['recipient']) && !empty($mailCondition['recipient'])) {
+            $conditionRecipient = $mailCondition['recipient'];
+        }
+
+        $this->parseMailRecipients($mailTemplate, $fieldValues, $conditionRecipient);
         $this->parseMailSender($mailTemplate, $fieldValues);
         $this->parseSubject($mailTemplate, $fieldValues);
         $this->setMailPlaceholders($mail, $fieldValues, $disableDefaultMailBody);
@@ -66,14 +88,14 @@ class MailParser
     }
 
     /**
-     * @param Email $mailTemplate
-     * @param array $data
+     * @param Email       $mailTemplate
+     * @param array       $data
+     * @param null|string $conditionRecipient
      */
-    private function parseMailRecipients(Email $mailTemplate, $data = [])
+    private function parseMailRecipients(Email $mailTemplate, $data = [], $conditionRecipient)
     {
-        $to = $mailTemplate->getTo();
+        $to = !is_null($conditionRecipient) ? $conditionRecipient : $mailTemplate->getTo();
         $parsedTo = $this->extractPlaceHolder($to, $data);
-
         $mailTemplate->setTo($parsedTo);
     }
 
@@ -140,7 +162,7 @@ class MailParser
             $mail->setParam($formField['name'], $this->getSingleRenderedValue($formField['value']));
         }
 
-        if ($disableDefaultMailBody === FALSE) {
+        if ($disableDefaultMailBody === false) {
             $mail->setParam('body', $this->getBodyTemplate($fieldValues));
         }
     }
@@ -177,7 +199,12 @@ class MailParser
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
                     if ($formField['name'] == $inputValue) {
-                        $str = str_replace($matches[0][$key], $formField['value'], $str);
+                        $value = $formField['value'];
+                        //if is array, use first value since this is the best what we can do...
+                        if(is_array($value)) {
+                            $value = reset($value);
+                        }
+                        $str = str_replace($matches[0][$key], $value, $str);
                     }
                 }
 
@@ -187,7 +214,7 @@ class MailParser
         }
 
         //remove invalid commas
-        $extractedValue = trim(implode(',', preg_split('@,@', $extractedValue, NULL, PREG_SPLIT_NO_EMPTY)));
+        $extractedValue = trim(implode(',', preg_split('@,@', $extractedValue, null, PREG_SPLIT_NO_EMPTY)));
 
         return $extractedValue;
     }

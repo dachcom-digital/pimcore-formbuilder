@@ -64,6 +64,10 @@ form_builder:
             toggleAvailability:
                 name: 'form_builder.cl.action.toggle_availability'
                 icon: 'form_builder_cl_toggle_availability'
+            mailBehaviour:
+                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\MailBehaviourAction'
+                name: 'form_builder.cl.action.mail_behaviour'
+                icon: 'form_builder_cl_mail_behaviour'
         condition:
             elementValue:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ElementValueCondition'

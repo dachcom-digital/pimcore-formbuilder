@@ -12,3 +12,7 @@ services:
     FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\FormTypeClasses:
         tags:
             - { name: 'form_builder.dispatcher', type: 'form_type_classes' }
+
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\MailBehaviour:
+        tags:
+            - { name: 'form_builder.dispatcher', type: 'mail_behaviour' }

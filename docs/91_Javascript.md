@@ -54,6 +54,7 @@ This Plugin will enable the conditional logic functionality.
 
 ```html
 <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.conditional-logic.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/vendor/dependsOn/dependsOn.min.js') }}"></script>
 ```
 
 ```javascript

@@ -18,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormRegistry;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;

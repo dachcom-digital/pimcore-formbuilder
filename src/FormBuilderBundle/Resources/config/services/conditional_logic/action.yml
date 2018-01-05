@@ -12,3 +12,5 @@ services:
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleClassAction: ~
 
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleElementAction: ~
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\MailBehaviourAction: ~

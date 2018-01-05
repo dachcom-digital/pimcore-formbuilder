@@ -7,8 +7,8 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
         var conditionTypesStore = Ext.create('Ext.data.Store', {
             fields: ['label', 'value'],
             data: [{
-                label: t('form_builder_element_value_type_is_selected'),
-                value: 'is_selected'
+                label: t('form_builder_element_value_type_contains'),
+                value: 'contains'
             }, {
                 label: t('form_builder_element_value_type_is_checked'),
                 value: 'is_checked'
@@ -30,6 +30,30 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
         var fieldStore = Ext.create('Ext.data.Store', {
             fields: ['name', 'display_name'],
             data: this.panel.getFormFields().fields
+        });
+
+        var descriptionField = new Ext.form.Label({
+            hidden:true,
+            anchor: '100%',
+            flex: 1,
+            style: 'display:block; padding:3px; background:#f5f5f5; border:1px solid #eee; font-weight: 300; word-wrap:break-word;'
+        });
+
+        var valueField = new Ext.form.TextField({
+            name: _.generateFieldName(this.sectionId, this.index, 'value'),
+            fieldLabel: t('form_builder_element_value_value'),
+            anchor: '100%',
+            labelAlign: 'top',
+            summaryDisplay: true,
+            allowBlank: this.data && this.data.comparator === 'is_checked',
+            disabled: this.data && this.data.comparator === 'is_checked',
+            value: this.data ? this.data.value : null,
+            flex: 1,
+            listeners: {
+                updateIndexName: function(sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value');
+                }
+            }
         });
 
         var items = [{
@@ -86,25 +110,27 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
             listeners: {
                 updateIndexName: function(sectionId, index) {
                     this.name = _.generateFieldName(sectionId, index, 'comparator');
+                },
+                change: function (combo, value) {
+                    valueField.setDisabled(value === 'is_checked');
+                    valueField.allowBlank = value === 'is_checked';
+                    if(value === 'is_checked') {
+                        valueField.setValue('');
+                        valueField.clearInvalid();
+                    } else {
+                        valueField.validate();
+                    }
+
+                    if(value === 'contains') {
+                        descriptionField.setHidden(false);
+                        descriptionField.setHtml(t('form_builder_element_value_type_contains_description'));
+                    } else {
+                        descriptionField.setHidden(true);
+                    }
                 }
             }
         },
-        {
-            xtype: 'textfield',
-            name: _.generateFieldName(this.sectionId, this.index, 'value'),
-            fieldLabel: t('form_builder_element_value_value'),
-            anchor: '100%',
-            labelAlign: 'top',
-            summaryDisplay: true,
-            allowBlank: true,
-            value: this.data ? this.data.value : null,
-            flex: 1,
-            listeners: {
-                updateIndexName: function(sectionId, index) {
-                    this.name = _.generateFieldName(sectionId, index, 'value');
-                }
-            }
-        }
+        valueField
         ];
 
         var compositeField = new Ext.form.FieldContainer({
@@ -123,7 +149,7 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
                 style: 'margin: 10px 0 0 0',
                 bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
                 tbar: this.getTopBar(myId),
-                items: compositeField,
+                items: [compositeField, descriptionField],
                 listeners: {}
             });
 
