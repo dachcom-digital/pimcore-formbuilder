@@ -660,6 +660,7 @@ class Builder
 
         foreach ($this->translate as $fieldName => $translateData) {
             foreach ($translateData as $key => $value) {
+                if ( empty($value) ) continue;
                 if (substr($key, 0, 8) == 'original') {
                     $n = strlen($key);
 
