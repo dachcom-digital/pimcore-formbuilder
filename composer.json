@@ -1,7 +1,7 @@
 {
     "name": "dachcom-digital/formbuilder",
     "type": "pimcore-bundle",
-    "license": "GPL-3.0+",
+    "license": "GPL-3.0-or-later",
     "description": "Pimcore 5.x FormBuilder - create forms easily!",
     "keywords": ["pimcore", "formbuilder"],
     "homepage": "https://github.com/dachcom-digital/pimcore-formbuilder",
