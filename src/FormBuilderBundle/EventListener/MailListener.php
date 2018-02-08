@@ -86,7 +86,7 @@ class MailListener implements EventSubscriberInterface
                         throw new \Exception('no valid copy mail template given.');
                     }
 
-                    $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $form, $request->getLocale());
+                    $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $form, $request->getLocale(), true);
                     if ($send !== TRUE) {
                         throw new \Exception('copy mail not sent.');
                     }
@@ -105,18 +105,19 @@ class MailListener implements EventSubscriberInterface
      * @param int           $mailTemplateId
      * @param FormInterface $form
      * @param               $locale
+     * @param bool          $isCopy
      *
      * @throws \Exception
      * @returns bool
      */
-    private function sendForm($mailTemplateId = 0, FormInterface $form, $locale)
+    private function sendForm($mailTemplateId = 0, FormInterface $form, $locale, $isCopy = false)
     {
         $mailTemplate = Document\Email::getById($mailTemplateId);
         if (!$mailTemplate instanceof Document\Email) {
             return FALSE;
         }
 
-        $mail = $this->mailParser->create($mailTemplate, $form, $locale);
+        $mail = $this->mailParser->create($mailTemplate, $form, $locale, $isCopy);
 
         $mailEvent = new MailEvent($form, $mail);
         \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);

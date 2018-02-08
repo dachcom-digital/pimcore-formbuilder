@@ -52,10 +52,12 @@ class MailParser
      * @param Email         $mailTemplate
      * @param FormInterface $form
      * @param               $locale
+     * @param bool          $isCopy
+     *
      * @return Mail
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, $locale)
+    public function create(Email $mailTemplate, FormInterface $form, $locale, $isCopy = false)
     {
         $mail = new Mail();
 
@@ -67,15 +69,19 @@ class MailParser
         $fieldValues = $this->formValuesBeautifier->transformData($form, $ignoreFields, $locale);
 
         //handle form conditions
-        $mailCondition = $this->dispatcher->runFormDispatcher('mail_behaviour', [
-            'formData'         => $form->getData()->getData(),
-            'conditionalLogic' => $form->getData()->getConditionalLogic()
-        ]);
-
         $conditionRecipient = null;
-        if (isset($mailCondition['recipient']) && !empty($mailCondition['recipient'])) {
-            $conditionRecipient = $mailCondition['recipient'];
+
+        if($isCopy === false) {
+            $mailCondition = $this->dispatcher->runFormDispatcher('mail_behaviour', [
+                'formData'         => $form->getData()->getData(),
+                'conditionalLogic' => $form->getData()->getConditionalLogic()
+            ]);
+
+            if (isset($mailCondition['recipient']) && !empty($mailCondition['recipient'])) {
+                $conditionRecipient = $mailCondition['recipient'];
+            }
         }
+
 
         $this->parseMailRecipients($mailTemplate, $fieldValues, $conditionRecipient);
         $this->parseMailSender($mailTemplate, $fieldValues);
