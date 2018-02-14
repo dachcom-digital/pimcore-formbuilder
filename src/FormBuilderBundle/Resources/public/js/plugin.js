@@ -37,7 +37,9 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
                     handler: this.openSettings.bind(this)
                 });
 
-                layoutToolbar.settingsMenu.add(formBuilderMenu);
+                if(layoutToolbar.settingsMenu) {
+                    layoutToolbar.settingsMenu.add(formBuilderMenu);
+                }
 
             }.bind(this)
         });
