@@ -36,5 +36,5 @@ To enable fineuploader, add the javascript library.
 
 ### Scripts
 ```twig
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/fineuploader/jquery.fine-uploader.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
 ```
