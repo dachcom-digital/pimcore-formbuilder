@@ -52,15 +52,16 @@ class DynamicChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'service'          => NULL,
-            'conditionalLogic' => NULL,
-            'choice_loader'    => function (Options $options) {
+            'service'                   => null,
+            'conditionalLogic'          => null,
+            'choice_translation_domain' => false,
+            'choice_loader'             => function (Options $options) {
 
-                $initialChoiceBuilder = FALSE;
+                $initialChoiceBuilder = false;
                 if (!$this->service) {
                     $serviceName = $options['service'];
                     $this->service = $this->builderRegistry->get($serviceName);
-                    $initialChoiceBuilder = TRUE;
+                    $initialChoiceBuilder = true;
                 }
 
                 //if conditional logic is available, we need to re-add the CallbackChoiceLoader
