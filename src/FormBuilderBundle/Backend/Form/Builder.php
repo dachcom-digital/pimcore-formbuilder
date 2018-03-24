@@ -102,7 +102,7 @@ class Builder
     {
         $formFields = [];
         foreach ($fields as $field) {
-            $formFields[] = $this->transformOptions($field, TRUE);
+            $formFields[] = $this->transformOptions($field, true);
         }
 
         return $formFields;
@@ -147,7 +147,7 @@ class Builder
 
             $groupIndex = array_search($this->getFormTypeGroup($formType, $beConfig), array_column($fieldStructure, 'id'));
 
-            if ($groupIndex !== FALSE) {
+            if ($groupIndex !== false) {
                 $fieldStructure[$groupIndex]['fields'][] = $fieldStructureElement;
             } else {
                 $groupIndex = array_search('other_fields', array_column($fieldStructure, 'id'));
@@ -221,6 +221,10 @@ class Builder
         return $groupData;
     }
 
+    /**
+     * @return array
+     * @throws \ReflectionException
+     */
     private function getValidationConstraints()
     {
         $constraints = $this->configuration->getConfig('validation_constraints');
@@ -229,7 +233,29 @@ class Builder
         foreach ($constraints as $constraintId => &$constraint) {
             $constraint['id'] = $constraintId;
             $constraint['label'] = $this->translate($constraint['label']);
+
+            $constraintClass = $constraint['class'];
+            $refClass = new \ReflectionClass($constraintClass);
+            $defaultProperties = $refClass->getDefaultProperties();
+            $constraintConfig = [];
+            foreach ($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
+                $propertyName = $refProperty->getName();
+                if (isset($defaultProperties[$propertyName])) {
+                    $defaultValue = $defaultProperties[$propertyName];
+                    if (in_array(gettype($defaultValue), ['string', 'boolean', 'integer'])) {
+                        $constraintConfig[] = [
+                            'name'         => $propertyName,
+                            'type'         => gettype($defaultValue),
+                            'defaultValue' => $defaultValue
+                        ];
+                    }
+                }
+            }
+
+            $constraint['config'] = $constraintConfig;
+
             $constraintData[] = $constraint;
+
         }
 
         return $constraintData;
@@ -272,7 +298,7 @@ class Builder
 
         foreach ($fieldConfigFields['fields'] as $fieldId => $field) {
 
-            if ($field === FALSE) {
+            if ($field === false) {
                 continue;
             }
 
@@ -375,25 +401,25 @@ class Builder
      * @param string $formType
      * @return bool
      */
-    private function isAllowedFormType($formType = NULL)
+    private function isAllowedFormType($formType = null)
     {
         $adminSettings = $this->configuration->getConfig('admin');
         $activeFields = $adminSettings['active_elements']['fields'];
         $inactiveFields = $adminSettings['inactive_elements']['fields'];
 
         if (empty($activeFields) && empty($inactiveFields)) {
-            return TRUE;
+            return true;
         }
 
         if (!empty($inactiveFields) && in_array($formType, $inactiveFields)) {
-            return FALSE;
+            return false;
         }
 
         if (!empty($activeFields) && !in_array($formType, $activeFields)) {
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -416,7 +442,7 @@ class Builder
      *
      * @return mixed
      */
-    private function transformOptions($fieldData, $reverse = FALSE)
+    private function transformOptions($fieldData, $reverse = false)
     {
         $formTypes = $this->configuration->getConfig('types');
 
@@ -444,7 +470,7 @@ class Builder
                 $transformer = $fieldData['options'][$optionName] = $this->optionsTransformerRegistry
                     ->get($optionConfig['options_transformer']);
 
-                if ($reverse === FALSE) {
+                if ($reverse === false) {
                     $fieldData['options'][$optionName] = $transformer->transform($optionValue, $optionConfig);
                 } else {
                     $fieldData['options'][$optionName] = $transformer->reverseTransform($optionValue, $optionConfig);

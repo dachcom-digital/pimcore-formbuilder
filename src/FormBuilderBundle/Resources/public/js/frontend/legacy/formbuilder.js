@@ -207,9 +207,7 @@ var formBuilder = (function () {
                                 if(data.success == true) {
                                     $storeField.val($storeField.val().replace(',' + data.uuid, ''));
                                 } else {
-                                    console.log(data.path)
                                     $storeField.val($storeField.val().replace(',' + data.path, ''));
-
                                 }
                             }
                         }

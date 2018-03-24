@@ -67,12 +67,20 @@ class Constraints implements ModuleInterface
 
         //add defaults
         $constraints = [];
-        foreach ($this->field->getConstraints() as $constraint) {
+        $fieldConstraints = $this->field->getConstraints();
+        foreach ($fieldConstraints as $constraint) {
             $constraints[] = $constraint['type'];
         }
 
-        $constraints = $this->checkConditionalLogicConstraints($constraints);
-        return $this->appendConstraintsData($constraints);
+        $validConstraints = $this->checkConditionalLogicConstraints($constraints);
+
+        $constraintData = [];
+        foreach($validConstraints as $validConstraint) {
+            $key = array_search($validConstraint, array_column($fieldConstraints, 'type'));
+            $constraintData[] = $fieldConstraints[$key];
+        }
+
+        return $this->appendConstraintsData($constraintData);
     }
 
     /**
@@ -124,12 +132,15 @@ class Constraints implements ModuleInterface
         $constraintData = [];
         foreach ($constraints as $constraint) {
 
-            if (!isset($this->availableConstraints[$constraint])) {
+            $constraintType = $constraint['type'];
+            $constraintConfig = $constraint['config'];
+
+            if (!isset($this->availableConstraints[$constraintType])) {
                 continue;
             }
 
-            $class = $this->availableConstraints[$constraint]['class'];
-            $constraintData[] = new $class();
+            $class = $this->availableConstraints[$constraintType]['class'];
+            $constraintData[] = new $class($constraintConfig);
         }
 
         return $constraintData;
