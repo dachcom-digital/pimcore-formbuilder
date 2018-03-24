@@ -222,6 +222,7 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                         field,
                         {
                             xtype: 'button',
+                            tooltip: t('reset'),
                             iconCls: 'pimcore_icon_cancel',
                             style: 'background-color:white; border-color:transparent;',
                             handler: function () {
