@@ -132,7 +132,9 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
 
         Ext.Array.each(this.config, function (configElement) {
 
-            var field;
+            var field,
+                value = this.getFieldValue(configElement.name, configElement.defaultValue),
+                opacityStyle = 'opacity: ' + (value !== configElement.defaultValue ? 1 : 0.6) + ';';
 
             switch (configElement.type) {
 
@@ -142,7 +144,19 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                         name: 'config.' + configElement.name,
                         value: this.getFieldValue(configElement.name, configElement.defaultValue),
                         allowBlank: true,
-                        anchor: '100%',
+                        flex: 2,
+                        style: opacityStyle,
+                        getSubmitValue: function () {
+                            if (this.getValue() === configElement.defaultValue) {
+                                return null;
+                            }
+                            return this.value;
+                        },
+                        listeners: {
+                            change: function (field, newVal, oldVal) {
+                                field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
+                            }
+                        }
                     });
 
                     break;
@@ -151,10 +165,23 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                     field = new Ext.form.Checkbox({
                         fieldLabel: configElement.name,
                         name: 'config.' + configElement.name,
+                        value: this.getFieldValue(configElement.name, configElement.defaultValue),
                         checked: false,
                         uncheckedValue: false,
                         inputValue: true,
-                        value: this.getFieldValue(configElement.name, configElement.defaultValue)
+                        flex: 2,
+                        style: opacityStyle,
+                        getSubmitValue: function () {
+                            if (this.getValue() === configElement.defaultValue) {
+                                return null;
+                            }
+                            return this.value;
+                        },
+                        listeners: {
+                            change: function (field, newVal, oldVal) {
+                                field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
+                            }
+                        }
                     });
 
                     break;
@@ -163,17 +190,48 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                     field = new Ext.form.field.Number({
                         fieldLabel: configElement.name,
                         name: 'config.' + configElement.name,
+                        value: this.getFieldValue(configElement.name, configElement.defaultValue),
                         allowDecimals: false,
-                        anchor: '100%',
-                        value: this.getFieldValue(configElement.name, configElement.defaultValue)
+                        flex: 2,
+                        style: opacityStyle,
+                        getSubmitValue: function () {
+                            if (this.getValue() === configElement.defaultValue) {
+                                return null;
+                            }
+                            return this.value;
+                        },
+                        listeners: {
+                            change: function (field, newVal, oldVal) {
+                                field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
+                            }
+                        }
                     });
 
                     break;
             }
 
             if (field) {
+
                 configFieldCounter++;
-                form.add(field);
+
+                var fieldContainer = new Ext.form.FieldContainer({
+                    layout: 'hbox',
+                    hideLabel: true,
+                    style: 'padding-bottom:5px;',
+                    items: [
+                        field,
+                        {
+                            xtype: 'button',
+                            iconCls: 'pimcore_icon_cancel',
+                            style: 'background-color:white; border-color:transparent;',
+                            handler: function () {
+                                field.setValue(configElement.defaultValue);
+                            }
+                        }
+                    ]
+                });
+
+                form.add(fieldContainer);
 
                 if (configElement.defaultValue !== undefined) {
                     var defaultValue = configElement.defaultValue;
@@ -181,9 +239,14 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                         defaultValue = defaultValue === true ? 'true' : 'false';
                     }
 
+                    var description = t('form_builder_constraint_default_value') + ': <code>' + defaultValue + '</code>';
+                    if (configElement.name === 'message') {
+                        description += '<br>' + t('form_builder_constraint_message_note');
+                    }
+
                     form.add(new Ext.form.Label({
                         name: 'defaultValue',
-                        html: t('form_builder_constraint_default_value') + ': <code>' + defaultValue + '</code>',
+                        html: description,
                         style: {
                             padding: '2px 5px',
                             margin: '0 0 15px 0',
@@ -216,7 +279,7 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
     },
 
     getFieldValue: function (id, defaultValue) {
-        if(!this.storeData['config'] || typeof(this.storeData['config'][id]) === 'undefined') {
+        if (!this.storeData['config'] || typeof(this.storeData['config'][id]) === 'undefined') {
             return defaultValue;
         }
 
