@@ -23,6 +23,14 @@ There are several form types available (updated continuously).
 |------|-------|
 | NotBlank | Validates that a value is not blank - meaning not equal to a blank string, a blank array or null |
 | Email | Validates that a value is a valid email address. The underlying value is cast to a string before being validated. |
+| Length | Validates that a given string length is between some minimum and maximum value. |
+| Url | Validates that a value is a valid URL string. |
+| Regex | Validates that a value matches a regular expression. |
+| IP-Address | Validates that a value is a valid IP address.  |
+| Range | Validates that a given number is between some minimum and maximum number. |
+| Card Scheme | This constraint ensures that a credit card number is valid for a given credit card company. |
+| BIC| This constraint is used to ensure that a value has the proper format of a Business Identifier Code (BIC).  |
+| Iban | This constraint is used to ensure that a bank account number has the proper format of an International Bank Account Number (IBAN). |
 
 ## Enable / Disable Form Types
 It's possible to enable or disable specific form types.
