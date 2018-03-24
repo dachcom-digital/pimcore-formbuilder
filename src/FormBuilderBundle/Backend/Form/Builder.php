@@ -86,7 +86,7 @@ class Builder
         $data['fields'] = $this->generateExtJsFields($fieldData);
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
-        $data['validation_constraints'] = $this->getValidationConstraints();
+        $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
         $data['conditional_logic'] = $this->generateConditionalLogicStructure($form->getConditionalLogic());
         $data['conditional_logic_store'] = $this->generateConditionalLogicStore();
 
@@ -223,39 +223,15 @@ class Builder
 
     /**
      * @return array
-     * @throws \ReflectionException
      */
-    private function getValidationConstraints()
+    private function getTranslatedValidationConstraints()
     {
-        $constraints = $this->configuration->getConfig('validation_constraints');
+        $constraints = $this->configuration->getAvailableConstraints();
 
         $constraintData = [];
         foreach ($constraints as $constraintId => &$constraint) {
-            $constraint['id'] = $constraintId;
             $constraint['label'] = $this->translate($constraint['label']);
-
-            $constraintClass = $constraint['class'];
-            $refClass = new \ReflectionClass($constraintClass);
-            $defaultProperties = $refClass->getDefaultProperties();
-            $constraintConfig = [];
-            foreach ($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
-                $propertyName = $refProperty->getName();
-                if (isset($defaultProperties[$propertyName])) {
-                    $defaultValue = $defaultProperties[$propertyName];
-                    if (in_array(gettype($defaultValue), ['string', 'boolean', 'integer'])) {
-                        $constraintConfig[] = [
-                            'name'         => $propertyName,
-                            'type'         => gettype($defaultValue),
-                            'defaultValue' => $defaultValue
-                        ];
-                    }
-                }
-            }
-
-            $constraint['config'] = $constraintConfig;
-
             $constraintData[] = $constraint;
-
         }
 
         return $constraintData;

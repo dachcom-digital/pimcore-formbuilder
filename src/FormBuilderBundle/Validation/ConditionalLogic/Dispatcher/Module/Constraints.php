@@ -7,9 +7,15 @@ use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class Constraints implements ModuleInterface
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
     /**
      * @var FormInterface
      */
@@ -36,22 +42,32 @@ class Constraints implements ModuleInterface
     protected $appliedConditions;
 
     /**
+     * Constraints constructor.
+     *
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /**
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'formData'             => [],
-            'field'                => NULL,
+            'field'                => null,
             'availableConstraints' => [],
             'appliedConditions'    => []
         ]);
 
         $resolver->setRequired(['formData', 'field', 'availableConstraints', 'appliedConditions']);
-        $resolver->setAllowedTypes('field',FormFieldInterface::class);
-        $resolver->setAllowedTypes('formData',['array', 'null']);
-        $resolver->setAllowedTypes('availableConstraints','array');
-        $resolver->setAllowedTypes('appliedConditions','array');
+        $resolver->setAllowedTypes('field', FormFieldInterface::class);
+        $resolver->setAllowedTypes('formData', ['array', 'null']);
+        $resolver->setAllowedTypes('availableConstraints', 'array');
+        $resolver->setAllowedTypes('appliedConditions', 'array');
     }
 
     /**
@@ -75,7 +91,7 @@ class Constraints implements ModuleInterface
         $validConstraints = $this->checkConditionalLogicConstraints($constraints);
 
         $constraintData = [];
-        foreach($validConstraints as $validConstraint) {
+        foreach ($validConstraints as $validConstraint) {
             $key = array_search($validConstraint, array_column($fieldConstraints, 'type'));
             $constraintData[] = $fieldConstraints[$key];
         }
@@ -137,6 +153,19 @@ class Constraints implements ModuleInterface
 
             if (!isset($this->availableConstraints[$constraintType])) {
                 continue;
+            }
+
+            $constraintInfo = $this->availableConstraints[$constraintType];
+
+            //translate custom message.
+            if (isset($constraintConfig['message']) && !empty($constraintConfig['message'])) {
+                $configKey = array_search('message', array_column($constraintInfo['config'], 'name'));
+                if ($configKey !== false) {
+                    $defaultMessage = $constraintInfo['config'][$configKey]['defaultValue'];
+                    if (!empty($defaultMessage) && !empty($constraintConfig['message']) && $defaultMessage !== $constraintConfig['message']) {
+                        $constraintConfig['message'] = $this->translator->trans($constraintConfig['message']);
+                    }
+                }
             }
 
             $class = $this->availableConstraints[$constraintType]['class'];

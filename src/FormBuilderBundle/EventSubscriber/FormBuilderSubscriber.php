@@ -94,7 +94,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $this->dispatcher = $dispatcher;
         $this->formRegistry = $formRegistry;
 
-        $this->availableConstraints = $this->configuration->getConfig('validation_constraints');
+        $this->availableConstraints = $this->configuration->getAvailableConstraints();
         $this->availableFormTypes = $this->configuration->getConfig('types');
     }
 

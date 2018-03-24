@@ -101,6 +101,48 @@ class Configuration
     }
 
     /**
+     * @return array
+     */
+    public function getAvailableConstraints()
+    {
+        $constraints = $this->config['validation_constraints'];
+
+        $constraintData = [];
+        foreach ($constraints as $constraintId => &$constraint) {
+            $constraint['id'] = $constraintId;
+            $constraintClass = $constraint['class'];
+
+            try {
+                $refClass = new \ReflectionClass($constraintClass);
+            } catch (\Exception $e) {
+                continue;
+            }
+
+            $defaultProperties = $refClass->getDefaultProperties();
+            $constraintConfig = [];
+            foreach ($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
+                $propertyName = $refProperty->getName();
+                if (isset($defaultProperties[$propertyName])) {
+                    $defaultValue = $defaultProperties[$propertyName];
+                    if (in_array(gettype($defaultValue), ['string', 'boolean', 'integer'])) {
+                        $constraintConfig[] = [
+                            'name'         => $propertyName,
+                            'type'         => gettype($defaultValue),
+                            'defaultValue' => $defaultValue
+                        ];
+                    }
+                }
+            }
+
+            $constraint['config'] = $constraintConfig;
+            $constraintData[$constraintId] = $constraint;
+
+        }
+
+        return $constraintData;
+    }
+
+    /**
      * @param $type
      *
      * @return mixed
