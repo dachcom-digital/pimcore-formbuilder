@@ -99,3 +99,35 @@ form_builder:
             class: Symfony\Component\Validator\Constraints\Email
             label: 'form_builder_validation_constraint.email'
             icon_class: form_builder_icon_validation
+        length:
+            class: Symfony\Component\Validator\Constraints\Length
+            label: 'form_builder_validation_constraint.length'
+            icon_class: form_builder_icon_validation
+        url:
+            class: Symfony\Component\Validator\Constraints\Url
+            label: 'form_builder_validation_constraint.url'
+            icon_class: form_builder_icon_validation
+        regex:
+            class: Symfony\Component\Validator\Constraints\Regex
+            label: 'form_builder_validation_constraint.regex'
+            icon_class: form_builder_icon_validation
+        ip:
+            class: Symfony\Component\Validator\Constraints\Ip
+            label: 'form_builder_validation_constraint.ip'
+            icon_class: form_builder_icon_validation
+        range:
+            class: Symfony\Component\Validator\Constraints\Range
+            label: 'form_builder_validation_constraint.range'
+            icon_class: form_builder_icon_validation
+        card_scheme:
+            class: Symfony\Component\Validator\Constraints\CardScheme
+            label: 'form_builder_validation_constraint.card_scheme'
+            icon_class: form_builder_icon_validation
+        bic:
+            class: Symfony\Component\Validator\Constraints\Bic
+            label: 'form_builder_validation_constraint.bic'
+            icon_class: form_builder_icon_validation
+        iban:
+            class: Symfony\Component\Validator\Constraints\Iban
+            label: 'form_builder_validation_constraint.iban'
+            icon_class: form_builder_icon_validation

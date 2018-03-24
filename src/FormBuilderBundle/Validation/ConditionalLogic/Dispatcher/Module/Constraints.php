@@ -149,7 +149,7 @@ class Constraints implements ModuleInterface
         foreach ($constraints as $constraint) {
 
             $constraintType = $constraint['type'];
-            $constraintConfig = $constraint['config'];
+            $constraintConfig = isset($constraint['config']) ? $constraint['config'] : [];
 
             if (!isset($this->availableConstraints[$constraintType])) {
                 continue;

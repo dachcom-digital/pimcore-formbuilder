@@ -108,6 +108,8 @@ class Configuration
         $constraints = $this->config['validation_constraints'];
 
         $constraintData = [];
+        $invalidProperties = ['payload'];
+
         foreach ($constraints as $constraintId => &$constraint) {
             $constraint['id'] = $constraintId;
             $constraintClass = $constraint['class'];
@@ -122,15 +124,25 @@ class Configuration
             $constraintConfig = [];
             foreach ($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
                 $propertyName = $refProperty->getName();
+
+                if (in_array($propertyName, $invalidProperties)) {
+                    continue;
+                }
+
                 if (isset($defaultProperties[$propertyName])) {
                     $defaultValue = $defaultProperties[$propertyName];
-                    if (in_array(gettype($defaultValue), ['string', 'boolean', 'integer'])) {
-                        $constraintConfig[] = [
-                            'name'         => $propertyName,
-                            'type'         => gettype($defaultValue),
-                            'defaultValue' => $defaultValue
-                        ];
-                    }
+                    $type = gettype($defaultValue);
+                } else {
+                    $defaultValue = null;
+                    $type = 'string';
+                }
+
+                if ($defaultValue === null || in_array(gettype($defaultValue), ['string', 'boolean', 'integer'])) {
+                    $constraintConfig[] = [
+                        'name'         => $propertyName,
+                        'type'         => $type,
+                        'defaultValue' => $defaultValue
+                    ];
                 }
             }
 

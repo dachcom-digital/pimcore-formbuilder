@@ -147,14 +147,15 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                         flex: 2,
                         style: opacityStyle,
                         getSubmitValue: function () {
-                            if (this.getValue() === configElement.defaultValue) {
+                            if (this.getValue() === '' || this.getValue() === configElement.defaultValue) {
                                 return null;
                             }
                             return this.value;
                         },
                         listeners: {
                             change: function (field, newVal, oldVal) {
-                                field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
+                                var defaultValue = configElement.defaultValue === null ? '' : configElement.defaultValue;
+                                field.setStyle('opacity', newVal !== defaultValue ? 1 : 0.6);
                             }
                         }
                     });

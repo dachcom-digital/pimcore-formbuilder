@@ -25,6 +25,14 @@
 
 "form_builder_validation_constraint.not_blank","Not Blank","NotBlank-Einschränkung"
 "form_builder_validation_constraint.email","Email-Validation","Email-Validierung"
+"form_builder_validation_constraint.length","Length","Länge"
+"form_builder_validation_constraint.url","Url","Url"
+"form_builder_validation_constraint.regex","Regex","Regex"
+"form_builder_validation_constraint.ip","IP-Address","IP-Adresse"
+"form_builder_validation_constraint.range","Range","Bereich"
+"form_builder_validation_constraint.card_scheme","Card Scheme","Karten-Schema"
+"form_builder_validation_constraint.bic","Bic","Bic"
+"form_builder_validation_constraint.iban","Iban","Iban"
 
 "form_builder_type.text_type","Text Type","Text Element"
 "form_builder_type.hidden_type","Hidden Type","Verstecktes Element"
