@@ -41,6 +41,22 @@
     background: url(/bundles/formbuilder/img/textfield.svg) left center no-repeat !important;
 }
 
+.form_builder_icon_date {
+    background: url(/bundles/formbuilder/img/date.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_date_time {
+    background: url(/bundles/formbuilder/img/date_time.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_time {
+    background: url(/bundles/formbuilder/img/time.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_birthday {
+    background: url(/bundles/formbuilder/img/birthday.svg) left center no-repeat !important;
+}
+
 .form_builder_icon_integer {
     background: url(/bundles/formbuilder/img/textfield.svg) left center no-repeat !important;
 }

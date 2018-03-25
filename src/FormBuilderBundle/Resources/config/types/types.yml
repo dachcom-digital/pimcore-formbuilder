@@ -1,5 +1,177 @@
 form_builder:
     types:
+        date:
+            class: Symfony\Component\Form\Extension\Core\Type\DateType
+            backend:
+                form_type_group: date_time_fields
+                label: 'form_builder_type.date_type'
+                icon_class: 'form_builder_icon_date'
+                fields:
+                    options.data: ~
+                    options.value: ~
+                    options.widget:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.date_widget'
+                        config:
+                            options:
+                                - ['Choice', 'choice']
+                                - ['Text', 'text']
+                                - ['Single Text', 'single_text']
+                    options.days:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_days'
+                        config: ~
+                    options.months:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_months'
+                        config: ~
+                    options.years:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_years'
+                        config: ~
+        date_time:
+            class: Symfony\Component\Form\Extension\Core\Type\DateTimeType
+            backend:
+                form_type_group: date_time_fields
+                label: 'form_builder_type.date_time_type'
+                icon_class: 'form_builder_icon_date_time'
+                fields:
+                    options.data: ~
+                    options.value: ~
+                    options.date_widget:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.date_widget'
+                        config:
+                            options:
+                                - ['Choice', 'choice']
+                                - ['Text', 'text']
+                                - ['Single Text', 'single_text']
+                    options.time_widget:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.time_widget'
+                        config:
+                            options:
+                                - ['Choice', 'choice']
+                                - ['Text', 'text']
+                                - ['Single Text', 'single_text']
+                    options.seconds:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_seconds'
+                        config: ~
+                    options.minutes:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_minutes'
+                        config: ~
+                    options.hours:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_hours'
+                        config: ~
+                    options.days:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_days'
+                        config: ~
+                    options.months:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_months'
+                        config: ~
+                    options.years:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_years'
+                        config: ~
+                    options.with_minutes:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.date_with_minutes'
+                    options.with_seconds:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.date_with_seconds'
+        time:
+            class: Symfony\Component\Form\Extension\Core\Type\TimeType
+            backend:
+                form_type_group: date_time_fields
+                label: 'form_builder_type.time_type'
+                icon_class: 'form_builder_icon_time'
+                fields:
+                    options.data: ~
+                    options.value: ~
+                    options.widget:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.date_widget'
+                        config:
+                            options:
+                                - ['Choice', 'choice']
+                                - ['Text', 'text']
+                                - ['Single Text', 'single_text']
+                    options.seconds:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_seconds'
+                        config: ~
+                    options.minutes:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_minutes'
+                        config: ~
+                    options.hours:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_hours'
+                        config: ~
+                    options.with_minutes:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.date_with_minutes'
+                    options.with_seconds:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.date_with_seconds'
+        birthday:
+            class: Symfony\Component\Form\Extension\Core\Type\BirthdayType
+            backend:
+                form_type_group: date_time_fields
+                label: 'form_builder_type.birthday_type'
+                icon_class: 'form_builder_icon_birthday'
+                fields:
+                    options.data: ~
+                    options.value: ~
+                    options.widget:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.date_widget'
+                        config:
+                            options:
+                                - ['Choice', 'choice']
+                                - ['Text', 'text']
+                                - ['Single Text', 'single_text']
+                    options.days:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_days'
+                        config: ~
+                    options.months:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_months'
+                        config: ~
+                    options.years:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_years'
+                        config: ~
         text:
             class: Symfony\Component\Form\Extension\Core\Type\TextType
             backend:

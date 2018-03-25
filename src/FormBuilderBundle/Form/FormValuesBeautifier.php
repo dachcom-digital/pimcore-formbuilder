@@ -8,6 +8,8 @@ use FormBuilderBundle\Storage\FormFieldInterface;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Intl\Intl;
 
@@ -41,11 +43,48 @@ class FormValuesBeautifier
      */
     public function getFieldValue($value, $formField, $locale)
     {
-        if(empty($value)) {
+        if (empty($value)) {
             return $value;
         }
 
         $fieldType = $formField->getConfig()->getType()->getInnerType();
+
+        if ($value instanceof \DateTime) {
+            if (class_exists('IntlDateFormatter')) {
+                $calendar = 'gregorian';
+                $formatValues = [
+                    'none'   => \IntlDateFormatter::NONE,
+                    'short'  => \IntlDateFormatter::SHORT,
+                    'medium' => \IntlDateFormatter::MEDIUM,
+                    'long'   => \IntlDateFormatter::LONG,
+                    'full'   => \IntlDateFormatter::FULL,
+                ];
+
+                $dateFormat = 'medium';
+                $timeFormat = 'none';
+                if ($fieldType instanceof TimeType) {
+                    $dateFormat = 'none';
+                }
+                if ($fieldType instanceof DateTimeType || $fieldType instanceof TimeType) {
+                    $timeFormat = 'medium';
+                }
+
+                $formatter = \IntlDateFormatter::create(
+                    $locale,
+                    $formatValues[$dateFormat],
+                    $formatValues[$timeFormat],
+                    \IntlTimeZone::createTimeZone($value->getTimezone()->getName()),
+                    'gregorian' === $calendar ? \IntlDateFormatter::GREGORIAN : \IntlDateFormatter::TRADITIONAL,
+                    null
+                );
+                return $formatter->format($value->getTimestamp());
+            }
+
+            $format = 'm/d/y H:i:s';
+            return $value->format($format);
+
+        }
+
         if ($fieldType instanceof CountryType) {
             if (is_array($value)) {
                 $choices = [];
@@ -62,7 +101,7 @@ class FormValuesBeautifier
             $choices = [];
             foreach (new \RecursiveIteratorIterator($arrayIterator) as $label => $key) {
                 if ((is_array($value) && isset(array_flip($value)[$key])) || $value === $key) {
-                    $choices[] = $this->translator->trans($label, [], NULL, $locale);
+                    $choices[] = $this->translator->trans($label, [], null, $locale);
                 }
             }
 
@@ -135,11 +174,11 @@ class FormValuesBeautifier
 
         return [
             'label'       => isset($fieldOptions['label']) && !empty($fieldOptions['label'])
-                ? $this->translator->trans($fieldOptions['label'], [], NULL, $locale)
+                ? $this->translator->trans($fieldOptions['label'], [], null, $locale)
                 : $field->getName(),
             'email_label' => isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
-                ? $this->translator->trans($optionalOptions['email_label'], [], NULL, $locale)
-                : NULL,
+                ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
+                : null,
             'value'       => $this->getFieldValue($formEntity->getFieldValue($field->getName()), $formField, $locale),
         ];
     }
@@ -159,12 +198,12 @@ class FormValuesBeautifier
 
         $valueTransformer = isset($optionalOptions['email_value_transformer']) && is_callable($optionalOptions['email_value_transformer'])
             ? $optionalOptions['email_value_transformer']
-            : FALSE;
+            : false;
 
-        $value = FALSE;
+        $value = false;
         $fieldValue = $formEntity->getFieldValue($field->getName());
 
-        if ($valueTransformer === FALSE) {
+        if ($valueTransformer === false) {
             $value = $this->getFieldValue($fieldValue, $formField, $locale);
         } elseif ($valueTransformer instanceof \Closure) {
             $value = call_user_func_array($valueTransformer, [$formField, $fieldValue, $locale]);
@@ -174,14 +213,12 @@ class FormValuesBeautifier
 
         return [
             'label'       => isset($label) && !empty($label)
-                ? $this->translator->trans($label, [], NULL, $locale)
+                ? $this->translator->trans($label, [], null, $locale)
                 : $label,
             'email_label' => isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
-                ? $this->translator->trans($optionalOptions['email_label'], [], NULL, $locale)
-                : NULL,
+                ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
+                : null,
             'value'       => $value
-
         ];
     }
-
 }

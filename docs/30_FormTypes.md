@@ -16,6 +16,10 @@ There are several form types available (updated continuously).
 | Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
 | Snippet | Other Fields | Place a custom snippet in your form. |
 | [Dynamic Multi File](80_FileUpload.md) | Other Fields | Multi-File Upload field. |
+| Date | Date and Time Fields | A field that allows the user to modify date information via a variety of different HTML elements. |
+| Date Time | Date and Time Fields | This field type allows the user to modify data that represents a specific date and time (e.g. 1984-06-05 12:15:30). |
+| Time | Date and Time Fields | This can be rendered as a text field, a series of text fields (e.g. hour, minute, second) or a series of select fields. The underlying data can be stored as a DateTime object, a string, a timestamp or an array. |
+| Birthday | Date and Time Fields | Can be rendered as a single text box, three text boxes (month, day and year), or three select boxes. |
 
 ## Constraints
 
@@ -31,6 +35,9 @@ There are several form types available (updated continuously).
 | Card Scheme | This constraint ensures that a credit card number is valid for a given credit card company. |
 | BIC| This constraint is used to ensure that a value has the proper format of a Business Identifier Code (BIC).  |
 | Iban | This constraint is used to ensure that a bank account number has the proper format of an International Bank Account Number (IBAN). |
+| Date | Validates that a value is a valid date, meaning either a DateTime object or a string (or an object that can be cast into a string) that follows a valid YYYY-MM-DD format. |
+| DateTime | Validates that a value is a valid "datetime", meaning either a DateTime object or a string (or an object that can be cast into a string) that follows a specific format. |
+| Time | Validates that a value is a valid time, meaning an object implementing DateTimeInterface or a string (or an object that can be cast into a string) that follows a valid HH:MM:SS format. |
 
 ## Enable / Disable Form Types
 It's possible to enable or disable specific form types.

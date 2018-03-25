@@ -20,6 +20,7 @@
 "form_builder_type_group.datetime_fields","DateTime Fields","Datumsfelder"
 "form_builder_type_group.other_fields","Other Fields","Andere Felder"
 "form_builder_type_group.field_groups","Field Groups","Feldgruppen"
+"form_builder_type_group.date_time_fields","Date and Time Fields","Datum und Uhrzeit Felder"
 "form_builder_type_group.hidden_fields","Hidden Fields","Versteckte Felder"
 "form_builder_type_group.buttons","Buttons","Schaltflächen"
 
@@ -33,6 +34,9 @@
 "form_builder_validation_constraint.card_scheme","Card Scheme","Karten-Schema"
 "form_builder_validation_constraint.bic","Bic","Bic"
 "form_builder_validation_constraint.iban","Iban","Iban"
+"form_builder_validation_constraint.date","Date","Datum"
+"form_builder_validation_constraint.date_time","Date & Time","Datum & Uhrzeit"
+"form_builder_validation_constraint.time","Time","Uhrzeit"
 
 "form_builder_type.text_type","Text Type","Text Element"
 "form_builder_type.hidden_type","Hidden Type","Verstecktes Element"
@@ -46,6 +50,10 @@
 "form_builder_type.snippet_type","Snippet Type","Snippet Element"
 "form_builder_type.dynamic_multi_file","Dynamic Multi File","Dynamic Multi-Datei Element"
 "form_builder_type.submit_type","Submit Type","Absenden Element"
+"form_builder_type.date_type","Date Type","Datum Element"
+"form_builder_type.date_time_type","Date Time Type","Datum & Uhrzeit Element"
+"form_builder_type.time_type","Time Type","Uhrzeit Element"
+"form_builder_type.birthday_type","Birthday Type","Geburtstag Element"
 
 "form_builder_type_tab.default","Default","Standard"
 
@@ -76,6 +84,16 @@
 "form_builder_type_field.allowed_extensions_desc","Add some extensions and confirm with enter.","Fügen Sie erlaubte Dateierweiterungen hinzu und bestätigen Sie mit der Enter-Taste."
 "form_builder_type_field.max_file_size","Max File Size","Max. Dateigröße"
 "form_builder_type_field.max_file_size_desc","Max file size will be calculated in MB. Empty or Zero means no Limit!","Maximale Dateigröße wird in MB verarbeitet. Leer oder 0 bedeutet kein Limit!"
+"form_builder_type_field.date_seconds","Seconds","Sekunden"
+"form_builder_type_field.date_minutes","Minutes","Minuten"
+"form_builder_type_field.date_hours","Hours","Stunden"
+"form_builder_type_field.date_days","Days","Tage"
+"form_builder_type_field.date_months","Months","Monate"
+"form_builder_type_field.date_years","Years","Jahre"
+"form_builder_type_field.date_widget","Widget","Darstellung"
+"form_builder_type_field.time_widget","Widget Time","Darstellung Uhrzeit"
+"form_builder_type_field.date_with_minutes","With Minutes","Minuten darstellen"
+"form_builder_type_field.date_with_seconds","With Seconds","Sekunden darstellen"
 
 "form_builder_type_template.default","Default","Default"
 
