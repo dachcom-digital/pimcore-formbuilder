@@ -85,6 +85,7 @@ class MailParser
 
         $this->parseMailRecipients($mailTemplate, $fieldValues, $conditionRecipient);
         $this->parseMailSender($mailTemplate, $fieldValues);
+        $this->parseReplyTo($mailTemplate, $fieldValues);
         $this->parseSubject($mailTemplate, $fieldValues);
         $this->setMailPlaceholders($mail, $fieldValues, $disableDefaultMailBody);
 
@@ -115,6 +116,18 @@ class MailParser
         $parsedFrom = $this->extractPlaceHolder($from, $data);
 
         $mailTemplate->setFrom($parsedFrom);
+    }
+
+    /**
+     * @param Email $mailTemplate
+     * @param array $data
+     */
+    private function parseReplyTo(Email $mailTemplate, $data = [])
+    {
+        $replyTo = $mailTemplate->getReplyTo();
+        $parsedReplyTo = $this->extractPlaceHolder($replyTo, $data);
+
+        $mailTemplate->setReplyTo($parsedReplyTo);
     }
 
     /**
