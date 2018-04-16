@@ -2,29 +2,29 @@
 
 namespace FormBuilderBundle\Resolver;
 
-use Pimcore\Model\Document\Email;
+use Pimcore\Model\Document;
 
 class FormOptionsResolver
 {
     /**
      * @var null
      */
-    protected $formId = NULL;
+    protected $formId = null;
 
     /**
      * @var null
      */
-    protected $mainLayout = NULL;
+    protected $mainLayout = null;
 
     /**
      * @var null
      */
-    protected $formTemplate = NULL;
+    protected $formTemplate = null;
 
     /**
      * @var null
      */
-    protected $formBlockTemplate = NULL;
+    protected $formBlockTemplate = null;
 
     /**
      * @var string
@@ -34,22 +34,22 @@ class FormOptionsResolver
     /**
      * @var bool
      */
-    protected $sendCopy = FALSE;
+    protected $sendCopy = false;
 
     /**
      * @var null
      */
-    protected $mailTemplate = NULL;
+    protected $mailTemplate = null;
 
     /**
      * @var null
      */
-    protected $mailCopyTemplate = NULL;
+    protected $mailCopyTemplate = null;
 
     /**
      * @param $formId
      */
-    function setFormId($formId)
+    public function setFormId($formId)
     {
         if (is_numeric($formId)) {
             $this->formId = $formId;
@@ -59,7 +59,7 @@ class FormOptionsResolver
     /**
      * @return null|int
      */
-    function getFormId()
+    public function getFormId()
     {
         return $this->formId;
     }
@@ -67,7 +67,7 @@ class FormOptionsResolver
     /**
      * @param $mainLayout
      */
-    function setMainLayout($mainLayout)
+    public function setMainLayout($mainLayout)
     {
         $this->mainLayout = $mainLayout;
     }
@@ -75,7 +75,7 @@ class FormOptionsResolver
     /**
      * @return null
      */
-    function getMainLayout()
+    public function getMainLayout()
     {
         return $this->mainLayout;
     }
@@ -83,7 +83,7 @@ class FormOptionsResolver
     /**
      * @param $preset
      */
-    function setFormPreset($preset = NULL)
+    public function setFormPreset($preset = null)
     {
         if (!empty($preset) && !is_null($preset)) {
             $this->preset = $preset;
@@ -93,7 +93,7 @@ class FormOptionsResolver
     /**
      * @return string
      */
-    function getFormPreset()
+    public function getFormPreset()
     {
         return $this->preset;
     }
@@ -101,7 +101,7 @@ class FormOptionsResolver
     /**
      * @param $formTemplate
      */
-    function setFormTemplate($formTemplate)
+    public function setFormTemplate($formTemplate)
     {
         if (empty($formTemplate)) {
             $formTemplate = 'form_div_layout.html.twig';
@@ -114,7 +114,7 @@ class FormOptionsResolver
     /**
      * @return string
      */
-    function getFormTemplate()
+    public function getFormTemplate()
     {
         return '@FormBuilder/Form/Theme/' . $this->formTemplate;
     }
@@ -122,7 +122,7 @@ class FormOptionsResolver
     /**
      * @return null|string
      */
-    function getFormTemplateName()
+    public function getFormTemplateName()
     {
         if (empty($this->formTemplate)) {
             return 'form_div_layout';
@@ -134,7 +134,7 @@ class FormOptionsResolver
     /**
      * @return string
      */
-    function getFormBlockTemplate()
+    public function getFormBlockTemplate()
     {
         return '@FormBuilder/Form/Theme/Macro/' . $this->formBlockTemplate;
     }
@@ -152,7 +152,7 @@ class FormOptionsResolver
     /**
      * @param $sendCopy
      */
-    function setSendCopy($sendCopy)
+    public function setSendCopy($sendCopy)
     {
         $this->sendCopy = $sendCopy;
     }
@@ -160,10 +160,10 @@ class FormOptionsResolver
     /**
      * @return bool
      */
-    function getSendCopy()
+    public function getSendCopy()
     {
-        if ($this->sendCopy === TRUE && is_null($this->getCopyMailTemplateId())) {
-            $this->sendCopy = FALSE;
+        if ($this->sendCopy === true && is_null($this->getCopyMailTemplateId())) {
+            $this->sendCopy = false;
         }
 
         return $this->sendCopy;
@@ -172,21 +172,22 @@ class FormOptionsResolver
     /**
      * @param $mailTemplate
      */
-    function setMailTemplate($mailTemplate)
+    public function setMailTemplate($mailTemplate)
     {
-        if(is_numeric($mailTemplate)) {
-            $mailTemplate = Email::getById($mailTemplate);
+        if (is_numeric($mailTemplate)) {
+            $mailTemplate = Document\Email::getById($mailTemplate);
         }
 
-        if ($mailTemplate instanceof Email) {
+        if ($mailTemplate instanceof Document\Email) {
+            $mailTemplate = $this->checkI18nPath($mailTemplate);
             $this->mailTemplate = $mailTemplate;
         }
     }
 
     /**
-     * @return null|Email
+     * @return null|Document\Email
      */
-    function getMailTemplate()
+    public function getMailTemplate()
     {
         return $this->mailTemplate;
     }
@@ -194,33 +195,34 @@ class FormOptionsResolver
     /**
      * @return int|null
      */
-    function getMailTemplateId()
+    public function getMailTemplateId()
     {
-        if ($this->mailTemplate instanceof Email) {
+        if ($this->mailTemplate instanceof Document\Email) {
             return $this->mailTemplate->getId();
         }
 
-        return NULL;
+        return null;
     }
 
     /**
      * @param $mailTemplate
      */
-    function setCopyMailTemplate($mailTemplate)
+    public function setCopyMailTemplate($mailTemplate)
     {
-        if(is_numeric($mailTemplate)) {
-            $mailTemplate = Email::getById($mailTemplate);
+        if (is_numeric($mailTemplate)) {
+            $mailTemplate = Document\Email::getById($mailTemplate);
         }
 
-        if ($mailTemplate instanceof Email) {
+        if ($mailTemplate instanceof Document\Email) {
+            $mailTemplate = $this->checkI18nPath($mailTemplate);
             $this->mailCopyTemplate = $mailTemplate;
         }
     }
 
     /**
-     * @return null|Email
+     * @return null|Document\Email
      */
-    function getCopyMailTemplate()
+    public function getCopyMailTemplate()
     {
         return $this->mailCopyTemplate;
     }
@@ -228,12 +230,43 @@ class FormOptionsResolver
     /**
      * @return int|null
      */
-    function getCopyMailTemplateId()
+    public function getCopyMailTemplateId()
     {
-        if ($this->mailCopyTemplate instanceof Email) {
+        if ($this->mailCopyTemplate instanceof Document\Email) {
             return $this->mailCopyTemplate->getId();
         }
 
-        return NULL;
+        return null;
+    }
+
+    /**
+     * Detect if email is in right i18n context.
+     * This method only works if you have enabled the i18n bundle.
+     *
+     * @see https://github.com/dachcom-digital/pimcore-i18n/blob/master/docs/90_InternalLinkRewriter.md#internal-link-rewriter
+     *
+     * @param Document\Email $mailTemplate
+     * @return Document\Email
+     */
+    private function checkI18nPath(Document\Email $mailTemplate)
+    {
+        $i18nFullPath = $mailTemplate->getFullPath();
+        $fullPath = $mailTemplate->getPath() . $mailTemplate->getKey();
+
+        if ($i18nFullPath === $fullPath) {
+            return $mailTemplate;
+        }
+
+        $realFullPath = str_replace($fullPath, '', $mailTemplate->getRealFullPath());
+
+        $mailPath = $mailTemplate->getFullPath();
+        $i18nRealFullPath = $realFullPath . $mailPath;
+
+        if (Document\Service::pathExists($i18nRealFullPath)) {
+            $mailTemplate = Document\Email::getByPath($i18nRealFullPath);
+        }
+
+        return $mailTemplate;
+
     }
 }
