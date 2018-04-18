@@ -13,13 +13,13 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     optionStore: null,
 
-    initialize: function(fieldConfig, storeData, optionStore) {
+    initialize: function (fieldConfig, storeData, optionStore) {
 
         this.fieldConfig = fieldConfig;
         this.storeData = storeData;
         this.optionStore = optionStore;
 
-        if(this.optionStore) {
+        if (this.optionStore) {
             this.optionType = 'store';
         }
 
@@ -27,11 +27,11 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     },
 
-    getRepeater: function() {
+    getRepeater: function () {
         return this.repeater;
     },
 
-    generateRepeaterWithKeyValue: function() {
+    generateRepeaterWithKeyValue: function () {
 
         var keyValueRepeater = null,
             metaDataCounter = 0,
@@ -39,16 +39,18 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
         this.typeSelector = new Ext.form.ComboBox({
             width: 300,
-            triggerAction:'all',
+            triggerAction: 'all',
             submitValue: false,
             store: [
                 ['default', t('form_builder_repeater_default')],
                 ['grouped', t('form_builder_repeater_grouped')]
             ],
             listeners: {
-                select: function(combo, rec) {
+                select: function (combo, rec) {
                     this.type = combo.getValue();
-                    combo.up().up().query('[name^=button_type_]').forEach(function(el) { el.hide() });
+                    combo.up().up().query('[name^=button_type_]').forEach(function (el) {
+                        el.hide()
+                    });
                     combo.up().up().query('[name="button_type_' + combo.getValue() + '"]')[0].show();
                 }.bind(this)
             }
@@ -65,7 +67,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
                 iconCls: 'pimcore_icon_add',
                 handler: this.addMetaField.bind(this),
                 tooltip: {
-                    title:'',
+                    title: '',
                     text: t('form_builder_add_metadata')
                 }
             },
@@ -77,19 +79,19 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
                 iconCls: 'pimcore_icon_add',
                 handler: this.addGroupedMetaField.bind(this),
                 tooltip: {
-                    title:'',
+                    title: '',
                     text: t('form_builder_add_grouped_metadata')
                 }
             }
         ];
 
-        if(allowFirstOptionsEmpty) {
+        if (allowFirstOptionsEmpty) {
 
-            items.unshift( {
+            items.unshift({
                 xtype: 'panel',
                 name: 'multiOptionsInfo',
                 fieldLabel: '',
-                submitValue : false,
+                submitValue: false,
                 frame: false,
                 border: false,
                 bodyStyle: 'background:transparent;',
@@ -102,7 +104,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
             title: this.fieldConfig.label,
             collapsible: false,
-            autoHeight:true,
+            autoHeight: true,
             width: '100%',
             style: 'margin-top: 20px;',
             name: 'meta',
@@ -119,25 +121,32 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     },
 
-    addGroupedMetaField: function(button, value) {
+    addGroupedMetaField: function (button, value) {
 
-        var fieldSet = button.up().up();
-
-        var groupFields = this.repeater.query('[name="meta_group"]'),
+        var _ = this,
+            fieldSet = button.up().up(),
+            groupFields = this.repeater.query('[name="meta_group"]'),
             fieldSetName = fieldSet.name,
             currentIndex = 0;
 
-        if(groupFields.length > 0) {
-            currentIndex = groupFields[groupFields.length -1].groupIndex + 1;
+        if (groupFields.length > 0) {
+            currentIndex = groupFields[groupFields.length - 1].groupIndex + 1;
         }
 
         var items = [
             {
                 xtype: 'textfield',
                 text: t('form_builder_repeater_group_name'),
-                name: this.fieldConfig.id + '.' + currentIndex + '.0.name',
+                name: _.generateFieldName(currentIndex, 0, 'name'),
                 label: t('group_name'),
-                value: typeof value !== 'object' ? value : null
+                value: typeof value !== 'object' ? value : null,
+                cls: 'repeater_group_name_field',
+                listeners: {
+                    updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
+                        var name = _.generateFieldName(fieldSetIndex, 0, 'name');
+                        this.name = name;
+                    }
+                }
             },
             '->',
             {
@@ -154,15 +163,15 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
                 style: 'float:left;',
                 handler: function (compositeField, el) {
                     el.up().up().destroy();
+                    this.updateIndex();
                     this.checkTypeSelector();
                 }.bind(this, compositeField)
             }
         ];
 
         var compositeField = new Ext.form.FieldSet({
-
             collapsible: false,
-            autoHeight:true,
+            autoHeight: true,
             width: '100%',
             style: 'margin-top: 20px;',
             name: 'meta_group',
@@ -183,45 +192,49 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     },
 
-    addMetaField: function(button, option, value) {
+    addMetaField: function (button, option, value) {
 
-        var count = 0,
-            namePrefix = '',
+        var _ = this,
             fieldSet = button.up().up(),
-            fieldSetName = fieldSet.name;
+            fieldSetName = fieldSet.name,
+            fieldSetIndex = null,
+            fieldContainerIndex = 0;
 
-        count = fieldSet.query('[name="delete_button"]').length;
+        fieldContainerIndex = fieldSet.query('[name="delete_button"]').length;
 
-        if(this.type === 'grouped') {
-            namePrefix = this.fieldConfig.id + '.' + fieldSet.groupIndex + '.' + count;
-        } else {
-            namePrefix = this.fieldConfig.id + '.' + count;
+        if (this.type === 'grouped') {
+            fieldSetIndex = fieldSet.groupIndex;
         }
 
         var optionField = null;
 
-        if(this.optionType === 'user') {
+        if (this.optionType === 'user') {
 
             optionField = new Ext.form.TextField({
-                name: namePrefix + '.option',
+                name: _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option'),
                 fieldLabel: t('form_builder_option'),
                 anchor: '100%',
                 summaryDisplay: true,
-                //allowBlank: allowFirstOptionsEmpty === true && metaDataCounter === 0,
-                value : typeof option !== 'object' ? option : null,
+                value: typeof option !== 'object' ? option : null,
                 flex: 1,
-                margin: '0 10px 0 0'
+                margin: '0 10px 0 0',
+                listeners: {
+                    updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
+                        var name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option');
+                        this.name = name;
+                    }
+                }
             });
 
         } else {
 
             var optionsStore = new Ext.data.ArrayStore({
-                fields: ['label','value'],
-                data : this.optionStore
+                fields: ['label', 'value'],
+                data: this.optionStore
             });
 
             optionField = new Ext.form.ComboBox({
-                name: namePrefix + '.option',
+                name: _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option'),
                 fieldLabel: t('form_builder_option'),
                 queryDelay: 0,
                 displayField: 'label',
@@ -233,7 +246,13 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
                 anchor: "100%",
                 summaryDisplay: true,
                 allowBlank: false,
-                value : typeof option !== 'object' ? option : null,
+                value: typeof option !== 'object' ? option : null,
+                listeners: {
+                    updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
+                        var name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option');
+                        this.name = name;
+                    }
+                }
             });
 
         }
@@ -246,14 +265,20 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
                 optionField,
                 {
                     xtype: 'textfield',
-                    name: namePrefix + '.value',
+                    name: _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'value'),
                     fieldLabel: t('form_builder_value'),
                     anchor: '100%',
                     summaryDisplay: true,
                     allowBlank: false,
-                    value : typeof value !== 'object' ? value : null,
+                    value: typeof value !== 'object' ? value : null,
                     flex: 1,
-                    margin: '0 10px 0 0'
+                    margin: '0 10px 0 0',
+                    listeners: {
+                        updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
+                            var name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'value');
+                            this.name = name;
+                        }
+                    }
                 }
             ]
         });
@@ -266,9 +291,10 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
             handler: function (compositeField, el) {
                 fieldSet.remove(compositeField);
                 fieldSet.updateLayout();
+                this.updateIndex();
                 this.checkTypeSelector();
             }.bind(this, compositeField)
-        },{
+        }, {
             xtype: 'box',
             style: 'clear:both;'
         }]);
@@ -280,17 +306,17 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     },
 
-    populateRepeater: function() {
+    populateRepeater: function () {
 
         var _ = this,
             type = null;
 
-        if(!this.storeData || this.storeData.length === 0) {
+        if (!this.storeData || this.storeData.length === 0) {
             return;
         }
 
         //set selector first.
-        Ext.Object.each(this.storeData, function(index, value) {
+        Ext.Object.each(this.storeData, function (index, value) {
 
             if (Ext.isArray(value)) { //meta group
                 type = 'grouped';
@@ -300,18 +326,18 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
             _.typeSelector.setValue(type);
             _.typeSelector.fireEvent('select', _.typeSelector);
-            return false;
+            return false; //break
 
         });
 
-        Ext.Object.each(this.storeData, function(index, value) {
+        Ext.Object.each(this.storeData, function (index, value) {
             if (type === 'grouped') {
                 groupMetaField = undefined;
-                Ext.Array.each(value, function(group) {
-                    if(group.name) {
+                Ext.Array.each(value, function (group, index) {
+                    if (group.name && index === 0) {
                         groupMetaField = _.addGroupedMetaField(_.repeater.query('[name="button_type_grouped"]')[0], group.name);
                     }
-                    if(groupMetaField) {
+                    if (groupMetaField) {
                         _.addMetaField(groupMetaField.query('[name="add_field_button"]')[0], group.option, group.value);
                     }
                 });
@@ -321,10 +347,42 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
         });
     },
 
-    checkTypeSelector: function() {
+    generateFieldName: function (fieldSetIndex, fieldContainerIndex, name) {
+        if(fieldSetIndex === null) {
+            return this.fieldConfig.id + '.' + fieldContainerIndex + '.' + name;
+        }
 
+        return this.fieldConfig.id + '.' + fieldSetIndex + '.' + fieldContainerIndex + '.' + name;
+    },
+
+    updateIndex: function () {
+        if (this.type === 'grouped') {
+            var fieldSets = Ext.ComponentQuery.query('fieldset', this.repeater);
+            Ext.Array.each(fieldSets, function (container, fieldSetIndex) {
+                //name field
+                var nameFields = Ext.ComponentQuery.query('textfield[cls*=repeater_group_name_field]', container);
+                Ext.Array.each(nameFields, function (nameField) {
+                    nameField.fireEvent('updateIndexName', fieldSetIndex, 0);
+                });
+                Ext.Array.each(Ext.ComponentQuery.query('fieldcontainer', container), function (container, fieldContainerIndex) {
+                    Ext.Array.each(Ext.ComponentQuery.query('textfield', container), function (field) {
+                        field.fireEvent('updateIndexName', fieldSetIndex, fieldContainerIndex);
+                    });
+                });
+            });
+        } else {
+            var fieldContainer = Ext.ComponentQuery.query('fieldcontainer', this.repeater);
+            Ext.Array.each(fieldContainer, function (container, fieldContainerIndex) {
+                Ext.Array.each(Ext.ComponentQuery.query('textfield', container), function (field) {
+                    field.fireEvent('updateIndexName', null, fieldContainerIndex);
+                });
+            });
+        }
+    },
+
+    checkTypeSelector: function () {
         var count = this.repeater.query('[name="delete_button"],[name="delete_group_button"]').length
-        if(count === 0) {
+        if (count === 0) {
             this.typeSelector.enable();
         } else {
             this.typeSelector.disable();

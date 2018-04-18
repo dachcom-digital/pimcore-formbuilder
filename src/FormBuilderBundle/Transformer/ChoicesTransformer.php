@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Transformer;
 
-class ChoicesTransformer implements OptionsTransformerInterface {
-
+class ChoicesTransformer implements OptionsTransformerInterface
+{
     /**
      * Transform ExtJs Array to valid symfony choices array.
      *
@@ -12,15 +12,15 @@ class ChoicesTransformer implements OptionsTransformerInterface {
      *
      * @return array
      */
-    public function transform($choices, $optionConfig = NULL)
+    public function transform($choices, $optionConfig = null)
     {
         $parsedChoices = [];
-        foreach($choices as $choice) {
+        foreach ($choices as $choice) {
 
             //groups
-            if(isset($choice[0])) {
+            if (isset($choice[0])) {
                 $groupName = $choice[0]['name'];
-                foreach($choice as $index => $choiceGroup) {
+                foreach ($choice as $index => $choiceGroup) {
                     $parsedChoices[$groupName][$choiceGroup['option']] = $choiceGroup['value'];
                 }
             } else {
@@ -39,19 +39,26 @@ class ChoicesTransformer implements OptionsTransformerInterface {
      *
      * @return array
      */
-    public function reverseTransform($choices, $optionConfig = NULL)
+    public function reverseTransform($choices, $optionConfig = null)
     {
         $parsedChoices = [];
-        foreach($choices as $choiceKey => $choiceValue) {
+
+        $groupCounter = 0;
+        foreach ($choices as $choiceKey => $choiceValue) {
 
             //groups
-            if(is_array($choiceValue)) {
+            if (is_array($choiceValue)) {
                 $groupName = $choiceKey;
-                $c = 0;
-                foreach($choiceValue as $choiceGroupKey => $choiceGroupValue) {
-                    $parsedChoices[$c][] = ['option' => $choiceGroupKey, 'value' => $choiceGroupValue, 'name' => $groupName];
-                    $c++;
+                foreach ($choiceValue as $choiceGroupKey => $choiceGroupValue) {
+                    $parsedChoices[$groupCounter][] = [
+                        'option' => $choiceGroupKey,
+                        'value'  => $choiceGroupValue,
+                        'name'   => $groupName
+                    ];
                 }
+
+                $groupCounter++;
+
             } else {
                 $parsedChoices[] = ['option' => $choiceKey, 'value' => $choiceValue];
             }
