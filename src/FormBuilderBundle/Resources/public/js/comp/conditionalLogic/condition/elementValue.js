@@ -13,6 +13,9 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
                 label: t('form_builder_element_value_type_is_checked'),
                 value: 'is_checked'
             }, {
+                label: t('form_builder_element_value_type_is_not_checked'), // new
+                value: 'is_not_checked'
+            }, {
                 label: t('form_builder_element_value_type_is_greater'),
                 value: 'is_greater'
             }, {
@@ -24,6 +27,9 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
             }, {
                 label: t('form_builder_element_value_type_is_not_value'),
                 value: 'is_not_value'
+            }, {
+                label: t('form_builder_element_value_type_is_empty_value'), // new
+                value: 'is_empty_value'
             }]
         });
 
@@ -39,14 +45,15 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
             style: 'display:block; padding:3px; background:#f5f5f5; border:1px solid #eee; font-weight: 300; word-wrap:break-word;'
         });
 
+        var allowValueFieldEmpty = this.data && (this.data.comparator === 'is_checked' || this.data.comparator === 'is_not_checked' || this.data.comparator === 'is_empty_value')
         var valueField = new Ext.form.TextField({
             name: _.generateFieldName(this.sectionId, this.index, 'value'),
             fieldLabel: t('form_builder_element_value_value'),
             anchor: '100%',
             labelAlign: 'top',
             summaryDisplay: true,
-            allowBlank: this.data && this.data.comparator === 'is_checked',
-            disabled: this.data && this.data.comparator === 'is_checked',
+            allowBlank: allowValueFieldEmpty,
+            disabled: allowValueFieldEmpty,
             value: this.data ? this.data.value : null,
             flex: 1,
             listeners: {
@@ -112,9 +119,10 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
                     this.name = _.generateFieldName(sectionId, index, 'comparator');
                 },
                 change: function (combo, value) {
-                    valueField.setDisabled(value === 'is_checked');
-                    valueField.allowBlank = value === 'is_checked';
-                    if(value === 'is_checked') {
+                    var allowValueFieldEmpty = value === 'is_checked' || value === 'is_not_checked' || value === 'is_empty_value';
+                    valueField.setDisabled(allowValueFieldEmpty);
+                    valueField.allowBlank = allowValueFieldEmpty;
+                    if(allowValueFieldEmpty) {
                         valueField.setValue('');
                         valueField.clearInvalid();
                     } else {

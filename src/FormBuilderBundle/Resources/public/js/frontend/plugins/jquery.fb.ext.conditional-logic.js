@@ -202,17 +202,23 @@
                             }
                             break;
                         case 'is_value':
-                            qualifiers['values'] = [condition.value]
+                            qualifiers['values'] = [condition.value];
                             break;
                         case 'is_not_value':
-                            qualifiers['not'] = [condition.value]
+                            qualifiers['not'] = [condition.value];
+                            break;
+                        case 'is_empty_value':
+                            qualifiers['values'] = [undefined, ''];
                             break;
                         case 'contains':
-                            qualifiers['contains'] = condition.value.split(',')
+                            qualifiers['contains'] = condition.value.split(',');
                             break;
                         case 'is_checked':
                             qualifiers['not'] = [undefined];
                             qualifiers['checked'] = true;
+                            break;
+                        case 'is_not_checked':
+                            qualifiers['checked'] = false;
                             break;
                     }
 
@@ -223,7 +229,6 @@
             this.conditions = {
                 'elementValue': elementValue
             };
-
         },
 
         setupActionProcessor: function () {
@@ -465,7 +470,7 @@
                         return true;
                     }
                     var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
-                    //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
+                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
 
                 });
 
