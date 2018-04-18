@@ -32,25 +32,29 @@ class ElementValueCondition implements ConditionInterface
     public function isValid($formData, $ruleId, $configuration = [])
     {
         foreach ($this->getFields() as $conditionFieldName) {
-            $fieldValue = isset($formData[$conditionFieldName]) ? $formData[$conditionFieldName] : NULL;
+            $fieldValue = isset($formData[$conditionFieldName]) ? $formData[$conditionFieldName] : null;
 
             if ($this->getComparator() === 'contains') {
                 return !empty(array_intersect(explode(',', $this->getValue()), (array)$fieldValue));
             } elseif ($this->getComparator() === 'is_checked') {
                 return in_array($conditionFieldName, $formData);
+            } elseif ($this->getComparator() === 'is_not_checked') {
+                return empty($fieldValue);
             } elseif ($this->getComparator() === 'is_greater') {
                 return $this->getValue() > $fieldValue;
             } elseif ($this->getComparator() === 'is_less') {
                 return $this->getValue() < $fieldValue;
             } elseif ($this->getComparator() === 'is_value') {
                 //could be an array (multiple)
-                return $this->getValue() == $fieldValue || in_array($this->getValue(),(array)$fieldValue);
+                return $this->getValue() == $fieldValue || in_array($this->getValue(), (array)$fieldValue);
+            } elseif ($this->getComparator() === 'is_empty_value') {
+                return empty($fieldValue);
             } elseif ($this->getComparator() === 'is_not_value') {
                 return $this->getValue() != $fieldValue;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
