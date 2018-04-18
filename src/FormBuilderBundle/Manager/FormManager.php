@@ -117,7 +117,7 @@ class FormManager
     protected function updateFormAttributes($data, $form)
     {
         $form->setName($data['form_name']);
-        $form->setDate($data['form_date']);
+        $form->setDate(isset($data['form_date']) ? $data['form_date'] : null);
 
         if(isset($data['form_config'])) {
             $form->setConfig($data['form_config']);

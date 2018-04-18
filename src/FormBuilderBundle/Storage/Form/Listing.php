@@ -7,6 +7,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array
+     */
+    protected $data;
+
+    /**
      * Test if the passed key is valid
      *
      * @param string $key
@@ -15,7 +20,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function isValidOrderKey($key)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -33,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getData()
     {
-        if ($this->data === NULL) {
+        if ($this->data === null) {
             $entities = [];
             foreach ($this->load() as $o) {
                 $entities[] = $o;
