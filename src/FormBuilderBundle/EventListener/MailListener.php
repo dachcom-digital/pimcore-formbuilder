@@ -33,9 +33,9 @@ class MailListener implements EventSubscriberInterface
     /**
      * MailListener constructor.
      *
-     * @param SessionInterface         $session
-     * @param MailParser      $mailParser
-     * @param IncludeRenderer $includeRenderer
+     * @param SessionInterface $session
+     * @param MailParser       $mailParser
+     * @param IncludeRenderer  $includeRenderer
      */
     public function __construct(
         SessionInterface $session,
@@ -66,28 +66,30 @@ class MailListener implements EventSubscriberInterface
         $form = $event->getForm();
 
         $formConfiguration = $event->getFormConfiguration();
-        $emailConfiguration = $formConfiguration['email'];
-        $sendCopy = $emailConfiguration['send_copy'];
         $flashBag = $this->session->getFlashBag();
+        $emailConfiguration = null;
 
         try {
 
-            if (empty($emailConfiguration['mail_template_id'])) {
-                throw new \Exception('no valid mail template given.');
+            if (empty($formConfiguration)) {
+                throw new \Exception('no valid mail configuration given.');
             }
 
+            $emailConfiguration = $formConfiguration['email'];
+            $sendCopy = $emailConfiguration['send_copy'];
+
             $send = $this->sendForm($emailConfiguration['mail_template_id'], $form, $request->getLocale());
-            if ($send === TRUE) {
+            if ($send === true) {
 
                 //send copy!
-                if ($sendCopy === TRUE) {
+                if ($sendCopy === true) {
 
                     if (empty($emailConfiguration['copy_mail_template_id'])) {
                         throw new \Exception('no valid copy mail template given.');
                     }
 
                     $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $form, $request->getLocale(), true);
-                    if ($send !== TRUE) {
+                    if ($send !== true) {
                         throw new \Exception('copy mail not sent.');
                     }
                 }
@@ -114,7 +116,7 @@ class MailListener implements EventSubscriberInterface
     {
         $mailTemplate = Document\Email::getById($mailTemplateId);
         if (!$mailTemplate instanceof Document\Email) {
-            return FALSE;
+            return false;
         }
 
         $mail = $this->mailParser->create($mailTemplate, $form, $locale, $isCopy);
@@ -125,7 +127,7 @@ class MailListener implements EventSubscriberInterface
         $mail = $mailEvent->getEmail();
         $mail->send();
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -137,12 +139,12 @@ class MailListener implements EventSubscriberInterface
      */
     private function onSuccess(SubmissionEvent $event, $flashBag, $mailTemplateId)
     {
-        $error = FALSE;
+        $error = false;
         $message = 'Success!';
 
         $mailTemplate = Document\Email::getById($mailTemplateId);
         if (!$mailTemplate instanceof Document\Email) {
-            return FALSE;
+            return false;
         }
 
         $afterSuccess = $mailTemplate->getProperty('mail_successfully_sent');
@@ -152,17 +154,17 @@ class MailListener implements EventSubscriberInterface
             $params['document'] = $afterSuccess;
 
             try {
-                $message = $this->includeRenderer->render($afterSuccess, $params, FALSE);
+                $message = $this->includeRenderer->render($afterSuccess, $params, false);
             } catch (\Exception $e) {
-                $error = TRUE;
+                $error = true;
                 $message = $e->getMessage();
             }
         } //it's a redirect!
-        else if ($afterSuccess instanceof Document) {
+        elseif ($afterSuccess instanceof Document) {
             $message = $afterSuccess->getFullPath();
             $event->setRedirectUri($afterSuccess->getFullPath());
         } //it's just a string!
-        else if (is_string($afterSuccess)) {
+        elseif (is_string($afterSuccess)) {
             $message = $afterSuccess;
         }
 

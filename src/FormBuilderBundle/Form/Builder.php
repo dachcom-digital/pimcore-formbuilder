@@ -81,7 +81,7 @@ class Builder
     {
         foreach ($request->request->all() as $key => $parameters) {
 
-            if (strpos($key, 'formbuilder_') === FALSE) {
+            if (strpos($key, 'formbuilder_') === false) {
                 continue;
             }
 
@@ -90,7 +90,7 @@ class Builder
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -102,7 +102,8 @@ class Builder
     public function buildForm($id, $userOptions = [])
     {
         $defaults = [
-            'form_preset' => NULL
+            'form_preset' => null,
+            'form_template' => null
         ];
 
         $formOptions = array_merge($defaults, $userOptions);
@@ -112,14 +113,14 @@ class Builder
         $formConfig = $formEntity->getConfig();
 
         $formAttributes = [];
-        if ($formConfig['noValidate'] === FALSE) {
+        if ($formConfig['noValidate'] === false) {
             $formAttributes['novalidate'] = 'novalidate';
         }
 
         $formAttributes['class'] = 'formbuilder';
         $formAttributes['data-template'] = $formOptions['form_template'];
 
-        if ($formConfig['useAjax'] === TRUE) {
+        if ($formConfig['useAjax'] === true) {
             $formAttributes['data-ajax-structure-url'] = $this->router->generate('form_builder.controller.ajax.url_structure');
             $formAttributes['class'] = $formAttributes['class'] . ' ajax-form';
         }
