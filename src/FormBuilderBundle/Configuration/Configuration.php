@@ -66,7 +66,8 @@ class Configuration
         $this->backendConfig = [
             'backend_base_field_type_groups' => $config['backend_base_field_type_groups'],
             'backend_base_field_type_config' => $config['backend_base_field_type_config'],
-            'backend_field_type_config'      => $config['backend_field_type_config']
+            // backend_field_type_config: not implemented yet.
+            'backend_field_type_config'      => isset($config['backend_field_type_config']) ? $config['backend_field_type_config'] : []
         ];
 
         unset($config['backend_base_field_type_groups'], $config['backend_base_field_type_config'], $config['backend_field_type_config']);

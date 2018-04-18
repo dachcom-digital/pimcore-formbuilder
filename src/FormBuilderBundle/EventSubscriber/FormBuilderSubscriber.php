@@ -243,7 +243,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         //tweak preferred choice options.
-        if ($field->getType() === 'choice') {
+        $choiceTypes = ['choice', 'dynamic_choice', 'country'];
+        if (in_array($field->getType(), $choiceTypes)) {
             if (
                 $options['multiple'] === FALSE
                 && isset($options['data'])
