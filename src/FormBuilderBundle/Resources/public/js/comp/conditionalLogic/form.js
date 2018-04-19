@@ -206,7 +206,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         var _ = this;
         this.conditionsContainer.items.each(function(component, index) {
             component.items.each(function(condition){
-                if(condition.items.items.length > 0) {
+                if(condition.items && condition.items.items.length > 0) {
                     Ext.Array.each(condition.items.items, function (field) {
                         field.fireEvent('updateIndexName', _.sectionId, index);
                     });
@@ -215,7 +215,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         });
         this.actionsContainer.items.each(function(component, index) {
             component.items.each(function(action){
-                if(action.items.items.length > 0) {
+                if(action.items && action.items.items.length > 0) {
                     Ext.Array.each(action.items.items, function (field) {
                         field.fireEvent('updateIndexName', _.sectionId, index);
                     });
