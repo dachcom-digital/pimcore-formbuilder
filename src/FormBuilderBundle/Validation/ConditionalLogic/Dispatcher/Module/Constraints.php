@@ -92,8 +92,7 @@ class Constraints implements ModuleInterface
 
         $constraintData = [];
         foreach ($validConstraints as $validConstraint) {
-            $key = array_search($validConstraint, array_column($fieldConstraints, 'type'));
-            $constraintData[] = $fieldConstraints[$key];
+            $constraintData[] = ['type' => $validConstraint];
         }
 
         return $this->appendConstraintsData($constraintData);
