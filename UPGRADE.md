@@ -3,6 +3,9 @@
 ***
 After every update you should check the pimcore extension manager. Just click the "update" button to finish the bundle update.
 
+#### Update from Version 2.2.x to Version 2.3.1
+- **[NEW FEATURE]**: Add Placeholder to the *ReplyTo* Field
+
 #### Update from Version 2.2.x to Version 2.3.0
 - **[NEW FEATURE]**: *Date*, *DateTime*, *Time* and *Birthday* fields added
 - **[NEW FEATURE]**: Configurable constraints and validation messages
