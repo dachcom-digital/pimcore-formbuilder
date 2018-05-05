@@ -14,7 +14,7 @@ AppBundle\Services\FormBuilderBundle\ProductChoices:
         - { name: form_builder.dynamic_choice_builder, label: 'Product Selector' }
 ```
 
-## PHP Service
+## PHP Service (Simple)
 ```php
 <?php
 
@@ -67,6 +67,60 @@ class ProductChoices implements ChoiceBuilderInterface
             $product1->getName() => $product1->getId(),
             $product2->getName() => $product2->getId()
         ];
+    }
+}
+```
+
+## PHP Service (Advanced)
+You could implement the `AdvancedChoiceBuilderInterface` to get more control about your choice element:
+
+```php
+<?php
+
+namespace AppBundle\Services\FormBuilderBundle;
+
+use FormBuilderBundle\Form\AdvancedChoiceBuilderInterface;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\FormBuilderInterface;
+use AppBundle\Model\Product;
+
+class ProductChoices implements AdvancedChoiceBuilderInterface
+{
+    protected $builder;
+
+    public function setFormBuilder(FormBuilderInterface $builder)
+    {
+        // same as in simple service
+    }
+
+    public function getList()
+    {
+        // same as in simple service
+    }
+
+    public function getChoiceValue($element = null)
+    {
+        // @see: https://symfony.com/doc/current/reference/forms/types/choice.html#choice-value
+    }
+
+    public function getChoiceLabel($element, $key, $index)
+    {
+        // @see: https://symfony.com/doc/current/reference/forms/types/choice.html#choice-label
+    }
+
+    public function getChoiceAttributes($element, $key, $index)
+    {
+        // @see: https://symfony.com/doc/current/reference/forms/types/choice.html#choice-attr
+    }
+
+    public function getGroupBy($element, $key, $index)
+    {
+        // @see: https://symfony.com/doc/current/reference/forms/types/choice.html#group-by
+    }
+
+    public function getPreferredChoices($element, $key, $index)
+    {
+        // @see: https://symfony.com/doc/current/reference/forms/types/choice.html#preferred-choices
     }
 }
 ```
