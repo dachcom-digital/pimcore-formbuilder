@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Form\Type;
 
+use FormBuilderBundle\Form\AdvancedChoiceBuilderInterface;
 use FormBuilderBundle\Form\ChoiceBuilderInterface;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use Symfony\Component\Form\AbstractType;
@@ -52,10 +53,10 @@ class DynamicChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'service'                   => null,
-            'conditionalLogic'          => null,
+            'service' => null,
+            'conditionalLogic' => null,
             'choice_translation_domain' => false,
-            'choice_loader'             => function (Options $options) {
+            'choice_loader' => function (Options $options) {
 
                 $initialChoiceBuilder = false;
                 if (!$this->service) {
@@ -72,7 +73,42 @@ class DynamicChoiceType extends AbstractType
                 }
 
                 return $this->choiceBuilder;
-            }
+            },
+            'choice_label' => function ($element, $key, $index) {
+                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
+                    return $this->service->getChoiceLabel($element, $key, $index);
+                }
+
+                return $key;
+            },
+            'choice_attr' => function ($element, $key, $index) {
+                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
+                    return $this->service->getChoiceAttributes($element, $key, $index);
+                }
+
+                return [];
+            },
+            'group_by' => function ($element, $key, $index) {
+                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
+                    return $this->service->getGroupBy($element, $key, $index);
+                }
+
+                return null;
+            },
+            'preferred_choices' => function ($element, $key, $index) {
+                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
+                    return $this->service->getPreferredChoices($element, $key, $index);
+                }
+
+                return null;
+            },
+            'choice_value' => function ($element = null) {
+                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
+                    return $this->service->getChoiceValue($element);
+                }
+
+                return $element;
+            },
         ]);
     }
 
