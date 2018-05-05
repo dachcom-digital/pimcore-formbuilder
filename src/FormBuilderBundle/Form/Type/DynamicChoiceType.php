@@ -79,7 +79,7 @@ class DynamicChoiceType extends AbstractType
                     return $this->service->getChoiceLabel($element, $key, $index);
                 }
 
-                return $element;
+                return $key;
             },
             'choice_attr' => function ($element, $key, $index) {
                 if ($this->service instanceof AdvancedChoiceBuilderInterface) {
@@ -88,7 +88,6 @@ class DynamicChoiceType extends AbstractType
 
                 return [];
             },
-
             'group_by' => function ($element, $key, $index) {
                 if ($this->service instanceof AdvancedChoiceBuilderInterface) {
                     return $this->service->getGroupBy($element, $key, $index);
@@ -108,7 +107,7 @@ class DynamicChoiceType extends AbstractType
                     return $this->service->getChoiceValue($element);
                 }
 
-                return '';
+                return $element;
             },
         ]);
     }

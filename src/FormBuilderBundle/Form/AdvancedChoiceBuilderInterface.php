@@ -2,8 +2,6 @@
 
 namespace FormBuilderBundle\Form;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
 interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
 {
     public function getChoiceValue($element = null);
