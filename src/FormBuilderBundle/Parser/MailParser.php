@@ -143,7 +143,7 @@ class MailParser
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
-                    if (empty($formField['value'])) {
+                    if (empty($formField['value']) && $formField['value'] !== 0) {
                         continue;
                     }
 
@@ -174,7 +174,7 @@ class MailParser
         //allow access to all form placeholders
         foreach ($fieldValues as $formField) {
 
-            if (empty($formField['value'])) {
+            if (empty($formField['value']) && $formField['value'] !== 0) {
                 continue;
             }
 
