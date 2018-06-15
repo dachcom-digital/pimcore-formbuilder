@@ -1014,12 +1014,9 @@ Formbuilder.comp.form = Class.create({
 
     importForm: function(importedFormData) {
 
-        this.parentPanel.getEditPanel().removeAll();
-
         this.formConfig = importedFormData.data.config;
         this.formFields = importedFormData.data.fields;
 
-        this.addLayout();
         this.initLayoutFields();
     },
 
