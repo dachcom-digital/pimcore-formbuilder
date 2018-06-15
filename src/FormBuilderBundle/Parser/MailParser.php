@@ -143,7 +143,7 @@ class MailParser
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
-                    if (empty($formField['value'])) {
+                    if ($this->isEmptyFormField($formField['value'])) {
                         continue;
                     }
 
@@ -173,8 +173,7 @@ class MailParser
     {
         //allow access to all form placeholders
         foreach ($fieldValues as $formField) {
-
-            if (empty($formField['value'])) {
+            if ($this->isEmptyFormField($formField['value'])) {
                 continue;
             }
 
@@ -184,6 +183,16 @@ class MailParser
         if ($disableDefaultMailBody === false) {
             $mail->setParam('body', $this->getBodyTemplate($fieldValues));
         }
+    }
+
+    /**
+     * @param mixed $formFieldValue
+     *
+     * @return bool
+     */
+    private function isEmptyFormField($formFieldValue)
+    {
+        return empty($formFieldValue) && $formFieldValue !== 0 && $formFieldValue !== '0';
     }
 
     /**
