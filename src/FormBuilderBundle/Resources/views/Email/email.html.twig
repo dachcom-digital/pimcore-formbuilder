@@ -11,13 +11,13 @@
         {% if editmode %}
 
             <div class="alert alert-info">
-                <strong>Admin:</strong> {{ 'form_builder.email.placeholder_list_available'|trans({},'admin')|format('<code>%Text(firstname);</code>') }}
+                <strong>Admin:</strong> {{ 'form_builder.email.placeholder_list_available'|trans({},'admin')|format('<code>%Text(firstname);</code>')|raw }}
             </div>
 
             {% if document.getProperty('mail_disable_default_mail_body') != true %}
                 <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.form_renders_automatically'|trans({},'admin') }}</div>
             {% else %}
-                <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.custom_style_activated_use_placeholder'|trans({},'admin')|format('<code>%Text(firstname);</code>') }}</div>
+                <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.custom_style_activated_use_placeholder'|trans({},'admin')|format('<code>%Text(firstname);</code>')|raw }}</div>
             {% endif %}
 
         {% endif %}
