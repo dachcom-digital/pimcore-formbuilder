@@ -25,6 +25,9 @@
             "bundles": [
                 "FormBuilderBundle\\FormBuilderBundle"
             ]
+        },
+        "branch-alias": {
+            "dev-master": "2.x-dev"
         }
     },
     "require": {
