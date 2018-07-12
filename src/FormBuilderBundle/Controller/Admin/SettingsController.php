@@ -326,6 +326,10 @@ class SettingsController extends AdminController
         return $this->json(['success' => $pathIsValid]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function getElementByPathAction(Request $request)
     {
         $path = $request->query->get('path');

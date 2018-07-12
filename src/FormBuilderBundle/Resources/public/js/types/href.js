@@ -2,33 +2,31 @@ pimcore.registerNS('Formbuilder.comp.types.href');
 Formbuilder.comp.types.href = Class.create({
 
     fieldConfig: null,
-
     storeData: null,
-
     href: null,
-
-    href_type: null,
+    hrefType: null,
+    locale: null,
 
     /**
      *
      * @param fieldConfig
      * @param storeData
      */
-    initialize: function(fieldConfig, storeData) {
+    initialize: function(fieldConfig, storeData, locale) {
         this.fieldConfig = fieldConfig;
         this.storeData = storeData;
+        this.locale = locale;
         this.generateElement();
     },
 
     /**
-     *
-     * @returns {Ext.panel.Panel|Ext.dashboard.Panel|Ext.form.Panel|Ext.grid.Panel|Ext.tab.Panel|Ext.tree.Panel|*}
+     * @returns Ext.panel.Panel
      */
     getHref: function() {
 
         var items = [
             this.href,
-            this.href_type
+            this.hrefType
         ]
 
         return item = new Ext.Panel({
@@ -37,13 +35,15 @@ Formbuilder.comp.types.href = Class.create({
             items: items
 
         });
-
     },
 
+    /**
+     * Generate hrefType and href Element
+     */
     generateElement: function() {
 
-        this.href_type = new Ext.form.Hidden({
-            'name' : 'options.href_type'
+        this.hrefType = new Ext.form.Hidden({
+            'name' : this.generateFieldName('options.href_type')
         }),
 
         this.data = {
@@ -59,7 +59,7 @@ Formbuilder.comp.types.href = Class.create({
         if (this.storeData.path) {
 
             this.options.value = this.storeData.path;
-            this.href_type.setValue(this.storeData.hrefType);
+            this.hrefType.setValue(this.storeData.hrefType);
 
             Ext.Ajax.request({
                 url: '/admin/formbuilder/settings/get-element-by-path',
@@ -81,7 +81,7 @@ Formbuilder.comp.types.href = Class.create({
         this.options.enableKeyEvents = true;
         this.options.emptyText = t('drop_element_here');
         this.options.fieldCls = 'pimcore_droptarget_input';
-        this.options.name = this.fieldConfig.id;
+        this.options.name = this.generateFieldName(this.fieldConfig.id);
 
         this.href = new Ext.form.TextField(this.options);
 
@@ -150,7 +150,7 @@ Formbuilder.comp.types.href = Class.create({
         this.data.path = record.data.path;
 
         this.href.setValue(record.data.path);
-        this.href_type.setValue(record.data.elementType);
+        this.hrefType.setValue(record.data.elementType);
 
         return true;
     },
@@ -241,7 +241,7 @@ Formbuilder.comp.types.href = Class.create({
                     item.parentMenu.destroy();
                     this.data = {};
                     this.href.setValue(this.data.path);
-                    this.href_type.setValue(this.data.subtype);
+                    this.hrefType.setValue(this.data.subtype);
 
                 }.bind(this)
             }));
@@ -283,7 +283,6 @@ Formbuilder.comp.types.href = Class.create({
     },
 
     /**
-     *
      * @param data
      * @returns {*}
      */
@@ -294,5 +293,9 @@ Formbuilder.comp.types.href = Class.create({
         }
         return data;
     },
+
+    generateFieldName(name) {
+        return name + '.' + this.locale;
+    }
 
 });

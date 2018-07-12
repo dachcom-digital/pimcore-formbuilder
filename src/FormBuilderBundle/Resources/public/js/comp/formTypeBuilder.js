@@ -429,16 +429,55 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     getHrefElement: function (fieldConfig) {
 
-        var keyValueRepeater = new Formbuilder.comp.types.href(
-            fieldConfig,
-            {
-                'path': this.getFieldValue(fieldConfig.id),
-                'hrefType': this.getFieldValue('options.href_type')
-            }
-        );
+        var tabs = [],
+            path = {},
+            hrefType = {},
+            storePath = this.getFieldValue(fieldConfig.id),
+            storeHrefType = this.getFieldValue('options.href_type');
 
-        return keyValueRepeater.getHref();
+        // legacy, add value to all languages
+        if (!Ext.isObject(storePath)) {
+            Ext.each(pimcore.settings.websiteLanguages, function (locale) {
+                path[locale] = storePath
+                hrefType[locale] = storeHrefType
+            });
+        } else {
+            path = storePath
+            hrefType = storeHrefType
+        }
 
+        Ext.each(pimcore.settings.websiteLanguages, function (locale) {
+
+            var keyValueRepeater = new Formbuilder.comp.types.href(
+                fieldConfig,
+                {
+                    'path': path[locale] ? path[locale] : '',
+                    'hrefType': hrefType[locale] ? hrefType[locale] : '',
+                },
+                locale
+            );
+
+            tabs.push({
+                title: pimcore.available_languages[locale],
+                iconCls: 'pimcore_icon_language_' + locale.toLowerCase(),
+                layout: 'form',
+                items: [keyValueRepeater.getHref()]
+            });
+
+        }.bind(this));
+
+        return new Ext.form.FieldSet({
+            items: [{
+                xtype: 'tabpanel',
+                activeTab: 0,
+                width: '100%',
+                defaults: {
+                    autoHeight: true,
+                    bodyStyle: 'padding:10px;'
+                },
+                items: tabs
+            }]
+        });
     },
 
     /**
