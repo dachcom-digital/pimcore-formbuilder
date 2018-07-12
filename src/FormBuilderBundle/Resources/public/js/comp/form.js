@@ -1,6 +1,8 @@
 pimcore.registerNS('Formbuilder.comp.form');
 Formbuilder.comp.form = Class.create({
 
+    importIsRunning: false,
+
     availableFormFields: [],
 
     parentPanel: null,
@@ -462,7 +464,7 @@ Formbuilder.comp.form = Class.create({
 
     saveRootNode: function() {
 
-        if(this.rootPanel === undefined) {
+        if(this.rootPanel === undefined || this.importIsRunning === true) {
             //root panel not initialized yet.
             return true;
         }
@@ -1014,6 +1016,8 @@ Formbuilder.comp.form = Class.create({
 
     importForm: function(importedFormData) {
 
+        this.importIsRunning = true;
+
         this.parentPanel.getEditPanel().removeAll();
 
         this.formConfig = importedFormData.data.config;
@@ -1021,6 +1025,11 @@ Formbuilder.comp.form = Class.create({
 
         this.addLayout();
         this.initLayoutFields();
+
+        this.importIsRunning = false;
+
+        this.saveCurrentNode();
+
     },
 
     exportForm: function() {
