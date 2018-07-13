@@ -14,7 +14,7 @@ There are several form types available (updated continuously).
 | Choice | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios |
 | [Dynamic Choice](82_DynamicChoice.md) | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios. Populate Data from a custom Service.|
 | Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
-| Snippet | Other Fields | Place a custom snippet in your form. |
+| Snippet | Other Fields | Place a custom (localized) snippet in your form. |
 | [Dynamic Multi File](80_FileUpload.md) | Other Fields | Multi-File Upload field. |
 | Date | Date and Time Fields | A field that allows the user to modify date information via a variety of different HTML elements. |
 | Date Time | Date and Time Fields | This field type allows the user to modify data that represents a specific date and time (e.g. 1984-06-05 12:15:30). |
