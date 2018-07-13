@@ -102,7 +102,7 @@ class Builder
     public function buildForm($id, $userOptions = [])
     {
         $defaults = [
-            'form_preset' => null,
+            'form_preset'   => null,
             'form_template' => null
         ];
 

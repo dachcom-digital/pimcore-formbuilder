@@ -25,19 +25,19 @@ class PackageStream
     }
 
     /**
-     * @param        $data
-     * @param string $formName
-     *
+     * @param $data
+     * @param $formName
      * @return bool|null|Asset
+     * @throws \Exception
      */
     public function createZipAsset($data, $formName)
     {
         if (!is_array($data)) {
-            return FALSE;
+            return false;
         }
 
         $files = [];
-        $fieldName = NULL;
+        $fieldName = null;
 
         foreach ($data as $fileData) {
             $fieldName = $fileData['fieldName'];
@@ -48,18 +48,19 @@ class PackageStream
                     $files[] = [
                         'name' => $fileData['fileName'],
                         'uuid' => $fileData['uuid'],
-                        'path' => $dirFiles[0]];
+                        'path' => $dirFiles[0]
+                    ];
                 }
             }
         }
 
         if (empty($files)) {
-            return FALSE;
+            return false;
         }
 
         $key = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 5);
         $zipFileName = File::getValidFilename($fieldName) . '-' . $key . '.zip';
-        $zipPath =  $this->fileLocator->getZipFolder() . '/' . $zipFileName;
+        $zipPath = $this->fileLocator->getZipFolder() . '/' . $zipFileName;
 
         try {
             $zip = new \ZipArchive();
@@ -73,7 +74,7 @@ class PackageStream
 
             //clean up!
             foreach ($files as $fileInfo) {
-                $targetFolder =  $this->fileLocator->getFilesFolder();
+                $targetFolder = $this->fileLocator->getFilesFolder();
                 $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['uuid']]);
                 if (is_dir($target)) {
                     $this->fileLocator->removeDir($target);
@@ -82,29 +83,29 @@ class PackageStream
         } catch (\Exception $e) {
             echo $e->getMessage();
             Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
-            return FALSE;
+            return false;
         }
 
         if (!file_exists($zipPath)) {
             Logger::log('zip path does not exist (' . $zipPath . ')');
-            return FALSE;
+            return false;
         }
 
-        $formDataFolder = NULL;
+        $formDataFolder = null;
         $formDataParentFolder = Asset\Folder::getByPath('/formdata');
 
         if (!$formDataParentFolder instanceof Asset\Folder) {
             Logger::error('parent folder does not exist (/formdata)!');
-            return FALSE;
+            return false;
         }
 
         $formName = File::getValidFilename($formName);
         $formFolderExists = Asset\Service::pathExists('/formdata/' . $formName);
 
-        if ($formFolderExists === FALSE) {
+        if ($formFolderExists === false) {
             $formDataFolder = new Asset\Folder();
             $formDataFolder->setCreationDate(time());
-            $formDataFolder->setLocked(TRUE);
+            $formDataFolder->setLocked(true);
             $formDataFolder->setUserOwner(1);
             $formDataFolder->setUserModification(0);
             $formDataFolder->setParentId($formDataParentFolder->getId());
@@ -116,7 +117,7 @@ class PackageStream
 
         if (!$formDataFolder instanceof Asset\Folder) {
             Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
-            return FALSE;
+            return false;
         }
 
         $assetData = [
@@ -124,16 +125,16 @@ class PackageStream
             'filename' => $zipFileName
         ];
 
-        $asset = NULL;
+        $asset = null;
         try {
-            $asset = Asset::create($formDataFolder->getId(), $assetData, FALSE);
+            $asset = Asset::create($formDataFolder->getId(), $assetData, false);
             $asset->save();
             if (file_exists($zipPath)) {
                 unlink($zipPath);
             }
         } catch (\Exception $e) {
             Logger::log('Error while storing asset in Pimcore (' . $zipPath . '): ' . $e->getMessage());
-            return FALSE;
+            return false;
         }
 
         return $asset;

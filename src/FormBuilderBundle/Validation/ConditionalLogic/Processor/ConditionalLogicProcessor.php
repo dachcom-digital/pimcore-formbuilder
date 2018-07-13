@@ -28,13 +28,13 @@ class ConditionalLogicProcessor
      * Cycle through each cl block.
      * If $filterField is not NULL, the action applier requests a FieldReturnStack with valid $fielderField field in return data.
      *
-     * @param $formData
-     * @param $conditionalLogic
-     * @param $fieldFilter
-     *
-     * @return ReturnStackInterface[] array
+     * @param      $formData
+     * @param      $conditionalLogic
+     * @param null $fieldFilter
+     * @return array
+     * @throws \Exception
      */
-    public function process($formData, $conditionalLogic, $fieldFilter = NULL)
+    public function process($formData, $conditionalLogic, $fieldFilter = null)
     {
         $actionData = [];
         if (empty($conditionalLogic)) {
@@ -58,12 +58,12 @@ class ConditionalLogicProcessor
      * @param $conditions
      * @param $formData
      * @param $ruleId
-     *
      * @return bool
+     * @throws \Exception
      */
     public function checkValidity($conditions, $formData, $ruleId)
     {
-        $valid = TRUE;
+        $valid = true;
         foreach ($conditions as $condition) {
             //skip condition if there is no php service for it.
             if (!$this->conditionalLogicRegistry->hasCondition($condition['type'])) {
@@ -71,7 +71,7 @@ class ConditionalLogicProcessor
             }
 
             if (!$this->conditionalLogicRegistry->getCondition($condition['type'])->setValues($condition)->isValid($formData, $ruleId)) {
-                $valid = FALSE;
+                $valid = false;
                 break;
             }
         }
@@ -85,8 +85,8 @@ class ConditionalLogicProcessor
      * @param $formData
      * @param $ruleId
      * @param $fieldFilter
-     *
      * @return array
+     * @throws \Exception
      */
     public function applyActions($validationState, $actions, $formData, $ruleId, $fieldFilter)
     {

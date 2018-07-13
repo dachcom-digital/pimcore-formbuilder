@@ -104,7 +104,7 @@ class Install extends AbstractInstaller
      */
     public function needsReloadAfterInstall()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -112,11 +112,11 @@ class Install extends AbstractInstaller
      */
     public function canBeUpdated()
     {
-        $needUpdate = FALSE;
+        $needUpdate = false;
         if ($this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH)) {
             $config = Yaml::parse(file_get_contents(Configuration::SYSTEM_CONFIG_FILE_PATH));
-            if($config['version'] !== FormBuilderBundle::BUNDLE_VERSION) {
-                $needUpdate = TRUE;
+            if ($config['version'] !== FormBuilderBundle::BUNDLE_VERSION) {
+                $needUpdate = true;
             }
         }
 
@@ -128,7 +128,7 @@ class Install extends AbstractInstaller
      */
     private function installOrUpdateConfigFile()
     {
-        if(!$this->fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
+        if (!$this->fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
             $this->fileSystem->mkdir(Configuration::SYSTEM_CONFIG_DIR_PATH);
         }
 
@@ -143,16 +143,17 @@ class Install extends AbstractInstaller
 
     /**
      * @return bool
+     * @throws \Exception
      */
     private function installTranslations()
     {
         $csv = $this->installSourcesPath . '/translations/frontend.csv';
         $csvAdmin = $this->installSourcesPath . '/translations/admin.csv';
 
-        Translation\Website::importTranslationsFromFile($csv, TRUE, Admin::getLanguages());
-        Translation\Admin::importTranslationsFromFile($csvAdmin, TRUE, Admin::getLanguages());
+        Translation\Website::importTranslationsFromFile($csv, true, Admin::getLanguages());
+        Translation\Admin::importTranslationsFromFile($csvAdmin, true, Admin::getLanguages());
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -166,6 +167,7 @@ class Install extends AbstractInstaller
 
     /**
      * @return bool
+     * @throws \Exception
      */
     private function installFormDataFolder()
     {
@@ -175,7 +177,7 @@ class Install extends AbstractInstaller
         if (!Asset\Folder::getByPath('/' . $folderName) instanceof Asset\Folder) {
             $folder = new Asset\Folder();
             $folder->setCreationDate(time());
-            $folder->setLocked(TRUE);
+            $folder->setLocked(true);
             $folder->setUserOwner(1);
             $folder->setUserModification(0);
             $folder->setParentId(1);
@@ -183,7 +185,7 @@ class Install extends AbstractInstaller
             $folder->save();
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -229,11 +231,11 @@ class Install extends AbstractInstaller
 
             $property->setDescription($propertyConfig['description']);
             $property->setCtype($propertyConfig['ctype']);
-            $property->setInheritable(FALSE);
+            $property->setInheritable(false);
             $property->save();
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -245,18 +247,18 @@ class Install extends AbstractInstaller
         $list = new DocType\Listing();
         $list->load();
 
-        $skipInstall = FALSE;
+        $skipInstall = false;
         $elementName = 'Formbuilder Email';
 
         foreach ($list->getDocTypes() as $type) {
             if ($type->getName() === $elementName) {
-                $skipInstall = TRUE;
+                $skipInstall = true;
                 break;
             }
         }
 
         if ($skipInstall) {
-            return FALSE;
+            return false;
         }
 
         $type = DocType::create();

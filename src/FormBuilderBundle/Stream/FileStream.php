@@ -32,18 +32,21 @@ class FileStream
 
     /**
      * Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
+     *
      * @var array
      */
     public $allowedExtensions = [];
 
     /**
      * Specify max file size in bytes.
+     *
      * @var null
      */
-    public $sizeLimit = NULL;
+    public $sizeLimit = null;
 
     /**
      * matches Fine Uploader's default inputName value by default
+     *
      * @var string
      */
     public $inputName = 'qqfile';
@@ -83,9 +86,12 @@ class FileStream
             return $file->getFilename();
         }
 
-        return FALSE;
+        return false;
     }
 
+    /**
+     * @return array
+     */
     public function getInitialFiles()
     {
         $initialFiles = [];
@@ -99,6 +105,8 @@ class FileStream
 
     /**
      * Get the name of the uploaded file
+     *
+     * @return mixed
      */
     public function getUploadName()
     {
@@ -107,6 +115,8 @@ class FileStream
 
     /**
      * Get the real name of the uploaded file
+     *
+     * @return bool|mixed|string
      */
     public function getRealFileName()
     {
@@ -129,7 +139,7 @@ class FileStream
         $this->uploadName = $name;
 
         if (!file_exists($targetPath)) {
-            mkdir(dirname($targetPath), 0777, TRUE);
+            mkdir(dirname($targetPath), 0777, true);
         }
 
         $target = fopen($targetPath, 'wb');
@@ -152,15 +162,15 @@ class FileStream
 
             return [
                 'statusCode'   => 413,
-                'success'      => FALSE,
+                'success'      => false,
                 'uuid'         => $uuid,
-                'preventRetry' => TRUE
+                'preventRetry' => true
             ];
         }
 
         return [
             'statusCode' => 200,
-            'success'    => TRUE,
+            'success'    => true,
             'uuid'       => $uuid
         ];
     }
@@ -187,7 +197,7 @@ class FileStream
 
         if (empty($type)) {
             return ['error' => 'No files were uploaded.'];
-        } else if (strpos(strtolower($type), 'multipart/') !== 0) {
+        } elseif (strpos(strtolower($type), 'multipart/') !== 0) {
             return ['error' => 'Server error. Not a multipart request. Please set forceMultipart to default value (true).'];
         }
 
@@ -209,7 +219,7 @@ class FileStream
         }
 
         // Validate name
-        if ($name === NULL || $name === '') {
+        if ($name === null || $name === '') {
             return ['error' => 'File name empty.'];
         }
 
@@ -219,7 +229,7 @@ class FileStream
         }
 
         if (!is_null($this->sizeLimit) && $size > $this->sizeLimit) {
-            return ['error' => 'File is too large.', 'preventRetry' => TRUE];
+            return ['error' => 'File is too large.', 'preventRetry' => true];
         }
 
         // Validate file extension
@@ -246,7 +256,7 @@ class FileStream
 
             $targetFolder = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
             if (!is_dir($targetFolder)) {
-                mkdir($targetFolder, 0777, TRUE);
+                mkdir($targetFolder, 0777, true);
             }
 
             $target = $targetFolder . '/' . $partIndex;
@@ -264,12 +274,12 @@ class FileStream
             if ($target) {
                 $this->uploadName = basename($target);
                 if (!is_dir($target)) {
-                    mkdir($target, 0777, TRUE);
+                    mkdir($target, 0777, true);
                 }
 
                 if ($file->move($target)) {
                     return [
-                        'success' => TRUE,
+                        'success' => true,
                         'uuid'    => $uuid
                     ];
                 }
@@ -296,12 +306,12 @@ class FileStream
         if (is_dir($target)) {
             $this->fileLocator->removeDir($target);
             return [
-                'success' => TRUE,
+                'success' => true,
                 'uuid'    => $uuid
             ];
         } else {
             return [
-                'success' => FALSE,
+                'success' => false,
                 'error'   => 'File not found! Unable to delete. UUID: ' . $uuid,
                 'path'    => $uuid
             ];
@@ -309,16 +319,16 @@ class FileStream
     }
 
     /**
-     * @param        $data
-     * @param string $formName
-     * @param int    $templateId
-     *
+     * @param $data
+     * @param $formName
+     * @param $templateId
      * @return bool|null|Asset
+     * @throws \Exception
      */
     public function createZipAsset($data, $formName, $templateId)
     {
         if (!is_array($data)) {
-            return FALSE;
+            return false;
         }
 
         $files = [];
@@ -335,7 +345,7 @@ class FileStream
         }
 
         if (empty($files)) {
-            return FALSE;
+            return false;
         }
 
         $zipFileName = uniqid('form-') . '.zip';
@@ -357,29 +367,29 @@ class FileStream
             }
         } catch (\Exception $e) {
             Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
-            return FALSE;
+            return false;
         }
 
         if (!file_exists($zipPath)) {
             Logger::log('Zip Path does not exist (' . $zipPath . ')');
-            return FALSE;
+            return false;
         }
 
-        $formDataFolder = NULL;
+        $formDataFolder = null;
         $formDataParentFolder = Asset\Folder::getByPath('/formdata');
 
         if (!$formDataParentFolder instanceof Asset\Folder) {
             Logger::error('formDataParent Folder does not exist (/formdata)!');
-            return FALSE;
+            return false;
         }
 
         $formName = \Pimcore\File::getValidFilename($formName);
         $formFolderExists = Asset\Service::pathExists('/formdata/' . $formName);
 
-        if ($formFolderExists === FALSE) {
+        if ($formFolderExists === false) {
             $formDataFolder = new Asset\Folder();
             $formDataFolder->setCreationDate(time());
-            $formDataFolder->setLocked(TRUE);
+            $formDataFolder->setLocked(true);
             $formDataFolder->setUserOwner(1);
             $formDataFolder->setUserModification(0);
             $formDataFolder->setParentId($formDataParentFolder->getId());
@@ -391,7 +401,7 @@ class FileStream
 
         if (!$formDataFolder instanceof Asset\Folder) {
             Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
-            return FALSE;
+            return false;
         }
 
         $assetData = [
@@ -399,10 +409,10 @@ class FileStream
             'filename' => $zipFileName
         ];
 
-        $asset = NULL;
+        $asset = null;
         try {
             $mailTemplate = \Pimcore\Model\Document::getById($templateId);
-            $asset = Asset::create($formDataFolder->getId(), $assetData, FALSE);
+            $asset = Asset::create($formDataFolder->getId(), $assetData, false);
             $asset->setProperty('linkedForm', 'document', $mailTemplate);
             $asset->save();
 
@@ -412,7 +422,7 @@ class FileStream
         } catch (\Exception $e) {
             Logger::log('Error while storing asset in Pimcore (' . $zipPath . '): ' . $e->getMessage());
 
-            return FALSE;
+            return false;
         }
 
         return $asset;
@@ -467,6 +477,7 @@ class FileStream
 
     /**
      * Determines is the OS is Windows or not
+     *
      * @return boolean
      */
     protected function isWindows()

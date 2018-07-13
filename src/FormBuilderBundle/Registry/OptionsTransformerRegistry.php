@@ -28,7 +28,7 @@ class OptionsTransformerRegistry
      */
     public function register($identifier, $service)
     {
-        if (!in_array($this->interface, class_implements($service), TRUE)) {
+        if (!in_array($this->interface, class_implements($service), true)) {
             throw new \InvalidArgumentException(
                 sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->interface, implode(', ', class_implements($service)))
             );

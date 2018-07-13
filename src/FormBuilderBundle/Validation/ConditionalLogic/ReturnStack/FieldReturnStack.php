@@ -18,10 +18,10 @@ class FieldReturnStack implements ReturnStackInterface
      * FieldReturnStack constructor.
      *
      * @param NULL|string $actionType
-     * @param array  $data
+     * @param array       $data
      * @throws \Exception
      */
-    public function __construct($actionType = NULL, $data = [])
+    public function __construct($actionType = null, $data = [])
     {
         if ($this->isAssoc($this->data)) {
             throw new \Exception('FieldReturnStack: Wrong data structure: data keys must contain form field names!');
@@ -62,7 +62,7 @@ class FieldReturnStack implements ReturnStackInterface
     private function isAssoc(array $arr)
     {
         if ([] === $arr) {
-            return FALSE;
+            return false;
         }
 
         return array_keys($arr) !== range(0, count($arr) - 1);

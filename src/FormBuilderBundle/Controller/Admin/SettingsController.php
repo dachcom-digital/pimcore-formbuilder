@@ -7,8 +7,6 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Model\Element\AbstractElement;
-use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +33,9 @@ class SettingsController extends AdminController
                 'id'            => (int)$form->getId(),
                 'text'          => $form->getName(),
                 'icon'          => '',
-                'leaf'          => TRUE,
+                'leaf'          => true,
                 'iconCls'       => 'form_builder_icon_root',
-                'allowChildren' => FALSE
+                'allowChildren' => false
 
             ];
         }
@@ -91,8 +89,8 @@ class SettingsController extends AdminController
         $backendFormBuilder = $this->get(Builder::class);
 
         $data = [
-            'success' => TRUE,
-            'message' => NULL
+            'success' => true,
+            'message' => null
         ];
 
         try {
@@ -100,7 +98,7 @@ class SettingsController extends AdminController
             $data['data'] = $backendFormBuilder->generateExtJsForm($form);
         } catch (\Exception $e) {
             $data = [
-                'success' => FALSE,
+                'success' => false,
                 'message' => $e->getMessage() . ' (' . $e->getFile() . ': ' . $e->getLine() . ')'
             ];
         }
@@ -120,11 +118,11 @@ class SettingsController extends AdminController
 
         $name = $this->getSaveName($request->query->get('form_name'));
 
-        $error = FALSE;
+        $error = false;
         $message = '';
-        $id = NULL;
+        $id = null;
 
-        $existingForm = FALSE;
+        $existingForm = false;
 
         try {
             $existingForm = $formManager->getIdByName($name);
@@ -132,7 +130,7 @@ class SettingsController extends AdminController
         }
 
         if (!empty($existingForm)) {
-            $error = TRUE;
+            $error = true;
             $message = 'Form already exists!';
         } else {
 
@@ -166,7 +164,7 @@ class SettingsController extends AdminController
 
         return $this->json(
             [
-                'success' => TRUE,
+                'success' => true,
                 'id'      => (int)$id,
             ]
         );
@@ -174,8 +172,8 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      */
     public function saveFormAction(Request $request)
     {
@@ -191,9 +189,9 @@ class SettingsController extends AdminController
         $storedFormName = $formEntity->getName();
 
         $formName = $request->get('form_name');
-        $formConfig = json_decode($request->get('form_config'), TRUE);
-        $formFields = json_decode($request->get('form_fields'), TRUE);
-        $formConditionalLogic = json_decode($request->get('form_cl'), TRUE);
+        $formConfig = json_decode($request->get('form_config'), true);
+        $formFields = json_decode($request->get('form_fields'), true);
+        $formConditionalLogic = json_decode($request->get('form_cl'), true);
         if (isset($formConditionalLogic['cl'])) {
             $formConditionalLogic = $formConditionalLogic['cl'];
         }
@@ -216,7 +214,7 @@ class SettingsController extends AdminController
         return $this->json([
             'formId'   => (int)$id,
             'formName' => $formEntity->getName(),
-            'success'  => TRUE
+            'success'  => true
         ]);
     }
 
@@ -246,11 +244,11 @@ class SettingsController extends AdminController
         chmod($importFile, 0766);
 
         $res = [];
-        $res['success'] = TRUE;
+        $res['success'] = true;
 
         return $this->json(
             [
-                'success' => TRUE,
+                'success' => true,
                 'msg'     => $res['success'] ? 'Success' : 'Error',
             ]
         );
@@ -258,8 +256,8 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      */
     public function getImportFileAction(Request $request)
     {
@@ -337,7 +335,7 @@ class SettingsController extends AdminController
         $configuration = $this->container->get(Configuration::class);
         $areaConfig = $configuration->getConfig('area');
 
-        $templates = [['key' => NULL, 'label' => '--']];
+        $templates = [['key' => null, 'label' => '--']];
 
         foreach ($areaConfig['group_templates'] as $configName => $element) {
             $templates[] = ['key' => $configName, 'label' => $element['niceName']];

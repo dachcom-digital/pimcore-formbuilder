@@ -46,7 +46,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     public function getJsPaths()
     {
         return [
-           '/bundles/formbuilder/js/plugin.js',
+            '/bundles/formbuilder/js/plugin.js',
             '/bundles/formbuilder/js/resource/Formbuilder.HrefTextField.js',
             '/bundles/formbuilder/js/settings.js',
             '/bundles/formbuilder/js/dataObject.js',

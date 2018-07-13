@@ -41,11 +41,11 @@ class Form extends AbstractTemplateAreabrick
     /**
      * Form constructor.
      *
-     * @param FormManager      $formManager
-     * @param PresetManager    $presetManager
-     * @param FormAssembler          $formAssembler
-     * @param TemplateManager  $templateManager
-     * @param Translator       $translator
+     * @param FormManager     $formManager
+     * @param PresetManager   $presetManager
+     * @param FormAssembler   $formAssembler
+     * @param TemplateManager $templateManager
+     * @param Translator      $translator
      */
     public function __construct(
         FormManager $formManager,
@@ -63,6 +63,8 @@ class Form extends AbstractTemplateAreabrick
 
     /**
      * @param Info $info
+     * @return null|\Symfony\Component\HttpFoundation\Response|void
+     * @throws \Exception
      */
     public function action(Info $info)
     {
@@ -72,7 +74,7 @@ class Form extends AbstractTemplateAreabrick
         $formPresetSelection = $this->getDocumentTag($info->getDocument(), 'select', 'formPreset');
         $formTemplateSelection = $this->getDocumentTag($info->getDocument(), 'select', 'formType');
 
-        if ($view->get('editmode') === TRUE) {
+        if ($view->get('editmode') === true) {
 
             $mains = $this->formManager->getAll();
             $formPresets = $this->presetManager->getAll($info->getDocument());
@@ -91,7 +93,7 @@ class Form extends AbstractTemplateAreabrick
             $editViewVars['formStore'] = $availableForms;
 
             $formTemplateStore = [];
-            foreach ($this->templateManager->getFormTemplates(TRUE) as $template) {
+            foreach ($this->templateManager->getFormTemplates(true) as $template) {
                 $template[1] = $this->translator->trans($template[1], [], 'admin');
                 $formTemplateStore[] = $template;
             }
@@ -119,9 +121,9 @@ class Form extends AbstractTemplateAreabrick
             }
         }
 
-        $formId = NULL;
+        $formId = null;
         $formTemplate = $formTemplateSelection->getValue();
-        $sendCopy = $this->getDocumentTag($info->getDocument(), 'checkbox', 'userCopy')->getData() === TRUE;
+        $sendCopy = $this->getDocumentTag($info->getDocument(), 'checkbox', 'userCopy')->getData() === true;
         $formPreset = $formPresetSelection->getData();
 
         $formNameElement = $this->getDocumentTag($info->getDocument(), 'select', 'formName');
@@ -153,7 +155,7 @@ class Form extends AbstractTemplateAreabrick
      */
     public function hasEditTemplate()
     {
-        return TRUE;
+        return true;
     }
 
     /**

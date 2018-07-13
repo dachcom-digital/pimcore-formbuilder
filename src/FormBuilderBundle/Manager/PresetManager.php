@@ -44,7 +44,7 @@ class PresetManager
             if (Tool::isFrontendRequestByAdmin() && isset($presetConfig['sites']) && !empty($presetConfig['sites'])) {
                 $currentSite = $this->getCurrentSiteInAdminMode($document);
 
-                if ($currentSite !== NULL) {
+                if ($currentSite !== null) {
                     $allowedSites = (array)$presetConfig['sites'];
 
                     if (!in_array($currentSite->getMainDomain(), $allowedSites)) {
@@ -88,13 +88,13 @@ class PresetManager
      */
     private function getCurrentSiteInAdminMode($originDocument)
     {
-        $currentSite = NULL;
+        $currentSite = null;
 
         if ($originDocument) {
             $site = Tool\Frontend::getSiteForDocument($originDocument);
             if ($site) {
                 $siteId = $site->getId();
-                if ($siteId !== NULL) {
+                if ($siteId !== null) {
                     $currentSite = $site;
                 }
             }

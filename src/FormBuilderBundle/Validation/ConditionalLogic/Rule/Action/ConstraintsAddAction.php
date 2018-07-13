@@ -21,15 +21,16 @@ class ConstraintsAddAction implements ActionInterface
     protected $validation = [];
 
     /**
-     * @param               $validationState
-     * @param               $formData
-     * @param               $ruleId
-     * @return ReturnStackInterface
+     * @param $validationState
+     * @param $formData
+     * @param $ruleId
+     * @return FieldReturnStack|ReturnStackInterface
+     * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
-        if($validationState === TRUE) {
+        if ($validationState === true) {
             foreach ($this->getFields() as $conditionFieldName) {
                 $data[$conditionFieldName] = [];
                 foreach ($this->getValidation() as $constraint) {

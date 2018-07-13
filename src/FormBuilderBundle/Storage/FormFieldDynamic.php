@@ -7,7 +7,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     /**
      * @var bool
      */
-    protected $name = FALSE;
+    protected $name = false;
 
     /**
      * @var string
@@ -17,7 +17,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     /**
      * @var bool
      */
-    protected $update = FALSE;
+    protected $update = false;
 
     /**
      * @var string
@@ -38,7 +38,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
      * @param $optional
      * @param $update
      */
-    public function __construct($name, $type, $options, $optional = [], $update = FALSE)
+    public function __construct($name, $type, $options, $optional = [], $update = false)
     {
         $this->name = $name;
         $this->type = $type;

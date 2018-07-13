@@ -10,8 +10,8 @@ use FormBuilderBundle\Storage\FormField;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Yaml\Yaml;
 
-class FormFactory implements FormFactoryInterface {
-
+class FormFactory implements FormFactoryInterface
+{
     /**
      * @var Translator
      */
@@ -53,7 +53,7 @@ class FormFactory implements FormFactoryInterface {
         $formEntities = Form::getAll();
 
         $objects = [];
-        foreach($formEntities as $entity) {
+        foreach ($formEntities as $entity) {
             $objects[] = $this->getFormById($entity['id']);
         }
 

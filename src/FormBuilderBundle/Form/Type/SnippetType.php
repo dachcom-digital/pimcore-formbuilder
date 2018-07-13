@@ -92,6 +92,7 @@ class SnippetType extends AbstractType
 
         //no locale found. use the first one.
         $firstElement = reset($data);
+
         return $firstElement['id'];
     }
 

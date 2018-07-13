@@ -13,7 +13,7 @@ class FormAssembler
     /**
      * @var FormOptionsResolver
      */
-    protected $optionsResolver = NULL;
+    protected $optionsResolver = null;
 
     /**
      * @var SessionInterface
@@ -60,14 +60,18 @@ class FormAssembler
         $this->optionsResolver = $optionsResolver;
     }
 
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
     public function assembleViewVars()
     {
         if (is_null($this->optionsResolver)) {
             throw new \Exception('no valid options resolver found.');
         }
 
-        $builderError = FALSE;
-        $exceptionMessage = NULL;
+        $builderError = false;
+        $exceptionMessage = null;
 
         $formId = $this->optionsResolver->getFormId();
         if (!empty($formId)) {
@@ -75,23 +79,23 @@ class FormAssembler
                 $formData = $this->formManager->getById($formId);
                 if (!$formData instanceof Form) {
                     $exceptionMessage = 'Form (' . $formId . ') is not a valid FormBuilder Element.';
-                    $builderError = TRUE;
+                    $builderError = true;
                 }
             } catch (\Exception $e) {
                 $exceptionMessage = $e->getMessage();
-                $builderError = TRUE;
+                $builderError = true;
             }
         } else {
             $exceptionMessage = 'No valid form selected.';
-            $builderError = TRUE;
+            $builderError = true;
         }
 
         $viewVars['form_layout'] = $this->optionsResolver->getFormLayout();
 
-        if($builderError === FALSE) {
+        if ($builderError === false) {
 
             $userOptions = [
-                'form_preset' => $this->optionsResolver->getFormPreset(),
+                'form_preset'   => $this->optionsResolver->getFormPreset(),
                 'form_template' => $this->optionsResolver->getFormTemplateName()
             ];
 
@@ -104,10 +108,10 @@ class FormAssembler
             //store current configuration for further events.
             $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
                 'user_options' => [
-                    'form_preset' => $this->optionsResolver->getFormPreset(),
+                    'form_preset'   => $this->optionsResolver->getFormPreset(),
                     'form_template' => $this->optionsResolver->getFormTemplateName()
                 ],
-                'email'       => [
+                'email'        => [
                     'send_copy'             => $this->optionsResolver->getSendCopy(),
                     'mail_template_id'      => $this->optionsResolver->getMailTemplateId(),
                     'copy_mail_template_id' => $this->optionsResolver->getCopyMailTemplateId()
@@ -123,7 +127,7 @@ class FormAssembler
 
         } else {
             $viewVars['message'] = $exceptionMessage;
-            $viewVars['form_template'] = NULL;
+            $viewVars['form_template'] = null;
         }
 
         return $viewVars;

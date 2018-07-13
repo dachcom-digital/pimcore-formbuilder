@@ -17,7 +17,7 @@ class DispatcherRegistry
      */
     public function register($identifier, $service)
     {
-        if (!in_array(ModuleInterface::class, class_implements($service), TRUE)) {
+        if (!in_array(ModuleInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
                 sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ModuleInterface::class, implode(', ', class_implements($service)))
             );

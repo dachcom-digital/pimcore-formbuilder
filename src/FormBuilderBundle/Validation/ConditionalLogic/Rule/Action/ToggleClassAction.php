@@ -18,20 +18,21 @@ class ToggleClassAction implements ActionInterface
     /**
      * @var string
      */
-    protected $class = NULL;
+    protected $class = null;
 
     /**
-     * @param               $validationState
-     * @param               $formData
-     * @param               $ruleId
-     * @return ReturnStackInterface
+     * @param $validationState
+     * @param $formData
+     * @param $ruleId
+     * @return FieldReturnStack|ReturnStackInterface
+     * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
         $class = $this->getClass();
 
-        if ($validationState === TRUE) {
+        if ($validationState === true) {
             foreach ($this->getFields() as $conditionFieldName) {
                 $data[$conditionFieldName] = $class;
             }

@@ -138,7 +138,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         $form = $event->getForm();
         $formEntity = $event->getData();
-        $this->populateForm($form, $formEntity, TRUE);
+        $this->populateForm($form, $formEntity, true);
     }
 
     /**
@@ -151,7 +151,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         $form = $event->getForm();
         $formEntity = $form->getData();
-        $this->populateForm($form, $formEntity, FALSE, $event->getData());
+        $this->populateForm($form, $formEntity, false, $event->getData());
     }
 
     /**
@@ -197,7 +197,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param bool                     $initial
      * @param array                    $data
      */
-    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = FALSE, $data = [])
+    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = false, $data = [])
     {
         $orderedFields = $formEntity->getFields();
         usort($orderedFields, function ($a, $b) {
@@ -210,7 +210,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         foreach ($orderedFields as $field) {
             if ($field instanceof FormFieldDynamicInterface) {
                 // do not initialize dynamic fields twice since there is also no conditional logic!
-                if ($initial === FALSE && !$field->isUpdated()) {
+                if ($initial === false && !$field->isUpdated()) {
                     continue;
                 }
                 $this->addDynamicField($form, $field, $data);
@@ -224,9 +224,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * @param FormInterface      $form
      * @param FormFieldInterface $field
-     * @param mixed              $formData
+     * @param null               $formData
+     * @throws \Exception
      */
-    private function addFormBuilderField(FormInterface $form, FormFieldInterface $field, $formData = NULL)
+    private function addFormBuilderField(FormInterface $form, FormFieldInterface $field, $formData = null)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -246,7 +247,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $choiceTypes = ['choice', 'dynamic_choice', 'country'];
         if (in_array($field->getType(), $choiceTypes)) {
             if (
-                $options['multiple'] === FALSE
+                $options['multiple'] === false
                 && isset($options['data'])
                 && is_array($options['data'])
                 && !empty($options['data'])
@@ -315,7 +316,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param FormFieldDynamicInterface $field
      * @param mixed                     $formData
      */
-    private function addDynamicField(FormInterface $form, FormFieldDynamicInterface $field, $formData = NULL)
+    private function addDynamicField(FormInterface $form, FormFieldDynamicInterface $field, $formData = null)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();

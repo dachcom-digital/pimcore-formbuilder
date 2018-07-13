@@ -2,9 +2,6 @@
 
 namespace FormBuilderBundle\Registry;
 
-use FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ActionInterface;
-use FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ConditionInterface;
-
 class ConditionalLogicRegistry
 {
     /**
@@ -51,7 +48,7 @@ class ConditionalLogicRegistry
      * @param $type
      * @param $configuration
      */
-    public function register($identifier, $service, $type = NULL, $configuration = [])
+    public function register($identifier, $service, $type = null, $configuration = [])
     {
         $allowedTypes = ['action', 'condition'];
         if (!is_null($type) && !in_array($type, $allowedTypes)) {
@@ -60,9 +57,9 @@ class ConditionalLogicRegistry
             );
         }
 
-        if(!is_null($service)) {
+        if (!is_null($service)) {
             $interfaceReference = $type . 'Interface';
-            if (!in_array($this->{$interfaceReference}, class_implements($service), TRUE)) {
+            if (!in_array($this->{$interfaceReference}, class_implements($service), true)) {
                 throw new \InvalidArgumentException(
                     sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->{$interfaceReference}, implode(', ', class_implements($service)))
                 );
@@ -111,7 +108,8 @@ class ConditionalLogicRegistry
 
     /**
      * @param $identifier
-     * @return ConditionInterface
+     * @return mixed
+     * @throws \Exception
      */
     public function getCondition($identifier)
     {
@@ -129,7 +127,8 @@ class ConditionalLogicRegistry
 
     /**
      * @param $identifier
-     * @return ActionInterface
+     * @return mixed
+     * @throws \Exception
      */
     public function getAction($identifier)
     {

@@ -53,7 +53,7 @@ class FormManager
 
     /**
      * @param array $data
-     * @param int $id
+     * @param int   $id
      *
      * @return FormInterface
      */
@@ -91,7 +91,7 @@ class FormManager
     }
 
     /**
-     * @param int $id
+     * @param int    $id
      * @param string $newName
      *
      * @return FormInterface|null
@@ -109,9 +109,8 @@ class FormManager
         return $object;
     }
 
-
     /**
-     * @param $data
+     * @param               $data
      * @param FormInterface $form
      */
     protected function updateFormAttributes($data, $form)
@@ -119,11 +118,11 @@ class FormManager
         $form->setName($data['form_name']);
         $form->setDate(isset($data['form_date']) ? $data['form_date'] : null);
 
-        if(isset($data['form_config'])) {
+        if (isset($data['form_config'])) {
             $form->setConfig($data['form_config']);
         }
 
-        if(isset($data['form_conditional_logic'])) {
+        if (isset($data['form_conditional_logic'])) {
             $form->setConditionalLogic($data['form_conditional_logic']);
         }
     }
@@ -131,7 +130,7 @@ class FormManager
     /**
      * Updates the contained fields in the form.
      *
-     * @param array $data
+     * @param array         $data
      * @param FormInterface $form
      */
     protected function updateFields($data, $form)
@@ -176,9 +175,9 @@ class FormManager
     }
 
     /**
-     * @param array $data
+     * @param array  $data
      * @param string $value
-     * @param mixed $default
+     * @param mixed  $default
      *
      * @return mixed
      */

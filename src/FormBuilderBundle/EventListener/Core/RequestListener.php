@@ -91,7 +91,7 @@ class RequestListener implements EventSubscriberInterface
         } catch (\Exception $e) {
             if ($request->isXmlHttpRequest()) {
                 $response = new JsonResponse([
-                    'success' => FALSE,
+                    'success' => false,
                     'error'   => $e->getMessage(),
                 ]);
                 $event->setResponse($response);
@@ -151,18 +151,18 @@ class RequestListener implements EventSubscriberInterface
      */
     protected function handleAjaxSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, FormInterface $form)
     {
-        $redirectUri = NULL;
+        $redirectUri = null;
         if ($submissionEvent->hasRedirectUri()) {
             $redirectUri = $submissionEvent->getRedirectUri();
         }
 
         $messages = [];
-        $error = FALSE;
+        $error = false;
         $flashBag = $this->session->getFlashBag();
 
         foreach ($flashBag->all() as $type => $message) {
             if ($type === 'error') {
-                $error = TRUE;
+                $error = true;
             }
             $messages[] = ['type' => $type, 'message' => $message];
         }
@@ -183,7 +183,7 @@ class RequestListener implements EventSubscriberInterface
     protected function handleAjaxErrorResponse(GetResponseEvent $event, FormInterface $form)
     {
         $response = new JsonResponse([
-            'success'           => FALSE,
+            'success'           => false,
             'validation_errors' => $this->getErrors($form),
         ]);
 

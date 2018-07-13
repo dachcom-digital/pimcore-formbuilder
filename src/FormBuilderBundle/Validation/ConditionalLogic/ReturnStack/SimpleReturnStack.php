@@ -18,9 +18,9 @@ class SimpleReturnStack implements ReturnStackInterface
      * EmptyReturnStack constructor.
      *
      * @param NULL|string $actionType
-     * @param array  $data
+     * @param array       $data
      */
-    public function __construct($actionType = NULL, $data = [])
+    public function __construct($actionType = null, $data = [])
     {
         $this->actionType = $actionType;
         $this->data = $data;

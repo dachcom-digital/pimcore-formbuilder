@@ -18,20 +18,21 @@ class ToggleElementAction implements ActionInterface
     /**
      * @var string
      */
-    protected $state = NULL;
+    protected $state = null;
 
     /**
-     * @param               $validationState
-     * @param               $formData
-     * @param               $ruleId
-     * @return ReturnStackInterface
+     * @param $validationState
+     * @param $formData
+     * @param $ruleId
+     * @return FieldReturnStack|ReturnStackInterface
+     * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
         $state = $this->getState();
         foreach ($this->getFields() as $conditionFieldName) {
-            $toggleState = $validationState === TRUE ? 'hide' : 'show';
+            $toggleState = $validationState === true ? 'hide' : 'show';
             $data[$conditionFieldName] = $state === $toggleState ? 'fb-cl-hide-element' : '';
         }
 

@@ -18,7 +18,7 @@ class ChoiceBuilderRegistry
      */
     public function register($identifier, $label, $service)
     {
-        if (!in_array(ChoiceBuilderInterface::class, class_implements($service), TRUE)) {
+        if (!in_array(ChoiceBuilderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
                 sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ChoiceBuilderInterface::class, implode(', ', class_implements($service)))
             );

@@ -30,17 +30,17 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var null
      */
-    public $id = NULL;
+    public $id = null;
 
     /**
      * @var null
      */
-    public $name = NULL;
+    public $name = null;
 
     /**
      * @var null
      */
-    public $date = NULL;
+    public $date = null;
 
     /**
      * @var array
@@ -72,7 +72,7 @@ class Form extends Model\AbstractModel implements FormInterface
         $id = intval($id);
 
         if ($id < 1) {
-            return NULL;
+            return null;
         }
 
         $obj = new self;
@@ -91,7 +91,7 @@ class Form extends Model\AbstractModel implements FormInterface
         $name = (string)$name;
 
         if (empty($name)) {
-            return NULL;
+            return null;
         }
 
         $obj = new self;
@@ -153,7 +153,7 @@ class Form extends Model\AbstractModel implements FormInterface
         $this->setName($newName);
         $this->save();
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -235,7 +235,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function setConfig($config)
     {
-        $validConfig = array_intersect_key($config, array_flip( self::ALLOWED_FORM_KEYS));
+        $validConfig = array_intersect_key($config, array_flip(self::ALLOWED_FORM_KEYS));
         $this->config = $validConfig;
         return $this;
     }
@@ -269,16 +269,16 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function addDynamicField($name, $type, $options, $optional = [])
     {
-        if(in_array($name, Configuration::INVALID_FIELD_NAMES)) {
+        if (in_array($name, Configuration::INVALID_FIELD_NAMES)) {
             throw new \Exception(sprintf('\'%s\' is a reserved form field name used by the form builder bundle and cannot be used.', $name));
         }
 
-        $update = FALSE;
-        if(isset($this->fields[$name])) {
-            if(!$this->fields[$name] instanceof FormFieldDynamicInterface) {
+        $update = false;
+        if (isset($this->fields[$name])) {
+            if (!$this->fields[$name] instanceof FormFieldDynamicInterface) {
                 throw new \Exception(sprintf('"%s" as field name is already used by form builder fields.', $name));
             } else {
-                $update = TRUE;
+                $update = true;
             }
         }
 
@@ -294,11 +294,11 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function removeDynamicField($name)
     {
-        if(!isset($this->fields[$name])) {
+        if (!isset($this->fields[$name])) {
             throw new \Exception(sprintf('cannot remove dynamic field, "%s" does not exists', $name));
         }
 
-        if(isset($this->fields[$name]) && $this->fields[$name] instanceof FormFieldDynamicInterface) {
+        if (isset($this->fields[$name]) && $this->fields[$name] instanceof FormFieldDynamicInterface) {
             unset($this->fields[$name]);
         }
 
@@ -366,7 +366,7 @@ class Form extends Model\AbstractModel implements FormInterface
         $field = $this->getField($name);
 
         if (!$field) {
-            return NULL;
+            return null;
         }
 
         return $field->getType();
@@ -397,7 +397,7 @@ class Form extends Model\AbstractModel implements FormInterface
     public function __isset($name)
     {
         if (!is_string($name)) {
-            return FALSE;
+            return false;
         }
 
         $data = $this->getData();

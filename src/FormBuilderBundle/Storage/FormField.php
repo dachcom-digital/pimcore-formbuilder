@@ -9,7 +9,7 @@ class FormField implements FormFieldInterface
     /**
      * @var bool
      */
-    protected $update = FALSE;
+    protected $update = false;
 
     /**
      * @var Translator
@@ -56,7 +56,7 @@ class FormField implements FormFieldInterface
      *
      * @param bool $update
      */
-    public function __construct($update = FALSE)
+    public function __construct($update = false)
     {
         $this->update = $update;
     }

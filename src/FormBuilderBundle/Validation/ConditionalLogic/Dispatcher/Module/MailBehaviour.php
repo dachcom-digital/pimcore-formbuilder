@@ -35,8 +35,8 @@ class MailBehaviour implements ModuleInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'formData'          => [],
-            'appliedConditions' => [],
+            'formData'             => [],
+            'appliedConditions'    => [],
             'availableConstraints' => []
         ]);
 

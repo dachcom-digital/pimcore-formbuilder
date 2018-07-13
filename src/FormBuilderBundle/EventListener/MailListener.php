@@ -108,9 +108,8 @@ class MailListener implements EventSubscriberInterface
      * @param FormInterface $form
      * @param               $locale
      * @param bool          $isCopy
-     *
+     * @return bool
      * @throws \Exception
-     * @returns bool
      */
     private function sendForm($mailTemplateId = 0, FormInterface $form, $locale, $isCopy = false)
     {

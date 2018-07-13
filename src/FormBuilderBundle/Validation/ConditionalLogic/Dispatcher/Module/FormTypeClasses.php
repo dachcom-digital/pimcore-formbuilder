@@ -42,7 +42,7 @@ class FormTypeClasses implements ModuleInterface
     {
         $resolver->setDefaults([
             'formData'          => [],
-            'field'             => NULL,
+            'field'             => null,
             'appliedConditions' => []
         ]);
 

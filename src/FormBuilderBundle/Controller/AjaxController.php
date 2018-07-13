@@ -17,6 +17,10 @@ class AjaxController extends FrontendController
         throw new \RuntimeException('form parse action gets handled by kernel events.');
     }
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|Response
+     */
     public function fileAddAction(Request $request)
     {
         $method = $request->getMethod();
@@ -32,7 +36,7 @@ class AjaxController extends FrontendController
             $result = $fileStream->handleUpload();
             $result['uploadName'] = $fileStream->getRealFileName();
 
-            if ($result['success'] === TRUE) {
+            if ($result['success'] === true) {
                 $sessionKey = 'file_' . $formId . '_' . $result['uuid'];
                 $sessionValue = ['fileName' => $result['uploadName'], 'fieldName' => $fieldName, 'uuid' => $result['uuid']];
                 $sessionBag->set($sessionKey, $sessionValue);
@@ -40,7 +44,7 @@ class AjaxController extends FrontendController
 
             return $this->json($result);
 
-        } else if ($method === 'DELETE') {
+        } elseif ($method === 'DELETE') {
             return $this->fileDeleteAction($request, $request->request->get('uuid'));
         } else {
             $response = new Response();
@@ -53,7 +57,7 @@ class AjaxController extends FrontendController
 
     /**
      * @param Request $request
-     * @param string $uuid
+     * @param string  $uuid
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -93,7 +97,7 @@ class AjaxController extends FrontendController
         // To return a name used for uploaded file you can use the following line.
         $result['uploadName'] = $fileStream->getRealFileName();
 
-        if ($result['success'] === TRUE) {
+        if ($result['success'] === true) {
             //add uuid to session to find it again later!
             $sessionKey = 'file_' . $formId . '_' . $result['uuid'];
             $sessionValue = ['fileName' => $result['uploadName'], 'fieldName' => $fieldName, 'uuid' => $result['uuid']];

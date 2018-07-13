@@ -21,7 +21,7 @@ class Dao extends AbstractDao
      *
      * @throws \Exception
      */
-    public function getByName($name = NULL)
+    public function getByName($name = null)
     {
         $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE name = ?', $name);
 
@@ -37,9 +37,9 @@ class Dao extends AbstractDao
      *
      * @throws \Exception
      */
-    public function getById($id = NULL)
+    public function getById($id = null)
     {
-        if ($id != NULL) {
+        if ($id != null) {
             $this->model->setId($id);
         }
 
@@ -52,9 +52,6 @@ class Dao extends AbstractDao
         }
     }
 
-    /**
-     *
-     */
     public function save()
     {
         $vars = get_object_vars($this->model);
@@ -97,7 +94,7 @@ class Dao extends AbstractDao
             }
         }
 
-        if ($this->model->getId() !== NULL) {
+        if ($this->model->getId() !== null) {
             $this->db->update($this->tableName, $buffer, ['id' => (int)$this->model->getId()]);
         } else {
             $this->db->insert($this->tableName, $buffer);
@@ -120,12 +117,9 @@ class Dao extends AbstractDao
             throw $e;
         }
 
-        return TRUE;
+        return true;
     }
 
-    /**
-     *
-     */
     protected function storeFormData()
     {
         $data = [
@@ -152,9 +146,6 @@ class Dao extends AbstractDao
         return $formFields;
     }
 
-    /**
-     *
-     */
     protected function deleteFormData()
     {
         if (file_exists(Configuration::STORE_PATH . '/main_' . $this->model->getId() . '.yml')) {

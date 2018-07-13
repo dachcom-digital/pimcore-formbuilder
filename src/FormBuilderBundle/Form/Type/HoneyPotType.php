@@ -16,8 +16,8 @@ class HoneypotType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'required'       => FALSE,
-            'mapped'         => FALSE,
+            'required'       => false,
+            'mapped'         => false,
             'data'           => '',
             'attr'           => [
                 'autocomplete' => 'off',
@@ -35,8 +35,8 @@ class HoneypotType extends AbstractType
                     ]
                 )
             ],
-            'error_bubbling' => TRUE,
-            'label'          => FALSE
+            'error_bubbling' => true,
+            'label'          => false
         ]);
     }
 

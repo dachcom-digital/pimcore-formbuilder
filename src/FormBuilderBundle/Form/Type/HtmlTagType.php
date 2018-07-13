@@ -17,9 +17,9 @@ class HtmlTagType extends AbstractType
     {
         $resolver->setDefaults([
             'tag'      => 'label',
-            'mapped'   => FALSE,
-            'label'    => FALSE,
-            'required' => FALSE
+            'mapped'   => false,
+            'label'    => false,
+            'required' => false
         ]);
     }
 
@@ -32,7 +32,7 @@ class HtmlTagType extends AbstractType
             'data' => '',
             'attr' => [
                 'data-field-name' => $view->vars['name'],
-                'class' => 'form-builder-html-tag-element'
+                'class'           => 'form-builder-html-tag-element'
             ],
             'tag'  => empty($options['tag']) ? 'label' : $options['tag']
         ]);
