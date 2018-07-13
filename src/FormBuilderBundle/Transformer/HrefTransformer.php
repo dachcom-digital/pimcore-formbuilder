@@ -4,10 +4,10 @@ namespace FormBuilderBundle\Transformer;
 
 use Pimcore\Model\Element\Service;
 
-class SnippetTransformer implements OptionsTransformerInterface
+class HrefTransformer implements OptionsTransformerInterface
 {
     /**
-     * Transform snippet data
+     * Transform href data
      *
      * @param $optionValue
      * @param $optionConfig
@@ -20,7 +20,7 @@ class SnippetTransformer implements OptionsTransformerInterface
         foreach ($optionValue as $locale => $value) {
             $transformedValues[$locale] = [
                 'id'   => isset($value['id']) ? $value['id'] : null,
-                'type' => isset($value['null']) ? $value['null'] : null,
+                'type' => isset($value['type']) ? $value['type'] : null,
             ];
         }
 
@@ -28,7 +28,7 @@ class SnippetTransformer implements OptionsTransformerInterface
     }
 
     /**
-     * Transform snippet path/id to deeper array
+     * Transform href path/id to detailed info array
      *
      * @param $optionValue
      * @param $optionConfig

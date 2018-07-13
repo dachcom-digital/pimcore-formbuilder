@@ -17,3 +17,7 @@ services:
     FormBuilderBundle\Transformer\DefaultValueTransformer:
         tags:
             - {name: form_builder.transformer.options}
+
+    FormBuilderBundle\Transformer\HrefTransformer:
+        tags:
+            - {name: form_builder.transformer.options}

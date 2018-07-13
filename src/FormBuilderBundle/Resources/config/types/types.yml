@@ -297,6 +297,7 @@ form_builder:
                         display_group_id: attributes
                         type: href
                         label: 'form_builder_type_field.snippet_path'
+                        options_transformer: FormBuilderBundle\Transformer\HrefTransformer
                         config:
                             types:
                                 - 'document'

@@ -430,31 +430,12 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     getHrefElement: function (fieldConfig) {
 
         var tabs = [],
-            path = {},
-            hrefType = {},
-            storePath = this.getFieldValue(fieldConfig.id),
-            storeHrefType = this.getFieldValue('options.href_type');
-
-        // legacy, add value to all languages
-        if (!Ext.isObject(storePath)) {
-            Ext.each(pimcore.settings.websiteLanguages, function (locale) {
-                path[locale] = storePath
-                hrefType[locale] = storeHrefType
-            });
-        } else {
-            path = storePath
-            hrefType = storeHrefType
-        }
+            fieldData = this.getFieldValue(fieldConfig.id);
 
         Ext.each(pimcore.settings.websiteLanguages, function (locale) {
 
             var keyValueRepeater = new Formbuilder.comp.types.href(
-                fieldConfig,
-                {
-                    'path': path[locale] ? path[locale] : '',
-                    'hrefType': hrefType[locale] ? hrefType[locale] : '',
-                },
-                locale
+                fieldConfig, fieldData[locale], locale
             );
 
             tabs.push({

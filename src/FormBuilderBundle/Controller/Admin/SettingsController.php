@@ -328,34 +328,6 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getElementByPathAction(Request $request)
-    {
-        $path = $request->query->get('path');
-        $type = $request->query->get('hrefType');
-
-        $element = Service::getElementByPath($type, $path);
-
-        $data = [
-            'id'      => NULL,
-            'type'    => NULL,
-            'subtype' => NULL
-        ];
-
-        if ($element instanceof AbstractElement) {
-            $data = [
-                'id'      => $element->getId(),
-                'type'    => $type,
-                'subtype' => $element->getType()
-            ];
-        }
-
-        return $this->json($data);
-    }
-
-    /**
-     * @param Request $request
      *
      * @return JsonResponse
      */
