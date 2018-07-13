@@ -4,9 +4,6 @@ form_builder.controller.admin.get_tree:
 form_builder.controller.admin.get_settings:
     path: /admin/formbuilder/settings/get-settings
     defaults: { _controller: FormBuilderBundle:Admin/Settings:getSettings }
-form_builder.controller.admin.get_element_by_path:
-    path: /admin/formbuilder/settings/get-element-by-path
-    defaults: { _controller: FormBuilderBundle:Admin/Settings:getElementByPath }
 form_builder.controller.admin.get_dynamic_choice_builder:
     path: /admin/formbuilder/settings/get-dynamic-choice-builder
     defaults: { _controller: FormBuilderBundle:Admin/Settings:getDynamicChoiceBuilder }

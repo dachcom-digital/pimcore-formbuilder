@@ -470,7 +470,7 @@
                         return true;
                     }
                     var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
-                    console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
+                    //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
 
                 });
 

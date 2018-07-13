@@ -326,30 +326,6 @@ class SettingsController extends AdminController
         return $this->json(['success' => $pathIsValid]);
     }
 
-    public function getElementByPathAction(Request $request)
-    {
-        $path = $request->query->get('path');
-        $type = $request->query->get('hrefType');
-
-        $element = Service::getElementByPath($type, $path);
-
-        $data = [
-            'id'      => NULL,
-            'type'    => NULL,
-            'subtype' => NULL
-        ];
-
-        if ($element instanceof AbstractElement) {
-            $data = [
-                'id'      => $element->getId(),
-                'type'    => $type,
-                'subtype' => $element->getType()
-            ];
-        }
-
-        return $this->json($data);
-    }
-
     /**
      * @param Request $request
      *

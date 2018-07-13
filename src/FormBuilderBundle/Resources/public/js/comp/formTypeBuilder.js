@@ -429,16 +429,36 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     getHrefElement: function (fieldConfig) {
 
-        var keyValueRepeater = new Formbuilder.comp.types.href(
-            fieldConfig,
-            {
-                'path': this.getFieldValue(fieldConfig.id),
-                'hrefType': this.getFieldValue('options.href_type')
-            }
-        );
+        var tabs = [],
+            fieldData = this.getFieldValue(fieldConfig.id);
 
-        return keyValueRepeater.getHref();
+        Ext.each(pimcore.settings.websiteLanguages, function (locale) {
 
+            var keyValueRepeater = new Formbuilder.comp.types.href(
+                fieldConfig, fieldData[locale], locale
+            );
+
+            tabs.push({
+                title: pimcore.available_languages[locale],
+                iconCls: 'pimcore_icon_language_' + locale.toLowerCase(),
+                layout: 'form',
+                items: [keyValueRepeater.getHref()]
+            });
+
+        }.bind(this));
+
+        return new Ext.form.FieldSet({
+            items: [{
+                xtype: 'tabpanel',
+                activeTab: 0,
+                width: '100%',
+                defaults: {
+                    autoHeight: true,
+                    bodyStyle: 'padding:10px;'
+                },
+                items: tabs
+            }]
+        });
     },
 
     /**

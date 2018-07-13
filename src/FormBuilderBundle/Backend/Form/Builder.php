@@ -33,6 +33,7 @@ class Builder
      * @var OptionsTransformerRegistry
      */
     protected $optionsTransformerRegistry;
+
     /**
      * @var ConditionalLogicRegistry
      */
@@ -65,8 +66,8 @@ class Builder
      * Generate array form with form attributes and available form types structure.
      *
      * @param FormInterface $form
-     *
      * @return array
+     * @throws \Exception
      */
     public function generateExtJsForm(FormInterface $form)
     {
@@ -95,8 +96,8 @@ class Builder
 
     /**
      * @param array $fields
-     *
      * @return array
+     * @throws \Exception
      */
     public function generateExtJsFields(array $fields)
     {
@@ -110,8 +111,8 @@ class Builder
 
     /**
      * @param array $data
-     *
      * @return array
+     * @throws \Exception
      */
     public function generateStoreFields(array $data)
     {
@@ -297,6 +298,11 @@ class Builder
         return $data;
     }
 
+    /**
+     * @param $formType
+     * @param $formTypeBackendConfig
+     * @return array
+     */
     private function getMergedFormTypeConfig($formType, $formTypeBackendConfig)
     {
         $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
@@ -415,8 +421,8 @@ class Builder
     /**
      * @param      $fieldData
      * @param bool $reverse
-     *
      * @return mixed
+     * @throws \Exception
      */
     private function transformOptions($fieldData, $reverse = false)
     {
@@ -443,8 +449,7 @@ class Builder
             if (!empty($optionConfig['options_transformer'])) {
 
                 /** @var OptionsTransformerInterface $transformer */
-                $transformer = $fieldData['options'][$optionName] = $this->optionsTransformerRegistry
-                    ->get($optionConfig['options_transformer']);
+                $transformer = $this->optionsTransformerRegistry->get($optionConfig['options_transformer']);
 
                 if ($reverse === false) {
                     $fieldData['options'][$optionName] = $transformer->transform($optionValue, $optionConfig);

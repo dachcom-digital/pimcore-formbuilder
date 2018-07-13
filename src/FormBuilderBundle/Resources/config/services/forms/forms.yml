@@ -18,6 +18,7 @@ services:
         tags:
             - { name: form.type }
     FormBuilderBundle\Form\Type\SnippetType:
+        autowire: true
         public: false
         tags:
             - { name: form.type }
