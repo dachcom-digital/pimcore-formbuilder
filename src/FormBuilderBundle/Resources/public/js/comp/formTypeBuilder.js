@@ -434,8 +434,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
         Ext.each(pimcore.settings.websiteLanguages, function (locale) {
 
+            var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null;
             var keyValueRepeater = new Formbuilder.comp.types.href(
-                fieldConfig, fieldData[locale], locale
+                fieldConfig, localeValue, locale
             );
 
             tabs.push({

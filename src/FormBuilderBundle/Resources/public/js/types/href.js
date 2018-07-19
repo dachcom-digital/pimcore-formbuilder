@@ -31,10 +31,10 @@ Formbuilder.comp.types.href = Class.create({
     generateElement: function () {
 
         this.data = {
-            id: this.storeData.id,
-            path: this.storeData.path,
-            type: this.storeData.type,
-            subtype: this.storeData.subtype,
+            id: this.storeData ? this.storeData.id : null,
+            path: this.storeData ? this.storeData.path : null,
+            type: this.storeData ? this.storeData.type : null,
+            subtype: this.storeData ? this.storeData.subtype : null
         };
 
         var options = {}
@@ -47,7 +47,7 @@ Formbuilder.comp.types.href = Class.create({
 
         this.href = Ext.create('FormBuilder.HrefTextField', options);
 
-        if (this.storeData.id) {
+        if (this.storeData && this.storeData.id) {
             this.href.setHrefObject(this.storeData);
         }
 
