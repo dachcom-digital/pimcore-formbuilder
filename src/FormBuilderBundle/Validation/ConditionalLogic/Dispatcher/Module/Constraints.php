@@ -4,6 +4,8 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\ConstraintsData;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -72,7 +74,7 @@ class Constraints implements ModuleInterface
 
     /**
      * @param $options
-     * @return array
+     * @return DataInterface
      */
     public function apply($options)
     {
@@ -95,7 +97,12 @@ class Constraints implements ModuleInterface
             $constraintData[] = ['type' => $validConstraint];
         }
 
-        return $this->appendConstraintsData($constraintData);
+        $completeConstraintData = $this->appendConstraintsData($constraintData);
+
+        $returnContainer = new ConstraintsData();
+        $returnContainer->setData($completeConstraintData);
+
+        return $returnContainer;
     }
 
     /**

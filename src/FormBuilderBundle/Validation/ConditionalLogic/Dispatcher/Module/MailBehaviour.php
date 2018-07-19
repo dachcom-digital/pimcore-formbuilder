@@ -3,6 +3,8 @@
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
 use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\SimpleReturnStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,6 +32,11 @@ class MailBehaviour implements ModuleInterface
     protected $availableConstraints;
 
     /**
+     * @var bool
+     */
+    protected $isCopyMail;
+
+    /**
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -37,29 +44,35 @@ class MailBehaviour implements ModuleInterface
         $resolver->setDefaults([
             'formData'             => [],
             'appliedConditions'    => [],
-            'availableConstraints' => []
+            'availableConstraints' => [],
+            'isCopy'               => false
         ]);
 
         $resolver->setRequired(['formData', 'appliedConditions']);
         $resolver->setAllowedTypes('formData', ['array', 'null']);
         $resolver->setAllowedTypes('appliedConditions', 'array');
+        $resolver->setAllowedTypes('isCopy', 'boolean');
     }
 
     /**
      * @param $options
-     * @return array
+     * @return DataInterface
      */
     public function apply($options)
     {
         $this->formData = $options['formData'];
         $this->availableConstraints = $options['availableConstraints'];
         $this->appliedConditions = $options['appliedConditions'];
+        $this->isCopyMail = $options['isCopy'];
+
+        $returnContainer = new MailBehaviourData();
 
         if (empty($this->appliedConditions)) {
-            return [];
+            return $returnContainer;
         }
 
         $mailConfig = [];
+
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
 
@@ -67,12 +80,24 @@ class MailBehaviour implements ModuleInterface
                 continue;
             }
 
-            foreach ($returnStack->getData() as $identifier => $value) {
-                $mailConfig[$identifier] = $value;
+            $returnStackData = $returnStack->getData();
+            if (empty($returnStackData)) {
+                continue;
             }
+
+            if ($this->isCopyMail === true && $returnStackData['mailType'] !== 'copy') {
+                continue;
+            } elseif ($this->isCopyMail === false && $returnStackData['mailType'] !== 'main') {
+                continue;
+            }
+
+            $mailConfig[$returnStackData['identifier']] = $returnStackData['value'];
+
         }
 
-        return $mailConfig;
+        $returnContainer->setData($mailConfig);
+
+        return $returnContainer;
     }
 
 }

@@ -3,7 +3,6 @@
 namespace FormBuilderBundle\Parser;
 
 use FormBuilderBundle\Form\FormValuesBeautifier;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
@@ -27,25 +26,17 @@ class MailParser
     protected $formValuesBeautifier;
 
     /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
      * MailParser constructor.
      *
      * @param EngineInterface      $templating
      * @param FormValuesBeautifier $formValuesBeautifier
-     * @param Dispatcher           $dispatcher
      */
     public function __construct(
         EngineInterface $templating,
-        FormValuesBeautifier $formValuesBeautifier,
-        Dispatcher $dispatcher
+        FormValuesBeautifier $formValuesBeautifier
     ) {
         $this->templating = $templating;
         $this->formValuesBeautifier = $formValuesBeautifier;
-        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -68,22 +59,7 @@ class MailParser
 
         $fieldValues = $this->formValuesBeautifier->transformData($form, $ignoreFields, $locale);
 
-        //handle form conditions
-        $conditionRecipient = null;
-
-        if($isCopy === false) {
-            $mailCondition = $this->dispatcher->runFormDispatcher('mail_behaviour', [
-                'formData'         => $form->getData()->getData(),
-                'conditionalLogic' => $form->getData()->getConditionalLogic()
-            ]);
-
-            if (isset($mailCondition['recipient']) && !empty($mailCondition['recipient'])) {
-                $conditionRecipient = $mailCondition['recipient'];
-            }
-        }
-
-
-        $this->parseMailRecipients($mailTemplate, $fieldValues, $conditionRecipient);
+        $this->parseMailRecipients($mailTemplate, $fieldValues);
         $this->parseMailSender($mailTemplate, $fieldValues);
         $this->parseReplyTo($mailTemplate, $fieldValues);
         $this->parseSubject($mailTemplate, $fieldValues);
@@ -95,14 +71,12 @@ class MailParser
     }
 
     /**
-     * @param Email       $mailTemplate
-     * @param array       $data
-     * @param null|string $conditionRecipient
+     * @param Email $mailTemplate
+     * @param array $data
      */
-    private function parseMailRecipients(Email $mailTemplate, $data = [], $conditionRecipient)
+    private function parseMailRecipients(Email $mailTemplate, $data = [])
     {
-        $to = !is_null($conditionRecipient) ? $conditionRecipient : $mailTemplate->getTo();
-        $parsedTo = $this->extractPlaceHolder($to, $data);
+        $parsedTo = $this->extractPlaceHolder($mailTemplate->getTo(), $data);
         $mailTemplate->setTo($parsedTo);
     }
 
@@ -229,7 +203,7 @@ class MailParser
                     if ($formField['name'] == $inputValue) {
                         $value = $formField['value'];
                         //if is array, use first value since this is the best what we can do...
-                        if(is_array($value)) {
+                        if (is_array($value)) {
                             $value = reset($value);
                         }
                         $str = str_replace($matches[0][$key], $value, $str);
