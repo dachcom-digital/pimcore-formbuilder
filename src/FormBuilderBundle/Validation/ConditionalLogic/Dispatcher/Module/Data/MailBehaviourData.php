@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 
+use FormBuilderBundle\Tool\HrefLocaleMapper;
+
 class MailBehaviourData implements DataInterface
 {
     const IDENTIFIER_MAIL_TEMPLATE = 'mailTemplate';
@@ -12,6 +14,21 @@ class MailBehaviourData implements DataInterface
      * @var array
      */
     private $data = [];
+
+    /**
+     * @var HrefLocaleMapper
+     */
+    protected $hrefLocaleMapper;
+
+    /**
+     * DynamicChoiceType constructor.
+     *
+     * @param HrefLocaleMapper $hrefLocaleMapper
+     */
+    public function __construct(HrefLocaleMapper $hrefLocaleMapper)
+    {
+        $this->hrefLocaleMapper = $hrefLocaleMapper;
+    }
 
     /**
      * @inheritdoc
@@ -62,10 +79,15 @@ class MailBehaviourData implements DataInterface
     }
 
     /**
+     * @param string $locale
      * @return null|string
      */
-    public function getMailTemplateId()
+    public function getMailTemplateId($locale)
     {
-        return $this->hasMailTemplate() ? (int)$this->data[self::IDENTIFIER_MAIL_TEMPLATE] : null;
+        if (!$this->hasMailTemplate()) {
+            return null;
+        }
+
+        return $this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
     }
 }

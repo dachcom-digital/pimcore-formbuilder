@@ -11,6 +11,9 @@ services:
     # tool: file locator
     FormBuilderBundle\Tool\FileLocator: ~
 
+    # tool: href locale mapper
+    FormBuilderBundle\Tool\HrefLocaleMapper: ~
+
     # configuration
     FormBuilderBundle\Configuration\Configuration: ~
 

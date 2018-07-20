@@ -43,36 +43,140 @@ form_builder:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleElementAction'
                 name: 'form_builder.cl.action.toggle_element'
                 icon: 'form_builder_cl_toggle_element'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_toggle_element_fields'
+                    state:
+                        type: select
+                        label: 'form_builder_toggle_element_state'
+                        config:
+                            options:
+                                - ['form_builder_toggle_element_show', 'show']
+                                - ['form_builder_toggle_element_hide', 'hide']
             constraintsAdd:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ConstraintsAddAction'
                 name: 'form_builder.cl.action.constraints_add'
                 icon: 'form_builder_cl_constraints_add'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_constraints_fields'
+                    validation:
+                        type: constraints_select
+                        label: 'form_builder_constraints_type'
             constraintsRemove:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ConstraintsRemoveAction'
                 name: 'form_builder.cl.action.constraints_remove'
                 icon: 'form_builder_cl_constraints_remove'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_constraints_fields'
+                    validation:
+                        type: constraints_select
+                        label: 'form_builder_constraints_type'
+                    removeAllValidations:
+                        type: checkbox
+                        label: 'form_builder_constraints_all'
             changeValue:
                 name: 'form_builder.cl.action.change_value'
                 icon: 'form_builder_cl_change_value'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_change_value_fields'
+                    value:
+                        type: textfield
+                        label: 'form_builder_change_value_value'
             triggerEvent:
                 name: 'form_builder.cl.action.trigger_event'
                 icon: 'form_builder_cl_trigger_event'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_trigger_event_fields'
+                    event:
+                        type: textfield
+                        label: 'form_builder_trigger_event_event'
             toggleClass:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleClassAction'
                 name: 'form_builder.cl.action.toggle_class'
                 icon: 'form_builder_cl_toggle_class'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_toggle_class_fields'
+                    class:
+                        type: textfield
+                        label: 'form_builder_toggle_class_value'
             toggleAvailability:
                 name: 'form_builder.cl.action.toggle_availability'
                 icon: 'form_builder_cl_toggle_availability'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_toggle_availability_fields'
+                    state:
+                        type: select
+                        label: 'form_builder_toggle_element_state'
+                        config:
+                            options:
+                                - ['form_builder_toggle_availability_enable', 'enable']
+                                - ['form_builder_toggle_availability_disable', 'disable']
             mailBehaviour:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\MailBehaviourAction'
                 name: 'form_builder.cl.action.mail_behaviour'
                 icon: 'form_builder_cl_mail_behaviour'
+                form:
+                    identifier:
+                        type: conditional_select
+                        label: 'form_builder_mail_behaviour_identifier'
+                        config:
+                            options:
+                                - ['form_builder_mail_behaviour_identifier_recipient', 'recipient']
+                                - ['form_builder_mail_behaviour_identifier_mail_template', 'mailTemplate']
+                        conditional_identifier: 'value'
+                        conditional:
+                            recipient:
+                                type: email
+                                label: 'form_builder_mail_behaviour_mail_address'
+                            mailTemplate:
+                                type: localized_href
+                                label: 'form_builder_mail_behaviour_mail_path'
+                                options_transformer: FormBuilderBundle\Transformer\HrefTransformer
+                    mailType:
+                        type: select
+                        label: 'form_builder_mail_behaviour_mail_type'
+                        config:
+                            options:
+                                - ['form_builder_mail_behaviour_mail_type_main', 'main']
+                                - ['form_builder_mail_behaviour_mail_type_copy', 'copy']
         condition:
             elementValue:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ElementValueCondition'
                 name: 'form_builder.cl.condition.element_value'
                 icon: 'form_builder_cl_element_value'
+                form:
+                    fields:
+                        type: fields_select
+                        label: 'form_builder_element_value_fields'
+                    comparator:
+                        type: select
+                        label: 'form_builder_element_value_type'
+                        config:
+                            options:
+                                - ['form_builder_element_value_type_contains', 'contains']
+                                - ['form_builder_element_value_type_is_checked', 'is_checked']
+                                - ['form_builder_element_value_type_is_not_checked', 'is_not_checked']
+                                - ['form_builder_element_value_type_is_greater', 'is_greater']
+                                - ['form_builder_element_value_type_is_less', 'is_less']
+                                - ['form_builder_element_value_type_is_value', 'is_value']
+                                - ['form_builder_element_value_type_is_not_value', 'is_not_value']
+                                - ['form_builder_element_value_type_is_empty_value', 'is_empty_value']
+                    value:
+                        type: textfield
+                        label: 'form_builder_element_value_value'
 imports:
     - { resource: '../backend/base_config.yml' }
     - { resource: '../types/types.yml' }

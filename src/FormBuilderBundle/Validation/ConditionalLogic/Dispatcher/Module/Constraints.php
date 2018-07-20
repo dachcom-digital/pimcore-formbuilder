@@ -6,6 +6,7 @@ use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\ConstraintsData;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,6 +18,11 @@ class Constraints implements ModuleInterface
      * @var TranslatorInterface
      */
     protected $translator;
+
+    /**
+     * @var DataFactory
+     */
+    protected $dataFactory;
 
     /**
      * @var FormInterface
@@ -47,10 +53,14 @@ class Constraints implements ModuleInterface
      * Constraints constructor.
      *
      * @param TranslatorInterface $translator
+     * @param DataFactory         $dataFactory
      */
-    public function __construct(TranslatorInterface $translator)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        DataFactory $dataFactory
+    ) {
         $this->translator = $translator;
+        $this->dataFactory = $dataFactory;
     }
 
     /**
@@ -99,7 +109,8 @@ class Constraints implements ModuleInterface
 
         $completeConstraintData = $this->appendConstraintsData($constraintData);
 
-        $returnContainer = new ConstraintsData();
+
+        $returnContainer = $this->dataFactory->generate(ConstraintsData::class);
         $returnContainer->setData($completeConstraintData);
 
         return $returnContainer;

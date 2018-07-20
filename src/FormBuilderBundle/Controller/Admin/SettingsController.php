@@ -8,7 +8,6 @@ use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\Request;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,8 +17,7 @@ class SettingsController extends AdminController
 {
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getTreeAction(Request $request)
     {
@@ -45,13 +43,12 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getSettingsAction(Request $request)
     {
         /** @var Configuration $configuration */
-        $configuration = $this->container->get(Configuration::class);
+        $configuration = $this->get(Configuration::class);
         $settings = $configuration->getConfigArray();
         $settings['forbidden_form_field_names'] = Configuration::INVALID_FIELD_NAMES;
         return $this->json(['settings' => $settings]);
@@ -59,12 +56,11 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getDynamicChoiceBuilderAction(Request $request)
     {
-        $registry = $this->container->get(ChoiceBuilderRegistry::class);
+        $registry = $this->get(ChoiceBuilderRegistry::class);
         $services = $registry->getAll();
         $data = [];
         foreach ($services as $identifier => $service) {
@@ -75,8 +71,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getFormAction(Request $request)
     {
@@ -108,8 +103,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function addFormAction(Request $request)
     {
@@ -154,8 +148,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function deleteFormAction(Request $request)
     {
@@ -203,10 +196,9 @@ class SettingsController extends AdminController
 
         $data = [
             'form_name'              => $formName,
-            //'form_date'            => time(),
-            'form_fields'            => $backendFormBuilder->generateStoreFields($formFields),
             'form_config'            => $formConfig,
-            'form_conditional_logic' => $formConditionalLogic,
+            'form_fields'            => $backendFormBuilder->generateStoreFields($formFields),
+            'form_conditional_logic' => $backendFormBuilder->generateConditionalLogicStoreFields($formConditionalLogic),
         ];
 
         $formEntity = $formManager->save($data, $id);
@@ -220,13 +212,11 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function importFormAction(Request $request)
     {
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
-
         $encoding = \Pimcore\Tool\Text::detectEncoding($data);
 
         if ($encoding) {
@@ -283,7 +273,6 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
      * @return Response
      */
     public function getExportFileAction(Request $request)
@@ -313,8 +302,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function checkPathAction(Request $request)
     {
@@ -326,13 +314,12 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
-     *
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getGroupTemplatesAction(Request $request)
     {
         /** @var Configuration $configuration */
-        $configuration = $this->container->get(Configuration::class);
+        $configuration = $this->get(Configuration::class);
         $areaConfig = $configuration->getConfig('area');
 
         $templates = [['key' => null, 'label' => '--']];

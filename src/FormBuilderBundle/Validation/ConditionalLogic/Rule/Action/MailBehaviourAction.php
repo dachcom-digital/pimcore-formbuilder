@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Action;
 
-use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\MailSettingReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\SimpleReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ActionTrait;

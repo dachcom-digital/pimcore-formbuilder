@@ -4,7 +4,12 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
 
     valueField: null,
 
-    compositeField: null,
+    fieldPanel: null,
+
+    updateInternalPositionIndex: function (sectionId, index) {
+        this.sectionId = sectionId;
+        this.index = index;
+    },
 
     getItem: function () {
 
@@ -22,6 +27,7 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
                 value: this.fieldConfiguration.identifier,
                 listeners: {
                     updateIndexName: function (sectionId, index) {
+                        _.updateInternalPositionIndex(sectionId, index);
                         this.name = _.generateFieldName(sectionId, index, 'type');
                     }
                 }
@@ -91,27 +97,29 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
             }
         ];
 
-        this.compositeField = new Ext.form.FieldContainer({
+        var compositeField = new Ext.form.FieldContainer({
             layout: 'hbox',
             hideLabel: true,
             style: 'padding-bottom:5px;',
             items: items
         });
 
-        // add initial value field
-        if (this.data && this.data.value) {
-            this.generateValueField(this.data.value);
-        }
-
-        return new Ext.form.FormPanel({
+        this.fieldPanel = new Ext.form.FormPanel({
             id: myId,
             type: 'combo',
             forceLayout: true,
             style: 'margin: 10px 0 0 0',
             bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
             tbar: this.getTopBar(myId),
-            items: this.compositeField
+            items: compositeField
         });
+
+        // add initial value field
+        if (this.data && this.data.identifier) {
+            this.generateValueField(this.data.identifier);
+        }
+
+        return this.fieldPanel;
     },
 
     generateValueField: function (value) {
@@ -119,19 +127,20 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
         var _ = this;
 
         if (this.valueField !== null) {
-            this.compositeField.remove(this.valueField);
+            this.fieldPanel.remove(this.valueField);
         }
 
         if (value === 'recipient') {
             this.valueField = new Ext.form.TextField({
                 name: _.generateFieldName(this.sectionId, this.index, 'value'),
+                vtype: 'email',
                 cls: 'form_builder_mail_behaviour_value_field',
-                fieldLabel: t('form_builder_mail_behaviour_mail_value'),
+                fieldLabel: t('form_builder_mail_behaviour_mail_address'),
                 anchor: '100%',
                 labelAlign: 'top',
                 summaryDisplay: true,
                 allowBlank: false,
-                value: this.data ? this.data.value : null,
+                value: this.data ? (typeof this.data.value === 'string' ? this.data.value : null) : null,
                 flex: 1,
                 listeners: {
                     updateIndexName: function (sectionId, index) {
@@ -140,51 +149,41 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
                 }
             });
         } else if (value === 'mailTemplate') {
+            var fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
+            var localizedField = new Formbuilder.comp.types.localizedField(
+                function (locale) {
+                    var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
+                        fieldConfig = {
+                            label: t('form_builder_mail_behaviour_mail_path'),
+                            id: _.generateFieldName(this.sectionId, this.index, 'value'),
+                            config: {
+                                types: ['document'],
+                                subtypes: {document: ['email']}
+                            }
+                        }, hrefField, hrefElement;
 
-            var fieldPath = new Ext.form.TextField({
-                fieldLabel: t('path'),
-                name: _.generateFieldName(this.sectionId, this.index, 'value'),
-                cls: 'form_builder_mail_behaviour_value_field',
-                fieldLabel: t('form_builder_mail_behaviour_mail_value'),
-                anchor: '100%',
-                labelAlign: 'top',
-                fieldCls: 'pimcore_droptarget_input',
-                allowBlank: false,
-                value: this.data ? this.data.value : null,
-                flex: 1,
-                listeners: {
-                    updateIndexName: function (sectionId, index) {
-                        console.log('hahahaha: updateIndexName');
-                        this.name = _.generateFieldName(sectionId, index, 'value');
-                    }
+                    hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
+                    hrefElement = hrefField.getHref();
+                    hrefElement.on('updateIndexName', function (sectionId, index) {
+                        this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
+                    });
+                    return hrefElement;
+                }.bind(this)
+            );
+
+            localizedElementField = localizedField.getField();
+            localizedElementField.on('updateIndexName', function (sectionId, index) {
+                var localizedTextFields = this.query('textfield');
+                if (localizedTextFields.length > 0) {
+                    Ext.Array.each(localizedTextFields, function (field) {
+                        field.fireEvent('updateIndexName', sectionId, index);
+                    });
                 }
             });
 
-            fieldPath.on('render', function (el) {
-                new Ext.dd.DropZone(el.getEl(), {
-                    reference: this,
-                    ddGroup: "element",
-                    getTargetFromEvent: function (e) {
-                        return fieldPath.getEl();
-                    },
-                    onNodeOver: function (target, dd, e, data) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    }.bind(this),
-                    onNodeDrop: function (target, dd, e, data) {
-                        var record = data.records[0];
-                        if (record.data.elementType == 'document') {
-                            fieldPath.setValue(record.data.path);
-                            return true;
-                        }
-                        return false;
-                    }.bind(this)
-                });
-            }.bind(this));
-
-            this.valueField = fieldPath;
-
+            this.valueField = localizedElementField;
         }
 
-        this.compositeField.add(this.valueField);
+        this.fieldPanel.add(this.valueField);
     }
 });

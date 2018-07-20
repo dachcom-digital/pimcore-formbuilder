@@ -5,12 +5,18 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
+use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\SimpleReturnStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MailBehaviour implements ModuleInterface
 {
+    /**
+     * @var DataFactory
+     */
+    protected $dataFactory;
+
     /**
      * @var FormInterface
      */
@@ -35,6 +41,14 @@ class MailBehaviour implements ModuleInterface
      * @var bool
      */
     protected $isCopyMail;
+
+    /**
+     * @param DataFactory $dataFactory
+     */
+    public function __construct(DataFactory $dataFactory)
+    {
+        $this->dataFactory = $dataFactory;
+    }
 
     /**
      * @param OptionsResolver $resolver
@@ -65,7 +79,7 @@ class MailBehaviour implements ModuleInterface
         $this->appliedConditions = $options['appliedConditions'];
         $this->isCopyMail = $options['isCopy'];
 
-        $returnContainer = new MailBehaviourData();
+        $returnContainer = $this->dataFactory->generate(MailBehaviourData::class);
 
         if (empty($this->appliedConditions)) {
             return $returnContainer;

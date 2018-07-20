@@ -429,37 +429,19 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     getHrefElement: function (fieldConfig) {
 
-        var tabs = [],
-            fieldData = this.getFieldValue(fieldConfig.id);
+        var fieldData = this.getFieldValue(fieldConfig.id),
+            localizedField = new Formbuilder.comp.types.localizedField(
+                function (locale) {
+                    var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
+                        field;
 
-        Ext.each(pimcore.settings.websiteLanguages, function (locale) {
+                    field = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
 
-            var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null;
-            var keyValueRepeater = new Formbuilder.comp.types.href(
-                fieldConfig, localeValue, locale
+                    return field.getHref();
+                }
             );
 
-            tabs.push({
-                title: pimcore.available_languages[locale],
-                iconCls: 'pimcore_icon_language_' + locale.toLowerCase(),
-                layout: 'form',
-                items: [keyValueRepeater.getHref()]
-            });
-
-        }.bind(this));
-
-        return new Ext.form.FieldSet({
-            items: [{
-                xtype: 'tabpanel',
-                activeTab: 0,
-                width: '100%',
-                defaults: {
-                    autoHeight: true,
-                    bodyStyle: 'padding:10px;'
-                },
-                items: tabs
-            }]
-        });
+        return localizedField.getField()
     },
 
     /**

@@ -125,7 +125,7 @@ class MailListener implements EventSubscriberInterface
         $mailConditionData = $this->checkMailCondition($form, $isCopy);
 
         if ($mailConditionData->hasMailTemplate()) {
-            $mailTemplate = Document\Email::getById($mailConditionData->getMailTemplateId());
+            $mailTemplate = Document\Email::getById($mailConditionData->getMailTemplateId($locale));
         } else {
             $mailTemplate = Document\Email::getById($mailTemplateId);
         }

@@ -88,7 +88,7 @@ class Builder
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
         $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
-        $data['conditional_logic'] = $this->generateConditionalLogicStructure($form->getConditionalLogic());
+        $data['conditional_logic'] = $this->generateConditionalLogicExtJsFields($form->getConditionalLogic());
         $data['conditional_logic_store'] = $this->generateConditionalLogicStore();
 
         return $data;
@@ -101,12 +101,11 @@ class Builder
      */
     public function generateExtJsFields(array $fields)
     {
-        $formFields = [];
-        foreach ($fields as $field) {
-            $formFields[] = $this->transformOptions($field, true);
+        foreach ($fields as &$fieldData) {
+            $this->transformOptions($fieldData, true);
         }
 
-        return $formFields;
+        return $fields;
     }
 
     /**
@@ -116,11 +115,37 @@ class Builder
      */
     public function generateStoreFields(array $data)
     {
+        if (!isset($data['fields'])) {
+            return $data;
+        }
+
         foreach ($data['fields'] as &$fieldData) {
-            $fieldData = $this->transformOptions($fieldData);
+            $this->transformOptions($fieldData);
         }
 
         return $data;
+    }
+
+    /**
+     * @param array $conditionalData
+     * @return array
+     * @throws \Exception
+     */
+    public function generateConditionalLogicStoreFields(array $conditionalData)
+    {
+        if (!empty($conditionalData)) {
+            foreach ($conditionalData as &$conditionalDataBlock) {
+                foreach (['condition', 'action'] as $conditionalType) {
+                    if (isset($conditionalDataBlock[$conditionalType]) && is_array($conditionalDataBlock[$conditionalType])) {
+                        foreach ($conditionalDataBlock[$conditionalType] as &$action) {
+                            $this->transformConditionalOptions($action, $conditionalType);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $conditionalData;
     }
 
     /**
@@ -162,15 +187,23 @@ class Builder
     /**
      * @param $conditionalData
      * @return array
+     * @throws \Exception
      */
-    private function generateConditionalLogicStructure($conditionalData)
+    private function generateConditionalLogicExtJsFields($conditionalData)
     {
-        $formConditionalLogicData = [];
         if (!empty($conditionalData)) {
-            $formConditionalLogicData['cl'] = $conditionalData;
+            foreach ($conditionalData as &$conditionalDataBlock) {
+                foreach (['condition', 'action'] as $conditionalType) {
+                    if (isset($conditionalDataBlock[$conditionalType]) && is_array($conditionalDataBlock[$conditionalType])) {
+                        foreach ($conditionalDataBlock[$conditionalType] as &$action) {
+                            $this->transformConditionalOptions($action, $conditionalType, true);
+                        }
+                    }
+                }
+            }
         }
 
-        return $formConditionalLogicData;
+        return $conditionalData;
     }
 
     /**
@@ -419,12 +452,12 @@ class Builder
     }
 
     /**
-     * @param      $fieldData
-     * @param bool $reverse
+     * @param array $fieldData
+     * @param bool  $reverse
      * @return mixed
      * @throws \Exception
      */
-    private function transformOptions($fieldData, $reverse = false)
+    private function transformOptions(&$fieldData, $reverse = false)
     {
         $formTypes = $this->configuration->getConfig('types');
 
@@ -458,7 +491,63 @@ class Builder
                 }
             }
         }
+    }
 
-        return $fieldData;
+    /**
+     * @param array  $fieldData
+     * @param string $type
+     * @param bool   $reverse
+     * @throws \Exception
+     */
+    private function transformConditionalOptions(&$fieldData, $type, $reverse = false)
+    {
+        if ($fieldData['type'] !== 'mailBehaviour') {
+            return;
+        }
+
+        $baseConfig = $this->configuration->getBackendConditionalLogicConfig();
+        $typeConfig = $baseConfig[$type];
+
+        $elementConfig = $typeConfig[$fieldData['type']];
+        $elementFormConfig = $elementConfig['form'];
+
+        foreach ($elementFormConfig as $formElementName => $config) {
+            if (!isset($fieldData[$formElementName])) {
+                continue;
+            }
+
+            $transformer = null;
+            $fieldType = $config['type'];
+            $fieldDataValue = $fieldData[$formElementName];
+
+            // conditional field transformer
+            if ($fieldType === 'conditional_select') {
+                $conditionalFieldIdentifier = $config['conditional_identifier'];
+                $fieldIndex = $conditionalFieldIdentifier;
+                if (isset($fieldData[$conditionalFieldIdentifier])) {
+                    foreach ($config['conditional'] as $conditionalFieldName => $conditionalFieldConfig) {
+                        if ($fieldDataValue === $conditionalFieldName) {
+                            if (!empty($conditionalFieldConfig['options_transformer'])) {
+                                $transformer = $this->optionsTransformerRegistry->get($conditionalFieldConfig['options_transformer']);
+                            }
+                        }
+                    }
+                }
+            } else {
+                // default field transformer
+                $fieldIndex = $formElementName;
+                if (!empty($config['options_transformer'])) {
+                    $transformer = $this->optionsTransformerRegistry->get($config['options_transformer']);
+                }
+            }
+
+            if ($transformer instanceof OptionsTransformerInterface) {
+                if ($reverse === false) {
+                    $fieldData[$fieldIndex] = $transformer->transform($fieldData[$fieldIndex]);
+                } else {
+                    $fieldData[$fieldIndex] = $transformer->reverseTransform($fieldData[$fieldIndex]);
+                }
+            }
+        }
     }
 }
