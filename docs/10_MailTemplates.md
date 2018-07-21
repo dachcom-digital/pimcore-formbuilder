@@ -14,6 +14,8 @@ Add those properties to your mail template.
 
 #### mail_successfully_sent *(String|Document|Snippet)*
 
+> Read more about the success message behaviour [here](11_SuccessMessage.md).
+
 Use the `mail_successfully_sent` property to define a message after the form has been successfully sent.
 There are three options:
 
@@ -45,3 +47,7 @@ Mail: %Text(mailaddress);
 In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user.
 To do so, just define the `mail_ignore_fields` property in your email template. Add one or multiple (comma separated) fields as string.
 *Notice:* The field name needs be identical to the field name in your form configuration.
+
+## Conditional Logic
+It's also possible to change the email template identification based on different conditions. 
+Read more about conditional logic [here](81_ConditionalLogic.md).
