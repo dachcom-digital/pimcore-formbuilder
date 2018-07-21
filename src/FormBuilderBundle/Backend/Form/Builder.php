@@ -501,10 +501,6 @@ class Builder
      */
     private function transformConditionalOptions(&$fieldData, $type, $reverse = false)
     {
-        if ($fieldData['type'] !== 'mailBehaviour') {
-            return;
-        }
-
         $baseConfig = $this->configuration->getBackendConditionalLogicConfig();
         $typeConfig = $baseConfig[$type];
 

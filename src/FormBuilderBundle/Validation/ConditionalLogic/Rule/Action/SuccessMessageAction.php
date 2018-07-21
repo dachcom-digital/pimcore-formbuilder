@@ -6,7 +6,7 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterfa
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\SimpleReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ActionTrait;
 
-class MailBehaviourAction implements ActionInterface
+class SuccessMessageAction implements ActionInterface
 {
     use ActionTrait;
 
@@ -21,11 +21,6 @@ class MailBehaviourAction implements ActionInterface
     protected $value = null;
 
     /**
-     * @var string
-     */
-    protected $mailType = null;
-
-    /**
      * @param               $validationState
      * @param               $formData
      * @param               $ruleId
@@ -37,10 +32,9 @@ class MailBehaviourAction implements ActionInterface
         if ($validationState === true) {
             $data['identifier'] = $this->getIdentifier();
             $data['value'] = $this->getValue();
-            $data['mailType'] = $this->getMailType();
         }
 
-        return new SimpleReturnStack('mailBehaviour', $data);
+        return new SimpleReturnStack('successMessage', $data);
     }
 
     /**
@@ -73,21 +67,5 @@ class MailBehaviourAction implements ActionInterface
     public function setValue($value)
     {
         $this->value = $value;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMailType()
-    {
-        return $this->mailType;
-    }
-
-    /**
-     * @param string
-     */
-    public function setMailType($mailType)
-    {
-        $this->mailType = $mailType;
     }
 }

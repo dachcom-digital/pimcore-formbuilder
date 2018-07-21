@@ -11,14 +11,14 @@ class MailBehaviourData implements DataInterface
     const IDENTIFIER_RECIPIENT = 'recipient';
 
     /**
-     * @var array
-     */
-    private $data = [];
-
-    /**
      * @var HrefLocaleMapper
      */
     protected $hrefLocaleMapper;
+
+    /**
+     * @var array
+     */
+    private $data = [];
 
     /**
      * DynamicChoiceType constructor.

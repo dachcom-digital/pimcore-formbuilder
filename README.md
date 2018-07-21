@@ -27,6 +27,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 ## Further Information
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
 - [Mail Template Configuration](docs/10_MailTemplates.md)
+- [Success Message](docs/11_SuccessMessage.md)
 - [Dynamic Fields](docs/20_AjaxForms.md)
 - [Available Form Types](docs/30_FormTypes.md)
   - [Dynamic Choice Type](docs/82_DynamicChoice.md)

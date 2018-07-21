@@ -152,6 +152,32 @@ form_builder:
                             options:
                                 - ['form_builder_mail_behaviour_mail_type_main', 'main']
                                 - ['form_builder_mail_behaviour_mail_type_copy', 'copy']
+            successMessage:
+                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\SuccessMessageAction'
+                name: 'form_builder.cl.action.success_message'
+                icon: 'form_builder_cl_success_message'
+                form:
+                    identifier:
+                        type: conditional_select
+                        label: 'form_builder_success_message_identifier'
+                        config:
+                            options:
+                                - ['form_builder_success_message_identifier_string', 'string']
+                                - ['form_builder_success_message_identifier_snippet', 'snippet']
+                                - ['form_builder_success_message_identifier_redirect', 'redirect']
+                        conditional_identifier: 'value'
+                        conditional:
+                            string:
+                                type: textfield
+                                label: 'form_builder_success_message_text'
+                            snippet:
+                                type: localized_href
+                                label: 'form_builder_success_message_snippet'
+                                options_transformer: FormBuilderBundle\Transformer\HrefTransformer
+                            redirect:
+                                type: localized_href
+                                label: 'form_builder_success_message_document'
+                                options_transformer: FormBuilderBundle\Transformer\HrefTransformer
         condition:
             elementValue:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ElementValueCondition'

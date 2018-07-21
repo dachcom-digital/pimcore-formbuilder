@@ -21,6 +21,10 @@ services:
         tags:
             - { name: 'form_builder.dispatcher', type: 'mail_behaviour' }
 
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\SuccessMessage:
+        tags:
+            - { name: 'form_builder.dispatcher', type: 'success_message' }
+
     # Data
     FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\ConstraintsData:
         shared: false
@@ -33,6 +37,11 @@ services:
             - { name: 'form_builder.module.data' }
 
     FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData:
+        shared: false
+        tags:
+            - { name: 'form_builder.module.data' }
+
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SuccessMessageData:
         shared: false
         tags:
             - { name: 'form_builder.module.data' }

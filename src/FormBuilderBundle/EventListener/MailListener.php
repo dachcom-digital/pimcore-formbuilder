@@ -9,6 +9,7 @@ use FormBuilderBundle\Parser\MailParser;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SuccessMessageData;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,6 +38,16 @@ class MailListener implements EventSubscriberInterface
      * @var Dispatcher
      */
     protected $dispatcher;
+
+    /**
+     * Defines which mail template should be used
+     * to gather success message context.
+     * By default this is always the main mail template
+     * but can be changed via mail behaviour CL.
+     *
+     * @var int
+     */
+    private $successMailTemplateProviderId;
 
     /**
      * MailListener constructor.
@@ -70,6 +81,7 @@ class MailListener implements EventSubscriberInterface
 
     /**
      * @param SubmissionEvent $event
+     * @throws \Exception
      */
     public function onFormSubmit(SubmissionEvent $event)
     {
@@ -77,6 +89,7 @@ class MailListener implements EventSubscriberInterface
         $form = $event->getForm();
 
         $formConfiguration = $event->getFormConfiguration();
+        /** @var FlashBagInterface $flashBag */
         $flashBag = $this->session->getFlashBag();
         $emailConfiguration = null;
 
@@ -91,7 +104,6 @@ class MailListener implements EventSubscriberInterface
 
             $send = $this->sendForm($emailConfiguration['mail_template_id'], $form, $request->getLocale());
             if ($send === true) {
-                //send copy!
                 if ($sendCopy === true) {
                     if (empty($emailConfiguration['copy_mail_template_id'])) {
                         throw new \Exception('no valid copy mail template given.');
@@ -108,13 +120,13 @@ class MailListener implements EventSubscriberInterface
             $flashBag->add('error', 'error while sending mail: ' . $e->getMessage());
         }
 
-        $this->onSuccess($event, $flashBag, $emailConfiguration['mail_template_id']);
+        $this->onSuccess($event, $form, $flashBag, $request->getLocale());
     }
 
     /**
      * @param int           $mailTemplateId
      * @param FormInterface $form
-     * @param               $locale
+     * @param string        $locale
      * @param bool          $isCopy
      * @return bool
      * @throws \Exception
@@ -122,16 +134,22 @@ class MailListener implements EventSubscriberInterface
     private function sendForm($mailTemplateId = 0, FormInterface $form, $locale, $isCopy = false)
     {
         /** @var MailBehaviourData $mailConditionData */
-        $mailConditionData = $this->checkMailCondition($form, $isCopy);
+        $mailConditionData = $this->checkMailCondition($form, 'mail_behaviour', ['isCopy' => $isCopy]);
 
         if ($mailConditionData->hasMailTemplate()) {
-            $mailTemplate = Document\Email::getById($mailConditionData->getMailTemplateId($locale));
+            $conditionalMailTemplateId = $mailConditionData->getMailTemplateId($locale);
+            $mailTemplate = Document\Email::getById($conditionalMailTemplateId);
+
         } else {
             $mailTemplate = Document\Email::getById($mailTemplateId);
         }
 
         if (!$mailTemplate instanceof Document\Email) {
             return false;
+        }
+
+        if ($isCopy === false) {
+            $this->successMailTemplateProviderId = $mailTemplate->getId();
         }
 
         if ($mailConditionData->hasRecipient()) {
@@ -150,59 +168,62 @@ class MailListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FormInterface $form
-     * @param               $isCopy
-     * @return DataInterface
+     * @param SubmissionEvent   $event
+     * @param FormInterface     $form
+     * @param FlashBagInterface $flashBag
+     * @param                   $locale
+     * @return bool
      * @throws \Exception
      */
-    private function checkMailCondition(FormInterface $form, $isCopy)
-    {
-        return $this->dispatcher->runFormDispatcher('mail_behaviour', [
-            'formData'         => $form->getData()->getData(),
-            'conditionalLogic' => $form->getData()->getConditionalLogic()
-        ], [
-            'isCopy' => $isCopy
-        ]);
-    }
-
-    /**
-     * @param SubmissionEvent   $event
-     * @param FlashBagInterface $flashBag
-     * @param                   $mailTemplateId
-     *
-     * @return bool
-     */
-    private function onSuccess(SubmissionEvent $event, $flashBag, $mailTemplateId)
+    private function onSuccess(SubmissionEvent $event, FormInterface $form, FlashBagInterface $flashBag, $locale)
     {
         $error = false;
         $message = 'Success!';
 
-        $mailTemplate = Document\Email::getById($mailTemplateId);
+        $mailTemplate = Document\Email::getById($this->successMailTemplateProviderId);
         if (!$mailTemplate instanceof Document\Email) {
             return false;
         }
 
-        $afterSuccess = $mailTemplate->getProperty('mail_successfully_sent');
+        /** @var SuccessMessageData $successConditionData */
+        $successConditionData = $this->checkMailCondition($form, 'success_message');
 
-        //get the content from a snippet
+        if ($successConditionData->hasData()) {
+            $afterSuccess = $successConditionData->getIdentifiedData($locale);
+        } else {
+            $afterSuccess = $mailTemplate->getProperty('mail_successfully_sent');
+        }
+
         if ($afterSuccess instanceof Document\Snippet) {
             $params['document'] = $afterSuccess;
-
             try {
                 $message = $this->includeRenderer->render($afterSuccess, $params, false);
             } catch (\Exception $e) {
                 $error = true;
                 $message = $e->getMessage();
             }
-        } //it's a redirect!
-        elseif ($afterSuccess instanceof Document) {
+        } elseif ($afterSuccess instanceof Document) {
             $message = $afterSuccess->getFullPath();
             $event->setRedirectUri($afterSuccess->getFullPath());
-        } //it's just a string!
-        elseif (is_string($afterSuccess)) {
+        } elseif (is_string($afterSuccess)) {
             $message = $afterSuccess;
         }
 
         $flashBag->add($error ? 'error' : 'success', $message);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string        $dispatchModule
+     * @param array         $moduleOptions
+     * @return DataInterface
+     * @throws \Exception
+     */
+    private function checkMailCondition(FormInterface $form, $dispatchModule, $moduleOptions = [])
+    {
+        return $this->dispatcher->runFormDispatcher($dispatchModule, [
+            'formData'         => $form->getData()->getData(),
+            'conditionalLogic' => $form->getData()->getConditionalLogic()
+        ], $moduleOptions);
     }
 }
