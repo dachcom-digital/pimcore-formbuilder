@@ -32,7 +32,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
             cls: 'form_builder_delete_conditional_section_container',
             style: 'margin-top: 10px; border: 1px solid #565d56;',
             listeners: {
-                updateSectionId: function(index) {
+                updateSectionId: function (index) {
                     _.sectionId = index;
                     _.updateIndex();
                 }
@@ -109,18 +109,18 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
             border: false
         });
 
-        if(this.sectionData && this.sectionData.condition && this.sectionData.condition.length > 0) {
+        if (this.sectionData && this.sectionData.condition && this.sectionData.condition.length > 0) {
             Ext.Array.each(this.sectionData.condition, function (condition) {
-                if(condition === null) {
+                if (condition === null) {
                     return;
                 }
                 this.addCondition(condition.type, condition);
             }.bind(this));
         }
 
-        if(this.sectionData && this.sectionData.action && this.sectionData.action.length > 0) {
+        if (this.sectionData && this.sectionData.action && this.sectionData.action.length > 0) {
             Ext.Array.each(this.sectionData.action, function (action) {
-                if(action === null) {
+                if (action === null) {
                     return;
                 }
                 this.addAction(action.type, action);
@@ -138,11 +138,11 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     addCondition: function (type, data) {
         try {
 
-            var configuration = Ext.Array.filter(this.conditionalStore.conditions, function(item) {
+            var configuration = Ext.Array.filter(this.conditionalStore.conditions, function (item) {
                 return item.identifier === type;
             });
 
-            if(configuration.length !== 1) {
+            if (configuration.length !== 1) {
                 throw 'invalid or no configuration found';
             }
 
@@ -153,7 +153,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
             this.conditionsContainer.add(item);
             item.updateLayout();
             this.conditionsContainer.updateLayout();
-        } catch(e) {
+        } catch (e) {
             console.error('condition type "' + type + '" error:', e);
         }
     },
@@ -166,11 +166,11 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     addAction: function (type, data) {
         try {
 
-            var configuration = Ext.Array.filter(this.conditionalStore.actions, function(item) {
+            var configuration = Ext.Array.filter(this.conditionalStore.actions, function (item) {
                 return item.identifier === type;
             });
 
-            if(configuration.length !== 1) {
+            if (configuration.length !== 1) {
                 throw 'invalid or no configuration found';
             }
 
@@ -181,7 +181,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
             this.actionsContainer.add(item);
             item.updateLayout();
             this.actionsContainer.updateLayout();
-        } catch(e) {
+        } catch (e) {
             console.error('action type "' + type + '" error:', e);
         }
     },
@@ -202,24 +202,18 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
         }
     },
 
-    updateIndex: function() {
+    updateIndex: function () {
         var _ = this;
-        this.conditionsContainer.items.each(function(component, index) {
-            component.items.each(function(condition){
-                if(condition.items && condition.items.items.length > 0) {
-                    Ext.Array.each(condition.items.items, function (field) {
-                        field.fireEvent('updateIndexName', _.sectionId, index);
-                    });
-                }
-            });
-        });
-        this.actionsContainer.items.each(function(component, index) {
-            component.items.each(function(action){
-                if(action.items && action.items.items.length > 0) {
-                    Ext.Array.each(action.items.items, function (field) {
-                        field.fireEvent('updateIndexName', _.sectionId, index);
-                    });
-                }
+        Ext.Array.each([this.conditionsContainer, this.actionsContainer], function (container) {
+            container.items.each(function (component, index) {
+                component.items.each(function (subComponent) {
+                    subComponent.fireEvent('updateIndexName', _.sectionId, index);
+                    if (subComponent.items && subComponent.items.items.length > 0) {
+                        Ext.Array.each(subComponent.items.items, function (field) {
+                            field.fireEvent('updateIndexName', _.sectionId, index);
+                        });
+                    }
+                });
             });
         });
     },

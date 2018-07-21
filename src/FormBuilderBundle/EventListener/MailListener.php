@@ -6,6 +6,9 @@ use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Parser\MailParser;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,20 +34,28 @@ class MailListener implements EventSubscriberInterface
     protected $includeRenderer;
 
     /**
+     * @var Dispatcher
+     */
+    protected $dispatcher;
+
+    /**
      * MailListener constructor.
      *
      * @param SessionInterface $session
      * @param MailParser       $mailParser
      * @param IncludeRenderer  $includeRenderer
+     * @param Dispatcher       $dispatcher
      */
     public function __construct(
         SessionInterface $session,
         MailParser $mailParser,
-        IncludeRenderer $includeRenderer
+        IncludeRenderer $includeRenderer,
+        Dispatcher $dispatcher
     ) {
         $this->session = $session;
         $this->mailParser = $mailParser;
         $this->includeRenderer = $includeRenderer;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -80,14 +91,11 @@ class MailListener implements EventSubscriberInterface
 
             $send = $this->sendForm($emailConfiguration['mail_template_id'], $form, $request->getLocale());
             if ($send === true) {
-
                 //send copy!
                 if ($sendCopy === true) {
-
                     if (empty($emailConfiguration['copy_mail_template_id'])) {
                         throw new \Exception('no valid copy mail template given.');
                     }
-
                     $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $form, $request->getLocale(), true);
                     if ($send !== true) {
                         throw new \Exception('copy mail not sent.');
@@ -113,9 +121,21 @@ class MailListener implements EventSubscriberInterface
      */
     private function sendForm($mailTemplateId = 0, FormInterface $form, $locale, $isCopy = false)
     {
-        $mailTemplate = Document\Email::getById($mailTemplateId);
+        /** @var MailBehaviourData $mailConditionData */
+        $mailConditionData = $this->checkMailCondition($form, $isCopy);
+
+        if ($mailConditionData->hasMailTemplate()) {
+            $mailTemplate = Document\Email::getById($mailConditionData->getMailTemplateId($locale));
+        } else {
+            $mailTemplate = Document\Email::getById($mailTemplateId);
+        }
+
         if (!$mailTemplate instanceof Document\Email) {
             return false;
+        }
+
+        if ($mailConditionData->hasRecipient()) {
+            $mailTemplate->setTo($mailConditionData->getRecipient());
         }
 
         $mail = $this->mailParser->create($mailTemplate, $form, $locale, $isCopy);
@@ -127,6 +147,22 @@ class MailListener implements EventSubscriberInterface
         $mail->send();
 
         return true;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param               $isCopy
+     * @return DataInterface
+     * @throws \Exception
+     */
+    private function checkMailCondition(FormInterface $form, $isCopy)
+    {
+        return $this->dispatcher->runFormDispatcher('mail_behaviour', [
+            'formData'         => $form->getData()->getData(),
+            'conditionalLogic' => $form->getData()->getConditionalLogic()
+        ], [
+            'isCopy' => $isCopy
+        ]);
     }
 
     /**

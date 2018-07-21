@@ -107,7 +107,7 @@ class RequestListener implements EventSubscriberInterface
             if ($form->isValid()) {
 
                 if ($sessionBag->has('form_configuration_' . $formId)) {
-                    $sessionBag->remove('form_configuration_' . $formId);
+                    //$sessionBag->remove('form_configuration_' . $formId);
                 }
 
                 $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);

@@ -21,6 +21,11 @@ class MailBehaviourAction implements ActionInterface
     protected $value = null;
 
     /**
+     * @var string
+     */
+    protected $mailType = null;
+
+    /**
      * @param               $validationState
      * @param               $formData
      * @param               $ruleId
@@ -28,11 +33,14 @@ class MailBehaviourAction implements ActionInterface
      */
     public function apply($validationState, $formData, $ruleId)
     {
-        $data = [];
+        $data = [
+            'identifier' => null
+        ];
+
         if ($validationState === true) {
-            $value = $this->getValue();
-            $identifier = $this->getIdentifier();
-            $data[$identifier] = $value;
+            $data['identifier'] = $this->getIdentifier();
+            $data['value'] = $this->getValue();
+            $data['mailType'] = $this->getMailType();
         }
 
         return new SimpleReturnStack('mailBehaviour', $data);
@@ -68,5 +76,21 @@ class MailBehaviourAction implements ActionInterface
     public function setValue($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMailType()
+    {
+        return $this->mailType;
+    }
+
+    /**
+     * @param string
+     */
+    public function setMailType($mailType)
+    {
+        $this->mailType = $mailType;
     }
 }

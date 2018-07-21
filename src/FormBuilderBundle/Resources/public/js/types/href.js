@@ -51,6 +51,8 @@ Formbuilder.comp.types.href = Class.create({
             this.href.setHrefObject(this.storeData);
         }
 
+        this.href.setHrefLocale(this.locale);
+
         this.href.on('render', function (el) {
 
             new Ext.dd.DropZone(el.getEl(), {

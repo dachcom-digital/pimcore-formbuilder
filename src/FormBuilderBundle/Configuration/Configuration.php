@@ -174,4 +174,12 @@ class Configuration
     {
         return $this->backendConfig[$slot];
     }
+
+    /**
+     * @return mixed
+     */
+    public function getBackendConditionalLogicConfig()
+    {
+        return $this->config['conditional_logic'];
+    }
 }

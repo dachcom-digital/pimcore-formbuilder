@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher;
 
 use FormBuilderBundle\Registry\DispatcherRegistry;
 use FormBuilderBundle\Storage\FormFieldInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Processor\ConditionalLogicProcessor;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -45,7 +46,7 @@ class Dispatcher
      * @param       $dispatcherModule
      * @param       $options
      * @param array $moduleOptions
-     * @return mixed
+     * @return DataInterface
      * @throws \Exception
      */
     public function runFieldDispatcher($dispatcherModule, $options, $moduleOptions = [])
@@ -63,7 +64,7 @@ class Dispatcher
      * @param       $dispatcherModule
      * @param       $options
      * @param array $moduleOptions
-     * @return mixed
+     * @return DataInterface
      * @throws \Exception
      */
     public function runFormDispatcher($dispatcherModule, $options, $moduleOptions = [])
@@ -81,7 +82,7 @@ class Dispatcher
      * @param $dispatcherModule
      * @param $options
      * @param $moduleOptions
-     * @return mixed
+     * @return DataInterface
      * @throws \Exception
      */
     private function run($dispatcherModule, $options, $moduleOptions)

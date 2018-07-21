@@ -93,7 +93,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $this->session = $session;
         $this->dispatcher = $dispatcher;
         $this->formRegistry = $formRegistry;
-
         $this->availableConstraints = $this->configuration->getAvailableConstraints();
         $this->availableFormTypes = $this->configuration->getConfig('types');
     }
@@ -257,7 +256,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         if (in_array('constraints', $availableOptions)) {
-            $constraints = $this->dispatcher->runFieldDispatcher('constraints', [
+
+            $constraintData = $this->dispatcher->runFieldDispatcher('constraints', [
                 'formData'         => $formData,
                 'field'            => $field,
                 'conditionalLogic' => $form->getData()->getConditionalLogic()
@@ -270,8 +270,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 $constraintNames[] = $constraint['type'];
             }
 
-            if (!empty($constraints)) {
-                $options['constraints'] = $constraints;
+            if ($constraintData->hasData()) {
+                $options['constraints'] = $constraintData->getData();
             }
         }
 
@@ -289,15 +289,14 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             //$options['conditionalLogic'] = NULL;
         }
 
-        //classes
-        $classes = $this->dispatcher->runFieldDispatcher('form_type_classes', [
+        $classData = $this->dispatcher->runFieldDispatcher('form_type_classes', [
             'formData'         => $formData,
             'field'            => $field,
             'conditionalLogic' => $form->getData()->getConditionalLogic()
         ]);
 
-        if (!empty($classes)) {
-            $templateClasses = array_merge($templateClasses, $classes);
+        if ($classData->hasData()) {
+            $templateClasses = array_merge($templateClasses, $classData->getData());
         }
 
         if (!empty($templateClasses)) {

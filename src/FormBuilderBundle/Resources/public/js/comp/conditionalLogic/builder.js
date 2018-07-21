@@ -16,7 +16,8 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
     initialize: function (conditionalData, conditionalStore, formBuilder) {
         var _ = this;
         this.formBuilder = formBuilder;
-        this.conditionalData = conditionalData;
+        // namespace in extJs is .cl
+        this.conditionalData = typeof conditionalData.cl === 'object' ? conditionalData.cl : conditionalData;
         this.conditionalStore = conditionalStore;
         this.panel = new Ext.form.FieldSet({
             title: t('form_builder_conditional_logic'),
@@ -40,8 +41,8 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
             }]
         });
 
-        if (this.conditionalData.cl && this.conditionalData.cl.length > 0) {
-            Ext.Array.each(this.conditionalData.cl, function (group) {
+        if (this.conditionalData.length > 0) {
+            Ext.Array.each(this.conditionalData, function (group) {
                 this.addConditionalSection(group);
             }.bind(this));
         }

@@ -4,12 +4,20 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\FormTypeClassesData;
+use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormTypeClasses implements ModuleInterface
 {
+    /**
+     * @var DataFactory
+     */
+    protected $dataFactory;
+
     /**
      * @var FormInterface
      */
@@ -34,6 +42,14 @@ class FormTypeClasses implements ModuleInterface
      * @var array
      */
     protected $appliedConditions;
+
+    /**
+     * @param DataFactory $dataFactory
+     */
+    public function __construct(DataFactory $dataFactory)
+    {
+        $this->dataFactory = $dataFactory;
+    }
 
     /**
      * @param OptionsResolver $resolver
@@ -66,12 +82,14 @@ class FormTypeClasses implements ModuleInterface
     }
 
     /**
-     * @return array
+     * @return DataInterface
      */
     private function checkConditionData()
     {
+        $returnContainer = $this->dataFactory->generate(FormTypeClassesData::class);
+
         if (empty($this->appliedConditions)) {
-            return [];
+            return $returnContainer;
         }
 
         $classes = [];
@@ -96,6 +114,8 @@ class FormTypeClasses implements ModuleInterface
             }
         }
 
-        return array_unique($classes);
+        $returnContainer->setData(array_unique($classes));
+
+        return $returnContainer;
     }
 }
