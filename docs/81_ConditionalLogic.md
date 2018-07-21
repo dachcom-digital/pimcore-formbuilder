@@ -1,5 +1,5 @@
 # Conditional Logic
-![](https://user-images.githubusercontent.com/700119/33080792-3835ab82-ced9-11e7-80c3-41da8940ceb3.png)
+![](https://user-images.githubusercontent.com/700119/43034880-05fca358-8ce5-11e8-8fc4-2954fc7b942d.png)
 
 Use the conditional logic to hide/show fields, toggle classes, change validation and more, depending on given field values.
 
