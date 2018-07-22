@@ -303,8 +303,6 @@
                         }
                     }
                 });
-                console.log('item Limit:');
-                console.log(config.item_limit);
 
                 $template.remove();
 
