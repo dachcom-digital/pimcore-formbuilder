@@ -45,7 +45,8 @@ class DynamicMultiFileType extends AbstractType
                 'messages'           => $this->getInterfaceTranslations(),
                 'multiple'           => $options['multiple'] ? 1 : 0,
                 'max_file_size'      => is_numeric($options['max_file_size']) ? (int)$options['max_file_size'] * 1024 * 1024 : 0,
-                'allowed_extensions' => is_array($options['allowed_extensions']) ? $options['allowed_extensions'] : []
+                'allowed_extensions' => is_array($options['allowed_extensions']) ? $options['allowed_extensions'] : [],
+                'item_limit'         => is_numeric($options['item_limit']) ? (int)$options['item_limit'] : 0
             ]
         ]);
 
@@ -62,6 +63,7 @@ class DynamicMultiFileType extends AbstractType
         $resolver->setDefaults([
             'max_file_size'      => false,
             'allowed_extensions' => false,
+            'item_limit'         => false
         ]);
     }
 
