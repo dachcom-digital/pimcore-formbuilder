@@ -213,8 +213,6 @@ var formBuilder = (function () {
                             }
                         }
                     });
-                    console.log('item Limit (legacy):');
-                    console.log(config.item_limit);
 
                     $template.remove();
                 }
