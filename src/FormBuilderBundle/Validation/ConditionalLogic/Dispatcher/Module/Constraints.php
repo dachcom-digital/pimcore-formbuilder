@@ -96,18 +96,9 @@ class Constraints implements ModuleInterface
         //add defaults
         $constraints = [];
         $fieldConstraints = $this->field->getConstraints();
-        foreach ($fieldConstraints as $constraint) {
-            $constraints[] = $constraint['type'];
-        }
+        $validConstraints = $this->checkConditionalLogicConstraints($fieldConstraints);
 
-        $validConstraints = $this->checkConditionalLogicConstraints($constraints);
-
-        $constraintData = [];
-        foreach ($validConstraints as $validConstraint) {
-            $constraintData[] = ['type' => $validConstraint];
-        }
-
-        $completeConstraintData = $this->appendConstraintsData($constraintData);
+        $completeConstraintData = $this->appendConstraintsData($validConstraints);
 
 
         $returnContainer = $this->dataFactory->generate(ConstraintsData::class);
