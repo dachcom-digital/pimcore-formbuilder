@@ -70,7 +70,7 @@ class FormTypeClasses implements ModuleInterface
 
     /**
      * @param $options
-     * @return array
+     * @return DataInterface
      */
     public function apply($options)
     {
