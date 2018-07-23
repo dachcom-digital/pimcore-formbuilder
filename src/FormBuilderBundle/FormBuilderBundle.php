@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
-    const BUNDLE_VERSION = '2.3.2';
+    const BUNDLE_VERSION = '2.3.3';
 
     /**
      * @param ContainerBuilder $container
