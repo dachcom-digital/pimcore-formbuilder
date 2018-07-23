@@ -254,6 +254,15 @@ form_builder:
                         display_group_id: attributes
                         type: label
                         label: 'form_builder_type_field.allowed_extensions_desc'
+                    options.item_limit:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.item_limit'
+                        config: ~
+                    options.item_limit_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.item_limit_desc'
                     options.max_file_size:
                         display_group_id: attributes
                         type: textfield

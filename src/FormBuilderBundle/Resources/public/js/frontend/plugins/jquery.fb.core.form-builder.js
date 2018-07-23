@@ -281,7 +281,8 @@
                     },
                     validation: {
                         sizeLimit: config.max_file_size,
-                        allowedExtensions: config.allowed_extensions
+                        allowedExtensions: config.allowed_extensions,
+                        itemLimit: config.item_limit
                     },
                     callbacks: {
                         onUpload: function () {
