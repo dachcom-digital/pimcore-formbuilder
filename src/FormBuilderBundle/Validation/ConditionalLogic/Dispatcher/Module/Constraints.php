@@ -94,21 +94,10 @@ class Constraints implements ModuleInterface
         $this->appliedConditions = $options['appliedConditions'];
 
         //add defaults
-        $constraints = [];
         $fieldConstraints = $this->field->getConstraints();
-        foreach ($fieldConstraints as $constraint) {
-            $constraints[] = $constraint['type'];
-        }
+        $validConstraints = $this->checkConditionalLogicConstraints($fieldConstraints);
 
-        $validConstraints = $this->checkConditionalLogicConstraints($constraints);
-
-        $constraintData = [];
-        foreach ($validConstraints as $validConstraint) {
-            $constraintData[] = ['type' => $validConstraint];
-        }
-
-        $completeConstraintData = $this->appendConstraintsData($constraintData);
-
+        $completeConstraintData = $this->appendConstraintsData($validConstraints);
 
         $returnContainer = $this->dataFactory->generate(ConstraintsData::class);
         $returnContainer->setData($completeConstraintData);
@@ -140,20 +129,25 @@ class Constraints implements ModuleInterface
 
             if ($returnStack->getActionType() === 'addConstraints') {
                 foreach ($returnStack->getData() as $constraint) {
-                    $defaultFieldConstraints[] = $constraint;
+                    $defaultFieldConstraints[] = ['type' => $constraint];
                 }
             } elseif ($returnStack->getActionType() === 'removeConstraints') {
                 if ($returnStack->getData() === 'all') {
                     $defaultFieldConstraints = [];
                 } else {
                     foreach ($returnStack->getData() as $constraint) {
-                        $defaultFieldConstraints = array_diff($defaultFieldConstraints, [$constraint]);
+                        $defaultFieldConstraints = array_filter($defaultFieldConstraints, function ($val) use ($constraint) {
+                            return $val['type'] !== $constraint;
+                        });
                     }
                 }
             }
         }
 
-        return array_unique($defaultFieldConstraints);
+        $tempArr = array_unique(array_column($defaultFieldConstraints, 'type'));
+        array_intersect_key($defaultFieldConstraints, $tempArr);
+
+        return $defaultFieldConstraints;
     }
 
     /**
