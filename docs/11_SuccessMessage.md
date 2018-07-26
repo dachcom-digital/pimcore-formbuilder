@@ -25,6 +25,13 @@ which you have defined in the previous placed form area.
 
 > The `mail_successfully_sent_flash_message` is automatically available after you've installed FormBuilder.
 
+
+Be sure you have included the twig template somewhere on top in your main layout:
+
+```twig
+{% include '@FormBuilder/Common/redirect_flash_message.html.twig' %}
+```
+
 It's also possible to modify those success handler via conditional logic.
 
 ## Conditional Logic
