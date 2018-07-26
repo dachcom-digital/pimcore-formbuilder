@@ -271,7 +271,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             }
 
             if ($constraintData->hasData()) {
-                $options['constraints'] = $constraintData->getData();
+                $constraints = $constraintData->getData();
+                $options['constraints'] = $constraints;
             }
         }
 
