@@ -77,7 +77,6 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
 
         this.fieldPanel = new Ext.form.FormPanel({
             id: myId,
-            type: 'combo',
             forceLayout: true,
             style: 'margin: 10px 0 0 0',
             bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
@@ -93,102 +92,152 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
         return this.fieldPanel;
     },
 
+    /**
+     * @param value
+     */
     generateValueField: function (value) {
-
-        var _ = this;
 
         if (this.valueField !== null) {
             this.fieldPanel.remove(this.valueField);
         }
 
         if (value === 'string') {
-            this.valueField = new Ext.form.TextField({
-                name: _.generateFieldName(this.sectionId, this.index, 'value'),
-                fieldLabel: t('form_builder_success_message_text'),
-                anchor: '100%',
-                labelAlign: 'top',
-                summaryDisplay: true,
-                allowBlank: false,
-                emptyText: t('form_builder_success_message_text_empty'),
-                value: this.data ? (typeof this.data.value === 'string' ? this.data.value : null) : null,
-                flex: 1,
-                listeners: {
-                    updateIndexName: function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'value');
-                    }
-                }
-            });
+            this.valueField = this.generateStringValueField();
         } else if (value === 'snippet') {
-            var fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
-            var localizedField = new Formbuilder.comp.types.localizedField(
-                function (locale) {
-                    var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
-                        fieldConfig = {
-                            label: t('form_builder_success_message_snippet'),
-                            id: _.generateFieldName(this.sectionId, this.index, 'value'),
-                            config: {
-                                types: ['document'],
-                                subtypes: {document: ['snippet']}
-                            }
-                        }, hrefField, hrefElement;
-
-                    hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
-                    hrefElement = hrefField.getHref();
-                    hrefElement.on('updateIndexName', function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
-                    });
-                    return hrefElement;
-                }.bind(this)
-            );
-
-            localizedElementField = localizedField.getField();
-            localizedElementField.on('updateIndexName', function (sectionId, index) {
-                var localizedTextFields = this.query('textfield');
-                if (localizedTextFields.length > 0) {
-                    Ext.Array.each(localizedTextFields, function (field) {
-                        field.fireEvent('updateIndexName', sectionId, index);
-                    });
-                }
-            });
-
-            this.valueField = localizedElementField;
-
+            this.valueField = this.generateSnippetValueField();
         } else if (value === 'redirect') {
-            var fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
-            var localizedField = new Formbuilder.comp.types.localizedField(
-                function (locale) {
-                    var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
-                        fieldConfig = {
-                            label: t('form_builder_success_message_document'),
-                            id: _.generateFieldName(this.sectionId, this.index, 'value'),
-                            config: {
-                                types: ['document'],
-                                subtypes: {document: ['page']}
-                            }
-                        }, hrefField, hrefElement;
-
-                    hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
-                    hrefElement = hrefField.getHref();
-                    hrefElement.on('updateIndexName', function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
-                    });
-                    return hrefElement;
-                }.bind(this)
-            );
-
-            localizedElementField = localizedField.getField();
-            localizedElementField.on('updateIndexName', function (sectionId, index) {
-                var localizedTextFields = this.query('textfield');
-                if (localizedTextFields.length > 0) {
-                    Ext.Array.each(localizedTextFields, function (field) {
-                        field.fireEvent('updateIndexName', sectionId, index);
-                    });
-                }
-            });
-
-            this.valueField = localizedElementField;
+            this.valueField = this.generateRedirectValueField();
         }
 
         this.fieldPanel.add(this.valueField);
+    },
+
+    /**
+     * @returns {Ext.form.TextField}
+     */
+    generateStringValueField: function () {
+        return new Ext.form.TextField({
+            name: this.generateFieldName(this.sectionId, this.index, 'value'),
+            fieldLabel: t('form_builder_success_message_text'),
+            anchor: '100%',
+            labelAlign: 'top',
+            summaryDisplay: true,
+            allowBlank: false,
+            emptyText: t('form_builder_success_message_text_empty'),
+            value: this.data ? (typeof this.data.value === 'string' ? this.data.value : null) : null,
+            flex: 1,
+            listeners: {
+                updateIndexName: function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value');
+                }
+            }
+        });
+    },
+
+    /**
+     * @returns {Ext.form.FieldSet}
+     */
+    generateSnippetValueField: function () {
+        var _ = this, fieldData, localizedField, localizedValueField;
+
+        fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
+
+        localizedField = new Formbuilder.comp.types.localizedField(
+            function (locale) {
+                var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
+                    fieldConfig = {
+                        label: t('form_builder_success_message_snippet'),
+                        id: _.generateFieldName(this.sectionId, this.index, 'value'),
+                        config: {
+                            types: ['document'],
+                            subtypes: {document: ['snippet']}
+                        }
+                    }, hrefField, hrefElement;
+
+                hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
+                hrefElement = hrefField.getHref();
+                hrefElement.on('updateIndexName', function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
+                });
+                return hrefElement;
+            }.bind(this)
+        );
+
+        localizedValueField = localizedField.getField();
+        localizedValueField.on('updateIndexName', function (sectionId, index) {
+            var localizedTextFields = this.query('textfield');
+            if (localizedTextFields.length > 0) {
+                Ext.Array.each(localizedTextFields, function (field) {
+                    field.fireEvent('updateIndexName', sectionId, index);
+                });
+            }
+        });
+
+        return localizedValueField;
+    },
+
+    /**
+     * @returns {Ext.form.FormPanel}
+     */
+    generateRedirectValueField: function () {
+        var _ = this, fieldData, localizedField, valueField, localizedValueField, flashMessageField;
+
+        fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
+        localizedField = new Formbuilder.comp.types.localizedField(
+            function (locale) {
+                var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
+                    fieldConfig = {
+                        label: t('form_builder_success_message_document'),
+                        id: _.generateFieldName(this.sectionId, this.index, 'value'),
+                        config: {
+                            types: ['document'],
+                            subtypes: {document: ['page']}
+                        }
+                    }, hrefField, hrefElement;
+
+                hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
+                hrefElement = hrefField.getHref();
+                hrefElement.on('updateIndexName', function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
+                });
+                return hrefElement;
+            }.bind(this)
+        );
+
+        localizedValueField = localizedField.getField();
+        localizedValueField.on('updateIndexName', function (sectionId, index) {
+            var localizedTextFields = this.query('textfield');
+            if (localizedTextFields.length > 0) {
+                Ext.Array.each(localizedTextFields, function (field) {
+                    field.fireEvent('updateIndexName', sectionId, index);
+                });
+            }
+        });
+
+        flashMessageField = new Ext.form.TextField({
+            name: _.generateFieldName(this.sectionId, this.index, 'flashMessage'),
+            fieldLabel: t('form_builder_success_message_flash_message_text'),
+            anchor: '100%',
+            labelAlign: 'top',
+            summaryDisplay: true,
+            allowBlank: false,
+            emptyText: t('form_builder_success_message_text_empty'),
+            value: this.data ? this.data.flashMessage : null,
+            flex: 1,
+            listeners: {
+                updateIndexName: function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value');
+                }
+            }
+        });
+
+        valueField = new Ext.form.FormPanel({
+            forceLayout: true,
+            style: '',
+            bodyStyle: '',
+            items: [localizedValueField, flashMessageField]
+        });
+
+        return valueField;
     }
 });

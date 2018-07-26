@@ -156,4 +156,25 @@ class SuccessMessageData implements DataInterface
 
         return null;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasFlashMessage()
+    {
+        return $this->isDocumentRedirect() && isset($this->data['flashMessage']) && !empty($this->data['flashMessage']);
+    }
+
+    /**
+     * @param $locale
+     * @return null|string
+     */
+    public function getFlashMessage($locale)
+    {
+        if (!$this->hasFlashMessage()) {
+            return null;
+        }
+
+        return $this->hasFlashMessage() ? $this->translator->trans((string)$this->data['flashMessage'], [], null, $locale) : null;
+    }
 }

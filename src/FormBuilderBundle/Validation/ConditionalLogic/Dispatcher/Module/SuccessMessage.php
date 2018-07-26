@@ -93,7 +93,7 @@ class SuccessMessage implements ModuleInterface
             }
 
             $successMessageConfig[$returnStackData['identifier']] = $returnStackData['value'];
-
+            $successMessageConfig['flashMessage'] = $returnStackData['flashMessage'];
         }
 
         $returnContainer->setData($successMessageConfig);

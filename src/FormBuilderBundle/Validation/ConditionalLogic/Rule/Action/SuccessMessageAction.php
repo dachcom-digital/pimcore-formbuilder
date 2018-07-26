@@ -21,6 +21,11 @@ class SuccessMessageAction implements ActionInterface
     protected $value = null;
 
     /**
+     * @var string
+     */
+    protected $flashMessage = null;
+
+    /**
      * @param               $validationState
      * @param               $formData
      * @param               $ruleId
@@ -32,6 +37,7 @@ class SuccessMessageAction implements ActionInterface
         if ($validationState === true) {
             $data['identifier'] = $this->getIdentifier();
             $data['value'] = $this->getValue();
+            $data['flashMessage'] = $this->getFlashMessage();
         }
 
         return new SimpleReturnStack('successMessage', $data);
@@ -67,5 +73,21 @@ class SuccessMessageAction implements ActionInterface
     public function setValue($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlashMessage()
+    {
+        return $this->flashMessage;
+    }
+
+    /**
+     * @param string
+     */
+    public function setFlashMessage($flashMessage)
+    {
+        $this->flashMessage = $flashMessage;
     }
 }

@@ -57,6 +57,7 @@ class Install extends AbstractInstaller
     public function update()
     {
         $this->installTranslations();
+        $this->installProperties();
         $this->installOrUpdateConfigFile();
     }
 
@@ -142,7 +143,6 @@ class Install extends AbstractInstaller
     }
 
     /**
-     * @return bool
      * @throws \Exception
      */
     private function installTranslations()
@@ -152,8 +152,6 @@ class Install extends AbstractInstaller
 
         Translation\Website::importTranslationsFromFile($csv, true, Admin::getLanguages());
         Translation\Admin::importTranslationsFromFile($csvAdmin, true, Admin::getLanguages());
-
-        return true;
     }
 
     /**
@@ -195,26 +193,31 @@ class Install extends AbstractInstaller
     {
         $properties = [
 
-            'mail_disable_default_mail_body' => [
+            'mail_disable_default_mail_body'       => [
                 'ctype'       => 'document',
                 'type'        => 'bool',
                 'name'        => 'Mail: Use custom template fields layout',
                 'description' => 'If the mail_disable_default_mail_body property is defined and checked, you need to add your own data to the mail template. You can use all the field names as placeholder.'
             ],
-            'mail_successfully_sent'         => [
+            'mail_successfully_sent'               => [
                 'ctype'       => 'document',
                 'type'        => 'document',
                 'name'        => 'Mail: Message after Submit',
                 'description' => 'Use the mail_successfully_sent property to define a message after the form has been successfully sent. There are three options: "String", "Snippet", "Dokument"'
 
             ],
-            'mail_ignore_fields'             => [
+            'mail_successfully_sent_flash_message' => [
+                'ctype'       => 'document',
+                'type'        => 'text',
+                'name'        => 'Mail: Flash Message after Success-Redirect',
+                'description' => 'Define a flash message which should show up after a form has been successfully submitted. Note: This only works if "mail_successfully_sent" property is a document.'
+            ],
+            'mail_ignore_fields'                   => [
                 'ctype'       => 'document',
                 'type'        => 'text',
                 'name'        => 'Mail: Ignored Fields in Email',
                 'description' => 'In some cases, you don\'t want to send specific fields via mail. Add one or multiple (comma separated) fields as string.'
-            ],
-
+            ]
         ];
 
         foreach ($properties as $key => $propertyConfig) {

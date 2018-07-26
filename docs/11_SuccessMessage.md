@@ -17,6 +17,16 @@ A Snippet could be useful if you need more output structure. FormBuild will rend
 *Document*  
 Use a document to get its path to perform a redirect for example.
 
+## Flash Messages on Redirect
+If you're using `Document` as a success handler you're able to define a flash message. 
+
+To define a flash message you need to add the `mail_successfully_sent_flash_message` property to the **main** email template
+which you have defined in the previous placed form area.
+
+> The `mail_successfully_sent_flash_message` is automatically available after you've installed FormBuilder.
+
+It's also possible to modify those success handler via conditional logic.
+
 ## Conditional Logic
 It's also possible to change the success message based on different conditions. 
 Read more about conditional logic [here](81_ConditionalLogic.md).

@@ -96,6 +96,7 @@ form_builder_success_message_text: 'Text'
 form_builder_success_message_text_empty: 'Text wird an Pimcore-Übersetzer gesendet.'
 form_builder_success_message_snippet: 'Snippet'
 form_builder_success_message_document: 'Document'
+form_builder_success_message_flash_message_text: 'Flash Message'
 
 # CI action / condition names
 form_builder.cl.action.toggle_element: 'Toggle Visibility'

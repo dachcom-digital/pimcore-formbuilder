@@ -122,67 +122,84 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
         return this.fieldPanel;
     },
 
+    /**
+     * @param value
+     */
     generateValueField: function (value) {
-
-        var _ = this;
 
         if (this.valueField !== null) {
             this.fieldPanel.remove(this.valueField);
         }
 
         if (value === 'recipient') {
-            this.valueField = new Ext.form.TextField({
-                name: _.generateFieldName(this.sectionId, this.index, 'value'),
-                vtype: 'email',
-                fieldLabel: t('form_builder_mail_behaviour_mail_address'),
-                anchor: '100%',
-                labelAlign: 'top',
-                summaryDisplay: true,
-                allowBlank: false,
-                value: this.data ? (typeof this.data.value === 'string' ? this.data.value : null) : null,
-                flex: 1,
-                listeners: {
-                    updateIndexName: function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'value');
-                    }
-                }
-            });
+            this.valueField = this.generateRecipientValueField();
         } else if (value === 'mailTemplate') {
-            var fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
-            var localizedField = new Formbuilder.comp.types.localizedField(
-                function (locale) {
-                    var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
-                        fieldConfig = {
-                            label: t('form_builder_mail_behaviour_mail_path'),
-                            id: _.generateFieldName(this.sectionId, this.index, 'value'),
-                            config: {
-                                types: ['document'],
-                                subtypes: {document: ['email']}
-                            }
-                        }, hrefField, hrefElement;
-
-                    hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
-                    hrefElement = hrefField.getHref();
-                    hrefElement.on('updateIndexName', function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
-                    });
-                    return hrefElement;
-                }.bind(this)
-            );
-
-            localizedElementField = localizedField.getField();
-            localizedElementField.on('updateIndexName', function (sectionId, index) {
-                var localizedTextFields = this.query('textfield');
-                if (localizedTextFields.length > 0) {
-                    Ext.Array.each(localizedTextFields, function (field) {
-                        field.fireEvent('updateIndexName', sectionId, index);
-                    });
-                }
-            });
-
-            this.valueField = localizedElementField;
+            this.valueField = this.generateMailTemplateValueField();
         }
 
         this.fieldPanel.add(this.valueField);
+    },
+
+    /**
+     * @returns {Ext.form.TextField}
+     */
+    generateRecipientValueField: function () {
+        return new Ext.form.TextField({
+            name: this.generateFieldName(this.sectionId, this.index, 'value'),
+            vtype: 'email',
+            fieldLabel: t('form_builder_mail_behaviour_mail_address'),
+            anchor: '100%',
+            labelAlign: 'top',
+            summaryDisplay: true,
+            allowBlank: false,
+            value: this.data ? (typeof this.data.value === 'string' ? this.data.value : null) : null,
+            flex: 1,
+            listeners: {
+                updateIndexName: function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value');
+                }
+            }
+        });
+    },
+
+    /**
+     * @returns {Ext.form.FormPanel}
+     */
+    generateMailTemplateValueField: function () {
+        var _ = this, fieldData, localizedField, localizedValueField;
+
+        fieldData = this.data ? (typeof this.data.value === 'object' ? this.data.value : {}) : {};
+        localizedField = new Formbuilder.comp.types.localizedField(
+            function (locale) {
+                var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
+                    fieldConfig = {
+                        label: t('form_builder_mail_behaviour_mail_path'),
+                        id: _.generateFieldName(this.sectionId, this.index, 'value'),
+                        config: {
+                            types: ['document'],
+                            subtypes: {document: ['email']}
+                        }
+                    }, hrefField, hrefElement;
+
+                hrefField = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
+                hrefElement = hrefField.getHref();
+                hrefElement.on('updateIndexName', function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value.' + this.getHrefLocale());
+                });
+                return hrefElement;
+            }.bind(this)
+        );
+
+        localizedValueField = localizedField.getField();
+        localizedValueField.on('updateIndexName', function (sectionId, index) {
+            var localizedTextFields = this.query('textfield');
+            if (localizedTextFields.length > 0) {
+                Ext.Array.each(localizedTextFields, function (field) {
+                    field.fireEvent('updateIndexName', sectionId, index);
+                });
+            }
+        });
+
+        return localizedValueField;
     }
 });
