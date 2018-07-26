@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -114,9 +115,9 @@ class RequestListener implements EventSubscriberInterface
                 $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
                 if ($request->isXmlHttpRequest()) {
-                    $this->handleAjaxSuccessResponse($event, $submissionEvent, $form);
+                    $this->handleAjaxSuccessResponse($event, $submissionEvent, $formId);
                 } else {
-                    $this->handleDefaultSuccessResponse($event, $submissionEvent, $form);
+                    $this->handleDefaultSuccessResponse($event, $submissionEvent, $formId);
                 }
             } else {
 
@@ -131,9 +132,9 @@ class RequestListener implements EventSubscriberInterface
     /**
      * @param                      $event
      * @param SubmissionEvent|null $submissionEvent
-     * @param                      $form
+     * @param                      $formId
      */
-    protected function handleDefaultSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, FormInterface $form)
+    protected function handleDefaultSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, $formId)
     {
         $uri = '?send=true';
         if ($submissionEvent->hasRedirectUri()) {
@@ -147,9 +148,9 @@ class RequestListener implements EventSubscriberInterface
     /**
      * @param GetResponseEvent $event
      * @param SubmissionEvent  $submissionEvent
-     * @param FormInterface    $form
+     * @param string           $formId
      */
-    protected function handleAjaxSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, FormInterface $form)
+    protected function handleAjaxSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, $formId)
     {
         $redirectUri = null;
         if ($submissionEvent->hasRedirectUri()) {
@@ -158,13 +159,20 @@ class RequestListener implements EventSubscriberInterface
 
         $messages = [];
         $error = false;
-        $flashBag = $this->session->getFlashBag();
 
-        foreach ($flashBag->all() as $type => $message) {
-            if ($type === 'error') {
-                $error = true;
+        foreach (['success', 'error'] as $type) {
+            $messageKey = 'formbuilder_' . $formId . '_' . $type;
+
+            if (!$this->getFlashBag()->has($messageKey)) {
+                continue;
             }
-            $messages[] = ['type' => $type, 'message' => $message];
+
+            foreach ($this->getFlashBag()->get($messageKey) as $message) {
+                if ($type === 'error') {
+                    $error = true;
+                }
+                $messages[] = ['type' => $type, 'message' => $message];
+            }
         }
 
         $response = new JsonResponse([
@@ -221,5 +229,13 @@ class RequestListener implements EventSubscriberInterface
         }
 
         return $errors;
+    }
+
+    /**
+     * @return FlashBagInterface
+     */
+    private function getFlashBag()
+    {
+        return $this->session->getFlashBag();
     }
 }

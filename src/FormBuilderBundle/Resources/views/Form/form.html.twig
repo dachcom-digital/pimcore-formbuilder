@@ -5,7 +5,8 @@
         {% form_theme form form_template %}
         {{ form_start(form) }}
             {{ form_builder_theme_macro.form_builder_form_head() }}
-                {{ form_builder_theme_macro.form_builder_form_message(app.flashes) }}
+                {% set flashMessages = form_builder_get_flash_messages(form.vars.id) %}
+                {{ form_builder_theme_macro.form_builder_form_message(flashMessages) }}
                 {{ form_widget(form) }}
             {{ form_builder_theme_macro.form_builder_form_foot() }}
         {{ form_end(form) }}

@@ -1,0 +1,8 @@
+{% set flashMessages = form_builder_get_redirect_flash_messages() %}
+ {% if flashMessages is iterable and flashMessages is not empty %}
+     <div class="formbuilder-redirect-flash-message">
+         {% for message in flashMessages %}
+             {{ message|raw }}<br>
+         {% endfor %}
+     </div>
+ {% endif %}

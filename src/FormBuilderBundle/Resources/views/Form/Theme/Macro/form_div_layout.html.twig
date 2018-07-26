@@ -5,9 +5,7 @@
 {% endmacro %}
 
 {% macro form_builder_form_message(flash_messages) %}
-
     {% if flash_messages is not empty %}
-
         {% for label, messages in flash_messages %}
             {% for message in messages %}
                 <div class="message message-{{ label }}">
@@ -15,7 +13,5 @@
                 </div>
             {% endfor %}
         {% endfor %}
-
     {% endif %}
-
 {% endmacro %}

@@ -8,3 +8,7 @@ services:
     FormBuilderBundle\Twig\Extension\StaticFormExtension:
         tags:
             - { name: twig.extension }
+
+    FormBuilderBundle\Twig\Extension\FlashMessageExtension:
+        tags:
+            - { name: twig.extension }
