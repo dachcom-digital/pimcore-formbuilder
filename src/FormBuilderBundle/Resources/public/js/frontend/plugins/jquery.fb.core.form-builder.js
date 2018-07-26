@@ -57,18 +57,18 @@
 
                     $fields.addClass('is-invalid');
                     $field.closest('form').addClass('was-validated');
-                    $.each(messages, function(validationType, message) {
+                    $.each(messages, function (validationType, message) {
                         $formGroup.find('span.invalid-feedback.validation').remove();
-                        $spanEl = $('<span/>', {'class' : 'invalid-feedback validation', 'text' : message});
+                        $spanEl = $('<span/>', {'class': 'invalid-feedback validation', 'text': message});
 
-                        if($field.attr('type') === 'checkbox' || $field.attr('type') === 'radio') {
+                        if ($field.attr('type') === 'checkbox' || $field.attr('type') === 'radio') {
                             $fields.attr('required', 'required');
                         }
 
                         if (isMultiple) {
-                           $fields.last().next('label').after($spanEl);
+                            $fields.last().next('label').after($spanEl);
                         } else {
-                            $fields.after( $spanEl );
+                            $fields.after($spanEl);
                         }
                     });
                 },
@@ -164,7 +164,7 @@
                         }
 
                         if (response.success === false) {
-                            if (response.validation_errors !== false) {
+                            if (typeof response.validation_errors === 'object' && Object.keys(response.validation_errors).length > 0) {
                                 $.each(response.validation_errors, function (fieldId, messages) {
                                     var $fields = $form.find('*[name*="' + fieldId + '"]');
                                     //fallback for custom fields (like ajax file, headline or snippet type)
