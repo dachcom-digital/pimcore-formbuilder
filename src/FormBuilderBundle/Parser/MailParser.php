@@ -236,6 +236,11 @@ class MailParser
             $data = $this->parseStringForOutput($field);
         }
 
+        // pimcore email log does not get stored if value is a true boolean.
+        if (is_bool($data)) {
+            $data = $data === true ? 1 : 0;
+        }
+
         return $data;
     }
 
