@@ -31,6 +31,10 @@ form_builder.controller.admin.import_form:
     path: /admin/formbuilder/settings/import-form/{id}/{admin_sid}
     defaults: { _controller: FormBuilderBundle:Admin/Settings:importForm }
 
+form_builder.controller.admin.csv_export.export:
+    path: /admin/formbuilder/export/mail-csv-export/{id}
+    defaults: { _controller: FormBuilderBundle:Admin/Export:exportFormEmails }
+
 form_builder.controller.admin.check_path:
     path: /admin/formbuilder/settings/check-path
     defaults: { _controller: FormBuilderBundle:Admin/Settings:checkPath }

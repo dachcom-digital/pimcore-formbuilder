@@ -688,11 +688,54 @@ Formbuilder.comp.form = Class.create({
 
         } catch (e) {}
 
-        //add conditional logic field
+        // add conditional logic field
         var clBuilder = new Formbuilder.comp.conditionalLogic.builder(this.formConditionalsStructured, this.formConditionalsStore, this);
         this.clBuilder = clBuilder.getLayout();
-        this.rootPanel = new Ext.form.FormPanel({
 
+        // add export panel
+        this.exportPanel = new Ext.form.FieldSet({
+            title:  t('form_builder_email_csv_export'),
+            collapsible: false,
+            autoHeight: true,
+            width: '100%',
+            style: 'margin-top: 20px;',
+            items: [
+            {
+                xtype: 'combo',
+                fieldLabel: t('form_builder_email_csv_export_mail_type'),
+                queryDelay: 0,
+                displayField: 'key',
+                valueField: 'value',
+                mode: 'local',
+                labelAlign: 'top',
+                store: new Ext.data.ArrayStore({
+                    fields: ['value', 'key'],
+                    data: [
+                        ['all', t('form_builder_email_csv_export_mail_type_all')],
+                        ['only_main', t('form_builder_email_csv_export_mail_type_only_main')],
+                        ['only_copy', t('form_builder_email_csv_export_mail_type_only_copy')],
+                    ]
+                }),
+                value: 'all',
+                editable: true,
+                triggerAction: 'all',
+                anchor: '100%',
+                summaryDisplay: true,
+                allowBlank: false,
+            },
+            {
+                xtype: 'toolbar',
+                style: 'margin-bottom: 5px;',
+                items: ['->', {
+                    xtype: 'button',
+                    text: t('export_csv'),
+                    iconCls: 'pimcore_icon_export',
+                    handler: this.exportFormEmailCsv.bind(this)
+                }]
+            }]
+        });
+
+        this.rootPanel = new Ext.form.FormPanel({
             title: t('form_builder_form_configuration'),
             bodyStyle: 'padding:10px',
             border: false,
@@ -759,7 +802,8 @@ Formbuilder.comp.form = Class.create({
                 },
 
                 this.metaDataPanel,
-                this.clBuilder
+                this.clBuilder,
+                this.exportPanel
 
             ]
         });
@@ -1033,7 +1077,18 @@ Formbuilder.comp.form = Class.create({
     },
 
     exportForm: function() {
-        location.href = '/admin/formbuilder/settings/get-export-file/' + this.formId;
+        pimcore.helpers.download('/admin/formbuilder/settings/get-export-file/' + this.formId);
+    },
+
+    exportFormEmailCsv: function() {
+        var mailTypeField = this.exportPanel.query('combo'),
+            mailTypeValue = 'all';
+
+        if(mailTypeField.length === 1) {
+            mailTypeValue = mailTypeField[0].getValue();
+        }
+
+        pimcore.helpers.download('/admin/formbuilder/export/mail-csv-export/' + this.formId + '?mailType=' + mailTypeValue);
     },
 
     /**
