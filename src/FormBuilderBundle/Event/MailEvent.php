@@ -5,12 +5,11 @@ namespace FormBuilderBundle\Event;
 use Pimcore\Mail;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class MailEvent extends Event
 {
     /**
-     * @var Request
+     * @var FormInterface
      */
     private $form;
 
@@ -20,15 +19,29 @@ class MailEvent extends Event
     private $email;
 
     /**
+     * @var array
+     */
+    private $formOptions;
+
+    /**
+     * @var bool
+     */
+    private $isCopy;
+
+    /**
      * MailEvent constructor.
      *
      * @param FormInterface $form
      * @param Mail          $email
+     * @param array         $formOptions
+     * @param bool          $isCopy
      */
-    public function __construct(FormInterface $form, Mail $email)
+    public function __construct(FormInterface $form, Mail $email, array $formOptions, $isCopy)
     {
         $this->form = $form;
         $this->email = $email;
+        $this->formOptions = $formOptions;
+        $this->isCopy = $isCopy;
     }
 
     /**
@@ -55,4 +68,19 @@ class MailEvent extends Event
         return $this->email;
     }
 
+    /**
+     * @return array
+     */
+    public function getFormOptions()
+    {
+        return $this->formOptions;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCopy()
+    {
+        return $this->isCopy;
+    }
 }

@@ -164,7 +164,7 @@ class MailListener implements EventSubscriberInterface
         $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
         $mail->setParam('_form_builder_preset', $formOptions['form_preset'] === 'custom' ? null : $formOptions['form_preset']);
 
-        $mailEvent = new MailEvent($form, $mail);
+        $mailEvent = new MailEvent($form, $mail, $formOptions, $isCopy);
         \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
 
         $mail = $mailEvent->getEmail();
