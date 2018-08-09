@@ -43,12 +43,11 @@ class MailParser
      * @param Email         $mailTemplate
      * @param FormInterface $form
      * @param               $locale
-     * @param bool          $isCopy
      *
      * @return Mail
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, $locale, $isCopy = false)
+    public function create(Email $mailTemplate, FormInterface $form, $locale)
     {
         $mail = new Mail();
 
@@ -64,7 +63,6 @@ class MailParser
         $this->parseReplyTo($mailTemplate, $fieldValues);
         $this->parseSubject($mailTemplate, $fieldValues);
         $this->setMailPlaceholders($mail, $fieldValues, $disableDefaultMailBody);
-
         $mail->setDocument($mailTemplate);
 
         return $mail;
@@ -236,6 +234,11 @@ class MailParser
             }
         } else {
             $data = $this->parseStringForOutput($field);
+        }
+
+        // pimcore email log does not get stored if value is a true boolean.
+        if (is_bool($data)) {
+            $data = $data === true ? 1 : 0;
         }
 
         return $data;
