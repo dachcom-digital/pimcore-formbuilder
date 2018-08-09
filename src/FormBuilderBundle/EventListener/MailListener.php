@@ -100,16 +100,16 @@ class MailListener implements EventSubscriberInterface
             }
 
             $emailConfiguration = $formConfiguration['email'];
-            $formOptions = $formConfiguration['user_options'];
+            $userOptions = $formConfiguration['user_options'];
             $sendCopy = $emailConfiguration['send_copy'];
 
-            $send = $this->sendForm($emailConfiguration['mail_template_id'], $formOptions, $form, $request->getLocale());
+            $send = $this->sendForm($emailConfiguration['mail_template_id'], $userOptions, $form, $request->getLocale());
             if ($send === true) {
                 if ($sendCopy === true) {
                     if (empty($emailConfiguration['copy_mail_template_id'])) {
                         throw new \Exception('no valid copy mail template given.');
                     }
-                    $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $formOptions, $form, $request->getLocale(), true);
+                    $send = $this->sendForm($emailConfiguration['copy_mail_template_id'], $userOptions, $form, $request->getLocale(), true);
                     if ($send !== true) {
                         throw new \Exception('copy mail not sent.');
                     }
@@ -126,7 +126,7 @@ class MailListener implements EventSubscriberInterface
 
     /**
      * @param int           $mailTemplateId
-     * @param array         $formOptions
+     * @param array         $userOptions
      * @param FormInterface $form
      * @param string        $locale
      * @param bool          $isCopy
@@ -134,7 +134,7 @@ class MailListener implements EventSubscriberInterface
      * @return bool
      * @throws \Exception
      */
-    private function sendForm($mailTemplateId = 0, $formOptions, FormInterface $form, $locale, $isCopy = false)
+    private function sendForm($mailTemplateId = 0, $userOptions, FormInterface $form, $locale, $isCopy = false)
     {
         /** @var MailBehaviourData $mailConditionData */
         $mailConditionData = $this->checkMailCondition($form, 'mail_behaviour', ['isCopy' => $isCopy]);
@@ -162,9 +162,9 @@ class MailListener implements EventSubscriberInterface
 
         $mail->setParam('_form_builder_id', (int)$form->getData()->getId());
         $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
-        $mail->setParam('_form_builder_preset', $formOptions['form_preset'] === 'custom' ? null : $formOptions['form_preset']);
+        $mail->setParam('_form_builder_preset', $userOptions['form_preset'] === 'custom' ? null : $userOptions['form_preset']);
 
-        $mailEvent = new MailEvent($form, $mail, $formOptions, $isCopy);
+        $mailEvent = new MailEvent($form, $mail, $userOptions, $isCopy);
         \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
 
         $mail = $mailEvent->getEmail();

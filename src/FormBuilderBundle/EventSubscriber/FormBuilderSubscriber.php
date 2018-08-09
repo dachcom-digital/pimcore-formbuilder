@@ -60,12 +60,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $formRegistry;
 
     /**
-     * @var
+     * @var array
      */
     private $availableConstraints;
 
     /**
-     * @var
+     * @var array
      */
     private $availableFormTypes;
 
@@ -129,6 +129,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param FormEvent $event
+     *
+     * @throws \Exception
      */
     public function onPostSetData(FormEvent $event)
     {
@@ -142,6 +144,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param FormEvent $event
+     *
+     * @throws \Exception
      */
     public function onPreSubmit(FormEvent $event)
     {
@@ -155,6 +159,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param FormEvent $event
+     *
+     * @throws \Exception
      */
     public function onPostSubmit(FormEvent $event)
     {
@@ -195,6 +201,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param FormBuilderFormInterface $formEntity
      * @param bool                     $initial
      * @param array                    $data
+     *
+     * @throws \Exception
      */
     private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = false, $data = [])
     {

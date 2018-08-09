@@ -21,7 +21,7 @@ class MailEvent extends Event
     /**
      * @var array
      */
-    private $formOptions;
+    private $userOptions;
 
     /**
      * @var bool
@@ -33,14 +33,14 @@ class MailEvent extends Event
      *
      * @param FormInterface $form
      * @param Mail          $email
-     * @param array         $formOptions
+     * @param array         $userOptions
      * @param bool          $isCopy
      */
-    public function __construct(FormInterface $form, Mail $email, array $formOptions, $isCopy)
+    public function __construct(FormInterface $form, Mail $email, array $userOptions, $isCopy)
     {
         $this->form = $form;
         $this->email = $email;
-        $this->formOptions = $formOptions;
+        $this->userOptions = $userOptions;
         $this->isCopy = $isCopy;
     }
 
@@ -71,9 +71,9 @@ class MailEvent extends Event
     /**
      * @return array
      */
-    public function getFormOptions()
+    public function getUserOptions()
     {
-        return $this->formOptions;
+        return $this->userOptions;
     }
 
     /**
