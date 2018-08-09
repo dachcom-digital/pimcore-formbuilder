@@ -116,6 +116,7 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
      * @returns {Ext.form.TextField}
      */
     generateStringValueField: function () {
+        var _ = this;
         return new Ext.form.TextField({
             name: this.generateFieldName(this.sectionId, this.index, 'value'),
             fieldLabel: t('form_builder_success_message_text'),
