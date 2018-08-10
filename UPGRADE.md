@@ -1,10 +1,37 @@
 # Upgrade Notes
 ![upgrade](https://user-images.githubusercontent.com/700119/31535145-3c01a264-affa-11e7-8d86-f04c33571f65.png)  
+
 ***
-After every update you should check the pimcore extension manager. Just click the "update" button to finish the bundle update.
+
+After every update you should check the pimcore extension manager. 
+Just click the "update" button to finish the bundle update.
+
+#### Update from Version 2.3.4 to Version 2.4.0
+- **[NEW FEATURE]**: Form mail export as CSV
+- **[IMPROVEMENT]**: Fix choices translation bug
+- **[IMPROVEMENT]**: Allow external page redirect in success workflow
+- **[IMPROVEMENT]**: Use pure symfony custom radio/checkbox type, controllable by [configuration flag](https://github.com/dachcom-digital/pimcore-formbuilder/blob/master/docs/100_ConfigurationFlags.md).
+- **[IMPROVEMENT]**: `userOptions` and `isCopy` Flag implemented in MailEvent
+- Various bug fixes ([Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/13?closed=1)
+
+#### Update from Version 2.3.3 to Version 2.3.4
+- **[NEW FEATURE]**: Flash Message in Success Redirect Implemented
+- **[IMPROVEMENT]**: Add Flash Message Namespace to allow dedicated form messages on page with multiple forms
+- Various bug fixes ([Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/12?closed=1)
+
+#### Update from Version 2.3.2 to Version 2.3.3
+- **[NEW FEATURE]**: `item limit` in download field implemented
+- **[NEW FEATURE]**: Conditional Logic: Mail Behaviour Switch
+- **[NEW FEATURE]**: Conditional Logic: Success Message Switch
+- Various bug fixes ([Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/11?closed=1)
+
+#### Update from Version 2.3.1 to Version 2.3.2
+- **[NEW FEATURE]**: Snippet in Conditional Logic is now website language sensitive
+- Various bug fixes ([Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/10?closed=1)
 
 #### Update from Version 2.2.x to Version 2.3.1
 - **[NEW FEATURE]**: Add Placeholder to the *ReplyTo* Field
+- Various bug fixes ([Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/9?closed=1))
 
 #### Update from Version 2.2.x to Version 2.3.0
 - **[NEW FEATURE]**: *Date*, *DateTime*, *Time* and *Birthday* fields added

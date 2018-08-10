@@ -25,7 +25,7 @@ which you have defined in the previous placed form area.
 
 > The `mail_successfully_sent_flash_message` is automatically available after you've installed FormBuilder.
 
-
+## Flash Messages Implementation
 Be sure you have included the twig template somewhere on top in your main layout:
 
 ```twig
