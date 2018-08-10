@@ -47,7 +47,8 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
                     data: [
                         ['string', t('form_builder_success_message_identifier_string')],
                         ['snippet', t('form_builder_success_message_identifier_snippet')],
-                        ['redirect', t('form_builder_success_message_identifier_redirect')]
+                        ['redirect', t('form_builder_success_message_identifier_redirect')],
+                        ['redirect_external', t('form_builder_success_message_identifier_redirect_external')]
                     ]
                 }),
                 editable: false,
@@ -107,6 +108,8 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
             this.valueField = this.generateSnippetValueField();
         } else if (value === 'redirect') {
             this.valueField = this.generateRedirectValueField();
+        } else if (value === 'redirect_external') {
+            this.valueField = this.generateExternalRedirectValueField();
         }
 
         this.fieldPanel.add(this.valueField);
@@ -240,5 +243,29 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
         });
 
         return valueField;
-    }
+    },
+
+    /**
+     * @returns {Ext.form.TextField}
+     */
+    generateExternalRedirectValueField: function () {
+        var _ = this;
+        return new Ext.form.TextField({
+            name: this.generateFieldName(this.sectionId, this.index, 'value'),
+            fieldLabel: t('form_builder_success_message_external_url'),
+            anchor: '100%',
+            labelAlign: 'top',
+            summaryDisplay: true,
+            allowBlank: false,
+            emptyText: t('form_builder_success_message_external_url_text_empty'),
+            value: this.data ? (typeof this.data.value === 'string' ? this.data.value : null) : null,
+            flex: 1,
+            listeners: {
+                updateIndexName: function (sectionId, index) {
+                    this.name = _.generateFieldName(sectionId, index, 'value');
+                }
+            }
+        });
+    },
+
 });

@@ -21,6 +21,7 @@ There are three options:
 
 *String*  
 Use a String to return a simple text like "Thank you for your message".
+If the string starts with `http:`, the given string will be interpreted as uri and triggers a redirect.
 
 *Snippet*  
 Use a Snippet to return some complex html stuff.

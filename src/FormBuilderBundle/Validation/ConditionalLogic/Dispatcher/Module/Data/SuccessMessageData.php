@@ -15,6 +15,8 @@ class SuccessMessageData implements DataInterface
 
     const IDENTIFIER_REDIRECT = 'redirect';
 
+    const IDENTIFIER_REDIRECT_EXTERNAL = 'redirect_external';
+
     /**
      * @var HrefLocaleMapper
      */
@@ -80,6 +82,8 @@ class SuccessMessageData implements DataInterface
             return $this->getSnippet($locale);
         } elseif ($this->isDocumentRedirect()) {
             return $this->getDocument($locale);
+        } elseif ($this->isExternalRedirect()) {
+            return $this->getExternalRedirect();
         }
 
         return null;
@@ -155,6 +159,28 @@ class SuccessMessageData implements DataInterface
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExternalRedirect()
+    {
+        return isset($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL])
+            && !empty($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL])
+            && substr($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL], 0, 4) === 'http';
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalRedirect()
+    {
+        if (!$this->isExternalRedirect()) {
+            return null;
+        }
+
+        return $this->data[self::IDENTIFIER_REDIRECT_EXTERNAL];
     }
 
     /**

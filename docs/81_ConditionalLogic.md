@@ -25,4 +25,4 @@ Use the conditional logic to hide/show fields, toggle classes, change validation
 | Toggle Classes | Toggle a Class of one ore more fields | Yes | Class Name: *string* |
 | Toggle Availability | Toggle a availability state | Yes | State: `Enabled`, `Disabled` |
 | Mail Behaviour | Change Mail Behavior | No | Type: `Recipient`, `Email Template` |
-| Success Message | Change Success Message | No | Type: `Text`, `Snippet`, `Redirect` |
+| Success Message | Change Success Message | No | Type: `Text`, `Snippet`, `Redirect to Document`, `Redirect to external Page` |

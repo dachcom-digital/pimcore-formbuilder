@@ -165,6 +165,7 @@ form_builder:
                                 - ['form_builder_success_message_identifier_string', 'string']
                                 - ['form_builder_success_message_identifier_snippet', 'snippet']
                                 - ['form_builder_success_message_identifier_redirect', 'redirect']
+                                - ['form_builder_success_message_identifier_redirect_external', 'redirect_external']
                         conditional_identifier: 'value'
                         conditional:
                             string:

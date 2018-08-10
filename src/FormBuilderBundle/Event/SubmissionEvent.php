@@ -26,7 +26,7 @@ class SubmissionEvent extends Event
     /**
      * @var null
      */
-    private $redirectUri = NULL;
+    private $redirectUri = null;
 
     /**
      * @param Request       $request

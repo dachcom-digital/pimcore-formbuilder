@@ -222,7 +222,12 @@ class MailListener implements EventSubscriberInterface
                 }
             }
         } elseif (is_string($afterSuccess)) {
-            $message = $afterSuccess;
+            // maybe it's a external redirect
+            if (substr($afterSuccess, 0, 4) === 'http') {
+                $event->setRedirectUri($afterSuccess);
+            } else {
+                $message = $afterSuccess;
+            }
         }
 
         $this->getFlashBag()->add($error ? 'formbuilder_' . $formId . '_error' : 'formbuilder_' . $formId . '_success', $message);
