@@ -282,7 +282,7 @@ class ExportController extends AdminController
      */
     private function cleanValue($value, $fieldType = null)
     {
-        if ($fieldType === 'choice') {
+        if (in_array($fieldType, ['choice', 'dynamic_choice', 'country'])) {
             $value = preg_split('/(<br>|<br \/>)/', $value);
             $value = join(', ', array_filter($value));
         } elseif ($fieldType === 'textarea') {
