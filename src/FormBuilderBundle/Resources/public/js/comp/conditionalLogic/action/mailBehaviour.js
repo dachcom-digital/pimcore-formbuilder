@@ -49,7 +49,7 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
                         ['mailTemplate', t('form_builder_mail_behaviour_identifier_mail_template')]
                     ]
                 }),
-                editable: true,
+                editable: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 value: this.data ? this.data.identifier : null,
@@ -82,7 +82,7 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
                         ['copy', t('form_builder_mail_behaviour_mail_type_copy')]
                     ]
                 }),
-                editable: true,
+                editable: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 value: this.data && this.data.mailType ? this.data.mailType : 'main',

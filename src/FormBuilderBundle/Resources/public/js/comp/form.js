@@ -104,7 +104,6 @@ Formbuilder.comp.form = Class.create({
 
         this.panel = new Ext.Panel({
             title: this.formName + ' (ID: ' + this.formId + ')',
-            id: this.formId,
             closable: true,
             iconCls: 'form_builder_icon_root',
             autoScroll: true,
@@ -616,7 +615,7 @@ Formbuilder.comp.form = Class.create({
                         valueField: 'value',
                         mode: 'local',
                         store: attributeStore,
-                        editable: true,
+                        editable: false,
                         triggerAction: 'all',
                         anchor: '100%',
                         value: name,
@@ -717,7 +716,7 @@ Formbuilder.comp.form = Class.create({
                     ]
                 }),
                 value: 'all',
-                editable: true,
+                editable: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 summaryDisplay: true,
@@ -766,7 +765,7 @@ Formbuilder.comp.form = Class.create({
                     valueField: 'value',
                     mode: 'local',
                     store: methodStore,
-                    editable: true,
+                    editable: false,
                     triggerAction: 'all',
                     width: 300,
                     value: this.formConfig.method ? this.formConfig.method : 'POST',
@@ -781,7 +780,7 @@ Formbuilder.comp.form = Class.create({
                     valueField: 'value',
                     mode: 'local',
                     store: encStore,
-                    editable: true,
+                    editable: false,
                     triggerAction: 'all',
                     width: 300,
                     value: this.formConfig.enctype ? this.formConfig.enctype : 'multipart/form-data',

@@ -241,7 +241,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
                 valueField: 'value',
                 mode: 'local',
                 store: optionsStore,
-                editable: true,
+                editable: false,
                 triggerAction: 'all',
                 anchor: "100%",
                 summaryDisplay: true,

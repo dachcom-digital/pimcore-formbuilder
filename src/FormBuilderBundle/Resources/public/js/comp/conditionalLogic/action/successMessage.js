@@ -50,7 +50,7 @@ Formbuilder.comp.conditionalLogic.action.successMessage = Class.create(Formbuild
                         ['redirect', t('form_builder_success_message_identifier_redirect')]
                     ]
                 }),
-                editable: true,
+                editable: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 value: this.data ? this.data.identifier : null,
