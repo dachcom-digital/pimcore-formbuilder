@@ -42,9 +42,13 @@ $('form.ajax-form')
          console.log(message, redirect);
  }).on('formbuilder.error', function(ev, messages, $form) {
          console.log(messages);
+ }).on('formbuilder.error-form', function (ev, messages, $form) {
+        console.error('error-form', messages);
  }).on('formbuilder.error-field', function(ev, data, $form) {
          console.log(data.field, data.messages);
- });
+ }).on('formbuilder.fatal', function (ev, response, $form) {
+        console.error('fatal', response.error, response.trace);
+});
 ```
 
 ## Conditional Logic Plugin

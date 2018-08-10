@@ -20,10 +20,13 @@ namespace AppBundle\EventListener;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
+use FormBuilderBundle\Storage\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderListener implements EventSubscriberInterface
 {
@@ -46,19 +49,21 @@ class FormBuilderListener implements EventSubscriberInterface
     {
         $formEvent = $event->getFormEvent();
         $formOptions = $event->getFormOptions();
-        $dataClass = $formEvent->getData();
-        
-        //create some choices based on a request value.
-        $entryId = $this->requestStack->getMasterRequest()->get('entry');
 
         //only apply this to a special preset
         if ($formOptions['form_preset'] !== 'dynamic_form') {
             return;
         }
 
+        /** @var FormBuilderFormInterface $formClass */
+        $formData = $formEvent->getData();
+        
+        //create some choices based on a request value.
+        $entryId = $this->requestStack->getMasterRequest()->get('entry');
+
         // 1. Add a hidden field to keep the value
         // since the request value gets lost during the ajax request.
-        $dataClass->addDynamicField(
+        $formData->addDynamicField(
             'entry_id',
             HiddenType::class,
             [
@@ -67,19 +72,7 @@ class FormBuilderListener implements EventSubscriberInterface
         );
 
         // 2. Add the dynamic choice field.
-        $dataClass->addDynamicField(
-            'event_date',
-            ChoiceType::class,
-            [
-                'label'   => 'Date',
-                'choices' => $this->getChoices($entryId)
-            ],
-            [
-                'template' => 'col-xs-6',
-                'order'    => 10
-            ]
-        );
-
+        $this->addEventDateField($formData, $entryId);
     }
     
     public function formPreSubmit(PreSubmitEvent $event)
@@ -90,33 +83,71 @@ class FormBuilderListener implements EventSubscriberInterface
         }
 
         $formEvent = $event->getFormEvent();
+        $form = $formEvent->getForm();
         $formData = $formEvent->getData();        
-        $dataClass = $formEvent->getForm()->getData();
 
         //remove the entry id field, since we don't need it anymore!
-        $dataClass->removeDynamicField('entry_id');
+        $formEvent->getData()->removeDynamicField('entry_id');
         
         //re-add the event date and populate it again!
-        $dataClass->addDynamicField(
+        $this->addEventDateField($form->getData(), $formData['entry_id']);
+        
+    }
+
+    private function addEventDateField(FormInterface $form, $id)
+    {
+        $form->addDynamicField(
             'event_date',
             ChoiceType::class,
             [
-                'label'   => 'Date',
-                'choices' => $this->getChoices($formData['entry_id'])
+                'label'          => 'Date',
+                'required'       => true,
+                
+                /*
+                 * set error_bubbling to "true" if you want to submit error
+                 * to main form as "general error".
+                 */
+                'error_bubbling' => false, 
+                
+                /* 
+                * Uncomment section if you want some expanded custom bootstrap checkboxes
+                *
+                * 'multiple' => true,
+                * 'expanded' => true,
+                * 'label_attr' => [
+                *     'class' => 'checkbox-custom'
+                * ],
+                */
+                'choices'        => $this->getChoices($id),
+                'constraints'    => [
+                    new NotBlank()
+                ]
+            ],
+        
+            /*
+             * This third argument is FormBuilder related stuff.
+             */
+            [
+                'template' => 'col-12',
+                'order'    => 10
             ]
         );
     }
-
-    private function getChoices($id = NULL)
+    
+    private function getChoices($id = null)
     {
         if (empty($id)) {
-            return [];
+            return [
+                'Test 1' => 'test1',
+                'Test 2' => 'test2',
+                'Test 3' => 'test3'
+            ];
         }
 
         return [
-            'Test 1' => 'test1',
-            'Test 2' => 'test2',
-            'Test 3' => 'test3'
+            'Test 1 (for ' . $id . ')' => 'test1',
+            'Test 2 (for ' . $id . ')' => 'test2',
+            'Test 3 (for ' . $id . ')' => 'test3'
         ];
     }
 }

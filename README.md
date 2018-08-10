@@ -26,6 +26,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 
 ## Further Information
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
+- [Export Forms](docs/1_ExportForms.md)
 - [Mail Template Configuration](docs/10_MailTemplates.md)
 - [Success Message](docs/11_SuccessMessage.md)
 - [Dynamic Fields](docs/20_AjaxForms.md)
@@ -41,6 +42,7 @@ Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templa
 - [Conditional Logic](docs/81_ConditionalLogic.md)
 - [Frontend Tips](docs/90_FrontendTips.md)
 - [FormBuilder Javascript Plugins](docs/91_Javascript.md)
+- [Configuration Flags](docs/100_ConfigurationFlags.md)
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)

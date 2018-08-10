@@ -5,6 +5,12 @@ The Dynamic Choice Type allows to generate Drop-Down / Checkbox / Radio Elements
 In the FormBuilder Backend add a "Dynamic Choice Type" Field. There you'll find a "Service Name" Field with the defined Services. 
 In the next Section you'll learn how to add such services.
 
+## Error Handling
+**Important**: It's not possible to add custom validation messages within the DynamicChoice Service. 
+That's because you're dealing with a already rendered form type (dynamic choice). 
+To add some validations you could use the default constraints in the form builder itself or
+by extending the default options via [form extensions](http://symfony.com/doc/current/form/create_form_type_extension.html).
+
 ## Add Service
 ```yaml
 AppBundle\Services\FormBuilderBundle\ProductChoices:
@@ -80,7 +86,6 @@ You could implement the `AdvancedChoiceBuilderInterface` to get more control abo
 namespace AppBundle\Services\FormBuilderBundle;
 
 use FormBuilderBundle\Form\AdvancedChoiceBuilderInterface;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use AppBundle\Model\Product;
 
