@@ -94,6 +94,7 @@ class RequestListener implements EventSubscriberInterface
                 $response = new JsonResponse([
                     'success' => false,
                     'error'   => $e->getMessage(),
+                    'trace'   => $e->getTrace()
                 ]);
                 $event->setResponse($response);
             }

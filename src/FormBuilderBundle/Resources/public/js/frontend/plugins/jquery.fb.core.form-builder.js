@@ -155,6 +155,8 @@
                     contentType: ($form.attr('method') === 'get') ? $form.attr('enctype') : false,
                     success: function (response) {
 
+                        var generalFormErrors = [];
+
                         $btns.attr('disabled', false);
 
                         _.validationTransformer.transform('removeFormValidations', $form);
@@ -166,23 +168,35 @@
                         if (response.success === false) {
                             if (typeof response.validation_errors === 'object' && Object.keys(response.validation_errors).length > 0) {
                                 $.each(response.validation_errors, function (fieldId, messages) {
-                                    var $fields = $form.find('*[name*="' + fieldId + '"]');
-                                    //fallback for custom fields (like ajax file, headline or snippet type)
-                                    if ($fields.length === 0) {
-                                        $fields = $form.find('*[data-field-name*="' + fieldId + '"]');
-                                    }
+                                    if (fieldId === 'general') {
+                                        generalFormErrors = messages;
+                                    } else {
+                                        var $fields = $form.find('*[name*="' + fieldId + '"]');
+                                        //fallback for custom fields (like ajax file, headline or snippet type)
+                                        if ($fields.length === 0) {
+                                            $fields = $form.find('*[data-field-name*="' + fieldId + '"]');
+                                        }
 
-                                    if ($fields.length > 0) {
-                                        _.validationTransformer.transform('addValidationMessage', $fields, messages);
-                                        $form.trigger('formbuilder.error-field', [{
-                                            'field': $fields.first(),
-                                            'messages': messages
-                                        }, $form]);
+                                        if ($fields.length > 0) {
+                                            _.validationTransformer.transform('addValidationMessage', $fields, messages);
+                                            $form.trigger('formbuilder.error-field', [{
+                                                'field': $fields.first(),
+                                                'messages': messages
+                                            }, $form]);
+                                        }
                                     }
                                 });
 
+                                if(generalFormErrors.length > 0) {
+                                    $form.trigger('formbuilder.error-form', [generalFormErrors, $form]);
+                                }
+
                             } else {
-                                $form.trigger('formbuilder.error', [response.messages, $form]);
+                                if(response.error) {
+                                    $form.trigger('formbuilder.fatal', [response, $form]);
+                                } else {
+                                    $form.trigger('formbuilder.error', [response.messages, $form]);
+                                }
                             }
 
                         } else {
