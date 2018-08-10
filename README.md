@@ -18,7 +18,7 @@ Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formb
 ## Usage
 Just open a document and place the form area brick like any other bricks via drag and drop. 
 Use the edit button at the right top corner to configure your form. 
-Also be sure you've included the [flash template](docs/11_SuccessMessage.md#Flash-messages-implementation) if you want to have some success messages after a redirect.
+Also be sure you've included the [flash template](docs/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
 
 It's also possible to render a form via twig or even within a controller method. [Click here](docs/0_Usage.md), to learn more about the form rendering types.
 

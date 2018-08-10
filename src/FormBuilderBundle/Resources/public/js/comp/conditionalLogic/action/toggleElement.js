@@ -43,6 +43,7 @@ Formbuilder.comp.conditionalLogic.action.toggleElement = Class.create(Formbuilde
             labelAlign: 'top',
             store: fieldStore,
             editable: false,
+            selectOnFocus: false,
             triggerAction: 'all',
             anchor: '100%',
             value: this.data ? this.data.fields : null,

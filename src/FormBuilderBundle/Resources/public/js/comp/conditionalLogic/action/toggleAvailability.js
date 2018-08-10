@@ -43,6 +43,7 @@ Formbuilder.comp.conditionalLogic.action.toggleAvailability = Class.create(Formb
                 labelAlign: 'top',
                 store: fieldStore,
                 editable: false,
+                selectOnFocus: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 value: this.data ? this.data.fields : null,
