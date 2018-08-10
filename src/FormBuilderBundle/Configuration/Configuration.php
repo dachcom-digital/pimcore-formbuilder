@@ -102,6 +102,16 @@ class Configuration
     }
 
     /**
+     * @param $flag
+     *
+     * @return bool
+     */
+    public function getConfigFlag($flag)
+    {
+        return $this->config['flags'][$flag];
+    }
+
+    /**
      * @return array
      */
     public function getAvailableConstraints()

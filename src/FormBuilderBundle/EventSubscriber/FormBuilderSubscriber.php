@@ -232,6 +232,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param FormInterface      $form
      * @param FormFieldInterface $field
      * @param null               $formData
+     *
      * @throws \Exception
      */
     private function addFormBuilderField(FormInterface $form, FormFieldInterface $field, $formData = null)
@@ -245,14 +246,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $constraintNames = [];
         $templateClasses = [];
 
-        //set optional template
-        if (isset($optional['template'])) {
-            $templateClasses[] = $optional['template'];
-        }
-
-        //tweak preferred choice options.
-        $choiceTypes = ['choice', 'dynamic_choice', 'country'];
-        if (in_array($field->getType(), $choiceTypes)) {
+        // options enrichment:  tweak preferred choice options
+        if (in_array($field->getType(), $this->getChoiceFieldTypes())) {
             if (
                 $options['multiple'] === false
                 && isset($options['data'])
@@ -263,6 +258,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             }
         }
 
+        // options enrichment: add constraints
         if (in_array('constraints', $availableOptions)) {
 
             $constraintData = $this->dispatcher->runFieldDispatcher('constraints', [
@@ -286,6 +282,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         $options['attr']['data-initial-constraints'] = join(',', $constraintNames);
 
+        // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
                     array_filter($constraints, function ($constraint) {
@@ -294,10 +291,25 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 ) === 1;
         }
 
-        if (in_array('conditionalLogic', $availableOptions)) {
-            //$options['conditionalLogic'] = NULL;
+        // options enrichment: check for custom radio / checkbox layout
+        if ($this->configuration->getConfigFlag('use_custom_radio_checkbox') === true) {
+            if (in_array('label_attr', $availableOptions)) {
+                if (in_array($field->getType(), ['checkbox'])) {
+                    $options['label_attr'] = ['class' => 'checkbox-custom'];
+                } elseif (in_array($field->getType(), $this->getChoiceFieldTypes())) {
+                    if ($options['expanded'] === true) {
+                        $options['label_attr'] = ['class' => $options['multiple'] === true ? 'checkbox-custom' : 'radio-custom'];
+                    }
+                }
+            }
         }
 
+        // options enrichment: set template
+        if (isset($optional['template'])) {
+            $templateClasses[] = $optional['template'];
+        }
+
+        // options enrichment: conditional logic class mapping
         $classData = $this->dispatcher->runFieldDispatcher('form_type_classes', [
             'formData'         => $formData,
             'field'            => $field,
@@ -342,10 +354,19 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @return array
+     */
+    private function getChoiceFieldTypes()
+    {
+        return ['choice', 'dynamic_choice', 'country'];
+    }
+
+    /**
      * Add pre-filled data to value store
      *
      * @param $fields
      * @param $data
+     *
      * @return mixed
      */
     private function prefillData($fields, $data)

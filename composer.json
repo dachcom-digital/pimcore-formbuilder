@@ -13,13 +13,11 @@
             "role": "Developer"
         }
     ],
-
     "autoload": {
         "psr-4": {
             "FormBuilderBundle\\": "src/FormBuilderBundle"
         }
     },
-
     "extra": {
         "pimcore": {
             "bundles": [

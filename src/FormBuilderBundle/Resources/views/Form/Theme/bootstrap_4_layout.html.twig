@@ -43,50 +43,12 @@
     {% endif %}
 {%- endblock choice_widget %}
 
-{#
-
-    {% block checkbox_widget -%}
-        {{ parent() }}
-        {% if help_text %}
-            {{ block('help_text_label') }}
-        {% endif %}
-    {%- endblock checkbox_widget %}
-
-#}
-
 {% block checkbox_widget -%}
-    {%- set id = 'cb-' ~ random() -%}
-    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
-    {%- set attr = attr|merge({class: attr.class|default('custom-control-input'), id: attr.id|default(id)}) -%}
-    {%- if 'checkbox-inline' in parent_label_class -%}
-        <div class="custom-control custom-checkbox custom-control-inline">
-            <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
-        </div>
-    {%- else -%}
-        <div class="custom-control custom-checkbox">
-            <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
-        </div>
-    {%- endif -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
 {%- endblock checkbox_widget %}
-
-{% block radio_widget -%}
-    {%- set id = 'rb-' ~ random() -%}
-    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
-    {%- set attr = attr|merge({class: attr.class|default('custom-control-input'), id: attr.id|default(id)}) -%}
-    {%- if 'radio-inline' in parent_label_class -%}
-        <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
-        </div>
-    {%- else -%}
-        <div class="custom-control custom-radio">
-            <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-            <label class="custom-control-label" for="{{ id }}">{{ label }}</label>
-        </div>
-    {%- endif -%}
-{%- endblock radio_widget %}
 
 {% block form_builder_honeypot_row -%}
     {{- form_widget(form) -}}

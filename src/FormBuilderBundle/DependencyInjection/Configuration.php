@@ -14,7 +14,12 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-
+                ->arrayNode('flags')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('use_custom_radio_checkbox')->defaultValue(true)->end()
+                    ->end()
+                ->end()
                 ->arrayNode('area')
                     ->addDefaultsIfNotSet()
                     ->children()
