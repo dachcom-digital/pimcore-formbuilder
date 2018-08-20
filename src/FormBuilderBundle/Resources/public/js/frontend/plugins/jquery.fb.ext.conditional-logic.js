@@ -26,23 +26,23 @@
             'bootstrap3': {
                 show: function ($els, className) {
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
                     });
                 },
                 hide: function ($els, className) {
                     $els.val('').prop('selectedIndex', 0);
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
                     });
                 },
                 addClass: function ($els, className) {
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
                     });
                 },
                 removeClass: function ($els, className) {
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
                     });
                 },
                 enable: function ($els) {
@@ -84,23 +84,23 @@
             'bootstrap4': {
                 show: function ($els, className) {
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
                     });
                 },
                 hide: function ($els, className) {
                     $els.val('').prop('selectedIndex', 0);
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
                     });
                 },
                 addClass: function ($els, className) {
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().addClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
                     });
                 },
                 removeClass: function ($els, className) {
                     $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').parent().removeClass(className);
+                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
                     });
                 },
                 enable: function ($els) {
