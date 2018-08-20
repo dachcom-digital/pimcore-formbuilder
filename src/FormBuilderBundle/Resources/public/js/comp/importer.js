@@ -3,32 +3,27 @@ pimcore.registerNS('Formbuilder.comp.importer');
 Formbuilder.comp.importer = Class.create({
 
     initialize: function (parentPanel) {
-       this.parentPanel = parentPanel;
-       this.importId = uniqid();
+        this.parentPanel = parentPanel;
+        this.importId = uniqid();
     },
 
-    showPanel: function() {
+    showPanel: function () {
 
-        if(typeof success !== 'function') {
-            var success = function () {  };
-        }
-
-        if(typeof failure !== 'function') {
-            var failure = function () {};
-        }
-
-        var url = '/admin/formbuilder/settings/import-form/' + this.importId + '/' + pimcore.settings.sessionId;
-
-        var uploadWindowCompatible = new Ext.Window({
+        var _ = this,
+            url = '/admin/formbuilder/settings/import-form/' + this.importId,
+            uploadWindowCompatible = new Ext.Window({
             autoHeight: true,
             title: t('upload'),
             closeAction: 'close',
-            width:400,
+            width: 400,
             modal: true
-        });
+        }), uploadForm;
 
-        var fbClass = this;
-        var uploadForm = new Ext.form.FormPanel({
+        if (Ext.isFunction(pimcore.helpers.addCsrfTokenToUrl)) {
+            url = pimcore.helpers.addCsrfTokenToUrl(url);
+        }
+
+        uploadForm = new Ext.form.FormPanel({
             bodyStyle: 'padding:10px',
             border: false,
             fileUpload: true,
@@ -38,23 +33,21 @@ Formbuilder.comp.importer = Class.create({
                 emptyText: t('form_builder_upload_configuration_file'),
                 fieldLabel: t('form_builder_file'),
                 width: 300,
-                name: 'Filedata',
+                name: 'formData',
                 buttonText: '',
                 buttonConfig: {
                     iconCls: 'pimcore_icon_upload'
                 },
                 listeners: {
                     change: function () {
-
                         uploadForm.getForm().submit({
                             url: url,
                             waitMsg: t('please_wait'),
                             success: function (el, res) {
-                                fbClass.getImport();
+                                _.getImport();
                                 uploadWindowCompatible.close();
                             },
                             failure: function (el, res) {
-                                failure(res);
                                 uploadWindowCompatible.close();
                             }
                         });
@@ -69,6 +62,7 @@ Formbuilder.comp.importer = Class.create({
         uploadWindowCompatible.updateLayout();
 
     },
+
     getImport: function () {
         Ext.Ajax.request({
             url: '/admin/formbuilder/settings/get-import',

@@ -7,6 +7,7 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -17,6 +18,7 @@ class SettingsController extends AdminController
 {
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getTreeAction(Request $request)
@@ -27,14 +29,12 @@ class SettingsController extends AdminController
         /** @var \FormBuilderBundle\Storage\Form $form */
         foreach ($forms as $form) {
             $mainItems[] = [
-
                 'id'            => (int)$form->getId(),
                 'text'          => $form->getName(),
                 'icon'          => '',
                 'leaf'          => true,
                 'iconCls'       => 'form_builder_icon_root',
                 'allowChildren' => false
-
             ];
         }
 
@@ -43,6 +43,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getSettingsAction(Request $request)
@@ -56,6 +57,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getDynamicChoiceBuilderAction(Request $request)
@@ -71,6 +73,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getFormAction(Request $request)
@@ -103,6 +106,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function addFormAction(Request $request)
@@ -121,6 +125,7 @@ class SettingsController extends AdminController
         try {
             $existingForm = $formManager->getIdByName($name);
         } catch (\Exception $e) {
+            // fail silently
         }
 
         if (!empty($existingForm)) {
@@ -148,6 +153,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function deleteFormAction(Request $request)
@@ -165,6 +171,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
      */
@@ -212,11 +219,14 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function importFormAction(Request $request)
     {
-        $data = file_get_contents($_FILES['Filedata']['tmp_name']);
+        /** @var UploadedFile $file */
+        $file = $request->files->get('formData');
+        $data = file_get_contents($file->getPathname());
         $encoding = \Pimcore\Tool\Text::detectEncoding($data);
 
         if ($encoding) {
@@ -246,6 +256,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
      */
@@ -273,6 +284,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return Response
      */
     public function getExportFileAction(Request $request)
@@ -302,6 +314,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function checkPathAction(Request $request)
@@ -314,6 +327,7 @@ class SettingsController extends AdminController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getGroupTemplatesAction(Request $request)

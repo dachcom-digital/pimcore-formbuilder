@@ -28,7 +28,7 @@ form_builder.controller.admin.get_import_file:
     path: /admin/formbuilder/settings/get-import/
     defaults: { _controller: FormBuilderBundle:Admin/Settings:getImportFile }
 form_builder.controller.admin.import_form:
-    path: /admin/formbuilder/settings/import-form/{id}/{admin_sid}
+    path: /admin/formbuilder/settings/import-form/{id}
     defaults: { _controller: FormBuilderBundle:Admin/Settings:importForm }
 
 form_builder.controller.admin.csv_export.export:
