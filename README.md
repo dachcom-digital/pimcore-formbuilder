@@ -1,14 +1,13 @@
 # Pimcore FormBuilder
-Pimcore 5 FormBuilder.
+Pimcore 5.x FormBuilder.
 
 #### Requirements
-* Pimcore 5.1
+* Pimcore 5.1+
 
 #### Pimcore 4 
 Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).
 
 ## Installation
-
 ```json
 "require" : {
     "dachcom-digital/formbuilder" : "~2.3.0"
@@ -20,10 +19,10 @@ Just open a document and place the form area brick like any other bricks via dra
 Use the edit button at the right top corner to configure your form. 
 Also make sure you've included the [flash template](docs/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
 
-It's also possible to render a form via twig or even within a controller method. [Click here](docs/0_Usage.md) to learn more about the form rendering types.
+It's also possible to render a form via Twig or even within a controller method. [Click here](docs/0_Usage.md) to learn more about the form rendering types.
 
 ## Overriding Templates
-Nothing to tell here, it's just [symfony](https://symfony.com/doc/current/templating/overriding.html) standard.
+Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templating/overriding.html) standard.
 
 ## Further Information
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
