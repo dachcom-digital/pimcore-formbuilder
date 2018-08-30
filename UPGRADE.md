@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button to finish the bundle update.
 
+#### Update from Version 2.4.1 to Version 2.4.2
+- implemented [PackageVersionTrait](https://github.com/pimcore/pimcore/blob/master/lib/Extension/Bundle/Traits/PackageVersionTrait.php)
+
 #### Update from Version 2.4.0 to Version 2.4.1
 - **[IMPROVEMENT]**: conditional logic jquery plugin: Fix class selector
 - **[IMPROVEMENT]**: Pimcore 5.3 ready: implement csrf check

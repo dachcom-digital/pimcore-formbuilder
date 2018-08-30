@@ -7,11 +7,12 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
-    const BUNDLE_VERSION = '2.4.1';
+    use PackageVersionTrait;
 
     /**
      * @param ContainerBuilder $container
@@ -22,14 +23,6 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new OptionsTransformerPass());
         $container->addCompilerPass(new DispatcherPass());
         $container->addCompilerPass(new ChoiceBuilderPass());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersion()
-    {
-        return self::BUNDLE_VERSION;
     }
 
     /**
@@ -103,4 +96,13 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/css/admin-editmode.css',
         ];
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getComposerPackageName(): string
+    {
+        return 'dachcom-digital/formbuilder';
+    }
+
 }
