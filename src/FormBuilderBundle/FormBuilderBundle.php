@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
+    const PACKAGE_NAME = 'dachcom-digital/formbuilder';
 
     /**
      * @param ContainerBuilder $container
@@ -102,7 +103,6 @@ class FormBuilderBundle extends AbstractPimcoreBundle
      */
     protected function getComposerPackageName(): string
     {
-        return 'dachcom-digital/formbuilder';
+        return self::PACKAGE_NAME;
     }
-
 }

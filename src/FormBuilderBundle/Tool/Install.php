@@ -4,11 +4,12 @@ namespace FormBuilderBundle\Tool;
 
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\FormBuilderBundle;
+use PackageVersions\Versions;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Property;
 use Pimcore\Model\Tool\Setup;
-use Pimcore\Model\Asset;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Filesystem\Filesystem;
@@ -27,12 +28,18 @@ class Install extends AbstractInstaller
     private $fileSystem;
 
     /**
+     * @var string
+     */
+    private $currentVersion;
+
+    /**
      * Install constructor.
      */
     public function __construct()
     {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->fileSystem = new Filesystem();
+        $this->currentVersion = Versions::getVersion(FormBuilderBundle::PACKAGE_NAME);
 
         parent::__construct();
     }
@@ -116,7 +123,7 @@ class Install extends AbstractInstaller
         $needUpdate = false;
         if ($this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH)) {
             $config = Yaml::parse(file_get_contents(Configuration::SYSTEM_CONFIG_FILE_PATH));
-            if ($config['version'] !== FormBuilderBundle::BUNDLE_VERSION) {
+            if ($config['version'] !== $this->currentVersion) {
                 $needUpdate = true;
             }
         }
@@ -137,7 +144,7 @@ class Install extends AbstractInstaller
             $this->fileSystem->mkdir(Configuration::STORE_PATH, 0755);
         }
 
-        $config = ['version' => FormBuilderBundle::BUNDLE_VERSION];
+        $config = ['version' => $this->currentVersion];
         $yml = Yaml::dump($config);
         file_put_contents(Configuration::SYSTEM_CONFIG_FILE_PATH, $yml);
     }
