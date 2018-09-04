@@ -6,10 +6,8 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button to finish the bundle update.
 
-#### Update from Version 2.4.2 to Version 2.4.3
-- fixed [issue #120](https://github.com/dachcom-digital/pimcore-formbuilder/issues/120) Fileupload failed with bigger files up to 2.5 MB
-
 #### Update from Version 2.4.1 to Version 2.4.2
+- fixed [issue #120](https://github.com/dachcom-digital/pimcore-formbuilder/issues/120) Fileupload failed with bigger files up to 2.5 MB
 - implemented [PackageVersionTrait](https://github.com/pimcore/pimcore/blob/master/lib/Extension/Bundle/Traits/PackageVersionTrait.php)
 
 #### Update from Version 2.4.0 to Version 2.4.1
