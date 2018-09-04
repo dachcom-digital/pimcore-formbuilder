@@ -79,6 +79,19 @@ class FileLocator
     }
 
     /**
+     * return content of $chunkDir as Finder-Object
+     *
+     * @param string $chunkDir
+     *
+     * @return Finder
+     */
+    public function getFilesFromChunkFolder(string $chunkDir)
+    {
+        $finder = new Finder();
+        return $finder->files()->in($chunkDir);
+    }
+
+    /**
      * @return string
      */
     public function getZipFolder()
