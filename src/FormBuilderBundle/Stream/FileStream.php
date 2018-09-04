@@ -18,6 +18,11 @@ use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Class FileStream
+ *
+ * @package FormBuilderBundle\Stream
+ */
 class FileStream
 {
     /**
@@ -144,9 +149,11 @@ class FileStream
 
         $target = fopen($targetPath, 'wb');
         for ($i = 0; $i < $totalParts; $i++) {
-            $chunk = fopen($targetFolder . DIRECTORY_SEPARATOR . $i, 'rb');
-            stream_copy_to_stream($chunk, $target);
-            fclose($chunk);
+            foreach ($this->fileLocator->getFilesFromChunkFolder($targetFolder . DIRECTORY_SEPARATOR . $i) as $chunkfile) {
+                $chunk = fopen($chunkfile->getPathname(), 'rb');
+                stream_copy_to_stream($chunk, $target);
+                fclose($chunk);
+            }
         }
 
         // Success
