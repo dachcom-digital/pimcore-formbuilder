@@ -6,38 +6,104 @@ use Pimcore\Translation\Translator;
 
 interface FormFieldInterface
 {
+    /**
+     * @param Translator $translator
+     *
+     * @return FormFieldInterface|void
+     */
     public function setTranslator(Translator $translator);
 
+    /**
+     * @return int
+     */
     public function getOrder();
 
-    public function setOrder($order);
+    /**
+     * @param int $order
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setOrder(int $order);
 
-    public function setName($name);
+    /**
+     * @param string $name
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setName(string $name);
 
+    /**
+     * @return string
+     */
     public function getName();
 
-    public function setDisplayName($name);
+    /**
+     * @param string $name
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setDisplayName(string $name);
 
+    /**
+     * @return string
+     */
     public function getDisplayName();
 
-    public function setType($type);
+    /**
+     * @param string $type
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setType(string $type);
 
+    /**
+     * @return string
+     */
     public function getType();
 
-    public function setOptions($options = []);
+    /**
+     * @param array $options
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setOptions(array $options = []);
 
+    /**
+     * @return array
+     */
     public function getOptions();
 
-    public function setOptional($options = []);
+    /**
+     * @param array $options
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setOptional(array $options = []);
 
+    /**
+     * @return array
+     */
     public function getOptional();
 
-    public function setConstraints($constraints = []);
+    /**
+     * @param array $constraints
+     *
+     * @return FormFieldInterface|void
+     */
+    public function setConstraints(array $constraints = []);
 
+    /**
+     * @return array
+     */
     public function getConstraints();
 
+    /**
+     * @return array
+     */
     public function toArray();
 
+    /**
+     * @return bool
+     */
     public function isUpdated();
-
 }
