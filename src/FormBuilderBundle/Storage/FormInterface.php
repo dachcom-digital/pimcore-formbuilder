@@ -18,7 +18,7 @@ interface FormInterface
      *
      * @return true
      */
-    public function rename($newName);
+    public function rename(string $newName);
 
     /**
      * @return mixed
@@ -35,7 +35,7 @@ interface FormInterface
      *
      * @return FormInterface|void
      */
-    public function setName($name);
+    public function setName(string $name);
 
     /**
      * @return string
@@ -91,7 +91,7 @@ interface FormInterface
      *
      * @return FormInterface|void
      */
-    public function addDynamicField($name, $type, $options, $optional = []);
+    public function addDynamicField(string $name, string $type, array $options, array $optional = []);
 
     /**
      * @param array $fields
@@ -122,14 +122,14 @@ interface FormInterface
     /**
      * @param string $name
      *
-     * @return string
+     * @return string|null
      */
     public function getFieldType(string $name);
 
     /**
      * @param string $name
      *
-     * @return string|array
+     * @return string|array|null
      */
     public function getFieldValue(string $name);
 }

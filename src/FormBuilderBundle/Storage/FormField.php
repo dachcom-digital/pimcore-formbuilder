@@ -24,7 +24,7 @@ class FormField implements FormFieldInterface
     /**
      * @var string
      */
-    private $display_name;
+    private $displayName;
 
     /**
      * @var string
@@ -82,9 +82,10 @@ class FormField implements FormFieldInterface
      *
      * @return FormField
      */
-    public function setOrder($order)
+    public function setOrder(int $order)
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -93,9 +94,10 @@ class FormField implements FormFieldInterface
      *
      * @return FormField
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -112,9 +114,10 @@ class FormField implements FormFieldInterface
      *
      * @return FormField
      */
-    public function setDisplayName($name)
+    public function setDisplayName(string $name)
     {
-        $this->display_name = $name;
+        $this->displayName = $name;
+        
         return $this;
     }
 
@@ -123,7 +126,7 @@ class FormField implements FormFieldInterface
      */
     public function getDisplayName()
     {
-        return $this->display_name;
+        return $this->displayName;
     }
 
     /**
@@ -131,9 +134,10 @@ class FormField implements FormFieldInterface
      *
      * @return FormField
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -156,7 +160,7 @@ class FormField implements FormFieldInterface
     /**
      * @param array $options
      */
-    public function setOptions($options = [])
+    public function setOptions(array $options = [])
     {
         $this->options = array_filter($options, function ($option) {
             return $option !== '';
@@ -174,7 +178,7 @@ class FormField implements FormFieldInterface
     /**
      * @param array $options
      */
-    public function setOptional($options = [])
+    public function setOptional(array $options = [])
     {
         if (!is_array($options)) {
             $options = [];
@@ -196,7 +200,7 @@ class FormField implements FormFieldInterface
     /**
      * @param array $constraints
      */
-    public function setConstraints($constraints = [])
+    public function setConstraints(array $constraints = [])
     {
         if (!is_array($constraints)) {
             $constraints = [];
@@ -225,6 +229,7 @@ class FormField implements FormFieldInterface
         }
 
         $removeKeys = ['translator', 'update'];
+
         return array_diff_key($array, array_flip($removeKeys));
     }
 }

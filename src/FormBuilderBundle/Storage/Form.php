@@ -106,6 +106,7 @@ class Form extends Model\AbstractModel implements FormInterface
     public static function getAll()
     {
         $list = new Form\Listing;
+
         return $list->getData();
     }
 
@@ -144,11 +145,11 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $newName
+     * @param string $newName
      *
      * @return bool
      */
-    public function rename($newName)
+    public function rename(string $newName)
     {
         $this->setName($newName);
         $this->save();
@@ -181,7 +182,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @return null
+     * @return int|null
      */
     public function getId()
     {
@@ -189,15 +190,15 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
     /**
-     * @return null
+     * @return string
      */
     public function getName()
     {
@@ -205,7 +206,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $date
+     * @param mixed $date
      */
     public function setDate($date)
     {
@@ -213,7 +214,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @return null
+     * @return mixed
      */
     public function getDate()
     {
@@ -229,14 +230,15 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(array $config)
     {
         $validConfig = array_intersect_key($config, array_flip(self::ALLOWED_FORM_KEYS));
         $this->config = $validConfig;
+
         return $this;
     }
 
@@ -249,25 +251,27 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return $this
      */
-    public function setConditionalLogic($config)
+    public function setConditionalLogic(array $config)
     {
         $this->conditionalLogic = $config;
+
         return $this;
     }
 
     /**
-     * @param       $name
-     * @param       $type
-     * @param       $options
-     * @param array $optional
+     * @param string $name
+     * @param string $type
+     * @param array  $options
+     * @param array  $optional
+     *
      * @return $this
      * @throws \Exception
      */
-    public function addDynamicField($name, $type, $options, $optional = [])
+    public function addDynamicField(string $name, string $type, array $options, array $optional = [])
     {
         if (in_array($name, Configuration::INVALID_FIELD_NAMES)) {
             throw new \Exception(sprintf('\'%s\' is a reserved form field name used by the form builder bundle and cannot be used.', $name));
@@ -284,11 +288,13 @@ class Form extends Model\AbstractModel implements FormInterface
 
         $dynamicField = new FormFieldDynamic($name, $type, $options, $optional, $update);
         $this->fields[$name] = $dynamicField;
+
         return $this;
     }
 
     /**
      * @param $name
+     *
      * @return $this
      * @throws \Exception
      */
@@ -325,11 +331,11 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return array
      */
-    public function getFieldsByType($type)
+    public function getFieldsByType(string $type)
     {
         $fields = [];
 
@@ -343,25 +349,27 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return mixed
+     * @return FormField|null
      */
-    public function getField($name)
+    public function getField(string $name)
     {
         foreach ($this->fields as $field) {
             if ($field->getName() === $name) {
                 return $field;
             }
         }
+
+        return null;
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return null
+     * @return string|null
      */
-    public function getFieldType($name)
+    public function getFieldType(string $name)
     {
         $field = $this->getField($name);
 
@@ -401,6 +409,7 @@ class Form extends Model\AbstractModel implements FormInterface
         }
 
         $data = $this->getData();
+
         return isset($data[$name]);
     }
 
@@ -417,14 +426,17 @@ class Form extends Model\AbstractModel implements FormInterface
      *
      * @param string $name
      *
-     * @return string|array
+     * @return string|array|null
      */
-    public function getFieldValue($name)
+    public function getFieldValue(string $name)
     {
         $array = $this->getData();
+
         if (isset($array[$name])) {
             return $array[$name];
         }
+
+        return null;
     }
 
 }
