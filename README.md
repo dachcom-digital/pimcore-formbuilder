@@ -1,6 +1,12 @@
 # Pimcore FormBuilder
 Pimcore 5.x FormBuilder.
 
+[![Join the chat at https://gitter.im/pimcore/pimcore](https://img.shields.io/gitter/room/pimcore/pimcore.svg?style=flat-square)](https://gitter.im/pimcore/pimcore)
+[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/formbuilder.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/formbuilder)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/dachcom-digital/pimcore-formbuilder.svg?style=flat-square)](https://www.scrutinizer-ci.com/g/dachcom-digital/pimcore-formbuilder)
+[![Travis](https://img.shields.io/travis/dachcom-digital/pimcore-formbuilder/master.svg?style=flat-square)](https://travis-ci.org/dachcom-digital/pimcore-formbuilder)
+
 #### Requirements
 * Pimcore 5.1+
 
