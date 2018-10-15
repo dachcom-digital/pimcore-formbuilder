@@ -8,13 +8,10 @@
 "form_builder.area.form_preset","Form Preset","Formular Vorlage"
 "form_builder.area.form_preset_info","Form Preset Info","Formular Vorlage Informationen"
 "form_builder.area.no_form_preset","No Form Preset","Ohne Vorlage"
-
 "form_builder.email.form_renders_automatically","Form data will be rendered automatically.","Formular-Inhalt wird automatisch in dieses E-Mail eingefügt."
 "form_builder.email.custom_style_activated_use_placeholder","Custom style mode has been activated. Please use placeholder like %s to display form value fields.","Benutzerdefiniertes Formular-Layout wurde aktiviert. Bitte benutzen Sie Platzhalter (zb. %s), um Formular-Elemente im E-Mail anzuzeigen."
-
-"form_builder.email.form_will_placed_here","Your form content will be placed here.","Formular-Inhalt wird hier angezeigt.",
+"form_builder.email.form_will_placed_here","Your form content will be placed here.","Formular-Inhalt wird hier angezeigt."
 "form_builder.email.placeholder_list_available","Depending on your selected form, some placeholder like %s are available.","Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung."
-
 "form_builder_type_group.text_fields","Text Fields","Textfelder"
 "form_builder_type_group.choice_fields","Choice Fields","Auswahlfelder"
 "form_builder_type_group.datetime_fields","DateTime Fields","Datumsfelder"
@@ -23,7 +20,6 @@
 "form_builder_type_group.date_time_fields","Date and Time Fields","Datum und Uhrzeit Felder"
 "form_builder_type_group.hidden_fields","Hidden Fields","Versteckte Felder"
 "form_builder_type_group.buttons","Buttons","Schaltflächen"
-
 "form_builder_validation_constraint.not_blank","Not Blank","NotBlank-Einschränkung"
 "form_builder_validation_constraint.email","Email-Validation","Email-Validierung"
 "form_builder_validation_constraint.length","Length","Länge"
@@ -37,7 +33,6 @@
 "form_builder_validation_constraint.date","Date","Datum"
 "form_builder_validation_constraint.date_time","Date & Time","Datum & Uhrzeit"
 "form_builder_validation_constraint.time","Time","Uhrzeit"
-
 "form_builder_type.text_type","Text Type","Text Element"
 "form_builder_type.hidden_type","Hidden Type","Verstecktes Element"
 "form_builder_type.integer_type","Integer Type","Numerisches Element"
@@ -54,13 +49,10 @@
 "form_builder_type.date_time_type","Date Time Type","Datum & Uhrzeit Element"
 "form_builder_type.time_type","Time Type","Uhrzeit Element"
 "form_builder_type.birthday_type","Birthday Type","Geburtstag Element"
-
 "form_builder_type_tab.default","Default","Standard"
-
 "form_builder_type_display_group.base","Base","Base"
 "form_builder_type_display_group.hook","Hook","Hook"
 "form_builder_type_display_group.attributes","Attributes","Attributes"
-
 "form_builder_type_field_base.label","Label","Label"
 "form_builder_type_field_base.email_label","Email Label","E-Mail Label"
 "form_builder_type_field_base.value","Value","Wert"
@@ -71,7 +63,6 @@
 "form_builder_type_field_base.hook_custom_class","Custom Class","Benutzerdefinierte Klasse"
 "form_builder_type_field_base.hook_custom_action","Custom Action","Benutzerdefinierte Aktion"
 "form_builder_type_field_base.attributes","Attributes","Attribute"
-
 "form_builder_type_field.tag_element","Tag Element","Tag Element"
 "form_builder_type_field.snippet_path","Snippet Path","Snippet Pfad"
 "form_builder_type_field.choices","Choices","Auswahl"
@@ -96,12 +87,9 @@
 "form_builder_type_field.time_widget","Widget Time","Darstellung Uhrzeit"
 "form_builder_type_field.date_with_minutes","With Minutes","Minuten darstellen"
 "form_builder_type_field.date_with_seconds","With Seconds","Sekunden darstellen"
-
 "form_builder_type_template.default","Default","Default"
-
 "form_builder_form_template.bootstrap_3_horizontal_layout","Bootstrap 3 Horizontal Layout","Bootstrap 3 Horizontales Layout"
 "form_builder_form_template.bootstrap_3_layout","Bootstrap 3 Layout","Bootstrap 3 Layout"
 "form_builder_form_template.bootstrap_4_horizontal_layout","Bootstrap 4 Horizontal Layout","Bootstrap 4 Horizontales Layout"
 "form_builder_form_template.bootstrap_4_layout","Bootstrap 4 Layout","Bootstrap 4 Layout"
-
 "form_builder_form_template.form_div_layout","Form Div Layout","Form Div Layout"

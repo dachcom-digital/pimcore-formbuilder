@@ -1,0 +1,16 @@
+form_builder:
+    form:
+        field:
+            templates:
+                default:
+                    value: 'default'
+                    label: 'form_builder_type_template.default'
+                    default: false
+                full:
+                    value: 'col-12'
+                    label: 'form_builder_type_template.full'
+                    default: true
+                half:
+                    value: 'col-6'
+                    label: 'form_builder_type_template.half'
+                    default: false

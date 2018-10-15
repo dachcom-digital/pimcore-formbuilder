@@ -1,0 +1,54 @@
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+
+class DefaultController extends FrontendController
+{
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $this->setViewAutoRender($event->getRequest(), true, 'twig');
+    }
+
+    public function defaultAction(Request $request)
+    {
+    }
+
+    public function twigRenderAction(Request $request)
+    {
+    }
+
+    public function controllerRenderAction(Request $request)
+    {
+        $options = [
+                'form_id'             => 3,
+                'form_template'       => 'bootstrap_3_layout.html.twig',
+                'main_layout'         => 'layout_form.html.twig', //app/Resources/views/layout.html.twig
+                'send_copy'           => FALSE,
+                'mail_template'       => 178,
+                'copy_mail_template'  => NULL,
+                'preset'              => NULL
+            ];
+
+            $optionBuilder = new FormOptionsResolver();
+            $optionBuilder->setFormId($options['form_id']);
+            $optionBuilder->setMainLayout($options['main_layout']);
+            $optionBuilder->setFormTemplate($options['form_template']);
+            $optionBuilder->setSendCopy($options['send_copy']);
+            $optionBuilder->setMailTemplate($options['mail_template']);
+            $optionBuilder->setCopyMailTemplate($options['copy_mail_template']);
+            $optionBuilder->setFormPreset($options['preset']);
+
+            /** @var FormAssembler $assembler */
+            $assembler = $this->container->get(FormAssembler::class);
+            $assembler->setFormOptionsResolver($optionBuilder);
+
+            return $this->renderTemplate(
+                '@FormBuilder/Form/form.html.twig',
+                $assembler->assembleViewVars()
+            );
+    }
+}

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+source $TRAVIS_BUILD_DIR/bundle_configuration
+
+$DACHCOM_BUNDLE_HOME/etc/scripts/codeception

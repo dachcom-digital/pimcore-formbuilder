@@ -1,0 +1,20 @@
+class_name: FunctionalTester
+modules:
+    enabled:
+        - \DachcomBundle\Test\Helper\BundleStructure:
+            run_installer: true
+            run_template_configurator: true
+        - \DachcomBundle\Test\Helper\PimcoreBundle:
+            connect_db: true
+            initialize_db: true
+            configuration_file: config_presets.yml
+            rebootable_client: true
+        - \DachcomBundle\Test\Helper\PimcoreBackend
+        - \DachcomBundle\Test\Helper\PimcoreUser
+
+env:
+    http:
+        modules:
+            enabled:
+                - PhpBrowser:
+                    url: '%PIMCORE_TEST_URL%'

@@ -1,0 +1,6 @@
+form_builder:
+    area:
+        presets:
+            preset1:
+                nice_name: 'Preset A'
+                admin_description: 'This is a description of Preset A'
