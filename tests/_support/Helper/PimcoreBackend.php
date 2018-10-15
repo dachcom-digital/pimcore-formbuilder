@@ -6,7 +6,9 @@ use Codeception\Module;
 use Codeception\TestInterface;
 use DachcomBundle\Test\Util\FormHelper;
 use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Storage\Form;
 use Pimcore\Model\Document\Email;
+use Pimcore\Model\Document\Page;
 use Pimcore\Model\Tool\Email\Log;
 use Pimcore\Model\Document\Tag\Areablock;
 use Pimcore\Model\Document\Tag\Checkbox;
@@ -55,6 +57,13 @@ class PimcoreBackend extends Module
      */
     public function haveASimpleForm($formName = 'MOCK_FORM', $addMail = false, $addCopyMail = false)
     {
+        $bundleManager = $this->getContainer()->get('pimcore.extension.bundle_manager');
+        $activeBundles = $bundleManager->getActiveBundles(true);
+
+        foreach($activeBundles as $bundle) {
+            \Codeception\Util\Debug::debug($bundle->getName());
+        }
+
         $this->haveASimpleFormOnPage($formName, 'form-test', $addMail, $addCopyMail);
     }
 
@@ -68,7 +77,7 @@ class PimcoreBackend extends Module
      */
     public function haveASimpleFormOnPage($formName = 'MOCK_FORM', $documentKey = 'form-test', $addMail = false, $addCopyMail = false)
     {
-        $this->createForm($formName);
+        $form = $this->createForm($formName);
 
         $document = $this->generateDocument($documentKey);
 
@@ -94,6 +103,9 @@ class PimcoreBackend extends Module
         } catch (\Exception $e) {
             \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
         }
+
+        $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
+        $this->assertInstanceOf(Page::class, Page::getById($document->getId()));
 
     }
 
@@ -185,6 +197,17 @@ class PimcoreBackend extends Module
      */
     protected function createForm($formName)
     {
+        $manager = $this->getFormManager();
+        $form = $manager->save(FormHelper::generateSimpleForm($formName));
+
+        return $form;
+    }
+
+    /**
+     * @return FormManager
+     */
+    protected function getFormManager()
+    {
         try {
             $manager = $this->getContainer()->get(FormManager::class);
         } catch (\Exception $e) {
@@ -192,9 +215,7 @@ class PimcoreBackend extends Module
             return null;
         }
 
-        $form = $manager->save(FormHelper::generateSimpleForm($formName));
-
-        return $form;
+        return $manager;
     }
 
     /**
