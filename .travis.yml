@@ -1,0 +1,42 @@
+sudo: false
+language: php
+addons:
+    mariadb: '10.1'
+    hosts:
+        - pimcore-test.dev
+env:
+    global:
+        - PIMCORE_ENVIRONMENT=test
+        - DACHCOM_BUNDLE_TEST=1
+        - PIMCORE_TEST_URL=http://pimcore-test.dev
+        - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
+        - SYMFONY_DEPRECATIONS_HELPER=weak
+matrix:
+    include:
+        -
+          sudo: required
+          php: 7.1
+          env:
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+        -
+          sudo: required
+          php: 7.2
+          env:
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+    fast_finish: true
+
+cache:
+    directories:
+        - ~/.composer/cache/files
+        - vendor
+
+install:
+    - tests/etc/travis/install
+
+script:
+    # we moved etc dir during install to .
+    - etc/travis/script
+
+notifications:
+    email:
+        - shagspiel@dachcom.ch
