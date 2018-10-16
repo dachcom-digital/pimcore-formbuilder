@@ -44,3 +44,10 @@ Vagrantfile
 .vagrant
 php-cgi.core
 .sass-cache
+
+# codeception (only stage *.dist.yml config files)
+/codeception.yml
+/tests/codeception.yml
+/tests/*.suite.yml
+/tests/_output/*
+/tests/_support/_generated/*
