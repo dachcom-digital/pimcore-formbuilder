@@ -4,7 +4,6 @@ namespace DachcomBundle\Test\Helper;
 
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Symfony\Component\Filesystem\Filesystem;
 
 class BundleStructure extends Module
 {
@@ -14,8 +13,7 @@ class BundleStructure extends Module
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
         $this->config = array_merge($this->config, [
-            'run_installer'             => false,
-            'run_template_configurator' => false
+            'run_installer'             => false
         ]);
 
         parent::__construct($moduleContainer, $config);
@@ -28,20 +26,10 @@ class BundleStructure extends Module
      */
     public function _beforeSuite($settings = [])
     {
+        parent::_beforeSuite($settings);
+
         if ($this->config['run_installer'] === true) {
             $this->installBundle($settings);
-        }
-
-        if ($this->config['run_template_configurator'] === true) {
-            $this->installTemplates($settings);
-        }
-
-    }
-
-    public function _afterSuite()
-    {
-        if ($this->config['run_template_configurator'] === true) {
-            $this->removeTemplates();
         }
     }
 
@@ -67,51 +55,5 @@ class BundleStructure extends Module
         // install dachcom bundle
         $installer = $pimcoreModule->getContainer()->get($installerClass);
         $installer->install();
-    }
-
-    /**
-     * @param $settings
-     */
-    private function installTemplates($settings)
-    {
-        return;
-
-        $bundleName = getenv('DACHCOM_BUNDLE_NAME');
-        $this->debug(sprintf('[%s] Install Bundle Templates...', strtoupper($bundleName)));
-
-        $fileSystem = new Filesystem();
-        foreach ($this->getTemplateFiles() as $templateSource => $templateDest) {
-            $fileSystem->copy($templateSource, $templateDest, true);
-        }
-    }
-
-    private function removeTemplates()
-    {
-        return;
-
-        $bundleName = getenv('DACHCOM_BUNDLE_NAME');
-        $this->debug(sprintf('[%s] Remove Bundle Templates...', strtoupper($bundleName)));
-
-        $fileSystem = new Filesystem();
-        foreach ($this->getTemplateFiles() as $templateSource => $templateDest) {
-            if ($fileSystem->exists($templateDest)) {
-                $fileSystem->remove($templateDest);
-            }
-        }
-    }
-
-    /**
-     * @return array
-     */
-    private function getTemplateFiles()
-    {
-        $bundleClass = getenv('DACHCOM_BUNDLE_HOME');
-        $templatePath = $bundleClass . '/etc/config/bundle/template';
-
-        return [
-            $templatePath . '/controller/DefaultController' => PIMCORE_PROJECT_ROOT . '/src/AppBundle/Controller/DefaultController.php',
-            $templatePath . '/views/default'                => PIMCORE_APP_ROOT . '/Resources/views/Default/default.html.twig'
-
-        ];
     }
 }
