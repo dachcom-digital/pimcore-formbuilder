@@ -82,6 +82,9 @@ class BundleStructure extends Module
             $this->debug(sprintf('[%s] Copy Bundle Template %s to %s.', strtoupper($bundleName), $templateSource, $templateDest));
             $fileSystem->copy($templateSource, $templateDest);
         }
+
+        $fileSystem->remove(PIMCORE_PROJECT_ROOT . '/var/cache');
+        $fileSystem->mkdir(PIMCORE_PROJECT_ROOT . '/var/cache');
     }
 
     private function removeTemplates()
@@ -106,15 +109,9 @@ class BundleStructure extends Module
         $bundleClass = getenv('DACHCOM_BUNDLE_HOME');
         $templatePath = $bundleClass . '/etc/config/bundle/template';
 
-        $pimcoreProjectRoot = getenv('TRAVIS_BUILD_DIR') ? getenv('TRAVIS_BUILD_DIR') : PIMCORE_PROJECT_ROOT;
-        $pimcoreAppRoot = getenv('TRAVIS_BUILD_DIR') ? (getenv('TRAVIS_BUILD_DIR') . '/app') : PIMCORE_APP_ROOT;
-
-        $this->debug(sprintf('Project Root for Templates: %s', $pimcoreProjectRoot));
-        $this->debug(sprintf('App Root for Templates: %s', $pimcoreAppRoot));
-
         return [
-            $templatePath . '/controller/DefaultController' => $pimcoreProjectRoot . '/src/AppBundle/Controller/DefaultController.php',
-            $templatePath . '/views/default'                => $pimcoreAppRoot . '/Resources/views/Default/default.html.twig'
+            $templatePath . '/controller/DefaultController' => PIMCORE_PROJECT_ROOT . '/src/AppBundle/Controller/DefaultController.php',
+            $templatePath . '/views/default'                => PIMCORE_APP_ROOT . '/Resources/views/Default/default.html.twig'
 
         ];
     }
