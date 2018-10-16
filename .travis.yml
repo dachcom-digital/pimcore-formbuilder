@@ -34,6 +34,9 @@ install:
     - tests/etc/travis/install
 
 after_failure:
+  - cd $TRAVIS_BUILD_DIR
+  - ls -la
+  - cat ./_output/*
   - cat tests/_output/*
 
 script:
