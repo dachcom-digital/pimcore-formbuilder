@@ -57,13 +57,6 @@ class PimcoreBackend extends Module
      */
     public function haveASimpleForm($formName = 'MOCK_FORM', $addMail = false, $addCopyMail = false)
     {
-        $bundleManager = $this->getContainer()->get('pimcore.extension.bundle_manager');
-        $activeBundles = $bundleManager->getActiveBundles(true);
-
-        foreach($activeBundles as $bundle) {
-            \Codeception\Util\Debug::debug($bundle->getName());
-        }
-
         $this->haveASimpleFormOnPage($formName, 'form-test', $addMail, $addCopyMail);
     }
 

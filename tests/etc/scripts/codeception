@@ -3,7 +3,7 @@ set -e
 
 echo "PHP UNIT TESTS FOR $DACHCOM_BUNDLE_NAME"
 
-CMD="vendor/bin/codecept run --debug -c lib/$DACHCOM_BUNDLE_NAME"
+CMD="vendor/bin/codecept run -c lib/$DACHCOM_BUNDLE_NAME"
 
 # generate json result file
 CMD="$CMD --json"

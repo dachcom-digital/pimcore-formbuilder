@@ -33,6 +33,9 @@ cache:
 install:
     - tests/etc/travis/install
 
+after_failure:
+  - cat tests/_output/*
+
 script:
     # we moved etc dir during install to .
     - etc/travis/script
