@@ -78,7 +78,7 @@ class BundleStructure extends Module
         $this->debug(sprintf('[%s] Install Bundle Templates...', strtoupper($bundleName)));
 
         $fileSystem = new Filesystem();
-        foreach($this->getTemplateFiles() as $templateSource => $templateDest) {
+        foreach ($this->getTemplateFiles() as $templateSource => $templateDest) {
             $this->debug(sprintf('[%s] Copy Bundle Template %s to %s.', strtoupper($bundleName), $templateSource, $templateDest));
             $fileSystem->copy($templateSource, $templateDest);
         }
@@ -90,8 +90,8 @@ class BundleStructure extends Module
         $this->debug(sprintf('[%s] Install Bundle Templates...', strtoupper($bundleName)));
 
         $fileSystem = new Filesystem();
-        foreach($this->getTemplateFiles() as $templateSource => $templateDest) {
-            if($fileSystem->exists($templateDest)) {
+        foreach ($this->getTemplateFiles() as $templateSource => $templateDest) {
+            if ($fileSystem->exists($templateDest)) {
                 $this->debug(sprintf('[%s] Removing Bundle Template %s', strtoupper($bundleName), $templateDest));
                 $fileSystem->remove($templateDest);
             }
@@ -106,9 +106,15 @@ class BundleStructure extends Module
         $bundleClass = getenv('DACHCOM_BUNDLE_HOME');
         $templatePath = $bundleClass . '/etc/config/bundle/template';
 
+        $pimcoreProjectRoot = getenv('TRAVIS_BUILD_DIR') ? getenv('TRAVIS_BUILD_DIR') : PIMCORE_PROJECT_ROOT;
+        $pimcoreAppRoot = getenv('TRAVIS_BUILD_DIR') ? (getenv('TRAVIS_BUILD_DIR') . '/app') : PIMCORE_APP_ROOT;
+
+        $this->debug(sprintf('Project Root for Templates: %s', $pimcoreProjectRoot));
+        $this->debug(sprintf('App Root for Templates: %s', $pimcoreAppRoot));
+
         return [
-            $templatePath . '/controller/DefaultController' => PIMCORE_PROJECT_ROOT . '/src/AppBundle/Controller/DefaultController.php',
-            $templatePath . '/views/default'                => PIMCORE_APP_ROOT . '/Resources/views/Default/default.html.twig'
+            $templatePath . '/controller/DefaultController' => $pimcoreProjectRoot . '/src/AppBundle/Controller/DefaultController.php',
+            $templatePath . '/views/default'                => $pimcoreAppRoot . '/Resources/views/Default/default.html.twig'
 
         ];
     }
