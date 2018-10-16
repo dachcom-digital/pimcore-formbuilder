@@ -74,17 +74,25 @@ class BundleStructure extends Module
      */
     private function installTemplates($settings)
     {
+        $bundleName = getenv('DACHCOM_BUNDLE_NAME');
+        $this->debug(sprintf('[%s] Install Bundle Templates...', strtoupper($bundleName)));
+
         $fileSystem = new Filesystem();
         foreach($this->getTemplateFiles() as $templateSource => $templateDest) {
+            $this->debug(sprintf('[%s] Copy Bundle Template %s to %s.', strtoupper($bundleName), $templateSource, $templateDest));
             $fileSystem->copy($templateSource, $templateDest);
         }
     }
 
     private function removeTemplates()
     {
+        $bundleName = getenv('DACHCOM_BUNDLE_NAME');
+        $this->debug(sprintf('[%s] Install Bundle Templates...', strtoupper($bundleName)));
+
         $fileSystem = new Filesystem();
         foreach($this->getTemplateFiles() as $templateSource => $templateDest) {
             if($fileSystem->exists($templateDest)) {
+                $this->debug(sprintf('[%s] Removing Bundle Template %s', strtoupper($bundleName), $templateDest));
                 $fileSystem->remove($templateDest);
             }
         }

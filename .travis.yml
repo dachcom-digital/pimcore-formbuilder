@@ -35,7 +35,6 @@ install:
 
 after_failure:
   - cd $TRAVIS_BUILD_DIR
-  - ls -la ./lib/FormBuilder
   - cat ./lib/FormBuilder/tests/_output/*
 
 script:

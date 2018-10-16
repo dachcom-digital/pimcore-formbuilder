@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use FormBuilderBundle\Resolver\FormOptionsResolver;
+use FormBuilderBundle\Assembler\FormAssembler;
 
 class DefaultController extends FrontendController
 {
@@ -24,31 +26,31 @@ class DefaultController extends FrontendController
     public function controllerRenderAction(Request $request)
     {
         $options = [
-                'form_id'             => 3,
-                'form_template'       => 'bootstrap_3_layout.html.twig',
-                'main_layout'         => 'layout_form.html.twig', //app/Resources/views/layout.html.twig
-                'send_copy'           => FALSE,
-                'mail_template'       => 178,
-                'copy_mail_template'  => NULL,
-                'preset'              => NULL
-            ];
+            'form_id'             => 1,
+            'form_template'       => 'bootstrap_3_layout.html.twig',
+            'main_layout'         => 'layout.html.twig',
+            'send_copy'           => false,
+            'mail_template'       => 1,
+            'copy_mail_template'  => null,
+            'preset'              => null
+        ];
 
-            $optionBuilder = new FormOptionsResolver();
-            $optionBuilder->setFormId($options['form_id']);
-            $optionBuilder->setMainLayout($options['main_layout']);
-            $optionBuilder->setFormTemplate($options['form_template']);
-            $optionBuilder->setSendCopy($options['send_copy']);
-            $optionBuilder->setMailTemplate($options['mail_template']);
-            $optionBuilder->setCopyMailTemplate($options['copy_mail_template']);
-            $optionBuilder->setFormPreset($options['preset']);
+        $optionBuilder = new FormOptionsResolver();
+        $optionBuilder->setFormId($options['form_id']);
+        $optionBuilder->setMainLayout($options['main_layout']);
+        $optionBuilder->setFormTemplate($options['form_template']);
+        $optionBuilder->setSendCopy($options['send_copy']);
+        $optionBuilder->setMailTemplate($options['mail_template']);
+        $optionBuilder->setCopyMailTemplate($options['copy_mail_template']);
+        $optionBuilder->setFormPreset($options['preset']);
 
-            /** @var FormAssembler $assembler */
-            $assembler = $this->container->get(FormAssembler::class);
-            $assembler->setFormOptionsResolver($optionBuilder);
+        /** @var FormAssembler $assembler */
+        $assembler = $this->container->get(FormAssembler::class);
+        $assembler->setFormOptionsResolver($optionBuilder);
 
-            return $this->renderTemplate(
-                '@FormBuilder/Form/form.html.twig',
-                $assembler->assembleViewVars()
-            );
+        return $this->renderTemplate(
+            '@FormBuilder/Form/form.html.twig',
+            $assembler->assembleViewVars()
+        );
     }
 }

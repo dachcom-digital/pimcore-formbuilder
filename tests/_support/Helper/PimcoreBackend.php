@@ -219,7 +219,8 @@ class PimcoreBackend extends Module
     protected function generateDocument($key = 'form-test')
     {
         $document = TestHelper::createEmptyDocumentPage('', false);
-        $document->setController('@AppBundle\Controller\DefaultController');
+        $document->setController('default');
+        $document->setAction('default');
         $document->setKey($key);
 
         return $document;
