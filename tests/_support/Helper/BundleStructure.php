@@ -74,6 +74,8 @@ class BundleStructure extends Module
      */
     private function installTemplates($settings)
     {
+        return;
+
         $bundleName = getenv('DACHCOM_BUNDLE_NAME');
         $this->debug(sprintf('[%s] Install Bundle Templates...', strtoupper($bundleName)));
 
@@ -85,6 +87,8 @@ class BundleStructure extends Module
 
     private function removeTemplates()
     {
+        return;
+
         $bundleName = getenv('DACHCOM_BUNDLE_NAME');
         $this->debug(sprintf('[%s] Remove Bundle Templates...', strtoupper($bundleName)));
 
