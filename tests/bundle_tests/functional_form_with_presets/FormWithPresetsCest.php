@@ -11,15 +11,19 @@ class FormWithPresetsCest
      */
     public function testAdminFormWithPresets(FunctionalTester $I)
     {
-        $I->haveAUser('dachcom_test');
+        $user = $I->haveAUser('dachcom_test');
+        $document = $I->haveAPageDocument('form-test');
+        $form = $I->haveAForm('dachcom_test');
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form);
+
         $I->amLoggedInAs('dachcom_test');
-        $I->haveASimpleForm('dachcom_test');
         $I->amOnPageInEditMode('/form-test');
 
         $I->see('Form Preset', '.form-config-window .fb-form-group label');
         $I->see('Form Preset Info', '.preview-fields h5');
 
-        $I->seeElement( '.preview-fields .preview-field[data-name="preset1"] .description');
+        $I->seeElement('.preview-fields .preview-field[data-name="preset1"] .description');
         $I->see('This is a description of Preset A', '.preview-fields .preview-field[data-name="preset1"] .description');
 
         $options = [

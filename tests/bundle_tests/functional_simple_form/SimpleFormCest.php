@@ -11,7 +11,10 @@ class SimpleFormCest
      */
     public function testSimpleForm(FunctionalTester $I)
     {
-        $I->haveASimpleForm('dachcom_test');
+        $document = $I->haveAPageDocument('form-test');
+        $form = $I->haveAForm('dachcom_test', 'simple');
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form);
 
         $I->amOnPage('/form-test');
         $I->seeElement('.form-builder-wrapper');
@@ -40,7 +43,10 @@ class SimpleFormCest
      */
     public function testSimpleFormSubmissionWithThrownValidationMessages(FunctionalTester $I)
     {
-        $I->haveASimpleForm('dachcom_test');
+        $document = $I->haveAPageDocument('form-test');
+        $form = $I->haveAForm('dachcom_test', 'simple');
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form);
 
         $I->amOnPage('/form-test');
         $I->seeElement('.form-builder-wrapper');
@@ -60,7 +66,10 @@ class SimpleFormCest
      */
     public function testSimpleFormSubmissionWithMissingMail(FunctionalTester $I)
     {
-        $I->haveASimpleForm('dachcom_test');
+        $document = $I->haveAPageDocument('form-test');
+        $form = $I->haveAForm('dachcom_test', 'simple');
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form);
 
         $I->amOnPage('/form-test');
         $I->seeElement('.form-builder-wrapper');
@@ -77,7 +86,13 @@ class SimpleFormCest
      */
     public function testSimpleFormSubmissionToAdminWithSuccess(FunctionalTester $I)
     {
-        $I->haveASimpleForm('dachcom_test', true);
+        $document = $I->haveAPageDocument('form-test');
+        $adminEmail = $I->haveAEmailDocumentForAdmin();
+        $userEmail = $I->haveAEmailDocumentForUser();
+
+        $form = $I->haveAForm('dachcom_test', 'simple');
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
         $I->seeElement('.form-builder-wrapper');
@@ -87,8 +102,23 @@ class SimpleFormCest
 
         $I->click('form button#formbuilder_1_send');
         $I->see('Success!', '.message.message-success');
-        $I->seeEmailIsSentToAdmin();
-        $I->seeEmailIsNotSentToUser();
+
+        $I->seeEmailIsSent($adminEmail);
+        $I->seePropertiesInEmail($adminEmail, [
+            'salutation'            => 'Mr.<br>',
+            'prename'               => 'TEST',
+            'lastname'              => 'MAN',
+            'phone'                 => '123456789',
+            'email'                 => 'test@test.com',
+            'comment'               => 'DUMMY TEXT',
+            'radios'                => 'Radio D<br>',
+            'checkbox'              => 'Check 4<br>',
+            '_form_builder_id'      => 1,
+            '_form_builder_is_copy' => 0,
+            '_form_builder_preset'  => null
+        ]);
+
+        $I->seeEmailIsNotSent($userEmail);
     }
 
     /**
@@ -96,7 +126,12 @@ class SimpleFormCest
      */
     public function testSimpleFormSubmissionToAdminAndUserWithSuccess(FunctionalTester $I)
     {
-        $I->haveASimpleForm('dachcom_test', true, true);
+        $document = $I->haveAPageDocument('form-test');
+        $form = $I->haveAForm('dachcom_test', 'simple');
+        $adminMail = $I->haveAEmailDocumentForAdmin();
+        $userMail = $I->haveAEmailDocumentForUser(['to' => '%email%']);
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminMail, $userMail);
 
         $I->amOnPage('/form-test');
         $I->seeElement('.form-builder-wrapper');
@@ -106,8 +141,36 @@ class SimpleFormCest
 
         $I->click('form button#formbuilder_1_send');
         $I->see('Success!', '.message.message-success');
-        $I->seeEmailIsSentToAdmin();
-        $I->seeEmailIsSentToUser();
+
+        $I->seeEmailIsSent($adminMail);
+        $I->seePropertiesInEmail($adminMail, [
+            'salutation'            => 'Mr.<br>',
+            'prename'               => 'TEST',
+            'lastname'              => 'MAN',
+            'phone'                 => '123456789',
+            'email'                 => 'test@test.com',
+            'comment'               => 'DUMMY TEXT',
+            'radios'                => 'Radio D<br>',
+            'checkbox'              => 'Check 4<br>',
+            '_form_builder_id'      => 1,
+            '_form_builder_is_copy' => 0,
+            '_form_builder_preset'  => null
+        ]);
+
+        $I->seeEmailIsSent($userMail);
+        $I->seePropertiesInEmail($userMail, [
+            'salutation'            => 'Mr.<br>',
+            'prename'               => 'TEST',
+            'lastname'              => 'MAN',
+            'phone'                 => '123456789',
+            'email'                 => 'test@test.com',
+            'comment'               => 'DUMMY TEXT',
+            'radios'                => 'Radio D<br>',
+            'checkbox'              => 'Check 4<br>',
+            '_form_builder_id'      => 1,
+            '_form_builder_is_copy' => 1,
+            '_form_builder_preset'  => null
+        ]);
     }
 
     /**
@@ -119,7 +182,7 @@ class SimpleFormCest
         $I->fillField('form input#formbuilder_1_lastname', 'MAN');
         $I->fillField('form input#formbuilder_1_phone', '123456789');
         $I->fillField('form input#formbuilder_1_email', 'test@test.com');
-        $I->fillField('form textarea#formbuilder_1_comment', 'DUMMY TEX');
+        $I->fillField('form textarea#formbuilder_1_comment', 'DUMMY TEXT');
         $I->selectOption('form select#formbuilder_1_salutation', 'mr');
         $I->selectOption('form input#formbuilder_1_radios_3', 'radio_d');
         $I->checkOption('form input#formbuilder_1_checkbox_3');

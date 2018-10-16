@@ -7,6 +7,7 @@ use Codeception\TestInterface;
 use DachcomBundle\Test\Util\FormHelper;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Storage\Form;
+use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Tool\Email\Log;
@@ -16,27 +17,10 @@ use Pimcore\Model\Document\Tag\Href;
 use Pimcore\Model\Document\Tag\Select;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Serializer\Serializer;
 
 class PimcoreBackend extends Module
 {
-    /**
-     * @var array
-     */
-    protected $generatedEmails = [];
-
-    /**
-     * @param TestInterface $test
-     */
-    public function _before(TestInterface $test)
-    {
-        parent::_before($test);
-
-        $this->generatedEmails = [
-            'admin' => [],
-            'user'  => []
-        ];
-    }
-
     /**
      * @param TestInterface $test
      */
@@ -52,44 +36,28 @@ class PimcoreBackend extends Module
      * Actor Function to create a Form
      *
      * @param string $formName
-     * @param bool   $addMail
-     * @param bool   $addCopyMail
+     * @param string $type
+     *
+     * @return FormInterface
      */
-    public function haveASimpleForm($formName = 'MOCK_FORM', $addMail = false, $addCopyMail = false)
+    public function haveAForm($formName = 'MOCK_FORM', $type = 'simple')
     {
-        $this->haveASimpleFormOnPage($formName, 'form-test', $addMail, $addCopyMail);
+        $form = $this->createForm($formName, $type);
+        $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
+
+        return $form;
     }
 
     /**
-     * Actor Function to create a Form on a specific Page
+     * Actor Function to create a Page Document
      *
-     * @param string $formName
      * @param string $documentKey
-     * @param bool   $addMail
-     * @param bool   $addCopyMail
+     *
+     * @return Page
      */
-    public function haveASimpleFormOnPage($formName = 'MOCK_FORM', $documentKey = 'form-test', $addMail = false, $addCopyMail = false)
+    public function haveAPageDocument($documentKey = 'form-test')
     {
-        $form = $this->createForm($formName);
-
-        $document = $this->generateDocument($documentKey);
-
-        $formId = 1;
-        $formType = 'form_div_layout.html.twig';
-        $mailTemplate = null;
-        $copyMailTemplate = null;
-        $sendUserCopy = false;
-
-        if ($addMail === true) {
-            $mailTemplate = $this->generateEmail('main-email', 'admin');
-        }
-
-        if ($addCopyMail === true) {
-            $sendUserCopy = true;
-            $copyMailTemplate = $this->generateEmail('main-email-copy', 'user');
-        }
-
-        $document->setElements($this->createFormArea($formId, $formType, $mailTemplate, $sendUserCopy, $copyMailTemplate));
+        $document = $this->generatePageDocument($documentKey);
 
         try {
             $document->save();
@@ -97,77 +65,151 @@ class PimcoreBackend extends Module
             \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
         }
 
-        $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
         $this->assertInstanceOf(Page::class, Page::getById($document->getId()));
 
+        return $document;
     }
 
     /**
-     *  Actor Function to see if an email has been sent to admin (specified in form)
+     * Actor Function to create a mail document for admin
+     *
+     * @param array $mailParams
+     *
+     * @return Email
      */
-    public function seeEmailIsSentToAdmin()
+    public function haveAEmailDocumentForAdmin(array $mailParams = [])
     {
-        $this->seeEmailIsSentToType('admin');
+        return $this->haveAEmailDocumentForType('admin', $mailParams);
     }
 
     /**
-     *  Actor Function to see if an email has been sent to admin
+     * Actor Function to create a mail document for user
+     *
+     * @param array $mailParams
+     *
+     * @return Email
      */
-    public function seeEmailIsNotSentToAdmin()
+    public function haveAEmailDocumentForUser(array $mailParams = [])
     {
-        $this->seeEmailIsNotSentToType('admin');
+        return $this->haveAEmailDocumentForType('user', $mailParams);
     }
 
     /**
-     *  Actor Function to see if an email has been sent to user (specified in form)
+     * Actor Function to create a mail document for given type
+     *
+     * @param       $type
+     * @param array $mailParams
+     *
+     * @return Email
      */
-    public function seeEmailIsSentToUser()
+    public function haveAEmailDocumentForType($type, array $mailParams = [])
     {
-        $this->seeEmailIsSentToType('user');
+        $emailDocument = $mailTemplate = $this->generateEmailDocument(sprintf('email-%s', $type), $mailParams);
+        $this->assertInstanceOf(Email::class, $emailDocument);
+
+        return $emailDocument;
+
     }
 
     /**
-     *  Actor Function to see if an email has not been sent to user
+     * Actor Function to place a form area on a document
+     *
+     * @param Page          $document
+     * @param FormInterface $form
+     * @param bool          $mailTemplate
+     * @param bool          $copyMailTemplate
+     * @param string        $formTemplate
      */
-    public function seeEmailIsNotSentToUser()
-    {
-        $this->seeEmailIsNotSentToType('user');
-    }
+    public function seeAFormAreaElementPlacedOnDocument(
+        Page $document,
+        FormInterface $form,
+        $mailTemplate = null,
+        $copyMailTemplate = null,
+        $formTemplate = 'form_div_layout.html.twig'
+    ) {
 
-    /**
-     * @param string $type
-     */
-    public function seeEmailIsSentToType($type = 'admin')
-    {
-        $mails = $this->generatedEmails[$type];
-        $this->assertGreaterThan(0, count($mails));
-
-        $documentIds = array_map(function (Email $email) {
-            return $email->getId();
-        }, $mails);
-
-        $foundEmails = $this->getEmailsFromDocumentIds($documentIds);
-        $this->assertEquals(count($mails), count($foundEmails));
-    }
-
-    /**
-     * @param string $type
-     */
-    public function seeEmailIsNotSentToType($type = 'admin')
-    {
-        $mails = $this->generatedEmails[$type];
-
-        // to have no mails is valid in this case.
-        if (count($mails) === 0) {
-            return;
+        if ($mailTemplate !== null) {
+            $this->assertInstanceOf(Email::class, $mailTemplate);
         }
 
-        $documentIds = array_map(function (Email $email) {
-            return $email->getId();
-        }, $mails);
+        $sendUserCopy = false;
+        if ($copyMailTemplate !== null) {
+            $sendUserCopy = true;
+            $this->assertInstanceOf(Email::class, $copyMailTemplate);
+        }
 
-        $foundEmails = $this->getEmailsFromDocumentIds($documentIds);
+        $document->setElements($this->createFormArea($form->getId(), $formTemplate, $mailTemplate, $sendUserCopy, $copyMailTemplate));
+
+        try {
+            $document->save();
+        } catch (\Exception $e) {
+            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
+        }
+
+        $this->assertCount(6, $document->getElements());
+    }
+
+    /**
+     * Actor Function to see if an email has been sent to admin (specified in form)
+     *
+     * @param Email $email#
+     */
+    public function seeEmailIsSent(Email $email)
+    {
+        $this->assertInstanceOf(Email::class, $email);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$email->getId()]);
+        $this->assertEquals(1, count($foundEmails));
+    }
+
+    /**
+     * Actor Function to see if an email has been sent to admin
+     *
+     * @param Email $email
+     */
+    public function seeEmailIsNotSent(Email $email)
+    {
+        $this->assertInstanceOf(Email::class, $email);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$email->getId()]);
         $this->assertEquals(0, count($foundEmails));
+    }
+
+    /**
+     * Actor Function to see if admin email contains given properties
+     *
+     * @param Email $mail
+     * @param array $properties
+     */
+    public function seePropertiesInEmail(Email $mail, array $properties)
+    {
+        $this->assertInstanceOf(Email::class, $mail);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
+        $this->assertGreaterThan(0, count($foundEmails));
+
+        $serializer = null;
+
+        try {
+            $serializer = $this->getContainer()->get('pimcore_admin.serializer');
+        } catch (\Exception $e) {
+            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while getting pimcore admin serializer. message was: ' . $e->getMessage()));
+        }
+
+        $this->assertInstanceOf(Serializer::class, $serializer);
+
+        foreach ($foundEmails as $email) {
+            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
+            foreach ($properties as $propertyKey => $propertyValue) {
+                $key = array_search($propertyKey, array_column($params, 'key'));
+                if ($key === false) {
+                    $this->fail(sprintf('Failed asserting that mail params array has the key "%s".', $propertyKey));
+                }
+
+                $data = $params[$key];
+                $this->assertEquals($propertyValue, $data['data']['value']);
+            }
+        }
     }
 
     /**
@@ -185,13 +227,24 @@ class PimcoreBackend extends Module
 
     /**
      * @param $formName
+     * @param $type
      *
-     * @return \FormBuilderBundle\Storage\FormInterface|null
+     * @return FormInterface
      */
-    protected function createForm($formName)
+    protected function createForm($formName, $type = 'simple')
     {
         $manager = $this->getFormManager();
-        $form = $manager->save(FormHelper::generateSimpleForm($formName));
+
+        $data = null;
+        switch ($type) {
+            case 'simple':
+                $data = FormHelper::generateSimpleForm($formName);
+                break;
+            default:
+                $this->fail(sprintf('form creation of type "%s" not possible', $type));
+        }
+
+        $form = $manager->save($data);
 
         return $form;
     }
@@ -216,7 +269,7 @@ class PimcoreBackend extends Module
      *
      * @return \Pimcore\Model\Document\Page
      */
-    protected function generateDocument($key = 'form-test')
+    protected function generatePageDocument($key = 'form-test')
     {
         $document = TestHelper::createEmptyDocumentPage('', false);
         $document->setController('@AppBundle\Controller\DefaultController');
@@ -228,11 +281,11 @@ class PimcoreBackend extends Module
 
     /**
      * @param string $key
-     * @param string $type
+     * @param array  $params
      *
      * @return null|Email
      */
-    protected function generateEmail($key = 'form-test-email', $type = 'admin')
+    protected function generateEmailDocument($key = 'form-test-email', array $params = [])
     {
         $document = new Email();
         $document->setType('email');
@@ -247,14 +300,32 @@ class PimcoreBackend extends Module
         $document->setSubject('MOCKED FORM MAIL (' . $key . ')');
         $document->setKey($key);
 
+        if (isset($params['to'])) {
+            $document->setTo($params['to']);
+        }
+
+        if (isset($params['replyTo'])) {
+            $document->setReplyTo($params['replyTo']);
+        }
+
+        if (isset($params['cc'])) {
+            $document->setCc($params['cc']);
+        }
+
+        if (isset($params['bcc'])) {
+            $document->setBcc($params['bcc']);
+        }
+
+        if (isset($params['from'])) {
+            $document->setFrom($params['from']);
+        }
+
         try {
             $document->save();
         } catch (\Exception $e) {
             \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating email. message was: ' . $e->getMessage()));
             return null;
         }
-
-        $this->generatedEmails[$type][] = $document;
 
         return $document;
     }

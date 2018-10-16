@@ -35,20 +35,30 @@ class PimcoreUser extends Module
      * Actor Function to create a User
      *
      * @param $username
+     *
+     * @return User
      */
     public function haveAUser($username)
     {
-        $this->createUser($username, false);
+        $user = $this->createUser($username, false);
+        $this->assertInstanceOf(User::class, $user);
+
+        return $user;
     }
 
     /**
      * Actor Function to create a Admin User
      *
      * @param $username
+     *
+     * @return User
      */
     public function haveAUserWithAdminRights($username)
     {
-        $this->createUser($username, true);
+        $user = $this->createUser($username, true);
+        $this->assertInstanceOf(User::class, $user);
+
+        return $user;
     }
 
     /**

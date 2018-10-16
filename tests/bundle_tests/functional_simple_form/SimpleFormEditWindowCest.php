@@ -31,7 +31,7 @@ class SimpleFormEditWindowCest
         ];
 
         $I->see('Form', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('formName', 'select', $options, 1, 'script');
+        $I->seeAEditableConfiguration('formName', 'select', $options, '1', 'script');
     }
 
     /**
@@ -123,9 +123,12 @@ class SimpleFormEditWindowCest
      */
     protected function setupAdminForm(FunctionalTester $I)
     {
-        $I->haveAUser('dachcom_test');
+        $user = $I->haveAUser('dachcom_test');
+        $form = $I->haveAForm('dachcom_test');
+        $document = $I->haveAPageDocument('form-test');
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form);
         $I->amLoggedInAs('dachcom_test');
-        $I->haveASimpleForm('dachcom_test');
         $I->amOnPageInEditMode('/form-test');
     }
 }
