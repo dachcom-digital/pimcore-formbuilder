@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Page</title>
+    <title>Test Page for FormBuilder</title>
 </head>
 <body>
     <div id="site">
@@ -10,19 +10,5 @@
             {{ pimcore_areablock('dachcomBundleTest') }}
         {% endblock %}
     </div>
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.conditional-logic.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/vendor/dependsOn/dependsOn.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js') }}"></script>
-    <script>
-        $(function () {
-            $('form.formbuilder.ajax-form').formBuilderAjaxManager({
-                resetFormMethod: function ($form) {
-                    //console.log($form);
-                }
-            });
-            $('form.formbuilder').formBuilderConditionalLogic();
-        });
-    </script>
 </body>
 </html>

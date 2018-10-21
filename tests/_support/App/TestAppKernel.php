@@ -34,6 +34,8 @@ class TestAppKernel extends Kernel
             $collection->addBundle(new \AppBundle\AppBundle);
         }
 
+        $collection->addBundle(new \Symfony\Bundle\WebServerBundle\WebServerBundle());
+
         $bundleClass = getenv('DACHCOM_BUNDLE_CLASS');
         $collection->addBundle(new $bundleClass());
     }

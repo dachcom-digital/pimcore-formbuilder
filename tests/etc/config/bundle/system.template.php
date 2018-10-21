@@ -4,7 +4,7 @@ return [
     "general"        => [
         "timezone"                 => "Europe/Berlin",
         "path_variable"            => "",
-        "domain"                   => "pimcore-test.dev",
+        "domain"                   => "localhost",
         "redirect_to_maindomain"   => false,
         "language"                 => "en",
         "validLanguages"           => "en,de",
@@ -32,7 +32,7 @@ return [
             "host"     => "localhost",
             "username" => "root",
             "password" => "",
-            "dbname"   => "pimcore_test",
+            "dbname"   => "dachcom_bundle_test",
             "port"     => "3306"
         ]
     ],

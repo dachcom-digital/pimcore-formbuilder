@@ -31,10 +31,11 @@ class FormHelper extends Autoload
 
     /**
      * @param string $formName
+     * @param bool   $useAjax
      *
      * @return array
      */
-    public static function generateSimpleForm(string $formName = 'TEST_FORM')
+    public static function generateSimpleForm(string $formName = 'TEST_FORM', $useAjax = false)
     {
         return [
             'form_name'   => $formName,
@@ -43,7 +44,7 @@ class FormHelper extends Autoload
                 'method'     => 'POST',
                 'enctype'    => 'multipart/form-data',
                 'noValidate' => false,
-                'useAjax'    => false
+                'useAjax'    => $useAjax
             ],
 
             'form_fields' => [

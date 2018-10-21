@@ -50,14 +50,15 @@ class PimcoreBackend extends Module
 
     /**
      * Actor Function to create a Page Document
-     *
      * @param string $documentKey
+     * @param        $action
+     * @param string $controller
      *
      * @return Page
      */
-    public function haveAPageDocument($documentKey = 'form-test')
+    public function haveAPageDocument($documentKey = 'form-test', $action = 'default', $controller = '@AppBundle\Controller\DefaultController')
     {
-        $document = $this->generatePageDocument($documentKey);
+        $document = $this->generatePageDocument($documentKey, $action, $controller);
 
         try {
             $document->save();
@@ -240,6 +241,9 @@ class PimcoreBackend extends Module
             case 'simple':
                 $data = FormHelper::generateSimpleForm($formName);
                 break;
+            case 'simple-javascript':
+                $data = FormHelper::generateSimpleForm($formName, true);
+                break;
             default:
                 $this->fail(sprintf('form creation of type "%s" not possible', $type));
         }
@@ -266,14 +270,16 @@ class PimcoreBackend extends Module
 
     /**
      * @param string $key
+     * @param string $action
+     * @param string $controller
      *
-     * @return \Pimcore\Model\Document\Page
+     * @return Page
      */
-    protected function generatePageDocument($key = 'form-test')
+    protected function generatePageDocument($key = 'form-test', $action = 'default', $controller = '@AppBundle\Controller\DefaultController')
     {
         $document = TestHelper::createEmptyDocumentPage('', false);
-        $document->setController('@AppBundle\Controller\DefaultController');
-        $document->setAction('default');
+        $document->setController($controller);
+        $document->setAction($action);
         $document->setKey($key);
 
         return $document;

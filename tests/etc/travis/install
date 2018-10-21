@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+
 ## include global bundle test configuration
 
 source $TRAVIS_BUILD_DIR/tests/bundle_configuration
@@ -9,6 +10,12 @@ source $TRAVIS_BUILD_DIR/tests/bundle_configuration
 ## setup php
 
 phpenv config-add $DACHCOM_BUNDLE_HOME/tests/etc/config/system/php.ini
+
+
+# Install chrome driver
+
+wget -c -nc --retry-connrefused --tries=0 "https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip" -O chromedriver_linux64.zip
+unzip -o -q chromedriver_linux64.zip -d $HOME
 
 
 ## setup mysql
