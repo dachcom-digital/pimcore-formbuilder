@@ -1,14 +1,18 @@
-sudo: false
+sudo: required
 language: php
 addons:
+    chrome: stable
     mariadb: '10.1'
-    hosts:
-        - pimcore-test.dev
+
 env:
     global:
         - PIMCORE_ENVIRONMENT=test
         - DACHCOM_BUNDLE_TEST=1
-        - PIMCORE_TEST_URL=http://pimcore-test.dev
+        - PIMCORE_TEST_URL=http://localhost
+        - CHROME_DRIVER_VERSION=2.41
+        - SELENIUM_VERSION=3.6.0
+        - WEBDRIVER_HOST=localhost
+        - WEBDRIVER_URL="http://localhost:8080/"
         - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
         - SYMFONY_DEPRECATIONS_HELPER=weak
 matrix:
@@ -27,19 +31,19 @@ matrix:
 
 cache:
     directories:
-        - ~/.composer/cache/files
-        - vendor
+        - $HOME/.composer/cache
 
 install:
     - tests/etc/travis/install
 
 after_failure:
-  - echo $(pwd)
-  - cd $TRAVIS_BUILD_DIR
-  - cat ./lib/FormBuilder/tests/_output/*
+    - cd $TRAVIS_BUILD_DIR
+    - cat ./lib/FormBuilder/tests/_output/*
 
 script:
-    # we moved etc dir during install to .
+    - '$HOME/chromedriver --url-base=/wd/hub &'
+    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
+    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
     - etc/travis/script
 
 notifications:
