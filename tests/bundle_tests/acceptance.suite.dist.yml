@@ -1,7 +1,7 @@
 actor: AcceptanceTester
 modules:
     config:
-        \DachcomBundle\Test\Helper\Browser\Webdriver:
+        \DachcomBundle\Test\Helper\Browser\WebDriver:
             host: '%WEBDRIVER_HOST%'
             url: '%WEBDRIVER_URL%'
             browser: chrome
@@ -14,6 +14,6 @@ modules:
             rebootable_client: true
         - \DachcomBundle\Test\Helper\PimcoreBundleCore:
             run_installer: true
-        - \DachcomBundle\Test\Helper\Browser\Webdriver
+        - \DachcomBundle\Test\Helper\Browser\WebDriver
         - \DachcomBundle\Test\Helper\PimcoreBackend
         - \DachcomBundle\Test\Helper\PimcoreUser
