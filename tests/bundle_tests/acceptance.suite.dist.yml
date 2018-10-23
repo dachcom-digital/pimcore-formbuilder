@@ -1,0 +1,19 @@
+actor: AcceptanceTester
+modules:
+    config:
+        \DachcomBundle\Test\Helper\Browser\Webdriver:
+            host: '%WEBDRIVER_HOST%'
+            url: '%WEBDRIVER_URL%'
+            browser: chrome
+            port: 4444
+            restart: true
+    enabled:
+        - \DachcomBundle\Test\Helper\PimcoreCore:
+            part: SERVICES
+            connect_db: true
+            rebootable_client: true
+        - \DachcomBundle\Test\Helper\PimcoreBundleCore:
+            run_installer: true
+        - \DachcomBundle\Test\Helper\Browser\Webdriver
+        - \DachcomBundle\Test\Helper\PimcoreBackend
+        - \DachcomBundle\Test\Helper\PimcoreUser

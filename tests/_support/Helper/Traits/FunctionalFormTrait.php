@@ -3,21 +3,48 @@
 namespace DachcomBundle\Test\Helper\Traits;
 
 use Codeception\Actor;
+use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\FunctionalTester;
+use DachcomBundle\Test\Util\FormHelper;
+use DachcomBundle\Test\Util\TestFormBuilder;
 
 trait FunctionalFormTrait
 {
     /**
-     * @param Actor $I
+     * @param bool $useAjax
+     *
+     * @return TestFormBuilder
      */
-    private function fillForm(Actor $I)
+    private function generateSimpleForm($useAjax = false)
     {
-        $I->fillField('form input#formbuilder_1_prename', 'TEST');
-        $I->fillField('form input#formbuilder_1_lastname', 'MAN');
-        $I->fillField('form input#formbuilder_1_phone', '123456789');
-        $I->fillField('form input#formbuilder_1_email', 'test@test.com');
-        $I->fillField('form textarea#formbuilder_1_comment', 'DUMMY TEXT');
-        $I->selectOption('form select#formbuilder_1_salutation', 'mr');
-        $I->selectOption('form input#formbuilder_1_radios_3', 'radio_d');
-        $I->checkOption('form input#formbuilder_1_checkbox_3');
+        return FormHelper::generateSimpleForm('dachcom_test', $useAjax);
+    }
+
+    /**
+     * @param TestFormBuilder                         $testFormBuilder
+     * @param AcceptanceTester|FunctionalTester|Actor $I
+     */
+    private function fillSimpleForm(TestFormBuilder $testFormBuilder, Actor $I)
+    {
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 'TEST_FIRST_NAME');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'TEST_LAST_NAME');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_3'), '+43 1234 67 89');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_4'), 'test@test.com');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_area'), 'DUMMY LOREM IPSUM TEXT AREA TEXT');
+
+        $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'simple_dropdown'), 'simple_drop_down_value_1');
+        $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'radios', '', '_3'), 'radio3');
+
+        $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_3'));
+        $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'single_checkbox'));
+    }
+
+    /**
+     * @param TestFormBuilder                         $testFormBuilder
+     * @param AcceptanceTester|FunctionalTester|Actor $I
+     */
+    private function clickSimpleFormSubmit(TestFormBuilder $testFormBuilder, Actor $I)
+    {
+        $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
     }
 }

@@ -16,14 +16,6 @@ class PimcoreUser extends Module
     protected $users = [];
 
     /**
-     * @inheritDoc
-     */
-    public function _initialize()
-    {
-        parent::_initialize();
-    }
-
-    /**
      * @param TestInterface $test
      */
     public function _before(TestInterface $test)

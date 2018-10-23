@@ -1,6 +1,6 @@
 modules:
     config:
-        WebDriver:
+        \DachcomBundle\Test\Helper\Browser\Webdriver:
             browser: chrome
             port: 9515
             capabilities:

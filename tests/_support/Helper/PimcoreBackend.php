@@ -5,6 +5,7 @@ namespace DachcomBundle\Test\Helper;
 use Codeception\Module;
 use Codeception\TestInterface;
 use DachcomBundle\Test\Util\FormHelper;
+use DachcomBundle\Test\Util\TestFormBuilder;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormInterface;
@@ -35,14 +36,13 @@ class PimcoreBackend extends Module
     /**
      * Actor Function to create a Form
      *
-     * @param string $formName
-     * @param string $type
+     * @param TestFormBuilder $formBuilder
      *
      * @return FormInterface
      */
-    public function haveAForm($formName = 'MOCK_FORM', $type = 'simple')
+    public function haveAForm(TestFormBuilder $formBuilder)
     {
-        $form = $this->createForm($formName, $type);
+        $form = $this->createForm($formBuilder);
         $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
 
         return $form;
@@ -50,6 +50,7 @@ class PimcoreBackend extends Module
 
     /**
      * Actor Function to create a Page Document
+     *
      * @param string $documentKey
      * @param        $action
      * @param string $controller
@@ -153,7 +154,7 @@ class PimcoreBackend extends Module
     /**
      * Actor Function to see if an email has been sent to admin (specified in form)
      *
-     * @param Email $email#
+     * @param Email $email #
      */
     public function seeEmailIsSent(Email $email)
     {
@@ -227,28 +228,14 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param $formName
-     * @param $type
+     * @param  TestFormBuilder $formBuilder
      *
      * @return FormInterface
      */
-    protected function createForm($formName, $type = 'simple')
+    protected function createForm(TestFormBuilder $formBuilder)
     {
         $manager = $this->getFormManager();
-
-        $data = null;
-        switch ($type) {
-            case 'simple':
-                $data = FormHelper::generateSimpleForm($formName);
-                break;
-            case 'simple-javascript':
-                $data = FormHelper::generateSimpleForm($formName, true);
-                break;
-            default:
-                $this->fail(sprintf('form creation of type "%s" not possible', $type));
-        }
-
-        $form = $manager->save($data);
+        $form = $manager->save($formBuilder->build());
 
         return $form;
     }
@@ -415,6 +402,6 @@ class PimcoreBackend extends Module
      */
     protected function getContainer()
     {
-        return $this->getModule('\\' . PimcoreBundle::class)->getContainer();
+        return $this->getModule('\\' . PimcoreCore::class)->getContainer();
     }
 }

@@ -155,11 +155,9 @@
                 case 'bootstrap_3_layout':
                 case 'bootstrap_3_horizontal_layout':
                     return this.themeTransform.bootstrap3[action].apply(null, args);
-                    break;
                 case 'bootstrap_4_layout':
                 case 'bootstrap_4_horizontal_layout':
                     return this.themeTransform.bootstrap4[action].apply(null, args);
-                    break;
                 default:
                     console.warn('unknown element transformer action found.', action);
                     break;
@@ -194,12 +192,12 @@
                         case 'is_greater':
                             qualifiers['greater'] = function (val) {
                                 return parseInt(val) > parseInt(condition.value);
-                            }
+                            };
                             break;
                         case 'is_less':
                             qualifiers['less'] = function (val) {
                                 return parseInt(val) < parseInt(condition.value);
-                            }
+                            };
                             break;
                         case 'is_value':
                             qualifiers['values'] = [condition.value];
@@ -211,16 +209,18 @@
                             qualifiers['values'] = [undefined, ''];
                             break;
                         case 'contains':
-                            qualifiers['contains'] = condition.value.split(',');
+                            qualifiers['contains'] = $.map(condition.value.split(','), function(e) { return $.trim(e) });
                             break;
                         case 'is_checked':
-                            qualifiers['not'] = [undefined];
+                            qualifiers['not'] = [undefined, ''];
                             qualifiers['checked'] = true;
                             break;
                         case 'is_not_checked':
                             qualifiers['checked'] = false;
                             break;
                     }
+
+                    console.log(qualifiers);
 
                     return qualifiers;
                 }
@@ -415,8 +415,8 @@
 
                 $(this).removeAttr('data-initial-constraints');
                 $field
-                    .data('fb.cl.initial-constraints', constraints)
-                    .data('fb.cl.has-initial-required-constraint', $.inArray('not_blank', constraints) !== -1);
+                .data('fb.cl.initial-constraints', constraints)
+                .data('fb.cl.has-initial-required-constraint', $.inArray('not_blank', constraints) !== -1);
             })
         },
 
@@ -439,9 +439,9 @@
                     var dependFields = [];
                     $.each(actionFields, function (i, field) {
                         dependFields.push(field);
-                    }.bind(this))
+                    }.bind(this));
                     dependingStructure.push({'action': action, 'condition': block.condition, 'fields': dependFields});
-                }.bind(this))
+                }.bind(this));
 
                 //create dependency structure for each group.
                 var formSelector = 'form[name="' + _.$form.prop('name') + '"]';
@@ -469,7 +469,12 @@
                         console.warn('no dependencies found. query was:', formDependingSelector);
                         return true;
                     }
-                    var $conditionField = $dependencies.dependsOn(conditionSelector, actionOptions);
+
+                    var dependsOnQuery = $dependencies.dependsOn(conditionSelector['and'], actionOptions);
+                    if(Object.keys(conditionSelector['or']).length > 0) {
+                        dependsOnQuery.or(conditionSelector['or']);
+                    }
+
                     //console.log('add condition to', formDependingSelector, 'depends on: ', conditionSelector, 'actionOptions:', actionOptions);
 
                 });
@@ -486,7 +491,7 @@
          */
         generateQualifiersSelector: function (conditions, formSelector) {
             var _ = this,
-                conditionSelector = {};
+                conditionSelector = {'and': {}, 'or': {}};
             $.each(conditions, function (conditionId, condition) {
                 var conditionType = condition.type,
                     qualifiers = {};
@@ -499,15 +504,30 @@
 
                 $.each(condition.fields, function (fieldIndex, field) {
                     var fieldSelector = formSelector + ' *[name*="' + field + '"]',
-                        $el = $(fieldSelector);
+                        $el = $(fieldSelector),
+                        isCheckbox = $el.first().attr('type') === 'checkbox';
 
-                    //if strict value is in comparator and element is a (maybe multiple) checkbox, stet selector to field with given value!
-                    if ($el.length > 1 && $el.first().attr('type') === 'checkbox' && condition.comparator === 'is_value' && condition.value !== '') {
+                    if(isCheckbox && condition.comparator !== 'is_not_checked') {
                         qualifiers['checked'] = true;
-                        fieldSelector += '[value="' + condition.value + '"]';
                     }
 
-                    conditionSelector[fieldSelector] = qualifiers
+                    //if strict value is in comparator and element is a (maybe multiple) checkbox, stet selector to field with given value!
+                    if ($el.length > 1 && isCheckbox === true) {
+                        if (condition.comparator === 'is_value' && condition.value !== '') {
+                            fieldSelector += '[value="' + condition.value + '"]';
+                            conditionSelector['and'][fieldSelector] = qualifiers
+                        } else if (condition.comparator === 'contains' && condition.value !== '') {
+                            $.each(condition.value.split(','), function (index, value) {
+                                var multiFieldSelector = fieldSelector + '[value="' + $.trim(value) + '"]',
+                                    section = index === 0 ? 'and' : 'or';
+                                conditionSelector[section][multiFieldSelector] = qualifiers
+                            });
+                        } else {
+                            conditionSelector['and'][fieldSelector] = qualifiers
+                        }
+                    } else {
+                        conditionSelector['and'][fieldSelector] = qualifiers
+                    }
                 });
             });
 
@@ -517,6 +537,7 @@
         /**
          *
          * @param action
+         * @param actionId
          * @returns {boolean}
          */
         generateActionOptions: function (action, actionId) {
@@ -530,7 +551,7 @@
                         disable: false,
                         onEnable: _.actions.toggleElement.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.toggleElement.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 case 'changeValue':
                     options = {
@@ -538,7 +559,7 @@
                         disable: false,
                         onEnable: _.actions.changeValue.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.changeValue.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 case 'triggerEvent':
                     options = {
@@ -546,7 +567,7 @@
                         disable: false,
                         onEnable: _.actions.triggerEvent.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.triggerEvent.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 case 'toggleClass':
                     options = {
@@ -554,7 +575,7 @@
                         disable: false,
                         onEnable: _.actions.toggleClass.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.toggleClass.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 case 'toggleAvailability':
                     options = {
@@ -562,7 +583,7 @@
                         disable: false,
                         onEnable: _.actions.toggleAvailability.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.toggleAvailability.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 case 'constraintsAdd':
                     options = {
@@ -570,7 +591,7 @@
                         disable: false,
                         onEnable: _.actions.constraintsAdd.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.constraintsAdd.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 case 'constraintsRemove':
                     options = {
@@ -578,7 +599,7 @@
                         disable: false,
                         onEnable: _.actions.constraintsRemove.onEnable.bind(null, action, actionId),
                         onDisable: _.actions.constraintsRemove.onDisable.bind(null, action, actionId)
-                    }
+                    };
                     break;
                 default:
                     options = false

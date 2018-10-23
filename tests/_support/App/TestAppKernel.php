@@ -34,8 +34,6 @@ class TestAppKernel extends Kernel
             $collection->addBundle(new \AppBundle\AppBundle);
         }
 
-        $collection->addBundle(new \Symfony\Bundle\WebServerBundle\WebServerBundle());
-
         $bundleClass = getenv('DACHCOM_BUNDLE_CLASS');
         $collection->addBundle(new $bundleClass());
     }
@@ -45,8 +43,10 @@ class TestAppKernel extends Kernel
      */
     protected function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new \DachcomBundle\Test\DependencyInjection\MakeServicesPublicPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, -100000);
-        $container->addCompilerPass(new \DachcomBundle\Test\DependencyInjection\MonologChannelLoggerPass(), \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
+        $container->addCompilerPass(new \DachcomBundle\Test\DependencyInjection\MakeServicesPublicPass(),
+            \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, -100000);
+        $container->addCompilerPass(new \DachcomBundle\Test\DependencyInjection\MonologChannelLoggerPass(),
+            \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace DachcomBundle\Test;
 
-
 /**
  * Class FunctionalTester
  *

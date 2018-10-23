@@ -2,14 +2,16 @@
 
 namespace DachcomBundle\Test\Util;
 
-use Codeception\Util\Autoload;
 use FormBuilderBundle\Configuration\Configuration;
 use Symfony\Component\Finder\Finder;
 
-class FormHelper extends Autoload
+class FormHelper
 {
     const AREA_TEST_NAMESPACE = 'dachcomBundleTest';
 
+    /**
+     * Delete all Forms from db / filesystem
+     */
     public static function removeAllForms()
     {
         $formPath = Configuration::STORE_PATH;
@@ -30,188 +32,62 @@ class FormHelper extends Autoload
     }
 
     /**
+     * @param string $name
+     * @param string $type
+     * @param array  $options
+     * @param null   $data
+     *
+     * @return string
+     */
+    public static function generateEditableConfiguration(string $name, string $type, array $options, $data = null)
+    {
+        $editableConfig = [
+            'id'        => sprintf('pimcore_editable_%s:1.%s', FormHelper::AREA_TEST_NAMESPACE, $name),
+            'name'      => sprintf('%s:1.%s', FormHelper::AREA_TEST_NAMESPACE, $name),
+            'realName'  => $name,
+            'options'   => $options,
+            'data'      => $data,
+            'type'      => $type,
+            'inherited' => false,
+        ];
+
+        $data = sprintf('editableConfigurations.push(%s);', json_encode($editableConfig));
+
+        return $data;
+
+    }
+
+    /**
      * @param string $formName
      * @param bool   $useAjax
      *
-     * @return array
+     * @return TestFormBuilder
      */
-    public static function generateSimpleForm(string $formName = 'TEST_FORM', $useAjax = false)
+    public static function generateSimpleForm(string $formName = 'dachcom_test', $useAjax = false)
     {
-        return [
-            'form_name'   => $formName,
-            'form_config' => [
-                'action'     => '/',
-                'method'     => 'POST',
-                'enctype'    => 'multipart/form-data',
-                'noValidate' => false,
-                'useAjax'    => $useAjax
-            ],
+        $testFormBuilder = (new TestFormBuilder($formName))
+            ->setUseAjax($useAjax)
+            ->addFormFieldChoice('simple_dropdown', ['Simple DropDown Value 0' => 'simple_drop_down_value_0', 'Simple DropDown Value 1' => 'simple_drop_down_value_1'])
+            ->addFormFieldInput('simple_text_input_1', [], [], ['not_blank'])
+            ->addFormFieldInput('simple_text_input_2', [], [], ['not_blank'])
+            ->addFormFieldInput('simple_text_input_3')
+            ->addFormFieldInput('simple_text_input_4', [], [], ['not_blank', 'not_blank'])
+            ->addFormFieldChoiceExpandedAndMultiple('checkboxes', [
+                'Check 0' => 'check0',
+                'Check 1' => 'check1',
+                'Check 2' => 'check2',
+                'Check 3' => 'check3',
+            ], [], [], ['not_blank'])
+            ->addFormFieldChoiceExpanded('radios', [
+                'Radio 0' => 'radio0',
+                'Radio 1' => 'radio1',
+                'Radio 2' => 'radio2',
+                'Radio 3' => 'radio3',
+            ], [], [], ['not_blank'])
+            ->addFormFieldTextArea('simple_text_area', [], [], ['not_blank'])
+            ->addFormFieldSingleCheckbox('single_checkbox', [], [], ['not_blank'])
+            ->addFormFieldSubmitButton('submit');
 
-            'form_fields' => [
-                'fields' => [
-                    0 => [
-                        'name'         => 'salutation',
-                        'display_name' => 'salutation',
-                        'type'         => 'choice',
-                        'constraints'  => [
-                            0 => [
-                                'type' => 'not_blank',
-                            ],
-                        ],
-                        'options'      => [
-                            'label'       => 'Salutation',
-                            'expanded'    => false,
-                            'multiple'    => false,
-                            'placeholder' => false,
-                            'choices'     => [
-                                'Mr.'  => 'mr',
-                                'Mrs.' => 'ms',
-                            ],
-                        ],
-                        'optional'     => [
-                            'template' => 'col-12',
-                        ],
-                    ],
-                    1 => [
-                        'name'         => 'prename',
-                        'display_name' => 'prename',
-                        'type'         => 'text',
-                        'constraints'  => [
-                            0 => [
-                                'type' => 'not_blank',
-                            ],
-                        ],
-                        'options'      => [
-                            'label' => 'Prename',
-                        ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                    2 => [
-                        'name'         => 'lastname',
-                        'display_name' => 'lastname',
-                        'type'         => 'text',
-                        'constraints'  => [],
-                        'options'      => [
-                            'label' => 'Name',
-                        ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                    3 => [
-                        'name'         => 'phone',
-                        'display_name' => 'phone',
-                        'type'         => 'text',
-                        'constraints'  => [],
-                        'options'      => [
-                            'label' => 'Phone',
-                        ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                    4 => [
-                        'name'         => 'email',
-                        'display_name' => 'email',
-                        'type'         => 'text',
-                        'constraints'  => [
-                            0 => [
-                                'type' => 'not_blank',
-                            ],
-                            1 => [
-                                'type' => 'email',
-                            ],
-                        ],
-                        'options'      => [
-                            'label' => 'Email',
-                        ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                    5 => [
-                        'name'         => 'checkbox',
-                        'display_name' => 'checkbox',
-                        'type'         => 'choice',
-                        'constraints'  => [
-                            0 => [
-                                'type' => 'not_blank',
-                            ],
-                        ],
-                        'options'      => [
-                            'label'       => 'Checkbox',
-                            'expanded'    => true,
-                            'multiple'    => true,
-                            'placeholder' => false,
-                            'choices'     => [
-                                'Check 1' => 'check1',
-                                'Check 2' => 'check2',
-                                'Check 3' => 'check3',
-                                'Check 4' => 'check4',
-                            ],
-                        ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                    6 => [
-                        'name'         => 'radios',
-                        'display_name' => 'radios',
-                        'type'         => 'choice',
-                        'constraints'  => [
-                            0 => [
-                                'type' => 'not_blank',
-                            ],
-                        ],
-                        'options'      =>
-                            [
-                                'label'       => 'Radios',
-                                'expanded'    => true,
-                                'multiple'    => false,
-                                'placeholder' => false,
-                                'choices'     => [
-                                    'Radio A' => 'radio_a',
-                                    'Radio B' => 'radio_b',
-                                    'Radio C' => 'radio_c',
-                                    'Radio D' => 'radio_d',
-                                ],
-                            ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                    7 => [
-                        'name'         => 'comment',
-                        'display_name' => 'comment',
-                        'type'         => 'textarea',
-                        'constraints'  => [
-                            0 => [
-                                'type' => 'not_blank',
-                            ],
-                        ],
-                        'options'      => [
-                            'label' => 'Comment',
-                        ],
-                        'optional'     => [
-                            'template' => 'col-12',
-                        ],
-                    ],
-                    8 => [
-                        'name'         => 'send',
-                        'display_name' => 'send',
-                        'type'         => 'submit',
-                        'constraints'  => [],
-                        'options'      => [
-                            'label' => 'Send',
-                        ],
-                        'optional'     => [
-                            'template' => 'col-sm-6',
-                        ],
-                    ],
-                ]
-            ]
-        ];
+        return $testFormBuilder;
     }
 }
