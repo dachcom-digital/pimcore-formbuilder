@@ -191,12 +191,12 @@
                     switch (condition.comparator) {
                         case 'is_greater':
                             qualifiers['greater'] = function (val) {
-                                return parseInt(val) > parseInt(condition.value);
+                                return parseFloat(val) > parseFloat(condition.value);
                             };
                             break;
                         case 'is_less':
                             qualifiers['less'] = function (val) {
-                                return parseInt(val) < parseInt(condition.value);
+                                return parseFloat(val) < parseFloat(condition.value);
                             };
                             break;
                         case 'is_value':
@@ -209,7 +209,9 @@
                             qualifiers['values'] = [undefined, ''];
                             break;
                         case 'contains':
-                            qualifiers['contains'] = $.map(condition.value.split(','), function(e) { return $.trim(e) });
+                            qualifiers['contains'] = $.map(condition.value.split(','), function (e) {
+                                return $.trim(e)
+                            });
                             break;
                         case 'is_checked':
                             qualifiers['not'] = [undefined, ''];
@@ -219,8 +221,6 @@
                             qualifiers['checked'] = false;
                             break;
                     }
-
-                    console.log(qualifiers);
 
                     return qualifiers;
                 }
@@ -471,7 +471,7 @@
                     }
 
                     var dependsOnQuery = $dependencies.dependsOn(conditionSelector['and'], actionOptions);
-                    if(Object.keys(conditionSelector['or']).length > 0) {
+                    if (Object.keys(conditionSelector['or']).length > 0) {
                         dependsOnQuery.or(conditionSelector['or']);
                     }
 
@@ -507,8 +507,14 @@
                         $el = $(fieldSelector),
                         isCheckbox = $el.first().attr('type') === 'checkbox';
 
-                    if(isCheckbox && condition.comparator !== 'is_not_checked') {
-                        qualifiers['checked'] = true;
+                    if (isCheckbox) {
+                        if (condition.comparator !== 'is_not_checked') {
+                            qualifiers['checked'] = true;
+                        }
+                    } else {
+                        if (condition.comparator === 'is_not_checked') {
+                            qualifiers['values'] = [undefined, ''];
+                        }
                     }
 
                     //if strict value is in comparator and element is a (maybe multiple) checkbox, stet selector to field with given value!

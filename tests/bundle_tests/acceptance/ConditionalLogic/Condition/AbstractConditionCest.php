@@ -12,6 +12,29 @@ abstract class AbstractConditionCest
     /**
      * @param AcceptanceTester $I
      * @param array            $condition
+     * @param TestFormBuilder  $testFormBuilder
+     *
+     * @return TestFormBuilder
+     */
+    protected function runTestWithConditionAndCustomFormBuilder(AcceptanceTester $I, array $condition, TestFormBuilder $testFormBuilder)
+    {
+        $document = $I->haveAPageDocument('form-test', 'javascript');
+
+        $testFormBuilder->addFormConditionBlock([$condition], [$this->action]);
+
+        $form = $I->haveAForm($testFormBuilder);
+
+        $formTemplate = 'bootstrap_4_layout.html.twig';
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, null, null, $formTemplate);
+        $I->amOnPage('/form-test');
+        $I->seeElement($testFormBuilder->getFormSelector(1));
+
+        return $testFormBuilder;
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     * @param array            $condition
      * @param null|\Closure    $closure
      *
      * @return TestFormBuilder|mixed
@@ -22,7 +45,10 @@ abstract class AbstractConditionCest
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
-            ->addFormFieldChoice('simple_dropdown', ['Simple DropDown Value 0' => 'simple_drop_down_value_0', 'Simple DropDown Value 1' => 'simple_drop_down_value_1'])
+            ->addFormFieldChoice('simple_dropdown', [
+                'Simple DropDown Value 0' => 'simple_drop_down_value_0',
+                'Simple DropDown Value 1' => 'simple_drop_down_value_1'
+            ])
             ->addFormFieldChoiceMultiple('multiple_select', [
                 'Select 0' => 'select_0',
                 'Select 1' => 'select_1',
@@ -32,7 +58,7 @@ abstract class AbstractConditionCest
             ->addFormFieldInput('simple_text_input_1', [], [], ['not_blank'])
             ->addFormFieldInput('simple_text_input_2', [], [], ['not_blank'])
             ->addFormFieldInput('simple_text_input_3')
-            ->addFormFieldInput('simple_text_input_4', [], [], ['not_blank', 'not_blank'])
+            ->addFormFieldInput('simple_text_input_4', [], [], ['not_blank', 'email'])
             ->addFormFieldChoiceExpandedAndMultiple('checkboxes', [
                 'Check 0' => 'check0',
                 'Check 1' => 'check1',
@@ -50,13 +76,15 @@ abstract class AbstractConditionCest
             ->addFormFieldSubmitButton('submit')
             ->addFormConditionBlock([$condition], [$this->action]);
 
+        // allow modification
         if ($closure instanceof \Closure) {
             $testFormBuilder = $closure($testFormBuilder);
         }
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, null, null, 'bootstrap_4_layout.html.twig');
+        $formTemplate = 'bootstrap_4_layout.html.twig';
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, null, null, $formTemplate);
         $I->amOnPage('/form-test');
         $I->seeElement($testFormBuilder->getFormSelector(1));
 

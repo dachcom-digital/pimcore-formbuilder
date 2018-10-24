@@ -160,6 +160,27 @@ class TestFormBuilder
      *
      * @return $this
      */
+    public function addFormFieldNumericInput($name, $options = [], $optional = [], $constraints = [])
+    {
+        $type = 'integer';
+        $displayName = ucfirst($name);
+
+        if (!isset($options['label'])) {
+            $options['label'] = $displayName;
+        }
+
+        $this->addFormField($type, $name, $displayName, $constraints, $options, $optional);
+        return $this;
+    }
+
+    /**
+     * @param       $name
+     * @param array $options
+     * @param array $optional
+     * @param array $constraints
+     *
+     * @return $this
+     */
     public function addFormFieldSingleCheckbox($name, $options = [], $optional = [], $constraints = [])
     {
         $type = 'checkbox';
