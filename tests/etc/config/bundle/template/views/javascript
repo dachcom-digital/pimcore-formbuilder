@@ -20,6 +20,29 @@
         var $forms = $('form.formbuilder'), $ajaxForms = $('form.formbuilder.ajax-form');
         $ajaxForms.formBuilderAjaxManager();
         $forms.formBuilderConditionalLogic();
+
+        $forms.on('formbuilder.test.cl.action.fired_event.enable', function(ev) {
+            var $el;
+            $el = $('<div/>', {
+                'class': 'form-event-success',
+                'data-target': $(ev.target).attr('id'),
+                'data-event' : 'formbuilder.test.cl.action.fired_event.enable',
+                'html': 'event reached: formbuilder.test.cl.action.fired_event.enable'
+            });
+            $el.insertBefore($(this));
+        });
+
+        $forms.on('formbuilder.test.cl.action.fired_event.disable', function(ev) {
+            var $el;
+            $el = $('<div/>', {
+                'class': 'form-event-success',
+                'data-target': $(ev.target).attr('id'),
+                'data-event' : 'formbuilder.test.cl.action.fired_event.disable',
+                'html': 'event reached: formbuilder.test.cl.action.fired_event.disable'
+            });
+            $el.insertBefore($(this));
+        });
+
         $ajaxForms.on('formbuilder.success', function (ev, message, redirect, $form) {
             var $el, messageData;
             ev.preventDefault();

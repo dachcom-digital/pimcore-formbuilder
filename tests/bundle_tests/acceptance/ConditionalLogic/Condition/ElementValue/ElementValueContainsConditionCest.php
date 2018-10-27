@@ -1,21 +1,24 @@
 <?php
 
-namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition;
+namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition\ElementValue;
 
 use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractConditionCest;
 
 /**
  *  * Condition "contains". Must work on:
  * - single checkbox
  * - inputs
- * - choice: default | extended | multiple | extended & multiple
+ * - choice: default (dropDown) | extended (radio) | multiple (multiSelect) | extended & multiple (checkboxes)
  */
 class ElementValueContainsConditionCest extends AbstractConditionCest
 {
-    protected $action = [
-        'type'   => 'toggleElement',
-        'fields' => ['simple_text_input_1'],
-        'state'  => 'hide'
+    protected $actions = [
+        [
+            'type'   => 'toggleElement',
+            'fields' => ['simple_text_input_1'],
+            'state'  => 'hide'
+        ]
     ];
 
     /**
@@ -32,7 +35,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'text1, text2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
         // just to trigger javascript blur we need to fill another field (text3)
@@ -54,7 +57,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'text1,text2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text1');
         // just to trigger javascript blur we need to fill another field (text3)
@@ -77,7 +80,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'text1,text2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'there is text2 but is still not valid');
         // just to trigger javascript blur we need to fill another field (text3)
@@ -99,7 +102,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => '1'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'single_checkbox'));
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -119,7 +122,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => '1'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -138,7 +141,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'check3,check4'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_1'));
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -158,7 +161,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'check1,check2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_1'));
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -178,7 +181,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'check1,check2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_1'));
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_2'));
@@ -199,7 +202,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'simple_drop_down_value_1'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'simple_dropdown'), 'simple_drop_down_value_1');
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -219,7 +222,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'simple_drop_down_value_0'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'simple_dropdown'), 'simple_drop_down_value_1');
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -239,7 +242,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'select_1,select_2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'multiple_select'), 'select_1');
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -259,7 +262,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'select_2,select_3'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'multiple_select'), 'select_1');
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -279,7 +282,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'select_1,select_2'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'multiple_select'), ['select_2', 'select_3']);
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -299,7 +302,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'radio1,radio3'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'radios', '', '_3'), 'radio3');
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -319,7 +322,7 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
             'value'      => 'radio1,radio3'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'radios', '', '_2'), 'radio2');
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);

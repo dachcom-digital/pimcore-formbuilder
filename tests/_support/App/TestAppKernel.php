@@ -31,8 +31,10 @@ class TestAppKernel extends Kernel
     public function registerBundlesToCollection(\Pimcore\HttpKernel\BundleCollection\BundleCollection $collection)
     {
         if (class_exists('\\AppBundle\\AppBundle')) {
-            $collection->addBundle(new \AppBundle\AppBundle);
+            $collection->addBundle(new \AppBundle\AppBundle());
         }
+
+        $collection->addBundle(new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle());
 
         $bundleClass = getenv('DACHCOM_BUNDLE_CLASS');
         $collection->addBundle(new $bundleClass());

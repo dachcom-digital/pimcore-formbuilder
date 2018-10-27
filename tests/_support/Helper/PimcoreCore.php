@@ -28,12 +28,6 @@ class PimcoreCore extends PimcoreCoreModule
         parent::__construct($moduleContainer, $config);
     }
 
-    public function _initialize()
-    {
-        $this->clearCache();
-        parent::_initialize();
-    }
-
     /**
      * @inheritDoc
      */
@@ -41,17 +35,6 @@ class PimcoreCore extends PimcoreCoreModule
     {
         parent::_after($test);
 
-        // config has changed, we need to restore default config before starting a new test!
-        if ($this->kernelHasCustomConfig === true) {
-            $this->clearCache();
-            $this->bootKernelWithConfiguration(null);
-            $this->kernelHasCustomConfig = false;
-        }
-    }
-
-    public function _afterSuite()
-    {
-        parent::_afterSuite();
         // config has changed, we need to restore default config before starting a new test!
         if ($this->kernelHasCustomConfig === true) {
             $this->clearCache();
@@ -85,8 +68,6 @@ class PimcoreCore extends PimcoreCoreModule
         if ($this->config['configuration_file'] !== null) {
             $configFile = $this->config['configuration_file'];
         }
-
-        $this->debug($configFile);
 
         $this->bootKernelWithConfiguration($configFile);
 

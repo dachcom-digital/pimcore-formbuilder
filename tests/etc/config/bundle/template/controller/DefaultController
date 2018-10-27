@@ -19,6 +19,10 @@ class DefaultController extends FrontendController
     {
     }
 
+    public function snippetAction(Request $request)
+    {
+    }
+
     public function javascriptAction(Request $request)
     {
     }

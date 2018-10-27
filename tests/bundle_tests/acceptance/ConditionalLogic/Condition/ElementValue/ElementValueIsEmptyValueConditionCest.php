@@ -1,9 +1,10 @@
 <?php
 
-namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition;
+namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition\ElementValue;
 
 use DachcomBundle\Test\AcceptanceTester;
 use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractConditionCest;
 
 /**
  * Condition "is_empty_value". Must work on:
@@ -13,10 +14,12 @@ use DachcomBundle\Test\Util\TestFormBuilder;
  */
 class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
 {
-    protected $action = [
-        'type'   => 'toggleElement',
-        'fields' => ['simple_text_input_1'],
-        'state'  => 'hide'
+    protected $actions = [
+        [
+            'type'   => 'toggleElement',
+            'fields' => ['simple_text_input_1'],
+            'state'  => 'hide'
+        ]
     ];
 
     /**
@@ -33,7 +36,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -52,7 +55,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 'text1');
         // just to trigger javascript blur we need to fill another field (text3)
@@ -74,7 +77,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -93,7 +96,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_area'), 'text area text');
         // just to trigger javascript blur we need to fill another field (text3)
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
@@ -115,7 +118,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -134,7 +137,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition, function (TestFormBuilder $testFormBuilder) {
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition], function (TestFormBuilder $testFormBuilder) {
             // re-add field with placeholder functionality.
             $testFormBuilder
                 ->removeField('simple_dropdown')
@@ -167,7 +170,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -186,7 +189,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'radios', '', '_3'), 'radio3');
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -206,7 +209,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -225,7 +228,7 @@ class ElementValueIsEmptyValueConditionCest extends AbstractConditionCest
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'multiple_select'), ['select_2', 'select_3']);
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);

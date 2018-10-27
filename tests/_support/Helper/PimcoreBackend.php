@@ -11,6 +11,7 @@ use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Document\Snippet;
 use Pimcore\Model\Tool\Email\Log;
 use Pimcore\Model\Document\Tag\Areablock;
 use Pimcore\Model\Document\Tag\Checkbox;
@@ -51,20 +52,25 @@ class PimcoreBackend extends Module
     /**
      * Actor Function to create a Page Document
      *
-     * @param string $documentKey
-     * @param        $action
-     * @param string $controller
+     * @param string      $documentKey
+     * @param null|string $action
+     * @param null|string $controller
+     * @param null|string $locale
      *
      * @return Page
      */
-    public function haveAPageDocument($documentKey = 'form-test', $action = 'default', $controller = '@AppBundle\Controller\DefaultController')
-    {
-        $document = $this->generatePageDocument($documentKey, $action, $controller);
+    public function haveAPageDocument(
+        $documentKey = 'form-test',
+        $action = null,
+        $controller = null,
+        $locale = 'en'
+    ) {
+        $document = $this->generatePageDocument($documentKey, $action, $controller, $locale);
 
         try {
             $document->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
+            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document page. message was: ' . $e->getMessage()));
         }
 
         $this->assertInstanceOf(Page::class, Page::getById($document->getId()));
@@ -73,44 +79,70 @@ class PimcoreBackend extends Module
     }
 
     /**
+     * Actor Function to create a Snippet
+     *
+     * @param string $snippetKey
+     * @param array  $elements
+     * @param string $locale
+     *
+     * @return null|Snippet
+     */
+    public function haveASnippetDocument($snippetKey, $elements = [], $locale = 'en')
+    {
+        $snippet = $this->generateSnippetDocument($snippetKey, $elements, $locale);
+
+        try {
+            $snippet->save();
+        } catch (\Exception $e) {
+            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document snippet. message was: ' . $e->getMessage()));
+        }
+
+        $this->assertInstanceOf(Snippet::class, $snippet);
+
+        return $snippet;
+    }
+
+    /**
      * Actor Function to create a mail document for admin
      *
-     * @param array $mailParams
+     * @param array  $mailParams
+     * @param string $locale
      *
      * @return Email
      */
-    public function haveAEmailDocumentForAdmin(array $mailParams = [])
+    public function haveAEmailDocumentForAdmin(array $mailParams = [], $locale = 'en')
     {
-        return $this->haveAEmailDocumentForType('admin', $mailParams);
+        return $this->haveAEmailDocumentForType('admin', $mailParams, $locale);
     }
 
     /**
      * Actor Function to create a mail document for user
      *
-     * @param array $mailParams
+     * @param array  $mailParams
+     * @param string $locale
      *
      * @return Email
      */
-    public function haveAEmailDocumentForUser(array $mailParams = [])
+    public function haveAEmailDocumentForUser(array $mailParams = [], $locale = 'en')
     {
-        return $this->haveAEmailDocumentForType('user', $mailParams);
+        return $this->haveAEmailDocumentForType('user', $mailParams, $locale);
     }
 
     /**
      * Actor Function to create a mail document for given type
      *
-     * @param       $type
-     * @param array $mailParams
+     * @param        $type
+     * @param array  $mailParams
+     * @param string $locale
      *
      * @return Email
      */
-    public function haveAEmailDocumentForType($type, array $mailParams = [])
+    public function haveAEmailDocumentForType($type, array $mailParams = [], $locale = 'en')
     {
-        $emailDocument = $mailTemplate = $this->generateEmailDocument(sprintf('email-%s', $type), $mailParams);
+        $emailDocument = $mailTemplate = $this->generateEmailDocument(sprintf('email-%s', $type), $mailParams, $locale);
         $this->assertInstanceOf(Email::class, $emailDocument);
 
         return $emailDocument;
-
     }
 
     /**
@@ -152,9 +184,9 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * Actor Function to see if an email has been sent to admin (specified in form)
+     * Actor Function to see if given email has been sent
      *
-     * @param Email $email #
+     * @param Email $email
      */
     public function seeEmailIsSent(Email $email)
     {
@@ -256,18 +288,51 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param string $key
-     * @param string $action
-     * @param string $controller
+     * API Function to create a Snippet
+     *
+     * @param        $snippetKey
+     * @param array  $elements
+     * @param string $locale
+     *
+     * @return null|Snippet
+     */
+    protected function generateSnippetDocument($snippetKey, $elements = [], $locale = 'en')
+    {
+        $document = new Snippet();
+        $document->setController('default');
+        $document->setAction('snippet');
+        $document->setType('snippet');
+        $document->setElements($elements);
+        $document->setParentId(1);
+        $document->setUserOwner(1);
+        $document->setUserModification(1);
+        $document->setCreationDate(time());
+        $document->setKey($snippetKey);
+        $document->setProperty('language', 'text', $locale, false, 1);
+        $document->setPublished(true);
+
+        return $document;
+
+    }
+
+    /**
+     * @param string      $key
+     * @param null|string $action
+     * @param null|string $controller
+     * @param string      $locale
      *
      * @return Page
      */
-    protected function generatePageDocument($key = 'form-test', $action = 'default', $controller = '@AppBundle\Controller\DefaultController')
+    protected function generatePageDocument($key = 'form-test', $action = null, $controller = null, $locale = 'en')
     {
+        $action = is_null($action) ? 'default' : $action;
+        $controller = is_null($controller) ? '@AppBundle\Controller\DefaultController' : $controller;
+
         $document = TestHelper::createEmptyDocumentPage('', false);
         $document->setController($controller);
         $document->setAction($action);
         $document->setKey($key);
+        $document->setProperty('language', 'text', $locale, false, 1);
 
         return $document;
     }
@@ -275,11 +340,14 @@ class PimcoreBackend extends Module
     /**
      * @param string $key
      * @param array  $params
+     * @param string $locale
      *
      * @return null|Email
      */
-    protected function generateEmailDocument($key = 'form-test-email', array $params = [])
+    protected function generateEmailDocument($key = 'form-test-email', array $params = [], $locale = 'en')
     {
+        $documentKey = uniqid(sprintf('%s-', $key));
+
         $document = new Email();
         $document->setType('email');
         $document->setParentId(1);
@@ -290,12 +358,16 @@ class PimcoreBackend extends Module
         $document->setController('Email');
         $document->setAction('email');
         $document->setTemplate('FormBuilderBundle:Email:email.html.twig');
-        $document->setSubject('MOCKED FORM MAIL (' . $key . ')');
-        $document->setKey($key);
+        $document->setSubject(sprintf('FORM EMAIL %s', $documentKey));
+        $document->setKey($documentKey);
+        $document->setProperty('language', 'text', $locale, false, 1);
 
+        $to = 'recpient@test.org';
         if (isset($params['to'])) {
-            $document->setTo($params['to']);
+            $to = $params['to'];
         }
+
+        $document->setTo($to);
 
         if (isset($params['replyTo'])) {
             $document->setReplyTo($params['replyTo']);

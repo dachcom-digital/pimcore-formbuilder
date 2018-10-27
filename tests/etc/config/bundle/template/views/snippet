@@ -1,0 +1,6 @@
+<div class="snippet">
+    {% block content %}
+        <h3>snippet content with id {{ document.getId() }}</h3>
+        {{ pimcore_areablock('dachcomBundleTest') }}
+    {% endblock %}
+</div>

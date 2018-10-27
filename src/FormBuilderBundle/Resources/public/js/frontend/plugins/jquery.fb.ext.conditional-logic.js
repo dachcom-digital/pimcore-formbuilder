@@ -259,6 +259,8 @@
                             $el.val(action.value);
                         } else if ($(this).is('select') && $el.find('option[value="' + action.value + '"]').length > 0) {
                             $el.val(action.value);
+                        } else if ($(this).is('textarea')) {
+                            $el.val(action.value);
                         }
                     });
                 },

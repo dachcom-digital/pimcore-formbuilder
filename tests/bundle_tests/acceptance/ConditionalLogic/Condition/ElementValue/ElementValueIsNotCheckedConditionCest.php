@@ -1,24 +1,27 @@
 <?php
 
-namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition;
+namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition\ElementValue;
 
 use DachcomBundle\Test\AcceptanceTester;
 use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractConditionCest;
 
 /**
- * Condition "is_checked". Must work on:
+ * Condition "is_not_checked". Must work on:
  * - single checkbox
  * - choice: default (dropDown) | extended (radio) | multiple (multiSelect) | extended & multiple (checkboxes)
  *
  * Triggers on those elements regardless its value.
  * Only undefined and empty values will be ignored
  */
-class ElementValueIsCheckedConditionCest extends AbstractConditionCest
+class ElementValueIsNotCheckedConditionCest extends AbstractConditionCest
 {
-    protected $action = [
-        'type'   => 'toggleElement',
-        'fields' => ['simple_text_input_1'],
-        'state'  => 'hide'
+    protected $actions = [
+        [
+            'type'   => 'toggleElement',
+            'fields' => ['simple_text_input_1'],
+            'state'  => 'hide'
+        ]
     ];
 
     /**
@@ -26,38 +29,37 @@ class ElementValueIsCheckedConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementValueCheckedOnCheckedSingleCheckbox(AcceptanceTester $I)
+    public function testElementValueNotCheckedOnNotCheckedSingleCheckbox(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['single_checkbox'],
-            'comparator' => 'is_checked',
+            'comparator' => 'is_not_checked',
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
+
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementValueNotCheckedOnCheckedSingleCheckbox(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['single_checkbox'],
+            'comparator' => 'is_not_checked',
+            'value'      => ''
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'single_checkbox'));
-        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementValueCheckedOnNotCheckedSingleCheckbox(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['single_checkbox'],
-            'comparator' => 'is_checked',
-            'value'      => ''
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
@@ -66,38 +68,37 @@ class ElementValueIsCheckedConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementValueCheckedOnCheckboxesWithElementsChecked(AcceptanceTester $I)
+    public function testElementValueNotCheckedOnCheckboxesWithNoSelectedElements(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['checkboxes'],
-            'comparator' => 'is_checked',
+            'comparator' => 'is_not_checked',
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
+
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementValueNotCheckedOnCheckboxesWithSelectedElements(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['checkboxes'],
+            'comparator' => 'is_not_checked',
+            'value'      => ''
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_2'));
-        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementValueCheckedOnCheckboxesWithNoElementsChecked(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['checkboxes'],
-            'comparator' => 'is_checked',
-            'value'      => ''
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
@@ -106,18 +107,56 @@ class ElementValueIsCheckedConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementValueCheckedOnMultipleSelectWithElementsSelected(AcceptanceTester $I)
+    public function testElementValueNotCheckedOnMultipleSelectWithNoSelectedElements(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['multiple_select'],
-            'comparator' => 'is_checked',
+            'comparator' => 'is_not_checked',
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
+
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementValueNotCheckedOnMultipleSelectWithElementsSelected(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['multiple_select'],
+            'comparator' => 'is_not_checked',
+            'value'      => ''
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'multiple_select'), ['select_2', 'select_3']);
+        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementValueNotCheckedOnRadiosWithNoElementsSelected(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['radios'],
+            'comparator' => 'is_not_checked',
+            'value'      => ''
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
+
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
@@ -126,16 +165,36 @@ class ElementValueIsCheckedConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementValueCheckedOnMultipleSelectWithNoElementsSelected(AcceptanceTester $I)
+    public function testElementValueNotCheckedOnRadiosWithElementsSelected(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
-            'fields'     => ['multiple_select'],
-            'comparator' => 'is_checked',
+            'fields'     => ['radios'],
+            'comparator' => 'is_not_checked',
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
+
+        $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'radios', '', '_2'), 'radio2');
+        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementValueNotCheckedOnSimpleDropDownWithFirstElementSelected(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['simple_dropdown'],
+            'comparator' => 'is_not_checked',
+            'value'      => ''
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -145,74 +204,16 @@ class ElementValueIsCheckedConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementValueCheckedOnRadiosWithElementSelected(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['radios'],
-            'comparator' => 'is_checked',
-            'value'      => ''
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
-        $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'radios', '', '_3'), 'radio3');
-        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementValueCheckedOnRadiosWithNoElementSelected(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['radios'],
-            'comparator' => 'is_checked',
-            'value'      => ''
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
-        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementValueCheckedOnSimpleDropDownWithFirstValueSelected(AcceptanceTester $I)
+    public function testElementValueNotCheckedOnSimpleDropDownWithPlaceholder(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_dropdown'],
-            'comparator' => 'is_checked',
+            'comparator' => 'is_not_checked',
             'value'      => ''
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
-        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementValueCheckedOnSimpleDropDownWithPlaceHolder(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['simple_dropdown'],
-            'comparator' => 'is_checked',
-            'value'      => ''
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition, function (TestFormBuilder $testFormBuilder) {
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition], function (TestFormBuilder $testFormBuilder) {
             // re-add field with placeholder functionality.
             $testFormBuilder
                 ->removeField('simple_dropdown')
@@ -228,6 +229,7 @@ class ElementValueIsCheckedConditionCest extends AbstractConditionCest
 
         });
 
-        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
+
 }

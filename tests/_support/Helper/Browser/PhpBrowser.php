@@ -8,9 +8,13 @@ use Codeception\Exception\ModuleException;
 use DachcomBundle\Test\Helper\PimcoreCore;
 use DachcomBundle\Test\Helper\PimcoreUser;
 use DachcomBundle\Test\Util\FormHelper;
+use Pimcore\Model\Document\Email;
 use Pimcore\Model\User;
+use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Profiler\Profile;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\BrowserKit\Cookie;
 
@@ -76,6 +80,52 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
     public function seeAEditableConfiguration(string $name, string $type, array $options, $data = null, $selector = null)
     {
         $this->pimcoreCore->see(FormHelper::generateEditableConfiguration($name, $type, $options, $data), $selector);
+    }
+
+    /**
+     * Actor Function to see if given email has been with specified address
+     * Only works with PhpBrowser (Symfony Client)
+     *
+     * @param string $recipient
+     * @param Email  $email
+     */
+    public function seeEmailIsSentTo(string $recipient, Email $email)
+    {
+        $this->assertInstanceOf(Email::class, $email);
+
+        /** @var Profiler $profiler */
+        $profiler = $this->pimcoreCore->_getContainer()->get('profiler');
+
+        $tokens = $profiler->find('', '', 1, 'POST', '', '');
+        if (count($tokens) === 0) {
+            throw new \RuntimeException('No profile found. Is the profiler data collector enabled?');
+        }
+
+        $token = $tokens[0]['token'];
+        /** @var \Symfony\Component\HttpKernel\Profiler\Profile $profile */
+        $profile = $profiler->loadProfile($token);
+
+        if (!$profile instanceof Profile) {
+            throw new \RuntimeException(sprintf('Profile with token "%s" not found.', $token));
+        }
+
+        /** @var MessageDataCollector $mailCollector */
+        $mailCollector = $profile->getCollector('swiftmailer');
+
+        $this->assertGreaterThan(0, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+
+        $recipients = [];
+        foreach ($collectedMessages as $message) {
+            if ($email->getSubject() !== $message->getSubject()) {
+                continue;
+            }
+            $recipients = array_merge($recipients, $message->getTo());
+        }
+
+        $this->assertContains($recipient, array_keys($recipients));
+
     }
 
     /**

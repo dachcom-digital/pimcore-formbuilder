@@ -1,36 +1,42 @@
 <?php
 
-namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition;
+namespace DachcomBundle\Test\acceptance\ConditionalLogic\Condition\ElementValue;
 
 use DachcomBundle\Test\AcceptanceTester;
 use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractConditionCest;
 
 /**
- * Condition "is_greater". Must work on:
+ * Condition "is_less". Must work on:
+ * - input
+ * - numeric
+ * - choice: default (dropDown)
  */
-class ElementValueIsGreaterConditionCest extends AbstractConditionCest
+class ElementValueIsLessConditionCest extends AbstractConditionCest
 {
-    protected $action = [
-        'type'   => 'toggleElement',
-        'fields' => ['simple_text_input_1'],
-        'state'  => 'hide'
+    protected $actions = [
+        [
+            'type'   => 'toggleElement',
+            'fields' => ['simple_text_input_1'],
+            'state'  => 'hide'
+        ]
     ];
-    
+
     /**
      * @param AcceptanceTester $I
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnEmptySimpleInput(AcceptanceTester $I)
+    public function testElementIsLessOnEmptySimpleInput(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_text_input_1'],
-            'comparator' => 'is_greater',
+            'comparator' => 'is_less',
             'value'      => 10
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
@@ -40,22 +46,22 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnSimpleInputWithGreaterValue(AcceptanceTester $I)
+    public function testElementIsLessOnSimpleInputWithGreaterValue(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_text_input_1'],
-            'comparator' => 'is_greater',
-            'value'      => 50
+            'comparator' => 'is_less',
+            'value'      => 10
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 100);
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 20);
         // just to trigger javascript blur we need to fill another field (text2)
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
 
-        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
     /**
@@ -63,16 +69,16 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnSimpleInputWithEqualValues(AcceptanceTester $I)
+    public function testElementIsLessOnSimpleInputWithEqualValues(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_text_input_1'],
-            'comparator' => 'is_greater',
+            'comparator' => 'is_less',
             'value'      => 10
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 10);
         // just to trigger javascript blur we need to fill another field (text2)
@@ -86,18 +92,18 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnSimpleInputWithNegativeValues(AcceptanceTester $I)
+    public function testElementIsLessOnSimpleInputWithNegativeValues(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_text_input_1'],
-            'comparator' => 'is_greater',
+            'comparator' => 'is_less',
             'value'      => '-500'
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), '-100');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), '-1000');
         // just to trigger javascript blur we need to fill another field (text2)
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
 
@@ -109,67 +115,18 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnSimpleInputWithLessValue(AcceptanceTester $I)
+    public function testElementIsLessOnSimpleInputWithLessValue(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_text_input_1'],
-            'comparator' => 'is_greater',
-            'value'      => 50
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 40);
-        // just to trigger javascript blur we need to fill another field (text2)
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
-
-        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementIsGreaterOnSimpleInputWithGreaterFloatValue(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['simple_text_input_1'],
-            'comparator' => 'is_greater',
-            'value'      => 100.5
-        ];
-
-        $testFormBuilder = $this->runTestWithCondition($I, $condition);
-
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 100.8);
-        // just to trigger javascript blur we need to fill another field (text2)
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
-
-        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
-    }
-
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementIsGreaterOnEmptySimpleNumericInput(AcceptanceTester $I)
-    {
-        $condition = [
-            'type'       => 'elementValue',
-            'fields'     => ['simple_numeric_input'],
-            'comparator' => 'is_greater',
+            'comparator' => 'is_less',
             'value'      => 10
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition, function (TestFormBuilder $testFormBuilder) {
-            $testFormBuilder->addFormFieldNumericInput('simple_numeric_input', [], [], ['not_blank']);
-            return $testFormBuilder;
-        });
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_numeric_input'), 50);
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 5);
         // just to trigger javascript blur we need to fill another field (text2)
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
 
@@ -181,21 +138,44 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnEmptySimpleNumericInputWithNegativeValues(AcceptanceTester $I)
+    public function testElementIsLessOnSimpleInputWithLessFloatValue(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['simple_text_input_1'],
+            'comparator' => 'is_less',
+            'value'      => 5.5
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
+
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 5.3);
+        // just to trigger javascript blur we need to fill another field (text2)
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
+
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementIsLessOnEmptySimpleNumericInput(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['simple_numeric_input'],
-            'comparator' => 'is_greater',
-            'value'      => '-50'
+            'comparator' => 'is_less',
+            'value'      => 10
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition, function (TestFormBuilder $testFormBuilder) {
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition], function (TestFormBuilder $testFormBuilder) {
             $testFormBuilder->addFormFieldNumericInput('simple_numeric_input', [], [], ['not_blank']);
             return $testFormBuilder;
         });
 
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_numeric_input'), '-10');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_numeric_input'), 5);
         // just to trigger javascript blur we need to fill another field (text2)
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
 
@@ -207,16 +187,42 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnSimpleDropDownWithFirstValueSelected(AcceptanceTester $I)
+    public function testElementIsLessOnEmptySimpleNumericInputWithNegativeValues(AcceptanceTester $I)
+    {
+        $condition = [
+            'type'       => 'elementValue',
+            'fields'     => ['simple_numeric_input'],
+            'comparator' => 'is_less',
+            'value'      => '-10'
+        ];
+
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition], function (TestFormBuilder $testFormBuilder) {
+            $testFormBuilder->addFormFieldNumericInput('simple_numeric_input', [], [], ['not_blank']);
+            return $testFormBuilder;
+        });
+
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_numeric_input'), '-40');
+        // just to trigger javascript blur we need to fill another field (text2)
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
+
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementIsLessOnSimpleDropDownWithFirstValueSelected(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['drop_down_with_numeric_values'],
-            'comparator' => 'is_greater',
-            'value'      => 20
+            'comparator' => 'is_less',
+            'value'      => 30
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition, function (TestFormBuilder $testFormBuilder) {
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition], function (TestFormBuilder $testFormBuilder) {
             $testFormBuilder
                 ->addFormFieldChoice('drop_down_with_numeric_values', [
                     '10' => '10',
@@ -227,7 +233,7 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
             return $testFormBuilder;
         });
 
-        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
     /**
@@ -235,16 +241,16 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
      *
      * @throws \Exception
      */
-    public function testElementIsGreaterOnSimpleDropDownWithGreaterValueSelected(AcceptanceTester $I)
+    public function testElementIsLessOnSimpleDropDownWithGreaterValueSelected(AcceptanceTester $I)
     {
         $condition = [
             'type'       => 'elementValue',
             'fields'     => ['drop_down_with_numeric_values'],
-            'comparator' => 'is_greater',
+            'comparator' => 'is_less',
             'value'      => 30
         ];
 
-        $testFormBuilder = $this->runTestWithCondition($I, $condition, function (TestFormBuilder $testFormBuilder) {
+        $testFormBuilder = $this->runTestWithCondition($I, [$condition], function (TestFormBuilder $testFormBuilder) {
             $testFormBuilder->addFormFieldChoice('drop_down_with_numeric_values', [
                 '10' => '10',
                 '20' => '20',
@@ -256,6 +262,6 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'drop_down_with_numeric_values'), '40');
 
-        $I->waitForElementVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 }

@@ -7,20 +7,20 @@ use DachcomBundle\Test\Util\TestFormBuilder;
 
 abstract class AbstractConditionCest
 {
-    protected $action;
+    protected $actions;
 
     /**
      * @param AcceptanceTester $I
-     * @param array            $condition
+     * @param array            $conditions
      * @param TestFormBuilder  $testFormBuilder
      *
      * @return TestFormBuilder
      */
-    protected function runTestWithConditionAndCustomFormBuilder(AcceptanceTester $I, array $condition, TestFormBuilder $testFormBuilder)
+    protected function runTestWithConditionAndCustomFormBuilder(AcceptanceTester $I, array $conditions, TestFormBuilder $testFormBuilder)
     {
         $document = $I->haveAPageDocument('form-test', 'javascript');
 
-        $testFormBuilder->addFormConditionBlock([$condition], [$this->action]);
+        $testFormBuilder->addFormConditionBlock($conditions, $this->actions);
 
         $form = $I->haveAForm($testFormBuilder);
 
@@ -34,12 +34,12 @@ abstract class AbstractConditionCest
 
     /**
      * @param AcceptanceTester $I
-     * @param array            $condition
+     * @param array            $conditions
      * @param null|\Closure    $closure
      *
      * @return TestFormBuilder|mixed
      */
-    protected function runTestWithCondition(AcceptanceTester $I, array $condition, $closure = null)
+    protected function runTestWithCondition(AcceptanceTester $I, array $conditions, $closure = null)
     {
         $document = $I->haveAPageDocument('form-test', 'javascript');
 
@@ -74,7 +74,7 @@ abstract class AbstractConditionCest
             ->addFormFieldTextArea('simple_text_area', [], [], ['not_blank'])
             ->addFormFieldSingleCheckbox('single_checkbox')
             ->addFormFieldSubmitButton('submit')
-            ->addFormConditionBlock([$condition], [$this->action]);
+            ->addFormConditionBlock($conditions, $this->actions);
 
         // allow modification
         if ($closure instanceof \Closure) {

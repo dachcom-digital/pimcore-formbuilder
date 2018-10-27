@@ -18,5 +18,6 @@ declare -A DACHCOM_INSTALL_CONFIG_FILES=(
  ["$DACHCOM_BUNDLE_HOME/etc/config/bundle/template/controller/DefaultController"]="src/AppBundle/Controller/DefaultController.php"
  ["$DACHCOM_BUNDLE_HOME/etc/config/bundle/template/views/default"]="app/Resources/views/Default/default.html.twig"
  ["$DACHCOM_BUNDLE_HOME/etc/config/bundle/template/views/javascript"]="app/Resources/views/Default/javascript.html.twig"
+ ["$DACHCOM_BUNDLE_HOME/etc/config/bundle/template/views/snippet"]="app/Resources/views/Default/snippet.html.twig"
  ["$DACHCOM_BUNDLE_HOME/etc/config/bundle/template/views/twigRender"]="app/Resources/views/Default/twigRender.html.twig"
 )
