@@ -113,12 +113,12 @@ class FormValuesBeautifier
 
     /**
      * @param FormInterface $form
-     * @param               $ignoreFields
-     * @param               $locale
+     * @param array         $ignoreFields
+     * @param string        $locale
      *
      * @return array
      */
-    public function transformData(FormInterface $form, $ignoreFields = [], $locale)
+    public function transformData(FormInterface $form, array $ignoreFields, $locale)
     {
         $fields = [];
 

@@ -117,14 +117,14 @@ class SimpleFormCest
 
         $I->seeEmailIsSent($adminEmail);
         $I->seePropertiesInEmail($adminEmail, [
-            'simple_dropdown'       => 'Simple DropDown Value 1<br>',
+            'simple_dropdown'       => 'Simple DropDown Value 1',
             'simple_text_input_1'   => 'TEST_FIRST_NAME',
             'simple_text_input_2'   => 'TEST_LAST_NAME',
             'simple_text_input_3'   => '+43 1234 67 89',
             'simple_text_input_4'   => 'test@test.com',
             'simple_text_area'      => 'DUMMY LOREM IPSUM TEXT AREA TEXT',
-            'radios'                => 'Radio 3<br>',
-            'checkboxes'            => 'Check 3<br>',
+            'radios'                => 'Radio 3',
+            'checkboxes'            => 'Check 3',
             'single_checkbox'       => 1,
             '_form_builder_id'      => 1,
             '_form_builder_is_copy' => 0,
@@ -159,14 +159,14 @@ class SimpleFormCest
 
         $I->seeEmailIsSent($adminMail);
         $I->seePropertiesInEmail($adminMail, [
-            'simple_dropdown'       => 'Simple DropDown Value 1<br>',
+            'simple_dropdown'       => 'Simple DropDown Value 1',
             'simple_text_input_1'   => 'TEST_FIRST_NAME',
             'simple_text_input_2'   => 'TEST_LAST_NAME',
             'simple_text_input_3'   => '+43 1234 67 89',
             'simple_text_input_4'   => 'test@test.com',
             'simple_text_area'      => 'DUMMY LOREM IPSUM TEXT AREA TEXT',
-            'radios'                => 'Radio 3<br>',
-            'checkboxes'            => 'Check 3<br>',
+            'radios'                => 'Radio 3',
+            'checkboxes'            => 'Check 3',
             'single_checkbox'       => 1,
             '_form_builder_id'      => 1,
             '_form_builder_is_copy' => 0,
@@ -175,14 +175,14 @@ class SimpleFormCest
 
         $I->seeEmailIsSent($userMail);
         $I->seePropertiesInEmail($userMail, [
-            'simple_dropdown'       => 'Simple DropDown Value 1<br>',
+            'simple_dropdown'       => 'Simple DropDown Value 1',
             'simple_text_input_1'   => 'TEST_FIRST_NAME',
             'simple_text_input_2'   => 'TEST_LAST_NAME',
             'simple_text_input_3'   => '+43 1234 67 89',
             'simple_text_input_4'   => 'test@test.com',
             'simple_text_area'      => 'DUMMY LOREM IPSUM TEXT AREA TEXT',
-            'radios'                => 'Radio 3<br>',
-            'checkboxes'            => 'Check 3<br>',
+            'radios'                => 'Radio 3',
+            'checkboxes'            => 'Check 3',
             'single_checkbox'       => 1,
             '_form_builder_id'      => 1,
             '_form_builder_is_copy' => 1,

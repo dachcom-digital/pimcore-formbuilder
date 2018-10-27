@@ -222,15 +222,7 @@ class PimcoreBackend extends Module
         $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
         $this->assertGreaterThan(0, count($foundEmails));
 
-        $serializer = null;
-
-        try {
-            $serializer = $this->getContainer()->get('pimcore_admin.serializer');
-        } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while getting pimcore admin serializer. message was: ' . $e->getMessage()));
-        }
-
-        $this->assertInstanceOf(Serializer::class, $serializer);
+        $serializer = $this->getSerializer();
 
         foreach ($foundEmails as $email) {
             $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
@@ -242,6 +234,58 @@ class PimcoreBackend extends Module
 
                 $data = $params[$key];
                 $this->assertEquals($propertyValue, $data['data']['value']);
+            }
+        }
+    }
+
+    /**
+     * Actor Function to see if admin email contains given properties
+     *
+     * @param Email $mail
+     * @param array $properties
+     */
+    public function seePropertyKeysInEmail(Email $mail, array $properties)
+    {
+        $this->assertInstanceOf(Email::class, $mail);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
+        $this->assertGreaterThan(0, count($foundEmails));
+
+        $serializer = $this->getSerializer();
+
+        foreach ($foundEmails as $email) {
+            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
+            foreach ($properties as $propertyKey) {
+                $key = array_search($propertyKey, array_column($params, 'key'));
+                $this->assertNotSame($key, false);
+            }
+        }
+    }
+
+    /**
+     * Actor Function to see if admin email not contains given properties
+     *
+     * @param Email $mail
+     * @param array $properties
+     */
+    public function cantSeePropertyKeysInEmail(Email $mail, array $properties)
+    {
+        $this->assertInstanceOf(Email::class, $mail);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
+        $this->assertGreaterThan(0, count($foundEmails));
+
+        $serializer = $this->getSerializer();
+
+        foreach ($foundEmails as $email) {
+            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
+            foreach ($properties as $propertyKey) {
+                $this->assertFalse(
+                    array_search(
+                        $propertyKey,
+                        array_column($params, 'key')),
+                    sprintf('Failed asserting that search for "%s" is false.', $propertyKey)
+                );
             }
         }
     }
@@ -358,16 +402,22 @@ class PimcoreBackend extends Module
         $document->setController('Email');
         $document->setAction('email');
         $document->setTemplate('FormBuilderBundle:Email:email.html.twig');
-        $document->setSubject(sprintf('FORM EMAIL %s', $documentKey));
         $document->setKey($documentKey);
-        $document->setProperty('language', 'text', $locale, false, 1);
+        $document->setProperty('language', 'text', $locale, false, true);
+        $document->setProperty('test_identifier', 'text', $documentKey, false, false);
 
         $to = 'recpient@test.org';
         if (isset($params['to'])) {
             $to = $params['to'];
         }
 
+        $subject = sprintf('FORM EMAIL %s', $documentKey);
+        if (isset($params['subject'])) {
+            $subject = $params['subject'];
+        }
+
         $document->setTo($to);
+        $document->setSubject($subject);
 
         if (isset($params['replyTo'])) {
             $document->setReplyTo($params['replyTo']);
@@ -383,6 +433,10 @@ class PimcoreBackend extends Module
 
         if (isset($params['from'])) {
             $document->setFrom($params['from']);
+        }
+
+        if (isset($params['properties'])) {
+            $document->setProperties($params['properties']);
         }
 
         try {
@@ -475,5 +529,23 @@ class PimcoreBackend extends Module
     protected function getContainer()
     {
         return $this->getModule('\\' . PimcoreCore::class)->getContainer();
+    }
+
+    /**
+     * @return Serializer
+     */
+    protected function getSerializer()
+    {
+        $serializer = null;
+
+        try {
+            $serializer = $this->getContainer()->get('pimcore_admin.serializer');
+        } catch (\Exception $e) {
+            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while getting pimcore admin serializer. message was: ' . $e->getMessage()));
+        }
+
+        $this->assertInstanceOf(Serializer::class, $serializer);
+
+        return $serializer;
     }
 }

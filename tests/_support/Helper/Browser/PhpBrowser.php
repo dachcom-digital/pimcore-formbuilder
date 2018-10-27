@@ -91,30 +91,7 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
      */
     public function seeEmailIsSentTo(string $recipient, Email $email)
     {
-        $this->assertInstanceOf(Email::class, $email);
-
-        /** @var Profiler $profiler */
-        $profiler = $this->pimcoreCore->_getContainer()->get('profiler');
-
-        $tokens = $profiler->find('', '', 1, 'POST', '', '');
-        if (count($tokens) === 0) {
-            throw new \RuntimeException('No profile found. Is the profiler data collector enabled?');
-        }
-
-        $token = $tokens[0]['token'];
-        /** @var \Symfony\Component\HttpKernel\Profiler\Profile $profile */
-        $profile = $profiler->loadProfile($token);
-
-        if (!$profile instanceof Profile) {
-            throw new \RuntimeException(sprintf('Profile with token "%s" not found.', $token));
-        }
-
-        /** @var MessageDataCollector $mailCollector */
-        $mailCollector = $profile->getCollector('swiftmailer');
-
-        $this->assertGreaterThan(0, $mailCollector->getMessageCount());
-
-        $collectedMessages = $mailCollector->getMessages();
+        $collectedMessages = $this->getCollectedEmails($email);
 
         $recipients = [];
         foreach ($collectedMessages as $message) {
@@ -126,6 +103,29 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         $this->assertContains($recipient, array_keys($recipients));
 
+    }
+
+    /**
+     * Actor Function to see if given email has been sent
+     *
+     * @param Email  $email
+     * @param string $property
+     * @param string $value
+     */
+    public function seeSentEmailHasPropertyValue(Email $email, string $property, string $value)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        $getter = 'get' . ucfirst($property);
+        foreach ($collectedMessages as $message) {
+            $getterData = $message->$getter();
+            var_dump($getterData);
+            if (is_array($getterData)) {
+                $this->assertContains($value, array_keys($getterData));
+            } else {
+                $this->assertEquals($value, $getterData);
+            }
+        }
     }
 
     /**
@@ -189,5 +189,50 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
     {
         $params['csrfToken'] = self::PIMCORE_ADMIN_CSRF_TOKEN_NAME;
         $this->pimcoreCore->sendAjaxPostRequest($url, $params);
+    }
+
+    /**
+     * @param Email $email
+     *
+     * @return array
+     */
+    protected function getCollectedEmails(Email $email)
+    {
+        $this->assertInstanceOf(Email::class, $email);
+
+        /** @var Profiler $profiler */
+        $profiler = $this->pimcoreCore->_getContainer()->get('profiler');
+
+        $tokens = $profiler->find('', '', 1, 'POST', '', '');
+        if (count($tokens) === 0) {
+            throw new \RuntimeException('No profile found. Is the profiler data collector enabled?');
+        }
+
+        $token = $tokens[0]['token'];
+        /** @var \Symfony\Component\HttpKernel\Profiler\Profile $profile */
+        $profile = $profiler->loadProfile($token);
+
+        if (!$profile instanceof Profile) {
+            throw new \RuntimeException(sprintf('Profile with token "%s" not found.', $token));
+        }
+
+        /** @var MessageDataCollector $mailCollector */
+        $mailCollector = $profile->getCollector('swiftmailer');
+
+        $this->assertGreaterThan(0, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+
+        $emails = [];
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            if ($email->getProperty('test_identifier') !== $message->getDocument()->getProperty('test_identifier')) {
+                continue;
+            }
+            $emails[] = $message;
+        }
+
+        return $emails;
+
     }
 }
