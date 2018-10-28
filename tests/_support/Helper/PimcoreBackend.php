@@ -4,11 +4,14 @@ namespace DachcomBundle\Test\Helper;
 
 use Codeception\Module;
 use Codeception\TestInterface;
+use DachcomBundle\Test\Util\FileGeneratorHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormInterface;
+use Pimcore\File;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
@@ -29,7 +32,21 @@ class PimcoreBackend extends Module
     public function _after(TestInterface $test)
     {
         TestHelper::cleanUp();
+
+        //re-create form data folder.
+        try {
+            $folder = new Asset\Folder();
+            $folder->setParentId(1);
+            $folder->setFilename('formdata');
+            $folder->save();
+        } catch (\Exception $e) {
+            \Codeception\Util\Debug::debug(
+                sprintf('[FORMBUILDER ERROR] error while re-creating formdata folder. message was: ' . $e->getMessage())
+            );
+        }
+
         FormHelper::removeAllForms();
+        FileGeneratorHelper::cleanUp();
 
         parent::_after($test);
     }
@@ -146,6 +163,15 @@ class PimcoreBackend extends Module
     }
 
     /**
+     * @param     $fileName
+     * @param int $fileSizeInMb Mb
+     */
+    public function haveFile($fileName, $fileSizeInMb = 1)
+    {
+        FileGeneratorHelper::generateDummyFile($fileName, $fileSizeInMb);
+    }
+
+    /**
      * Actor Function to place a form area on a document
      *
      * @param Page          $document
@@ -257,8 +283,30 @@ class PimcoreBackend extends Module
             $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
             foreach ($properties as $propertyKey) {
                 $key = array_search($propertyKey, array_column($params, 'key'));
-                $this->assertNotSame($key, false);
+                $this->assertNotSame(false, $key);
             }
+        }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string        $fieldName
+     *
+     * @throws \Exception
+     */
+    public function seeZipFileInPimcoreAssetsFromField(FormInterface $form, string $fieldName)
+    {
+        $assetList = Asset::getList([
+            'condition' => sprintf(
+                'path = "/formdata/%s/" AND filename LIKE "%s-%%"',
+                File::getValidFilename($form->getName()), $fieldName
+            )
+        ]);
+
+        $this->assertEquals(1, count($assetList));
+
+        foreach ($assetList as $asset) {
+            $this->assertEquals('application/zip', $asset->getMimeType());
         }
     }
 

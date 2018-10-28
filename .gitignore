@@ -50,4 +50,6 @@ php-cgi.core
 /tests/codeception.yml
 /tests/*.suite.yml
 /tests/_output/*
+/tests/_data/*
+!/tests/_data/.gitkeep
 /tests/_support/_generated/*

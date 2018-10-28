@@ -16,9 +16,9 @@ class SimpleFormWithDivLayoutCest
      */
     public function testSimpleForm(AcceptanceTester $I)
     {
-        $testFormBuilder = $this->generateSimpleForm();
+        $testFormBuilder = $this->generateSimpleForm(true);
 
-        $form = $I->haveAForm($this->generateSimpleForm(true));
+        $form = $I->haveAForm($testFormBuilder);
 
         $document = $I->haveAPageDocument('form-test', 'javascript');
         $adminEmail = $I->haveAEmailDocumentForAdmin();
