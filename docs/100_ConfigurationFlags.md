@@ -10,7 +10,7 @@
 Change `use_custom_radio_checkbox` to false, if you don't want to use the bootstrap [custom forms](https://symfony.com/doc/current/form/bootstrap4.html#custom-forms).
 
 ```yaml
-formbuilder:
+form_builder:
     flags:
         use_custom_radio_checkbox: false
 ```

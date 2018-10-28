@@ -5,7 +5,7 @@ namespace DachcomBundle\Test\functional\Fields;
 use DachcomBundle\Test\FunctionalTester;
 use DachcomBundle\Test\Util\TestFormBuilder;
 
-class AbstractFieldCest
+abstract class AbstractFieldCest
 {
     protected $type;
 

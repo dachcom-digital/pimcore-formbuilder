@@ -10,35 +10,14 @@
 <div id="site">
     {% block content %}
         {% set config = {
-            'form_id': 1,
+            'form_id': document.getProperty('form_id') ,
             'form_template': 'bootstrap_4_layout.html.twig',
-            'mail_template': 178,
-            'copy_mail_template': 179,
+            'mail_template': document.getProperty('mail_id'),
+            'copy_mail_template': document.getProperty('mail_copy_id'),
             'send_copy': true
         } %}
         {{ form_builder_static(config) }}
     {% endblock %}
 </div>
-
-<script type="text/javascript"
-        src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
-<script type="text/javascript"
-        src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.conditional-logic.js') }}"></script>
-<script type="text/javascript"
-        src="{{ asset('bundles/formbuilder/js/frontend/vendor/dependsOn/dependsOn.min.js') }}"></script>
-<script type="text/javascript"
-        src="{{ asset('bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js') }}"></script>
-
-<script>
-    $(function () {
-            $('form.formbuilder.ajax-form').formBuilderAjaxManager({
-                resetFormMethod: function ($form) {
-                    //console.log($form);
-                }
-            });
-            $('form.formbuilder').formBuilderConditionalLogic();
-        });
-
-</script>
 </body>
 </html>

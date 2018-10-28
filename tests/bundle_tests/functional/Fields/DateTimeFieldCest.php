@@ -31,7 +31,7 @@ class DateTimeFieldCest extends AbstractFieldCest
      *
      * @param FunctionalTester $I
      */
-    private function dateTimeFieldOptionsWithHelpText(FunctionalTester $I)
+    private function testDateTimeFieldOptionsWithHelpText(FunctionalTester $I)
     {
         $options = [
             'date_widget' => 'single_text',

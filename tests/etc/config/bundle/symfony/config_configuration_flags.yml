@@ -1,0 +1,3 @@
+form_builder:
+    flags:
+        use_custom_radio_checkbox: false

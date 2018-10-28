@@ -33,14 +33,16 @@ class DefaultController extends FrontendController
 
     public function controllerRenderAction(Request $request)
     {
+        $document = $this->document;
+
         $options = [
-            'form_id'             => 1,
-            'form_template'       => 'bootstrap_3_layout.html.twig',
-            'main_layout'         => 'layout.html.twig',
-            'send_copy'           => false,
-            'mail_template'       => 1,
-            'copy_mail_template'  => null,
-            'preset'              => null
+            'form_id'            => $document->getProperty('form_id'),
+            'form_template'      => 'bootstrap_4_layout.html.twig',
+            'main_layout'        => false,
+            'send_copy'          => true,
+            'mail_template'      => $document->getProperty('mail_id'),
+            'copy_mail_template' => $document->getProperty('mail_copy_id'),
+            'preset'             => null
         ];
 
         $optionBuilder = new FormOptionsResolver();
