@@ -34,7 +34,7 @@ class SnippetFieldCest extends AbstractFieldCest
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
-        $I->see('snippet content with id 2', '.form-builder-snippet-element h3');
+        $I->see(sprintf('snippet content with id %s', $snippet->getId()), '.form-builder-snippet-element h3');
     }
 
     /**
