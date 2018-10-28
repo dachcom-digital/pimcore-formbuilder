@@ -119,7 +119,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         $getter = 'get' . ucfirst($property);
         foreach ($collectedMessages as $message) {
             $getterData = $message->$getter();
-            var_dump($getterData);
             if (is_array($getterData)) {
                 $this->assertContains($value, array_keys($getterData));
             } else {

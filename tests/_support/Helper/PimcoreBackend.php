@@ -289,6 +289,30 @@ class PimcoreBackend extends Module
     }
 
     /**
+     * @param Email  $mail
+     * @param string $string
+     */
+    public function seeInRenderedEmailBody(Email $mail, string $string)
+    {
+        $this->assertInstanceOf(Email::class, $mail);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
+        $this->assertGreaterThan(0, count($foundEmails));
+
+        $serializer = $this->getSerializer();
+
+        foreach ($foundEmails as $email) {
+            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
+
+            $bodyKey = array_search('body', array_column($params, 'key'));
+            $this->assertNotSame(false, $bodyKey);
+
+            $data = $params[$bodyKey];
+            $this->assertContains($string, $data['data']['value']);
+        }
+    }
+
+    /**
      * @param FormInterface $form
      * @param string        $fieldName
      *

@@ -134,7 +134,7 @@ class MailListener implements EventSubscriberInterface
      * @return bool
      * @throws \Exception
      */
-    private function sendForm($mailTemplateId = 0, $userOptions, FormInterface $form, $locale, $isCopy = false)
+    private function sendForm($mailTemplateId, $userOptions, FormInterface $form, $locale, $isCopy = false)
     {
         /** @var MailBehaviourData $mailConditionData */
         $mailConditionData = $this->checkMailCondition($form, 'mail_behaviour', ['isCopy' => $isCopy]);
