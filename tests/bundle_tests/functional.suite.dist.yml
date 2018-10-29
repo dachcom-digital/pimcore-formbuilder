@@ -4,7 +4,6 @@ modules:
         - \DachcomBundle\Test\Helper\PimcoreCore:
             connect_db: true
             rebootable_client: true
-            # configuration_file: config_presets.yml
         - \DachcomBundle\Test\Helper\PimcoreBundleCore:
             run_installer: true
         - \DachcomBundle\Test\Helper\Browser\PhpBrowser:

@@ -1,6 +1,6 @@
 <?php
 
-namespace DachcomBundle\Test\acceptance\ConditionalLogic\Action\Form;
+namespace DachcomBundle\Test\functional\ConditionalLogic\Action\Form;
 
 use DachcomBundle\Test\Helper\Traits;
 use DachcomBundle\Test\FunctionalTester;

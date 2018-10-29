@@ -8,7 +8,7 @@ class AppKernel extends Kernel
     public function registerBundlesToCollection(BundleCollection $collection)
     {
         if (class_exists('\\AppBundle\\AppBundle')) {
-            $collection->addBundle(new \AppBundle\AppBundle);
+            $collection->addBundle(new \AppBundle\AppBundle());
         }
 
         $collection->addBundle(new \Symfony\Bundle\WebServerBundle\WebServerBundle());
