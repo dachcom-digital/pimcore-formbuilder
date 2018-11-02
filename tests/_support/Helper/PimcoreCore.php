@@ -44,6 +44,17 @@ class PimcoreCore extends PimcoreCoreModule
     }
 
     /**
+     * @param array $settings
+     *
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function _beforeSuite($settings = [])
+    {
+        parent::_beforeSuite($settings);
+        $this->clearCache();
+    }
+
+    /**
      * Actor Function to boot symfony with a specific bundle configuration
      *
      * @param string $configuration

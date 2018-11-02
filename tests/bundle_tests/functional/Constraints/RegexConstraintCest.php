@@ -90,7 +90,7 @@ class RegexConstraintCest extends AbstractConstraintCest
     {
         list($testFormBuilder, $form) = $this->setupForm($I, [['regex', ['pattern' => '/\d/', 'match' => true]]]);
 
-        $this->fillForm($I, ['text_0' => '123']);
+        $this->fillForm($I, ['text_0' => '123', 'textarea_0' => '123']);
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
         $I->see('Success!', '.message.message-success');

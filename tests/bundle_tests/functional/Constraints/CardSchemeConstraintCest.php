@@ -70,7 +70,7 @@ class CardSchemeConstraintCest extends AbstractConstraintCest
     {
         list($testFormBuilder, $form) = $this->setupForm($I, [['card_scheme', ['schemes' => 'MASTERCARD']]]);
 
-        $this->fillForm($I, ['text_0' => '5500 0000 0000 0004']);
+        $this->fillForm($I, ['text_0' => '5555555555554444']);
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
         $I->see('Success!', '.message.message-success');
