@@ -66,6 +66,7 @@ class Builder
      * Generate array form with form attributes and available form types structure.
      *
      * @param FormInterface $form
+     *
      * @return array
      * @throws \Exception
      */
@@ -87,6 +88,7 @@ class Builder
         $data['fields'] = $this->generateExtJsFields($fieldData);
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
+        $data['config_store'] = $this->getFormStoreData();
         $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
         $data['conditional_logic'] = $this->generateConditionalLogicExtJsFields($form->getConditionalLogic());
         $data['conditional_logic_store'] = $this->generateConditionalLogicStore();
@@ -96,6 +98,7 @@ class Builder
 
     /**
      * @param array $fields
+     *
      * @return array
      * @throws \Exception
      */
@@ -110,6 +113,7 @@ class Builder
 
     /**
      * @param array $data
+     *
      * @return array
      * @throws \Exception
      */
@@ -128,6 +132,7 @@ class Builder
 
     /**
      * @param array $conditionalData
+     *
      * @return array
      * @throws \Exception
      */
@@ -186,6 +191,7 @@ class Builder
 
     /**
      * @param $conditionalData
+     *
      * @return array
      * @throws \Exception
      */
@@ -334,6 +340,7 @@ class Builder
     /**
      * @param $formType
      * @param $formTypeBackendConfig
+     *
      * @return array
      */
     private function getMergedFormTypeConfig($formType, $formTypeBackendConfig)
@@ -381,7 +388,35 @@ class Builder
      */
     private function getFormTypeAllowedConstraints($formType, $formTypeBackendConfig)
     {
-        return $formTypeBackendConfig['constraints'];
+        $constraints = [];
+        foreach ($this->configuration->getAvailableConstraints() as $constraintId => $constraintData) {
+            $constraints[] = $constraintId;
+        }
+        // all constraints are allowed
+        if (!isset($formTypeBackendConfig['constraints'])) {
+            return $constraints;
+        }
+
+        $definedConstraints = $formTypeBackendConfig['constraints'];
+
+        // no constraints are allowed
+        if (isset($definedConstraints['enabled'])
+            && is_array($definedConstraints['enabled']) && count($definedConstraints['enabled']) === 0) {
+            return [];
+        }
+
+        // specific constraints enabled
+        if (isset($definedConstraints['enabled']) && is_array($definedConstraints['enabled'])) {
+            // only get available constraints
+            return array_values(array_intersect($constraints, $definedConstraints['enabled']));
+        }
+
+        // specific constraints disabled
+        if (isset($definedConstraints['disabled']) && is_array($definedConstraints['disabled'])) {
+            return array_values(array_diff($constraints, $definedConstraints['disabled']));
+        }
+
+        return [];
     }
 
     /**
@@ -413,7 +448,20 @@ class Builder
     }
 
     /**
+     * @return array
+     */
+    private function getFormStoreData()
+    {
+        $formAttributes = $this->configuration->getConfig('form_attributes');
+
+        return [
+            'attributes' => $formAttributes
+        ];
+    }
+
+    /**
      * @param string $formType
+     *
      * @return bool
      */
     private function isAllowedFormType($formType = null)
@@ -454,6 +502,7 @@ class Builder
     /**
      * @param array $fieldData
      * @param bool  $reverse
+     *
      * @return mixed
      * @throws \Exception
      */
@@ -497,6 +546,7 @@ class Builder
      * @param array  $fieldData
      * @param string $type
      * @param bool   $reverse
+     *
      * @throws \Exception
      */
     private function transformConditionalOptions(&$fieldData, $type, $reverse = false)

@@ -32,7 +32,6 @@ class MailIgnoreFieldsPropertyCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
 
@@ -63,7 +62,6 @@ class MailIgnoreFieldsPropertyCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
 

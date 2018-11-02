@@ -27,7 +27,6 @@ abstract class AbstractConditionCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, null, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         return $testFormBuilder;
     }
@@ -86,7 +85,6 @@ abstract class AbstractConditionCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, null, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         return $testFormBuilder;
     }

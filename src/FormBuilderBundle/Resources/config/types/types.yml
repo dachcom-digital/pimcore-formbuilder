@@ -6,6 +6,9 @@ form_builder:
                 form_type_group: date_time_fields
                 label: 'form_builder_type.date_type'
                 icon_class: 'form_builder_icon_date'
+                constraints:
+                    disabled:
+                    - 'dynamic_multi_file_not_blank'
                 fields:
                     options.data: ~
                     options.value: ~
@@ -39,6 +42,9 @@ form_builder:
                 form_type_group: date_time_fields
                 label: 'form_builder_type.date_time_type'
                 icon_class: 'form_builder_icon_date_time'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.data: ~
                     options.value: ~
@@ -104,6 +110,9 @@ form_builder:
                 form_type_group: date_time_fields
                 label: 'form_builder_type.time_type'
                 icon_class: 'form_builder_icon_time'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.data: ~
                     options.value: ~
@@ -145,6 +154,9 @@ form_builder:
                 form_type_group: date_time_fields
                 label: 'form_builder_type.birthday_type'
                 icon_class: 'form_builder_icon_birthday'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.data: ~
                     options.value: ~
@@ -178,6 +190,9 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.text_type'
                 icon_class: 'form_builder_icon_text'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value: ~
         hidden:
@@ -186,6 +201,7 @@ form_builder:
                 form_type_group: hidden_fields
                 label: 'form_builder_type.hidden_type'
                 icon_class: 'form_builder_icon_hidden'
+                constraints: false
                 fields:
                     options.value: ~
                     options.help_text: ~
@@ -195,6 +211,9 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.textarea_type'
                 icon_class: 'form_builder_icon_textarea'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value: ~
         integer:
@@ -203,6 +222,9 @@ form_builder:
                 form_type_group: text_fields
                 label: 'form_builder_type.integer_type'
                 icon_class: 'form_builder_icon_integer'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value: ~
         checkbox:
@@ -211,6 +233,9 @@ form_builder:
                 form_type_group: other_fields
                 label: 'form_builder_type.checkbox_type'
                 icon_class: 'form_builder_icon_checkbox'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value:
                         display_group_id: base
@@ -242,6 +267,9 @@ form_builder:
                 form_type_group: other_fields
                 label: 'form_builder_type.dynamic_multi_file'
                 icon_class: 'form_builder_icon_file'
+                constraints:
+                    enabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.data: ~
                     options.value: ~
@@ -319,6 +347,9 @@ form_builder:
                 form_type_group: choice_fields
                 label: 'form_builder_type.country_type'
                 icon_class: 'form_builder_icon_country'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value: ~
                     options.data:
@@ -358,6 +389,9 @@ form_builder:
                 form_type_group: choice_fields
                 label: 'form_builder_type.choice_type'
                 icon_class: 'form_builder_icon_multi_select'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value: ~
                     options.data:
@@ -403,6 +437,9 @@ form_builder:
                 form_type_group: choice_fields
                 label: 'form_builder_type.dynamic_choice_type'
                 icon_class: 'form_builder_icon_dynamic_multi_select'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.value: ~
                     options.data:

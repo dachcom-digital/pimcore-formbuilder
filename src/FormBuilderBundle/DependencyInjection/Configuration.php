@@ -14,6 +14,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->variableNode('form_attributes')->end()
                 ->arrayNode('flags')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -38,11 +39,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
                 ->arrayNode('form')
                     ->addDefaultsIfNotSet()
                     ->children()
-
                         ->arrayNode('templates')
                             ->useAttributeAsKey('name')
                             ->prototype('array')
@@ -60,7 +59,6 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
-
                         ->arrayNode('field')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -83,10 +81,8 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
-
                     ->end()
                 ->end()
-
                 ->arrayNode('admin')
                     ->children()
                         ->arrayNode('active_elements')
@@ -107,7 +103,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
                 ->arrayNode('backend_base_field_type_groups')
                     ->useAttributeAsKey('name')
                     ->prototype('array')
@@ -124,7 +119,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
                 ->arrayNode('validation_constraints')
                     ->useAttributeAsKey('name')
                     ->prototype('array')
@@ -142,7 +136,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
                 ->arrayNode('backend_base_field_type_config')
                     ->children()
                         ->arrayNode('tabs')
@@ -183,28 +176,60 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
                 ->arrayNode('types')
                     ->useAttributeAsKey('name')
                     ->prototype('array')
                         ->children()
-
                             ->scalarNode('class')->cannotBeEmpty()->end()
                                 ->arrayNode('configurations')
                                 ->scalarPrototype()->cannotBeEmpty()->end()
                             ->end()
-                            ->arrayNode('constraints')
-                                ->scalarPrototype()->cannotBeEmpty()->end()
-                            ->end()
-
                             ->arrayNode('backend')
                                 ->children()
-
                                     ->scalarNode('form_type_group')->isRequired()->end()
                                     ->scalarNode('label')->isRequired()->end()
                                     ->scalarNode('icon_class')->end()
-                                    ->booleanNode('constraints')->defaultTrue()->end()
-
+                                    ->arrayNode('constraints')
+                                        ->beforeNormalization()
+                                            ->ifTrue(function ($value) {
+                                                // legacy
+                                                return is_bool($value);
+                                            })
+                                            ->then(function ($value) {
+                                                return $value === true
+                                                    ? ['enabled' => ['all']]
+                                                    : ['disabled' => ['all']];
+                                            })
+                                        ->end()
+                                        ->validate()
+                                            ->ifTrue(function ($value) {
+                                                return count($value['enabled']) > 0 && count($value['disabled']) > 0;
+                                            })
+                                            ->thenInvalid('%s is invalid, only one node can be defined ("enabled" or "disabled").')
+                                        ->end()
+                                        ->validate()
+                                            ->always(function($value) {
+                                                if (isset($value['enabled']) && in_array('all', $value['enabled'])) {
+                                                    return ['disabled' => []];
+                                                } elseif (isset($value['disabled']) && in_array('all', $value['disabled'])) {
+                                                    return ['enabled' => []];
+                                                } elseif (isset($value['enabled']) && !empty($value['enabled'])) {
+                                                    return ['enabled' => $value['enabled']];
+                                                } elseif (isset($value['disabled']) && !empty($value['disabled'])) {
+                                                    return ['disabled' => $value['disabled']];
+                                                }
+                                                return $value;
+                                            })
+                                        ->end()
+                                        ->children()
+                                            ->arrayNode('enabled')
+                                                ->prototype('scalar')->end()
+                                            ->end()
+                                            ->arrayNode('disabled')
+                                                ->prototype('scalar')->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
                                     ->arrayNode('tabs')
                                         ->useAttributeAsKey('name')
                                         ->prototype('array')
@@ -255,14 +280,11 @@ class Configuration implements ConfigurationInterface
                                             ->end()
                                         ->end()
                                     ->end()
-
                                 ->end()
                             ->end()
-
                         ->end()
                     ->end()
                 ->end()
-
                 ->arrayNode('conditional_logic')
                     ->children()
                         ->arrayNode('action')
@@ -297,7 +319,6 @@ class Configuration implements ConfigurationInterface
                                                 ->arrayNode('conditional')
                                                     ->useAttributeAsKey('name')
                                                     ->prototype('array')
-
                                                         ->children()
                                                             ->scalarNode('type')->isRequired()->end()
                                                             ->scalarNode('label')->isRequired()->end()
@@ -352,7 +373,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
             ->end();
 
         return $treeBuilder;

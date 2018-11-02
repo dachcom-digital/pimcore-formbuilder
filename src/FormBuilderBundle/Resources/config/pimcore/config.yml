@@ -1,6 +1,30 @@
 parameters:
     form_builder_html_tag_elements:
         - ['label','label']
+    form_builder_form_attributes:
+        - ['class','class']
+        - ['id','id']
+        - ['style','style']
+        - ['maxlength','maxlength']
+        - ['disabled','disabled']
+        - ['readonly','readonly']
+        - ['size','size']
+        - ['title','title']
+        - ['placeholder','placeholder']
+        - ['onchange','onchange']
+        - ['onclick','onclick']
+        - ['ondbclick','ondbclick']
+        - ['onfocus','onfocus']
+        - ['onkeydown','onkeydown']
+        - ['onkeypress','onkeypress']
+        - ['onkeyup','onkeyup']
+        - ['onmousedown','onmousedown']
+        - ['onmousemove','onmousemove']
+        - ['onmouseout','onmouseout']
+        - ['onmouseover','onmouseover']
+        - ['onmouseup','onmouseup']
+        - ['onselect','onselect']
+    form_builder_field_attributes: '%form_builder_form_attributes%'
 
 form_builder:
     area:

@@ -126,8 +126,7 @@ class TestFormBuilder
      */
     public function addFormAttributes($key, $value)
     {
-        $this->formConfig['form_config']['attributes'][$key] = $value;
-
+        $this->formConfig['form_config']['attributes'][] = ['option' => $key, 'value' => $value];
         return $this;
     }
 
@@ -370,7 +369,11 @@ class TestFormBuilder
     {
         $parsedConstraints = [];
         foreach ($constraints as $constraintType) {
-            $parsedConstraints[] = ['type' => $constraintType];
+            if (is_array($constraintType)) {
+                $parsedConstraints[] = ['type' => $constraintType[0], 'config' => $constraintType[1]];
+            } else {
+                $parsedConstraints[] = ['type' => $constraintType];
+            }
         }
 
         if (!isset($optional['template'])) {

@@ -25,7 +25,6 @@ class PlaceholderReplacementCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
 
@@ -52,7 +51,6 @@ class PlaceholderReplacementCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
         $I->checkOption($testFormBuilder->getFormFieldSelector(1, 'checkboxes', '', '_1'));
@@ -80,7 +78,6 @@ class PlaceholderReplacementCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
 
@@ -107,7 +104,6 @@ class PlaceholderReplacementCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
 
@@ -134,7 +130,6 @@ class PlaceholderReplacementCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $this->fillSimpleForm($testFormBuilder, $I);
 

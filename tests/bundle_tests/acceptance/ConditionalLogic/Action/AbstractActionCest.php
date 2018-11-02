@@ -38,7 +38,6 @@ abstract class AbstractActionCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, null, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         return $testFormBuilder;
     }
@@ -72,7 +71,6 @@ abstract class AbstractActionCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, $copyMailTemplate, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         return $testFormBuilder;
     }

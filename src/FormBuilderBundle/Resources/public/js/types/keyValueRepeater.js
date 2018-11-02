@@ -1,6 +1,8 @@
 pimcore.registerNS('Formbuilder.comp.types.keyValueRepeater');
 Formbuilder.comp.types.keyValueRepeater = Class.create({
 
+    allowGroupSelector: true,
+
     fieldConfig: null,
 
     storeData: null,
@@ -13,7 +15,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     optionStore: null,
 
-    initialize: function (fieldConfig, storeData, optionStore) {
+    initialize: function (fieldConfig, storeData, optionStore, allowGroup) {
 
         this.fieldConfig = fieldConfig;
         this.storeData = storeData;
@@ -21,6 +23,10 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
         if (this.optionStore) {
             this.optionType = 'store';
+        }
+
+        if (allowGroup === false) {
+            this.allowGroupSelector = false;
         }
 
         this.generateRepeaterWithKeyValue();
@@ -33,18 +39,19 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     generateRepeaterWithKeyValue: function () {
 
-        var keyValueRepeater = null,
-            metaDataCounter = 0,
-            allowFirstOptionsEmpty = false;
+        var allowFirstOptionsEmpty = false,
+            storeData = [];
+
+        storeData.push(['default', t('form_builder_repeater_default')]);
+        if (this.allowGroupSelector === true) {
+            storeData.push(['grouped', t('form_builder_repeater_grouped')]);
+        }
 
         this.typeSelector = new Ext.form.ComboBox({
             width: 300,
             triggerAction: 'all',
             submitValue: false,
-            store: [
-                ['default', t('form_builder_repeater_default')],
-                ['grouped', t('form_builder_repeater_grouped')]
-            ],
+            store: storeData,
             listeners: {
                 select: function (combo, rec) {
                     this.type = combo.getValue();
@@ -86,7 +93,6 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
         ];
 
         if (allowFirstOptionsEmpty) {
-
             items.unshift({
                 xtype: 'panel',
                 name: 'multiOptionsInfo',
@@ -331,8 +337,8 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
         });
 
         Ext.Object.each(this.storeData, function (index, value) {
+            var groupMetaField = undefined;
             if (type === 'grouped') {
-                groupMetaField = undefined;
                 Ext.Array.each(value, function (group, index) {
                     if (group.name && index === 0) {
                         groupMetaField = _.addGroupedMetaField(_.repeater.query('[name="button_type_grouped"]')[0], group.name);
@@ -348,7 +354,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
     },
 
     generateFieldName: function (fieldSetIndex, fieldContainerIndex, name) {
-        if(fieldSetIndex === null) {
+        if (fieldSetIndex === null) {
             return this.fieldConfig.id + '.' + fieldContainerIndex + '.' + name;
         }
 

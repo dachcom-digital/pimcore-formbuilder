@@ -1,5 +1,5 @@
 form_builder:
-
+    form_attributes: '%form_builder_form_attributes%'
     backend_base_field_type_groups:
         text_fields:
             label: 'form_builder_type_group.text_fields'
@@ -25,7 +25,6 @@ form_builder:
         buttons:
             label: 'form_builder_type_group.buttons'
             icon_class: form_builder_icon_container
-
     backend_base_field_type_config:
         tabs:
             default:
@@ -69,34 +68,15 @@ form_builder:
                 label: 'form_builder_type_field_base.attributes'
                 options_transformer: FormBuilderBundle\Transformer\ChoicesTransformer
                 config:
-                    options:
-                        - ['class','class']
-                        - ['id','id']
-                        - ['style','style']
-                        - ['maxlength','maxlength']
-                        - ['disabled','disabled']
-                        - ['readonly','readonly']
-                        - ['size','size']
-                        - ['title','title']
-                        - ['placeholder','placeholder']
-                        - ['onchange','onchange']
-                        - ['onclick','onclick']
-                        - ['ondbclick','ondbclick']
-                        - ['onfocus','onfocus']
-                        - ['onkeydown','onkeydown']
-                        - ['onkeypress','onkeypress']
-                        - ['onkeyup','onkeyup']
-                        - ['onmousedown','onmousedown']
-                        - ['onmousemove','onmousemove']
-                        - ['onmouseout','onmouseout']
-                        - ['onmouseover','onmouseover']
-                        - ['onmouseup','onmouseup']
-                        - ['onselect','onselect']
-
+                    options: '%form_builder_field_attributes%'
     validation_constraints:
         not_blank:
             class: Symfony\Component\Validator\Constraints\NotBlank
             label: 'form_builder_validation_constraint.not_blank'
+            icon_class: form_builder_icon_validation
+        dynamic_multi_file_not_blank:
+            class: FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlank
+            label: 'form_builder_validation_constraint.dynamic_multi_file_not_blank'
             icon_class: form_builder_icon_validation
         email:
             class: Symfony\Component\Validator\Constraints\Email

@@ -128,6 +128,10 @@ class Builder
         //@todo: implement inline functionality.
         //$formAttributes['class'] = 'form-inline';
 
+        if (isset($formConfig['attributes']) && is_array($formConfig['attributes'])) {
+            $formAttributes = $this->addFormAttributes($formAttributes, $formConfig['attributes']);
+        }
+
         $builder = $this->formFactory->createNamedBuilder(
             'formbuilder_' . $formEntity->getId(),
             DynamicFormType::class,
@@ -152,5 +156,33 @@ class Builder
         $form->handleRequest($request);
 
         return $form;
+    }
+
+    /**
+     * @param array $currentAttributes
+     * @param array $attributes
+     *
+     * @return array
+     */
+    private function addFormAttributes(array $currentAttributes, array $attributes)
+    {
+        foreach ($attributes as $key => $attribute) {
+            // legacy
+            if (!isset($attribute['option']) || is_null($attribute['option'])) {
+                continue;
+            }
+
+            if (isset($currentAttributes[$attribute['option']])) {
+                if (is_array($currentAttributes[$attribute['option']])) {
+                    $currentAttributes[$attribute['option']] = array_merge($currentAttributes[$attribute['option']], (array)$attribute['value']);
+                } else {
+                    $currentAttributes[$attribute['option']] .= ' ' . (string)$attribute['value'];
+                }
+            } else {
+                $currentAttributes[$attribute['option']] = (string)$attribute['value'];
+            }
+        }
+
+        return $currentAttributes;
     }
 }

@@ -17,7 +17,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     configurationLayout: [],
 
-    allowedConstraints: true,
+    allowedConstraints: [],
 
     attributeSelector: null,
 
@@ -30,7 +30,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         this.formTypeTemplates = availableFormFieldTemplates;
         this.configurationLayout = initData.configuration_layout;
         this.allowedConstraints = initData.constraints;
-
         this.iconClass = initData.icon_class;
         this.type = initData.type;
         this.typeName = initData.text;
@@ -85,7 +84,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                 items: [
                     this.getForm(tabLayout.fields, i === 0)
                 ]
-
             });
 
             items.push(item);
@@ -420,7 +418,8 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
             fieldConfig,
             this.getFieldValue(fieldConfig.id),
-            fieldConfig.config.options
+            fieldConfig.config.options,
+            false
         );
 
         return keyValueRepeater.getRepeater();

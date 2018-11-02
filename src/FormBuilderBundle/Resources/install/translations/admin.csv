@@ -21,6 +21,7 @@
 "form_builder_type_group.hidden_fields","Hidden Fields","Versteckte Felder"
 "form_builder_type_group.buttons","Buttons","Schaltflächen"
 "form_builder_validation_constraint.not_blank","Not Blank","NotBlank-Einschränkung"
+"form_builder_validation_constraint.dynamic_multi_file_not_blank","Dynamic Multi-File Not Blank","NotBlank-Einschränkung für Multi-Datei Element"
 "form_builder_validation_constraint.email","Email-Validation","Email-Validierung"
 "form_builder_validation_constraint.length","Length","Länge"
 "form_builder_validation_constraint.url","Url","Url"

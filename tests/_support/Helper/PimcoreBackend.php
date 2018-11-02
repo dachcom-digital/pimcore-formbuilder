@@ -21,6 +21,7 @@ use Pimcore\Model\Document\Tag\Checkbox;
 use Pimcore\Model\Document\Tag\Href;
 use Pimcore\Model\Document\Tag\Select;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Translation\Translator;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Serializer\Serializer;
 
@@ -289,6 +290,34 @@ class PimcoreBackend extends Module
     }
 
     /**
+     * Actor Function to see if admin email not contains given properties
+     *
+     * @param Email $mail
+     * @param array $properties
+     */
+    public function cantSeePropertyKeysInEmail(Email $mail, array $properties)
+    {
+        $this->assertInstanceOf(Email::class, $mail);
+
+        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
+        $this->assertGreaterThan(0, count($foundEmails));
+
+        $serializer = $this->getSerializer();
+
+        foreach ($foundEmails as $email) {
+            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
+            foreach ($properties as $propertyKey) {
+                $this->assertFalse(
+                    array_search(
+                        $propertyKey,
+                        array_column($params, 'key')),
+                    sprintf('Failed asserting that search for "%s" is false.', $propertyKey)
+                );
+            }
+        }
+    }
+
+    /**
      * @param Email  $mail
      * @param string $string
      */
@@ -335,31 +364,16 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * Actor Function to see if admin email not contains given properties
+     * Actor Function to see if a key has been stored in admin translations
      *
-     * @param Email $mail
-     * @param array $properties
+     * @param string $key
+     *
      */
-    public function cantSeePropertyKeysInEmail(Email $mail, array $properties)
+    public function seeKeyInFrontendTranslations(string $key)
     {
-        $this->assertInstanceOf(Email::class, $mail);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
-        $this->assertGreaterThan(0, count($foundEmails));
-
-        $serializer = $this->getSerializer();
-
-        foreach ($foundEmails as $email) {
-            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
-            foreach ($properties as $propertyKey) {
-                $this->assertFalse(
-                    array_search(
-                        $propertyKey,
-                        array_column($params, 'key')),
-                    sprintf('Failed asserting that search for "%s" is false.', $propertyKey)
-                );
-            }
-        }
+        /** @var Translator $translator */
+        $translator = \Pimcore::getContainer()->get('pimcore.translator');
+        $this->assertTrue($translator->getCatalogue()->has($key));
     }
 
     /**

@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlankValidator:
+        tags:
+            - { name: validator.constraint_validator }

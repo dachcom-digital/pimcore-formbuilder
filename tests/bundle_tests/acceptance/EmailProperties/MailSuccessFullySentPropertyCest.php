@@ -36,7 +36,6 @@ class MailSuccessFullySentPropertyCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
@@ -74,7 +73,6 @@ class MailSuccessFullySentPropertyCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
@@ -111,7 +109,6 @@ class MailSuccessFullySentPropertyCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
@@ -145,7 +142,6 @@ class MailSuccessFullySentPropertyCest
         $formTemplate = 'bootstrap_4_layout.html.twig';
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, null, $formTemplate);
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 

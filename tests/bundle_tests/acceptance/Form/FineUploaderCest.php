@@ -28,7 +28,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -67,7 +66,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -106,7 +104,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -160,7 +157,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -208,7 +204,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -252,7 +247,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -299,7 +293,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -348,7 +341,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
@@ -395,7 +387,6 @@ class FineUploaderCest
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->amOnPage('/form-test');
-        $I->seeElement($testFormBuilder->getFormSelector(1));
 
         $I->waitForElement('div.qq-upload-button', 5);
 
