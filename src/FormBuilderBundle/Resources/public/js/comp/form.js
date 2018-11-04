@@ -2,33 +2,18 @@ pimcore.registerNS('Formbuilder.comp.form');
 Formbuilder.comp.form = Class.create({
 
     importIsRunning: false,
-
     availableFormFields: [],
-
     parentPanel: null,
-
     formId: null,
-
     formName: null,
-
     formDate: null,
-
     formConfig: null,
-
     formConfigStore: {},
-
     formConditionalsStructured: {},
-
     formConditionalsStore: {},
-
     formFields: null,
-
-    formIsValid: false,
-
     copyData: null,
-
     rootFields: [],
-
     allowedMoveElements: {
         'root': [
             'field'
@@ -71,10 +56,10 @@ Formbuilder.comp.form = Class.create({
             width: 300,
             root: {
                 id: '0',
-                text: t('form_builder_base'),
-                iconCls: 'form_builder_icon_root',
                 fbType: 'root',
                 fbTypeContainer: 'root',
+                text: t('form_builder_base'),
+                iconCls: 'form_builder_icon_root',
                 isTarget: true,
                 leaf: true,
                 root: true
@@ -174,7 +159,7 @@ Formbuilder.comp.form = Class.create({
      */
     recursiveAddNode: function (scope, formTypeValues, type) {
 
-        var stype = null, fn = null, newNode = null;
+        var newNode = null;
 
         if (type === 'formType') {
 
@@ -185,8 +170,7 @@ Formbuilder.comp.form = Class.create({
                 return null;
             }
 
-            fn = this.createFormField.bind(this, scope, formGroupElement, formTypeValues);
-            newNode = fn();
+            newNode = this.createFormField(scope, formGroupElement, formTypeValues);
 
         } else if (type === 'constraint') {
 
@@ -197,8 +181,7 @@ Formbuilder.comp.form = Class.create({
                 return null;
             }
 
-            fn = this.createFormFieldConstraint.bind(this, scope, constraintElement, formTypeValues);
-            newNode = fn();
+            newNode = this.createFormFieldConstraint(scope, constraintElement, formTypeValues);
         }
 
         if (formTypeValues.constraints) {
@@ -208,8 +191,8 @@ Formbuilder.comp.form = Class.create({
         }
 
         if (formTypeValues.fields) {
-            for (var i = 0; i < formTypeValues.fields.length; i++) {
-                this.recursiveAddNode(newNode, formTypeValues.fields[i], 'formType');
+            for (var i2 = 0; i2 < formTypeValues.fields.length; i2++) {
+                this.recursiveAddNode(newNode, formTypeValues.fields[i2], 'formType');
             }
         }
 
@@ -255,7 +238,7 @@ Formbuilder.comp.form = Class.create({
      */
     onTreeNodeBeforeSelect: function (tree) {
         try {
-            this.saveCurrentNode();
+            this.checkCurrentNodeValidation();
         } catch (e) {
             Ext.MessageBox.alert(t('error'), e);
             return false;
@@ -273,21 +256,22 @@ Formbuilder.comp.form = Class.create({
      */
     onTreeNodeSelect: function (tree, record, item, index, e, eOpts) {
 
+        var fbObject;
+
         this.editPanel.removeAll();
 
-        if (record.data.object) {
-
-            if (record.data.object.storeData.locked) {
+        if (record.data.fbType === 'root') {
+            this.editPanel.add(this.getRootPanel());
+            this.setCurrentNode('root');
+            // could be field constraint, ...
+        } else if (record.getData().hasOwnProperty('object')) {
+            fbObject = record.getData().object;
+            if (fbObject.storeData.locked) {
                 return;
             }
 
-            this.editPanel.add(record.data.object.renderLayout());
-            this.setCurrentNode(record.data.object);
-        }
-
-        if (record.data.root) {
-            this.editPanel.add(this.getRootPanel());
-            this.setCurrentNode('root');
+            this.editPanel.add(fbObject.renderLayout());
+            this.setCurrentNode(record.getData());
         }
 
         this.editPanel.updateLayout();
@@ -300,28 +284,31 @@ Formbuilder.comp.form = Class.create({
      * @param record
      * @param item
      * @param index
-     * @param e
-     * @param eOpts
+     * @param ev
      */
-    onTreeNodeContextMenu: function (tree, record, item, index, e, eOpts) {
+    onTreeNodeContextMenu: function (tree, record, item, index, ev) {
 
         var _ = this,
             parentType = record.data.fbType,
             deleteAllowed,
             showPaste = false,
-            menu = new Ext.menu.Menu();
+            menu = new Ext.menu.Menu(),
+            layoutElem = [];
 
-        e.stopEvent();
-        tree.select();
+        ev.stopEvent();
+
+        try {
+            this.checkCurrentNodeValidation();
+        } catch (e) {
+            return;
+        }
+
+        this.tree.getSelectionModel().select(record, true);
 
         deleteAllowed = parentType !== 'root';
-
         if (record.data.object && record.data.object.storeData.locked) {
             deleteAllowed = false;
         }
-
-        var layoutElem = [],
-            layouts = Object.keys(Formbuilder.comp.type);
 
         //add form items
         if (parentType === 'root' && _.availableFormFields.length > 0) {
@@ -342,7 +329,7 @@ Formbuilder.comp.form = Class.create({
                     formGroupElements.push({
                         text: formGroupElement.label,
                         iconCls: formGroupElement.icon_class,
-                        handler: this.createFormField.bind(_, record, formGroupElement, null)
+                        handler: this.createFormField.bind(_, record, formGroupElement, null, true)
                     });
                 }
 
@@ -365,14 +352,12 @@ Formbuilder.comp.form = Class.create({
 
         //delete menu
         if (parentType !== 'root') {
-
             menu.add(new Ext.menu.Item({
                 text: t('copy'),
                 iconCls: 'pimcore_icon_copy',
                 hideOnClick: true,
                 handler: this.copyFormField.bind(this, tree, record)
             }));
-
         }
 
         //constraint menu
@@ -412,55 +397,113 @@ Formbuilder.comp.form = Class.create({
         }
 
         if (showPaste === true) {
-
             menu.add(new Ext.menu.Item({
                 text: t('paste'),
                 iconCls: 'pimcore_icon_paste',
                 handler: this.pasteFormField.bind(this, tree, record)
             }));
-
         }
 
         if (deleteAllowed) {
-
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: 'pimcore_icon_delete',
                 handler: this.removeFormField.bind(this, tree, record)
             }));
-
         }
 
-        menu.showAt(e.pageX, e.pageY);
+        menu.showAt(ev.pageX, ev.pageY);
     },
 
     setCurrentNode: function (cn) {
         this.currentNode = cn;
     },
 
-    saveCurrentNode: function () {
+    checkCurrentNodeValidation: function () {
 
         if (!this.currentNode) {
             return;
         }
 
         if (this.currentNode === 'root') {
-            this.saveRootNode();
+            this.rootNodeIsValid();
         } else {
-            this.saveSubNodes();
+            this.fieldNodeIsValid();
         }
     },
 
-    saveRootNode: function () {
+    /**
+     * 1. check field name uniqueness
+     * 2. check field validation of fb-field object
+     *
+     * throws exception
+     */
+    fieldNodeIsValid: function () {
+
+        var c = 0, currentNodeName;
+
+        this.dispatchFieldNodeValueParser();
+
+        currentNodeName = this.currentNode.fbType + '.' + this.currentNode.object.getName();
+
+        Ext.each(this.getUsedFieldNames(this.tree.getRootNode(), []), function (name) {
+            if (name === currentNodeName) {
+                c++;
+            }
+        });
+
+        this.currentNode.object.getTreeNode().set('cls', '');
+
+        if (c > 1) {
+            this.currentNode.object.getTreeNode().set('cls', 'tree_node_error');
+            throw 'field name "' + currentNodeName + '" is already in use.';
+        }
+
+        if (!this.currentNode.object.isValid()) {
+            this.currentNode.object.getTreeNode().set('cls', 'tree_node_error');
+            throw t('form_builder_form_type_invalid')
+        }
+    },
+
+    dispatchFieldNodeValueParser: function () {
+        this.currentNode.object.applyData();
+    },
+
+    /**
+     * throws exception
+     */
+    rootNodeIsValid: function () {
+        if (this.rootPanel === undefined || this.importIsRunning === true) {
+            //root panel not initialized yet.
+            return;
+        }
+
+        this.dispatchRootNodeValueParser();
+
+        this.tree.getRootNode().set('cls', '');
+
+        if (this.rootFields.length > 0) {
+            this.rootFields.each(function (field) {
+                if (typeof field.getValue === 'function') {
+                    if (field.allowBlank !== true && field.getValue() === '') {
+                        this.tree.getRootNode().set('cls', 'tree_node_error');
+                        throw field.getName() + ' cannot be empty.';
+                    }
+                }
+            }.bind(this));
+        }
+
+        if (this.formName.length <= 2 || in_array(this.formName.toLowerCase(), this.parentPanel.getConfig().forbidden_form_field_names)) {
+            this.tree.getRootNode().set('cls', 'tree_node_error');
+            throw this.formName.toLowerCase() + ' is a reserved name and cannot be used.';
+        }
+    },
+
+    dispatchRootNodeValueParser: function () {
 
         var formConditionals = {},
             formAttributes = {},
             parsedFormAttributes = {};
-
-        if (this.rootPanel === undefined || this.importIsRunning === true) {
-            //root panel not initialized yet.
-            return true;
-        }
 
         // save root node data
         this.rootFields = this.rootPanel.getForm().getFields();
@@ -500,25 +543,6 @@ Formbuilder.comp.form = Class.create({
         // and also to send them to server well formatted.
         parsedFormAttributes = DataObjectParser.transpose(formAttributes).data();
         this.formConfig['attributes'] = parsedFormAttributes['attributes'] ? parsedFormAttributes['attributes'] : {};
-
-        this.formIsValid = this.rootFormIsValid();
-
-    },
-
-    saveSubNodes: function () {
-
-        this.currentNode.applyData();
-
-        var c = 0, n = this.currentNode.treeNode.data.fbType + '.' + this.currentNode.getName();
-        Ext.each(this.getUsedFieldNames(this.tree.getRootNode(), []), function (name) {
-            if (name === n) {
-                c++;
-            }
-        });
-
-        if (c > 1) {
-            throw 'field name "' + n + '" is already in use.';
-        }
 
     },
 
@@ -661,7 +685,7 @@ Formbuilder.comp.form = Class.create({
                     xtype: 'checkbox',
                     name: 'useAjax',
                     fieldLabel: t('form_builder_form_ajax_submission'),
-                    checked: this.formConfig.useAjax === undefined ? true : false,
+                    checked: this.formConfig.useAjax === undefined,
                     value: this.formConfig.useAjax
                 },
 
@@ -680,16 +704,24 @@ Formbuilder.comp.form = Class.create({
      * @param tree
      * @param formType
      * @param formTypeValues
+     * @param selectNode
      * @returns {*|{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
-    createFormField: function (tree, formType, formTypeValues) {
+    createFormField: function (tree, formType, formTypeValues, selectNode) {
 
-        var newNode = this.createFormFieldNode(formType, formTypeValues);
+        var newNode = this.createFormFieldNode(formType, formTypeValues),
+            formObject;
 
         newNode = tree.appendChild(newNode);
-        newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(this, newNode, formType, this.availableFormFieldTemplates, formTypeValues));
+
+        formObject = new Formbuilder.comp.type.formTypeBuilder(this, newNode, formType, this.availableFormFieldTemplates, formTypeValues);
+        newNode.set('object', formObject);
 
         tree.expand();
+
+        if (selectNode === true) {
+            this.tree.getSelectionModel().select(newNode, true);
+        }
 
         return newNode;
     },
@@ -701,8 +733,7 @@ Formbuilder.comp.form = Class.create({
      * @returns {{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
     createFormFieldNode: function (formType, formTypeValues) {
-
-        var node = {
+        return {
             text: formTypeValues ? formTypeValues.display_name : formType.label,
             type: 'layout',
             draggable: true,
@@ -713,9 +744,6 @@ Formbuilder.comp.form = Class.create({
             expandable: false,
             expanded: true
         };
-
-        return node;
-
     },
 
     /**
@@ -743,8 +771,7 @@ Formbuilder.comp.form = Class.create({
      * @returns {{text, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
     createFormFieldConstraintNode: function (constraintType) {
-
-        var node = {
+        return {
             text: constraintType.label,
             type: 'layout',
             draggable: true,
@@ -755,8 +782,6 @@ Formbuilder.comp.form = Class.create({
             expandable: false,
             expanded: true
         };
-
-        return node;
     },
 
     /**
@@ -765,9 +790,7 @@ Formbuilder.comp.form = Class.create({
      * @param record
      */
     copyFormField: function (tree, record) {
-        this.copyData = {};
-        var newNode = this.cloneChild(tree, record, true);
-        this.copyData = newNode;
+        this.copyData = this.cloneChild(tree, record, true);
     },
 
     /**
@@ -777,8 +800,8 @@ Formbuilder.comp.form = Class.create({
      */
     pasteFormField: function (tree, record) {
 
-        var node = this.copyData;
-        var newNode = this.cloneChild(tree, node, false);
+        var node = this.copyData,
+            newNode = this.cloneChild(tree, node, false);
 
         record.appendChild(newNode);
         tree.updateLayout();
@@ -792,14 +815,12 @@ Formbuilder.comp.form = Class.create({
      */
     removeFormField: function (tree, record) {
 
-        if (this.id !== 0) {
-            if (this.currentNode === record.data.object) {
-                this.currentNode = null;
-                var f = this.onTreeNodeSelect.bind(this, this.tree, this.tree.getRootNode());
-                f();
-            }
+        record.remove();
 
-            record.remove();
+        if (this.id !== 0) {
+            this.currentNode = null;
+            // select root node "base"
+            this.tree.getSelectionModel().select(this.tree.getRootNode(), true);
         }
     },
 
@@ -830,19 +851,17 @@ Formbuilder.comp.form = Class.create({
             nodeType.type = formTypeValues.type;
             nodeType.label = formTypeValues.display_name;
             nodeType.configuration_layout = formFieldObject.configurationLayout;
-            config = this.createFormFieldNode(nodeType, formTypeValues)
+            config = this.createFormFieldNode(nodeType, formTypeValues);
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(
                 this, newNode, nodeType, this.availableFormFieldTemplates, formTypeValues));
 
         } else if (node.data.fbType === 'constraint') {
-
             nodeType.label = formFieldObject.typeName;
             config = this.createFormFieldConstraintNode(nodeType, formTypeValues);
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(
                 this, newNode, nodeType, formTypeValues));
-
         } else {
             Ext.MessageBox.alert(t('error'), 'invalid field type: ' + node.data.fbType);
         }
@@ -878,18 +897,10 @@ Formbuilder.comp.form = Class.create({
         var formFieldData = {};
 
         if (typeof node.data.object === 'object') {
-
             formFieldData = node.data.object.getData();
-
-            var view = this.tree.getView(),
-                nodeEl = Ext.fly(view.getNodeByRecord(node));
-
-            if (nodeEl) {
-                nodeEl.removeCls('tree_node_error');
-            }
-
+            node.set('cls', '');
             if (!node.data.object.isValid()) {
-                nodeEl.addCls('tree_node_error');
+                node.set('cls', 'tree_node_error');
                 throw t('form_builder_form_type_invalid')
             }
         }
@@ -916,10 +927,8 @@ Formbuilder.comp.form = Class.create({
     },
 
     showImportPanel: function () {
-
         var importPanel = new Formbuilder.comp.importer(this);
         importPanel.showPanel();
-
     },
 
     importForm: function (importedFormData) {
@@ -936,11 +945,17 @@ Formbuilder.comp.form = Class.create({
 
         this.importIsRunning = false;
 
-        this.saveCurrentNode();
-
     },
 
     exportForm: function () {
+
+        try {
+            this.checkCurrentNodeValidation();
+        } catch (e) {
+            Ext.MessageBox.alert(t('error'), e);
+            return;
+        }
+
         pimcore.helpers.download('/admin/formbuilder/settings/get-export-file/' + this.formId);
     },
 
@@ -957,80 +972,46 @@ Formbuilder.comp.form = Class.create({
 
     /**
      *
-     * @returns {boolean}
-     */
-    rootFormIsValid: function () {
-
-        var isValid = true;
-
-        if (this.rootFields.length > 0) {
-            this.rootFields.each(function (field) {
-                if (typeof field.getValue === 'function') {
-                    try {
-                        if (field.allowBlank !== true && field.getValue() === '') {
-                            isValid = false;
-                            return false;
-                        }
-
-                    } catch (e) {
-                        console.warn(field, e);
-                    }
-                }
-            });
-        }
-
-        if (this.formName.length <= 2 || in_array(this.formName.toLowerCase(), this.parentPanel.getConfig().forbidden_form_field_names)) {
-            isValid = false;
-        }
-
-        return isValid;
-
-    },
-
-    /**
-     *
      * @param ev
      * @returns {boolean}
      */
     save: function (ev) {
 
-        var formData = {};
+        var formData = {}, formConfig,
+            formConditionalLogic, formFields;
 
-        this.saveCurrentNode();
-
-        if (this.formIsValid) {
-
-            this.tree.getRootNode().set('cls', '');
-
-            try {
-                formData = this.getData();
-            } catch (e) {
-                Ext.MessageBox.alert(t('error'), e);
-                return false;
-            }
-
-            var formConfig = Ext.encode(this.formConfig),
-                formConditionalLogic = Ext.encode(this.formConditionalsStructured),
-                formFields = Ext.encode(formData);
-
-            Ext.Ajax.request({
-                url: '/admin/formbuilder/settings/save-form',
-                method: 'post',
-                params: {
-                    form_id: this.formId,
-                    form_name: this.formName,
-                    form_config: formConfig,
-                    form_cl: formConditionalLogic,
-                    form_fields: formFields
-                },
-                success: this.saveOnComplete.bind(this),
-                failure: this.saveOnError.bind(this)
-            });
-
-        } else {
-            this.tree.getRootNode().set('cls', 'tree_node_error');
-            Ext.Msg.alert(t('error'), t('form_builder_invalid_form_config'));
+        try {
+            this.checkCurrentNodeValidation();
+        } catch (e) {
+            Ext.MessageBox.alert(t('error'), e);
+            return false;
         }
+
+        try {
+            formData = this.getData();
+        } catch (e) {
+            Ext.MessageBox.alert(t('error'), e);
+            return false;
+        }
+
+        formConfig = Ext.encode(this.formConfig);
+        formConditionalLogic = Ext.encode(this.formConditionalsStructured);
+        formFields = Ext.encode(formData);
+
+        Ext.Ajax.request({
+            url: '/admin/formbuilder/settings/save-form',
+            method: 'post',
+            params: {
+                form_id: this.formId,
+                form_name: this.formName,
+                form_config: formConfig,
+                form_cl: formConditionalLogic,
+                form_fields: formFields
+            },
+            success: this.saveOnComplete.bind(this),
+            failure: this.saveOnError.bind(this)
+        });
+
     },
 
     /**
@@ -1061,8 +1042,6 @@ Formbuilder.comp.form = Class.create({
      * @returns {Array}
      */
     getUsedFieldNames: function (node, nodeNames) {
-
-        var nodeNames = nodeNames ? nodeNames : [];
 
         if (node.data.object) {
 

@@ -13,104 +13,98 @@ Formbuilder.comp.conditionalLogic.action.mailBehaviour = Class.create(Formbuilde
 
     getItem: function () {
 
-        var _ = this, myId = Ext.id();
-
-        var fieldStore = Ext.create('Ext.data.Store', {
-            fields: ['name', 'display_name'],
-            data: this.panel.getFormFields().fields
-        });
-
-        var items = [
-            {
-                xtype: 'hidden',
-                name: _.generateFieldName(this.sectionId, this.index, 'type'),
-                value: this.fieldConfiguration.identifier,
-                listeners: {
-                    updateIndexName: function (sectionId, index) {
-                        _.updateInternalPositionIndex(sectionId, index);
-                        this.name = _.generateFieldName(sectionId, index, 'type');
+        var _ = this,
+            fieldId = Ext.id(),
+            items = [
+                {
+                    xtype: 'hidden',
+                    name: _.generateFieldName(this.sectionId, this.index, 'type'),
+                    value: this.fieldConfiguration.identifier,
+                    listeners: {
+                        updateIndexName: function (sectionId, index) {
+                            _.updateInternalPositionIndex(sectionId, index);
+                            this.name = _.generateFieldName(sectionId, index, 'type');
+                        }
+                    }
+                },
+                {
+                    xtype: 'combo',
+                    name: _.generateFieldName(this.sectionId, this.index, 'identifier'),
+                    fieldLabel: t('form_builder_mail_behaviour_identifier'),
+                    style: 'margin: 0 5px 0 0',
+                    queryDelay: 0,
+                    displayField: 'key',
+                    valueField: 'value',
+                    mode: 'local',
+                    labelAlign: 'top',
+                    store: new Ext.data.ArrayStore({
+                        fields: ['value', 'key'],
+                        data: [
+                            ['recipient', t('form_builder_mail_behaviour_identifier_recipient')],
+                            ['mailTemplate', t('form_builder_mail_behaviour_identifier_mail_template')]
+                        ]
+                    }),
+                    editable: false,
+                    triggerAction: 'all',
+                    anchor: '100%',
+                    value: this.data ? this.data.identifier : null,
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    flex: 1,
+                    listeners: {
+                        updateIndexName: function (sectionId, index) {
+                            this.name = _.generateFieldName(sectionId, index, 'identifier');
+                        },
+                        change: function (field, value) {
+                            this.generateValueField(value);
+                        }.bind(this)
+                    }
+                },
+                {
+                    xtype: 'combo',
+                    name: _.generateFieldName(this.sectionId, this.index, 'mailType'),
+                    fieldLabel: t('form_builder_mail_behaviour_mail_type'),
+                    style: 'margin: 0 5px 0 0',
+                    queryDelay: 0,
+                    displayField: 'key',
+                    valueField: 'value',
+                    mode: 'local',
+                    labelAlign: 'top',
+                    store: new Ext.data.ArrayStore({
+                        fields: ['value', 'key'],
+                        data: [
+                            ['main', t('form_builder_mail_behaviour_mail_type_main')],
+                            ['copy', t('form_builder_mail_behaviour_mail_type_copy')]
+                        ]
+                    }),
+                    editable: false,
+                    triggerAction: 'all',
+                    anchor: '100%',
+                    value: this.data && this.data.mailType ? this.data.mailType : 'main',
+                    summaryDisplay: true,
+                    allowBlank: false,
+                    flex: 1,
+                    listeners: {
+                        updateIndexName: function (sectionId, index) {
+                            this.name = _.generateFieldName(sectionId, index, 'mailType');
+                        }
                     }
                 }
-            },
-            {
-                xtype: 'combo',
-                name: _.generateFieldName(this.sectionId, this.index, 'identifier'),
-                fieldLabel: t('form_builder_mail_behaviour_identifier'),
-                style: 'margin: 0 5px 0 0',
-                queryDelay: 0,
-                displayField: 'key',
-                valueField: 'value',
-                mode: 'local',
-                labelAlign: 'top',
-                store: new Ext.data.ArrayStore({
-                    fields: ['value', 'key'],
-                    data: [
-                        ['recipient', t('form_builder_mail_behaviour_identifier_recipient')],
-                        ['mailTemplate', t('form_builder_mail_behaviour_identifier_mail_template')]
-                    ]
-                }),
-                editable: false,
-                triggerAction: 'all',
-                anchor: '100%',
-                value: this.data ? this.data.identifier : null,
-                summaryDisplay: true,
-                allowBlank: false,
-                flex: 1,
-                listeners: {
-                    updateIndexName: function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'identifier');
-                    },
-                    change: function (field, value) {
-                        this.generateValueField(value);
-                    }.bind(this)
-                }
-            },
-            {
-                xtype: 'combo',
-                name: _.generateFieldName(this.sectionId, this.index, 'mailType'),
-                fieldLabel: t('form_builder_mail_behaviour_mail_type'),
-                style: 'margin: 0 5px 0 0',
-                queryDelay: 0,
-                displayField: 'key',
-                valueField: 'value',
-                mode: 'local',
-                labelAlign: 'top',
-                store: new Ext.data.ArrayStore({
-                    fields: ['value', 'key'],
-                    data: [
-                        ['main', t('form_builder_mail_behaviour_mail_type_main')],
-                        ['copy', t('form_builder_mail_behaviour_mail_type_copy')]
-                    ]
-                }),
-                editable: false,
-                triggerAction: 'all',
-                anchor: '100%',
-                value: this.data && this.data.mailType ? this.data.mailType : 'main',
-                summaryDisplay: true,
-                allowBlank: false,
-                flex: 1,
-                listeners: {
-                    updateIndexName: function (sectionId, index) {
-                        this.name = _.generateFieldName(sectionId, index, 'mailType');
-                    }
-                }
-            }
-        ];
-
-        var compositeField = new Ext.form.FieldContainer({
-            layout: 'hbox',
-            hideLabel: true,
-            style: 'padding-bottom:5px;',
-            items: items
-        });
+            ],
+            compositeField = new Ext.form.FieldContainer({
+                layout: 'hbox',
+                hideLabel: true,
+                style: 'padding-bottom:5px;',
+                items: items
+            });
 
         this.fieldPanel = new Ext.form.FormPanel({
-            id: myId,
+            id: fieldId,
             type: 'combo',
             forceLayout: true,
             style: 'margin: 10px 0 0 0',
             bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
-            tbar: this.getTopBar(myId),
+            tbar: this.getTopBar(fieldId),
             items: compositeField
         });
 

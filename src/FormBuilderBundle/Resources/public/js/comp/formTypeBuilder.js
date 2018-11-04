@@ -460,6 +460,14 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     },
 
     /**
+     *
+     * @returns {*}
+     */
+    getTreeNode: function () {
+        return this.treeNode;
+    },
+
+    /**
      * @param field
      */
     checkFieldLabelName: function (field) {

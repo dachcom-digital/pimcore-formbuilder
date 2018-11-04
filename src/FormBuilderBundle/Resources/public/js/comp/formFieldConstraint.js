@@ -28,6 +28,14 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
 
     },
 
+    /**
+     *
+     * @returns {*}
+     */
+    getTreeNode: function () {
+        return this.treeNode;
+    },
+
     getType: function () {
         return this.type;
     },

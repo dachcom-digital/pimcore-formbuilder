@@ -3,13 +3,9 @@ pimcore.registerNS('Formbuilder.comp.conditionalLogic.condition.abstract');
 Formbuilder.comp.conditionalLogic.condition.abstract = Class.create({
 
     panel: null,
-
     data: null,
-
     sectionId: 0,
-
     index: 0,
-
     fieldConfiguration: {},
 
     initialize: function (panel, data, sectionId, index, fieldConfiguration) {
@@ -47,5 +43,17 @@ Formbuilder.comp.conditionalLogic.condition.abstract = Class.create({
                 }.bind(window, index, parent)
             }
         ];
+    },
+
+    checkFieldAvailability: function (fields, store, fieldName) {
+
+        Ext.Array.each(fields, function (field, index) {
+            // field is not available anymore.
+            if (store.find(fieldName, field) === -1) {
+                fields.splice(index, 1);
+            }
+        });
+
+        return fields;
     }
 });
