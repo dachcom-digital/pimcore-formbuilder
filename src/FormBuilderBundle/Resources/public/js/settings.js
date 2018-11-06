@@ -84,14 +84,13 @@ Formbuilder.settings = Class.create({
                 containerScroll: true,
                 split: true,
                 width: 200,
-
+                cls: 'form-builder-form-selector-tree',
                 root: {
                     draggable: false,
                     allowChildren: false,
                     id: '0',
                     expanded: true
                 },
-
                 rootVisible: false,
                 listeners: this.getTreeNodeListeners(),
                 tbar: {
@@ -142,7 +141,7 @@ Formbuilder.settings = Class.create({
             render: function () {
                 this.getRootNode().expand();
             },
-            beforeitemappend: function (thisNode, newChildNode, index, eOpts) {
+            beforeitemappend: function (thisNode, newChildNode) {
                 newChildNode.data.qtip = t('id') + ': ' + newChildNode.data.id;
             }
         };
@@ -220,9 +219,8 @@ Formbuilder.settings = Class.create({
      * @param item
      * @param index
      * @param e
-     * @param eOpts
      */
-    onTreeNodeContextMenu: function (tree, record, item, index, e, eOpts) {
+    onTreeNodeContextMenu: function (tree, record, item, index, e) {
 
         e.stopEvent();
         tree.select();
@@ -246,10 +244,9 @@ Formbuilder.settings = Class.create({
      *
      * @param button
      * @param value
-     * @param object
      * @returns {boolean}
      */
-    addMainComplete: function (button, value, object) {
+    addMainComplete: function (button, value) {
 
         if (button === 'ok' && value.length > 2 && !in_array(value.toLowerCase(), this.getConfig().forbidden_form_field_names)) {
 
@@ -299,7 +296,7 @@ Formbuilder.settings = Class.create({
             if (btn === 'yes') {
 
                 var i = this.usedFormNames.indexOf(record.data.text);
-                if (i != -1) {
+                if (i !== -1) {
                     this.usedFormNames.splice(i, 1);
                 }
 

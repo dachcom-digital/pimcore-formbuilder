@@ -54,6 +54,7 @@ Formbuilder.comp.form = Class.create({
             split: true,
             enableDD: true,
             width: 300,
+            cls: 'form-builder-form-elements-tree',
             root: {
                 id: '0',
                 fbType: 'root',
@@ -75,14 +76,19 @@ Formbuilder.comp.form = Class.create({
         this.editPanel = new Ext.Panel({
             region: 'center',
             bodyStyle: 'padding: 10px;',
+            cls: 'form-builder-form-configuration-panel',
             autoScroll: true
         });
 
         this.panel = new Ext.Panel({
             title: this.formName + ' (ID: ' + this.formId + ')',
             closable: true,
+            cls: 'form-builder-form-panel',
             iconCls: 'form_builder_icon_root',
             autoScroll: true,
+            autoEl: {
+                'data-form-id': this.formId
+            },
             buttons: [
                 {
                     text: t('import'),
@@ -294,6 +300,10 @@ Formbuilder.comp.form = Class.create({
             showPaste = false,
             menu = new Ext.menu.Menu(),
             layoutElem = [];
+
+        menu.on('hide', function (menu) {
+            menu.destroy()
+        }, this, {delay: 200});
 
         ev.stopEvent();
 

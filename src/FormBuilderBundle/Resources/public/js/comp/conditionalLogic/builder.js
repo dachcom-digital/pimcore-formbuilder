@@ -14,13 +14,14 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
     conditionalStore: [],
 
     initialize: function (conditionalData, conditionalStore, formBuilder) {
-        var _ = this;
         this.formBuilder = formBuilder;
         // namespace in extJs is .cl
         this.conditionalData = typeof conditionalData.cl === 'object' ? conditionalData.cl : conditionalData;
         this.conditionalStore = conditionalStore;
+
         this.panel = new Ext.form.FieldSet({
             title: t('form_builder_conditional_logic'),
+            cls: 'form-builder-conditional-logic-field-set',
             collapsible: false,
             autoHeight: true,
             width: '100%',
@@ -30,9 +31,10 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
                 style: 'margin-bottom: 10px;',
                 items: ['->', {
                     xtype: 'button',
+                    disabled: this.formBuilder.getData().fields === undefined,
                     text: t('add'),
                     iconCls: 'pimcore_icon_add',
-                    handler: _.addConditionalSection.bind(_),
+                    handler: this.addConditionalSection.bind(this),
                     tooltip: {
                         title: '',
                         text: t('form_builder_add_metadata')
@@ -55,27 +57,26 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
     addConditionalSection: function (data) {
 
         var clFieldClass = new Formbuilder.comp.conditionalLogic.form(data, this.sectionId, this.conditionalStore, this.formBuilder),
-            layout = clFieldClass.getLayout();
-
-        var conditionFieldSet = new Ext.form.FieldSet({
-            hideLabel: false,
-            cls: 'form_builder_conditional_section',
-            title: t('form_builder_conditional_section'),
-            style: 'padding-bottom:5px; margin-bottom:30px; background: rgba(117, 139, 181, 0.2);',
-            items: [layout]
-        });
+            layout = clFieldClass.getLayout(),
+            conditionFieldSet = new Ext.form.FieldSet({
+                hideLabel: false,
+                cls: 'form_builder_conditional_section',
+                title: t('form_builder_conditional_section'),
+                style: 'padding-bottom:5px; margin-bottom:30px; background: rgba(117, 139, 181, 0.2);',
+                items: [layout]
+            });
 
         conditionFieldSet.add([{
             xtype: 'button',
             text: t('form_builder_delete_conditional_section'),
             iconCls: 'pimcore_icon_delete',
             handler: function (conditionFieldSet, el) {
-                this.panel.remove(conditionFieldSet);
                 var sectionFieldSets = this.panel.query('fieldset[cls=form_builder_conditional_section]');
+                this.panel.remove(conditionFieldSet);
                 this.sectionId = sectionFieldSets.length;
-                Ext.Array.each(sectionFieldSets, function(fieldSet, sIndex) {
+                Ext.Array.each(sectionFieldSets, function (fieldSet, sIndex) {
                     var sectionFieldContainer = fieldSet.query('fieldcontainer[cls=form_builder_delete_conditional_section_container]');
-                    Ext.Array.each(sectionFieldContainer, function(container, cIndex) {
+                    Ext.Array.each(sectionFieldContainer, function (container, cIndex) {
                         container.fireEvent('updateSectionId', sIndex);
                     });
                 })
