@@ -17,11 +17,18 @@ abstract class AbstractExtJs
     private $formIdIncrementor = 1;
 
     /**
-     * @param AcceptanceTester $I
+     * @var string|null
      */
-    public function _before(AcceptanceTester $I)
+    private $env = null;
+
+    /**
+     * @param AcceptanceTester      $I
+     * @param \Codeception\Scenario $scenario
+     */
+    public function _before(AcceptanceTester $I, \Codeception\Scenario $scenario)
     {
         $this->formIdIncrementor = 1;
+        $this->env = $scenario->current('env');
     }
 
     /**
@@ -43,7 +50,9 @@ abstract class AbstractExtJs
         $I->click('.pimcore_main_accordion + .x-splitter > div');
 
         // hide symfony toolbar
-        $I->click('a.hide-button');
+        if ($this->env === 'local') {
+            $I->click('a.hide-button');
+        }
 
         // wait for pimcore settings => click
         $I->waitForElement('li#pimcore_menu_settings', 10);
