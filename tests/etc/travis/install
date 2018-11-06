@@ -53,7 +53,7 @@ chmod -R +x $DACHCOM_BUNDLE_HOME/etc
 
 ## create download dir
 
-mkdir $TRAVIS_BUILD_DIR/tests/_data/downloads
+mkdir $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_data/downloads
 
 
 ## add config templates
