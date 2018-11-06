@@ -7,4 +7,4 @@ modules:
                 chromeOptions:
                     args: ['--headless', '--disable-gpu', '--no-sandbox',  '--window-size=1024,768']
                     prefs:
-                        download.default_directory: '%TRAVIS_BUILD_DIR%/tests/_data/downloads'
+                        download.default_directory: '%TRAVIS_BUILD_DIR%/lib/FormBuilder/tests/_data/downloads'
