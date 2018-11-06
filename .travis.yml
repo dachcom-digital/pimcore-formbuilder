@@ -37,6 +37,7 @@ install:
     - tests/etc/travis/install
 
 after_failure:
+    - ls -la /home/travis
     - cd $TRAVIS_BUILD_DIR
     - cat ./lib/FormBuilder/tests/_output/*
 
