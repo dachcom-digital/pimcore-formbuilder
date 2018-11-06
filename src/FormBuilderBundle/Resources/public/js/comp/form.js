@@ -949,6 +949,9 @@ Formbuilder.comp.form = Class.create({
 
         this.formConfig = importedFormData.data.config;
         this.formFields = importedFormData.data.fields;
+        if (importedFormData.data.hasOwnProperty('conditional_logic')) {
+            this.formConditionalsStructured = importedFormData.data.conditional_logic;
+        }
 
         this.addLayout();
         this.initLayoutFields();
