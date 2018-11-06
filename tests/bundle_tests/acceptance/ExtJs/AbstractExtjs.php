@@ -144,12 +144,12 @@ abstract class AbstractExtjs
      * @param AcceptanceTester $I
      * @param                  $formId
      * @param                  $sectionId
-     * @param                  $condition
+     * @param array            $fieldsToSelect
      *
      * @return array
      * @throws \Exception
      */
-    protected function addConditionToSection(AcceptanceTester $I, $formId, $sectionId, $condition)
+    protected function addConditionToSection(AcceptanceTester $I, $formId, $sectionId, array $fieldsToSelect)
     {
         $conditionBlockIndex = 0;
 
@@ -161,7 +161,7 @@ abstract class AbstractExtjs
         $activePanelPanelSelector = sprintf('%s + .x-panel-body', $activePanelToolbarSelector);
 
         $I->click(sprintf('%s .pimcore_icon_add', $activePanelToolbarSelector));
-        $I->click($condition);
+        $I->click('Element Value');
 
         $conditionBlockSelector = sprintf('%s .x-panel:nth-of-type(%d)', $activePanelPanelSelector, $conditionBlockIndex + 1);
 
@@ -171,6 +171,21 @@ abstract class AbstractExtjs
         // scroll to field
         $this->scrollConfigurationPanel($I, $formId);
 
+        // POPULATE CONDITION
+
+        // field
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.fields"]', $id, $conditionBlockIndex), 60, 10);
+        $I->waitForText($fieldsToSelect[0], 10, 'ul.x-list-plain[aria-hidden="false"]');
+        $I->clickWithLeftButton(sprintf('//ul[@aria-hidden="false"]//li[text()="%s"]', $fieldsToSelect[0]));
+
+        // comparator
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.comparator"]', $id, $conditionBlockIndex), 60, 10);
+        $I->clickWithLeftButton('//ul[@aria-hidden="false"]//li[text()="Contains"]');
+
+        // value
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.value"]', $id, $conditionBlockIndex));
+        $I->fillField(sprintf('input[name="cl.%d.condition.%d.value"]', $id, $conditionBlockIndex), 'test');
+
         return ['selector' => $id, 'index' => $conditionBlockIndex];
     }
 
@@ -178,12 +193,12 @@ abstract class AbstractExtjs
      * @param AcceptanceTester $I
      * @param                  $formId
      * @param                  $sectionId
-     * @param                  $condition
+     * @param array            $fieldsToSelect
      *
      * @return array
      * @throws \Exception
      */
-    protected function addActionToSection(AcceptanceTester $I, $formId, $sectionId, $condition)
+    protected function addActionToSection(AcceptanceTester $I, $formId, $sectionId, array $fieldsToSelect)
     {
         $actionBlockIndex = 0;
 
@@ -195,7 +210,7 @@ abstract class AbstractExtjs
         $activePanelPanelSelector = sprintf('%s + .x-panel-body', $activePanelToolbarSelector);
 
         $I->click(sprintf('%s .pimcore_icon_add', $activePanelToolbarSelector));
-        $I->click($condition);
+        $I->click('Toggle Visibility');
 
         $ActionBlockSelector = sprintf('%s .x-panel:nth-of-type(%d)', $activePanelPanelSelector, $actionBlockIndex + 1);
 
@@ -204,6 +219,17 @@ abstract class AbstractExtjs
 
         // scroll to field
         $this->scrollConfigurationPanel($I, $formId);
+
+        // POPULATE ACTION
+
+        // field
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.fields"]', $id, $actionBlockIndex), 100, 10);
+        $I->waitForText($fieldsToSelect[0], 10, 'ul.x-list-plain[aria-hidden="false"]');
+        $I->clickWithLeftButton(sprintf('//ul[@aria-hidden="false"]//li[text()="%s"]', $fieldsToSelect[0]));
+
+        // state
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.state"]', $id, $actionBlockIndex), 100, 10);
+        $I->clickWithLeftButton('//ul[@aria-hidden="false"]//li[text()="Hide"]');
 
         return ['selector' => $id, 'index' => $actionBlockIndex];
 
@@ -299,5 +325,13 @@ abstract class AbstractExtjs
     protected function getNewFormMessageBoxSelector()
     {
         return '.x-message-box[aria-hidden="false"]';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getUploadBoxFileInputSelector()
+    {
+        return '.x-window[aria-hidden="false"] input.x-form-file-input';
     }
 }

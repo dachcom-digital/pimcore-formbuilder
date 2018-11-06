@@ -31,7 +31,7 @@ class SaveFormCest extends AbstractExtjs
         $I->waitForElementVisible('input[name="display_name"]', 10);
         $I->fillField('input[name="display_name"]', 'value');
 
-        $I->click('Save');
+        $I->click('Save', $this->getFormPanelSelector($formId));
         $I->waitForText('Form successfully saved', 10);
     }
 }

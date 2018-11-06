@@ -30,6 +30,15 @@ class PimcoreBackend extends Module
     /**
      * @param TestInterface $test
      */
+    public function _before(TestInterface $test)
+    {
+        FileGeneratorHelper::preparePaths();
+        parent::_before($test);
+    }
+
+    /**
+     * @param TestInterface $test
+     */
     public function _after(TestInterface $test)
     {
         TestHelper::cleanUp();
@@ -170,6 +179,17 @@ class PimcoreBackend extends Module
     public function haveFile($fileName, $fileSizeInMb = 1)
     {
         FileGeneratorHelper::generateDummyFile($fileName, $fileSizeInMb);
+    }
+
+    /**
+     * @param $fileName
+     */
+    public function seeDownload($fileName)
+    {
+        $supportDir = FileGeneratorHelper::getDownloadPath();
+        $filePath = $supportDir . $fileName;
+
+        $this->assertTrue(is_file($filePath));
     }
 
     /**
