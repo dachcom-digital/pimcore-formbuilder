@@ -50,6 +50,12 @@ cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/bundle_configuration $
 cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/etc $DACHCOM_BUNDLE_HOME/etc
 chmod -R +x $DACHCOM_BUNDLE_HOME/etc
 
+
+## create download dir
+
+mkdir $TRAVIS_BUILD_DIR/tests/_data/downloads
+
+
 ## add config templates
 
 mkdir -p $DACHCOM_BUNDLE_HOME/var/config
