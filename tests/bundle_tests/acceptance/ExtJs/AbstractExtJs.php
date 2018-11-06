@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\acceptance\ExtJs;
 
 use DachcomBundle\Test\AcceptanceTester;
 
-abstract class AbstractExtjs
+abstract class AbstractExtJs
 {
     /**
      * @var array

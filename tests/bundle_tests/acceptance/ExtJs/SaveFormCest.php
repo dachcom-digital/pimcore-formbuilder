@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\acceptance\ExtJs;
 
 use DachcomBundle\Test\AcceptanceTester;
 
-class SaveFormCest extends AbstractExtjs
+class SaveFormCest extends AbstractExtJs
 {
     /**
      * @param AcceptanceTester $I

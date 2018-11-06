@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\acceptance\ExtJs;
 
 use DachcomBundle\Test\AcceptanceTester;
 
-class ConditionalLogicCest extends AbstractExtjs
+class ConditionalLogicCest extends AbstractExtJs
 {
     /**
      * @param AcceptanceTester $I

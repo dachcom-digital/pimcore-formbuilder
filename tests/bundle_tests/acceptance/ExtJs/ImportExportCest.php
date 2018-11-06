@@ -5,7 +5,7 @@ namespace DachcomBundle\Test\acceptance\ExtJs;
 
 use DachcomBundle\Test\AcceptanceTester;
 
-class ImportExportCest extends AbstractExtjs
+class ImportExportCest extends AbstractExtJs
 {
     /**
      * @param AcceptanceTester $I

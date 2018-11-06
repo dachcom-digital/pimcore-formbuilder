@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\acceptance\ExtJs;
 
 use DachcomBundle\Test\AcceptanceTester;
 
-class ContextMenuCest extends AbstractExtjs
+class ContextMenuCest extends AbstractExtJs
 {
     /**
      * @param AcceptanceTester $I
