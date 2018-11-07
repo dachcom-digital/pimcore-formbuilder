@@ -14,6 +14,8 @@ class ImportExportCest extends AbstractExtJs
      */
     public function testFormExportImport(AcceptanceTester $I)
     {
+        $I->setDownloadPathForWebDriver();
+
         $this->amOnFormBuilderBackendBuilder($I);
 
         $formId = $this->seeExtJsForm($I);
