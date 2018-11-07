@@ -3,7 +3,7 @@ set -e
 
 echo "START CODECEPTION TESTS FOR $DACHCOM_BUNDLE_NAME"
 
-CMD="vendor/bin/codecept run -c lib/$DACHCOM_BUNDLE_NAME tests/bundle_tests/acceptance/ExtJs/ImportExportCest.php --debug --env travis"
+CMD="vendor/bin/codecept run -c lib/$DACHCOM_BUNDLE_NAME --env travis"
 
 # generate json result file
 CMD="$CMD --json"
