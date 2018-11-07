@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class FormBuilderBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
+
     const PACKAGE_NAME = 'dachcom-digital/formbuilder';
 
     /**

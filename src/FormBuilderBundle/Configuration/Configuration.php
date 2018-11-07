@@ -8,8 +8,6 @@ class Configuration
 {
     const SYSTEM_CONFIG_DIR_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle';
 
-    const SYSTEM_CONFIG_FILE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-
     const STORE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/forms';
 
     const IMPORT_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/import';

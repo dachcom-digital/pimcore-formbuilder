@@ -2,55 +2,47 @@
 
 namespace FormBuilderBundle\Tool;
 
+use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\DBAL\Migrations\Version;
+use Doctrine\DBAL\Schema\Schema;
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\FormBuilderBundle;
-use PackageVersions\Versions;
-use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
+use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
+use Pimcore\Migrations\Migration\InstallMigration;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Property;
-use Pimcore\Model\Tool\Setup;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
+use Pimcore\Model\User\Permission;
 
-class Install extends AbstractInstaller
+class Install extends MigrationInstaller
 {
     /**
-     * @var string
+     * @var array
      */
-    private $installSourcesPath;
+    protected $permissionsToInstall = [
+        'formbuilder_permission_settings'
+    ];
 
     /**
-     * @var Filesystem
+     * @param Schema  $schema
+     * @param Version $version
+     *
+     * @throws AbortMigrationException
      */
-    private $fileSystem;
-
-    /**
-     * @var string
-     */
-    private $currentVersion;
-
-    /**
-     * Install constructor.
-     */
-    public function __construct()
+    public function migrateInstall(Schema $schema, Version $version)
     {
-        $this->installSourcesPath = __DIR__ . '/../Resources/install';
-        $this->fileSystem = new Filesystem();
-        $this->currentVersion = Versions::getVersion(FormBuilderBundle::PACKAGE_NAME);
+        /** @var InstallMigration $migration */
+        $migration = $version->getMigration();
+        if ($migration->isDryRun()) {
+            $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping installation');
+            return;
+        }
 
-        parent::__construct();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function install()
-    {
-        $this->installOrUpdateConfigFile();
-        $this->injectDbData();
+        $this->setupPaths();
+        $this->installDbStructure($schema, $version);
+        $this->installPermissions();
         $this->installTranslations();
         $this->installFormDataFolder();
         $this->installProperties();
@@ -58,53 +50,19 @@ class Install extends AbstractInstaller
     }
 
     /**
-     * For now, just update the config file to the current version.
-     * {@inheritdoc}
+     * @param Schema  $schema
+     * @param Version $version
      */
-    public function update()
+    public function migrateUninstall(Schema $schema, Version $version)
     {
-        $this->installTranslations();
-        $this->installProperties();
-        $this->installOrUpdateConfigFile();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function uninstall()
-    {
-        $target = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config.yml';
-
-        if ($this->fileSystem->exists($target)) {
-            $this->fileSystem->rename(
-                $target,
-                PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/config_backup.yml'
-            );
+        /** @var InstallMigration $migration */
+        $migration = $version->getMigration();
+        if ($migration->isDryRun()) {
+            $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping uninstallation');
+            return;
         }
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isInstalled()
-    {
-        return $this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function canBeInstalled()
-    {
-        return !$this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function canBeUninstalled()
-    {
-        return $this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH);
+        // currently nothing to do.
     }
 
     /**
@@ -116,90 +74,120 @@ class Install extends AbstractInstaller
     }
 
     /**
-     * {@inheritdoc}
+     * @param string|null $version
+     *
+     * @throws AbortMigrationException
      */
-    public function canBeUpdated()
+    protected function beforeUpdateMigration(string $version = null)
     {
-        $needUpdate = false;
-        if ($this->fileSystem->exists(Configuration::SYSTEM_CONFIG_FILE_PATH)) {
-            $config = Yaml::parse(file_get_contents(Configuration::SYSTEM_CONFIG_FILE_PATH));
-            if ($config['version'] !== $this->currentVersion) {
-                $needUpdate = true;
-            }
-        }
-
-        return $needUpdate;
+        $this->installTranslations();
+        $this->installProperties();
+        $this->setupPaths();
     }
 
     /**
      * install or update config file
      */
-    private function installOrUpdateConfigFile()
+    protected function setupPaths()
     {
-        if (!$this->fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
-            $this->fileSystem->mkdir(Configuration::SYSTEM_CONFIG_DIR_PATH);
+        $fileSystem = new Filesystem();
+        if (!$fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
+            $fileSystem->mkdir(Configuration::SYSTEM_CONFIG_DIR_PATH);
         }
 
-        if (!$this->fileSystem->exists(Configuration::STORE_PATH)) {
-            $this->fileSystem->mkdir(Configuration::STORE_PATH, 0755);
+        if (!$fileSystem->exists(Configuration::STORE_PATH)) {
+            $fileSystem->mkdir(Configuration::STORE_PATH, 0755);
+        }
+    }
+
+    /**
+     * @throws AbortMigrationException
+     */
+    protected function installTranslations()
+    {
+        $csv = $this->getInstallSourcesPath() . '/translations/frontend.csv';
+        $csvAdmin = $this->getInstallSourcesPath() . '/translations/admin.csv';
+
+        try {
+            Translation\Website::importTranslationsFromFile($csv, true, Admin::getLanguages());
+        } catch (\Exception $e) {
+            throw new AbortMigrationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
         }
 
-        $config = ['version' => $this->currentVersion];
-        $yml = Yaml::dump($config);
-        file_put_contents(Configuration::SYSTEM_CONFIG_FILE_PATH, $yml);
+        try {
+            Translation\Admin::importTranslationsFromFile($csvAdmin, true, Admin::getLanguages());
+        } catch (\Exception $e) {
+            throw new AbortMigrationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
+        }
     }
 
     /**
-     * @throws \Exception
+     * @param Schema  $schema
+     * @param Version $version
      */
-    private function installTranslations()
+    protected function installDbStructure(Schema $schema, Version $version)
     {
-        $csv = $this->installSourcesPath . '/translations/frontend.csv';
-        $csvAdmin = $this->installSourcesPath . '/translations/admin.csv';
-
-        Translation\Website::importTranslationsFromFile($csv, true, Admin::getLanguages());
-        Translation\Admin::importTranslationsFromFile($csvAdmin, true, Admin::getLanguages());
+        $version->addSql(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
     }
 
     /**
-     *
+     * @throws AbortMigrationException
      */
-    public function injectDbData()
+    protected function installPermissions()
     {
-        $setup = new Setup();
-        $setup->insertDump($this->installSourcesPath . '/sql/install.sql');
+        foreach ($this->permissionsToInstall as $permission) {
+            $definition = Permission\Definition::getByKey($permission);
+
+            if ($definition) {
+                $this->outputWriter->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping permission "%s" as it already exists',
+                    $permission
+                ));
+
+                continue;
+            }
+
+            try {
+                Permission\Definition::create($permission);
+            } catch (\Throwable $e) {
+                throw new AbortMigrationException(sprintf('Failed to create permission "%s"', $permission));
+            }
+        }
     }
 
     /**
-     * @return bool
-     * @throws \Exception
+     * @throws AbortMigrationException
      */
-    private function installFormDataFolder()
+    protected function installFormDataFolder()
     {
         //create folder for upload storage!
         $folderName = 'formdata';
 
-        if (!Asset\Folder::getByPath('/' . $folderName) instanceof Asset\Folder) {
-            $folder = new Asset\Folder();
-            $folder->setCreationDate(time());
-            $folder->setLocked(true);
-            $folder->setUserOwner(1);
-            $folder->setUserModification(0);
-            $folder->setParentId(1);
-            $folder->setFilename($folderName);
-            $folder->save();
+        if (Asset\Folder::getByPath('/' . $folderName) instanceof Asset\Folder) {
+            return;
         }
 
-        return true;
+        $folder = new Asset\Folder();
+        $folder->setCreationDate(time());
+        $folder->setLocked(true);
+        $folder->setUserOwner(1);
+        $folder->setUserModification(0);
+        $folder->setParentId(1);
+        $folder->setFilename($folderName);
+
+        try {
+            $folder->save();
+        } catch (\Exception $e) {
+            throw new AbortMigrationException(sprintf('Failed to create form data folder. Error was: "%s"', $e->getMessage()));
+        }
     }
 
     /**
-     * @return bool
+     * @throws AbortMigrationException
      */
-    private function installProperties()
+    protected function installProperties()
     {
         $properties = [
-
             'mail_disable_default_mail_body'       => [
                 'ctype'       => 'document',
                 'type'        => 'bool',
@@ -229,7 +217,6 @@ class Install extends AbstractInstaller
 
         foreach ($properties as $key => $propertyConfig) {
             $defProperty = Property\Predefined::getByKey($key);
-
             if ($defProperty instanceof Property\Predefined) {
                 continue;
             }
@@ -242,16 +229,19 @@ class Install extends AbstractInstaller
             $property->setDescription($propertyConfig['description']);
             $property->setCtype($propertyConfig['ctype']);
             $property->setInheritable(false);
-            $property->save();
-        }
 
-        return true;
+            try {
+                $property->save();
+            } catch (\Exception $e) {
+                throw new AbortMigrationException(sprintf('Failed to save property "%s". Error was: "%s"', $key, $e->getMessage()));
+            }
+        }
     }
 
     /**
-     * @return bool
+     * @throws AbortMigrationException
      */
-    private function installDocumentTypes()
+    protected function installDocumentTypes()
     {
         // get list of types
         $list = new DocType\Listing();
@@ -267,23 +257,32 @@ class Install extends AbstractInstaller
             }
         }
 
-        if ($skipInstall) {
-            return false;
+        if ($skipInstall === true) {
+            return;
         }
 
-        $type = DocType::create();
+        try {
+            $type = DocType::create();
+            $type->setValues([
+                'name'       => $elementName,
+                'module'     => 'FormBuilderBundle',
+                'controller' => 'Email',
+                'action'     => 'email',
+                'template'   => 'FormBuilderBundle:Email:email.html.twig',
+                'type'       => 'email',
+                'priority'   => 0
+            ]);
+            $type->save();
+        } catch (\Exception $e) {
+            throw new AbortMigrationException(sprintf('Failed to create document type "%s". Error was: "%s"', $elementName, $e->getMessage()));
+        }
+    }
 
-        $data = [
-            'name'       => $elementName,
-            'module'     => 'FormBuilderBundle',
-            'controller' => 'Email',
-            'action'     => 'email',
-            'template'   => 'FormBuilderBundle:Email:email.html.twig',
-            'type'       => 'email',
-            'priority'   => 0
-        ];
-
-        $type->setValues($data);
-        $type->save();
+    /**
+     * @return string
+     */
+    protected function getInstallSourcesPath()
+    {
+        return __DIR__ . '/../Resources/install';
     }
 }
