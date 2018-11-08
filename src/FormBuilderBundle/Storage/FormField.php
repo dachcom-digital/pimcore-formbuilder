@@ -37,7 +37,7 @@ class FormField implements FormFieldInterface
     private $order;
 
     /**
-     * @var
+     * @var array
      */
     private $constraints = [];
 
@@ -47,7 +47,7 @@ class FormField implements FormFieldInterface
     private $options = [];
 
     /**
-     * @var
+     * @var array
      */
     private $optional = [];
 
@@ -62,7 +62,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param Translator $translator
+     * @inheritdoc
      */
     public function setTranslator(Translator $translator)
     {
@@ -70,7 +70,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getOrder()
     {
@@ -78,29 +78,23 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param int $order
-     *
-     * @return FormField
+     * @inheritdoc
      */
-    public function setOrder($order)
+    public function setOrder(int $order)
     {
         $this->order = $order;
-        return $this;
     }
 
     /**
-     * @param string $name
-     *
-     * @return FormField
+     * @inheritdoc
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
-        return $this;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getName()
     {
@@ -108,18 +102,15 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param string $name
-     *
-     * @return FormField
+     * @inheritdoc
      */
-    public function setDisplayName($name)
+    public function setDisplayName(string $name)
     {
         $this->display_name = $name;
-        return $this;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getDisplayName()
     {
@@ -127,18 +118,15 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param string $type
-     *
-     * @return FormField
+     * @inheritdoc
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
-        return $this;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getType()
     {
@@ -146,7 +134,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isUpdated()
     {
@@ -154,9 +142,9 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param array $options
+     * @inheritdoc
      */
-    public function setOptions($options = [])
+    public function setOptions(array $options = [])
     {
         $this->options = array_filter($options, function ($option) {
             return $option !== '';
@@ -164,7 +152,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getOptions()
     {
@@ -172,9 +160,9 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param array $options
+     * @inheritdoc
      */
-    public function setOptional($options = [])
+    public function setOptional(array $options = [])
     {
         if (!is_array($options)) {
             $options = [];
@@ -186,7 +174,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getOptional()
     {
@@ -194,9 +182,9 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @param array $constraints
+     * @inheritdoc
      */
-    public function setConstraints($constraints = [])
+    public function setConstraints(array $constraints = [])
     {
         if (!is_array($constraints)) {
             $constraints = [];
@@ -206,7 +194,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getConstraints()
     {
@@ -214,7 +202,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function toArray()
     {

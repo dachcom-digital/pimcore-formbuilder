@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Manager;
 use FormBuilderBundle\Factory\FormFactoryInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 
 class FormManager
 {
@@ -14,13 +15,22 @@ class FormManager
     protected $formFactory;
 
     /**
+     * TokenStorageUserResolver
+     */
+    protected $storageUserResolver;
+
+    /**
      * FormManager constructor.
      *
-     * @param FormFactoryInterface $formFactory
+     * @param FormFactoryInterface     $formFactory
+     * @param TokenStorageUserResolver $storageUserResolver
      */
-    public function __construct(FormFactoryInterface $formFactory)
-    {
+    public function __construct(
+        FormFactoryInterface $formFactory,
+        TokenStorageUserResolver $storageUserResolver
+    ) {
         $this->formFactory = $formFactory;
+        $this->storageUserResolver = $storageUserResolver;
     }
 
     /**
@@ -28,7 +38,7 @@ class FormManager
      *
      * @return FormInterface|null
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         return $this->formFactory->getFormById($id);
     }
@@ -42,30 +52,33 @@ class FormManager
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return FormInterface|null
      */
-    public function getIdByName($name)
+    public function getIdByName(string $name)
     {
         return $this->formFactory->getFormIdByName($name);
     }
 
     /**
      * @param array $data
-     * @param int   $id
+     * @param null  $id
      *
-     * @return FormInterface
+     * @return FormInterface|null
+     * @throws \Exception
      */
-    public function save($data, $id = null)
+    public function save(array $data, $id = null)
     {
-        if ($id) {
+        $isUpdate = false;
+        if (!is_null($id)) {
+            $isUpdate = true;
             $form = $this->getById($id);
         } else {
             $form = $this->formFactory->createForm();
         }
 
-        $this->updateFormAttributes($data, $form);
+        $this->updateFormAttributes($data, $form, $isUpdate);
         $this->updateFields($data['form_fields'], $form);
         $form->save();
 
@@ -73,9 +86,10 @@ class FormManager
     }
 
     /**
-     * @param int $id
+     * @param $id
      *
      * @return FormInterface|null
+     * @throws \Exception
      */
     public function delete($id)
     {
@@ -95,8 +109,9 @@ class FormManager
      * @param string $newName
      *
      * @return FormInterface|null
+     * @throws \Exception
      */
-    public function rename($id, $newName)
+    public function rename(int $id, string $newName)
     {
         $object = $this->getById($id);
 
@@ -110,19 +125,28 @@ class FormManager
     }
 
     /**
-     * @param               $data
+     * @param array         $data
      * @param FormInterface $form
+     * @param bool          $isUpdate
      */
-    protected function updateFormAttributes($data, $form)
+    protected function updateFormAttributes(array $data, FormInterface $form, $isUpdate = false)
     {
-        $form->setName($data['form_name']);
-        $form->setDate(isset($data['form_date']) ? $data['form_date'] : null);
+        $form->setName((string)$data['form_name']);
 
-        if (isset($data['form_config'])) {
+        $date = date('Y-m-d H:i:s');
+        if ($isUpdate === false) {
+            $form->setCreationDate($date);
+            $form->setCreatedBy($this->getAdminUserId());
+        }
+
+        $form->setModificationDate($date);
+        $form->setModifiedBy($this->getAdminUserId());
+
+        if (isset($data['form_config']) && is_array($data['form_config'])) {
             $form->setConfig($data['form_config']);
         }
 
-        if (isset($data['form_conditional_logic'])) {
+        if (isset($data['form_conditional_logic']) && is_array($data['form_conditional_logic'])) {
             $form->setConditionalLogic($data['form_conditional_logic']);
         }
     }
@@ -164,9 +188,17 @@ class FormManager
             $field->setOrder($counter);
             $field->setType($fieldType);
 
-            $field->setOptions($optionsParameter);
-            $field->setOptional($optionalParameter);
-            $field->setConstraints($constraints);
+            if (!empty($optionsParameter) && is_array($optionsParameter)) {
+                $field->setOptions($optionsParameter);
+            }
+
+            if (!empty($optionalParameter) && is_array($optionalParameter)) {
+                $field->setOptional($optionalParameter);
+            }
+
+            if (!empty($constraints) && is_array($constraints)) {
+                $field->setConstraints($constraints);
+            }
 
             $fields[$fieldName] = $field;
         }
@@ -188,5 +220,14 @@ class FormManager
         }
 
         return $default;
+    }
+
+    /**
+     * @return int|null|\Pimcore\Model\User
+     */
+    protected function getAdminUserId()
+    {
+        $user = $this->storageUserResolver->getUser();
+        return $user instanceof \Pimcore\Model\User ? (int)$user->getId() : 0;
     }
 }

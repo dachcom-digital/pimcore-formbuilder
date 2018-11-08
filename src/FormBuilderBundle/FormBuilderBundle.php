@@ -50,6 +50,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/types/href.js',
             '/bundles/formbuilder/js/comp/importer.js',
             '/bundles/formbuilder/js/comp/form.js',
+            '/bundles/formbuilder/js/comp/extensions/formMetaData.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/builder.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/form.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/condition/abstract.js',

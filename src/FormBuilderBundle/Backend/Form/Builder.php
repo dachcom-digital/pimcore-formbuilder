@@ -75,8 +75,13 @@ class Builder
         $data = [
             'id'     => $form->getId(),
             'name'   => $form->getName(),
-            'date'   => $form->getDate(),
             'config' => $form->getConfig(),
+            'meta'   => [
+                'creation_date'     => $form->getCreationDate(),
+                'modification_date' => $form->getModificationDate(),
+                'created_by'        => $form->getCreatedBy(),
+                'modified_by'       => $form->getModifiedBy(),
+            ]
         ];
 
         $fieldData = [];

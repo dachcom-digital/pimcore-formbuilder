@@ -6,7 +6,7 @@ Formbuilder.comp.form = Class.create({
     parentPanel: null,
     formId: null,
     formName: null,
-    formDate: null,
+    formMeta: {},
     formConfig: null,
     formConfigStore: {},
     formConditionalsStructured: {},
@@ -29,7 +29,7 @@ Formbuilder.comp.form = Class.create({
         this.parentPanel = parentPanel;
         this.formId = formData.id;
         this.formName = formData.name;
-        this.formDate = formData.date;
+        this.formMeta = formData.meta;
         this.formConfig = formData.config.length === 0 ? {} : formData.config;
         this.formConfigStore = formData.config_store;
         this.formConditionalsStructured = formData.conditional_logic;
@@ -157,7 +157,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param scope
      * @param formTypeValues
      * @param type
@@ -221,7 +220,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param node
      * @param oldParent
      * @param newParent
@@ -238,7 +236,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @returns {boolean}
      */
@@ -252,7 +249,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param record
      * @param item
@@ -285,7 +281,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param record
      * @param item
@@ -534,10 +529,6 @@ Formbuilder.comp.form = Class.create({
                         formConditionals[fieldName] = val;
                     } else if (fieldName.substring(0, 11) === 'attributes.') {
                         formAttributes[fieldName] = val;
-                    } else if (fieldName === 'name') {
-                        this.formName = val;
-                    } else if (fieldName === 'date') {
-                        this.formDate = val;
                     } else {
                         this.formConfig[fieldName] = val;
                     }
@@ -557,8 +548,7 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
-     * @returns {Ext.form.FormPanel}
+     * @returns Ext.form.FormPanel
      */
     getRootPanel: function () {
 
@@ -634,9 +624,9 @@ Formbuilder.comp.form = Class.create({
         });
 
         this.rootPanel = new Ext.form.FormPanel({
-            title: t('form_builder_form_configuration'),
-            bodyStyle: 'padding:10px',
+            bodyStyle: 'padding: 10px',
             border: false,
+            tbar: this.getRootPanelToolbar(),
             items: [
                 {
                     xtype: 'textfield',
@@ -710,7 +700,42 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
+     * @returns Ext.Toolbar
+     */
+    getRootPanelToolbar: function () {
+
+        var toolbar = new Ext.Toolbar(),
+            items = [];
+
+        items.push({
+            xtype: 'tbtext',
+            cls: 'x-panel-header-title-default',
+            text: t('form_builder_form_configuration')
+        });
+
+        items.push('->');
+
+        items.push({
+            tooltip: t('show_metainfo'),
+            iconCls: 'pimcore_icon_info',
+            scale: 'medium',
+            handler: this.showFormMetaInfo.bind(this)
+        });
+
+
+        toolbar.add(items);
+
+        return toolbar;
+    },
+
+    /**
+     * Display info window with current form meta information
+     */
+    showFormMetaInfo: function () {
+        new Formbuilder.comp.extensions.formMetaData(this.formMeta);
+    },
+
+    /**
      * @param tree
      * @param formType
      * @param formTypeValues
@@ -737,7 +762,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param formType
      * @param formTypeValues
      * @returns {{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
@@ -757,7 +781,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param constraint
      * @param constraintValues
@@ -776,7 +799,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param constraintType
      * @returns {{text, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
@@ -795,7 +817,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param record
      */
@@ -804,7 +825,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param record
      */
@@ -819,7 +839,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param record
      */
@@ -835,7 +854,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param tree
      * @param node
      * @param isCopy
@@ -890,7 +908,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @returns {*|{}}
      */
     getData: function () {
@@ -898,7 +915,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param node
      * @returns {{}}
      */
@@ -936,11 +952,17 @@ Formbuilder.comp.form = Class.create({
         return formFieldData;
     },
 
+    /**
+     * Create Import Panel (Upload File)
+     */
     showImportPanel: function () {
         var importPanel = new Formbuilder.comp.importer(this);
         importPanel.showPanel();
     },
 
+    /**
+     * @param importedFormData
+     */
     importForm: function (importedFormData) {
 
         this.importIsRunning = true;
@@ -960,6 +982,10 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     * Trigger browser download (if form is valid)
+     * -> for form export
+     */
     exportForm: function () {
 
         try {
@@ -972,6 +998,10 @@ Formbuilder.comp.form = Class.create({
         pimcore.helpers.download('/admin/formbuilder/settings/get-export-file/' + this.formId);
     },
 
+    /**
+     * Trigger browser download
+     * -> for csv export of sent emails
+     */
     exportFormEmailCsv: function () {
         var mailTypeField = this.exportPanel.query('combo'),
             mailTypeValue = 'all';
@@ -984,7 +1014,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param ev
      * @returns {boolean}
      */
@@ -1016,7 +1045,6 @@ Formbuilder.comp.form = Class.create({
             method: 'post',
             params: {
                 form_id: this.formId,
-                form_name: this.formName,
                 form_config: formConfig,
                 form_cl: formConditionalLogic,
                 form_fields: formFields
@@ -1028,12 +1056,16 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param response
      */
     saveOnComplete: function (response) {
 
         var res = Ext.decode(response.responseText);
+
+        if (res.success === false) {
+            pimcore.helpers.showNotification(t('error'), res.message, 'error');
+            return;
+        }
 
         if (res.formId && res.formName) {
             this.panel.setTitle(res.formName + ' (ID: ' + res.formId + ')');
@@ -1044,12 +1076,16 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    /**
+     * Generic error notification on form save event
+     */
     saveOnError: function () {
         pimcore.helpers.showNotification(t('error'), t('form_builder_some_fields_cannot_be_saved'), 'error');
     },
 
     /**
      * Helper: find duplicate form type names
+     *
      * @param node
      * @param nodeNames
      * @returns {Array}
@@ -1074,7 +1110,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param typeId
      * @returns {boolean}
      */
@@ -1100,7 +1135,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @param constraintId
      * @returns {boolean}
      */

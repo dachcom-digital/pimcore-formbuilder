@@ -6,38 +6,89 @@ use Pimcore\Translation\Translator;
 
 interface FormFieldInterface
 {
+    /**
+     * @param Translator $translator
+     */
     public function setTranslator(Translator $translator);
 
+    /**
+     * @param int $order
+     */
+    public function setOrder(int $order);
+
+    /**
+     * @return int
+     */
     public function getOrder();
 
-    public function setOrder($order);
+    /**
+     * @param string $name
+     */
+    public function setName(string $name);
 
-    public function setName($name);
-
+    /**
+     * @return string
+     */
     public function getName();
 
-    public function setDisplayName($name);
+    /**
+     * @param string $name
+     */
+    public function setDisplayName(string $name);
 
+    /**
+     * @return mixed
+     */
     public function getDisplayName();
 
-    public function setType($type);
+    /**
+     * @param string $type
+     */
+    public function setType(string $type);
 
+    /**
+     * @return string
+     */
     public function getType();
 
-    public function setOptions($options = []);
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options = []);
 
+    /**
+     * @return array
+     */
     public function getOptions();
 
-    public function setOptional($options = []);
+    /**
+     * @param array $options
+     */
+    public function setOptional(array $options = []);
 
+    /**
+     * @return array
+     */
     public function getOptional();
 
-    public function setConstraints($constraints = []);
+    /**
+     * @param array $constraints
+     */
+    public function setConstraints(array $constraints = []);
 
+    /**
+     * @return array
+     */
     public function getConstraints();
 
+    /**
+     * @return array
+     */
     public function toArray();
 
+    /**
+     * @return boolean
+     */
     public function isUpdated();
 
 }

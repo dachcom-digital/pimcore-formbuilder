@@ -6,43 +6,193 @@ use Pimcore\Translation\Translator;
 
 interface FormInterface
 {
-    public function setTranslator(Translator $translator);
+    /**
+     * @param int $id
+     *
+     * @return FormInterface
+     */
+    public static function getById(int $id);
 
-    public function rename($newName);
+    /**
+     * @param string $name
+     *
+     * @return FormInterface
+     */
+    public static function getByName(string $name);
 
-    public function delete();
+    /**
+     * @param int $id
+     *
+     * @return string
+     */
+    public static function getNameById(int $id);
 
-    public function getId();
+    /**
+     * @param string $name
+     *
+     * @return int
+     */
+    public static function getIdByName(string $name);
 
-    public function setName($name);
+    /**
+     * @return FormInterface[]
+     */
+    public static function getAll();
 
-    public function getName();
-
+    /**
+     * @throws \Exception
+     * @return bool
+     */
     public function save();
 
-    public function setDate($date);
+    /**
+     * @throws \Exception
+     * @return bool
+     */
+    public function delete();
 
-    public function getDate();
+    /**
+     * @param string $newName
+     * @throws \Exception
+     */
+    public function rename(string $newName);
 
-    public function setConfig($config);
+    /**
+     * @param Translator $translator
+     */
+    public function setTranslator(Translator $translator);
 
+    /**
+     * @return null|int
+     */
+    public function getId();
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name);
+
+    /**
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * @param string $date
+     */
+    public function setCreationDate(string $date);
+
+    /**
+     * @return string
+     */
+    public function getCreationDate();
+
+    /**
+     * @param string $date
+     */
+    public function setModificationDate(string $date);
+
+    /**
+     * @return string
+     */
+    public function getModificationDate();
+
+    /**
+     * @param int $userId
+     *
+     * @return int
+     */
+    public function setModifiedBy(int $userId);
+
+    /**
+     * @return int
+     */
+    public function getModifiedBy();
+
+    /**
+     * @param int $userId
+     *
+     * @return int
+     */
+    public function setCreatedBy(int $userId);
+
+    /**
+     * @return int
+     */
+    public function getCreatedBy();
+
+    /**
+     * @param array $config
+     */
+    public function setConfig(array $config);
+
+    /**
+     * @return array
+     */
     public function getConfig();
 
-    public function setConditionalLogic($data);
+    /**
+     * @param array $data
+     */
+    public function setConditionalLogic(array $data);
 
+    /**
+     * @return array
+     */
     public function getConditionalLogic();
 
-    public function addDynamicField($name, $type, $options, $optional = []);
+    /**
+     * @param string $name
+     * @param string $type
+     * @param array  $options
+     * @param array  $optional
+     *
+     * @throws \Exception
+     */
+    public function addDynamicField(string $name, string $type, array $options = [], array $optional = []);
 
+    /**
+     * @param string $name
+     *
+     * @throws \Exception
+     */
+    public function removeDynamicField(string $name);
+
+    /**
+     * @param FormFieldInterface[] $fields
+     */
     public function setFields(array $fields);
 
+    /**
+     * @return FormFieldInterface[]
+     */
     public function getFields();
 
-    public function getFieldsByType($type);
+    /**
+     * @param string $type
+     *
+     * @return FormFieldInterface[]
+     */
+    public function getFieldsByType(string $type);
 
-    public function getField($name);
+    /**
+     * @param string $name
+     *
+     * @return FormFieldInterface
+     */
+    public function getField(string $name);
 
-    public function getFieldType($name);
+    /**
+     * @param string $name
+     *
+     * @return null|string
+     */
+    public function getFieldType(string $name);
 
-    public function getFieldValue($name);
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function getFieldValue(string $name);
 }

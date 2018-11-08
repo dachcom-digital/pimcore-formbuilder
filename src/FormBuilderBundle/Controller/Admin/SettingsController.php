@@ -6,6 +6,7 @@ use FormBuilderBundle\Backend\Form\Builder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
+use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,11 +18,9 @@ use Symfony\Component\Yaml\Yaml;
 class SettingsController extends AdminController
 {
     /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getTreeAction(Request $request)
+    public function getTreeAction()
     {
         $forms = $this->get(FormManager::class)->getAll();
 
@@ -42,25 +41,22 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getSettingsAction(Request $request)
+    public function getSettingsAction()
     {
         /** @var Configuration $configuration */
         $configuration = $this->get(Configuration::class);
         $settings = $configuration->getConfigArray();
         $settings['forbidden_form_field_names'] = Configuration::INVALID_FIELD_NAMES;
+
         return $this->json(['settings' => $settings]);
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getDynamicChoiceBuilderAction(Request $request)
+    public function getDynamicChoiceBuilderAction()
     {
         $registry = $this->get(ChoiceBuilderRegistry::class);
         $services = $registry->getAll();
@@ -68,6 +64,7 @@ class SettingsController extends AdminController
         foreach ($services as $identifier => $service) {
             $data[] = ['label' => $service['label'], 'value' => $identifier];
         }
+
         return $this->json($data);
     }
 
@@ -116,39 +113,34 @@ class SettingsController extends AdminController
 
         $name = $this->getSaveName($request->query->get('form_name'));
 
-        $error = false;
-        $message = '';
+        $success = true;
+        $message = null;
         $id = null;
-
-        $existingForm = false;
 
         try {
             $existingForm = $formManager->getIdByName($name);
         } catch (\Exception $e) {
-            // fail silently
+            $existingForm = null;
         }
 
-        if (!empty($existingForm)) {
-            $error = true;
-            $message = 'Form already exists!';
+        if ($existingForm instanceof FormInterface) {
+            $success = false;
+            $message = sprintf('Form with name "%s" already exists!', $name);
         } else {
-
-            $data = [
-                'form_name' => $name,
-                'form_date' => time()
-            ];
-
-            $formEntity = $formManager->save($data);
-            $id = $formEntity->getId();
+            try {
+                $formEntity = $formManager->save(['form_name' => $name]);
+                $id = $formEntity->getId();
+            } catch (\Exception $e) {
+                $success = false;
+                $message = sprintf('Error while creating new form with name "%s". Error was: %s', $name, $e->getMessage());
+            }
         }
 
-        return $this->json(
-            [
-                'success' => !$error,
-                'message' => $message,
-                'id'      => (int)$id,
-            ]
-        );
+        return $this->json([
+            'success' => $success,
+            'message' => $message,
+            'id'      => $id,
+        ]);
     }
 
     /**
@@ -159,14 +151,21 @@ class SettingsController extends AdminController
     public function deleteFormAction(Request $request)
     {
         $id = $request->get('id');
-        $this->get(FormManager::class)->delete($id);
+        $success = true;
+        $message = null;
 
-        return $this->json(
-            [
-                'success' => true,
-                'id'      => (int)$id,
-            ]
-        );
+        try {
+            $this->get(FormManager::class)->delete($id);
+        } catch (\Exception $e) {
+            $success = false;
+            $message = sprintf('Error while deleting form with id %d. Error was: %s', $id, $e->getMessage());
+        }
+
+        return $this->json([
+            'success' => $success,
+            'message' => $message,
+            'id'      => (int)$id,
+        ]);
     }
 
     /**
@@ -177,7 +176,9 @@ class SettingsController extends AdminController
      */
     public function saveFormAction(Request $request)
     {
-        $id = $request->get('form_id');
+        $id = (int)$request->get('form_id');
+        $success = true;
+        $message = null;
 
         /** @var FormManager $formManager */
         $formManager = $this->get(FormManager::class);
@@ -188,15 +189,30 @@ class SettingsController extends AdminController
         $formEntity = $formManager->getById($id);
         $storedFormName = $formEntity->getName();
 
-        $formName = $request->get('form_name');
         $formConfig = json_decode($request->get('form_config'), true);
         $formFields = json_decode($request->get('form_fields'), true);
+
         $formConditionalLogic = json_decode($request->get('form_cl'), true);
         if (isset($formConditionalLogic['cl'])) {
             $formConditionalLogic = $formConditionalLogic['cl'];
         }
 
-        if ($formName != $storedFormName) {
+        $formName = (string)$formConfig['name'];
+        if ($formName !== $storedFormName) {
+
+            try {
+                $existingForm = $formManager->getIdByName($formName);
+            } catch (\Exception $e) {
+                $existingForm = null;
+            }
+
+            if ($existingForm instanceof FormInterface) {
+                return $this->json([
+                    'success' => false,
+                    'message' => sprintf('Form with name "%s" already exists!', $formName)
+                ]);
+            }
+
             $formName = $this->getSaveName($formName);
             $formManager->rename($id, $formName);
         }
@@ -208,12 +224,18 @@ class SettingsController extends AdminController
             'form_conditional_logic' => $backendFormBuilder->generateConditionalLogicStoreFields($formConditionalLogic),
         ];
 
-        $formEntity = $formManager->save($data, $id);
+        try {
+            $formEntity = $formManager->save($data, $id);
+        } catch (\Exception $e) {
+            $success = false;
+            $message = sprintf('Error while saving form with id %d. Error was: %s', $id, $e->getMessage());
+        }
 
         return $this->json([
             'formId'   => (int)$id,
             'formName' => $formEntity->getName(),
-            'success'  => true
+            'success'  => $success,
+            'message'  => $message
         ]);
     }
 
@@ -246,12 +268,10 @@ class SettingsController extends AdminController
         $res = [];
         $res['success'] = true;
 
-        return $this->json(
-            [
-                'success' => true,
-                'msg'     => $res['success'] ? 'Success' : 'Error',
-            ]
-        );
+        return $this->json([
+            'success' => true,
+            'msg'     => $res['success'] ? 'Success' : 'Error',
+        ]);
     }
 
     /**
@@ -277,9 +297,7 @@ class SettingsController extends AdminController
 
         unlink(Configuration::IMPORT_PATH . '/import_' . $formId);
 
-        return $this->json([
-            'data' => $formContent
-        ]);
+        return $this->json(['data' => $formContent]);
     }
 
     /**
@@ -326,11 +344,9 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getGroupTemplatesAction(Request $request)
+    public function getGroupTemplatesAction()
     {
         /** @var Configuration $configuration */
         $configuration = $this->get(Configuration::class);
@@ -348,11 +364,11 @@ class SettingsController extends AdminController
     /**
      * @param string $name
      *
-     * @return mixed
+     * @return string
      */
-    private function getSaveName($name = '')
+    private function getSaveName($name)
     {
-        return preg_replace('/[^A-Za-z0-9aäüöÜÄÖß \-]/', '', $name);
+        return (string)preg_replace('/[^A-Za-z0-9aäüöÜÄÖß \-]/', '', $name);
     }
 
 }

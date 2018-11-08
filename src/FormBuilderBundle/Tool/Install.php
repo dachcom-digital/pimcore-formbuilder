@@ -30,6 +30,7 @@ class Install extends MigrationInstaller
      * @param Version $version
      *
      * @throws AbortMigrationException
+     * @throws \Doctrine\DBAL\Migrations\MigrationException
      */
     public function migrateInstall(Schema $schema, Version $version)
     {
@@ -40,6 +41,13 @@ class Install extends MigrationInstaller
             return;
         }
 
+        // legacy: we switched from default to migration installation
+        // so we need to migrate all versions
+        $skipVersionMigration = true;
+        if ($schema->hasTable('formbuilder_forms')) {
+            $skipVersionMigration = false;
+        }
+
         $this->setupPaths();
         $this->installDbStructure($schema, $version);
         $this->installPermissions();
@@ -47,6 +55,12 @@ class Install extends MigrationInstaller
         $this->installFormDataFolder();
         $this->installProperties();
         $this->installDocumentTypes();
+
+        // mark all versions as installed if were here for a fresh install.
+        if ($skipVersionMigration === true) {
+            $migrationConfiguration = $this->migrationManager->getBundleConfiguration($this->bundle);
+            $this->migrationManager->markVersionAsMigrated($migrationConfiguration->getVersion($migrationConfiguration->getLatestVersion()));
+        }
     }
 
     /**
@@ -70,7 +84,7 @@ class Install extends MigrationInstaller
      */
     public function needsReloadAfterInstall()
     {
-        return false;
+        return true;
     }
 
     /**

@@ -96,11 +96,11 @@ class FormFactory implements FormFactoryInterface
 
         $data = Yaml::parse(file_get_contents($formPath));
 
-        if (!empty($data['config'])) {
+        if (!empty($data['config']) && is_array($data['config'])) {
             $formEntity->setConfig($data['config']);
         }
 
-        if (!empty($data['conditional_logic'])) {
+        if (!empty($data['conditional_logic']) && is_array($data['conditional_logic'])) {
             $formEntity->setConditionalLogic($data['conditional_logic']);
         }
 
