@@ -9,6 +9,7 @@ use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Assembler\FormAssembler;
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Model\Document\Tag\Select;
 use Pimcore\Translation\Translator;
 
 class Form extends AbstractTemplateAreabrick
@@ -69,10 +70,17 @@ class Form extends AbstractTemplateAreabrick
     public function action(Info $info)
     {
         $view = $info->getView();
+        $info->setParams(array_merge($info->getParams(), ['forceEditInView' => true]));
+
         $editViewVars = [];
 
+        /** @var Select $formPresetSelection */
         $formPresetSelection = $this->getDocumentTag($info->getDocument(), 'select', 'formPreset');
+        /** @var Select $formTemplateSelection */
         $formTemplateSelection = $this->getDocumentTag($info->getDocument(), 'select', 'formType');
+
+        // editmode variable is not available if there is a edit window
+        $view->getParameters()->set('form_builder_is_admin_mode', $view->get('editmode') === true);
 
         if ($view->get('editmode') === true) {
 
@@ -126,6 +134,7 @@ class Form extends AbstractTemplateAreabrick
         $sendCopy = $this->getDocumentTag($info->getDocument(), 'checkbox', 'userCopy')->getData() === true;
         $formPreset = $formPresetSelection->getData();
 
+        /** @var Select $formNameElement */
         $formNameElement = $this->getDocumentTag($info->getDocument(), 'select', 'formName');
         if (!$formNameElement->isEmpty()) {
             $formId = $formNameElement->getData();
@@ -146,7 +155,7 @@ class Form extends AbstractTemplateAreabrick
         $assemblerViewVars = $this->formAssembler->assembleViewVars();
 
         foreach (array_merge($editViewVars, $assemblerViewVars) as $var => $varValue) {
-            $view->{$var} = $varValue;
+            $view->getParameters()->set($var, $varValue);
         }
     }
 

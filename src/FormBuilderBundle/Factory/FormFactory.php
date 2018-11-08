@@ -4,7 +4,6 @@ namespace FormBuilderBundle\Factory;
 
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Storage\FormInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormField;
 use Pimcore\Translation\Translator;
@@ -17,13 +16,18 @@ class FormFactory implements FormFactoryInterface
      */
     protected $translator;
 
+    /**
+     * FormFactory constructor.
+     *
+     * @param Translator $translator
+     */
     public function __construct(Translator $translator)
     {
         $this->translator = $translator;
     }
 
     /**
-     * @return Form
+     * @inheritdoc
      */
     public function createForm()
     {
@@ -33,20 +37,45 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @param $id
-     *
-     * @return FormInterface
+     * @inheritdoc
      */
-    public function getFormById($id)
+    public function getFormById($id, bool $ignoreMissingConfigurationFile = true)
     {
         $formEntity = Form::getById($id);
         $formEntity->setTranslator($this->translator);
-        $this->assignRelationDataToFormObject($formEntity);
+
+        try {
+            $this->assignRelationDataToFormObject($formEntity);
+        } catch (\Exception $e) {
+            if ($ignoreMissingConfigurationFile === false) {
+                return null;
+            }
+        }
+
         return $formEntity;
     }
 
     /**
-     * @return array
+     * @inheritdoc
+     */
+    public function getFormIdByName(string $name, bool $ignoreMissingConfigurationFile = true)
+    {
+        $formEntity = Form::getByName($name);
+        $formEntity->setTranslator($this->translator);
+
+        try {
+            $this->assignRelationDataToFormObject($formEntity);
+        } catch (\Exception $e) {
+            if ($ignoreMissingConfigurationFile === false) {
+                return null;
+            }
+        }
+
+        return $formEntity;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getAllForms()
     {
@@ -54,27 +83,17 @@ class FormFactory implements FormFactoryInterface
 
         $objects = [];
         foreach ($formEntities as $entity) {
-            $objects[] = $this->getFormById($entity['id']);
+            $form = $this->getFormById($entity['id']);
+            if ($form instanceof FormInterface) {
+                $objects[] = $this->getFormById($entity['id']);
+            }
         }
 
         return $objects;
     }
 
     /**
-     * @param $name
-     *
-     * @return FormInterface
-     */
-    public function getFormIdByName($name)
-    {
-        $formEntity = Form::getByName($name);
-        $formEntity->setTranslator($this->translator);
-        $this->assignRelationDataToFormObject($formEntity);
-        return $formEntity;
-    }
-
-    /**
-     * @return FormFieldInterface
+     * @inheritdoc
      */
     public function createFormField()
     {
@@ -84,14 +103,14 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @param FormInterface $formEntity
+     * @inheritdoc
      */
-    public function assignRelationDataToFormObject($formEntity)
+    public function assignRelationDataToFormObject(FormInterface $formEntity)
     {
         $formPath = Configuration::STORE_PATH . '/main_' . $formEntity->getId() . '.yml';
 
         if (!file_exists($formPath)) {
-            return;
+            throw new \Exception(sprintf('configuration yml file for form with id "%d" not found', $formEntity->getId()));
         }
 
         $data = Yaml::parse(file_get_contents($formPath));
@@ -123,6 +142,22 @@ class FormFactory implements FormFactoryInterface
 
             $formEntity->setFields($fields);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function formHasAvailableConfigurationFile(int $formId)
+    {
+        return file_exists($this->getConfigurationPathOfForm($formId));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfigurationPathOfForm(int $formId)
+    {
+        return Configuration::STORE_PATH . '/main_' . $formId . '.yml';
     }
 
     /**

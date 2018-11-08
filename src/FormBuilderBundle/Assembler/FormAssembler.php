@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Assembler;
 use FormBuilderBundle\Form\Builder;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Storage\Form;
+use FormBuilderBundle\Storage\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormAssembler
@@ -77,8 +77,19 @@ class FormAssembler
         if (!empty($formId)) {
             try {
                 $formData = $this->formManager->getById($formId);
-                if (!$formData instanceof Form) {
-                    $exceptionMessage = 'Form (' . $formId . ') is not a valid FormBuilder Element.';
+                if (!$formData instanceof FormInterface || !$this->formManager->configurationFileExists($formId)) {
+
+                    $errorMessage = [];
+                    if (!$formData instanceof FormInterface) {
+                        $errorMessage[] = sprintf('Form with id "%s" is not valid.', $formId);
+                    }
+
+                    if (!$this->formManager->configurationFileExists($formId)) {
+                        $formConfigurationPath = $this->formManager->getConfigurationPath($formId);
+                        $errorMessage[] = sprintf('Configuration file is not available. This file needs to be generated as "%s".', $formConfigurationPath);
+                    }
+
+                    $exceptionMessage = join(' ', $errorMessage);
                     $builderError = true;
                 }
             } catch (\Exception $e) {
@@ -90,47 +101,46 @@ class FormAssembler
             $builderError = true;
         }
 
+        $viewVars = [];
         $viewVars['form_layout'] = $this->optionsResolver->getFormLayout();
 
-        if ($builderError === false) {
-
-            $userOptions = [
-                'form_preset'   => $this->optionsResolver->getFormPreset(),
-                'form_template' => $this->optionsResolver->getFormTemplateName()
-            ];
-
-            /** @var \Symfony\Component\Form\Form $form */
-            $form = $this->formBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
-
-            /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
-            $sessionBag = $this->session->getBag('form_builder_session');
-
-            //store current configuration for further events.
-            $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
-                'user_options' => [
-                    'form_preset'   => $this->optionsResolver->getFormPreset(),
-                    'form_template' => $this->optionsResolver->getFormTemplateName()
-                ],
-                'email'        => [
-                    'send_copy'             => $this->optionsResolver->getSendCopy(),
-                    'mail_template_id'      => $this->optionsResolver->getMailTemplateId(),
-                    'copy_mail_template_id' => $this->optionsResolver->getCopyMailTemplateId()
-                ]
-            ]);
-
-            $viewVars['form_block_template'] = $this->optionsResolver->getFormBlockTemplate();
-            $viewVars['form_template'] = $this->optionsResolver->getFormTemplate();
-            $viewVars['form_id'] = $this->optionsResolver->getFormId();
-            $viewVars['form_preset'] = $this->optionsResolver->getFormPreset();
-            $viewVars['main_layout'] = $this->optionsResolver->getMainLayout();
-            $viewVars['form'] = $form->createView();
-
-        } else {
+        if ($builderError === true) {
             $viewVars['message'] = $exceptionMessage;
             $viewVars['form_template'] = null;
+            return $viewVars;
         }
+
+        $userOptions = [
+            'form_preset'   => $this->optionsResolver->getFormPreset(),
+            'form_template' => $this->optionsResolver->getFormTemplateName()
+        ];
+
+        /** @var \Symfony\Component\Form\Form $form */
+        $form = $this->formBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
+
+        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        $sessionBag = $this->session->getBag('form_builder_session');
+
+        //store current configuration for further events.
+        $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
+            'user_options' => [
+                'form_preset'   => $this->optionsResolver->getFormPreset(),
+                'form_template' => $this->optionsResolver->getFormTemplateName()
+            ],
+            'email'        => [
+                'send_copy'             => $this->optionsResolver->getSendCopy(),
+                'mail_template_id'      => $this->optionsResolver->getMailTemplateId(),
+                'copy_mail_template_id' => $this->optionsResolver->getCopyMailTemplateId()
+            ]
+        ]);
+
+        $viewVars['form_block_template'] = $this->optionsResolver->getFormBlockTemplate();
+        $viewVars['form_template'] = $this->optionsResolver->getFormTemplate();
+        $viewVars['form_id'] = $this->optionsResolver->getFormId();
+        $viewVars['form_preset'] = $this->optionsResolver->getFormPreset();
+        $viewVars['main_layout'] = $this->optionsResolver->getMainLayout();
+        $viewVars['form'] = $form->createView();
 
         return $viewVars;
     }
-
 }

@@ -44,6 +44,26 @@ class FormManager
     }
 
     /**
+     * @param $id
+     *
+     * @return bool
+     */
+    public function configurationFileExists(int $id)
+    {
+        return $this->formFactory->formHasAvailableConfigurationFile($id);
+    }
+
+    /**
+     * @param $id
+     *
+     * @return bool
+     */
+    public function getConfigurationPath(int $id)
+    {
+        return $this->formFactory->getConfigurationPathOfForm($id);
+    }
+
+    /**
      * @return array
      */
     public function getAll()

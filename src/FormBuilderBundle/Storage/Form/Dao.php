@@ -26,7 +26,7 @@ class Dao extends AbstractDao
         $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE name = ?', $name);
 
         if (!$data['id']) {
-            throw new \Exception('Form with ID ' . $name . ' doesn\'t exists');
+            throw new \Exception(sprintf('Form with name "%s" does not exist.', $name));
         }
 
         $this->assignVariablesToModel($data);
@@ -48,7 +48,7 @@ class Dao extends AbstractDao
         if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('Form with id: ' . $this->model->getId() . ' doesn\'t exist');
+            throw new \Exception(sprintf('Form with id "%d" does not exist.', $this->model->getId()));
         }
     }
 

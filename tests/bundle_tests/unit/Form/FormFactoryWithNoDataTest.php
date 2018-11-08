@@ -22,7 +22,7 @@ class FormFactoryWithNoDataTest extends DachcomBundleTestCase
         $factory = $this->getContainer()->get(FormFactoryInterface::class);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Form with id: 99 doesn\'t exist');
+        $this->expectExceptionMessage('Form with id "99" does not exist.');
 
         $factory->getFormById(99);
     }
@@ -32,7 +32,7 @@ class FormFactoryWithNoDataTest extends DachcomBundleTestCase
         $factory = $this->getContainer()->get(FormFactoryInterface::class);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Form with ID form doesn\'t exist');
+        $this->expectExceptionMessage('Form with name "form" does not exist.');
 
         $factory->getFormIdByName('form');
     }

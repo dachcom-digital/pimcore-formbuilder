@@ -52,7 +52,7 @@ class FormOptionsResolver
     public function setFormId($formId)
     {
         if (is_numeric($formId)) {
-            $this->formId = $formId;
+            $this->formId = (int)$formId;
         }
     }
 
