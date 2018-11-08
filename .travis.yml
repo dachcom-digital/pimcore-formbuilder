@@ -6,46 +6,54 @@ addons:
 
 env:
     global:
-        - PIMCORE_ENVIRONMENT=test
-        - DACHCOM_BUNDLE_TEST=1
-        - PIMCORE_TEST_URL=http://localhost
-        - CHROME_DRIVER_VERSION=2.41
-        - SELENIUM_VERSION=3.6.0
-        - WEBDRIVER_HOST=localhost
-        - WEBDRIVER_URL="http://localhost:8080/"
-        - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
-        - SYMFONY_DEPRECATIONS_HELPER=weak
+    - PIMCORE_ENVIRONMENT=test
+    - DACHCOM_BUNDLE_TEST=1
+    - PIMCORE_TEST_URL=http://localhost
+    - CHROME_DRIVER_VERSION=2.41
+    - SELENIUM_VERSION=3.6.0
+    - WEBDRIVER_HOST=localhost
+    - WEBDRIVER_URL="http://localhost:8080/"
+    - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
+    - SYMFONY_DEPRECATIONS_HELPER=weak
 matrix:
     include:
-        -
-          sudo: required
-          php: 7.1
-          env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-        -
-          sudo: required
-          php: 7.2
-          env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+    -   sudo: required
+        php: 7.1
+        env:
+        # pimcore 5.4.x
+        - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+    -   sudo: required
+        php: 7.2
+        env:
+        - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+    -   sudo: required
+        php: 7.1
+        env:
+        # pimcore 5.5.x
+        - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+    -   sudo: required
+        php: 7.2
+        env:
+        - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
     fast_finish: true
 
 cache:
     directories:
-        - $HOME/.composer/cache
+    - $HOME/.composer/cache
 
 install:
-    - tests/etc/travis/install
+- tests/etc/travis/install
 
 after_failure:
-    - cd $TRAVIS_BUILD_DIR
-    - cat ./lib/FormBuilder/tests/_output/*
+- cd $TRAVIS_BUILD_DIR
+- cat ./lib/FormBuilder/tests/_output/*
 
 script:
-    - '$HOME/chromedriver --url-base=/wd/hub &'
-    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
-    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
-    - etc/travis/script
+- '$HOME/chromedriver --url-base=/wd/hub &'
+- 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
+- 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
+- etc/travis/script
 
 notifications:
     email:
-        - shagspiel@dachcom.ch
+    - shagspiel@dachcom.ch

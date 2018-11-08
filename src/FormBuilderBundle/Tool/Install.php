@@ -25,7 +25,8 @@ class Install extends MigrationInstaller
     protected $permissionsToInstall = [
         'formbuilder_permission_settings'
     ];
-/**
+
+    /**
      * @inheritdoc
      */
     public function getMigrationVersion(): string
@@ -34,7 +35,9 @@ class Install extends MigrationInstaller
     }
 
     /**
+     * @throws AbortMigrationException
      * @throws MigrationException
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function beforeInstallMigration()
     {
@@ -53,14 +56,13 @@ class Install extends MigrationInstaller
             $migrationConfiguration = $this->migrationManager->getBundleConfiguration($this->bundle);
             $this->migrationManager->markVersionAsMigrated($migrationConfiguration->getVersion($migrationConfiguration->getLatestVersion()));
         }
+
+        $this->initializeFreshSetup();
     }
 
     /**
      * @param Schema  $schema
      * @param Version $version
-     *
-     * @throws AbortMigrationException
-     * @throws \Doctrine\DBAL\Migrations\MigrationException
      */
     public function migrateInstall(Schema $schema, Version $version)
     {
@@ -70,15 +72,21 @@ class Install extends MigrationInstaller
             $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping installation');
             return;
         }
+    }
 
+    /**
+     * @throws AbortMigrationException
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function initializeFreshSetup()
+    {
         $this->setupPaths();
-        $this->installDbStructure($schema, $version);
+        $this->installDbStructure();
         $this->installPermissions();
         $this->installTranslations();
         $this->installFormDataFolder();
         $this->installProperties();
         $this->installDocumentTypes();
-
     }
 
     /**
@@ -154,12 +162,12 @@ class Install extends MigrationInstaller
     }
 
     /**
-     * @param Schema  $schema
-     * @param Version $version
+     * @throws \Doctrine\DBAL\DBALException
      */
-    protected function installDbStructure(Schema $schema, Version $version)
+    protected function installDbStructure()
     {
-        $version->addSql(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
+        $db = \Pimcore\Db::get();
+        $db->query(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
     }
 
     /**
