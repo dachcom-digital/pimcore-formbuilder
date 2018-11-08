@@ -14,11 +14,36 @@ Pimcore 5.x FormBuilder.
 Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).
 
 ## Installation
+
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~2.4.0"
+    "dachcom-digital/formbuilder" : "~2.5.0"
 }
 ```
+
+### Installation via Extension Manager
+After you have installed the FormBuilder Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+- Click the green `+` Button in `Enable / Disable` row
+- Click the green `+` Button in `Install/Uninstall` row
+
+### Installation via CommandLine
+After you have installed the FormBuilder Bundle via composer:
+- Execute: `$ bin/console pimcore:bundle:enable FormBuilderBundle`
+- Execute: `$ bin/console pimcore:bundle:install FormBuilderBundle`
+
+## Upgrading
+
+### Upgrading via Extension Manager
+After you have updated the FormBuilder Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+- Click the green `+` Button in `Update` row
+
+### Upgrading via CommandLine
+After you have updated the FormBuilder Bundle via composer:
+- Execute: `$ bin/console pimcore:bundle:update FormBuilderBundle`
+
+### Migrate via CommandLine
+Does actually the same as the update command and preferred in CI-Workflow:
+- Execute: `$ bin/console pimcore:migrations:migrate -b FormBuilderBundle`
 
 ## Usage
 Just open a document and place the form area brick like any other bricks via drag and drop. 

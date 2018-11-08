@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Tool;
 
 use Doctrine\DBAL\Migrations\AbortMigrationException;
+use Doctrine\DBAL\Migrations\MigrationException;
 use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Schema\Schema;
 use FormBuilderBundle\Configuration\Configuration;
@@ -24,6 +25,35 @@ class Install extends MigrationInstaller
     protected $permissionsToInstall = [
         'formbuilder_permission_settings'
     ];
+/**
+     * @inheritdoc
+     */
+    public function getMigrationVersion(): string
+    {
+        return '00000001';
+    }
+
+    /**
+     * @throws MigrationException
+     */
+    protected function beforeInstallMigration()
+    {
+        $markVersionsAsMigrated = true;
+
+        // legacy: we switched from config to migration
+        // if config.yml exists, this instance needs to migrate
+        // so every migration needs to run.
+        // fresh: skip all versions since they are not required anymore (fresh installation does not require any version migrations)
+        $fileSystem = new Filesystem();
+        if ($fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH . '/config.yml')) {
+            $markVersionsAsMigrated = false;
+        }
+
+        if ($markVersionsAsMigrated === true) {
+            $migrationConfiguration = $this->migrationManager->getBundleConfiguration($this->bundle);
+            $this->migrationManager->markVersionAsMigrated($migrationConfiguration->getVersion($migrationConfiguration->getLatestVersion()));
+        }
+    }
 
     /**
      * @param Schema  $schema
@@ -41,13 +71,6 @@ class Install extends MigrationInstaller
             return;
         }
 
-        // legacy: we switched from default to migration installation
-        // so we need to migrate all versions
-        $skipVersionMigration = true;
-        if ($schema->hasTable('formbuilder_forms')) {
-            $skipVersionMigration = false;
-        }
-
         $this->setupPaths();
         $this->installDbStructure($schema, $version);
         $this->installPermissions();
@@ -56,11 +79,6 @@ class Install extends MigrationInstaller
         $this->installProperties();
         $this->installDocumentTypes();
 
-        // mark all versions as installed if were here for a fresh install.
-        if ($skipVersionMigration === true) {
-            $migrationConfiguration = $this->migrationManager->getBundleConfiguration($this->bundle);
-            $this->migrationManager->markVersionAsMigrated($migrationConfiguration->getVersion($migrationConfiguration->getLatestVersion()));
-        }
     }
 
     /**

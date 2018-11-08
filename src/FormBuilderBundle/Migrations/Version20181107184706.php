@@ -25,6 +25,6 @@ class Version20181107184706 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-
+        // no down migration available.
     }
 }
