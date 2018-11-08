@@ -29,12 +29,12 @@ class SimpleFormEditWindowCest
         $options = [
             'width' => 240,
             'store' => [
-                0 => ['1', 'dachcom_test'],
+                0 => [1, 'dachcom_test'],
             ]
         ];
 
         $I->see('Form', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('formName', 'select', $options, '1', 'script');
+        $I->seeAEditableConfiguration('formName', 'select', $options, 1, 'script');
     }
 
     /**

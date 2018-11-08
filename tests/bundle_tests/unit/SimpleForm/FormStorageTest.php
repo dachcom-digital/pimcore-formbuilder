@@ -8,11 +8,14 @@ use FormBuilderBundle\Manager\FormManager;
 
 class FormStorageTest extends DachcomBundleTestCase
 {
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testFormConfig()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
-        $testFormBuilder = FormHelper::generateSimpleForm();
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
         $formConfig = $form->getConfig();
@@ -33,4 +36,155 @@ class FormStorageTest extends DachcomBundleTestCase
         $this->assertEquals(false, $formConfig['useAjax']);
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormAttribute()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $testFormBuilder->addFormAttributes('class', 'my-shiny-class');
+        $form = $manager->save($testFormBuilder->build());
+
+        $formConfig = $form->getConfig();
+
+        $this->assertInternalType('array', $formConfig['attributes']);
+
+        $attributeIndex = array_search('class', array_column($formConfig['attributes'], 'option'));
+
+        $this->assertNotFalse($attributeIndex);
+        $this->assertEquals('my-shiny-class', $formConfig['attributes'][$attributeIndex]['value']);
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormMultipleAttributes()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $testFormBuilder->addFormAttributes('class', 'my-shiny-class');
+        $testFormBuilder->addFormAttributes('maxlength', 30);
+        $form = $manager->save($testFormBuilder->build());
+
+        $formConfig = $form->getConfig();
+
+        $this->assertInternalType('array', $formConfig['attributes']);
+
+        $attribute1Index = array_search('class', array_column($formConfig['attributes'], 'option'));
+        $this->assertNotFalse($attribute1Index);
+        $this->assertEquals('my-shiny-class', $formConfig['attributes'][$attribute1Index]['value']);
+
+        $attribute2Index = array_search('maxlength', array_column($formConfig['attributes'], 'option'));
+        $this->assertNotFalse($attribute2Index);
+        $this->assertEquals(30, $formConfig['attributes'][$attribute2Index]['value']);
+
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormMetaCreationDate()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $date1 = new \DateTime($form->getCreationDate());
+        $date2 = new \DateTime();
+
+        $this->assertInternalType('string', $form->getCreationDate());
+        $this->assertEquals($date2->format('d.m.Y'), $date1->format('d.m.Y'));
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormMetaCreationDateHasNotChangedAfterUpdating()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $date1 = new \DateTime($form->getCreationDate());
+
+        sleep(2);
+
+        $updatedForm = $manager->save($testFormBuilder->build(), $form->getId());
+        $date2 = new \DateTime($updatedForm->getCreationDate());
+
+        $this->assertEquals($date1->format('d.m.Y H:i:s'), $date2->format('d.m.Y H:i:s'));
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormMetaModificationDate()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $date1 = new \DateTime($form->getModificationDate());
+        $date2 = new \DateTime();
+
+        $this->assertInternalType('string', $form->getModificationDate());
+        $this->assertEquals($date2->format('d.m.Y'), $date1->format('d.m.Y'));
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormMetaModificationDateHasChangedAfterUpdating()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $date1 = new \DateTime($form->getModificationDate());
+
+        sleep(2);
+
+        $updatedForm = $manager->save($testFormBuilder->build(), $form->getId());
+        $date2 = new \DateTime($updatedForm->getModificationDate());
+
+        $this->assertNotEquals($date1->format('d.m.Y H:i:s'), $date2->format('d.m.Y H:i:s'));
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormMetaCreatedBy()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $createdById = $form->getCreatedBy();
+
+        $this->assertInternalType('integer', $createdById);
+        $this->assertEquals(0, $createdById);
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function testFormMetaModifiedBy()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $createdById = $form->getModifiedBy();
+
+        $this->assertInternalType('integer', $createdById);
+        $this->assertEquals(0, $createdById);
+    }
 }

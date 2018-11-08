@@ -5,19 +5,14 @@ namespace FormBuilderBundle\Storage;
 class FormFieldDynamic implements FormFieldDynamicInterface
 {
     /**
-     * @var bool
+     * @var string
      */
-    protected $name = false;
+    protected $name;
 
     /**
      * @var string
      */
     protected $type;
-
-    /**
-     * @var bool
-     */
-    protected $update = false;
 
     /**
      * @var string
@@ -30,15 +25,20 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     protected $optional;
 
     /**
+     * @var bool
+     */
+    protected $update = false;
+
+    /**
      * FormFieldDynamic constructor.
      *
-     * @param $name
-     * @param $type
-     * @param $options
-     * @param $optional
-     * @param $update
+     * @param string $name
+     * @param string $type
+     * @param array  $options
+     * @param array  $optional
+     * @param bool   $update
      */
-    public function __construct($name, $type, $options, $optional = [], $update = false)
+    public function __construct(string $name, string $type, array $options, array $optional = [], bool $update = false)
     {
         $this->name = $name;
         $this->type = $type;
@@ -48,7 +48,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function getName()
     {
@@ -56,7 +56,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getType()
     {
@@ -64,7 +64,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isUpdated()
     {
@@ -72,7 +72,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getOptions()
     {
@@ -80,7 +80,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @return array|string
+     * @inheritdoc
      */
     public function getOptional()
     {
@@ -88,14 +88,13 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @return int|mixed
+     * @inheritdoc
      */
     public function getOrder()
     {
         $optional = $this->getOptional();
-
-        if (isset($optional['order'])) {
-            return $optional['order'];
+        if (isset($optional['order']) && is_numeric($optional['order'])) {
+            return (int)$optional['order'];
         }
 
         return 0;

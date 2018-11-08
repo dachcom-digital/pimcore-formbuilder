@@ -45,8 +45,6 @@ class PimcoreCore extends PimcoreCoreModule
 
     /**
      * @param array $settings
-     *
-     * @throws \Codeception\Exception\ModuleException
      */
     public function _beforeSuite($settings = [])
     {
@@ -86,7 +84,7 @@ class PimcoreCore extends PimcoreCoreModule
     }
 
     /**
-     * @param      $configuration
+     * @param $configuration
      */
     public function bootKernelWithConfiguration($configuration)
     {

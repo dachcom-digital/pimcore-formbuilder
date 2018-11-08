@@ -9,6 +9,9 @@ use FormBuilderBundle\Storage\Form;
 
 class FormManagerTest extends DachcomBundleTestCase
 {
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
     public function testSaveNewForm()
     {
         $manager = $this->getContainer()->get(FormManager::class);
@@ -18,6 +21,9 @@ class FormManagerTest extends DachcomBundleTestCase
         $this->assertInstanceOf(Form::class, $form);
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
     public function testDeleteForm()
     {
         $manager = $this->getContainer()->get(FormManager::class);
@@ -33,6 +39,9 @@ class FormManagerTest extends DachcomBundleTestCase
         $manager->getById($form->getId());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
     public function testSaveNewFormId()
     {
         $manager = $this->getContainer()->get(FormManager::class);
@@ -42,6 +51,9 @@ class FormManagerTest extends DachcomBundleTestCase
         $this->assertEquals(1, $form->getId());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     */
     public function testRenameForm()
     {
         $manager = $this->getContainer()->get(FormManager::class);

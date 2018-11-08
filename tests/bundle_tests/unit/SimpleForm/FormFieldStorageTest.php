@@ -9,10 +9,13 @@ use FormBuilderBundle\Storage\FormField;
 
 class FormFieldStorageTest extends DachcomBundleTestCase
 {
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldSimpleDropDown()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_dropdown');
@@ -24,10 +27,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(5, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldInput1()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_1');
@@ -39,10 +45,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(1, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldInput2()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_2');
@@ -54,10 +63,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(1, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldInput3()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_3');
@@ -69,10 +81,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(1, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldInput4()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_4');
@@ -84,10 +99,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(1, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldSingleCheckbox()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('single_checkbox');
@@ -99,10 +117,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(1, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldCheckboxes()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('checkboxes');
@@ -114,10 +135,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(5, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldRadios()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('radios');
@@ -129,10 +153,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(5, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldTextArea()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_area');
@@ -144,10 +171,13 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertCount(1, $field->getOptions());
     }
 
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testNewFormFieldSubmitButton()
     {
         $manager = $this->getContainer()->get(FormManager::class);
-
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('submit');
@@ -157,5 +187,41 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertEquals('submit', $field->getType());
         $this->assertInternalType('array', $field->getOptions());
         $this->assertCount(1, $field->getOptions());
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormFieldOptions()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $testFormBuilder->addFormFieldInput('input_with_options', ['class' => 'my-shiny-class']);
+        $form = $manager->save($testFormBuilder->build());
+        $field = $form->getField('input_with_options');
+        $options = $field->getOptions();
+
+        $this->assertInternalType('array', $options);
+        $this->assertArrayHasKey('class', $options);
+        $this->assertEquals('my-shiny-class', $options['class']);
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormFieldOptionals()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $testFormBuilder->addFormFieldInput('input_with_optional', [], ['template' => 'default']);
+        $form = $manager->save($testFormBuilder->build());
+        $field = $form->getField('input_with_optional');
+        $optionals = $field->getOptional();
+
+        $this->assertInternalType('array', $optionals);
+        $this->assertArrayHasKey('template', $optionals);
+        $this->assertEquals('default', $optionals['template']);
     }
 }
