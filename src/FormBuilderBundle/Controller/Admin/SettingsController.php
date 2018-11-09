@@ -375,19 +375,16 @@ class SettingsController extends AdminController
 
         $dependencyLocator = $this->get(FormDependencyLocator::class);
 
-        $data = [];
-
         try {
             $data = $dependencyLocator->findDocumentDependencies($formId, $offset, $limit);
         } catch (\Exception $e) {
-            // fail silently
+            $data = [];
         }
 
         return $this->json([
-            'documents' => $data['documents'],
+            'documents' => isset($data['documents']) ? $data['documents'] : [],
             'limit'     => $limit,
-            'start'     => 0,
-            'total'     => $data['total']
+            'total'     => isset($data['total']) ? $data['total'] : 0
         ]);
     }
 

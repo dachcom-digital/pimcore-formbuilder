@@ -7,6 +7,7 @@ use FormBuilderBundle\Form\Builder;
 use FormBuilderBundle\FormBuilderEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -209,6 +210,7 @@ class RequestListener implements EventSubscriberInterface
         $errors = [];
 
         $generalErrors = [];
+        /** @var FormError $error */
         foreach ($form->getErrors() as $error) {
             $generalErrors[] = $error->getMessage();
         }
@@ -219,7 +221,7 @@ class RequestListener implements EventSubscriberInterface
 
         foreach ($form->all() as $field) {
             $fieldErrors = [];
-
+            /** @var FormError $error */
             foreach ($field->getErrors() as $error) {
                 $fieldErrors[] = $error->getMessage();
             }

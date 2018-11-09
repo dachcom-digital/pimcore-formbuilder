@@ -8,6 +8,7 @@ paths:
     envs: _envs
 settings:
     bootstrap: _bootstrap.php
+    memory_limit: -1
     colors: true
 params:
     - env

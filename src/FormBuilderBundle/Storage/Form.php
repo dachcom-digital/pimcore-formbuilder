@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Storage;
 
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Storage\Form\Dao;
 use Pimcore\Model;
 use Pimcore\Translation\Translator;
 
@@ -414,6 +415,14 @@ class Form extends Model\AbstractModel implements FormInterface
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @return Dao
+     */
+    public function getDao()
+    {
+        return parent::getDao();
     }
 
     /**

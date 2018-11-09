@@ -15,12 +15,12 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     protected $type;
 
     /**
-     * @var string
+     * @var array
      */
     protected $options;
 
     /**
-     * @var string
+     * @var array
      */
     protected $optional;
 

@@ -8,6 +8,14 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 class Version00000001 extends AbstractPimcoreMigration
 {
     /**
+     * @return bool
+     */
+    public function doesSqlMigrations(): bool
+    {
+        return false;
+    }
+
+    /**
      * @param Schema $schema
      */
     public function up(Schema $schema)

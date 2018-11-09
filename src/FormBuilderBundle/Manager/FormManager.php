@@ -56,7 +56,7 @@ class FormManager
     /**
      * @param $id
      *
-     * @return bool
+     * @return string
      */
     public function getConfigurationPath(int $id)
     {

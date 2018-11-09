@@ -8,6 +8,7 @@ interface FormInterface
 {
     /**
      * @param int $id
+     * @throws \Exception
      *
      * @return FormInterface
      */
@@ -15,6 +16,7 @@ interface FormInterface
 
     /**
      * @param string $name
+     * @throws \Exception
      *
      * @return FormInterface
      */
@@ -22,6 +24,7 @@ interface FormInterface
 
     /**
      * @param int $id
+     * @throws \Exception
      *
      * @return string
      */
@@ -29,6 +32,7 @@ interface FormInterface
 
     /**
      * @param string $name
+     * @throws \Exception
      *
      * @return int
      */

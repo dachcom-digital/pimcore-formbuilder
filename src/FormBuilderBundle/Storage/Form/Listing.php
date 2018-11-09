@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Storage\Form;
 
+use FormBuilderBundle\Storage\Form\Listing\Dao;
 use Pimcore\Model;
 
 class Listing extends Model\Listing\AbstractListing
@@ -40,7 +41,7 @@ class Listing extends Model\Listing\AbstractListing
     {
         if ($this->data === null) {
             $entities = [];
-            foreach ($this->load() as $o) {
+            foreach ($this->getDao()->load() as $o) {
                 $entities[] = $o;
             }
 
@@ -49,5 +50,13 @@ class Listing extends Model\Listing\AbstractListing
         }
 
         return $this->data;
+    }
+
+    /**
+     * @return Dao
+     */
+    public function getDao()
+    {
+        return parent::getDao();
     }
 }

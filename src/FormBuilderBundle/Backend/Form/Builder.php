@@ -20,7 +20,7 @@ class Builder
     protected $configuration;
 
     /**
-     * @var OptionsTransformerRegistry
+     * @var TemplateManager
      */
     protected $templateManager;
 

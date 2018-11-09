@@ -48,7 +48,7 @@ class PimcoreCore extends PimcoreCoreModule
     /**
      * @inheritdoc
      */
-    public function _afterSuite($settings = [])
+    public function _afterSuite()
     {
         $this->clearCache();
         parent::_beforeSuite($settings);
@@ -90,7 +90,6 @@ class PimcoreCore extends PimcoreCoreModule
      */
     protected function bootKernelWithConfiguration($configuration)
     {
-
         if ($configuration === null) {
             $configuration = 'config_default.yml';
         }
@@ -161,3 +160,4 @@ class PimcoreCore extends PimcoreCoreModule
         $this->bootKernelWithConfiguration($configuration);
     }
 }
+

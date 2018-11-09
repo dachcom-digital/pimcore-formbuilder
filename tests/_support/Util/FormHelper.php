@@ -41,8 +41,11 @@ class FormHelper
      */
     public static function generateEditableConfiguration(string $name, string $type, array $options, $data = null)
     {
+        $dotSuffix = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.0') ? '_' : '.';
+        $colonSuffix = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.0') ? '_' : ':';
+
         $editableConfig = [
-            'id'        => sprintf('pimcore_editable_%s:1.%s', FormHelper::AREA_TEST_NAMESPACE, $name),
+            'id'        => sprintf('pimcore_editable_%s%s1%s%s', FormHelper::AREA_TEST_NAMESPACE, $colonSuffix, $dotSuffix, $name),
             'name'      => sprintf('%s:1.%s', FormHelper::AREA_TEST_NAMESPACE, $name),
             'realName'  => $name,
             'options'   => $options,
@@ -54,7 +57,6 @@ class FormHelper
         $data = sprintf('editableConfigurations.push(%s);', json_encode($editableConfig));
 
         return $data;
-
     }
 
     /**

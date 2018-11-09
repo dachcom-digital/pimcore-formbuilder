@@ -10,6 +10,14 @@ use Symfony\Component\Filesystem\Filesystem;
 class Version20181107184706 extends AbstractPimcoreMigration
 {
     /**
+     * @return bool
+     */
+    public function doesSqlMigrations(): bool
+    {
+        return false;
+    }
+
+    /**
      * @param Schema $schema
      */
     public function up(Schema $schema)

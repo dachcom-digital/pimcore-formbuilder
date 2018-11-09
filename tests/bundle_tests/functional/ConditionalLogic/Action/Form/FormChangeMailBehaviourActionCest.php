@@ -166,7 +166,6 @@ class FormChangeMailBehaviourActionCest
         $I->seeEmailIsSentTo('custom-admin-mail@test.org', $adminConditionEmail);
     }
 
-
     /**
      * @param FunctionalTester $I
      *
