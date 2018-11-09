@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Storage\Form;
 
-use FormBuilderBundle\Storage\Form\Listing\Dao;
 use Pimcore\Model;
+use FormBuilderBundle\Storage\Form\Listing\Dao as ListingDao;
 
 class Listing extends Model\Listing\AbstractListing
 {
@@ -53,7 +53,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return Dao
+     * @return ListingDao
      */
     public function getDao()
     {

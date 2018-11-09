@@ -8,5 +8,7 @@ modules:
             run_installer: true
         - \DachcomBundle\Test\Helper\Browser\PhpBrowser:
             depends: \DachcomBundle\Test\Helper\PimcoreCore
+        - \DachcomBundle\Test\Helper\PimcoreAdminJson:
+            depends: \DachcomBundle\Test\Helper\PimcoreCore
         - \DachcomBundle\Test\Helper\PimcoreBackend
         - \DachcomBundle\Test\Helper\PimcoreUser

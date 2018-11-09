@@ -73,7 +73,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @return null
+     * @return string|null
      */
     public function getMainLayout()
     {

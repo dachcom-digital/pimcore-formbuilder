@@ -204,6 +204,7 @@ class MailListener implements EventSubscriberInterface
             $afterSuccess = $mailTemplate->getProperty('mail_successfully_sent');
         }
 
+        $params = [];
         if ($afterSuccess instanceof Document\Snippet) {
             $params['document'] = $afterSuccess;
             try {
