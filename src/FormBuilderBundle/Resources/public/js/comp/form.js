@@ -732,7 +732,7 @@ Formbuilder.comp.form = Class.create({
      * Display info window with current form meta information
      */
     showFormMetaInfo: function () {
-        new Formbuilder.comp.extensions.formMetaData(this.formMeta);
+        new Formbuilder.comp.extensions.formMetaData(this.formId, this.formMeta);
     },
 
     /**

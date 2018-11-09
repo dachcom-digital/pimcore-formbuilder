@@ -42,6 +42,10 @@ form_builder.controller.admin.get_group_templates:
     path: /admin/formbuilder/settings/get-group-templates
     defaults: { _controller: FormBuilderBundle:Admin/Settings:getGroupTemplates }
 
+form_builder.controller.admin.get_form_dependencies:
+    path: /admin/formbuilder/settings/get-form-dependencies
+    defaults: { _controller: FormBuilderBundle:Admin/Settings:findFormDependencies }
+
 form_builder.controller.ajax.url_structure:
     path: /{_locale}/form-control/get-url-structure
     defaults: { _controller: FormBuilderBundle:Ajax:getAjaxUrlStructure }

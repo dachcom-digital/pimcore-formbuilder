@@ -7,6 +7,7 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -359,6 +360,35 @@ class SettingsController extends AdminController
         }
 
         return $this->json($templates);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function findFormDependenciesAction(Request $request)
+    {
+        $formId = (int)$request->get('formId');
+        $offset = (int)$request->get('start', 0);
+        $limit = (int)$request->get('limit', 25);
+
+        $dependencyLocator = $this->get(FormDependencyLocator::class);
+
+        $data = [];
+
+        try {
+            $data = $dependencyLocator->findDocumentDependencies($formId, $offset, $limit);
+        } catch (\Exception $e) {
+            // fail silently
+        }
+
+        return $this->json([
+            'documents' => $data['documents'],
+            'limit'     => $limit,
+            'start'     => 0,
+            'total'     => $data['total']
+        ]);
     }
 
     /**
