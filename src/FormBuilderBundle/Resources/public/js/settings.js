@@ -17,7 +17,7 @@ Formbuilder.settings = Class.create({
     },
 
     getTabPanel: function () {
-
+        var tabPanel;
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: 'form_builder_settings',
@@ -29,7 +29,7 @@ Formbuilder.settings = Class.create({
                 items: [this.getMainTree(), this.getEditPanel()]
             });
 
-            var tabPanel = Ext.getCmp('pimcore_panel_tabs');
+            tabPanel = Ext.getCmp('pimcore_panel_tabs');
             tabPanel.add(this.panel);
             tabPanel.setActiveItem('form_builder_settings');
 
@@ -47,6 +47,7 @@ Formbuilder.settings = Class.create({
     getMainTree: function () {
 
         var _self = this;
+
         if (!this.tree) {
 
             var store = Ext.create('Ext.data.TreeStore', {
@@ -153,6 +154,9 @@ Formbuilder.settings = Class.create({
      * @param record
      */
     onTreeNodeClick: function (tree, record) {
+        if (!record.isLeaf()) {
+            return;
+        }
         this.openFormConfig(record.data.id);
     },
 

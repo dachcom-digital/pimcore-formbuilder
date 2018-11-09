@@ -75,6 +75,7 @@ class Builder
         $data = [
             'id'     => $form->getId(),
             'name'   => $form->getName(),
+            'group'  => $form->getGroup(),
             'config' => $form->getConfig(),
             'meta'   => [
                 'creation_date'     => $form->getCreationDate(),

@@ -29,6 +29,7 @@ Formbuilder.comp.form = Class.create({
         this.parentPanel = parentPanel;
         this.formId = formData.id;
         this.formName = formData.name;
+        this.formGroup = formData.group;
         this.formMeta = formData.meta;
         this.formConfig = formData.config.length === 0 ? {} : formData.config;
         this.formConfigStore = formData.config_store;
@@ -636,6 +637,15 @@ Formbuilder.comp.form = Class.create({
                     value: this.formName,
                     allowBlank: false,
                     required: true
+                },
+                {
+                    xtype: 'textfield',
+                    fieldLabel: t('form_builder_form_group'),
+                    name: 'group',
+                    width: 300,
+                    value: this.formGroup,
+                    allowBlank: true,
+                    required: false
                 },
                 {
                     xtype: 'textfield',

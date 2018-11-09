@@ -153,6 +153,10 @@ class FormManager
     {
         $form->setName((string)$data['form_name']);
 
+        if (isset($data['form_group'])) {
+            $form->setGroup($data['form_group']);
+        }
+
         $date = date('Y-m-d H:i:s');
         if ($isUpdate === false) {
             $form->setCreationDate($date);

@@ -28,14 +28,40 @@ class SettingsController extends AdminController
         $mainItems = [];
         /** @var \FormBuilderBundle\Storage\Form $form */
         foreach ($forms as $form) {
-            $mainItems[] = [
-                'id'            => (int)$form->getId(),
-                'text'          => $form->getName(),
-                'icon'          => '',
-                'leaf'          => true,
-                'iconCls'       => 'form_builder_icon_root',
-                'allowChildren' => false
-            ];
+
+            if (!is_null($form->getGroup())) {
+                if (array_search($form->getGroup(), array_column($mainItems, 'id')) === false) {
+                    $mainItems[] = [
+                        'id'            => $form->getGroup(),
+                        'text'          => $form->getGroup(),
+                        'leaf'          => false,
+                        'expandable'    => true,
+                        'allowChildren' => true,
+                        'iconCls'       => 'pimcore_icon_folder',
+                        'children'      => []
+                    ];
+                }
+
+                $groupKey = array_search($form->getGroup(), array_column($mainItems, 'id'));
+
+                $mainItems[$groupKey]['children'][] = [
+                    'id'            => (int)$form->getId(),
+                    'text'          => $form->getName(),
+                    'icon'          => '',
+                    'leaf'          => true,
+                    'iconCls'       => 'form_builder_icon_root',
+                    'allowChildren' => false
+                ];
+            } else {
+                $mainItems[] = [
+                    'id'            => (int)$form->getId(),
+                    'text'          => $form->getName(),
+                    'icon'          => '',
+                    'leaf'          => true,
+                    'iconCls'       => 'form_builder_icon_root',
+                    'allowChildren' => false
+                ];
+            }
         }
 
         return $this->json($mainItems);
@@ -199,6 +225,8 @@ class SettingsController extends AdminController
         }
 
         $formName = (string)$formConfig['name'];
+        $formGroup = (string)$formConfig['group'];
+
         if ($formName !== $storedFormName) {
 
             try {
@@ -220,6 +248,7 @@ class SettingsController extends AdminController
 
         $data = [
             'form_name'              => $formName,
+            'form_group'             => $formGroup,
             'form_config'            => $formConfig,
             'form_fields'            => $backendFormBuilder->generateStoreFields($formFields),
             'form_conditional_logic' => $backendFormBuilder->generateConditionalLogicStoreFields($formConditionalLogic),

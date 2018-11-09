@@ -8,6 +8,7 @@ interface FormInterface
 {
     /**
      * @param int $id
+     *
      * @throws \Exception
      *
      * @return FormInterface
@@ -16,6 +17,7 @@ interface FormInterface
 
     /**
      * @param string $name
+     *
      * @throws \Exception
      *
      * @return FormInterface
@@ -24,6 +26,7 @@ interface FormInterface
 
     /**
      * @param int $id
+     *
      * @throws \Exception
      *
      * @return string
@@ -32,6 +35,7 @@ interface FormInterface
 
     /**
      * @param string $name
+     *
      * @throws \Exception
      *
      * @return int
@@ -57,6 +61,7 @@ interface FormInterface
 
     /**
      * @param string $newName
+     *
      * @throws \Exception
      */
     public function rename(string $newName);
@@ -80,6 +85,16 @@ interface FormInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * @param string $groupName
+     */
+    public function setGroup(string $groupName);
+
+    /**
+     * @return null|string
+     */
+    public function getGroup();
 
     /**
      * @param string $date

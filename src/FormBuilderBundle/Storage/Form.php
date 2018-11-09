@@ -39,6 +39,11 @@ class Form extends Model\AbstractModel implements FormInterface
     public $name;
 
     /**
+     * @var null|string
+     */
+    public $group;
+
+    /**
      * @var string
      */
     public $creationDate;
@@ -204,6 +209,22 @@ class Form extends Model\AbstractModel implements FormInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setGroup(string $groupName = null)
+    {
+        $this->group = !empty($groupName) && is_string($groupName) ? $groupName : null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     /**
