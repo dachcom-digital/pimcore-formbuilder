@@ -154,14 +154,12 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         /** @var Session $session */
         $session = $this->pimcoreCore->getContainer()->get('session');
 
-        $this->pimcoreCore->client->getCookieJar()->clear();
-
         $user = new \Pimcore\Bundle\AdminBundle\Security\User\User($pimcoreUser);
         $token = new UsernamePasswordToken($user, null, $firewallName, $pimcoreUser->getRoles());
         $this->pimcoreCore->getContainer()->get('security.token_storage')->setToken($token);
 
-        \Pimcore\Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
-            \Pimcore\Tool\Session::regenerateId();
+        \Pimcore\Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser, $session) {
+            $session->setId(\Pimcore\Tool\Session::getSessionId());
             $adminSession->set('user', $pimcoreUser);
             $adminSession->set('csrfToken', self::PIMCORE_ADMIN_CSRF_TOKEN_NAME);
         });
@@ -174,6 +172,7 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
             $this->sessionSnapShot = $cookie;
         }
 
+        $this->pimcoreCore->client->getCookieJar()->clear();
         $this->pimcoreCore->client->getCookieJar()->set($cookie);
 
     }

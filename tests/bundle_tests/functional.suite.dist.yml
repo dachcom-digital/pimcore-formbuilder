@@ -10,5 +10,7 @@ modules:
             depends: \DachcomBundle\Test\Helper\PimcoreCore
         - \DachcomBundle\Test\Helper\PimcoreAdminJson:
             depends: \DachcomBundle\Test\Helper\PimcoreCore
+        - \DachcomBundle\Test\Helper\PimcoreAdminCsv:
+            depends: \DachcomBundle\Test\Helper\PimcoreCore
         - \DachcomBundle\Test\Helper\PimcoreBackend
         - \DachcomBundle\Test\Helper\PimcoreUser
