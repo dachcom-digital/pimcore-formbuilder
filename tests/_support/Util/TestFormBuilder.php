@@ -5,6 +5,11 @@ namespace DachcomBundle\Test\Util;
 class TestFormBuilder
 {
     /**
+     * @var string|null
+     */
+    protected $group = null;
+
+    /**
      * @var string
      */
     protected $action = '/';
@@ -56,6 +61,18 @@ class TestFormBuilder
             'form_conditional_logic' => []
         ];
 
+    }
+
+    /**
+     * @param string $group
+     *
+     * @return $this
+     */
+    public function setGroup(string $group)
+    {
+        $this->group = $group;
+
+        return $this;
     }
 
     /**
@@ -504,6 +521,8 @@ class TestFormBuilder
     public function build()
     {
         $config = $this->formConfig;
+
+        $config['form_group'] = $this->group;
         $config['form_config']['action'] = $this->action;
         $config['form_config']['method'] = $this->method;
         $config['form_config']['enctype'] = $this->enctype;

@@ -43,10 +43,13 @@ class Install extends MigrationInstaller
     {
         $markVersionsAsMigrated = true;
 
-        // legacy: we switched from config to migration
-        // if config.yml exists, this instance needs to migrate
-        // so every migration needs to run.
-        // fresh: skip all versions since they are not required anymore (fresh installation does not require any version migrations)
+        // legacy:
+        //   we switched from config to migration
+        //   if config.yml exists, this instance needs to migrate
+        //   so every migration needs to run.
+        // fresh:
+        //   skip all versions since they are not required anymore
+        //   (fresh installation does not require any version migrations)
         $fileSystem = new Filesystem();
         if ($fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH . '/config.yml')) {
             $markVersionsAsMigrated = false;

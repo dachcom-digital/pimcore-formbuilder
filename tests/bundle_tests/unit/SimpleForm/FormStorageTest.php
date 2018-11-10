@@ -40,6 +40,46 @@ class FormStorageTest extends DachcomBundleTestCase
      * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
+    public function testFormNameConfig()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $this->assertEquals('TEST_FORM', $form->getName());
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormGroupEmptyConfig()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $form = $manager->save($testFormBuilder->build());
+
+        $this->assertEquals(null, $form->getGroup());
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
+    public function testFormGroupPopulatedConfig()
+    {
+        $manager = $this->getContainer()->get(FormManager::class);
+        $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
+        $testFormBuilder->setGroup('group1');
+        $form = $manager->save($testFormBuilder->build());
+
+        $this->assertEquals('group1', $form->getGroup());
+    }
+
+    /**
+     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
+     */
     public function testFormAttribute()
     {
         $manager = $this->getContainer()->get(FormManager::class);
@@ -80,7 +120,6 @@ class FormStorageTest extends DachcomBundleTestCase
         $attribute2Index = array_search('maxlength', array_column($formConfig['attributes'], 'option'));
         $this->assertNotFalse($attribute2Index);
         $this->assertEquals(30, $formConfig['attributes'][$attribute2Index]['value']);
-
     }
 
     /**

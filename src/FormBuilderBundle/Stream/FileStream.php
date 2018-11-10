@@ -243,7 +243,10 @@ class FileStream
         $pathInfo = pathinfo($this->getName());
         $ext = isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
 
-        if (is_array($this->allowedExtensions) && !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))) {
+        if (is_array($this->allowedExtensions) &&
+            count($this->allowedExtensions) > 0 &&
+            !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))
+        ) {
             $these = implode(', ', $this->allowedExtensions);
             return ['error' => 'File has an invalid extension, it should be one of ' . $these . '.'];
         }
