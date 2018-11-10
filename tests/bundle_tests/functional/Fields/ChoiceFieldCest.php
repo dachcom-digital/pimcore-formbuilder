@@ -21,7 +21,7 @@ class ChoiceFieldCest extends AbstractFieldCest
             'expanded'    => false,
             'multiple'    => false,
             'placeholder' => false,
-            'label'       => 'Country Selection',
+            'label'       => 'Choice Selection',
             'choices'     => [
                 'Choice A' => 'choice_a',
                 'Choice B' => 'choice_b'
@@ -31,7 +31,7 @@ class ChoiceFieldCest extends AbstractFieldCest
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
         $I->seeElement('select#formbuilder_1_choice_field');
-        $I->see('Country Selection', 'label');
+        $I->see('Choice Selection', 'label');
     }
 
     /**
