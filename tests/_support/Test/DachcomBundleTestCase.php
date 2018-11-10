@@ -5,6 +5,7 @@ namespace DachcomBundle\Test\Test;
 use DachcomBundle\Test\Helper\PimcoreCore;
 use DachcomBundle\Test\Util\FormHelper;
 use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Util\TestHelper;
 
 abstract class DachcomBundleTestCase extends TestCase
 {
@@ -13,8 +14,9 @@ abstract class DachcomBundleTestCase extends TestCase
      */
     protected function _after()
     {
-        FormHelper::removeAllForms();
         parent::_after();
+        FormHelper::removeAllForms();
+        TestHelper::cleanUp();
     }
 
     /**
