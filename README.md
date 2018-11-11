@@ -48,6 +48,7 @@ Does actually the same as the update command and preferred in CI-Workflow:
 - Execute: `$ bin/console pimcore:migrations:migrate -b FormBuilderBundle`
 
 ## Usage
+![](http://g.recordit.co/39nEX5OhQK.gif)
 1. Go to `Settings` => `Form Builder Settings` and create your form.
 2. Open a document and place the form area brick like any other bricks via drag and drop. 
 3. Use the edit button at the right top corner to configure your form. 
