@@ -125,7 +125,6 @@ class PackageStream
             'filename' => $zipFileName
         ];
 
-        $asset = null;
         try {
             $asset = Asset::create($formDataFolder->getId(), $assetData, false);
             $asset->save();

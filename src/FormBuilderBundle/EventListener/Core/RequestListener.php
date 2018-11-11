@@ -119,7 +119,7 @@ class RequestListener implements EventSubscriberInterface
                 if ($request->isXmlHttpRequest()) {
                     $this->handleAjaxSuccessResponse($event, $submissionEvent, $formId);
                 } else {
-                    $this->handleDefaultSuccessResponse($event, $submissionEvent, $formId);
+                    $this->handleDefaultSuccessResponse($event, $submissionEvent);
                 }
             } else {
 
@@ -134,9 +134,8 @@ class RequestListener implements EventSubscriberInterface
     /**
      * @param                      $event
      * @param SubmissionEvent|null $submissionEvent
-     * @param                      $formId
      */
-    protected function handleDefaultSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, $formId)
+    protected function handleDefaultSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent)
     {
         $uri = '?send=true';
         if ($submissionEvent->hasRedirectUri()) {

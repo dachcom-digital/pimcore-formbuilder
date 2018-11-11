@@ -220,7 +220,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 if ($initial === false && !$field->isUpdated()) {
                     continue;
                 }
-                $this->addDynamicField($form, $field, $data);
+                $this->addDynamicField($form, $field);
             } else {
                 // since we apply conditional logic here, we need to add fields multiple times (post-set-data and pre-submit). :(
                 $this->addFormBuilderField($form, $field, $data);
@@ -334,9 +334,8 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * @param FormInterface             $form
      * @param FormFieldDynamicInterface $field
-     * @param mixed                     $formData
      */
-    private function addDynamicField(FormInterface $form, FormFieldDynamicInterface $field, $formData = null)
+    private function addDynamicField(FormInterface $form, FormFieldDynamicInterface $field)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();

@@ -89,9 +89,7 @@ class MailListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $form = $event->getForm();
         $formId = $form->getData()->getId();
-
         $formConfiguration = $event->getFormConfiguration();
-        $emailConfiguration = null;
 
         try {
 

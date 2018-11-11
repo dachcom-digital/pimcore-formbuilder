@@ -176,13 +176,13 @@ class Builder
             $beConfig = $formTypeConfiguration['backend'];
             $fieldStructureElement = [
                 'type'                 => $formType,
-                'label'                => $this->getFormTypeLabel($formType, $beConfig),
-                'icon_class'           => $this->getFormTypeIcon($formType, $beConfig),
-                'constraints'          => $this->getFormTypeAllowedConstraints($formType, $beConfig),
-                'configuration_layout' => $this->getFormTypeBackendConfiguration($formType, $beConfig)
+                'label'                => $this->getFormTypeLabel($beConfig),
+                'icon_class'           => $this->getFormTypeIcon($beConfig),
+                'constraints'          => $this->getFormTypeAllowedConstraints($beConfig),
+                'configuration_layout' => $this->getFormTypeBackendConfiguration($beConfig, $formType)
             ];
 
-            $groupIndex = array_search($this->getFormTypeGroup($formType, $beConfig), array_column($fieldStructure, 'id'));
+            $groupIndex = array_search($this->getFormTypeGroup($beConfig), array_column($fieldStructure, 'id'));
 
             if ($groupIndex !== false) {
                 $fieldStructure[$groupIndex]['fields'][] = $fieldStructureElement;
@@ -196,7 +196,7 @@ class Builder
     }
 
     /**
-     * @param $conditionalData
+     * @param array $conditionalData
      *
      * @return array
      * @throws \Exception
@@ -284,12 +284,12 @@ class Builder
     }
 
     /**
-     * @param $formType
-     * @param $formTypeBackendConfig
+     * @param array $formTypeBackendConfig
+     * @param string $formType
      *
      * @return array
      */
-    private function getFormTypeBackendConfiguration($formType, $formTypeBackendConfig)
+    private function getFormTypeBackendConfiguration($formTypeBackendConfig, $formType)
     {
         $fieldConfigFields = $this->getMergedFormTypeConfig($formType, $formTypeBackendConfig);
 
@@ -344,8 +344,8 @@ class Builder
     }
 
     /**
-     * @param $formType
-     * @param $formTypeBackendConfig
+     * @param string $formType
+     * @param array $formTypeBackendConfig
      *
      * @return array
      */
@@ -365,34 +365,41 @@ class Builder
     }
 
     /**
-     * @param $formType
-     * @param $formTypeBackendConfig
+     * @param array $formTypeBackendConfig
      *
      * @return mixed
      */
-    private function getFormTypeGroup($formType, $formTypeBackendConfig)
+    private function getFormTypeGroup(array $formTypeBackendConfig)
     {
         return $formTypeBackendConfig['form_type_group'];
     }
 
     /**
-     * @param $formType
      * @param $formTypeBackendConfig
      *
      * @return mixed
      */
-    private function getFormTypeIcon($formType, $formTypeBackendConfig)
+    private function getFormTypeIcon(array $formTypeBackendConfig)
     {
         return $formTypeBackendConfig['icon_class'];
     }
 
     /**
-     * @param $formType
-     * @param $formTypeBackendConfig
+     * @param array $formTypeBackendConfig
+     *
+     * @return string
+     */
+    private function getFormTypeLabel(array $formTypeBackendConfig)
+    {
+        return $this->translate($formTypeBackendConfig['label']);
+    }
+
+    /**
+     * @param array $formTypeBackendConfig
      *
      * @return mixed
      */
-    private function getFormTypeAllowedConstraints($formType, $formTypeBackendConfig)
+    private function getFormTypeAllowedConstraints($formTypeBackendConfig)
     {
         $constraints = [];
         foreach ($this->configuration->getAvailableConstraints() as $constraintId => $constraintData) {
@@ -423,17 +430,6 @@ class Builder
         }
 
         return [];
-    }
-
-    /**
-     * @param $formType
-     * @param $formTypeBackendConfig
-     *
-     * @return string
-     */
-    private function getFormTypeLabel($formType, $formTypeBackendConfig)
-    {
-        return $this->translate($formTypeBackendConfig['label']);
     }
 
     /**

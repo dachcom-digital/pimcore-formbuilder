@@ -16,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExportController extends AdminController
 {
+    const NO_DATA_MESSAGE = '';
+
     /**
      * @var FormManager
      */
@@ -92,17 +94,20 @@ class ExportController extends AdminController
         $rows = [];
 
         $formEntity = $this->formManager->getById($formId);
+        if (!$formEntity instanceof FormInterface) {
+            return self::NO_DATA_MESSAGE;
+        }
 
         /** @var Email\Log $log */
         foreach ($mailData as $log) {
 
-            $mailDocument = null;
             $mailPath = null;
             $mailParams = $this->extractMailParams($log, $formEntity, $mailHeader);
 
             try {
                 $mailDocument = \Pimcore\Model\Document\Email::getById($log->getDocumentId());
             } catch (\Exception $e) {
+                $mailDocument = null;
             }
 
             if ($mailDocument instanceof \Pimcore\Model\Document\Email) {
@@ -140,7 +145,7 @@ class ExportController extends AdminController
         }
 
         if (empty($rows)) {
-            return 'NO_CSV_DATA_FOUND';
+            return self::NO_DATA_MESSAGE;
         }
 
         $header = array_keys($rows[0]);
@@ -256,6 +261,9 @@ class ExportController extends AdminController
     private function generateCsvStructure($header, $data)
     {
         $handle = fopen('php://temp', 'r+');
+        if (!is_resource($handle)) {
+            return '';
+        }
 
         fputcsv($handle, $header, ',', '""');
 
@@ -275,8 +283,8 @@ class ExportController extends AdminController
     }
 
     /**
-     * @param      $value
-     * @param null $fieldType
+     * @param string $value
+     * @param string $fieldType
      *
      * @return mixed
      */
@@ -284,7 +292,7 @@ class ExportController extends AdminController
     {
         if (in_array($fieldType, ['choice', 'dynamic_choice', 'country'])) {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = join(', ', array_filter($value));
+            $value = is_array($value) ? join(', ', array_filter($value)) : $value;
         } elseif ($fieldType === 'textarea') {
             $value = preg_split('/(<br>|<br \/>)/', $value);
             $value = join("\n", array_filter($value));

@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 class AjaxController extends FrontendController
 {
     /**
-     * @param Request $request
+     * @throws \RuntimeException
      */
-    public function parseAction(Request $request)
+    public function parseAction()
     {
         throw new \RuntimeException('form parse action gets handled by kernel events.');
     }
@@ -108,11 +108,9 @@ class AjaxController extends FrontendController
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getAjaxUrlStructureAction(Request $request)
+    public function getAjaxUrlStructureAction()
     {
         $router = $this->container->get('router');
 
