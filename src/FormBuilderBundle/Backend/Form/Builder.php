@@ -349,14 +349,13 @@ class Builder
      *
      * @return array
      */
-    private function getMergedFormTypeConfig($formType, $formTypeBackendConfig)
+    private function getMergedFormTypeConfig($formType, $formTypeBackendConfig = null)
     {
-        $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
-
         if (is_null($formTypeBackendConfig)) {
             throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
         }
 
+        $baseConfig = $this->configuration->getBackendConfig('backend_base_field_type_config');
         $tabs = array_merge($baseConfig['tabs'], $formTypeBackendConfig['tabs']);
         $displayGroups = array_merge($baseConfig['display_groups'], $formTypeBackendConfig['display_groups']);
         $fields = array_merge($baseConfig['fields'], $formTypeBackendConfig['fields']);

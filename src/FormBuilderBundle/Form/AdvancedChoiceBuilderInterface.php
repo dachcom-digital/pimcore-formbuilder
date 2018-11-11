@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Form;
 interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
 {
     /**
-     * @param null $element
+     * @param $element
      *
      * @return callable|string
      */
