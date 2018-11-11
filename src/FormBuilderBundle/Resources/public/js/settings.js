@@ -65,12 +65,10 @@ Formbuilder.settings = Class.create({
                             }
                         }, this);
 
-                        //new form added, mark es selected!
+                        //new form added, mark as selected!
                         if (opt.formId !== undefined) {
-
                             var record = _self.tree.getRootNode().findChild('id', opt.formId, true);
                             _self.tree.getSelectionModel().select(record);
-
                         }
                     }
                 }
@@ -161,16 +159,14 @@ Formbuilder.settings = Class.create({
     },
 
     /**
-     *
      * @param id
-     * @returns {boolean}
      */
     openFormConfig: function (id) {
 
         var formPanelKey = 'form_' + id;
 
         if (this.loading === true) {
-            return false;
+            return;
         }
 
         //its already loaded
@@ -225,16 +221,18 @@ Formbuilder.settings = Class.create({
      * @param e
      */
     onTreeNodeContextMenu: function (tree, record, item, index, e) {
-
         e.stopEvent();
         tree.select();
+
+        if (!record.isLeaf()) {
+            return;
+        }
 
         var menu = new Ext.menu.Menu();
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: 'pimcore_icon_delete',
             handler: this.deleteMain.bind(this, tree, record)
-
         }));
 
         menu.showAt(e.pageX, e.pageY);
@@ -310,6 +308,10 @@ Formbuilder.settings = Class.create({
                         id: record.id
                     }
                 });
+
+                if (this.panels['form_' + record.id]) {
+                    this.panels['form_' + record.id].remove();
+                }
 
                 this.getEditPanel().remove(record.id);
                 record.remove();

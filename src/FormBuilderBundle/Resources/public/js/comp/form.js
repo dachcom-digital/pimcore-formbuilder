@@ -45,6 +45,10 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    remove: function() {
+        this.panel.destroy();
+    },
+
     addLayout: function () {
 
         this.tree = Ext.create('Ext.tree.Panel', {
