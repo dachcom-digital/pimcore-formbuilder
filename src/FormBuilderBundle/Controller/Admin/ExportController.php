@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExportController extends AdminController
 {
-    const NO_DATA_MESSAGE = '';
+    const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
 
     /**
      * @var FormManager
