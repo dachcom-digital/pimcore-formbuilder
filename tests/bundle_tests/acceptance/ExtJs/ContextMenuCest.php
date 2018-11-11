@@ -103,6 +103,80 @@ class ContextMenuCest extends AbstractExtJs
         $I->dontSee('Add validation');
         $I->see('Delete');
         $I->see('Copy');
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testExtJsFormContextMenuCopyPasteField(AcceptanceTester $I)
+    {
+        $this->amOnFormBuilderBackendBuilder($I);
+
+        $formId = $this->seeExtJsForm($I);
+        $I->clickWithRightButton($this->getRootNodeOfForm($formId));
+
+        $I->waitForText('Add form element', 10);
+
+        $I->click('Add form element');
+        $I->waitForText('Text Fields', 10);
+
+        $I->click('Text Fields');
+        $I->waitForText('Text Type', 10);
+
+        $I->click('Text Type');
+        $I->waitForElementVisible('input[name="display_name"]', 10);
+        $I->fillField('input[name="display_name"]', 'field_name_one');
+
+        $I->clickWithRightButton('//span[text()="field_name_one"]');
+        $I->waitForText('Copy', 10);
+        $I->click('Copy');
+
+        $I->clickWithRightButton($this->getRootNodeOfForm($formId));
+        $I->waitForText('Paste', 10);
+        $I->click('Paste');
+
+        $I->see('field_name_one field_name_one', $this->getFormElementsTreeSelector($formId));
+
+        $I->clickWithRightButton(
+            sprintf('%s table:last-child', $this->getFormElementsTreeSelector($formId))
+        );
+
+        $I->waitForText('Copy', 10);
+        $I->waitForText('Add validation', 10);
+        $I->waitForText('Delete', 10);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testExtJsFormContextMenuDeleteField(AcceptanceTester $I)
+    {
+        $this->amOnFormBuilderBackendBuilder($I);
+
+        $formId = $this->seeExtJsForm($I);
+        $I->clickWithRightButton($this->getRootNodeOfForm($formId));
+
+        $I->waitForText('Add form element', 10);
+
+        $I->click('Add form element');
+        $I->waitForText('Text Fields', 10);
+
+        $I->click('Text Fields');
+        $I->waitForText('Text Type', 10);
+
+        $I->click('Text Type');
+        $I->waitForElementVisible('input[name="display_name"]', 10);
+        $I->fillField('input[name="display_name"]', 'field_name_one');
+
+        $I->clickWithRightButton('//span[text()="field_name_one"]');
+        $I->waitForText('Delete', 10);
+        $I->click('Delete');
+
+        $I->waitForElementNotVisible('//span[text()="field_name_one"]', 10);
 
     }
 }
