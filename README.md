@@ -7,6 +7,8 @@ Pimcore 5.x FormBuilder.
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/dachcom-digital/pimcore-formbuilder.svg?style=flat-square)](https://www.scrutinizer-ci.com/g/dachcom-digital/pimcore-formbuilder)
 [![Travis](https://img.shields.io/travis/dachcom-digital/pimcore-formbuilder/master.svg?style=flat-square)](https://travis-ci.org/dachcom-digital/pimcore-formbuilder)
 
+<img src="https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png">
+
 #### Requirements
 * Pimcore 5.1+
 
@@ -46,10 +48,11 @@ Does actually the same as the update command and preferred in CI-Workflow:
 - Execute: `$ bin/console pimcore:migrations:migrate -b FormBuilderBundle`
 
 ## Usage
-Just open a document and place the form area brick like any other bricks via drag and drop. 
-Use the edit button at the right top corner to configure your form. 
-Also make sure you've included the [flash template](docs/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
+1. Go to `Settings` => `Form Builder Settings` and create your form.
+2. Open a document and place the form area brick like any other bricks via drag and drop. 
+3. Use the edit button at the right top corner to configure your form. 
 
+Also make sure you've included the [flash template](docs/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
 It's also possible to render a form via Twig or even within a controller method. [Click here](docs/0_Usage.md) to learn more about the form rendering types.
 
 ## Overriding Templates
@@ -57,20 +60,22 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 
 ## Further Information
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
-- [Export Forms](docs/1_ExportForms.md)
+- [Backend Administration of Forms](docs/01_BackendUsage.md)
+- [Export Forms](docs/02_ExportForms.md)
 - [Mail Template Configuration](docs/10_MailTemplates.md)
-- [Success Message](docs/11_SuccessMessage.md)
+- [Success Messages](docs/11_SuccessMessage.md)
 - [Dynamic Fields](docs/20_AjaxForms.md)
 - [Available Form Types](docs/30_FormTypes.md)
   - [Dynamic Choice Type](docs/82_DynamicChoice.md)
   - [Dynamic Multi File Type](docs/80_FileUpload.md)
 - [Create Custom Form Type](docs/40_CustomFormType.md)
 - [Custom Form Type Backend Layout](docs/50_CustomFormTypeBackendLayout.md)
-- [Using Presets](docs/60_Presets.md)
+- [Form Presets](docs/60_Presets.md)
 - [Events](docs/70_Events.md)
 - [Custom Fields with Events](docs/71_CustomFields.md)
 - [Mastering File Uploads](docs/80_FileUpload.md)
 - [Conditional Logic](docs/81_ConditionalLogic.md)
+- [Form & Field Attributes](docs/83_Attributes.md)
 - [Frontend Tips](docs/90_FrontendTips.md)
 - [FormBuilder Javascript Plugins](docs/91_Javascript.md)
 - [Configuration Flags](docs/100_ConfigurationFlags.md)

@@ -8,7 +8,7 @@ Before we start, check out the available options. Those are needed for the twig 
 | Name | Description |
 |------|-------------|
 | form_id | Can you guess it? It's the Form Id, right. |
-| form_template | Form Template, for example: `bootstrap_3_layout.html.twig` |
+| form_template | Form Template, for example: `bootstrap_4_layout.html.twig` |
 | main_layout | This option is only needed if you render a form via a controller. By default, FormBuilder extends a empty default layout. If you want do extend your custom layout, define it: `layout.html.twig` |
 | send_copy | If you want to submit a copy, set this to `true` |
 | mail_template | The Mail Template or Mail Template Id |
@@ -27,7 +27,7 @@ Create a Form using the Twig Extension.
     <h2>Static Form via Twig</h2>
     {% set config = {
         'form_id': 3,
-        'form_template': 'bootstrap_3_layout.html.twig',
+        'form_template': 'bootstrap_4_layout.html.twig',
         'mail_template': 178,
         'copy_mail_template': 179,
         'send_copy': true
@@ -54,12 +54,12 @@ class DefaultController extends AbstractController
     {
         $options = [
             'form_id'             => 3,
-            'form_template'       => 'bootstrap_3_layout.html.twig',
+            'form_template'       => 'bootstrap_4_layout.html.twig',
             'main_layout'         => 'layout_form.html.twig', //app/Resources/views/layout.html.twig
-            'send_copy'           => FALSE,
+            'send_copy'           => false,
             'mail_template'       => 178,
-            'copy_mail_template'  => NULL,
-            'preset'              => NULL
+            'copy_mail_template'  => null,
+            'preset'              => null
         ];
 
         $optionBuilder = new FormOptionsResolver();
