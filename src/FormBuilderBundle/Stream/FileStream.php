@@ -73,24 +73,23 @@ class FileStream
     }
 
     /**
-     * Get the original filename
+     * @return string
      */
     public function getName()
     {
         $masterRequest = $this->requestStack->getMasterRequest();
 
         if ($masterRequest->request->has('qqfilename')) {
-            return $masterRequest->request->get('qqfilename');
+            return $masterRequest->request->get('qqfilename', '');
         }
 
         if ($masterRequest->files->has($this->inputName)) {
             /** @var UploadedFile $file */
             $file = $masterRequest->files->get($this->inputName);
-
             return $file->getFilename();
         }
 
-        return false;
+        return '';
     }
 
     /**
@@ -170,6 +169,10 @@ class FileStream
                     }
                 }
             }
+
+            // Success
+            fclose($destinationResource);
+
         } else {
             $chunkSuccess = false;
         }
@@ -187,9 +190,6 @@ class FileStream
                 'preventRetry' => true
             ];
         }
-
-        // Success
-        fclose($destinationResource);
 
         $this->cleanUpChunkProcess($tmpDirs);
 
