@@ -79,16 +79,20 @@ class FileLocator
     }
 
     /**
-     * return content of $chunkDir as Finder-Object
+     * return content of $path as Finder-Object
      *
-     * @param string $chunkDir
+     * @param string $path
      *
-     * @return Finder
+     * @return null|Finder
      */
-    public function getFilesFromChunkFolder(string $chunkDir)
+    public function getFilesFromFolder(string $path)
     {
+        if (!$this->filesystem->exists($path)) {
+            return null;
+        }
+
         $finder = new Finder();
-        return $finder->files()->in($chunkDir);
+        return $finder->files()->in($path);
     }
 
     /**

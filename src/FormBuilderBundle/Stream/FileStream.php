@@ -13,8 +13,7 @@
 namespace FormBuilderBundle\Stream;
 
 use FormBuilderBundle\Tool\FileLocator;
-use Pimcore\Logger;
-use Pimcore\Model\Asset;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -133,40 +132,69 @@ class FileStream
      */
     public function combineChunks()
     {
+        $tmpDirs = [];
+        $chunkSuccess = true;
         $masterRequest = $this->requestStack->getMasterRequest();
         $uuid = $masterRequest->request->get('qquuid');
-
         $name = preg_replace('/[^a-zA-Z0-9]+/', '', $this->getName());
 
-        $targetFolder = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
+        $targetPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
+        $destinationFolderPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
+        $destinationPath = join(DIRECTORY_SEPARATOR, [$destinationFolderPath, $name]);
+
         $totalParts = $masterRequest->request->has('qqtotalparts') ? (int)$masterRequest->request->get('qqtotalparts') : 1;
-        $targetPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid, $name]);
         $this->uploadName = $name;
 
-        if (!file_exists($targetPath)) {
-            mkdir(dirname($targetPath), 0777, true);
+        if (!file_exists($destinationPath)) {
+            mkdir(dirname($destinationPath), 0777, true);
         }
 
-        $target = fopen($targetPath, 'wb');
-        for ($i = 0; $i < $totalParts; $i++) {
-            foreach ($this->fileLocator->getFilesFromChunkFolder($targetFolder . DIRECTORY_SEPARATOR . $i) as $chunkfile) {
-                $chunk = fopen($chunkfile->getPathname(), 'rb');
-                stream_copy_to_stream($chunk, $target);
-                fclose($chunk);
+        $destinationResource = fopen($destinationPath, 'wb');
+        if (is_resource($destinationResource)) {
+            for ($i = 0; $i < $totalParts; $i++) {
+                $chunkPath = $targetPath . DIRECTORY_SEPARATOR . $i;
+                $chunkFiles = $this->fileLocator->getFilesFromFolder($chunkPath);
+                if ($chunkFiles === null) {
+                    $chunkSuccess = false;
+                } else {
+                    $tmpDirs[] = $chunkPath;
+                    foreach ($chunkFiles as $chunkFile) {
+                        $chunkPathResource = fopen($chunkFile->getPathname(), 'rb');
+                        if (!is_resource($chunkPathResource)) {
+                            $chunkSuccess = false;
+                            continue;
+                        }
+
+                        stream_copy_to_stream($chunkPathResource, $destinationResource);
+                        fclose($chunkPathResource);
+                    }
+                }
             }
+        } else {
+            $chunkSuccess = false;
+        }
+
+        $tmpDirs[] = $targetPath;
+
+        if ($chunkSuccess === false) {
+            $tmpDirs[] = $destinationPath;
+            $tmpDirs[] = $destinationFolderPath;
+            $this->cleanUpChunkProcess($tmpDirs);
+            return [
+                'statusCode'   => 413,
+                'success'      => false,
+                'uuid'         => $uuid,
+                'preventRetry' => true
+            ];
         }
 
         // Success
-        fclose($target);
-        for ($i = 0; $i < $totalParts; $i++) {
-            $this->fileLocator->removeDir($targetFolder . DIRECTORY_SEPARATOR . $i);
-        }
+        fclose($destinationResource);
 
-        rmdir($targetFolder);
+        $this->cleanUpChunkProcess($tmpDirs);
 
-        if (!is_null($this->sizeLimit) && filesize($targetPath) > $this->sizeLimit) {
-            $this->fileLocator->removeDir($targetPath);
-
+        if (!is_null($this->sizeLimit)
+            && filesize($destinationPath) > $this->sizeLimit) {
             return [
                 'statusCode'   => 413,
                 'success'      => false,
@@ -193,19 +221,19 @@ class FileStream
         // exceed size allowed by server config
         if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit || $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
             $neededRequestSize = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
-            return ['error' => 'Server error. Increase post_max_size and upload_max_filesize to ' . $neededRequestSize];
+            return ['success' => false, 'error' => 'Server error. Increase post_max_size and upload_max_filesize to ' . $neededRequestSize];
         }
 
         if ($this->isInaccessible($this->fileLocator->getFilesFolder())) {
-            return ['error' => 'Server error. Upload directory isn\'t writable'];
+            return ['success' => false, 'error' => 'Server error. Upload directory isn\'t writable'];
         }
 
         $type = $masterRequest->headers->get('Content-Type');
 
         if (empty($type)) {
-            return ['error' => 'No files were uploaded.'];
+            return ['success' => false, 'error' => 'No files were uploaded.'];
         } elseif (strpos(strtolower($type), 'multipart/') !== 0) {
-            return ['error' => 'Server error. Not a multipart request. Please set forceMultipart to default value (true).'];
+            return ['success' => false, 'error' => 'Server error. Not a multipart request. Please set forceMultipart to default value (true).'];
         }
 
         // Get size and name
@@ -222,21 +250,21 @@ class FileStream
 
         // check file error
         if ($file->getError() !== UPLOAD_ERR_OK) {
-            return ['error' => 'Upload Error #' . $file->getErrorMessage()];
+            return ['success' => false, 'error' => 'Upload Error #' . $file->getErrorMessage()];
         }
 
         // Validate name
         if ($name === null || $name === '') {
-            return ['error' => 'File name empty.'];
+            return ['success' => false, 'error' => 'File name empty.'];
         }
 
         // Validate file size
         if ($size == 0) {
-            return ['error' => 'File is empty.'];
+            return ['success' => false, 'error' => 'File is empty.'];
         }
 
         if (!is_null($this->sizeLimit) && $size > $this->sizeLimit) {
-            return ['error' => 'File is too large.', 'preventRetry' => true];
+            return ['success' => false, 'error' => 'File is too large.', 'preventRetry' => true];
         }
 
         // Validate file extension
@@ -248,7 +276,7 @@ class FileStream
             !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))
         ) {
             $these = implode(', ', $this->allowedExtensions);
-            return ['error' => 'File has an invalid extension, it should be one of ' . $these . '.'];
+            return ['success' => false, 'error' => 'File has an invalid extension, it should be one of ' . $these . '.'];
         }
 
         // Save a chunk
@@ -261,22 +289,34 @@ class FileStream
             $partIndex = (int)$masterRequest->request->get('qqpartindex');
 
             if (!is_writable($chunksFolder) && !is_executable($this->fileLocator->getFilesFolder())) {
-                return ['error' => 'Server error. Chunks directory isn\'t writable or executable.'];
+                return ['success' => false, 'error' => 'Server error. Chunks directory isn\'t writable or executable.'];
             }
 
-            $targetFolder = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
-            if (!is_dir($targetFolder)) {
-                mkdir($targetFolder, 0777, true);
+            $targetPath = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
+            if (!is_dir($targetPath)) {
+                mkdir($targetPath, 0777, true);
             }
 
-            $target = $targetFolder . '/' . $partIndex;
+            $target = $targetPath . '/' . $partIndex;
             /** @var UploadedFile $file */
             $file = $masterRequest->files->get($this->inputName);
-            $success = $file->move($target);
+
+            try {
+                $file->move($target);
+            } catch (FileException $e) {
+                return [
+                    'success' => false,
+                    'error'   => $e->getMessage(),
+                    'uuid'    => $uuid
+                ];
+            }
+
             return [
-                'success' => $success,
+                'success' => true,
+                'error'   => null,
                 'uuid'    => $uuid
             ];
+
         } else {
             # non-chunked upload
             $target = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
@@ -287,15 +327,27 @@ class FileStream
                     mkdir($target, 0777, true);
                 }
 
-                if ($file->move($target)) {
+                try {
+                    $file->move($target);
+                } catch (FileException $e) {
                     return [
-                        'success' => true,
+                        'success' => false,
+                        'error'   => $e->getMessage(),
                         'uuid'    => $uuid
                     ];
                 }
+
+                return [
+                    'success' => true,
+                    'uuid'    => $uuid
+                ];
+
             }
 
-            return ['error' => 'Could not save uploaded file. The upload was cancelled, or server error encountered'];
+            return [
+                'success' => false,
+                'error' => 'Could not save uploaded file. The upload was cancelled, or server error encountered'
+            ];
         }
     }
 
@@ -310,8 +362,8 @@ class FileStream
             return ['error' => 'Server error. Upload directory isn\'t writable' . ((!$this->isWindows()) ? ' or executable.' : '.')];
         }
 
-        $targetFolder = $this->fileLocator->getFilesFolder();
-        $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $uuid]);
+        $targetPath = $this->fileLocator->getFilesFolder();
+        $target = join(DIRECTORY_SEPARATOR, [$targetPath, $uuid]);
 
         if (is_dir($target)) {
             $this->fileLocator->removeDir($target);
@@ -385,5 +437,15 @@ class FileStream
         $isWin = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
 
         return $isWin;
+    }
+
+    /**
+     * @param array $foldersToDelete
+     */
+    protected function cleanUpChunkProcess(array $foldersToDelete)
+    {
+        foreach ($foldersToDelete as $folder) {
+            $this->fileLocator->removeDir($folder);
+        }
     }
 }
