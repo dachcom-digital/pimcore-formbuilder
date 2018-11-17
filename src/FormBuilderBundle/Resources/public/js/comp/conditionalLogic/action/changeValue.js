@@ -36,7 +36,7 @@ Formbuilder.comp.conditionalLogic.action.changeValue = Class.create(Formbuilder.
                     triggerAction: 'all',
                     anchor: '100%',
                     value: this.data ? this.checkFieldAvailability(this.data.fields, fieldStore, 'name') : null,
-                    allowBlank: true,
+                    allowBlank: false,
                     flex: 1,
                     listeners: {
                         updateIndexName: function (sectionId, index) {

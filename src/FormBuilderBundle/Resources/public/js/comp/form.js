@@ -465,7 +465,11 @@ Formbuilder.comp.form = Class.create({
         if (rootFields.length > 0) {
             rootFields.each(function (field) {
                 if (typeof field.getValue === 'function') {
-                    if (field.allowBlank !== true && field.getValue() === '') {
+                    if (field.allowBlank !== true && (
+                        field.getValue() === null ||
+                        field.getValue() === '' ||
+                        (Ext.isArray(field.getValue()) && field.getValue().length === 0))
+                    ) {
                         this.formValidator.root.push({name: field.getName(), message: field.getName() + ' cannot be empty.'});
                     }
                 }
@@ -1075,7 +1079,7 @@ Formbuilder.comp.form = Class.create({
      */
     exportForm: function () {
 
-        if(!this.formIsValid()) {
+        if (!this.formIsValid()) {
             return;
         }
 
@@ -1106,7 +1110,7 @@ Formbuilder.comp.form = Class.create({
         var formData, formConfig,
             formConditionalLogic, formFields;
 
-        if(!this.formIsValid()) {
+        if (!this.formIsValid()) {
             return false;
         }
 
