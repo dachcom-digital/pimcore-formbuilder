@@ -218,7 +218,6 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     *
      * @returns {{beforeselect, select, itemcontextmenu, beforeitemmove}}
      */
     getTreeNodeListeners: function () {
@@ -267,7 +266,7 @@ Formbuilder.comp.form = Class.create({
      */
     onTreeNodeSelect: function (tree, record) {
 
-        var fbObject;
+        var fbObject, displayField;
 
         this.editPanel.removeAll();
 
@@ -283,10 +282,15 @@ Formbuilder.comp.form = Class.create({
 
             this.editPanel.add(fbObject.renderLayout());
             this.setCurrentNode(record.getData());
+
+            // focus on display_name if available
+            displayField = fbObject.form.getForm().findField('display_name');
+            if (displayField !== null) {
+                displayField.focus(true, true);
+            }
         }
 
         this.editPanel.updateLayout();
-
     },
 
     /**
@@ -897,7 +901,8 @@ Formbuilder.comp.form = Class.create({
      * @param record
      */
     copyFormField: function (tree, record) {
-        this.copyData = this.cloneChild(tree, record, true);
+        this.storeCurrentNodeData();
+        this.copyData = this.cloneChild(tree, record);
     },
 
     /**
@@ -907,10 +912,11 @@ Formbuilder.comp.form = Class.create({
     pasteFormField: function (tree, record) {
 
         var node = this.copyData,
-            newNode = this.cloneChild(tree, node, false);
+            newNode = this.cloneChild(tree, node);
 
         record.appendChild(newNode);
         tree.updateLayout();
+        tree.getSelectionModel().select(newNode, true);
 
     },
 
@@ -932,10 +938,9 @@ Formbuilder.comp.form = Class.create({
     /**
      * @param tree
      * @param node
-     * @param isCopy
      * @returns {{}}
      */
-    cloneChild: function (tree, node, isCopy) {
+    cloneChild: function (tree, node) {
 
         var formFieldObject = node.data.object,
             formTypeValues = Ext.apply({}, formFieldObject.getData()),
@@ -974,7 +979,7 @@ Formbuilder.comp.form = Class.create({
         // Move child nodes across to the copy if required
         for (var i = 0; i < len; i++) {
             var childNode = node.childNodes[i];
-            var clonedChildNode = this.cloneChild(tree, childNode, isCopy);
+            var clonedChildNode = this.cloneChild(tree, childNode);
             newNode.appendChild(clonedChildNode);
         }
 

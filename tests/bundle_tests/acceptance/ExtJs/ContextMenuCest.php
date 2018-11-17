@@ -29,7 +29,6 @@ class ContextMenuCest extends AbstractExtJs
 
         $I->click('Text Fields');
         $I->waitForText('Text Type', 10);
-
     }
 
     /**

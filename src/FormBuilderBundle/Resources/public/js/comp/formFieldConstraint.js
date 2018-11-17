@@ -16,7 +16,6 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
     storeData: {},
 
     initialize: function (formHandler, treeNode, constraint, values) {
-
         this.formHandler = formHandler;
         this.treeNode = treeNode;
         this.iconClass = constraint.icon_class;
@@ -25,7 +24,6 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
         this.config = constraint.config;
 
         this.initData(values);
-
     },
 
     /**
@@ -70,9 +68,8 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
 
     renderLayout: function () {
 
-        var items = [];
-
-        var item = new Ext.Panel({
+        var items = [],
+            item = new Ext.Panel({
             title: t('form_builder_base'),
             closable: false,
             autoScroll: true,
@@ -122,16 +119,12 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
     },
 
     getForm: function () {
-
-        var form = this.createBaseForm();
-        return form;
-
+        return this.createBaseForm();
     },
 
     createBaseForm: function () {
 
-        var _ = this,
-            configFieldCounter = 0,
+        var configFieldCounter = 0,
             form = new Ext.form.Panel({
                 bodyStyle: 'padding: 10px;',
                 labelWidth: 150,
@@ -145,7 +138,6 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                 opacityStyle = 'opacity: ' + (value !== configElement.defaultValue ? 1 : 0.6) + ';';
 
             switch (configElement.type) {
-
                 case 'string':
                     field = new Ext.form.TextField({
                         fieldLabel: configElement.name,
