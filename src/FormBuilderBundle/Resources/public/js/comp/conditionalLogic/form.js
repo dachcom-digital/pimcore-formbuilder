@@ -29,7 +29,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
 
         this.panel = new Ext.form.FieldContainer({
             width: '100%',
-            cls: 'form_builder_delete_conditional_section_container',
+            cls: 'form_builder_conditional_section_container',
             style: 'margin-top: 10px; border: 1px solid #565d56;',
             listeners: {
                 updateSectionId: function (index) {
@@ -137,7 +137,6 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
      */
     addCondition: function (type, data) {
         try {
-
             var configuration = Ext.Array.filter(this.conditionalStore.conditions, function (item) {
                 return item.identifier === type;
             });
@@ -151,8 +150,6 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
                 ),
                 item = itemClass.getItem();
             this.conditionsContainer.add(item);
-            item.updateLayout();
-            this.conditionsContainer.updateLayout();
         } catch (e) {
             console.error('condition type "' + type + '" error:', e);
         }
@@ -179,8 +176,6 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
                 ),
                 item = itemClass.getItem();
             this.actionsContainer.add(item);
-            item.updateLayout();
-            this.actionsContainer.updateLayout();
         } catch (e) {
             console.error('action type "' + type + '" error:', e);
         }
@@ -219,7 +214,7 @@ Formbuilder.comp.conditionalLogic.form = Class.create({
     },
 
     getFormFields: function () {
-        return this.formBuilder.getData();
+        return this.formBuilder.getFields('field');
     },
 
     getFormConstraints: function () {

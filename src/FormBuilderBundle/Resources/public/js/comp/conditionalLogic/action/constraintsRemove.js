@@ -11,7 +11,7 @@ Formbuilder.comp.conditionalLogic.action.constraintsRemove = Class.create(Formbu
             }),
             fieldStore = Ext.create('Ext.data.Store', {
                 fields: ['name', 'display_name'],
-                data: this.panel.getFormFields().fields
+                data: this.panel.getFormFields()
             }),
             validationSelectionField = new Ext.form.field.Tag({
                 xtype: 'tagfield',

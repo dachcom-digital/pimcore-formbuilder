@@ -52,6 +52,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
             triggerAction: 'all',
             submitValue: false,
             store: storeData,
+            name: '_keyValueRepeaterTypeSelector',
             listeners: {
                 select: function (combo, rec) {
                     this.type = combo.getValue();

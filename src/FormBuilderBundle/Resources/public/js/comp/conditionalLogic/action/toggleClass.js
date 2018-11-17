@@ -6,7 +6,7 @@ Formbuilder.comp.conditionalLogic.action.toggleClass = Class.create(Formbuilder.
         var _ = this,
             fieldStore = Ext.create('Ext.data.Store', {
                 fields: ['name', 'display_name'],
-                data: this.panel.getFormFields().fields
+                data: this.panel.getFormFields()
             }),
             items = [
                 {

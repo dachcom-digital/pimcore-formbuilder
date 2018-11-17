@@ -10,7 +10,7 @@ Formbuilder.comp.conditionalLogic.action.constraintsAdd = Class.create(Formbuild
             }),
             fieldStore = Ext.create('Ext.data.Store', {
                 fields: ['name', 'display_name'],
-                data: this.panel.getFormFields().fields
+                data: this.panel.getFormFields()
             }),
             items = [
                 {

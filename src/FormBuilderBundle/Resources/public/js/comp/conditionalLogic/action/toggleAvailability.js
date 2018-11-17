@@ -16,7 +16,7 @@ Formbuilder.comp.conditionalLogic.action.toggleAvailability = Class.create(Formb
             }),
             fieldStore = Ext.create('Ext.data.Store', {
                 fields: ['name', 'display_name'],
-                data: this.panel.getFormFields().fields
+                data: this.panel.getFormFields()
             }),
             items = [
                 {

@@ -1,3 +1,7 @@
+.form-builder-form-elements-tree .tree_node_error {
+    background: url(/bundles/formbuilder/img/danger.svg) 95% 50% no-repeat !important;
+}
+
 .form_builder_icon_root {
     background: url(/bundles/formbuilder/img/application_form.svg) left center no-repeat !important;
 }
@@ -136,6 +140,7 @@
 .form_builder_icon_html_tag {
     background: url(/bundles/formbuilder/img/html.svg) left center no-repeat !important;
 }
+
 .form_builder_icon_snippet_tag {
     background: url(/bundles/formbuilder/img/snippet.svg) left center no-repeat !important;
 }
@@ -146,30 +151,39 @@
 .form_builder_cl_toggle_element {
     background: url(/bundles/formbuilder/img/cl_toggle_element.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_constraints_add {
     background: url(/bundles/formbuilder/img/cl_constraints_add.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_constraints_remove {
     background: url(/bundles/formbuilder/img/cl_constraints_remove.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_change_value {
     background: url(/bundles/formbuilder/img/cl_change_value.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_trigger_event {
     background: url(/bundles/formbuilder/img/cl_trigger_event.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_toggle_class {
     background: url(/bundles/formbuilder/img/cl_toggle_class.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_element_value {
     background: url(/bundles/formbuilder/img/cl_element_value.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_toggle_availability {
     background: url(/bundles/formbuilder/img/cl_toggle_availability.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_mail_behaviour {
     background: url(/bundles/formbuilder/img/cl_mail_behaviour.svg) left center no-repeat !important;
 }
+
 .form_builder_cl_success_message {
     background: url(/bundles/formbuilder/img/cl_success_message.svg) left center no-repeat !important;
 }

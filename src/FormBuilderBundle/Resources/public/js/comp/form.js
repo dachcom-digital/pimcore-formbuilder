@@ -1,6 +1,7 @@
 pimcore.registerNS('Formbuilder.comp.form');
 Formbuilder.comp.form = Class.create({
 
+    getDataSuccess: true,
     importIsRunning: false,
     availableFormFields: [],
     parentPanel: null,
@@ -13,7 +14,6 @@ Formbuilder.comp.form = Class.create({
     formConditionalsStore: {},
     formFields: null,
     copyData: null,
-    rootFields: [],
     allowedMoveElements: {
         'root': [
             'field'
@@ -23,7 +23,15 @@ Formbuilder.comp.form = Class.create({
         ],
         'constraint': []
     },
+    formValidator: {
+        'root': [],
+        'fields': {}
+    },
 
+    /**
+     * @param formData
+     * @param parentPanel
+     */
     initialize: function (formData, parentPanel) {
 
         this.parentPanel = parentPanel;
@@ -45,7 +53,7 @@ Formbuilder.comp.form = Class.create({
 
     },
 
-    remove: function() {
+    remove: function () {
         this.panel.destroy();
     },
 
@@ -246,7 +254,7 @@ Formbuilder.comp.form = Class.create({
      */
     onTreeNodeBeforeSelect: function (tree) {
         try {
-            this.checkCurrentNodeValidation();
+            this.storeCurrentNodeData();
         } catch (e) {
             Ext.MessageBox.alert(t('error'), e);
             return false;
@@ -256,12 +264,8 @@ Formbuilder.comp.form = Class.create({
     /**
      * @param tree
      * @param record
-     * @param item
-     * @param index
-     * @param e
-     * @param eOpts
      */
-    onTreeNodeSelect: function (tree, record, item, index, e, eOpts) {
+    onTreeNodeSelect: function (tree, record) {
 
         var fbObject;
 
@@ -306,12 +310,6 @@ Formbuilder.comp.form = Class.create({
         }, this, {delay: 200});
 
         ev.stopEvent();
-
-        try {
-            this.checkCurrentNodeValidation();
-        } catch (e) {
-            return;
-        }
 
         this.tree.getSelectionModel().select(record, true);
 
@@ -425,111 +423,69 @@ Formbuilder.comp.form = Class.create({
         menu.showAt(ev.pageX, ev.pageY);
     },
 
-    setCurrentNode: function (cn) {
-        this.currentNode = cn;
+    /**
+     * @param currentNode
+     */
+    setCurrentNode: function (currentNode) {
+        this.currentNode = currentNode;
     },
 
-    checkCurrentNodeValidation: function () {
+    storeCurrentNodeData: function () {
 
         if (!this.currentNode) {
             return;
         }
 
         if (this.currentNode === 'root') {
-            this.rootNodeIsValid();
+            this.dispatchRootNodeValueParser();
         } else {
-            this.fieldNodeIsValid();
+            this.dispatchFieldNodeValueParser();
         }
     },
 
     /**
-     * 1. check field name uniqueness
-     * 2. check field validation of fb-field object
-     *
-     * throws exception
+     * Store Root Panel Data
      */
-    fieldNodeIsValid: function () {
+    dispatchRootNodeValueParser: function () {
 
-        var c = 0, currentNodeName;
+        var rootFields,
+            formConditionals = {},
+            formAttributes = {},
+            parsedFormAttributes, items;
 
-        this.dispatchFieldNodeValueParser();
-
-        currentNodeName = this.currentNode.fbType + '.' + this.currentNode.object.getName();
-
-        Ext.each(this.getUsedFieldNames(this.tree.getRootNode(), []), function (name) {
-            if (name === currentNodeName) {
-                c++;
-            }
-        });
-
-        this.currentNode.object.getTreeNode().set('cls', '');
-
-        if (c > 1) {
-            this.currentNode.object.getTreeNode().set('cls', 'tree_node_error');
-            throw 'field name "' + currentNodeName + '" is already in use.';
-        }
-
-        if (!this.currentNode.object.isValid()) {
-            this.currentNode.object.getTreeNode().set('cls', 'tree_node_error');
-            throw t('form_builder_form_type_invalid')
-        }
-    },
-
-    dispatchFieldNodeValueParser: function () {
-        this.currentNode.object.applyData();
-    },
-
-    /**
-     * throws exception
-     */
-    rootNodeIsValid: function () {
         if (this.rootPanel === undefined || this.importIsRunning === true) {
             //root panel not initialized yet.
             return;
         }
 
-        this.dispatchRootNodeValueParser();
+        // setup validator
+        rootFields = this.rootPanel.getForm().getFields();
+        this.formValidator.root = [];
 
-        this.tree.getRootNode().set('cls', '');
-
-        if (this.rootFields.length > 0) {
-            this.rootFields.each(function (field) {
+        if (rootFields.length > 0) {
+            rootFields.each(function (field) {
                 if (typeof field.getValue === 'function') {
                     if (field.allowBlank !== true && field.getValue() === '') {
-                        this.tree.getRootNode().set('cls', 'tree_node_error');
-                        throw field.getName() + ' cannot be empty.';
+                        this.formValidator.root.push({name: field.getName(), message: field.getName() + ' cannot be empty.'});
                     }
                 }
             }.bind(this));
         }
 
-        if (this.formName.length <= 2 || in_array(this.formName.toLowerCase(), this.parentPanel.getConfig().forbidden_form_field_names)) {
-            this.tree.getRootNode().set('cls', 'tree_node_error');
-            throw this.formName.toLowerCase() + ' is a reserved name and cannot be used.';
-        }
-    },
-
-    dispatchRootNodeValueParser: function () {
-
-        var formConditionals = {},
-            formAttributes = {},
-            parsedFormAttributes = {};
-
-        // save root node data
-        this.rootFields = this.rootPanel.getForm().getFields();
-
-        var items = this.rootPanel.queryBy(function () {
-            return true;
+        items = this.rootPanel.queryBy(function (el) {
+            return el.submitValue === undefined || el.submitValue === true;
         });
 
         for (var i = 0; i < items.length; i++) {
-
             if (typeof items[i].getValue === 'function') {
-
                 var val = items[i].getValue(),
                     fieldName = items[i].name;
-
                 if (fieldName) {
+
+                    if (fieldName === 'name') {
+                        this.formName = val;
+                    }
+
                     if (fieldName.substring(0, 3) === 'cl.') {
                         formConditionals[fieldName] = val;
                     } else if (fieldName.substring(0, 11) === 'attributes.') {
@@ -550,6 +506,105 @@ Formbuilder.comp.form = Class.create({
         parsedFormAttributes = DataObjectParser.transpose(formAttributes).data();
         this.formConfig['attributes'] = parsedFormAttributes['attributes'] ? parsedFormAttributes['attributes'] : {};
 
+    },
+
+    /**
+     * Store Current Node Data
+     */
+    dispatchFieldNodeValueParser: function () {
+
+        var fieldId;
+
+        if (typeof this.currentNode.object !== 'object') {
+            return;
+        }
+
+        if (this.currentNode.hasOwnProperty('id')) {
+            fieldId = this.currentNode.id;
+        } else {
+            fieldId = 'default';
+        }
+
+        this.currentNode.object.applyData();
+
+        this.formValidator.fields[fieldId] = [];
+        if (!this.currentNode.object.isValid()) {
+            this.formValidator.fields[fieldId].push({
+                'name': this.currentNode.object.getName(),
+                'message': t('form_builder_form_type_invalid')
+            });
+            return false;
+        }
+
+        try {
+            this.checkNodeHasUniqueName(this.currentNode);
+        } catch (e) {
+            this.formValidator.fields[fieldId].push({'name': this.currentNode.object.getName(), 'message': e});
+        }
+    },
+
+    /**
+     * @returns {boolean}
+     */
+    formIsValid: function () {
+
+        this.storeCurrentNodeData();
+
+        this.getDataSuccess = true;
+        this.validateRootNode();
+
+        if (this.getDataSuccess === true) {
+            this.validateSubNodes();
+        }
+
+        return this.getDataSuccess;
+    },
+
+    validateRootNode: function () {
+
+        this.tree.getRootNode().set('cls', '');
+
+        if (this.formValidator.root.length > 0) {
+            Ext.Array.each(this.formValidator.root, function (validation) {
+                this.tree.getRootNode().set('cls', 'tree_node_error');
+                this.getDataSuccess = false;
+                Ext.MessageBox.alert('Root ' + t('error'), validation.message);
+                return false;
+            }.bind(this));
+        }
+
+        if (in_array(this.formName.toLowerCase(), this.parentPanel.getConfig().forbidden_form_field_names)) {
+            this.tree.getRootNode().set('cls', 'tree_node_error');
+            this.getDataSuccess = false;
+            Ext.MessageBox.alert(t('error'), '"' + this.formName.toLowerCase() + '" is a reserved name and cannot be used.');
+        }
+    },
+
+    validateSubNodes: function (node) {
+
+        // initially undefined, use root to start:
+        if (node === undefined) {
+            node = this.tree.getRootNode();
+        }
+
+        node.set('cls', '');
+
+        if (typeof node.data.object === 'object') {
+            if (Ext.isArray(this.formValidator.fields[node.getId()]) && this.formValidator.fields[node.getId()].length > 0) {
+                Ext.Array.each(this.formValidator.fields[node.getId()], function (validation) {
+                    node.set('cls', 'tree_node_error');
+                    this.getDataSuccess = false;
+                    Ext.MessageBox.alert('Field ' + t('error'), validation.message);
+                    return false;
+                }.bind(this));
+            }
+        }
+
+        if (node.childNodes.length > 0) {
+            for (var i = 0; i < node.childNodes.length; i++) {
+                this.validateSubNodes(node.childNodes[i]);
+            }
+        }
     },
 
     /**
@@ -592,6 +647,7 @@ Formbuilder.comp.form = Class.create({
             autoHeight: true,
             width: '100%',
             style: 'margin-top: 20px;',
+            submitValue: false,
             items: [
                 {
                     xtype: 'combo',
@@ -615,6 +671,8 @@ Formbuilder.comp.form = Class.create({
                     anchor: '100%',
                     summaryDisplay: true,
                     allowBlank: false,
+                    name: '_csvExportMailType',
+                    submitValue: false,
                 },
                 {
                     xtype: 'toolbar',
@@ -921,27 +979,22 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     * @returns {*|{}}
-     */
-    getData: function () {
-        return this.getNodeData(this.tree.getRootNode());
-    },
-
-    /**
      * @param node
      * @returns {{}}
      */
-    getNodeData: function (node) {
+    getData: function (node) {
 
         var formFieldData = {};
 
+        // initially undefined, use root to start:
+        if (node === undefined) {
+            node = this.tree.getRootNode();
+        }
+
+        node.set('cls', '');
+
         if (typeof node.data.object === 'object') {
             formFieldData = node.data.object.getData();
-            node.set('cls', '');
-            if (!node.data.object.isValid()) {
-                node.set('cls', 'tree_node_error');
-                throw t('form_builder_form_type_invalid')
-            }
         }
 
         if (formFieldData['fields']) {
@@ -958,11 +1011,32 @@ Formbuilder.comp.form = Class.create({
                 if (!formFieldData[type]) {
                     formFieldData[type] = [];
                 }
-                formFieldData[type].push(this.getNodeData(node.childNodes[i]));
+                formFieldData[type].push(this.getData(node.childNodes[i]));
             }
         }
 
         return formFieldData;
+    },
+
+    /**
+     * Check if field name is unique
+     * @param node
+     */
+    checkNodeHasUniqueName: function (node) {
+
+        var c = 0,
+            currentNodeName = node.fbType + '.' + node.object.getName();
+
+        Ext.each(this.getUsedFieldNames(this.tree.getRootNode(), []), function (name) {
+            if (name === currentNodeName) {
+                c++;
+            }
+        });
+
+        if (c > 1) {
+            node.object.getTreeNode().set('cls', 'tree_node_error');
+            throw 'field name "' + currentNodeName + '" is already in use.';
+        }
     },
 
     /**
@@ -1001,10 +1075,7 @@ Formbuilder.comp.form = Class.create({
      */
     exportForm: function () {
 
-        try {
-            this.checkCurrentNodeValidation();
-        } catch (e) {
-            Ext.MessageBox.alert(t('error'), e);
+        if(!this.formIsValid()) {
             return;
         }
 
@@ -1032,22 +1103,14 @@ Formbuilder.comp.form = Class.create({
      */
     save: function (ev) {
 
-        var formData = {}, formConfig,
+        var formData, formConfig,
             formConditionalLogic, formFields;
 
-        try {
-            this.checkCurrentNodeValidation();
-        } catch (e) {
-            Ext.MessageBox.alert(t('error'), e);
+        if(!this.formIsValid()) {
             return false;
         }
 
-        try {
-            formData = this.getData();
-        } catch (e) {
-            Ext.MessageBox.alert(t('error'), e);
-            return false;
-        }
+        formData = this.getData();
 
         formConfig = Ext.encode(this.formConfig);
         formConditionalLogic = Ext.encode(this.formConditionalsStructured);
@@ -1167,5 +1230,31 @@ Formbuilder.comp.form = Class.create({
         }
 
         return formTypeConstraint;
+    },
+
+    /**
+     * @param fbType
+     * @returns {boolean}
+     */
+    hasFields: function (fbType) {
+        return this.tree.getSelectionModel().getStore().findRecord('fbType', fbType) !== null;
+    },
+
+    /**
+     * @param fbType
+     * @returns {Array}
+     */
+    getFields: function (fbType) {
+        var treeStore = this.tree.getSelectionModel().getStore(),
+            fields = [];
+
+        Ext.Array.each(treeStore.queryBy(function (record, id) {
+            return record.get('fbType') === fbType;
+        }).getRange(), function (field) {
+            if (field.getData().hasOwnProperty('object')) {
+                fields.push(field.getData().object.getData());
+            }
+        });
+        return fields;
     }
 });

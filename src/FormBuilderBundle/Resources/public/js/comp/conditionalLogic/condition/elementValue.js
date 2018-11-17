@@ -34,7 +34,7 @@ Formbuilder.comp.conditionalLogic.condition.elementValue = Class.create(Formbuil
             }),
             fieldStore = Ext.create('Ext.data.Store', {
                 fields: ['name', 'display_name'],
-                data: this.panel.getFormFields().fields
+                data: this.panel.getFormFields()
             }),
             descriptionField = new Ext.form.Label({
                 hidden: true,

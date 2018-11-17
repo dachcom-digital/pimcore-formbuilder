@@ -31,7 +31,7 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
                 style: 'margin-bottom: 10px;',
                 items: ['->', {
                     xtype: 'button',
-                    disabled: this.formBuilder.getData().fields === undefined,
+                    disabled: !this.formBuilder.hasFields('field'),
                     text: t('add'),
                     iconCls: 'pimcore_icon_add',
                     handler: this.addConditionalSection.bind(this),
@@ -70,12 +70,13 @@ Formbuilder.comp.conditionalLogic.builder = Class.create({
             xtype: 'button',
             text: t('form_builder_delete_conditional_section'),
             iconCls: 'pimcore_icon_delete',
-            handler: function (conditionFieldSet, el) {
-                var sectionFieldSets = this.panel.query('fieldset[cls=form_builder_conditional_section]');
+            handler: function (conditionFieldSet) {
+                var sectionFieldSets;
                 this.panel.remove(conditionFieldSet);
+                sectionFieldSets = this.panel.query('fieldset[cls~="form_builder_conditional_section"]');
                 this.sectionId = sectionFieldSets.length;
                 Ext.Array.each(sectionFieldSets, function (fieldSet, sIndex) {
-                    var sectionFieldContainer = fieldSet.query('fieldcontainer[cls=form_builder_delete_conditional_section_container]');
+                    var sectionFieldContainer = fieldSet.query('fieldcontainer[cls~="form_builder_conditional_section_container"]');
                     Ext.Array.each(sectionFieldContainer, function (container, cIndex) {
                         container.fireEvent('updateSectionId', sIndex);
                     });
