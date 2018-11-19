@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button to finish the bundle update.
 
+#### Update from Version 2.5.0 to Version 2.5.1
+- **[IMPROVEMENT]**: Better Form Validation in ExtJs Context
+
 #### Update from Version 2.4.2 to Version 2.5.0
 - **[ATTENTION]**: Installer has moved to the [MigrationBundle](https://github.com/dachcom-digital/pimcore-formbuilder/issues/129). After updating to this version you need to enable this extension again!
 - **[IMPROVEMENT]**: Pimcore 5.5 ready
