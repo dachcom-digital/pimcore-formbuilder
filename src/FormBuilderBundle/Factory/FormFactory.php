@@ -3,6 +3,9 @@
 namespace FormBuilderBundle\Factory;
 
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Storage\FormFieldContainer;
+use FormBuilderBundle\Storage\FormFieldContainerInterface;
+use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormField;
@@ -105,6 +108,16 @@ class FormFactory implements FormFactoryInterface
     /**
      * @inheritdoc
      */
+    public function createFormFieldContainer()
+    {
+        $formFieldContainerEntity = new FormFieldContainer();
+        $formFieldContainerEntity->setTranslator($this->translator);
+        return $formFieldContainerEntity;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function assignRelationDataToFormObject(FormInterface $formEntity)
     {
         $formPath = Configuration::STORE_PATH . '/main_' . $formEntity->getId() . '.yml';
@@ -126,15 +139,20 @@ class FormFactory implements FormFactoryInterface
         if (!empty($data['fields'])) {
             $fields = [];
             foreach ($data['fields'] as $field) {
-                $formField = $this->createFormField();
-                foreach ($field as $fieldName => $fieldValue) {
-
-                    $setter = 'set' . $this->camelize($fieldName);
-                    if (!is_callable([$formField, $setter])) {
-                        continue;
+                if ($field['type'] === 'container') {
+                    $formField = $this->createFormFieldContainer();
+                    $this->populateFormField($formField, $field);
+                    if (isset($field['fields']) && is_array($field['fields'])) {
+                        $subFields = [];
+                        foreach ($field['fields'] as $subField) {
+                            $subFormField = $this->createFormField();
+                            $subFields[] = $this->populateFormField($subFormField, $subField);
+                        }
+                        $formField->setFields($subFields);
                     }
-
-                    $formField->$setter($fieldValue);
+                } else {
+                    $formField = $this->createFormField();
+                    $this->populateFormField($formField, $field);
                 }
 
                 $fields[$field['name']] = $formField;
@@ -142,6 +160,22 @@ class FormFactory implements FormFactoryInterface
 
             $formEntity->setFields($fields);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function populateFormField($formField, array $field)
+    {
+        foreach ($field as $fieldName => $fieldValue) {
+            $setter = 'set' . $this->camelize($fieldName);
+            if (!is_callable([$formField, $setter])) {
+                continue;
+            }
+            $formField->$setter($fieldValue);
+        }
+
+        return $formField;
     }
 
     /**

@@ -2,25 +2,15 @@ pimcore.registerNS('Formbuilder.comp.type.formTypeBuilder');
 Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     form: null,
-
     formIsValid: true,
-
     formHandler: null,
-
     type: null,
-
     typeName: null,
-
     iconClass: null,
-
     formTypeTemplates: [],
-
     configurationLayout: [],
-
     allowedConstraints: [],
-
     attributeSelector: null,
-
     storeData: {},
 
     initialize: function (formHandler, treeNode, initData, availableFormFieldTemplates, values) {

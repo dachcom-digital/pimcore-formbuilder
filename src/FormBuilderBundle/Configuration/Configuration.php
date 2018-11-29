@@ -112,6 +112,23 @@ class Configuration
     /**
      * @return array
      */
+    public function getAvailableContainer()
+    {
+        $containerTypes = $this->config['container_types'];
+
+        $containerData = [];
+        foreach ($containerTypes as $containerId => &$container) {
+            $container['id'] = $containerId;
+            $container['config'] = [];
+            $containerData[$containerId] = $container;
+        }
+
+        return $containerData;
+    }
+
+    /**
+     * @return array
+     */
     public function getAvailableConstraints()
     {
         $constraints = $this->config['validation_constraints'];

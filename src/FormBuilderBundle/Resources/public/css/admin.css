@@ -22,6 +22,14 @@
     background: url(/bundles/formbuilder/img/container_add.svg) left center no-repeat !important;
 }
 
+.form_builder_icon_container_type {
+    background: url(/bundles/formbuilder/img/stack.svg) left center no-repeat !important;
+}
+
+.form_builder_icon_container_type_add {
+    background: url(/bundles/formbuilder/img/stack_add.svg) left center no-repeat !important;
+}
+
 .form_builder_icon_validation {
     background: url(/bundles/formbuilder/img/filter.svg) left center no-repeat !important;
 }

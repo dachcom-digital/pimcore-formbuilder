@@ -153,7 +153,7 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                             return this.value;
                         },
                         listeners: {
-                            change: function (field, newVal, oldVal) {
+                            change: function (field, newVal) {
                                 var defaultValue = configElement.defaultValue === null ? '' : configElement.defaultValue;
                                 field.setStyle('opacity', newVal !== defaultValue ? 1 : 0.6);
                             }

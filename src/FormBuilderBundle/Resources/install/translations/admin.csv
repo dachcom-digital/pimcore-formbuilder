@@ -34,6 +34,8 @@
 "form_builder_validation_constraint.date","Date","Datum"
 "form_builder_validation_constraint.date_time","Date & Time","Datum & Uhrzeit"
 "form_builder_validation_constraint.time","Time","Uhrzeit"
+"form_builder_container_type.fieldset","Fieldset","Fieldset"
+"form_builder_container_type.repeater","Repeater","Repeater"
 "form_builder_type.text_type","Text Type","Text Element"
 "form_builder_type.hidden_type","Hidden Type","Verstecktes Element"
 "form_builder_type.integer_type","Integer Type","Numerisches Element"

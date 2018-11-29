@@ -126,3 +126,12 @@ form_builder:
             class: Symfony\Component\Validator\Constraints\Time
             label: 'form_builder_validation_constraint.time'
             icon_class: form_builder_icon_validation
+    container_types:
+        fieldset:
+            class: Test1
+            label: 'form_builder_container_type.fieldset'
+            icon_class: form_builder_icon_container_type
+        repeater:
+            class: Test2
+            label: 'form_builder_container_type.repeater'
+            icon_class: form_builder_icon_container_type

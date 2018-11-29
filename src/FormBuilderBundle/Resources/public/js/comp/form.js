@@ -4,6 +4,7 @@ Formbuilder.comp.form = Class.create({
     getDataSuccess: true,
     importIsRunning: false,
     availableFormFields: [],
+    availableContainerTypes: [],
     parentPanel: null,
     formId: null,
     formName: null,
@@ -13,13 +14,17 @@ Formbuilder.comp.form = Class.create({
     formConditionalsStructured: {},
     formConditionalsStore: {},
     formFields: null,
-    copyData: null,
+    copyNode: null,
     allowedMoveElements: {
         'root': [
-            'field'
+            'field',
+            'container'
         ],
         'field': [
             'constraint'
+        ],
+        'container': [
+            'field'
         ],
         'constraint': []
     },
@@ -45,6 +50,7 @@ Formbuilder.comp.form = Class.create({
         this.formConditionalsStore = formData.conditional_logic_store;
         this.formFields = formData.fields;
         this.availableFormFields = formData.fields_structure;
+        this.availableContainerTypes = formData.container_types;
         this.availableConstraints = formData.validation_constraints;
         this.availableFormFieldTemplates = formData.fields_template;
 
@@ -156,14 +162,17 @@ Formbuilder.comp.form = Class.create({
             return;
         }
 
-        for (var i = 0; i < this.formFields.length; i++) {
-            var node = this.recursiveAddNode(this.tree.getRootNode(), this.formFields[i], 'formType');
+        Ext.Array.each(this.formFields, function (formField) {
+            var type = formField.hasOwnProperty('type') && formField.type === 'container' ? 'container' : 'formType',
+                node = this.recursiveAddNode(this.tree.getRootNode(), formField, type);
             if (node !== null) {
                 this.tree.getRootNode().appendChild(node);
             }
-        }
+        }.bind(this));
 
+        // expand root node by default
         this.tree.getRootNode().expand();
+
         // select root node "base"
         this.tree.getSelectionModel().select(this.tree.getRootNode(), true);
 
@@ -177,41 +186,46 @@ Formbuilder.comp.form = Class.create({
      */
     recursiveAddNode: function (scope, formTypeValues, type) {
 
-        var newNode = null;
+        var nodeObject,
+            newNode = null;
 
         if (type === 'formType') {
-
-            var formGroupElement = this.getFormTypeStructure(formTypeValues.type);
-
-            if (formGroupElement === false) {
+            nodeObject = this.getFormTypeStructure(formTypeValues.type);
+            if (nodeObject === false) {
                 Ext.MessageBox.alert(t('error'), 'Form type structure for type "' + formTypeValues.type + '" not found.');
                 return null;
             }
+            newNode = this.createFormField(scope, nodeObject, formTypeValues);
 
-            newNode = this.createFormField(scope, formGroupElement, formTypeValues);
-
-        } else if (type === 'constraint') {
-
-            var constraintElement = this.getFormTypeConstraintStructure(formTypeValues.type);
-
-            if (constraintElement === false) {
-                Ext.MessageBox.alert(t('error'), 'Form type constraint structure for type "' + formTypeValues.type + '" not found.');
+        } else if (type === 'container') {
+            nodeObject = this.getContainerTypeStructure(formTypeValues.sub_type);
+            if (nodeObject === false) {
+                Ext.MessageBox.alert(t('error'), 'Form container for type "' + formTypeValues.type + '" not found.');
                 return null;
             }
+            newNode = this.createContainerField(scope, nodeObject, formTypeValues);
 
-            newNode = this.createFormFieldConstraint(scope, constraintElement, formTypeValues);
+        } else if (type === 'constraint') {
+            nodeObject = this.getFormTypeConstraintStructure(formTypeValues.type);
+            if (nodeObject === false) {
+                Ext.MessageBox.alert(t('error'), 'Form constraint structure for type "' + formTypeValues.type + '" not found.');
+                return null;
+            }
+            newNode = this.createFormFieldConstraint(scope, nodeObject, formTypeValues);
         }
 
-        if (formTypeValues.constraints) {
+        if (formTypeValues.hasOwnProperty('constraints') && Ext.isArray(formTypeValues.constraints)) {
             for (var i = 0; i < formTypeValues.constraints.length; i++) {
-                this.recursiveAddNode(newNode, formTypeValues.constraints[i], 'constraint');
+                Ext.Array.each(formTypeValues.constraints, function (constraint) {
+                    this.recursiveAddNode(newNode, constraint, 'constraint');
+                }.bind(this));
             }
         }
 
-        if (formTypeValues.fields) {
-            for (var i2 = 0; i2 < formTypeValues.fields.length; i2++) {
-                this.recursiveAddNode(newNode, formTypeValues.fields[i2], 'formType');
-            }
+        if (formTypeValues.hasOwnProperty('fields') && Ext.isArray(formTypeValues.fields)) {
+            Ext.Array.each(formTypeValues.fields, function (field) {
+                this.recursiveAddNode(newNode, field, 'formType');
+            }.bind(this));
         }
 
         return newNode;
@@ -323,27 +337,23 @@ Formbuilder.comp.form = Class.create({
         }
 
         //add form items
-        if (parentType === 'root' && _.availableFormFields.length > 0) {
+        if (in_array(parentType, ['root', 'container']) && this.availableFormFields.length > 0) {
 
-            for (var i = 0; i < _.availableFormFields.length; i++) {
+            Ext.Array.each(this.availableFormFields, function (formGroup) {
 
-                var formGroup = _.availableFormFields[i],
-                    formGroupElements = [];
+                var formGroupElements = [];
 
                 if (formGroup.fields.length === 0) {
-                    continue;
+                    return true;
                 }
 
-                for (var groupI = 0; groupI < formGroup.fields.length; groupI++) {
-
-                    var formGroupElement = formGroup.fields[groupI];
-
+                Ext.Array.each(formGroup.fields, function (formGroupElement, groupI) {
                     formGroupElements.push({
                         text: formGroupElement.label,
                         iconCls: formGroupElement.icon_class,
-                        handler: this.createFormField.bind(_, record, formGroupElement, null, true)
+                        handler: this.createFormField.bind(this, record, formGroupElement, null, true)
                     });
-                }
+                }.bind(this));
 
                 layoutElem.push(new Ext.menu.Item({
                     text: formGroup.label,
@@ -352,7 +362,7 @@ Formbuilder.comp.form = Class.create({
                     menu: formGroupElements
                 }));
 
-            }
+            }.bind(this));
 
             menu.add(new Ext.menu.Item({
                 text: t('form_builder_add_form_item'),
@@ -360,6 +370,7 @@ Formbuilder.comp.form = Class.create({
                 hideOnClick: false,
                 menu: layoutElem
             }));
+
         }
 
         //delete menu
@@ -382,7 +393,7 @@ Formbuilder.comp.form = Class.create({
                     text: constraint.label,
                     iconCls: constraint.icon_class,
                     hideOnClick: true,
-                    handler: _.createFormFieldConstraint.bind(_, record, constraint, null)
+                    handler: _.createFormFieldConstraint.bind(_, record, constraint, null, true)
                 }));
             });
 
@@ -394,17 +405,31 @@ Formbuilder.comp.form = Class.create({
             }));
         }
 
-        if (this.copyData !== null) {
+        // container menu
+        if (parentType === 'root' && this.availableContainerTypes.length > 0) {
 
-            var copyType = this.copyData.data.type;
+            var containerElements = [];
+            Ext.Array.each(this.availableContainerTypes, function (container) {
+                containerElements.push(new Ext.menu.Item({
+                    text: container.label,
+                    iconCls: container.icon_class,
+                    hideOnClick: true,
+                    handler: _.createContainerField.bind(_, record, container, null, true)
+                }));
+            });
 
-            if (parentType === 'root') {
-                if (copyType !== 'validator') {
-                    showPaste = true;
-                }
-            } else {
-                //@todo: check additional types.
-                //showPaste = true;
+            menu.add(new Ext.menu.Item({
+                text: t('form_builder_add_container_type'),
+                iconCls: 'form_builder_icon_container_type_add',
+                hideOnClick: false,
+                menu: containerElements
+            }));
+
+        }
+
+        if (this.copyNode !== null) {
+            if (parentType === 'root' && this.copyNode.data.type !== 'validator') {
+                showPaste = true;
             }
         }
 
@@ -820,7 +845,6 @@ Formbuilder.comp.form = Class.create({
      * @param formType
      * @param formTypeValues
      * @param selectNode
-     * @returns {*|{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
     createFormField: function (tree, formType, formTypeValues, selectNode) {
 
@@ -844,7 +868,6 @@ Formbuilder.comp.form = Class.create({
     /**
      * @param formType
      * @param formTypeValues
-     * @returns {{text: *, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
     createFormFieldNode: function (formType, formTypeValues) {
         return {
@@ -864,9 +887,9 @@ Formbuilder.comp.form = Class.create({
      * @param tree
      * @param constraint
      * @param constraintValues
-     * @returns {*|{text, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
+     * @param selectNode
      */
-    createFormFieldConstraint: function (tree, constraint, constraintValues) {
+    createFormFieldConstraint: function (tree, constraint, constraintValues, selectNode) {
 
         var newNode = this.createFormFieldConstraintNode(constraint);
 
@@ -875,12 +898,15 @@ Formbuilder.comp.form = Class.create({
 
         tree.expand();
 
+        if (selectNode === true) {
+            this.tree.getSelectionModel().select(newNode, true);
+        }
+
         return newNode;
     },
 
     /**
      * @param constraintType
-     * @returns {{text, type: string, draggable: boolean, iconCls: (null|*|string), fbType: string, fbTypeContainer: string, leaf: boolean, expandable: boolean, expanded: boolean}}
      */
     createFormFieldConstraintNode: function (constraintType) {
         return {
@@ -898,11 +924,47 @@ Formbuilder.comp.form = Class.create({
 
     /**
      * @param tree
+     * @param container
+     * @param containerValues
+     * @param selectNode
+     */
+    createContainerField: function (tree, container, containerValues, selectNode) {
+
+        var newNode = this.createContainerFieldNode(container);
+
+        newNode = tree.appendChild(newNode);
+        newNode.set('object', new Formbuilder.comp.type.formFieldContainer(this, newNode, container, containerValues));
+
+        tree.expand();
+
+        if (selectNode === true) {
+            this.tree.getSelectionModel().select(newNode, true);
+        }
+
+        return newNode;
+    },
+
+    createContainerFieldNode: function (containerType) {
+        return {
+            text: containerType.label,
+            type: 'layout',
+            draggable: true,
+            iconCls: containerType.icon_class,
+            fbType: 'container',
+            fbTypeContainer: 'fields', // container element should be treated as a normal field.
+            leaf: true,
+            expandable: true,
+            expanded: true
+        };
+    },
+
+    /**
+     * @param tree
      * @param record
      */
     copyFormField: function (tree, record) {
-        this.storeCurrentNodeData();
-        this.copyData = this.cloneChild(tree, record);
+        //this.storeCurrentNodeData(); @fixme: do we need a current storage?
+        this.copyNode = record;
     },
 
     /**
@@ -911,7 +973,7 @@ Formbuilder.comp.form = Class.create({
      */
     pasteFormField: function (tree, record) {
 
-        var node = this.copyData,
+        var node = this.copyNode,
             newNode = this.cloneChild(tree, node);
 
         record.appendChild(newNode);
@@ -970,6 +1032,13 @@ Formbuilder.comp.form = Class.create({
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(
                 this, newNode, formElement, formTypeValues));
+        } else if (node.data.fbType === 'container') {
+            formElement = this.getContainerTypeStructure(formFieldObject.type);
+            nodeType.label = formElement.label;
+            config = this.createContainerFieldNode(nodeType);
+            newNode = node.createNode(config);
+            newNode.set('object', new Formbuilder.comp.type.formFieldContainer(
+                this, newNode, formElement, formTypeValues));
         } else {
             Ext.MessageBox.alert(t('error'), 'invalid field type: ' + node.data.fbType);
         }
@@ -978,8 +1047,8 @@ Formbuilder.comp.form = Class.create({
 
         // Move child nodes across to the copy if required
         for (var i = 0; i < len; i++) {
-            var childNode = node.childNodes[i];
-            var clonedChildNode = this.cloneChild(tree, childNode);
+            var childNode = node.childNodes[i],
+                clonedChildNode = this.cloneChild(tree, childNode);
             newNode.appendChild(clonedChildNode);
         }
 
@@ -1178,9 +1247,8 @@ Formbuilder.comp.form = Class.create({
     getUsedFieldNames: function (node, nodeNames) {
 
         if (node.data.object) {
-
             var fieldName = node.data.fbType + '.' + node.data.object.getName();
-            if (node.data.fbType !== 'constraint') {
+            if (!in_array(node.data.fbType, ['constraint'])) {
                 nodeNames.push(fieldName);
             }
         }
@@ -1196,49 +1264,64 @@ Formbuilder.comp.form = Class.create({
 
     /**
      * @param typeId
-     * @returns {boolean}
+     * @returns object|boolean
      */
     getFormTypeStructure: function (typeId) {
-
         var formTypeElement = false;
         if (this.availableFormFields.length === 0) {
             return formTypeElement;
         }
 
-        for (var i = 0; i < this.availableFormFields.length; i++) {
-            var formGroup = this.availableFormFields[i];
-            for (var groupI = 0; groupI < formGroup.fields.length; groupI++) {
-                var formGroupElement = formGroup.fields[groupI];
+        Ext.Array.each(this.availableFormFields, function (formGroup, i) {
+            Ext.Array.each(formGroup.fields, function (formGroupElement, groupI) {
                 if (formGroupElement.type === typeId) {
                     formTypeElement = formGroupElement;
-                    break;
+                    return false;
                 }
-            }
-        }
+            });
+        });
 
-        return formTypeElement;
+        return Ext.clone(formTypeElement);
     },
 
     /**
      * @param constraintId
-     * @returns {boolean}
+     * @returns object|boolean
      */
     getFormTypeConstraintStructure: function (constraintId) {
-
         var formTypeConstraint = false;
         if (this.availableConstraints.length === 0) {
             return formTypeConstraint;
         }
 
-        for (var i = 0; i < this.availableConstraints.length; i++) {
-            var formConstraint = this.availableConstraints[i];
+        Ext.Array.each(this.availableConstraints, function (formConstraint) {
             if (formConstraint.id === constraintId) {
                 formTypeConstraint = formConstraint;
-                break;
+                return false;
             }
+        });
+
+        return Ext.clone(formTypeConstraint);
+    },
+
+    /**
+     * @param containerId
+     * @returns object|boolean
+     */
+    getContainerTypeStructure: function (containerId) {
+        var container = false;
+        if (this.availableContainerTypes.length === 0) {
+            return container;
         }
 
-        return formTypeConstraint;
+        Ext.Array.each(this.availableContainerTypes, function (containerType) {
+            if (containerType.id === containerId) {
+                container = containerType;
+                return false;
+            }
+        });
+
+        return Ext.clone(container);
     },
 
     /**

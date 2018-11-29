@@ -6,6 +6,7 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
+use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
@@ -86,7 +87,7 @@ class Builder
         ];
 
         $fieldData = [];
-        /** @var FormFieldInterface $field */
+        /** @var FormFieldInterface|FormFieldContainerInterface $field */
         foreach ($form->getFields() as $field) {
             $fieldData[] = $field->toArray();
         }
@@ -95,6 +96,7 @@ class Builder
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
         $data['config_store'] = $this->getFormStoreData();
+        $data['container_types'] = $this->getTranslatedContainerTypes();
         $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
         $data['conditional_logic'] = $this->generateConditionalLogicExtJsFields($form->getConditionalLogic());
         $data['conditional_logic_store'] = $this->generateConditionalLogicStore();
@@ -270,6 +272,22 @@ class Builder
     /**
      * @return array
      */
+    private function getTranslatedContainerTypes()
+    {
+        $containerTypes = $this->configuration->getAvailableContainer();
+
+        $containerData = [];
+        foreach ($containerTypes as $containerId => &$container) {
+            $container['label'] = $this->translate($container['label']);
+            $containerData[] = $container;
+        }
+
+        return $containerData;
+    }
+
+    /**
+     * @return array
+     */
     private function getTranslatedValidationConstraints()
     {
         $constraints = $this->configuration->getAvailableConstraints();
@@ -284,7 +302,7 @@ class Builder
     }
 
     /**
-     * @param array $formTypeBackendConfig
+     * @param array  $formTypeBackendConfig
      * @param string $formType
      *
      * @return array
@@ -345,7 +363,7 @@ class Builder
 
     /**
      * @param string $formType
-     * @param array $formTypeBackendConfig
+     * @param array  $formTypeBackendConfig
      *
      * @return array
      */
