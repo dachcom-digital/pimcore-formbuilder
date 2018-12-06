@@ -933,7 +933,7 @@ Formbuilder.comp.form = Class.create({
         var newNode = this.createContainerFieldNode(container);
 
         newNode = tree.appendChild(newNode);
-        newNode.set('object', new Formbuilder.comp.type.formFieldContainer(this, newNode, container, containerValues));
+        newNode.set('object', new Formbuilder.comp.type.formFieldContainer(this, newNode, container, this.availableFormFieldTemplates, containerValues));
 
         tree.expand();
 

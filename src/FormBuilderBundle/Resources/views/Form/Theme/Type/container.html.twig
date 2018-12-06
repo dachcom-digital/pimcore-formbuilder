@@ -1,0 +1,29 @@
+{% block form_builder_container_fieldset_widget %}
+    {{- block('collection_widget') -}}
+{% endblock %}
+
+{% block form_builder_container_repeater_widget %}
+    {{- block('collection_widget') -}}
+{% endblock %}
+
+{% block form_builder_container_collection_widget %}
+    {{- block('form_widget') -}}
+{% endblock %}
+
+{% block form_builder_container_collection_label %}
+    {%- if add_block_counter != false -%}
+        {%- if label != false -%}
+            {%- set label_attr = label_attr|merge({'data-label-template': label|trans ~ ' __label_index__'}) -%}
+            {%- if name == '__name__' -%}
+                {%- set label = label|trans ~ ' __label__' -%}
+            {% else %}
+                {%- set label = (label|trans ~ ' ' ~ (name|abs + 1)) -%}
+            {%- endif -%}
+        {%- endif -%}
+    {% else %}
+        {%- if label != false -%}
+            {%- set label = label|trans -%}
+        {%- endif -%}
+    {%- endif -%}
+    {{- block('form_label') -}}
+{% endblock %}

@@ -4,8 +4,6 @@ namespace FormBuilderBundle\Factory;
 
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Storage\FormFieldContainer;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormField;

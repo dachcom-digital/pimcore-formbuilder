@@ -63,22 +63,16 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     renderLayout: function () {
 
         var items = [];
-
-        for (var i = 0; i < this.configurationLayout.length; i++) {
-
-            var tabLayout = this.configurationLayout[i];
-            var item = new Ext.Panel({
+        Ext.Array.each(this.configurationLayout, function (tabLayout, i) {
+            items.push(new Ext.Panel({
                 title: tabLayout.label,
                 closable: false,
                 autoScroll: true,
                 items: [
                     this.getForm(tabLayout.fields, i === 0)
                 ]
-            });
-
-            items.push(item);
-
-        }
+            }));
+        }.bind(this));
 
         this.form = new Ext.form.Panel({
             items: {
@@ -142,12 +136,14 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
      */
     getForm: function (formConfig, isMainTab) {
 
-        var form = this.createBaseForm(isMainTab);
+        var form = this.createBaseForm(isMainTab),
+            groupFields = [];
 
-        var groupFields = [];
-        for (var i = 0; i < formConfig.length; i++) {
+        Ext.Array.each(formConfig, function (fieldSetConfig, i) {
 
-            var fieldSetConfig = formConfig[i],
+            var fieldSetFields = [],
+                fieldConfig,
+                field,
                 fieldSet = new Ext.form.FieldSet({
                     title: fieldSetConfig.label,
                     collapsible: true,
@@ -156,22 +152,18 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                     defaultType: 'textfield'
                 });
 
-            var fieldSetFields = [];
             for (var fieldsIndex = 0; fieldsIndex < fieldSetConfig.fields.length; fieldsIndex++) {
 
-                var fieldConfig = fieldSetConfig.fields[fieldsIndex],
-                    field = this.generateField(fieldConfig);
-
+                fieldConfig = fieldSetConfig.fields[fieldsIndex];
+                field = this.generateField(fieldConfig);
                 if (field !== null) {
                     fieldSetFields.push(field);
                 }
             }
 
             fieldSet.add(fieldSetFields);
-
             groupFields.push(fieldSet);
-
-        }
+        }.bind(this));
 
         form.add(groupFields);
 

@@ -1,16 +1,53 @@
-<table>
-{% for field in fields|default([]) %}
+{% macro render(field) %}
     {% set value = field.value %}
-
     {% if value is iterable %}
         {% set value = value|join(', ') %}
     {% endif %}
-
     {% if value is not empty %}
         <tr>
-            <td width="50%" valign="top"><strong>{{ field.email_label|default(field.label)|raw }}:</strong></td>
-            <td width="50%" valign="top">{{ value }}</td>
+            <td width="50%" valign="top" align="left"><strong>{{ field.email_label|default(field.label)|raw }}:</strong></td>
+            <td width="50%" valign="top" align="left">{{ value }}</td>
         </tr>
     {% endif %}
-{% endfor %}
+{% endmacro %}
+
+{% import _self as formFieldRenderer %}
+
+<table>
+    <thead></thead>
+    <tbody>
+    {% for field in fields|default([]) %}
+        {% if field.render_type == 'simple' %}
+            {{ formFieldRenderer.render(field) }}
+        {% elseif field.render_type == 'container' %}
+            {% if field.fields is defined and field.fields is iterable and field.fields|length > 0 %}
+                {% if field.label != false %}
+                    <tr>
+                        <td width="100%" valign="top" colspan="2" align="left"><strong>{{ field.label|trans }}:</strong></td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td width="100%" valign="top" align="left" colspan="2">
+                        <table width="100%">
+                            {% for field_container in field.fields %}
+                                {% if field_container is iterable %}
+                                    {% for sub_field in field_container %}
+                                        {{ formFieldRenderer.render(sub_field) }}
+                                    {% endfor %}
+                                    {% if loop.last == false %}
+                                        <tr>
+                                            <td width="100%" valign="top" colspan="2">
+                                                <hr>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    </tbody>
 </table>

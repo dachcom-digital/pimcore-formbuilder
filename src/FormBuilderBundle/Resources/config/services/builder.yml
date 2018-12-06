@@ -11,5 +11,9 @@ services:
     # backend form builder
     FormBuilderBundle\Backend\Form\Builder: ~
 
-    #form values beautifier
+    # form values beautifier
     FormBuilderBundle\Form\FormValuesBeautifier: ~
+
+    # error serializer
+    FormBuilderBundle\Form\FormErrorsSerializer: ~
+    FormBuilderBundle\Form\FormErrorsSerializerInterface: '@FormBuilderBundle\Form\FormErrorsSerializer'

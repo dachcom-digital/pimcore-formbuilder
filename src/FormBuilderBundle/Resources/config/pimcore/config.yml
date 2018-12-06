@@ -230,5 +230,6 @@ form_builder:
                         label: 'form_builder_element_value_value'
 imports:
     - { resource: '../backend/base_config.yml' }
-    - { resource: '../types/types.yml' }
+    - { resource: '../types/field_types.yml' }
+    - { resource: '../types/container_types.yml' }
     - { resource: '../extension/extension.yml' }

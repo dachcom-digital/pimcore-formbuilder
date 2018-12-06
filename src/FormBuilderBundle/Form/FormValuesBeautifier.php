@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\Form;
 
+use FormBuilderBundle\Form\Type\Container\ContainerType;
+use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 use FormBuilderBundle\Storage\FormFieldDynamicInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
@@ -35,13 +37,223 @@ class FormValuesBeautifier
     }
 
     /**
+     * @param FormInterface $form
+     * @param array         $ignoreFields
+     * @param string        $locale
+     *
+     * @return array
+     */
+    public function transformData(FormInterface $form, array $ignoreFields, $locale)
+    {
+        $fieldValues = [];
+
+        /** @var FormBuilderFormInterface $formEntity */
+        $formEntity = $form->getData();
+
+        $orderedFields = $formEntity->getFields();
+        usort($orderedFields, function ($a, $b) {
+            return ($a->getOrder() < $b->getOrder()) ? -1 : 1;
+        });
+
+        /** @var FormFieldInterface $field */
+        foreach ($orderedFields as $field) {
+
+            if (in_array($field->getName(), $ignoreFields)) {
+                continue;
+            }
+
+            $formField = $form->get($field->getName());
+
+            if ($field instanceof FormFieldDynamicInterface) {
+                $data = $this->transformDynamicField($formEntity, $field, $formField, $locale);
+                if ($data !== null) {
+                    $fieldValues[$field->getName()] = $data;
+                }
+            } else {
+                if ($field instanceof FormFieldContainerInterface) {
+                    $data = $this->transformFormBuilderContainerField($formEntity, $field, $formField, $locale);
+                    if ($data !== null) {
+                        $fieldValues[$field->getName()] = $data;
+                    }
+                } else {
+                    $data = $this->transformFormBuilderField($formEntity, $field, $formField, $locale);
+                    if ($data !== null) {
+                        $fieldValues[$field->getName()] = $data;
+                    }
+                }
+            }
+        }
+
+        return $fieldValues;
+    }
+
+    /**
+     * @param FormBuilderFormInterface  $formEntity
+     * @param FormFieldDynamicInterface $entityField
+     * @param FormInterface             $formField
+     * @param                           $locale
+     *
+     * @return array
+     */
+    private function transformDynamicField(FormBuilderFormInterface $formEntity, FormFieldDynamicInterface $entityField, FormInterface $formField, $locale)
+    {
+        $formFieldValue = $formEntity->getFieldValue($entityField->getName());
+        $data = $this->beautifyDynamicField($entityField, $formFieldValue, $formField, $locale);
+
+        return $data;
+    }
+
+    /**
+     * @param FormBuilderFormInterface    $formEntity
+     * @param FormFieldContainerInterface $entityField
+     * @param FormInterface               $formField
+     * @param                             $locale
+     *
+     * @return array|null
+     */
+    private function transformFormBuilderContainerField(FormBuilderFormInterface $formEntity, FormFieldContainerInterface $entityField, FormInterface $formField, $locale)
+    {
+        if (
+            $formField->getConfig()->getType()->getParent() === null ||
+            !$formField->getConfig()->getType()->getParent()->getInnerType() instanceof ContainerType
+        ) {
+            return null;
+        }
+
+        if ($formField->count() === 0) {
+            return null;
+        }
+
+        $formFieldValues = $formEntity->getFieldValue($entityField->getName());
+
+        $subFieldValues = [];
+        foreach ($formField->all() as $index => $subFieldCollection) {
+            $subCollectionFieldValues = [];
+            foreach ($entityField->getFields() as $subField) {
+                $subFormField = $subFieldCollection->get($subField->getName());
+                $formFieldValue = is_array($formFieldValues) && isset($formFieldValues[$index][$subField->getName()]) ? $formFieldValues[$index][$subField->getName()] : null;
+                $subCollectionFieldValues[] = $this->beautifyFormBuilderField($subField, $formFieldValue, $subFormField, $locale);
+            }
+            if (count($subCollectionFieldValues) > 0) {
+                $subFieldValues[] = $subCollectionFieldValues;
+            }
+        }
+
+        if (count($subFieldValues) === 0) {
+            return null;
+        }
+
+        $fieldConfig = $entityField->getConfiguration();
+        $containerLabel = isset($fieldConfig['label']) && !empty($fieldConfig['label']) ? $fieldConfig['label'] : false;
+        $blockLabel = isset($fieldConfig['block_label']) && !empty($fieldConfig['block_label']) ? $fieldConfig['block_label'] : false;
+
+        $data = [
+            'render_type' => 'container',
+            'label'       => $containerLabel,
+            'block_label' => $blockLabel,
+            'type'        => $entityField->getSubType(),
+            'fields'      => $subFieldValues
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @param FormBuilderFormInterface $formEntity
+     * @param FormFieldInterface       $entityField
+     * @param FormInterface            $formField
+     * @param                          $locale
+     *
+     * @return array
+     */
+    private function transformFormBuilderField(FormBuilderFormInterface $formEntity, FormFieldInterface $entityField, FormInterface $formField, $locale)
+    {
+        $formFieldValue = $formEntity->getFieldValue($entityField->getName());
+        $data = $this->beautifyFormBuilderField($entityField, $formFieldValue, $formField, $locale);
+        return $data;
+    }
+
+    /**
+     * @param FormFieldInterface $field
+     * @param mixed              $formFieldValue
+     * @param FormInterface      $formField
+     * @param string             $locale
+     *
+     * @return array
+     */
+    private function beautifyFormBuilderField(FormFieldInterface $field, $formFieldValue, FormInterface $formField, $locale)
+    {
+        $fieldOptions = $field->getOptions();
+        $optionalOptions = $field->getOptional();
+
+        $defaults = [
+            'render_type' => 'simple',
+            'name'        => $field->getName(),
+            'type'        => $field->getType()
+        ];
+
+        return array_merge([
+            'label'       => isset($fieldOptions['label']) && !empty($fieldOptions['label'])
+                ? $this->translator->trans($fieldOptions['label'], [], null, $locale)
+                : $field->getName(),
+            'email_label' => isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
+                ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
+                : null,
+            'value'       => $this->getFieldValue($formFieldValue, $formField, $locale),
+        ], $defaults);
+    }
+
+    /**
+     * @param FormFieldDynamicInterface $field
+     * @param mixed                     $formFieldValue
+     * @param FormInterface             $formField
+     * @param string                    $locale
+     *
+     * @return array
+     */
+    private function beautifyDynamicField(FormFieldDynamicInterface $field, $formFieldValue, FormInterface $formField, $locale)
+    {
+        $label = $formField->getConfig()->hasOption('label') ? $formField->getConfig()->getOption('label') : $field->getName();
+        $optionalOptions = $field->getOptional();
+
+        $valueTransformer = isset($optionalOptions['email_value_transformer']) && is_callable($optionalOptions['email_value_transformer'])
+            ? $optionalOptions['email_value_transformer']
+            : false;
+
+        $value = false;
+        if ($valueTransformer === false) {
+            $value = $this->getFieldValue($formFieldValue, $formField, $locale);
+        } elseif ($valueTransformer instanceof \Closure) {
+            $value = call_user_func_array($valueTransformer, [$formField, $formFieldValue, $locale]);
+        } elseif (is_array($valueTransformer)) {
+            $value = call_user_func_array($valueTransformer, [$formField, $formFieldValue, $locale]);
+        }
+
+        $defaults = [
+            'render_type' => 'simple',
+            'name'        => $field->getName(),
+            'type'        => $field->getType()
+        ];
+
+        return array_merge([
+            'label'       => isset($label) && !empty($label)
+                ? $this->translator->trans($label, [], null, $locale)
+                : $label,
+            'email_label' => isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
+                ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
+                : null,
+            'value'       => $value
+        ], $defaults);
+    }
+
+    /**
      * @param mixed         $value
      * @param FormInterface $formField
      * @param string        $locale
      *
      * @return string|array
      */
-    public function getFieldValue($value, $formField, $locale)
+    public function getFieldValue($value, FormInterface $formField, $locale)
     {
         if (empty($value)) {
             return $value;
@@ -111,114 +323,4 @@ class FormValuesBeautifier
         return $value;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param array         $ignoreFields
-     * @param string        $locale
-     *
-     * @return array
-     */
-    public function transformData(FormInterface $form, array $ignoreFields, $locale)
-    {
-        $fields = [];
-
-        /** @var \FormBuilderBundle\Storage\FormInterface $formEntity */
-        $formEntity = $form->getData();
-
-        $orderedFields = $formEntity->getFields();
-        usort($orderedFields, function ($a, $b) {
-            return ($a->getOrder() < $b->getOrder()) ? -1 : 1;
-        });
-
-        /** @var FormFieldInterface $field */
-        foreach ($orderedFields as $field) {
-
-            if (in_array($field->getName(), $ignoreFields)) {
-                continue;
-            }
-
-            $formField = $form->get($field->getName());
-
-            if ($field instanceof FormFieldDynamicInterface) {
-                $additional = $this->beautifyDynamicField($field, $formEntity, $formField, $locale);
-            } else {
-                $additional = $this->beautifyFormBuilderField($field, $formEntity, $formField, $locale);
-            }
-
-            $fieldData = array_merge(
-                [
-                    'name' => $field->getName(),
-                    'type' => $field->getType(),
-                ],
-                $additional
-            );;
-
-            $fields[] = $fieldData;
-        }
-
-        return $fields;
-    }
-
-    /**
-     * @param FormFieldInterface       $field
-     * @param FormBuilderFormInterface $formEntity
-     * @param FormInterface            $formField
-     * @param string                   $locale
-     *
-     * @return array
-     */
-    private function beautifyFormBuilderField(FormFieldInterface $field, FormBuilderFormInterface $formEntity, FormInterface $formField, $locale)
-    {
-        $fieldOptions = $field->getOptions();
-        $optionalOptions = $field->getOptional();
-
-        return [
-            'label'       => isset($fieldOptions['label']) && !empty($fieldOptions['label'])
-                ? $this->translator->trans($fieldOptions['label'], [], null, $locale)
-                : $field->getName(),
-            'email_label' => isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
-                ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
-                : null,
-            'value'       => $this->getFieldValue($formEntity->getFieldValue($field->getName()), $formField, $locale),
-        ];
-    }
-
-    /**
-     * @param FormFieldDynamicInterface $field
-     * @param FormBuilderFormInterface  $formEntity
-     * @param FormInterface             $formField
-     * @param string                    $locale
-     *
-     * @return array
-     */
-    private function beautifyDynamicField(FormFieldDynamicInterface $field, FormBuilderFormInterface $formEntity, FormInterface $formField, $locale)
-    {
-        $label = $formField->getConfig()->hasOption('label') ? $formField->getConfig()->getOption('label') : $field->getName();
-        $optionalOptions = $field->getOptional();
-
-        $valueTransformer = isset($optionalOptions['email_value_transformer']) && is_callable($optionalOptions['email_value_transformer'])
-            ? $optionalOptions['email_value_transformer']
-            : false;
-
-        $value = false;
-        $fieldValue = $formEntity->getFieldValue($field->getName());
-
-        if ($valueTransformer === false) {
-            $value = $this->getFieldValue($fieldValue, $formField, $locale);
-        } elseif ($valueTransformer instanceof \Closure) {
-            $value = call_user_func_array($valueTransformer, [$formField, $fieldValue, $locale]);
-        } elseif (is_array($valueTransformer)) {
-            $value = call_user_func_array($valueTransformer, [$formField, $fieldValue, $locale]);
-        }
-
-        return [
-            'label'       => isset($label) && !empty($label)
-                ? $this->translator->trans($label, [], null, $locale)
-                : $label,
-            'email_label' => isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
-                ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
-                : null,
-            'value'       => $value
-        ];
-    }
 }

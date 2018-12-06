@@ -31,7 +31,7 @@ class Dispatcher
     protected $optionsResolver = [];
 
     /**
-     * ConstraintConnector constructor.
+     * Dispatcher constructor.
      *
      * @param ConditionalLogicProcessor $conditionalLogicProcessor
      * @param DispatcherRegistry        $dispatcherRegistry

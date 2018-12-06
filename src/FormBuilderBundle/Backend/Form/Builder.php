@@ -113,7 +113,13 @@ class Builder
     public function generateExtJsFields(array $fields)
     {
         foreach ($fields as &$fieldData) {
-            $this->transformOptions($fieldData, true);
+            if ($fieldData['type'] === 'container' && is_array($fieldData['fields'])) {
+                foreach ($fieldData['fields'] as &$subFieldData) {
+                    $this->transformOptions($subFieldData, true);
+                }
+            } else {
+                $this->transformOptions($fieldData, true);
+            }
         }
 
         return $fields;
@@ -132,7 +138,13 @@ class Builder
         }
 
         foreach ($data['fields'] as &$fieldData) {
-            $this->transformOptions($fieldData);
+            if ($fieldData['type'] === 'container' && is_array($fieldData['fields'])) {
+                foreach ($fieldData['fields'] as &$subFieldData) {
+                    $this->transformOptions($subFieldData);
+                }
+            } else {
+                $this->transformOptions($fieldData);
+            }
         }
 
         return $data;
@@ -279,6 +291,13 @@ class Builder
         $containerData = [];
         foreach ($containerTypes as $containerId => &$container) {
             $container['label'] = $this->translate($container['label']);
+            if (isset($container['config']) && is_array($container['config'])) {
+                foreach ($container['config'] as $index => $configNode) {
+                    if (isset($container['config'][$index]['label'])) {
+                        $container['config'][$index]['label'] = $this->translate($configNode['label']);
+                    }
+                }
+            }
             $containerData[] = $container;
         }
 

@@ -110,6 +110,18 @@ class Configuration
     }
 
     /**
+     * @param string $containerName
+     *
+     * @return mixed
+     */
+    public function getContainerFieldClass(string $containerName)
+    {
+        $containerTypes = $this->config['container_types'];
+
+        return $containerTypes[$containerName]['class'];
+    }
+
+    /**
      * @return array
      */
     public function getAvailableContainer()
@@ -118,8 +130,12 @@ class Configuration
 
         $containerData = [];
         foreach ($containerTypes as $containerId => &$container) {
+
+            if($container['enabled'] === false) {
+                continue;
+            }
+
             $container['id'] = $containerId;
-            $container['config'] = [];
             $containerData[$containerId] = $container;
         }
 

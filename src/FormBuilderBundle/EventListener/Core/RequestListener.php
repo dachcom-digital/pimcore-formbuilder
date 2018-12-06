@@ -4,6 +4,7 @@ namespace FormBuilderBundle\EventListener\Core;
 
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Builder;
+use FormBuilderBundle\Form\FormErrorsSerializerInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -33,20 +34,28 @@ class RequestListener implements EventSubscriberInterface
     protected $session;
 
     /**
+     * @var FormErrorsSerializerInterface
+     */
+    protected $formErrorsSerializer;
+
+    /**
      * RequestListener constructor.
      *
-     * @param Builder                  $formBuilder
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param SessionInterface         $session
+     * @param Builder                       $formBuilder
+     * @param EventDispatcherInterface      $eventDispatcher
+     * @param SessionInterface              $session
+     * @param FormErrorsSerializerInterface $formErrorsSerializer
      */
     public function __construct(
         Builder $formBuilder,
         EventDispatcherInterface $eventDispatcher,
-        SessionInterface $session
+        SessionInterface $session,
+        FormErrorsSerializerInterface $formErrorsSerializer
     ) {
         $this->formBuilder = $formBuilder;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
+        $this->formErrorsSerializer = $formErrorsSerializer;
     }
 
     /**
@@ -205,31 +214,7 @@ class RequestListener implements EventSubscriberInterface
      */
     protected function getErrors(FormInterface $form)
     {
-        $errors = [];
-
-        $generalErrors = [];
-        foreach ($form->getErrors() as $error) {
-            /** @scrutinizer ignore-call */
-            $generalErrors[] = $error->getMessage();
-        }
-
-        if (!empty($generalErrors)) {
-            $errors['general'] = $generalErrors;
-        }
-
-        foreach ($form->all() as $field) {
-            $fieldErrors = [];
-            foreach ($field->getErrors() as $error) {
-                /** @scrutinizer ignore-call */
-                $fieldErrors[] = $error->getMessage();
-            }
-
-            if (!empty($fieldErrors)) {
-                $errors[$field->getName()] = $fieldErrors;
-            }
-        }
-
-        return $errors;
+        return $this->formErrorsSerializer->getErrors($form);
     }
 
     /**

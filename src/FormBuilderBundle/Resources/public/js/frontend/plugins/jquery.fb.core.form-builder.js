@@ -1,7 +1,7 @@
 /*
  *  Project: PIMCORE FormBuilder
  *  Extension: Core
- *  Version: 2.2.1
+ *  Since: 2.2.0
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
  *
@@ -28,14 +28,11 @@
                     var $field = $fields.first(),
                         $formGroup = $field.closest('.form-group');
 
+                    $formGroup.addClass('has-error');
+                    $formGroup.find('span.help-block.validation').remove();
+
                     $.each(messages, function (validationType, message) {
-
-                        $formGroup.addClass('has-error');
-                        $formGroup.find('span.help-block.validation').remove();
-
-                        //it's a multiple field
                         var $spanEl = $('<span/>', {'class': 'help-block validation', 'text': message});
-
                         if ($fields.length > 1) {
                             $field.closest('label').before($spanEl);
                         } else {
@@ -52,21 +49,29 @@
                 addValidationMessage: function ($fields, messages) {
                     var $field = $fields.first(),
                         $formGroup = $field.closest('.form-group'),
-                        $spanEl,
-                        isMultiple = $fields.length > 1;
+                        isDiv = $field.prop('nodeName') === 'DIV',
+                        isMultipleInputElement = false;
 
                     $fields.addClass('is-invalid');
+
+                    $formGroup.each(function () {
+                        $(this).find('span.invalid-feedback.validation').remove();
+                    });
+
+                    if (isDiv === true) {
+                        isMultipleInputElement = $field.find('input:checkbox,input:radio').length > 0;
+                    }
+
+                    if (isMultipleInputElement) {
+                        $field.find('input:checkbox,input:radio').attr('required', 'required');
+                    }
+
                     $field.closest('form').addClass('was-validated');
+
                     $.each(messages, function (validationType, message) {
-                        $formGroup.find('span.invalid-feedback.validation').remove();
-                        $spanEl = $('<span/>', {'class': 'invalid-feedback validation', 'text': message});
-
-                        if ($field.attr('type') === 'checkbox' || $field.attr('type') === 'radio') {
-                            $fields.attr('required', 'required');
-                        }
-
-                        if (isMultiple) {
-                            $fields.last().next('label').after($spanEl);
+                        var $spanEl = $('<span/>', {'class': 'invalid-feedback validation', 'text': message});
+                        if (isMultipleInputElement) {
+                            $fields.find('input').last().next('label').after($spanEl);
                         } else {
                             $fields.after($spanEl);
                         }
@@ -75,7 +80,7 @@
                 removeFormValidations: function ($form) {
                     $form.removeClass('was-validated');
                     $form.find('.is-invalid').removeClass('is-invalid');
-                    $form.find('.span.invalid-feedback.validation').remove();
+                    $form.find('span.invalid-feedback.validation').remove();
                 }
             }
         };
@@ -93,11 +98,9 @@
                 case 'bootstrap_3_layout':
                 case 'bootstrap_3_horizontal_layout':
                     return this.themeTransform.bootstrap3[action].apply(null, args);
-                    break;
                 case 'bootstrap_4_layout':
                 case 'bootstrap_4_horizontal_layout':
                     return this.themeTransform.bootstrap4[action].apply(null, args);
-                    break;
                 default:
                     console.warn('unknown validation transformer action.', action);
                     break;
@@ -112,7 +115,7 @@
         this.ajaxUrls = {};
         this.validationTransformer = new ValidationTransformer(this.options.validationTransformer, this.formTemplate);
 
-        window.formBuilderGlobalContext = {}
+        window.formBuilderGlobalContext = {};
 
         this.init();
 
@@ -171,10 +174,16 @@
                                     if (fieldId === 'general') {
                                         generalFormErrors = messages;
                                     } else {
-                                        var $fields = $form.find('*[name*="' + fieldId + '"]');
+                                        var $fields = $form.find('[id="' + fieldId + '"]');
+
+                                        //fallback for radio / checkbox
+                                        if ($fields.length === 0) {
+                                            $fields = $form.find('[id^="' + fieldId + '"]');
+                                        }
+
                                         //fallback for custom fields (like ajax file, headline or snippet type)
                                         if ($fields.length === 0) {
-                                            $fields = $form.find('*[data-field-name*="' + fieldId + '"]');
+                                            $fields = $form.find('[data-field-name*="' + fieldId + '"]');
                                         }
 
                                         if ($fields.length > 0) {
@@ -187,12 +196,12 @@
                                     }
                                 });
 
-                                if(generalFormErrors.length > 0) {
+                                if (generalFormErrors.length > 0) {
                                     $form.trigger('formbuilder.error-form', [generalFormErrors, $form]);
                                 }
 
                             } else {
-                                if(response.error) {
+                                if (response.error) {
                                     $form.trigger('formbuilder.fatal', [response, $form]);
                                 } else {
                                     $form.trigger('formbuilder.error', [response.messages, $form]);
@@ -308,7 +317,7 @@
                         },
                         onDeleteComplete: function (id, xhr, isError) {
                             var data = jQuery.parseJSON(xhr.responseText);
-                            if (data.success == true) {
+                            if (data.success === true) {
                                 $storeField.val($storeField.val().replace(',' + data.uuid, ''));
                             } else {
                                 $storeField.val($storeField.val().replace(',' + data.path, ''));

@@ -3,6 +3,7 @@
 {% use '@FormBuilder/Form/Theme/Type/dynamic_multi_file.html.twig' %}
 {% use '@FormBuilder/Form/Theme/Type/html_tag.html.twig' %}
 {% use '@FormBuilder/Form/Theme/Type/snippet.html.twig' %}
+{% use '@FormBuilder/Form/Theme/Type/container.html.twig' %}
 
 {%- block form_builder_dynamicmultifile_widget -%}
     {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) -%}
@@ -60,7 +61,11 @@
 {%- endblock form_builder_honeypot_row %}
 
 {% block form_row -%}
-    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : 'col-12' }}">
+    {% set form_row_class = attr['data-template'] is defined ? attr['data-template'] : 'col-12' %}
+    {% if form.vars.is_form_builder_container_block is defined %}
+        {% set form_row_class = 'formbuilder-container-block' %}
+    {% endif %}
+    <div class="{{ form_row_class }}">
         {{ parent() }}
     </div>
 {%- endblock form_row %}
