@@ -631,11 +631,12 @@ Formbuilder.comp.form = Class.create({
             }
         }
 
-        if (node.childNodes.length > 0) {
-            for (var i = 0; i < node.childNodes.length; i++) {
-                this.validateSubNodes(node.childNodes[i]);
-            }
+        if (node.hasOwnProperty('childNodes') && Ext.isArray(node.childNodes)) {
+            Ext.Array.each(node.childNodes, function (childNode, i) {
+                this.validateSubNodes(childNode);
+            }.bind(this));
         }
+
     },
 
     /**
@@ -1041,13 +1042,11 @@ Formbuilder.comp.form = Class.create({
             Ext.MessageBox.alert(t('error'), 'invalid field type: ' + node.data.fbType);
         }
 
-        var len = node.childNodes ? node.childNodes.length : 0;
-
-        // Move child nodes across to the copy if required
-        for (var i = 0; i < len; i++) {
-            var childNode = node.childNodes[i],
-                clonedChildNode = this.cloneChild(tree, childNode);
-            newNode.appendChild(clonedChildNode);
+        if (node.hasOwnProperty('childNodes') && Ext.isArray(node.childNodes)) {
+            Ext.Array.each(node.childNodes, function (childNode, i) {
+                var clonedChildNode = this.cloneChild(tree, childNode);
+                newNode.appendChild(clonedChildNode);
+            }.bind(this));
         }
 
         return newNode;
@@ -1081,14 +1080,14 @@ Formbuilder.comp.form = Class.create({
             delete formFieldData['constraints'];
         }
 
-        if (node.childNodes.length > 0) {
-            for (var i = 0; i < node.childNodes.length; i++) {
-                var type = node.childNodes[i].data.fbTypeContainer;
+        if (node.hasOwnProperty('childNodes') && Ext.isArray(node.childNodes)) {
+            Ext.Array.each(node.childNodes, function (childNode, i) {
+                var type = childNode.data.fbTypeContainer;
                 if (!formFieldData[type]) {
                     formFieldData[type] = [];
                 }
-                formFieldData[type].push(this.getData(node.childNodes[i]));
-            }
+                formFieldData[type].push(this.getData(childNode));
+            }.bind(this));
         }
 
         return formFieldData;
@@ -1251,10 +1250,10 @@ Formbuilder.comp.form = Class.create({
             }
         }
 
-        if (node.childNodes.length > 0) {
-            for (var i = 0; i < node.childNodes.length; i++) {
-                this.getUsedFieldNames(node.childNodes[i], nodeNames);
-            }
+        if (node.hasOwnProperty('childNodes') && Ext.isArray(node.childNodes)) {
+            Ext.Array.each(node.childNodes, function (childNode, i) {
+                this.getUsedFieldNames(childNode, nodeNames);
+            }.bind(this));
         }
 
         return nodeNames;
@@ -1339,9 +1338,20 @@ Formbuilder.comp.form = Class.create({
             fields = [];
 
         Ext.Array.each(treeStore.queryBy(function (record, id) {
+            if (Ext.isArray(fbType)) {
+                return in_array(record.get('fbType'), fbType);
+            }
             return record.get('fbType') === fbType;
         }).getRange(), function (field) {
-            if (field.getData().hasOwnProperty('object')) {
+            var isValidRootField = true, parentData;
+            if (field.hasOwnProperty('parentNode')) {
+                parentData = field.parentNode.getData();
+                // currently we can't handle container sub fields
+                if (parentData.hasOwnProperty('fbType') && parentData.fbType !== 'root') {
+                    isValidRootField = false;
+                }
+            }
+            if (isValidRootField === true && field.getData().hasOwnProperty('object')) {
                 fields.push(field.getData().object.getData());
             }
         });

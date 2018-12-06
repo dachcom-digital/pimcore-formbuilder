@@ -70,17 +70,31 @@
 
                     $.each(messages, function (validationType, message) {
                         var $spanEl = $('<span/>', {'class': 'invalid-feedback validation', 'text': message});
+
+                        // multiple radio / checkbox:
+                        // at least one checked strategy: add feedback message out of a single element
                         if (isMultipleInputElement) {
-                            $fields.find('input').last().next('label').after($spanEl);
+                            $field.addClass('fb-multiple-input-validated');
+                            $field.append($spanEl.addClass('d-block'));
                         } else {
                             $fields.after($spanEl);
                         }
                     });
                 },
                 removeFormValidations: function ($form) {
+                    var $multipleValidatedInputElements;
+
                     $form.removeClass('was-validated');
                     $form.find('.is-invalid').removeClass('is-invalid');
                     $form.find('span.invalid-feedback.validation').remove();
+
+                    // multiple radio / checkbox:
+                    // at least one checked strategy: add feedback message out of a single element
+                    $multipleValidatedInputElements = $form.find('.fb-multiple-input-validated');
+                    if ($multipleValidatedInputElements.length > 0) {
+                        $multipleValidatedInputElements.removeClass('fb-multiple-input-validated');
+                        $multipleValidatedInputElements.find('input:checkbox,input:radio').removeAttr('required');
+                    }
                 }
             }
         };
