@@ -145,7 +145,7 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
             value: (this.getName() ? this.getName() : Ext.id(null, 'container_')),
             allowBlank: false,
             flex: 2,
-            readOnly: true
+            hidden: true
         }));
 
         Ext.iterate(this.containerTemplates, function (data, value) {

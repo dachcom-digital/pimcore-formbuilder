@@ -283,14 +283,20 @@ class FormManager
 
         if (!empty($optionsParameter) && is_array($optionsParameter)) {
             $field->setOptions($optionsParameter);
+        } else {
+            $field->setOptions([]);
         }
 
         if (!empty($optionalParameter) && is_array($optionalParameter)) {
             $field->setOptional($optionalParameter);
+        } else {
+            $field->setOptional([]);
         }
 
         if (!empty($constraints) && is_array($constraints)) {
             $field->setConstraints($constraints);
+        } else {
+            $field->setConstraints([]);
         }
 
         return $field;

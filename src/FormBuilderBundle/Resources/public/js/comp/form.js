@@ -200,7 +200,7 @@ Formbuilder.comp.form = Class.create({
         } else if (type === 'container') {
             nodeObject = this.getContainerTypeStructure(formTypeValues.sub_type);
             if (nodeObject === false) {
-                Ext.MessageBox.alert(t('error'), 'Form container for type "' + formTypeValues.type + '" not found.');
+                Ext.MessageBox.alert(t('error'), 'Form container for type "' + formTypeValues.sub_type + '" not found.');
                 return null;
             }
             newNode = this.createContainerField(scope, nodeObject, formTypeValues);
@@ -215,11 +215,9 @@ Formbuilder.comp.form = Class.create({
         }
 
         if (formTypeValues.hasOwnProperty('constraints') && Ext.isArray(formTypeValues.constraints)) {
-            for (var i = 0; i < formTypeValues.constraints.length; i++) {
-                Ext.Array.each(formTypeValues.constraints, function (constraint) {
-                    this.recursiveAddNode(newNode, constraint, 'constraint');
-                }.bind(this));
-            }
+            Ext.Array.each(formTypeValues.constraints, function (constraint) {
+                this.recursiveAddNode(newNode, constraint, 'constraint');
+            }.bind(this));
         }
 
         if (formTypeValues.hasOwnProperty('fields') && Ext.isArray(formTypeValues.fields)) {
@@ -1017,7 +1015,7 @@ Formbuilder.comp.form = Class.create({
 
         if (node.data.fbType === 'field') {
             nodeType.label = formTypeValues.display_name;
-            formElement = this.getFormTypeStructure(formFieldObject.type);
+            formElement = this.getFormTypeStructure(formFieldObject.getType());
             formElement.label = formTypeValues.display_name;
             //reset name
             formTypeValues.name = Ext.id(null, 'field_');
@@ -1026,14 +1024,14 @@ Formbuilder.comp.form = Class.create({
             newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(
                 this, newNode, formElement, this.availableFormFieldTemplates, formTypeValues));
         } else if (node.data.fbType === 'constraint') {
-            formElement = this.getFormTypeConstraintStructure(formFieldObject.type);
+            formElement = this.getFormTypeConstraintStructure(formFieldObject.getType());
             nodeType.label = formElement.label;
             config = this.createFormFieldConstraintNode(nodeType);
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(
                 this, newNode, formElement, formTypeValues));
         } else if (node.data.fbType === 'container') {
-            formElement = this.getContainerTypeStructure(formFieldObject.type);
+            formElement = this.getContainerTypeStructure(formFieldObject.getSubType());
             nodeType.label = formElement.label;
             config = this.createContainerFieldNode(nodeType);
             newNode = node.createNode(config);
