@@ -43,6 +43,7 @@ class FormHelper
     {
         $dotSuffix = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.0') ? '_' : '.';
         $colonSuffix = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.0') ? '_' : ':';
+        $prettyJson = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.4');
 
         $editableConfig = [
             'id'        => sprintf('pimcore_editable_%s%s1%s%s', FormHelper::AREA_TEST_NAMESPACE, $colonSuffix, $dotSuffix, $name),
@@ -54,7 +55,7 @@ class FormHelper
             'inherited' => false,
         ];
 
-        $data = sprintf('editableConfigurations.push(%s);', json_encode($editableConfig));
+        $data = sprintf('editableConfigurations.push(%s);', json_encode($editableConfig, ($prettyJson ? JSON_PRETTY_PRINT : JSON_ERROR_NONE)));
 
         return $data;
     }

@@ -46,7 +46,7 @@
                     $els.each(function (i, el) {
                         var data = getContainerAwareFields($(el), this.$form);
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).removeClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -57,7 +57,7 @@
                             data.fields.val('').prop('selectedIndex', 0);
                         }
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).addClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -65,7 +65,7 @@
                     $els.each(function (i, el) {
                         var data = getContainerAwareFields($(el), this.$form);
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).addClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -73,7 +73,7 @@
                     $els.each(function (i, el) {
                         var data = getContainerAwareFields($(el), this.$form);
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).removeClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -118,7 +118,7 @@
                     $els.each(function (i, el) {
                         var data = getContainerAwareFields($(el), this.$form);
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).removeClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -129,7 +129,7 @@
                             data.fields.val('').prop('selectedIndex', 0);
                         }
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).addClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -137,7 +137,7 @@
                     $els.each(function (i, el) {
                         var data = getContainerAwareFields($(el), this.$form);
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).addClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
@@ -145,7 +145,7 @@
                     $els.each(function (i, el) {
                         var data = getContainerAwareFields($(el), this.$form);
                         data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('*[class^=col-]', this.$form[0]).removeClass(className);
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this),
