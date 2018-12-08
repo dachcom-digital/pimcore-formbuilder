@@ -17,13 +17,13 @@ class Dao extends AbstractDao
     protected $tableName = 'formbuilder_forms';
 
     /**
-     * @param null $name
+     * @param string $name
      *
      * @throws \Exception
      */
-    public function getByName($name = null)
+    public function getByName(string $name)
     {
-        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE name = ?', $name);
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE `name` = ?', $name);
 
         if (!$data['id']) {
             throw new \Exception(sprintf('Form with name "%s" does not exist.', $name));
@@ -33,17 +33,17 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @param null $id
+     * @param int|null $id
      *
      * @throws \Exception
      */
     public function getById($id = null)
     {
-        if ($id != null) {
+        if ($id !== null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE `id` = ?', $this->model->getId());
 
         if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -128,7 +128,7 @@ class Dao extends AbstractDao
             'fields'            => $this->getFormFieldData()
         ];
 
-        return $this->storeYmlData($data);
+        $this->storeYmlData($data);
     }
 
     /**

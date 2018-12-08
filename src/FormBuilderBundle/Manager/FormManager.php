@@ -83,8 +83,8 @@ class FormManager
     }
 
     /**
-     * @param array $data
-     * @param null  $id
+     * @param array    $data
+     * @param null|int $id
      *
      * @return FormInterface|null
      * @throws \Exception

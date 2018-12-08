@@ -24,9 +24,10 @@ class ElementValueCondition implements ConditionInterface
     protected $value;
 
     /**
-     * @param               $formData
-     * @param               $ruleId
-     * @param               $configuration
+     * @param array $formData
+     * @param int   $ruleId
+     * @param array $configuration
+     *
      * @return bool
      */
     public function isValid($formData, $ruleId, $configuration = [])
@@ -88,7 +89,6 @@ class ElementValueCondition implements ConditionInterface
     {
         $this->fields = $fields;
     }
-
 
     /**
      * @return string|array

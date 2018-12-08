@@ -7,22 +7,22 @@ use Pimcore\Model\Document;
 class FormOptionsResolver
 {
     /**
-     * @var null
+     * @var null|int
      */
     protected $formId = null;
 
     /**
-     * @var null
+     * @var null|string
      */
     protected $mainLayout = null;
 
     /**
-     * @var null
+     * @var null|string
      */
     protected $formTemplate = null;
 
     /**
-     * @var null
+     * @var null|string
      */
     protected $formBlockTemplate = null;
 
@@ -37,17 +37,17 @@ class FormOptionsResolver
     protected $sendCopy = false;
 
     /**
-     * @var null
+     * @var null|Document\Email
      */
     protected $mailTemplate = null;
 
     /**
-     * @var null
+     * @var null|Document\Email
      */
     protected $mailCopyTemplate = null;
 
     /**
-     * @param $formId
+     * @param int $formId
      */
     public function setFormId($formId)
     {
@@ -246,6 +246,7 @@ class FormOptionsResolver
      * @see https://github.com/dachcom-digital/pimcore-i18n/blob/master/docs/90_InternalLinkRewriter.md#internal-link-rewriter
      *
      * @param Document\Email $mailTemplate
+     *
      * @return Document\Email
      */
     private function checkI18nPath(Document\Email $mailTemplate)

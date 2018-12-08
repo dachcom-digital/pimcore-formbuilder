@@ -49,7 +49,7 @@ class TestFormBuilder
      *
      * @param string $formName
      */
-    public function __construct($formName = '')
+    public function __construct(string $formName = '')
     {
         $this->fieldTypeMapper = [];
         $this->formConfig = [
@@ -148,14 +148,14 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldInput($name, $options = [], $optional = [], $constraints = [])
+    public function addFormFieldInput(string $name, array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'text';
         $displayName = ucfirst($name);
@@ -169,14 +169,14 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldNumericInput($name, $options = [], $optional = [], $constraints = [])
+    public function addFormFieldNumericInput(string $name, array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'integer';
         $displayName = ucfirst($name);
@@ -190,14 +190,14 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldSingleCheckbox($name, $options = [], $optional = [], $constraints = [])
+    public function addFormFieldSingleCheckbox(string $name, array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'checkbox';
         $displayName = ucfirst($name);
@@ -211,14 +211,14 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldTextArea($name, $options = [], $optional = [], $constraints = [])
+    public function addFormFieldTextArea(string $name, array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'textarea';
         $displayName = ucfirst($name);
@@ -232,15 +232,15 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $choices
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $choices
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldChoice($name, $choices = [], $options = [], $optional = [], $constraints = [])
+    public function addFormFieldChoice(string $name, array $choices = [], array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'choice';
         $displayName = ucfirst($name);
@@ -262,15 +262,15 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $choices
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $choices
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldChoiceExpanded($name, $choices = [], $options = [], $optional = [], $constraints = [])
+    public function addFormFieldChoiceExpanded(string $name, array $choices = [], array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'choice';
         $displayName = ucfirst($name);
@@ -292,15 +292,15 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $choices
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $choices
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldChoiceMultiple($name, $choices = [], $options = [], $optional = [], $constraints = [])
+    public function addFormFieldChoiceMultiple(string $name, array $choices = [], array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'choice';
         $displayName = ucfirst($name);
@@ -322,15 +322,15 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $choices
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $choices
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldChoiceExpandedAndMultiple($name, $choices = [], $options = [], $optional = [], $constraints = [])
+    public function addFormFieldChoiceExpandedAndMultiple(string $name, array $choices = [], array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'choice';
         $displayName = ucfirst($name);
@@ -352,14 +352,14 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $name
-     * @param array $options
-     * @param array $optional
-     * @param array $constraints
+     * @param string $name
+     * @param array  $options
+     * @param array  $optional
+     * @param array  $constraints
      *
      * @return $this
      */
-    public function addFormFieldSubmitButton($name, $options = [], $optional = [], $constraints = [])
+    public function addFormFieldSubmitButton(string $name, array $options = [], array $optional = [], array $constraints = [])
     {
         $type = 'submit';
         $displayName = ucfirst($name);
@@ -373,16 +373,16 @@ class TestFormBuilder
     }
 
     /**
-     * @param       $type
-     * @param       $name
-     * @param       $displayName
-     * @param array $constraints
-     * @param array $options
-     * @param array $optional
+     * @param string $type
+     * @param string $name
+     * @param string $displayName
+     * @param array  $constraints
+     * @param array  $options
+     * @param array  $optional
      *
      * @return $this
      */
-    public function addFormField($type, $name, $displayName, $constraints = [], $options = [], $optional = [])
+    public function addFormField(string $type, string $name, string $displayName, array $constraints = [], array $options = [], array $optional = [])
     {
         $parsedConstraints = [];
         foreach ($constraints as $constraintType) {
@@ -436,11 +436,40 @@ class TestFormBuilder
     }
 
     /**
-     * @param $fieldName
+     * @param string $subType
+     * @param string $name
+     * @param array  $configuration
+     * @param array  $subFields
      *
      * @return $this
      */
-    public function removeField($fieldName)
+    public function addFormFieldContainer(string $subType, string $name, array $configuration, array $subFields)
+    {
+        if (!isset($configuration['template'])) {
+            $configuration['template'] = '';
+        }
+
+        $field = [
+            'type'          => 'container',
+            'sub_type'      => $subType,
+            'name'          => $name,
+            'display_name'  => ucfirst($subType),
+            'configuration' => $configuration,
+            'fields'        => $subFields
+        ];
+
+        $this->fieldTypeMapper[$name] = 'div';
+        $this->formConfig['form_fields']['fields'][] = $field;
+
+        return $this;
+    }
+
+    /**
+     * @param string $fieldName
+     *
+     * @return $this
+     */
+    public function removeField(string $fieldName)
     {
         foreach ($this->formConfig['form_fields']['fields'] as $index => $field) {
             if ($field['name'] === $fieldName) {
@@ -472,13 +501,13 @@ class TestFormBuilder
 
     /***
      * @param        $formId
-     * @param        $fieldName
+     * @param string $fieldName
      * @param string $prefix
      * @param string $suffix
      *
      * @return string
      */
-    public function getFormFieldSelector($formId, $fieldName, $prefix = '', $suffix = '')
+    public function getFormFieldSelector($formId, string $fieldName, string $prefix = '', string $suffix = '')
     {
         return sprintf('%s %s %s#formbuilder_%d_%s%s',
             $this->getFormSelector($formId),
