@@ -24,6 +24,57 @@ class ContainerRepeaterCest extends AbstractFieldCest
     /**
      * @param FunctionalTester $I
      */
+    public function testRepeaterContainerFieldEmailProperty(FunctionalTester $I)
+    {
+        $options = [
+            'min' => 2
+        ];
+        $optional = [
+            'subFields' => [
+                [
+                    'type'         => 'text',
+                    'name'         => 'sub_text_field_1',
+                    'display_name' => 'Text Field 1',
+                    'constraints'  => [],
+                    'options'      => [],
+                    'optional'     => [],
+                ],
+                [
+                    'type'         => 'text',
+                    'name'         => 'sub_text_field_2',
+                    'display_name' => 'Text Field 2',
+                    'constraints'  => [],
+                    'options'      => [],
+                    'optional'     => [],
+                ]
+            ]
+        ];
+
+        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, $optional);
+
+        $repeaterSelector = $testFormBuilder->getFormFieldSelector(1, 'repeater_container');
+        $fieldGenerator = function ($index, $subIndex) {
+            return sprintf('input#formbuilder_1_repeater_container_%d_sub_text_field_%d', $index, $subIndex);
+        };
+
+        $I->fillField(sprintf('%s %s', $repeaterSelector, $fieldGenerator(0, 1)), 'text_value_1');
+        $I->fillField(sprintf('%s %s', $repeaterSelector, $fieldGenerator(0, 2)), 'text_value_2');
+        $I->fillField(sprintf('%s %s', $repeaterSelector, $fieldGenerator(1, 1)), 'text_value_3');
+        $I->fillField(sprintf('%s %s', $repeaterSelector, $fieldGenerator(1, 2)), 'text_value_4');
+
+        $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
+
+        $I->seePropertiesInEmail($adminEmail, [
+            'repeater_container_0_sub_text_field_1' => 'text_value_1',
+            'repeater_container_0_sub_text_field_2' => 'text_value_2',
+            'repeater_container_1_sub_text_field_1' => 'text_value_3',
+            'repeater_container_1_sub_text_field_2' => 'text_value_4'
+        ]);
+    }
+
+    /**
+     * @param FunctionalTester $I
+     */
     public function testRepeaterContainerFieldWithLabel(FunctionalTester $I)
     {
         $options = [

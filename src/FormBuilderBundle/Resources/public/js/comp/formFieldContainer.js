@@ -5,29 +5,25 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
     formIsValid: true,
     formHandler: null,
     type: 'container',
-    name: null,
+    displayName: null,
     subType: null,
     typeName: null,
     iconClass: null,
     containerTemplates: [],
     storeData: {},
 
-    initialize: function (formHandler, treeNode, container, availableContainerTemplates, values) {
+    initialize: function (formHandler, treeNode, containerConfig, availableContainerTemplates, values) {
         this.formHandler = formHandler;
         this.treeNode = treeNode;
-        this.iconClass = container.icon_class;
-        this.subType = container.id;
-        this.typeName = container.label;
-        this.name = container.name;
-        this.config = container.config;
+        this.iconClass = containerConfig.icon_class;
+        this.subType = containerConfig.id;
+        this.typeName = containerConfig.label;
+        this.config = containerConfig.config;
         this.containerTemplates = availableContainerTemplates;
+        this.displayName = values ? values.display_name : null;
         this.initData(values);
     },
 
-    /**
-     *
-     * @returns {*}
-     */
     getTreeNode: function () {
         return this.treeNode;
     },
@@ -41,7 +37,18 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
     },
 
     getName: function () {
-        return this.name ? this.name : (this.storeData['name'] ? this.storeData['name'] : null);
+        return this.getData().name;
+    },
+
+    getDisplayName: function () {
+        return this.displayName ? this.displayName : this.typeName;
+    },
+
+    updateDisplayName: function (name) {
+        this.displayName = this.getSubType().charAt(0).toUpperCase() + this.getSubType().slice(1) + ' (' + name + ')';
+        if (this.treeNode) {
+            this.treeNode.set('text', this.displayName);
+        }
     },
 
     getTypeName: function () {
@@ -108,6 +115,7 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
         this.storeData = this.transposeFormFields(this.form.getValues());
         this.storeData.type = this.getType();
         this.storeData.sub_type = this.getSubType();
+        this.storeData.display_name = this.getDisplayName();
     },
 
     getData: function () {
@@ -131,7 +139,8 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
 
     createBaseForm: function () {
 
-        var configFieldCounter = 0,
+        var _ = this,
+            configFieldCounter = 0,
             defaultTemplate = undefined,
             form = new Ext.form.Panel({
                 bodyStyle: 'padding: 10px;',
@@ -142,10 +151,28 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
         form.add(new Ext.form.TextField({
             fieldLabel: 'Name',
             name: 'name',
-            value: (this.getName() ? this.getName() : Ext.id(null, 'container_')),
+            value: (this.getName() ? this.getName() : this.generateId()),
             allowBlank: false,
-            flex: 2,
-            hidden: true
+            enableKeyEvents: true,
+            anchor: '100%',
+            listeners: {
+                render: function (field) {
+                    this.updateDisplayName(field.getValue());
+                }.bind(this),
+                keyup: function (field) {
+                    this.updateDisplayName(field.getValue());
+                }.bind(this)
+            },
+            validator: function (v) {
+                var containerInvalidNames = ['group'];
+                if (in_array(v.toLowerCase(), containerInvalidNames) ||
+                    in_array(v.toLowerCase(), _.formHandler.parentPanel.getConfig().forbidden_form_field_names)) {
+                    this.setValue('');
+                    Ext.MessageBox.alert(t('error'), t('form_builder_forbidden_file_name'));
+                    return false;
+                }
+                return new RegExp('^[A-Za-z0-9?_]+$').test(v);
+            }
         }));
 
         Ext.iterate(this.containerTemplates, function (data, value) {
@@ -233,5 +260,9 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
         }
 
         return this.storeData['configuration'][id];
+    },
+
+    generateId: function () {
+        return Ext.id(null, 'container_');
     }
 });

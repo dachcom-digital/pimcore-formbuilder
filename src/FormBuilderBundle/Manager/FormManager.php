@@ -99,6 +99,10 @@ class FormManager
             $form = $this->formFactory->createForm();
         }
 
+        if (!$form instanceof FormInterface) {
+            return null;
+        }
+
         $this->updateFormAttributes($data, $form, $isUpdate);
         $this->updateFields($data['form_fields'], $form);
         $form->save();
@@ -225,12 +229,12 @@ class FormManager
         /** @var FormFieldContainerInterface $fieldContainer */
         $fieldContainer = $form->getField($fieldName);
 
-        if (!$fieldContainer) {
+        if (!$fieldContainer instanceof FormFieldContainerInterface) {
             $fieldContainer = $this->formFactory->createFormFieldContainer();
         }
 
         $fieldContainer->setName($fieldName);
-        $fieldContainer->setDisplayName(ucfirst($fieldSubType));
+        $fieldContainer->setDisplayName($this->getValue($fieldData, 'display_name'));
         $fieldContainer->setType($fieldType);
         $fieldContainer->setSubType($fieldSubType);
         $fieldContainer->setOrder($order);
@@ -272,7 +276,7 @@ class FormManager
         /** @var FormFieldInterface $field */
         $field = $form->getField($fieldName);
 
-        if (!$field) {
+        if (!$field instanceof FormFieldInterface) {
             $field = $this->formFactory->createFormField();
         }
 

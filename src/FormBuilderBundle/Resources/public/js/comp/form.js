@@ -847,13 +847,16 @@ Formbuilder.comp.form = Class.create({
      */
     createFormField: function (tree, formType, formTypeValues, selectNode) {
 
-        var newNode = this.createFormFieldNode(formType, formTypeValues),
-            formObject;
+        var label = formTypeValues === null ? formType.label : formTypeValues.display_name,
+            newNode = this.createFormFieldNode(label, formType.icon_class);
 
         newNode = tree.appendChild(newNode);
-
-        formObject = new Formbuilder.comp.type.formTypeBuilder(this, newNode, formType, this.availableFormFieldTemplates, formTypeValues);
-        newNode.set('object', formObject);
+        newNode.set(
+            'object',
+            new Formbuilder.comp.type.formTypeBuilder(
+                this, newNode, formType, this.availableFormFieldTemplates, formTypeValues
+            )
+        );
 
         tree.expand();
 
@@ -865,15 +868,15 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     * @param formType
-     * @param formTypeValues
+     * @param nodeLabel
+     * @param iconCls
      */
-    createFormFieldNode: function (formType, formTypeValues) {
+    createFormFieldNode: function (nodeLabel, iconCls) {
         return {
-            text: formTypeValues ? formTypeValues.display_name : formType.label,
+            text: nodeLabel,
             type: 'layout',
             draggable: true,
-            iconCls: formType.icon_class,
+            iconCls: iconCls,
             fbType: 'field',
             fbTypeContainer: 'fields',
             leaf: false,
@@ -890,10 +893,15 @@ Formbuilder.comp.form = Class.create({
      */
     createFormFieldConstraint: function (tree, constraint, constraintValues, selectNode) {
 
-        var newNode = this.createFormFieldConstraintNode(constraint);
+        var newNode = this.createFormFieldConstraintNode(constraint.label, constraint.icon_class);
 
         newNode = tree.appendChild(newNode);
-        newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(this, newNode, constraint, constraintValues));
+        newNode.set(
+            'object',
+            new Formbuilder.comp.type.formFieldConstraint(
+                this, newNode, constraint, constraintValues
+            )
+        );
 
         tree.expand();
 
@@ -905,14 +913,15 @@ Formbuilder.comp.form = Class.create({
     },
 
     /**
-     * @param constraintType
+     * @param nodeLabel
+     * @param iconCls
      */
-    createFormFieldConstraintNode: function (constraintType) {
+    createFormFieldConstraintNode: function (nodeLabel, iconCls) {
         return {
-            text: constraintType.label,
+            text: nodeLabel,
             type: 'layout',
             draggable: true,
-            iconCls: constraintType.icon_class,
+            iconCls: iconCls,
             fbType: 'constraint',
             fbTypeContainer: 'constraints',
             leaf: false,
@@ -929,10 +938,16 @@ Formbuilder.comp.form = Class.create({
      */
     createContainerField: function (tree, container, containerValues, selectNode) {
 
-        var newNode = this.createContainerFieldNode(container);
+        var label = containerValues === null ? container.label : containerValues.display_name,
+            newNode = this.createContainerFieldNode(label, container.icon_class);
 
         newNode = tree.appendChild(newNode);
-        newNode.set('object', new Formbuilder.comp.type.formFieldContainer(this, newNode, container, this.availableFormFieldTemplates, containerValues));
+        newNode.set(
+            'object',
+            new Formbuilder.comp.type.formFieldContainer(
+                this, newNode, container, this.availableFormFieldTemplates, containerValues
+            )
+        );
 
         tree.expand();
 
@@ -943,12 +958,12 @@ Formbuilder.comp.form = Class.create({
         return newNode;
     },
 
-    createContainerFieldNode: function (containerType) {
+    createContainerFieldNode: function (nodeLabel, iconCls) {
         return {
-            text: containerType.label,
+            text: nodeLabel,
             type: 'layout',
             draggable: true,
-            iconCls: containerType.icon_class,
+            iconCls: iconCls,
             fbType: 'container',
             fbTypeContainer: 'fields', // container element should be treated as a normal field.
             leaf: true,
@@ -1007,37 +1022,30 @@ Formbuilder.comp.form = Class.create({
             formTypeValues = Ext.apply({}, formFieldObject.getData()),
             config = {},
             newNode = {},
-            formElement = {},
-            nodeType = {
-                'icon_class': formFieldObject.iconClass
-            };
+            formElement = {};
 
         config.listeners = this.getTreeNodeListeners();
 
         if (node.data.fbType === 'field') {
-            nodeType.label = formTypeValues.display_name;
+            formTypeValues.name = formFieldObject.generateId();
             formElement = this.getFormTypeStructure(formFieldObject.getType());
-            formElement.label = formTypeValues.display_name;
-            //reset name
-            formTypeValues.name = Ext.id(null, 'field_');
-            config = this.createFormFieldNode(nodeType, formTypeValues);
+            config = this.createFormFieldNode(formTypeValues.display_name, formFieldObject.getIconClass());
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formTypeBuilder(
                 this, newNode, formElement, this.availableFormFieldTemplates, formTypeValues));
         } else if (node.data.fbType === 'constraint') {
             formElement = this.getFormTypeConstraintStructure(formFieldObject.getType());
-            nodeType.label = formElement.label;
-            config = this.createFormFieldConstraintNode(nodeType);
+            config = this.createFormFieldConstraintNode(formElement.label, formFieldObject.getIconClass());
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formFieldConstraint(
                 this, newNode, formElement, formTypeValues));
         } else if (node.data.fbType === 'container') {
+            formTypeValues.name = formFieldObject.generateId();
             formElement = this.getContainerTypeStructure(formFieldObject.getSubType());
-            nodeType.label = formElement.label;
-            config = this.createContainerFieldNode(nodeType);
+            config = this.createContainerFieldNode(formElement.display_name, formFieldObject.getIconClass());
             newNode = node.createNode(config);
             newNode.set('object', new Formbuilder.comp.type.formFieldContainer(
-                this, newNode, formElement, formTypeValues));
+                this, newNode, formElement, this.availableFormFieldTemplates, formTypeValues));
         } else {
             Ext.MessageBox.alert(t('error'), 'invalid field type: ' + node.data.fbType);
         }
@@ -1100,7 +1108,7 @@ Formbuilder.comp.form = Class.create({
     checkNodeHasUniqueName: function (node) {
 
         var c = 0,
-            currentNodeName = node.fbType + '.' + node.object.getName();
+            currentNodeName = node.fbTypeContainer + '.' + node.object.getName();
 
         Ext.each(this.getUsedFieldNames(this.tree.getRootNode(), []), function (name) {
             if (name === currentNodeName) {
@@ -1244,7 +1252,7 @@ Formbuilder.comp.form = Class.create({
     getUsedFieldNames: function (node, nodeNames) {
 
         if (node.data.object) {
-            var fieldName = node.data.fbType + '.' + node.data.object.getName();
+            var fieldName = node.data.fbTypeContainer + '.' + node.data.object.getName();
             if (!in_array(node.data.fbType, ['constraint'])) {
                 nodeNames.push(fieldName);
             }

@@ -17,9 +17,9 @@
     <thead></thead>
     <tbody>
     {% for field in fields|default([]) %}
-        {% if field.render_type == 'simple' %}
+        {% if field.field_type == 'simple' %}
             {{ formFieldRenderer.render(field) }}
-        {% elseif field.render_type == 'container' %}
+        {% elseif field.field_type == 'container' %}
             {% if field.fields is defined and field.fields is iterable and field.fields|length > 0 %}
                 {% if field.label != false %}
                     <tr>

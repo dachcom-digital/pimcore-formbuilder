@@ -47,7 +47,7 @@ class FormOptionsResolver
     protected $mailCopyTemplate = null;
 
     /**
-     * @param int $formId
+     * @param null|int $formId
      */
     public function setFormId($formId)
     {

@@ -19,7 +19,7 @@ Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formb
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~2.5.0"
+    "dachcom-digital/formbuilder" : "~2.6.0"
 }
 ```
 
@@ -69,6 +69,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [Available Form Types](docs/30_FormTypes.md)
   - [Dynamic Choice Type](docs/82_DynamicChoice.md)
   - [Dynamic Multi File Type](docs/80_FileUpload.md)
+  - [Container Type](docs/83_ContainerType.md)
 - [Create Custom Form Type](docs/40_CustomFormType.md)
 - [Custom Form Type Backend Layout](docs/50_CustomFormTypeBackendLayout.md)
 - [Form Presets](docs/60_Presets.md)

@@ -89,3 +89,8 @@
         {{- form_errors(form) -}}
     </div>
 {%- endblock radio_row %}
+
+{% block form_builder_container_collection_widget %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' row')|trim}) -%}
+    {{- parent() -}}
+{% endblock form_builder_container_collection_widget %}

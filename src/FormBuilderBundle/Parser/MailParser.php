@@ -103,10 +103,11 @@ class MailParser
     }
 
     /**
-     * @param Email $mailTemplate
-     * @param array $fieldValues
+     * @param Email  $mailTemplate
+     * @param array  $fieldValues
+     * @param string $prefix
      */
-    private function parseSubject(Email $mailTemplate, $fieldValues = [])
+    private function parseSubject(Email $mailTemplate, $fieldValues = [], $prefix = '')
     {
         $realSubject = $mailTemplate->getSubject();
 
@@ -115,11 +116,22 @@ class MailParser
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
+
+                    if ($formField['field_type'] === 'container') {
+                        if ($formField['type'] === 'fieldset' && is_array($formField['fields']) && count($formField['fields']) === 1) {
+                            $this->parseSubject($mailTemplate, $formField['fields'][0], $formField['name']);
+                            $realSubject = $mailTemplate->getSubject();
+                        }
+                        // repeatable container values as placeholders is unsupported.
+                        continue;
+                    }
+
                     if ($this->isEmptyFormField($formField['value'])) {
                         continue;
                     }
 
-                    if ($formField['name'] == $inputValue) {
+                    $name = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
+                    if ($name == $inputValue) {
                         $realSubject = str_replace(
                             $matches[0][$key],
                             $this->getSingleRenderedValue($formField['value'], ', '),
@@ -137,19 +149,35 @@ class MailParser
     }
 
     /**
-     * @param Mail $mail
-     * @param      $fieldValues
-     * @param      $disableDefaultMailBody
+     * @param Mail   $mail
+     * @param array  $fieldValues
+     * @param bool   $disableDefaultMailBody
+     * @param string $prefix
      */
-    private function setMailPlaceholders(Mail $mail, $fieldValues, $disableDefaultMailBody)
+    private function setMailPlaceholders(Mail $mail, array $fieldValues, bool $disableDefaultMailBody, string $prefix = '')
     {
         //allow access to all form placeholders
         foreach ($fieldValues as $formField) {
+            if ($formField['field_type'] === 'container') {
+                if (is_array($formField['fields']) && count($formField['fields']) > 0) {
+                    foreach ($formField['fields'] as $groupIndex => $group) {
+                        $prefix = sprintf('%s_%s', $formField['name'], $groupIndex);
+                        // do not add numeric index to fieldset (not repeatable)
+                        // to allow better placeholder versatility
+                        if ($formField['type'] === 'fieldset') {
+                            $prefix = $formField['name'];
+                        }
+                        $this->setMailPlaceholders($mail, $group, $disableDefaultMailBody, $prefix);
+                    }
+                }
+                continue;
+            }
             if ($this->isEmptyFormField($formField['value'])) {
                 continue;
             }
 
-            $mail->setParam($formField['name'], $this->getSingleRenderedValue($formField['value']));
+            $paramName = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
+            $mail->setParam($paramName, $this->getSingleRenderedValue($formField['value']));
         }
 
         if ($disableDefaultMailBody === false) {
@@ -184,12 +212,13 @@ class MailParser
     /**
      * Extract Placeholder Data from given String like %email% and compare it with given form data.
      *
-     * @param $str
-     * @param $fieldValues
+     * @param string $str
+     * @param array  $fieldValues
+     * @param string $prefix
      *
      * @return mixed|string
      */
-    private function extractPlaceHolder($str, $fieldValues)
+    private function extractPlaceHolder($str, $fieldValues, $prefix = '')
     {
         $extractedValue = $str;
 
@@ -198,7 +227,18 @@ class MailParser
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
-                    if ($formField['name'] == $inputValue) {
+
+                    // container values as placeholders is unsupported.
+                    if ($formField['field_type'] === 'container') {
+                        if ($formField['type'] === 'fieldset' && is_array($formField['fields']) && count($formField['fields']) === 1) {
+                            $str = $this->extractPlaceHolder($str, $formField['fields'][0], $formField['name']);
+                        }
+                        // repeatable container values as placeholders is unsupported.
+                        continue;
+                    }
+
+                    $name = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
+                    if ($name == $inputValue) {
                         $value = $formField['value'];
                         //if is array, use first value since this is the best what we can do...
                         if (is_array($value)) {
@@ -231,7 +271,7 @@ class MailParser
         if (is_array($field)) {
             foreach ($field as $k => $f) {
                 $data .= $this->parseStringForOutput($f);
-                if ($k+1 !== count($field)) {
+                if ($k + 1 !== count($field)) {
                     $data .= $separator;
                 }
             }

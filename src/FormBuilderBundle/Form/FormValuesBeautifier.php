@@ -148,9 +148,10 @@ class FormValuesBeautifier
         $blockLabel = isset($fieldConfig['block_label']) && !empty($fieldConfig['block_label']) ? $fieldConfig['block_label'] : false;
 
         $data = [
-            'render_type' => 'container',
+            'field_type'  => 'container',
             'label'       => $containerLabel,
             'block_label' => $blockLabel,
+            'name'        => $entityField->getName(),
             'type'        => $entityField->getSubType(),
             'fields'      => $subFieldValues
         ];
@@ -187,9 +188,9 @@ class FormValuesBeautifier
         $optionalOptions = $field->getOptional();
 
         $defaults = [
-            'render_type' => 'simple',
-            'name'        => $field->getName(),
-            'type'        => $field->getType()
+            'field_type' => 'simple',
+            'name'       => $field->getName(),
+            'type'       => $field->getType()
         ];
 
         return array_merge([
@@ -230,9 +231,9 @@ class FormValuesBeautifier
         }
 
         $defaults = [
-            'render_type' => 'simple',
-            'name'        => $field->getName(),
-            'type'        => $field->getType()
+            'field_type' => 'simple',
+            'name'       => $field->getName(),
+            'type'       => $field->getType()
         ];
 
         return array_merge([
