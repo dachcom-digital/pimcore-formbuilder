@@ -23,10 +23,10 @@ class Dao extends AbstractDao
      */
     public function getByName(string $name)
     {
-        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE `name` = ?', $name);
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->tableName . ' WHERE `name` = ?', [$name]);
 
         if (!$data['id']) {
-            throw new \Exception(sprintf('Form with name "%s" does not exist.', [$name]));
+            throw new \Exception(sprintf('Form with name "%s" does not exist.', $name));
         }
 
         $this->assignVariablesToModel($data);
