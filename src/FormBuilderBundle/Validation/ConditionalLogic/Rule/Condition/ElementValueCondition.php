@@ -36,7 +36,8 @@ class ElementValueCondition implements ConditionInterface
             $fieldValue = isset($formData[$conditionFieldName]) ? $formData[$conditionFieldName] : null;
 
             if ($this->getComparator() === 'contains') {
-                return !empty(array_intersect(explode(',', $this->getValue()), (array)$fieldValue));
+                $value = is_array($this->getValue()) ? $this->getValue() : (is_string($this->getValue()) ? explode(',', $this->getValue()) : [$this->getValue()]);
+                return !empty(array_intersect($value, (array)$fieldValue));
             } elseif ($this->getComparator() === 'is_checked') {
                 return array_key_exists($conditionFieldName, $formData) && !empty($fieldValue);
             } elseif ($this->getComparator() === 'is_not_checked') {

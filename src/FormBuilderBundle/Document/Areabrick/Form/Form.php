@@ -137,7 +137,7 @@ class Form extends AbstractTemplateAreabrick
         /** @var Select $formNameElement */
         $formNameElement = $this->getDocumentTag($info->getDocument(), 'select', 'formName');
         if (!$formNameElement->isEmpty()) {
-            $formId = $formNameElement->getData();
+            $formId = (int)$formNameElement->getData();
         }
 
         $mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();

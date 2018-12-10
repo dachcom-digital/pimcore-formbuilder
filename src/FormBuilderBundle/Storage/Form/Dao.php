@@ -105,7 +105,6 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @return bool
      * @throws \Exception
      */
     public function delete()
@@ -116,8 +115,6 @@ class Dao extends AbstractDao
         } catch (\Exception $e) {
             throw $e;
         }
-
-        return true;
     }
 
     protected function storeFormData()

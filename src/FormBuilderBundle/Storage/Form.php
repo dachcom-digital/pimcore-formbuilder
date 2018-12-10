@@ -168,7 +168,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function save()
     {
-        return $this->getDao()->save();
+        $this->getDao()->save();
     }
 
     /**
@@ -176,7 +176,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function delete()
     {
-        return $this->getDao()->delete();
+        $this->getDao()->delete();
     }
 
     /**

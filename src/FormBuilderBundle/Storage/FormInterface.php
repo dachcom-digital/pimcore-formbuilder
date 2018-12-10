@@ -49,13 +49,11 @@ interface FormInterface
 
     /**
      * @throws \Exception
-     * @return bool
      */
     public function save();
 
     /**
      * @throws \Exception
-     * @return bool
      */
     public function delete();
 
