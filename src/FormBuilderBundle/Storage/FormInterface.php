@@ -197,9 +197,17 @@ interface FormInterface
     /**
      * @param string $name
      *
-     * @return FormFieldInterface
+     * @return null|FormFieldInterface
      */
     public function getField(string $name);
+
+    /**
+     * @param string $name
+     *
+     * @throws \Exception
+     * @return null|FormFieldContainerInterface
+     */
+    public function getFieldContainer(string $name);
 
     /**
      * @param string $name

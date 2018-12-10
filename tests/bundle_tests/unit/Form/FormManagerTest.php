@@ -32,11 +32,8 @@ class FormManagerTest extends DachcomBundleTestCase
         $form = $manager->save($testFormBuilder->build());
 
         $manager->delete($form->getId());
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(sprintf('Form with id "%s" does not exist', $form->getId()));
-
-        $manager->getById($form->getId());
+        $form = $manager->getById($form->getId());
+        $this->assertNull($form);
     }
 
     /**

@@ -401,6 +401,21 @@ class Form extends Model\AbstractModel implements FormInterface
                 return $field;
             }
         }
+
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFieldContainer(string $name)
+    {
+        $fieldContainer = $this->getField($name);
+        if ($fieldContainer !== null && !$fieldContainer instanceof FormFieldContainerInterface) {
+            throw new \Exception(sprintf('Requested field "%s" container is not an instance of FormFieldContainerInterface', $name));
+        }
+
+        return $fieldContainer;
     }
 
     /**

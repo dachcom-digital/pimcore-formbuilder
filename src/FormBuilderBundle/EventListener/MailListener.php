@@ -123,7 +123,7 @@ class MailListener implements EventSubscriberInterface
     }
 
     /**
-     * @param int           $mailTemplateId
+     * @param int|null      $mailTemplateId
      * @param array         $userOptions
      * @param FormInterface $form
      * @param string        $locale

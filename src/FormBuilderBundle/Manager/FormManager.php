@@ -216,6 +216,7 @@ class FormManager
      * @param array         $fieldData
      * @param int           $order
      *
+     * @throws \Exception
      * @return FormFieldContainerInterface
      */
     protected function generateFormFieldContainer(FormInterface $form, array $fieldData, int $order)
@@ -227,8 +228,7 @@ class FormManager
         $configParameter = $this->getValue($fieldData, 'configuration');
         $containerFields = $this->getValue($fieldData, 'fields');
 
-        /** @var FormFieldContainerInterface $fieldContainer */
-        $fieldContainer = $form->getField($fieldName);
+        $fieldContainer = $form->getFieldContainer($fieldName);
 
         if (!$fieldContainer instanceof FormFieldContainerInterface) {
             $fieldContainer = $this->formFactory->createFormFieldContainer();

@@ -198,7 +198,7 @@ class FormOptionsResolver
     public function getMailTemplateId()
     {
         if ($this->mailTemplate instanceof Document\Email) {
-            return $this->mailTemplate->getId();
+            return (int)$this->mailTemplate->getId();
         }
 
         return null;
@@ -233,7 +233,7 @@ class FormOptionsResolver
     public function getCopyMailTemplateId()
     {
         if ($this->mailCopyTemplate instanceof Document\Email) {
-            return $this->mailCopyTemplate->getId();
+            return (int)$this->mailCopyTemplate->getId();
         }
 
         return null;
