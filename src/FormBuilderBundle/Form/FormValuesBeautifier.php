@@ -286,7 +286,7 @@ class FormValuesBeautifier
                     $locale,
                     $formatValues[$dateFormat],
                     $formatValues[$timeFormat],
-                    \IntlTimeZone::createTimeZone($value->getTimezone()->getName()),
+                    \IntlTimeZone::createTimeZone($value->getTimezone()->getName())->getID(),
                     'gregorian' === $calendar ? \IntlDateFormatter::GREGORIAN : \IntlDateFormatter::TRADITIONAL,
                     null
                 );

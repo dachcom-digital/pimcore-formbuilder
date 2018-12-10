@@ -254,7 +254,8 @@ class MailParser
         }
 
         //remove invalid commas
-        $extractedValue = trim(implode(',', preg_split('@,@', $extractedValue, null, PREG_SPLIT_NO_EMPTY)));
+        $fragments = preg_split('@,@', $extractedValue, null, PREG_SPLIT_NO_EMPTY);
+        $extractedValue = trim(is_array($fragments) ? implode(',', $fragments) : $fragments);
 
         return $extractedValue;
     }

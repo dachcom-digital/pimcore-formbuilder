@@ -40,17 +40,17 @@ class FormFactory implements FormFactoryInterface
     /**
      * @inheritdoc
      */
-    public function getFormById($id, bool $ignoreMissingConfigurationFile = true)
+    public function getFormById($id)
     {
-        $formEntity = Form::getById($id);
-        $formEntity->setTranslator($this->translator);
-
         try {
-            $this->assignRelationDataToFormObject($formEntity);
-        } catch (\Exception $e) {
-            if ($ignoreMissingConfigurationFile === false) {
+            $formEntity = Form::getById($id);
+            $formEntity->setTranslator($this->translator);
+            if (!$formEntity instanceof FormInterface) {
                 return null;
             }
+            $this->assignRelationDataToFormObject($formEntity);
+        } catch (\Exception $e) {
+            return null;
         }
 
         return $formEntity;
@@ -59,17 +59,17 @@ class FormFactory implements FormFactoryInterface
     /**
      * @inheritdoc
      */
-    public function getFormIdByName(string $name, bool $ignoreMissingConfigurationFile = true)
+    public function getFormIdByName(string $name)
     {
-        $formEntity = Form::getByName($name);
-        $formEntity->setTranslator($this->translator);
-
         try {
-            $this->assignRelationDataToFormObject($formEntity);
-        } catch (\Exception $e) {
-            if ($ignoreMissingConfigurationFile === false) {
+            $formEntity = Form::getByName($name);
+            $formEntity->setTranslator($this->translator);
+            if (!$formEntity instanceof FormInterface) {
                 return null;
             }
+            $this->assignRelationDataToFormObject($formEntity);
+        } catch (\Exception $e) {
+            return null;
         }
 
         return $formEntity;

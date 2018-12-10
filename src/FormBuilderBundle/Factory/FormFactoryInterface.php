@@ -15,19 +15,17 @@ interface FormFactoryInterface
 
     /**
      * @param int  $id
-     * @param bool $ignoreMissingConfigurationFile
      *
      * @return null|FormInterface
      */
-    public function getFormById($id, bool $ignoreMissingConfigurationFile = true);
+    public function getFormById($id);
 
     /**
      * @param string $name
-     * @param bool   $ignoreMissingConfigurationFile
      *
      * @return null|FormInterface
      */
-    public function getFormIdByName(string $name, bool $ignoreMissingConfigurationFile = true);
+    public function getFormIdByName(string $name);
 
     /**
      * @return FormInterface[]

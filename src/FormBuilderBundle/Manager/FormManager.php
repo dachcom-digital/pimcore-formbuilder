@@ -220,10 +220,11 @@ class FormManager
      */
     protected function generateFormFieldContainer(FormInterface $form, array $fieldData, int $order)
     {
-        $fieldType = $this->getValue($fieldData, 'type');
-        $fieldSubType = $this->getValue($fieldData, 'sub_type');
+        $fieldType = $this->getValueAsString($fieldData, 'type');
+        $fieldSubType = $this->getValueAsString($fieldData, 'sub_type');
+        $fieldName = $this->getValueAsString($fieldData, 'name');
+        $fieldDisplayName = $this->getValueAsString($fieldData, 'display_name');
         $configParameter = $this->getValue($fieldData, 'configuration');
-        $fieldName = $this->getValue($fieldData, 'name');
         $containerFields = $this->getValue($fieldData, 'fields');
 
         /** @var FormFieldContainerInterface $fieldContainer */
@@ -234,13 +235,15 @@ class FormManager
         }
 
         $fieldContainer->setName($fieldName);
-        $fieldContainer->setDisplayName($this->getValue($fieldData, 'display_name'));
+        $fieldContainer->setDisplayName($fieldDisplayName);
         $fieldContainer->setType($fieldType);
         $fieldContainer->setSubType($fieldSubType);
         $fieldContainer->setOrder($order);
 
         if (!empty($configParameter) && is_array($configParameter)) {
             $fieldContainer->setConfiguration($configParameter);
+        } else {
+            $fieldContainer->setConfiguration([]);
         }
 
         // add sub-fields to container
@@ -253,6 +256,8 @@ class FormManager
                 $parsedContainerFields[] = $this->generateFormField($form, $containerFieldData, $subOrder);
             }
             $fieldContainer->setFields($parsedContainerFields);
+        } else {
+            $fieldContainer->setFields([]);
         }
 
         return $fieldContainer;
@@ -267,11 +272,12 @@ class FormManager
      */
     protected function generateFormField(FormInterface $form, array $fieldData, int $order)
     {
-        $fieldType = $this->getValue($fieldData, 'type');
+        $fieldType = $this->getValueAsString($fieldData, 'type');
+        $fieldName = $this->getValueAsString($fieldData, 'name');
+        $fieldDisplayName = $this->getValueAsString($fieldData, 'display_name');
+        $constraints = $this->getValue($fieldData, 'constraints');
         $optionsParameter = $this->getValue($fieldData, 'options');
         $optionalParameter = $this->getValue($fieldData, 'optional');
-        $fieldName = $this->getValue($fieldData, 'name');
-        $constraints = $this->getValue($fieldData, 'constraints');
 
         /** @var FormFieldInterface $field */
         $field = $form->getField($fieldName);
@@ -281,7 +287,7 @@ class FormManager
         }
 
         $field->setName($fieldName);
-        $field->setDisplayName($this->getValue($fieldData, 'display_name'));
+        $field->setDisplayName($fieldDisplayName);
         $field->setType($fieldType);
         $field->setOrder($order);
 
@@ -320,6 +326,19 @@ class FormManager
         }
 
         return $default;
+    }
+
+    /**
+     * @param        $data
+     * @param        $value
+     * @param string $default
+     *
+     * @return string
+     */
+    protected function getValueAsString($data, $value, $default = '')
+    {
+        $value = $this->getValue($data, $value, $default);
+        return is_string($value) ? $value : $default;
     }
 
     /**
