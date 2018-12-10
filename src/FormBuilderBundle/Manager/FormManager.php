@@ -279,7 +279,6 @@ class FormManager
         $optionsParameter = $this->getValue($fieldData, 'options');
         $optionalParameter = $this->getValue($fieldData, 'optional');
 
-        /** @var FormFieldInterface $field */
         $field = $form->getField($fieldName);
 
         if (!$field instanceof FormFieldInterface) {
