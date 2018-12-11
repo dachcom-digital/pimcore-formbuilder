@@ -19,11 +19,6 @@ class Form extends Model\AbstractModel implements FormInterface
     ];
 
     /**
-     * @var
-     */
-    protected $table;
-
-    /**
      * @var Translator
      */
     protected $translator;
@@ -66,22 +61,22 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var array
      */
-    public $config;
+    public $config = [];
 
     /**
      * @var array
      */
-    public $conditionalLogic;
+    public $conditionalLogic = [];
 
     /**
      * @var array
      */
-    public $fields;
+    public $fields = [];
 
     /**
      * @var array
      */
-    private $data;
+    private $data = [];
 
     /**
      * @inheritdoc
@@ -305,7 +300,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function getConfig()
     {
-        return is_array($this->config) ? $this->config : [];
+        return $this->config;
     }
 
     /**
@@ -313,7 +308,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function getConditionalLogic()
     {
-        return is_array($this->conditionalLogic) ? $this->conditionalLogic : [];
+        return $this->conditionalLogic;
     }
 
     /**

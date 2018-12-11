@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Manager;
 
 use FormBuilderBundle\Configuration\Configuration;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Tool;
 
 class PresetManager
@@ -81,23 +82,19 @@ class PresetManager
     }
 
     /**
-     * Get Site Id in EditMode if SiteRequest is available
+     * Get Site in EditMode if SiteRequest is available
      *
      * @param Document $originDocument
-     * @return null|\Pimcore\Model\Site
+     *
+     * @return null|Site
      */
     private function getCurrentSiteInAdminMode($originDocument)
     {
         $currentSite = null;
 
-        if ($originDocument) {
-            $site = Tool\Frontend::getSiteForDocument($originDocument);
-            if ($site) {
-                $siteId = $site->getId();
-                if ($siteId !== null) {
-                    $currentSite = $site;
-                }
-            }
+        $site = Tool\Frontend::getSiteForDocument($originDocument);
+        if ($site instanceof Site) {
+            $currentSite = $site;
         }
 
         return $currentSite;

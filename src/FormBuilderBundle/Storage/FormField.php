@@ -164,10 +164,6 @@ class FormField implements FormFieldInterface
      */
     public function setOptional(array $options = [])
     {
-        if (!is_array($options)) {
-            $options = [];
-        }
-
         $this->optional = array_filter($options, function ($option) {
             return $option !== '';
         });
@@ -186,10 +182,6 @@ class FormField implements FormFieldInterface
      */
     public function setConstraints(array $constraints = [])
     {
-        if (!is_array($constraints)) {
-            $constraints = [];
-        }
-
         $this->constraints = $constraints;
     }
 

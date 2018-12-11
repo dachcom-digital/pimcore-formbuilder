@@ -50,7 +50,7 @@ class FieldSetContainerType extends AbstractType
         ]);
 
         $entryOptionsNormalizer = function (Options $options, $globalEntryOptions) {
-            return array_merge($globalEntryOptions, $this->getFormEntryOptions($options['formbuilder_configuration']));
+            return array_merge($globalEntryOptions, $this->getFormEntryOptions());
         };
 
         $resolver->setNormalizer('entry_options', $entryOptionsNormalizer);
@@ -65,11 +65,9 @@ class FieldSetContainerType extends AbstractType
     }
 
     /**
-     * @param array $config
-     *
      * @return array
      */
-    private function getFormEntryOptions(array $config)
+    private function getFormEntryOptions()
     {
         $options = [];
         $options['label'] = false;

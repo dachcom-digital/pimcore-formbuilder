@@ -110,10 +110,6 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$form instanceof FormInterface) {
-            return;
-        }
-
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
 
