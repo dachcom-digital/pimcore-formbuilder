@@ -368,7 +368,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function getFields()
     {
-        return is_array($this->fields) ? $this->fields : [];
+        return $this->fields;
     }
 
     /**

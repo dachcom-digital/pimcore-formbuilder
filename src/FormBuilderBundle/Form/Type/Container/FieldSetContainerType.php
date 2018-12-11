@@ -23,7 +23,7 @@ class FieldSetContainerType extends AbstractType
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $globalEntryOptions = $event->getForm()->getConfig()->getOption('entry_options');
-            $parsedEntryOptions = $this->getFormEntryOptions($options['formbuilder_configuration']);
+            $parsedEntryOptions = $this->getFormEntryOptions();
             $entryOptions = array_merge($parsedEntryOptions, ['fields' => $globalEntryOptions['fields']]);
             $this->addEmptyCollections($event->getForm(), $entryOptions, 1);
         });
