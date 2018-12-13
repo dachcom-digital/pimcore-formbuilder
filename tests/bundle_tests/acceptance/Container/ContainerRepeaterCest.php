@@ -23,7 +23,9 @@ class ContainerRepeaterCest
                 'repeater',
                 'repeater_container',
                 [
-                    'label' => 'Repeater Container',
+                    'label'              => 'Repeater Container',
+                    'label_add_block'    => 'Add New',
+                    'label_remove_block' => 'Remove',
                 ],
                 [
                     [
@@ -72,8 +74,10 @@ class ContainerRepeaterCest
                 'repeater',
                 'repeater_container',
                 [
-                    'label' => 'Repeater Container',
-                    'max'   => 2
+                    'label'              => 'Repeater Container',
+                    'label_add_block'    => 'Add New',
+                    'label_remove_block' => 'Remove',
+                    'max'                => 2
                 ],
                 [
                     [
@@ -124,7 +128,9 @@ class ContainerRepeaterCest
                 'repeater',
                 'repeater_container',
                 [
-                    'label' => 'Repeater Container',
+                    'label'              => 'Repeater Container',
+                    'label_add_block'    => 'Add New',
+                    'label_remove_block' => 'Remove',
                 ],
                 [
                     [
@@ -173,8 +179,10 @@ class ContainerRepeaterCest
                 'repeater',
                 'repeater_container',
                 [
-                    'label' => 'Repeater Container',
-                    'min'   => 1
+                    'label'              => 'Repeater Container',
+                    'label_add_block'    => 'Add New',
+                    'label_remove_block' => 'Remove',
+                    'min'                => 1
                 ],
                 [
                     [
