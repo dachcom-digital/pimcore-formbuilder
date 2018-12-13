@@ -71,7 +71,7 @@
         renderCreateBlockElement: function (container) {
             var $element = null,
                 classes = this.options.classes.add + ' add-block',
-                text = this.options.labels.addNewSection;
+                text = $(container).data('label-add-block');
 
             if (typeof this.options.renderCreateBlockElement === 'function') {
                 $element = this.options.renderCreateBlockElement.call(container, classes, text);
@@ -119,7 +119,7 @@
         renderRemoveBlockElement: function (container, block) {
             var $element = null,
                 classes = this.options.classes.remove + ' remove-block',
-                text = this.options.labels.removeSection;
+                text = $(container).data('label-remove-block');
 
             if (typeof this.options.renderRemoveBlockElement === 'function') {
                 $element = this.options.renderRemoveBlockElement.call(block, classes, text);
@@ -156,8 +156,8 @@
             $container.data('index', newIndex);
 
             cb = function ($newForm) {
-                this.addRemoveBlockButton(container, index, $newForm);
                 this.reRenderBlockLabels(container);
+                this.addRemoveBlockButton(container, index, $newForm);
                 this.verifyButtonStates(container);
             }.bind(this);
 
@@ -262,10 +262,6 @@
         classes: {
             add: 'btn btn-info',
             remove: 'btn btn-danger'
-        },
-        labels: {
-            addNewSection: 'Add New',
-            removeSection: 'Remove',
         }
     };
 

@@ -3,6 +3,12 @@
 {% endblock %}
 
 {% block form_builder_container_repeater_widget %}
+    {%- if attr['data-label-add-block'] is defined and attr['data-label-add-block'] is not empty -%}
+        {% set attr = attr|merge({'data-label-add-block': attr['data-label-add-block']|trans}) %}
+    {%- endif -%}
+    {%- if attr['data-label-remove-block'] is defined and attr['data-label-remove-block'] is not empty -%}
+        {% set attr = attr|merge({'data-label-remove-block': attr['data-label-remove-block']|trans}) %}
+    {%- endif -%}
     {{- block('collection_widget') -}}
 {% endblock %}
 
@@ -11,6 +17,7 @@
 {% endblock %}
 
 {% block form_builder_container_collection_label %}
+    {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' formbuilder-container-block-label')|trim}) -%}
     {%- if add_block_counter != false -%}
         {%- if label != false -%}
             {%- set label_attr = label_attr|merge({'data-label-template': label|trans ~ ' __label_index__'}) -%}

@@ -34,3 +34,11 @@ form_builder:
                     name: max
                     type: integer
                     label: 'form_builder_type_container.repeater.option.max'
+                -
+                    name: label_add_block
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.label.add_block'
+                -
+                    name: label_remove_block
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.label.remove_block'

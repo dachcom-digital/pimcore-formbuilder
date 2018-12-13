@@ -98,6 +98,8 @@ class RepeaterContainerType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['label'] = $this->getContainerLabel($options);
+        $view->vars['attr']['data-label-add-block'] = $options['formbuilder_configuration']['label_add_block'];
+        $view->vars['attr']['data-label-remove-block'] = $options['formbuilder_configuration']['label_remove_block'];
         $view->vars['attr']['data-repeater-min'] = $options['formbuilder_configuration']['min'];
         $view->vars['attr']['data-repeater-max'] = $options['formbuilder_configuration']['max'];
     }
@@ -128,11 +130,6 @@ class RepeaterContainerType extends AbstractType
     public function getBlockPrefix()
     {
         return 'form_builder_container_repeater';
-    }
-
-    public function getFurz()
-    {
-        return ['fields' => false];
     }
 
     /**

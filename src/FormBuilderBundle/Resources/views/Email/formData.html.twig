@@ -31,6 +31,11 @@
                         <table width="100%">
                             {% for field_container in field.fields %}
                                 {% if field_container is iterable %}
+                                    {% if field.block_label is defined and field.block_label != false %}
+                                        <tr>
+                                            <td width="100%" valign="top" colspan="2" align="left"><strong>{{ field.block_label|trans }}:</strong></td>
+                                        </tr>
+                                    {% endif %}
                                     {% for sub_field in field_container %}
                                         {{ formFieldRenderer.render(sub_field) }}
                                     {% endfor %}

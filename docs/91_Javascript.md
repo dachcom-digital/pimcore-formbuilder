@@ -110,6 +110,11 @@ $(function () {
 ```javascript
 $forms.formBuilderRepeater({
 
+    classes: {
+        add: 'btn btn-special-class',
+        remove: 'btn btn-special-class'
+    },
+    
     onRemove: function (cb) {
         var $containerBlock = $(this);
         $containerBlock.slideUp(1350, function () {
