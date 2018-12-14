@@ -2,40 +2,27 @@ pimcore.registerNS('Formbuilder.comp.type.formTypeBuilder');
 Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     form: null,
-
     formIsValid: true,
-
     formHandler: null,
-
     type: null,
-
     typeName: null,
-
     iconClass: null,
-
     formTypeTemplates: [],
-
     configurationLayout: [],
-
     allowedConstraints: [],
-
     attributeSelector: null,
-
     storeData: {},
 
-    initialize: function (formHandler, treeNode, initData, availableFormFieldTemplates, values) {
-
+    initialize: function (formHandler, treeNode, fieldConfig, availableFormFieldTemplates, values) {
         this.formHandler = formHandler;
         this.treeNode = treeNode;
         this.formTypeTemplates = availableFormFieldTemplates;
-        this.configurationLayout = initData.configuration_layout;
-        this.allowedConstraints = initData.constraints;
-        this.iconClass = initData.icon_class;
-        this.type = initData.type;
-        this.typeName = initData.text;
-
+        this.configurationLayout = fieldConfig.configuration_layout;
+        this.allowedConstraints = fieldConfig.constraints;
+        this.iconClass = fieldConfig.icon_class;
+        this.type = fieldConfig.type;
+        this.typeName = fieldConfig.type;
         this.initData(values);
-
     },
 
     getType: function () {
@@ -44,6 +31,10 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     getName: function () {
         return this.getData().name;
+    },
+
+    getDisplayName: function () {
+        return this.getData().display_name ? this.getData().display_name : null;
     },
 
     getTypeName: function () {
@@ -73,22 +64,16 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     renderLayout: function () {
 
         var items = [];
-
-        for (var i = 0; i < this.configurationLayout.length; i++) {
-
-            var tabLayout = this.configurationLayout[i];
-            var item = new Ext.Panel({
+        Ext.Array.each(this.configurationLayout, function (tabLayout, i) {
+            items.push(new Ext.Panel({
                 title: tabLayout.label,
                 closable: false,
                 autoScroll: true,
                 items: [
                     this.getForm(tabLayout.fields, i === 0)
                 ]
-            });
-
-            items.push(item);
-
-        }
+            }));
+        }.bind(this));
 
         this.form = new Ext.form.Panel({
             items: {
@@ -103,23 +88,7 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
             }
         });
 
-        this.form.on('render', this.layoutRendered.bind(this));
-
         return this.form;
-    },
-
-    layoutRendered: function () {
-
-        var items = this.form.queryBy(function (component) {
-            return in_array(component.name, ['display_name']);
-        });
-
-        for (var i = 0; i < items.length; i++) {
-            if (items[i].name === 'display_name') {
-                items[i].on('keyup', this.checkFieldDisplayName.bind(this));
-                items[i].on('blur', this.checkFieldLabelName.bind(this));
-            }
-        }
     },
 
     /**
@@ -152,12 +121,14 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
      */
     getForm: function (formConfig, isMainTab) {
 
-        var form = this.createBaseForm(isMainTab);
+        var form = this.createBaseForm(isMainTab),
+            groupFields = [];
 
-        var groupFields = [];
-        for (var i = 0; i < formConfig.length; i++) {
+        Ext.Array.each(formConfig, function (fieldSetConfig, i) {
 
-            var fieldSetConfig = formConfig[i],
+            var fieldSetFields = [],
+                fieldConfig,
+                field,
                 fieldSet = new Ext.form.FieldSet({
                     title: fieldSetConfig.label,
                     collapsible: true,
@@ -166,22 +137,17 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
                     defaultType: 'textfield'
                 });
 
-            var fieldSetFields = [];
             for (var fieldsIndex = 0; fieldsIndex < fieldSetConfig.fields.length; fieldsIndex++) {
-
-                var fieldConfig = fieldSetConfig.fields[fieldsIndex],
-                    field = this.generateField(fieldConfig);
-
+                fieldConfig = fieldSetConfig.fields[fieldsIndex];
+                field = this.generateField(fieldConfig);
                 if (field !== null) {
                     fieldSetFields.push(field);
                 }
             }
 
             fieldSet.add(fieldSetFields);
-
             groupFields.push(fieldSet);
-
-        }
+        }.bind(this));
 
         form.add(groupFields);
 
@@ -201,22 +167,24 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         if (isMainTab === true) {
 
             //create "display name" field.
-            var displayNameValue = this.getFieldValue('display_name');
             form.add(new Ext.form.TextField({
                 fieldLabel: t('form_builder_field_display_name'),
                 name: 'display_name',
-                value: displayNameValue ? displayNameValue : this.typeName,
+                value: this.getDisplayName(),
                 allowBlank: false,
                 anchor: '100%',
-                enableKeyEvents: true
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: this.checkFieldDisplayName.bind(this),
+                    blur: this.checkFieldLabelName.bind(this)
+                }
             }));
 
             //create "name" field.
-            var nameValue = this.getFieldValue('name');
             form.add(new Ext.form.TextField({
                 fieldLabel: t('form_builder_field_name'),
                 name: 'name',
-                value: nameValue ? nameValue : this.generateUniqueFieldName(),
+                value: (this.getName() ? this.getName() : this.generateId()),
                 allowBlank: false,
                 anchor: '100%',
                 enableKeyEvents: true,
@@ -444,13 +412,6 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     },
 
     /**
-     * @returns {String}
-     */
-    generateUniqueFieldName: function () {
-        return Ext.id(null, 'field_');
-    },
-
-    /**
      * @param field
      */
     checkFieldDisplayName: function (field) {
@@ -554,5 +515,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
         }
 
         return undefined;
+    },
+
+    generateId: function () {
+        return Ext.id(null, 'field_');
     }
 });

@@ -9,6 +9,8 @@ abstract class AbstractFieldCest
 {
     protected $type;
 
+    protected $subType;
+
     protected $name;
 
     protected $displayName;
@@ -16,8 +18,8 @@ abstract class AbstractFieldCest
     /**
      * @param FunctionalTester $I
      * @param array            $options
-     * @param string           $formTemplate
      * @param array            $optional
+     * @param string           $formTemplate
      *
      * @return array
      */
@@ -26,15 +28,26 @@ abstract class AbstractFieldCest
         $document = $I->haveAPageDocument('form-test');
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $testFormBuilder = (new TestFormBuilder('dachcom_test'))
-            ->setUseAjax(false)
-            ->addFormField(
+        $testFormBuilder = (new TestFormBuilder('dachcom_test'))->setUseAjax(false);
+
+        if ($this->type === 'container') {
+            $subFields = isset($optional['subFields']) ? $optional['subFields'] : [];
+            $testFormBuilder->addFormFieldContainer(
+                $this->subType,
+                $this->name,
+                $options,
+                $subFields
+            );
+        } else {
+            $testFormBuilder->addFormField(
                 $this->type,
                 $this->name,
                 $this->displayName,
                 [], $options, $optional
-            )
-            ->addFormFieldSubmitButton('submit');
+            );
+        }
+
+        $testFormBuilder->addFormFieldSubmitButton('submit');
 
         $form = $I->haveAForm($testFormBuilder);
 

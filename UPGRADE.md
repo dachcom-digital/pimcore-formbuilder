@@ -4,7 +4,16 @@
 ***
 
 After every update you should check the pimcore extension manager. 
-Just click the "update" button to finish the bundle update.
+Just click the "update" button or execute the migration command to finish the bundle update.
+
+#### Update from Version 2.5.x to Version 2.6.0
+- **[BC BREAK]** (Js): `.formbuilder-row` Class added to each form element. `jquery.fb.ext.conditional-logic.js` now only listens to this class
+- **[BC BREAK]** (Js): Validation allocation changed. Since we have sub forms now, we need the full form element id to validate against.
+  If you're dealing with a custom error validation (`$(form).on('formbuilder.error-field, fn);` event for example), you need to adjust your field selector.
+- **[BC BREAK]** (Template): Because of th new sub forms, we had to change the mail value formatter in `views/Email/formData.html.twig`. 
+  Check your mail template, if you're using a custom template.
+- **[NEW FEATURE]**: [Repeater Field](https://github.com/dachcom-digital/pimcore-formbuilder/issues/68)
+- Various bug fixes ([Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/17?closed=1))
 
 #### Update from Version 2.5.0 to Version 2.5.1
 - **[IMPROVEMENT]**: Better Form Validation in ExtJs Context

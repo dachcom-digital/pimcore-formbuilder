@@ -30,7 +30,7 @@ class TemplateManager
         $templates = $areaConfig['field']['templates'];
 
         $templateData = [];
-        foreach($templates as $templateId => $template) {
+        foreach ($templates as $templateId => $template) {
             $template['id'] = $templateId;
             $templateData[] = $template;
         }
@@ -39,15 +39,15 @@ class TemplateManager
     }
 
     /**
-     * @return null
+     * @return string|null
      */
     public function getDefaultFieldTemplate()
     {
-        $defaultValue = NULL;
+        $defaultValue = null;
 
         $areaConfig = $this->configuration->getConfig('form');
         $templates = $areaConfig['field']['templates'];
-        foreach($templates as $template) {
+        foreach ($templates as $template) {
             $defaultValue = $template['value'];
             break;
         }
@@ -58,22 +58,22 @@ class TemplateManager
     /**
      * @param bool $parseForExtJsStore
      *
-     * @return mixed
+     * @return array
      */
-    public function getFormTemplates($parseForExtJsStore = FALSE)
+    public function getFormTemplates($parseForExtJsStore = false)
     {
         $areaConfig = $this->configuration->getConfig('form');
         $templates = $areaConfig['templates'];
 
         $templateData = [];
-        foreach($templates as $templateId => $template) {
+        foreach ($templates as $templateId => $template) {
             $template['id'] = $templateId;
             $templateData[] = $template;
         }
 
-        if($parseForExtJsStore) {
+        if ($parseForExtJsStore) {
             $storeTemplates = [];
-            foreach($templateData as $template) {
+            foreach ($templateData as $template) {
                 $storeTemplates[] = [$template['value'], $template['label']];
             }
             return $storeTemplates;
@@ -83,15 +83,15 @@ class TemplateManager
     }
 
     /**
-     * @return null
+     * @return string|null
      */
     public function getDefaultFormTemplate()
     {
-        $defaultValue = NULL;
+        $defaultValue = null;
 
         $areaConfig = $this->configuration->getConfig('form');
         $templates = $areaConfig['templates'];
-        foreach($templates as $template) {
+        foreach ($templates as $template) {
             $defaultValue = $template['value'];
             break;
         }

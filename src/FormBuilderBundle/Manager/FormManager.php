@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Manager;
 
 use FormBuilderBundle\Factory\FormFactoryInterface;
+use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
@@ -82,8 +83,8 @@ class FormManager
     }
 
     /**
-     * @param array $data
-     * @param null  $id
+     * @param array    $data
+     * @param null|int $id
      *
      * @return FormInterface|null
      * @throws \Exception
@@ -96,6 +97,10 @@ class FormManager
             $form = $this->getById($id);
         } else {
             $form = $this->formFactory->createForm();
+        }
+
+        if (!$form instanceof FormInterface) {
+            return null;
         }
 
         $this->updateFormAttributes($data, $form, $isUpdate);
@@ -183,51 +188,127 @@ class FormManager
      */
     protected function updateFields($data, $form)
     {
-        $counter = 0;
+        $order = 0;
         $fields = [];
 
         foreach ($this->getValue($data, 'fields', []) as $fieldData) {
 
             //allow some space for dynamic fields.
-            $counter += 100;
+            $order += 100;
 
             $fieldType = $this->getValue($fieldData, 'type');
-
-            $optionsParameter = $this->getValue($fieldData, 'options');
-            $optionalParameter = $this->getValue($fieldData, 'optional');
             $fieldName = $this->getValue($fieldData, 'name');
-            $constraints = $this->getValue($fieldData, 'constraints');
 
-            /** @var FormFieldInterface $field */
-            $field = $form->getField($fieldName);
-
-            if (!$field) {
-                $field = $this->formFactory->createFormField();
-                $field->setName($fieldName);
-            } elseif ($field->getType() !== $fieldType || !$field->getName()) {
-                $field->setName($fieldName);
-            }
-
-            $field->setDisplayName($this->getValue($fieldData, 'display_name'));
-            $field->setOrder($counter);
-            $field->setType($fieldType);
-
-            if (!empty($optionsParameter) && is_array($optionsParameter)) {
-                $field->setOptions($optionsParameter);
-            }
-
-            if (!empty($optionalParameter) && is_array($optionalParameter)) {
-                $field->setOptional($optionalParameter);
-            }
-
-            if (!empty($constraints) && is_array($constraints)) {
-                $field->setConstraints($constraints);
+            if ($fieldType === 'container') {
+                $field = $this->generateFormFieldContainer($form, $fieldData, $order);
+            } else {
+                $field = $this->generateFormField($form, $fieldData, $order);
             }
 
             $fields[$fieldName] = $field;
         }
 
         $form->setFields($fields);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param array         $fieldData
+     * @param int           $order
+     *
+     * @throws \Exception
+     * @return FormFieldContainerInterface
+     */
+    protected function generateFormFieldContainer(FormInterface $form, array $fieldData, int $order)
+    {
+        $fieldType = $this->getValueAsString($fieldData, 'type');
+        $fieldSubType = $this->getValueAsString($fieldData, 'sub_type');
+        $fieldName = $this->getValueAsString($fieldData, 'name');
+        $fieldDisplayName = $this->getValueAsString($fieldData, 'display_name');
+        $configParameter = $this->getValue($fieldData, 'configuration');
+        $containerFields = $this->getValue($fieldData, 'fields');
+
+        $fieldContainer = $form->getFieldContainer($fieldName);
+
+        if (!$fieldContainer instanceof FormFieldContainerInterface) {
+            $fieldContainer = $this->formFactory->createFormFieldContainer();
+        }
+
+        $fieldContainer->setName($fieldName);
+        $fieldContainer->setDisplayName($fieldDisplayName);
+        $fieldContainer->setType($fieldType);
+        $fieldContainer->setSubType($fieldSubType);
+        $fieldContainer->setOrder($order);
+
+        if (!empty($configParameter) && is_array($configParameter)) {
+            $fieldContainer->setConfiguration($configParameter);
+        } else {
+            $fieldContainer->setConfiguration([]);
+        }
+
+        // add sub-fields to container
+        if (is_array($containerFields) && count($containerFields) > 0) {
+            $parsedContainerFields = [];
+            $subOrder = 0;
+            foreach ($containerFields as $containerFieldData) {
+                //allow some space for dynamic fields.
+                $subOrder += 100;
+                $parsedContainerFields[] = $this->generateFormField($form, $containerFieldData, $subOrder);
+            }
+            $fieldContainer->setFields($parsedContainerFields);
+        } else {
+            $fieldContainer->setFields([]);
+        }
+
+        return $fieldContainer;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param array         $fieldData
+     * @param int           $order
+     *
+     * @return FormFieldInterface
+     */
+    protected function generateFormField(FormInterface $form, array $fieldData, int $order)
+    {
+        $fieldType = $this->getValueAsString($fieldData, 'type');
+        $fieldName = $this->getValueAsString($fieldData, 'name');
+        $fieldDisplayName = $this->getValueAsString($fieldData, 'display_name');
+        $constraints = $this->getValue($fieldData, 'constraints');
+        $optionsParameter = $this->getValue($fieldData, 'options');
+        $optionalParameter = $this->getValue($fieldData, 'optional');
+
+        $field = $form->getField($fieldName);
+
+        if (!$field instanceof FormFieldInterface) {
+            $field = $this->formFactory->createFormField();
+        }
+
+        $field->setName($fieldName);
+        $field->setDisplayName($fieldDisplayName);
+        $field->setType($fieldType);
+        $field->setOrder($order);
+
+        if (!empty($optionsParameter) && is_array($optionsParameter)) {
+            $field->setOptions($optionsParameter);
+        } else {
+            $field->setOptions([]);
+        }
+
+        if (!empty($optionalParameter) && is_array($optionalParameter)) {
+            $field->setOptional($optionalParameter);
+        } else {
+            $field->setOptional([]);
+        }
+
+        if (!empty($constraints) && is_array($constraints)) {
+            $field->setConstraints($constraints);
+        } else {
+            $field->setConstraints([]);
+        }
+
+        return $field;
     }
 
     /**
@@ -244,6 +325,19 @@ class FormManager
         }
 
         return $default;
+    }
+
+    /**
+     * @param        $data
+     * @param        $value
+     * @param string $default
+     *
+     * @return string
+     */
+    protected function getValueAsString($data, $value, $default = '')
+    {
+        $value = $this->getValue($data, $value, $default);
+        return is_string($value) ? $value : $default;
     }
 
     /**

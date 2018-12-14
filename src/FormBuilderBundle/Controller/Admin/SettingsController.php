@@ -117,7 +117,11 @@ class SettingsController extends AdminController
 
         try {
             $form = $formManager->getById($id);
-            $data['data'] = $backendFormBuilder->generateExtJsForm($form);
+            if ($form instanceof FormInterface) {
+                $data['data'] = $backendFormBuilder->generateExtJsForm($form);
+            } else {
+                throw new \Exception(sprintf('No form for id %d found.', $id));
+            }
         } catch (\Exception $e) {
             $data = [
                 'success' => false,

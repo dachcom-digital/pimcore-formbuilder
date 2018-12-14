@@ -1,0 +1,44 @@
+form_builder:
+    container_types:
+        fieldset:
+            class: FormBuilderBundle\Form\Type\Container\FieldSetContainerType
+            label: 'form_builder_container_type.fieldset'
+            icon_class: form_builder_icon_container_type
+            config:
+                -
+                    name: label
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.label'
+        repeater:
+            class: FormBuilderBundle\Form\Type\Container\RepeaterContainerType
+            label: 'form_builder_container_type.repeater'
+            icon_class: form_builder_icon_container_type
+            config:
+                -
+                    name: label
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.label'
+                -
+                    name: block_label
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.block_label'
+                -
+                    name: add_block_counter
+                    type: boolean
+                    label: 'form_builder_type_container.repeater.option.add_block_counter'
+                -
+                    name: min
+                    type: integer
+                    label: 'form_builder_type_container.repeater.option.min'
+                -
+                    name: max
+                    type: integer
+                    label: 'form_builder_type_container.repeater.option.max'
+                -
+                    name: label_add_block
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.label.add_block'
+                -
+                    name: label_remove_block
+                    type: string
+                    label: 'form_builder_type_container.repeater.option.label.remove_block'

@@ -80,7 +80,7 @@ class MailBehaviourData implements DataInterface
 
     /**
      * @param string $locale
-     * @return null|string
+     * @return null|int
      */
     public function getMailTemplateId($locale)
     {
@@ -88,6 +88,6 @@ class MailBehaviourData implements DataInterface
             return null;
         }
 
-        return $this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
+        return (int)$this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
     }
 }

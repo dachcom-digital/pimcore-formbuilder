@@ -41,13 +41,13 @@
 {%- endblock form_builder_honeypot_row %}
 
 {% block form_row -%}
-    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : '' }}">
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : '' }}">
         {{ parent() }}
     </div>
 {%- endblock form_row %}
 
 {% block button_row -%}
-    <div class="{{ attr['data-template'] is defined ? attr['data-template'] : '' }}">
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : '' }}">
         {{ parent() }}
     </div>
 {%- endblock button_row %}

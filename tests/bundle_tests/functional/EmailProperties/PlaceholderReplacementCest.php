@@ -23,16 +23,56 @@ class PlaceholderReplacementCest
         $form = $I->haveAForm($testFormBuilder);
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
-
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
-
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-
         $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', 'subject with TEST_FIRST_NAME');
+    }
+
+    /**
+     * @param FunctionalTester $I
+     *
+     * @throws \Exception
+     */
+    public function testSubjectPlaceholderWithFieldsetContainer(FunctionalTester $I)
+    {
+        $adminEmail = $I->haveAEmailDocumentForAdmin(['subject' => 'subject with %fieldset_container_sub_text_field_1%']);
+
+        $document = $I->haveAPageDocument('form-test');
+        $testFormBuilder = $this->generateSimpleForm();
+        $testFormBuilder->addFormFieldContainer(
+            'fieldset',
+            'fieldset_container',
+            [],
+            [
+                [
+                    'type'         => 'text',
+                    'name'         => 'sub_text_field_1',
+                    'display_name' => 'Text Field 1',
+                    'constraints'  => [],
+                    'options'      => [],
+                    'optional'     => [],
+                ]
+            ]
+        );
+
+        $form = $I->haveAForm($testFormBuilder);
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->amOnPage('/form-test');
+
+        $repeaterSelector = $testFormBuilder->getFormFieldSelector(1, 'fieldset_container');
+        $subFieldSelector = 'input#formbuilder_1_fieldset_container_0_sub_text_field_1';
+        $I->fillField(sprintf('%s %s', $repeaterSelector, $subFieldSelector), 'TEST_FIELDSET_CONTAINER_VALUE');
+
+        $this->fillSimpleForm($testFormBuilder, $I);
+        $this->clickSimpleFormSubmit($testFormBuilder, $I);
+
+        $I->seeEmailIsSent($adminEmail);
+        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', 'subject with TEST_FIELDSET_CONTAINER_VALUE');
     }
 
     /**
@@ -49,7 +89,6 @@ class PlaceholderReplacementCest
         $form = $I->haveAForm($testFormBuilder);
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
-
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
@@ -58,7 +97,6 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-
         $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', 'subject with Check 1, Check 3');
     }
 
@@ -76,15 +114,12 @@ class PlaceholderReplacementCest
         $form = $I->haveAForm($testFormBuilder);
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
-
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
-
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-
         $I->seeSentEmailHasPropertyValue($adminEmail, 'replyTo', 'test@test.com');
     }
 
@@ -102,15 +137,12 @@ class PlaceholderReplacementCest
         $form = $I->haveAForm($testFormBuilder);
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
-
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
-
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-
         $I->seeSentEmailHasPropertyValue($adminEmail, 'from', 'test@test.com');
     }
 
@@ -128,15 +160,55 @@ class PlaceholderReplacementCest
         $form = $I->haveAForm($testFormBuilder);
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
-
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
-
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
+        $I->seeSentEmailHasPropertyValue($adminEmail, 'to', 'test@test.com');
+    }
 
+    /**
+     * @param FunctionalTester $I
+     *
+     * @throws \Exception
+     */
+    public function testRecipientPlaceholderWithFieldsetContainer(FunctionalTester $I)
+    {
+        $adminEmail = $I->haveAEmailDocumentForAdmin(['to' => '%fieldset_container_sub_text_field_1%']);
+
+        $document = $I->haveAPageDocument('form-test');
+        $testFormBuilder = $this->generateSimpleForm();
+        $testFormBuilder->addFormFieldContainer(
+            'fieldset',
+            'fieldset_container',
+            [],
+            [
+                [
+                    'type'         => 'text',
+                    'name'         => 'sub_text_field_1',
+                    'display_name' => 'Text Field 1',
+                    'constraints'  => [],
+                    'options'      => [],
+                    'optional'     => [],
+                ]
+            ]
+        );
+
+        $form = $I->haveAForm($testFormBuilder);
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->amOnPage('/form-test');
+
+        $repeaterSelector = $testFormBuilder->getFormFieldSelector(1, 'fieldset_container');
+        $subFieldSelector = 'input#formbuilder_1_fieldset_container_0_sub_text_field_1';
+        $I->fillField(sprintf('%s %s', $repeaterSelector, $subFieldSelector), 'test@test.com');
+
+        $this->fillSimpleForm($testFormBuilder, $I);
+        $this->clickSimpleFormSubmit($testFormBuilder, $I);
+
+        $I->seeEmailIsSent($adminEmail);
         $I->seeSentEmailHasPropertyValue($adminEmail, 'to', 'test@test.com');
     }
 

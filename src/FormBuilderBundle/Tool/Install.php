@@ -271,7 +271,7 @@ class Install extends MigrationInstaller
 
             $property->setDescription($propertyConfig['description']);
             $property->setCtype($propertyConfig['ctype']);
-            $property->setInheritable(false);
+            $property->setInheritable(/** @scrutinizer ignore-type */ false);
 
             try {
                 $property->save();

@@ -36,11 +36,9 @@ class CleanUpListener implements EventSubscriberInterface
     }
 
     /**
-     * @param MaintenanceEvent $ev
-     *
      * @return void
      */
-    public function onMaintenance(MaintenanceEvent $ev)
+    public function onMaintenance()
     {
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {
             Logger::log('Remove form builder files folder: ' . $file);

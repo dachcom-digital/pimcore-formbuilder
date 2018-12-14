@@ -20,21 +20,15 @@ class FormFactoryWithNoDataTest extends DachcomBundleTestCase
     public function testFormGetterById()
     {
         $factory = $this->getContainer()->get(FormFactoryInterface::class);
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Form with id "99" does not exist.');
-
-        $factory->getFormById(99);
+        $form = $factory->getFormById(99);
+        $this->assertNull($form);
     }
 
     public function testFormGetterIdByName()
     {
         $factory = $this->getContainer()->get(FormFactoryInterface::class);
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Form with name "form" does not exist.');
-
-        $factory->getFormIdByName('form');
+        $form = $factory->getFormIdByName('form');
+        $this->assertNull($form);
     }
 
     public function testFormGetAll()

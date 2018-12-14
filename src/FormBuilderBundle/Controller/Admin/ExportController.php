@@ -295,7 +295,7 @@ class ExportController extends AdminController
             $value = is_array($value) ? join(', ', array_filter($value)) : $value;
         } elseif ($fieldType === 'textarea') {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = join("\n", array_filter($value));
+            $value = is_array($value) ? join("\n", array_filter($value)) : $value;
             $value = preg_replace("/[\r\n]+/", "\n", $value);
         }
 

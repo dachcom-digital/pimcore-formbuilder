@@ -21,6 +21,16 @@ There are several form types available (updated continuously).
 | Time | Date and Time Fields | This can be rendered as a text field, a series of text fields (e.g. hour, minute, second) or a series of select fields. The underlying data can be stored as a DateTime object, a string, a timestamp or an array. |
 | Birthday | Date and Time Fields | Can be rendered as a single text box, three text boxes (month, day and year), or three select boxes. |
 
+# Available Container Form Types
+
+There are several container form types available.
+Read more about the [Container Type](83_ContainerType.md) here.
+
+| Name | Group | Description |
+|------|-------|-------------|
+| Repeater | Container | Create repeatable field collections |
+| Fieldset | Container | Create grouped field blocks |
+
 ## Constraints
 
 | Name | Description |

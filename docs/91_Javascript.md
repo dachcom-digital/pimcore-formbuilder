@@ -4,6 +4,11 @@ Of course it's up to you to copy those files into your project and modify them a
 
 > Note: Be sure that jQuery has been initialized, before you load formbuilder.js.
 
+## Overview
+- [Core Plugin](#core-plugin)
+- [Conditional Logic Extension](#conditional-logic-plugin)
+- [Repeater Extension](#repeater-plugin)
+
 ## Core Plugin
 This Plugin will enable the ajax functionality and also the multi file handling:
 
@@ -83,5 +88,76 @@ $('form.formbuilder').formBuilderConditionalLogic({
             $els.hide();
         }
     }
+});
+```
+
+## Repeater Plugin
+This Plugin will enable the repeater functionality.
+
+### Enable Plugin
+
+```html
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.repeater.js') }}"></script>
+```
+
+```javascript
+$(function () {
+    $('form.formbuilder').formBuilderRepeater();
+});
+```
+
+### Extended Usage
+```javascript
+$forms.formBuilderRepeater({
+
+    classes: {
+        add: 'btn btn-special-class',
+        remove: 'btn btn-special-class'
+    },
+    
+    onRemove: function (cb) {
+        var $containerBlock = $(this);
+        $containerBlock.slideUp(1350, function () {
+            $(this).remove();
+            cb(); // always trigger the callback action!
+        });
+    },
+
+    onAdd: function (newForm, cb) {
+        var $container = $(this),
+            $newForm = $(newForm);
+        $newForm.insertAfter($container.find('span.add-block')).hide().slideDown(1000, function () {
+            cb($newForm); // always trigger the callback action!
+        });
+    },
+
+    renderCreateBlockElement: function (classes, text) {
+        var $container = $(this);
+        return $('<span/>', {
+            'href': '#',
+            'class': classes,
+            'text': text
+        });
+    },
+
+    allocateCreateBlockElement: function ($element) {
+        var $container = $(this);
+        $container.prepend($element);
+    },
+
+    renderRemoveBlockElement: function (classes, text) {
+        var $containerBlock = $(this);
+        return $('<span/>', {
+            'href': '#',
+            'class': classes,
+            'text': text
+        });
+    },
+
+    allocateRemoveBlockElement: function ($element) {
+        var $containerBlock = $(this);
+        $containerBlock.prepend($element);
+    }
+
 });
 ```

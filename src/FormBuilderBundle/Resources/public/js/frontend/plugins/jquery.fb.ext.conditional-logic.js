@@ -1,7 +1,7 @@
 /*
  *  Project: PIMCORE FormBuilder
  *  Extension: Conditional Logic
- *  Version: 2.2.1
+ *  Since: 2.2.1
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
  *
@@ -19,32 +19,64 @@
         this.onDisable = options && typeof options.onDisable === 'function' ? options.onDisable : internal.disable;
     }
 
-    function ElementTransformer(options, formTemplate) {
+    function ElementTransformer($form, options, formTemplate) {
+
+        var getContainerAwareFields = function ($els, $form) {
+            var $fields,
+                isContainerAware = false,
+                $containerField = $els.first().closest('.formbuilder-container', $form[0]),
+                isContainerField = $containerField.length > 0;
+
+            if (isContainerField === true) {
+                isContainerAware = true;
+                $fields = $containerField;
+            } else {
+                $fields = $els;
+            }
+
+            return {'isContainerAware': isContainerAware, 'fields': $fields};
+        };
+
+        this.$form = $form;
         this.formTemplate = formTemplate;
         this.userMethods = options;
         this.themeTransform = {
             'bootstrap3': {
                 show: function ($els, className) {
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 hide: function ($els, className) {
-                    $els.val('').prop('selectedIndex', 0);
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        if (data.isContainerAware === false) {
+                            data.fields.val('').prop('selectedIndex', 0);
+                        }
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 addClass: function ($els, className) {
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 removeClass: function ($els, className) {
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 enable: function ($els) {
                     $els.removeAttr('disabled');
                 },
@@ -83,26 +115,40 @@
             },
             'bootstrap4': {
                 show: function ($els, className) {
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 hide: function ($els, className) {
-                    $els.val('').prop('selectedIndex', 0);
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        if (data.isContainerAware === false) {
+                            data.fields.val('').prop('selectedIndex', 0);
+                        }
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 addClass: function ($els, className) {
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().addClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 removeClass: function ($els, className) {
-                    $els.each(function () {
-                        $(this).parentsUntil('*[class^=col-]').first().parent().removeClass(className);
-                    });
-                },
+                    $els.each(function (i, el) {
+                        var data = getContainerAwareFields($(el), this.$form);
+                        data.fields.each(function (i, dataElement) {
+                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
+                        }.bind(this));
+                    }.bind(this));
+                }.bind(this),
                 enable: function ($els) {
                     $els.removeAttr('disabled');
                 },
@@ -172,7 +218,7 @@
         this.logic = {};
         this.actions = {};
         this.conditions = {};
-        this.elementTransformer = new ElementTransformer(this.options.elementTransformer, this.formTemplate);
+        this.elementTransformer = new ElementTransformer(this.$form, this.options.elementTransformer, this.formTemplate);
 
         this.setupConditionProcessor();
         this.setupActionProcessor();

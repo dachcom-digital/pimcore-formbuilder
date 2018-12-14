@@ -4,6 +4,7 @@ namespace DachcomBundle\Test\acceptance\ConditionalLogic\Action\Element;
 
 use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractActionCest;
 use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\Util\TestFormBuilder;
 
 /**
  * Action "toggleClass". Must work on:
@@ -257,6 +258,55 @@ class ElementToggleClassActionCest extends AbstractActionCest
 
         $I->waitForElementNotVisible(
             $testFormBuilder->getFormFieldSelector(1, 'single_checkbox', '.test-class'),
+            5
+        );
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testElementToggleClassOnContainer(AcceptanceTester $I)
+    {
+        $actions = [
+            'type'   => 'toggleClass',
+            'fields' => ['repeater_container'],
+            'class'  => 'test-class'
+        ];
+
+        $testFormBuilder = $this->runTestWithActions($I, [$actions], function (TestFormBuilder $testFormBuilder) {
+            $testFormBuilder->addFormFieldContainer(
+                'repeater',
+                'repeater_container',
+                [
+                    'min' => 1
+                ],
+                [
+                    [
+                        'type'         => 'text',
+                        'name'         => 'sub_text_field',
+                        'display_name' => 'Text Field',
+                        'constraints'  => [],
+                        'options'      => [],
+                        'optional'     => [],
+                    ]
+                ]
+            );
+            return $testFormBuilder;
+        });
+
+        $this->triggerCondition($I, $testFormBuilder);
+
+        $I->waitForElementVisible(
+            $testFormBuilder->getFormFieldSelector(1, 'repeater_container', '.test-class', ''),
+            5
+        );
+
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 'invalid_text1');
+
+        $I->waitForElementNotVisible(
+            $testFormBuilder->getFormFieldSelector(1, 'repeater_container', '.test-class'),
             5
         );
     }

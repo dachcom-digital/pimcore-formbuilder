@@ -19,11 +19,6 @@ class Form extends Model\AbstractModel implements FormInterface
     ];
 
     /**
-     * @var
-     */
-    protected $table;
-
-    /**
      * @var Translator
      */
     protected $translator;
@@ -66,22 +61,22 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var array
      */
-    public $config;
+    public $config = [];
 
     /**
      * @var array
      */
-    public $conditionalLogic;
+    public $conditionalLogic = [];
 
     /**
      * @var array
      */
-    public $fields;
+    public $fields = [];
 
     /**
      * @var array
      */
-    private $data;
+    private $data = [];
 
     /**
      * @inheritdoc
@@ -168,7 +163,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function save()
     {
-        return $this->getDao()->save();
+        $this->getDao()->save();
     }
 
     /**
@@ -176,7 +171,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function delete()
     {
-        return $this->getDao()->delete();
+        $this->getDao()->delete();
     }
 
     /**
@@ -305,7 +300,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function getConfig()
     {
-        return is_array($this->config) ? $this->config : [];
+        return $this->config;
     }
 
     /**
@@ -313,7 +308,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function getConditionalLogic()
     {
-        return is_array($this->conditionalLogic) ? $this->conditionalLogic : [];
+        return $this->conditionalLogic;
     }
 
     /**
@@ -373,7 +368,7 @@ class Form extends Model\AbstractModel implements FormInterface
      */
     public function getFields()
     {
-        return is_array($this->fields) ? $this->fields : [];
+        return $this->fields;
     }
 
     /**
@@ -401,6 +396,21 @@ class Form extends Model\AbstractModel implements FormInterface
                 return $field;
             }
         }
+
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFieldContainer(string $name)
+    {
+        $fieldContainer = $this->getField($name);
+        if ($fieldContainer !== null && !$fieldContainer instanceof FormFieldContainerInterface) {
+            throw new \Exception(sprintf('Requested field "%s" container is not an instance of FormFieldContainerInterface', $name));
+        }
+
+        return $fieldContainer;
     }
 
     /**

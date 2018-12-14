@@ -28,9 +28,10 @@ class ConditionalLogicProcessor
      * Cycle through each cl block.
      * If $filterField is not NULL, the action applier requests a FieldReturnStack with valid $fielderField field in return data.
      *
-     * @param      $formData
-     * @param      $conditionalLogic
-     * @param null $fieldFilter
+     * @param array                   $formData
+     * @param array                   $conditionalLogic
+     * @param null|FormFieldInterface $fieldFilter
+     *
      * @return array
      * @throws \Exception
      */
@@ -55,9 +56,10 @@ class ConditionalLogicProcessor
     }
 
     /**
-     * @param $conditions
-     * @param $formData
-     * @param $ruleId
+     * @param array $conditions
+     * @param array $formData
+     * @param int   $ruleId
+     *
      * @return bool
      * @throws \Exception
      */
@@ -80,11 +82,12 @@ class ConditionalLogicProcessor
     }
 
     /**
-     * @param $validationState
-     * @param $actions
-     * @param $formData
-     * @param $ruleId
-     * @param $fieldFilter
+     * @param bool                    $validationState
+     * @param array                   $actions
+     * @param array                   $formData
+     * @param int                     $ruleId
+     * @param null|FormFieldInterface $fieldFilter
+     *
      * @return array
      * @throws \Exception
      */

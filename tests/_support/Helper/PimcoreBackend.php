@@ -412,6 +412,7 @@ class PimcoreBackend extends Module
     /**
      * @param  TestFormBuilder $formBuilder
      *
+     * @throws \Exception
      * @return FormInterface
      */
     protected function createForm(TestFormBuilder $formBuilder)

@@ -2,27 +2,20 @@ pimcore.registerNS('Formbuilder.comp.type.formFieldConstraint');
 Formbuilder.comp.type.formFieldConstraint = Class.create({
 
     form: null,
-
     formIsValid: true,
-
     formHandler: null,
-
     type: null,
-
     typeName: null,
-
     iconClass: null,
-
     storeData: {},
 
-    initialize: function (formHandler, treeNode, constraint, values) {
+    initialize: function (formHandler, treeNode, constraintConfig, values) {
         this.formHandler = formHandler;
         this.treeNode = treeNode;
-        this.iconClass = constraint.icon_class;
-        this.type = constraint.id;
-        this.typeName = constraint.label;
-        this.config = constraint.config;
-
+        this.iconClass = constraintConfig.icon_class;
+        this.type = constraintConfig.id;
+        this.typeName = constraintConfig.label;
+        this.config = constraintConfig.config;
         this.initData(values);
     },
 
@@ -153,7 +146,7 @@ Formbuilder.comp.type.formFieldConstraint = Class.create({
                             return this.value;
                         },
                         listeners: {
-                            change: function (field, newVal, oldVal) {
+                            change: function (field, newVal) {
                                 var defaultValue = configElement.defaultValue === null ? '' : configElement.defaultValue;
                                 field.setStyle('opacity', newVal !== defaultValue ? 1 : 0.6);
                             }

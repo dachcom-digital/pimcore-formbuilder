@@ -3,28 +3,60 @@ services:
         public: false
         tags:
             - { name: form.type }
+
     FormBuilderBundle\Form\Type\DynamicMultiFileType:
         public: false
         arguments:
             - '@translator'
         tags:
             - { name: form.type }
+
     FormBuilderBundle\Form\Type\HoneypotType:
         public: false
         tags:
             - { name: form.type }
+
     FormBuilderBundle\Form\Type\HtmlTagType:
         public: false
         tags:
             - { name: form.type }
+
     FormBuilderBundle\Form\Type\SnippetType:
         autowire: true
         public: false
         tags:
             - { name: form.type }
+
     FormBuilderBundle\Form\Type\DynamicChoiceType:
         public: false
         arguments:
             - '@FormBuilderBundle\Registry\ChoiceBuilderRegistry'
         tags:
             - { name: form.type }
+
+    FormBuilderBundle\Form\Type\ContainerCollectionType:
+        autowire: true
+        public: false
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Type\Container\ContainerType:
+        autowire: true
+        public: false
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Type\Container\FieldSetContainerType:
+        autowire: true
+        public: false
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Type\Container\RepeaterContainerType:
+        autowire: true
+        public: false
+        calls:
+            - [setTranslator, ['@translator']]
+        tags:
+            - { name: form.type }
+

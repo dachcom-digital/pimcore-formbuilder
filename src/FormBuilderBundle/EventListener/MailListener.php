@@ -123,7 +123,7 @@ class MailListener implements EventSubscriberInterface
     }
 
     /**
-     * @param int           $mailTemplateId
+     * @param int|null      $mailTemplateId
      * @param array         $userOptions
      * @param FormInterface $form
      * @param string        $locale
@@ -139,9 +139,9 @@ class MailListener implements EventSubscriberInterface
 
         if ($mailConditionData->hasMailTemplate()) {
             $conditionalMailTemplateId = $mailConditionData->getMailTemplateId($locale);
-            $mailTemplate = Document\Email::getById($conditionalMailTemplateId);
+            $mailTemplate = is_numeric($conditionalMailTemplateId) ? Document\Email::getById($conditionalMailTemplateId) : null;
         } else {
-            $mailTemplate = Document\Email::getById($mailTemplateId);
+            $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
         }
 
         if (!$mailTemplate instanceof Document\Email) {

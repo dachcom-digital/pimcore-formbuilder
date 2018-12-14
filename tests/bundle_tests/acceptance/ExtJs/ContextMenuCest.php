@@ -23,6 +23,7 @@ class ContextMenuCest extends AbstractExtJs
         $I->dontSee('Copy');
         $I->dontSee('Add validation');
         $I->see('Add form element');
+        $I->see('Add container');
 
         $I->click('Add form element');
         $I->waitForText('Text Fields', 10);
@@ -41,24 +42,21 @@ class ContextMenuCest extends AbstractExtJs
         $this->amOnFormBuilderBackendBuilder($I);
 
         $formId = $this->seeExtJsForm($I);
+
         $I->clickWithRightButton($this->getRootNodeOfForm($formId));
-
         $I->waitForText('Add form element', 10);
-
         $I->click('Add form element');
         $I->waitForText('Text Fields', 10);
-
         $I->click('Text Fields');
         $I->waitForText('Text Type', 10);
-
         $I->click('Text Type');
         $I->waitForElementVisible('input[name="display_name"]', 10);
         $I->fillField('input[name="display_name"]', 'field_name_one');
 
         $I->clickWithRightButton('.form_builder_icon_text');
-
         $I->wait(0.2);
         $I->dontSee('Add form element');
+        $I->dontSee('Add container');
         $I->see('Delete');
         $I->see('Copy');
         $I->see('Add validation');
@@ -74,25 +72,20 @@ class ContextMenuCest extends AbstractExtJs
         $this->amOnFormBuilderBackendBuilder($I);
 
         $formId = $this->seeExtJsForm($I);
+
         $I->clickWithRightButton($this->getRootNodeOfForm($formId));
-
         $I->waitForText('Add form element', 10);
-
         $I->click('Add form element');
         $I->waitForText('Text Fields', 10);
-
         $I->click('Text Fields');
         $I->waitForText('Text Type', 10);
-
         $I->click('Text Type');
         $I->waitForElementVisible('input[name="display_name"]', 10);
         $I->fillField('input[name="display_name"]', 'field_name_one');
 
         $I->clickWithRightButton('.form_builder_icon_text');
-
         $I->wait(0.2);
         $I->click('Add validation');
-
         $I->waitForText('Not Blank', 10);
         $I->click('Not Blank');
 
@@ -109,21 +102,44 @@ class ContextMenuCest extends AbstractExtJs
      *
      * @throws \Exception
      */
-    public function testExtJsFormContextMenuCopyPasteField(AcceptanceTester $I)
+    public function testExtJsFormContextMenuOnContainerFieldNode(AcceptanceTester $I)
     {
         $this->amOnFormBuilderBackendBuilder($I);
 
         $formId = $this->seeExtJsForm($I);
         $I->clickWithRightButton($this->getRootNodeOfForm($formId));
+        $I->waitForText('Add container', 10);
+        $I->click('Add container');
+        $I->waitForText('Fieldset', 10);
+        $I->click('Fieldset');
+        $I->waitForElementVisible('input[name="name"]', 10);
+        $I->fillField('input[name="name"]', 'fieldset_one');
 
+        $I->clickWithRightButton('.form_builder_icon_container_type');
+        $I->wait(0.2);
+        $I->see('Add form element');
+        $I->dontSee('Add validation');
+        $I->see('Delete');
+        $I->see('Copy');
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testExtJsFormContextMenuCopyPasteField(AcceptanceTester $I)
+    {
+        $this->amOnFormBuilderBackendBuilder($I);
+
+        $formId = $this->seeExtJsForm($I);
+
+        $I->clickWithRightButton($this->getRootNodeOfForm($formId));
         $I->waitForText('Add form element', 10);
-
         $I->click('Add form element');
         $I->waitForText('Text Fields', 10);
-
         $I->click('Text Fields');
         $I->waitForText('Text Type', 10);
-
         $I->click('Text Type');
         $I->waitForElementVisible('input[name="display_name"]', 10);
         $I->fillField('input[name="display_name"]', 'field_name_one');
@@ -157,16 +173,13 @@ class ContextMenuCest extends AbstractExtJs
         $this->amOnFormBuilderBackendBuilder($I);
 
         $formId = $this->seeExtJsForm($I);
+
         $I->clickWithRightButton($this->getRootNodeOfForm($formId));
-
         $I->waitForText('Add form element', 10);
-
         $I->click('Add form element');
         $I->waitForText('Text Fields', 10);
-
         $I->click('Text Fields');
         $I->waitForText('Text Type', 10);
-
         $I->click('Text Type');
         $I->waitForElementVisible('input[name="display_name"]', 10);
         $I->fillField('input[name="display_name"]', 'field_name_one');
@@ -177,5 +190,43 @@ class ContextMenuCest extends AbstractExtJs
 
         $I->waitForElementNotVisible('//span[text()="field_name_one"]', 10);
 
+    }
+
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testExtJsFormContextMenuDeleteContainerField(AcceptanceTester $I)
+    {
+        $this->amOnFormBuilderBackendBuilder($I);
+
+        $formId = $this->seeExtJsForm($I);
+
+        $I->clickWithRightButton($this->getRootNodeOfForm($formId));
+        $I->waitForText('Add container', 10);
+        $I->click('Add container');
+        $I->waitForText('Fieldset', 10);
+        $I->click('Fieldset');
+        $I->waitForElementVisible('input[name="name"]', 10);
+        $I->fillField('input[name="name"]', 'fieldset_one');
+
+        $I->clickWithRightButton('.form_builder_icon_container_type');
+        $I->waitForText('Add form element', 10);
+        $I->click('Add form element');
+        $I->waitForText('Text Fields', 10);
+        $I->click('Text Fields');
+        $I->waitForText('Text Type', 10);
+        $I->click('Text Type');
+        $I->waitForElementVisible('input[name="display_name"]', 10);
+        $I->fillField('input[name="display_name"]', 'field_name_one');
+
+        $I->clickWithRightButton('.form_builder_icon_container_type');
+        $I->waitForText('Delete', 10);
+        $I->click('Delete');
+
+        $I->waitForElementNotVisible('.form_builder_icon_container_type', 10);
+        $I->waitForElementNotVisible('//span[text()="field_name_one"]', 10);
     }
 }
