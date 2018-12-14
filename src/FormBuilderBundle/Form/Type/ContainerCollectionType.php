@@ -40,8 +40,7 @@ class ContainerCollectionType extends AbstractType
         $resolver->setDefaults([
             'fields'             => [],
             'container_type'     => null,
-            'add_block_counter'  => false,
-            'translation_domain' => false
+            'add_block_counter'  => false
         ]);
     }
 
