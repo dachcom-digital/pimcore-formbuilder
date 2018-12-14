@@ -10,6 +10,7 @@ use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -277,6 +278,7 @@ class SettingsController extends AdminController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      */
     public function importFormAction(Request $request)
     {
@@ -289,49 +291,35 @@ class SettingsController extends AdminController
             $data = iconv($encoding, 'UTF-8', $data);
         }
 
-        if (!is_dir(Configuration::IMPORT_PATH)) {
-            mkdir(Configuration::IMPORT_PATH);
-        }
-
-        $importFile = Configuration::IMPORT_PATH . '/import_' . $request->get('id');
-
-        file_put_contents($importFile, $data);
-
-        chmod($importFile, 0766);
-
-        $res = [];
-        $res['success'] = true;
-
-        return $this->json([
-            'success' => true,
-            'msg'     => $res['success'] ? 'Success' : 'Error',
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
-     */
-    public function getImportFileAction(Request $request)
-    {
-        $formId = $request->get('id');
-
         /** @var Builder $backendFormBuilder */
         $backendFormBuilder = $this->get(Builder::class);
 
-        if (!file_exists(Configuration::IMPORT_PATH . '/import_' . $formId)) {
-            throw new NotFoundHttpException('no import form with id ' . $formId . ' found.');
+        $response = [
+            'success' => true,
+            'data'    => [],
+            'message' => 'Success!',
+        ];
+
+        try {
+            $formContent = Yaml::parse($data);
+            $formContent['fields'] = $backendFormBuilder->generateExtJsFields($formContent['fields']);
+            $response['data'] = $formContent;
+        } catch (\Exception $e) {
+            $response['success'] = false;
+            $response['message'] = $e->getMessage();
         }
 
-        $data = file_get_contents(Configuration::IMPORT_PATH . '/import_' . $formId);
-        $formContent = Yaml::parse($data);
-        $formContent['fields'] = $backendFormBuilder->generateExtJsFields($formContent['fields']);
+        if (!$this->container->has('serializer')) {
+            throw new \LogicException('No serializer found.');
+        }
 
-        unlink(Configuration::IMPORT_PATH . '/import_' . $formId);
+        $jsonData = $this->container->get('serializer')->serialize($response, 'json', array_merge([
+            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
+        ], []));
 
-        return $this->json(['data' => $formContent]);
+        $response = new JsonResponse($jsonData, 200, ['Content-Type' => 'text/plain'], true);
+
+        return $response;
     }
 
     /**
@@ -339,7 +327,7 @@ class SettingsController extends AdminController
      *
      * @return Response
      */
-    public function getExportFileAction(Request $request)
+    public function exportFormAction(Request $request)
     {
         $formId = $request->get('id');
 

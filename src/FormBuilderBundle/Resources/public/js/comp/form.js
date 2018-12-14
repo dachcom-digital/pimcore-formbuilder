@@ -1139,10 +1139,10 @@ Formbuilder.comp.form = Class.create({
 
         this.parentPanel.getEditPanel().removeAll();
 
-        this.formConfig = importedFormData.data.config;
-        this.formFields = importedFormData.data.fields;
-        if (importedFormData.data.hasOwnProperty('conditional_logic')) {
-            this.formConditionalsStructured = importedFormData.data.conditional_logic;
+        this.formConfig = importedFormData.config;
+        this.formFields = importedFormData.fields;
+        if (importedFormData.hasOwnProperty('conditional_logic')) {
+            this.formConditionalsStructured = importedFormData.conditional_logic;
         }
 
         this.addLayout();
@@ -1162,7 +1162,7 @@ Formbuilder.comp.form = Class.create({
             return;
         }
 
-        pimcore.helpers.download('/admin/formbuilder/settings/get-export-file/' + this.formId);
+        pimcore.helpers.download('/admin/formbuilder/settings/export-form/' + this.formId);
     },
 
     /**
