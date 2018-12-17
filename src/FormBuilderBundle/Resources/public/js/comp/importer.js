@@ -71,11 +71,10 @@ Formbuilder.comp.importer = Class.create({
      * @param data
      */
     getImportComplete: function (el, data) {
-        this.uploadWindow.close();
         var response = Ext.decode(data.response.responseText);
+        this.uploadWindow.close();
         if (response.success === true) {
             this.parentPanel.importForm(response.data);
-            pimcore.layout.refresh();
         } else {
             Ext.Msg.alert(t('error'), response.message, 'error');
         }

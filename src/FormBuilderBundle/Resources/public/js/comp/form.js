@@ -152,6 +152,10 @@ Formbuilder.comp.form = Class.create({
 
     },
 
+    resetLayout: function () {
+        this.tree.getRootNode().removeAll();
+    },
+
     activate: function () {
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
     },
@@ -958,6 +962,10 @@ Formbuilder.comp.form = Class.create({
         return newNode;
     },
 
+    /**
+     * @param nodeLabel
+     * @param iconCls
+     */
     createContainerFieldNode: function (nodeLabel, iconCls) {
         return {
             text: nodeLabel,
@@ -977,7 +985,6 @@ Formbuilder.comp.form = Class.create({
      * @param record
      */
     copyFormField: function (tree, record) {
-        //this.storeCurrentNodeData(); @fixme: do we need a current storage?
         this.copyNode = record;
     },
 
@@ -1136,17 +1143,18 @@ Formbuilder.comp.form = Class.create({
     importForm: function (importedFormData) {
 
         this.importIsRunning = true;
-
-        this.parentPanel.getEditPanel().removeAll();
-
         this.formConfig = importedFormData.config;
         this.formFields = importedFormData.fields;
         if (importedFormData.hasOwnProperty('conditional_logic')) {
             this.formConditionalsStructured = importedFormData.conditional_logic;
         }
 
-        this.addLayout();
+        this.resetLayout();
         this.initLayoutFields();
+
+        this.editPanel.removeAll();
+        this.editPanel.add(this.getRootPanel());
+        this.setCurrentNode('root');
 
         this.importIsRunning = false;
 
