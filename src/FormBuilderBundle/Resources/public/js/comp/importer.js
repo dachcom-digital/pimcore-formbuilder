@@ -2,6 +2,10 @@ pimcore.registerNS('Formbuilder.comp.importer');
 
 Formbuilder.comp.importer = Class.create({
 
+    parentPanel: null,
+    importId: null,
+    uploadWindow: null,
+
     initialize: function (parentPanel) {
         this.parentPanel = parentPanel;
         this.importId = uniqid();
@@ -9,15 +13,16 @@ Formbuilder.comp.importer = Class.create({
 
     showPanel: function () {
 
-        var _ = this,
-            url = '/admin/formbuilder/settings/import-form/' + this.importId,
-            uploadWindowCompatible = new Ext.Window({
+        var url = '/admin/formbuilder/settings/import-form/' + this.importId,
+            uploadForm;
+
+        this.uploadWindow = new Ext.Window({
             autoHeight: true,
             title: t('upload'),
             closeAction: 'close',
             width: 400,
             modal: true
-        }), uploadForm;
+        });
 
         if (Ext.isFunction(pimcore.helpers.addCsrfTokenToUrl)) {
             url = pimcore.helpers.addCsrfTokenToUrl(url);
@@ -43,41 +48,36 @@ Formbuilder.comp.importer = Class.create({
                         uploadForm.getForm().submit({
                             url: url,
                             waitMsg: t('please_wait'),
-                            success: function (el, res) {
-                                _.getImport();
-                                uploadWindowCompatible.close();
-                            },
-                            failure: function (el, res) {
-                                uploadWindowCompatible.close();
-                            }
+                            success: this.getImportComplete.bind(this),
+                            failure: function (el, data) {
+                                this.uploadWindow.close();
+                                Ext.Msg.alert(t('error'), data.response.responseText, 'error');
+                            }.bind(this)
                         });
-                    }
+                    }.bind(this)
                 }
             }]
         });
 
-        uploadWindowCompatible.add(uploadForm);
-        uploadWindowCompatible.show();
-        uploadWindowCompatible.setWidth(401);
-        uploadWindowCompatible.updateLayout();
+        this.uploadWindow.add(uploadForm);
+        this.uploadWindow.show();
+        this.uploadWindow.setWidth(400);
+        this.uploadWindow.updateLayout();
 
     },
 
-    getImport: function () {
-        Ext.Ajax.request({
-            url: '/admin/formbuilder/settings/get-import',
-            params: {
-                id: this.importId,
-                method: 'post'
-            },
-            success: this.getImportComplete.bind(this)
-        });
-    },
-
-    getImportComplete: function (response) {
-        var data = Ext.decode(response.responseText);
-        this.parentPanel.importForm(data);
-        pimcore.layout.refresh();
+    /**
+     * @param el
+     * @param data
+     */
+    getImportComplete: function (el, data) {
+        var response = Ext.decode(data.response.responseText);
+        this.uploadWindow.close();
+        if (response.success === true) {
+            this.parentPanel.importForm(response.data);
+        } else {
+            Ext.Msg.alert(t('error'), response.message, 'error');
+        }
     }
 
 });

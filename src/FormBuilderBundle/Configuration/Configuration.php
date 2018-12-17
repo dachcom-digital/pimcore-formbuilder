@@ -10,8 +10,6 @@ class Configuration
 
     const STORE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/forms';
 
-    const IMPORT_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/import';
-
     const INVALID_FIELD_NAMES = [
         'name',
         'date',
