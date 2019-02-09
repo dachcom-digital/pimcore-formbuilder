@@ -1,0 +1,12 @@
+includes:
+	- ../../vendor/phpstan/phpstan-symfony/extension.neon
+parameters:
+    reportUnmatchedIgnoredErrors: false
+    autoload_files:
+        - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/compatibility-v4.php
+    autoload_directories:
+        - src
+    symfony:
+        container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
+    ignoreErrors:
+        - '#Constant PIMCORE_[A-Z\\_]+ not found\.#'

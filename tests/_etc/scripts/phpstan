@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+echo "START PHPSTAN FOR $DACHCOM_BUNDLE_NAME"
+
+bin/console cache:warmup --env=dev
+vendor/bin/phpstan analyse -c lib/$DACHCOM_BUNDLE_NAME/phpstan.neon lib/$DACHCOM_BUNDLE_NAME/src -l 1

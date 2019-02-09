@@ -6,7 +6,8 @@ services:
         public: false
 
     # manager: form
-    FormBuilderBundle\Manager\FormManager: ~
+    FormBuilderBundle\Manager\FormManager:
+        public: true
 
     # manager: preset
     FormBuilderBundle\Manager\PresetManager: ~
