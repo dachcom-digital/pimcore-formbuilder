@@ -21,7 +21,7 @@ matrix:
     -   sudo: required
         php: 7.2
         env:
-            # phpstan: alwoays latest pimcore
+            # phpstan: always latest pimcore
             - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
             - DACHCOM_BUNDLE_SECTION=phpstan
     -   sudo: required
