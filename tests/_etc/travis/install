@@ -73,7 +73,7 @@ COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
 
 ##  install $DACHCOM_BUNDLE_NAME dependencies
 
-COMPOSER_MEMORY_LIMIT=-1 composer require-dev dachcom-digital/$DACHCOM_BUNDLE_REPO_NAME:dev-$DACHCOM_BUNDLE_BRANCH#$DACHCOM_BUNDLE_COMMIT
+COMPOSER_MEMORY_LIMIT=-1 composer require --dev dachcom-digital/$DACHCOM_BUNDLE_REPO_NAME:dev-$DACHCOM_BUNDLE_BRANCH#$DACHCOM_BUNDLE_COMMIT
 
 
 ##  clear cache
