@@ -47,7 +47,7 @@ mv $DACHCOM_BUNDLE_HOME/../lib $DACHCOM_BUNDLE_HOME
 ## copy _etc dir to root dir
 
 cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc/bundle_configuration $DACHCOM_BUNDLE_HOME/bundle_configuration
-cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc $DACHCOM_BUNDLE_HOME/etc
+cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc $DACHCOM_BUNDLE_HOME/_etc
 chmod -R +x $DACHCOM_BUNDLE_HOME/_etc
 
 
