@@ -12,9 +12,9 @@ class ChoiceBuilderRegistry
     protected $services = [];
 
     /**
-     * @param $identifier
-     * @param $label
-     * @param $service
+     * @param string                 $identifier
+     * @param string                 $label
+     * @param ChoiceBuilderInterface $service
      */
     public function register($identifier, $label, $service)
     {
@@ -28,7 +28,7 @@ class ChoiceBuilderRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
      *
      * @return bool
      */
@@ -38,7 +38,8 @@ class ChoiceBuilderRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
+     *
      * @return ChoiceBuilderInterface
      * @throws \Exception
      */
@@ -51,6 +52,9 @@ class ChoiceBuilderRegistry
         return $this->services[$identifier]['service'];
     }
 
+    /**
+     * @return array
+     */
     public function getAll()
     {
         return $this->services;

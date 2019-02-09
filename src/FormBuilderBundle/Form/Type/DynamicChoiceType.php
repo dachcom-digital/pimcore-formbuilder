@@ -73,30 +73,30 @@ class DynamicChoiceType extends AbstractType
 
                 return $this->choiceBuilder;
             },
-            'choice_label'              => function ($element, $key, $index) {
+            'choice_label'              => function ($choiceValue, $key, $value) {
                 if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getChoiceLabel($element, $key, $index);
+                    return $this->service->getChoiceLabel($choiceValue, $key, $value);
                 }
 
                 return $key;
             },
-            'choice_attr'               => function ($element, $key, $index) {
+            'choice_attr'               => function ($element, $key, $value) {
                 if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getChoiceAttributes($element, $key, $index);
+                    return $this->service->getChoiceAttributes($element, $key, $value);
                 }
 
                 return [];
             },
-            'group_by'                  => function ($element, $key, $index) {
+            'group_by'                  => function ($element, $key, $value) {
                 if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getGroupBy($element, $key, $index);
+                    return $this->service->getGroupBy($element, $key, $value);
                 }
 
                 return null;
             },
-            'preferred_choices'         => function ($element, $key, $index) {
+            'preferred_choices'         => function ($element, $key, $value) {
                 if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getPreferredChoices($element, $key, $index);
+                    return $this->service->getPreferredChoices($element, $key, $value);
                 }
 
                 return null;

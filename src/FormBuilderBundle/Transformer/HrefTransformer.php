@@ -9,8 +9,8 @@ class HrefTransformer implements OptionsTransformerInterface
     /**
      * Transform href data
      *
-     * @param $optionValue
-     * @param $optionConfig
+     * @param array $optionValue
+     * @param array $optionConfig
      *
      * @return mixed
      */
@@ -30,8 +30,8 @@ class HrefTransformer implements OptionsTransformerInterface
     /**
      * Transform href path/id to detailed info array
      *
-     * @param $optionValue
-     * @param $optionConfig
+     * @param array $optionValue
+     * @param array $optionConfig
      *
      * @return mixed
      */

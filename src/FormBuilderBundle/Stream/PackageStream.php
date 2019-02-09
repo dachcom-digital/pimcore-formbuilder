@@ -25,8 +25,9 @@ class PackageStream
     }
 
     /**
-     * @param $data
-     * @param $formName
+     * @param array  $data
+     * @param string $formName
+     *
      * @return bool|null|Asset
      * @throws \Exception
      */

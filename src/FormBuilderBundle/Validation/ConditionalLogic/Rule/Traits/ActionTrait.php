@@ -9,6 +9,7 @@ trait ActionTrait
 {
     /**
      * @param array $values
+     *
      * @return $this
      */
     public function setValues(array $values)
@@ -24,13 +25,15 @@ trait ActionTrait
     }
 
     /**
-     * @param               $formData
-     * @param               $ruleId
+     * @param array $formData
+     * @param int   $ruleId
+     *
      * @return ReturnStackInterface
      */
     public function apply($formData, $ruleId)
     {
         $data = [];
+
         return new SimpleReturnStack(self::class, $data);
     }
 }

@@ -2,24 +2,23 @@
 
 namespace FormBuilderBundle\Twig\Extension;
 
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use FormBuilderBundle\Session\FlashBagManagerInterface;
 
 class FlashMessageExtension extends \Twig_Extension
 {
     /**
-     * @var SessionInterface
+     * @var FlashBagManagerInterface
      */
-    protected $session;
+    protected $flashBagManager;
 
     /**
      * RequestListener constructor.
      *
-     * @param SessionInterface $session
+     * @param FlashBagManagerInterface $flashBagManager
      */
-    public function __construct(SessionInterface $session)
+    public function __construct(FlashBagManagerInterface $flashBagManager)
     {
-        $this->session = $session;
+        $this->flashBagManager = $flashBagManager;
     }
 
     /**
@@ -34,8 +33,9 @@ class FlashMessageExtension extends \Twig_Extension
     }
 
     /**
-     * @param       $formId
+     * @param int   $formId
      * @param array $types
+     *
      * @return array
      */
     public function getFlashMessagesForForm($formId, $types = ['success', 'error'])
@@ -45,11 +45,11 @@ class FlashMessageExtension extends \Twig_Extension
             $messages[$type] = [];
             $messageKey = $formId . '_' . $type;
 
-            if (!$this->getFlashBag()->has($messageKey)) {
+            if (!$this->flashBagManager->has($messageKey)) {
                 continue;
             }
 
-            foreach ($this->getFlashBag()->get($messageKey) as $message) {
+            foreach ($this->flashBagManager->get($messageKey) as $message) {
                 $messages[$type][] = $message;
             }
         }
@@ -62,18 +62,10 @@ class FlashMessageExtension extends \Twig_Extension
      */
     public function getFlashMessagesForRedirectForm()
     {
-        if (!$this->getFlashBag()->has('formbuilder_redirect_flash_message')) {
+        if (!$this->flashBagManager->has('formbuilder_redirect_flash_message')) {
             return [];
         }
 
-        return $this->getFlashBag()->get('formbuilder_redirect_flash_message');
-    }
-
-    /**
-     * @return FlashBagInterface
-     */
-    private function getFlashBag()
-    {
-        return $this->session->getFlashBag();
+        return $this->flashBagManager->get('formbuilder_redirect_flash_message');
     }
 }

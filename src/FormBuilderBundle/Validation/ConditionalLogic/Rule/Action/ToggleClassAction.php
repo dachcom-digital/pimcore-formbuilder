@@ -21,9 +21,10 @@ class ToggleClassAction implements ActionInterface
     protected $class = null;
 
     /**
-     * @param $validationState
-     * @param $formData
-     * @param $ruleId
+     * @param bool  $validationState
+     * @param array $formData
+     * @param int   $ruleId
+     *
      * @return FieldReturnStack|ReturnStackInterface
      * @throws \Exception
      */
@@ -43,7 +44,7 @@ class ToggleClassAction implements ActionInterface
     }
 
     /**
-     * @param array
+     * @param array $fields
      */
     public function setFields($fields)
     {
@@ -59,7 +60,7 @@ class ToggleClassAction implements ActionInterface
     }
 
     /**
-     * @param string
+     * @param string $class
      */
     public function setClass($class)
     {

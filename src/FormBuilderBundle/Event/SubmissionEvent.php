@@ -24,7 +24,7 @@ class SubmissionEvent extends Event
     private $form;
 
     /**
-     * @var null
+     * @var null|string
      */
     private $redirectUri = null;
 
@@ -41,7 +41,7 @@ class SubmissionEvent extends Event
     }
 
     /**
-     * @param $uri
+     * @param string $uri
      */
     public function setRedirectUri($uri)
     {

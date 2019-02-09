@@ -35,7 +35,7 @@ class FormManager
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return FormInterface|null
      */
@@ -45,7 +45,7 @@ class FormManager
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return bool
      */
@@ -55,7 +55,7 @@ class FormManager
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return string
      */
@@ -111,7 +111,7 @@ class FormManager
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return FormInterface|null
      * @throws \Exception
@@ -328,8 +328,8 @@ class FormManager
     }
 
     /**
-     * @param        $data
-     * @param        $value
+     * @param array  $data
+     * @param string $value
      * @param string $default
      *
      * @return string

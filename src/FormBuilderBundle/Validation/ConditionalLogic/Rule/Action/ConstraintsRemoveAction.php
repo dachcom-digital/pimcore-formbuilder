@@ -26,9 +26,10 @@ class ConstraintsRemoveAction implements ActionInterface
     protected $removeAllValidations = false;
 
     /**
-     * @param $validationState
-     * @param $formData
-     * @param $ruleId
+     * @param bool  $validationState
+     * @param array $formData
+     * @param int   $ruleId
+     *
      * @return FieldReturnStack|ReturnStackInterface
      * @throws \Exception
      */
@@ -61,7 +62,7 @@ class ConstraintsRemoveAction implements ActionInterface
     }
 
     /**
-     * @param array
+     * @param array $fields
      */
     public function setFields($fields)
     {
@@ -77,13 +78,12 @@ class ConstraintsRemoveAction implements ActionInterface
     }
 
     /**
-     * @param array
+     * @param array $validation
      */
     public function setValidation($validation)
     {
         $this->validation = $validation;
     }
-
 
     /**
      * @return bool
@@ -94,7 +94,7 @@ class ConstraintsRemoveAction implements ActionInterface
     }
 
     /**
-     * @param bool
+     * @param bool $removeAllValidations
      */
     public function setRemoveAllValidations($removeAllValidations)
     {

@@ -21,9 +21,10 @@ class ConstraintsAddAction implements ActionInterface
     protected $validation = [];
 
     /**
-     * @param $validationState
-     * @param $formData
-     * @param $ruleId
+     * @param bool  $validationState
+     * @param array $formData
+     * @param int   $ruleId
+     *
      * @return FieldReturnStack|ReturnStackInterface
      * @throws \Exception
      */
@@ -52,7 +53,7 @@ class ConstraintsAddAction implements ActionInterface
     }
 
     /**
-     * @param array
+     * @param array $fields
      */
     public function setFields($fields)
     {
@@ -68,7 +69,7 @@ class ConstraintsAddAction implements ActionInterface
     }
 
     /**
-     * @param array
+     * @param array $validation
      */
     public function setValidation($validation)
     {

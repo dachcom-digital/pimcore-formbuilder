@@ -56,7 +56,7 @@ class FileStream
     public $inputName = 'qqfile';
 
     /**
-     * @var
+     * @var string
      */
     protected $uploadName;
 
@@ -109,7 +109,7 @@ class FileStream
     /**
      * Get the name of the uploaded file
      *
-     * @return mixed
+     * @return string
      */
     public function getUploadName()
     {
@@ -346,13 +346,13 @@ class FileStream
 
             return [
                 'success' => false,
-                'error' => 'Could not save uploaded file. The upload was cancelled, or server error encountered'
+                'error'   => 'Could not save uploaded file. The upload was cancelled, or server error encountered'
             ];
         }
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
      *
      * @return array
      */
@@ -383,14 +383,19 @@ class FileStream
     /**
      * Converts a given size with units to bytes.
      *
-     * @param string $str
+     * @param string $sizeStr
      *
      * @return int|string
      */
-    protected function toBytes($str)
+    protected function toBytes($sizeStr)
     {
-        $val = trim($str);
-        $last = strtolower($str[strlen($str) - 1]);
+        $val = trim($sizeStr);
+        if (is_numeric($val)) {
+            return $val;
+        }
+
+        $last = strtolower($sizeStr[strlen($sizeStr) - 1]);
+        $val = (int)substr($val, 0, -1);
 
         switch ($last) {
             case 'g':

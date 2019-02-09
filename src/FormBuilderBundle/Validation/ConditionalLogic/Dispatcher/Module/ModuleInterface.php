@@ -12,7 +12,8 @@ interface ModuleInterface
     public function configureOptions(OptionsResolver $resolver);
 
     /**
-     * @param $options
+     * @param array $options
+     *
      * @return mixed
      */
     public function apply($options);

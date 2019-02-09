@@ -7,8 +7,8 @@ class ChoicesTransformer implements OptionsTransformerInterface
     /**
      * Transform ExtJs Array to valid symfony choices array.
      *
-     * @param $choices
-     * @param $optionConfig
+     * @param array $choices
+     * @param array $optionConfig
      *
      * @return array
      */
@@ -34,8 +34,8 @@ class ChoicesTransformer implements OptionsTransformerInterface
     /**
      * Transform symfony choices array into valid ExtJs Array
      *
-     * @param $choices
-     * @param $optionConfig
+     * @param array $choices
+     * @param array $optionConfig
      *
      * @return array
      */

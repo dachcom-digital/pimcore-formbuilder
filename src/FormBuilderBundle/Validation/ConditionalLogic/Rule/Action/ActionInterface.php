@@ -7,9 +7,9 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterfa
 interface ActionInterface
 {
     /**
-     * @param $validationState
-     * @param $formData
-     * @param $ruleId
+     * @param bool  $validationState
+     * @param array $formData
+     * @param int   $ruleId
      *
      * @return ReturnStackInterface
      */
@@ -17,6 +17,7 @@ interface ActionInterface
 
     /**
      * @param array $values
+     *
      * @return ActionInterface
      */
     public function setValues(array $values);

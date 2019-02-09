@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Validator\Constraints;
 
 use FormBuilderBundle\Storage\Form;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormConfigBuilderInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraint;
@@ -34,6 +35,10 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
         $formEntity = $this->context->getRoot()->getData();
         if (!$formEntity instanceof Form) {
             return;
+        }
+
+        if (!$constraint instanceof DynamicMultiFileNotBlank) {
+            throw new UnexpectedTypeException($constraint, DynamicMultiFileNotBlank::class);
         }
 
         $field = $this->context->getObject()->getConfig();

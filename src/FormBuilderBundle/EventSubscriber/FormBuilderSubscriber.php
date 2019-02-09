@@ -100,7 +100,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param $formOptions
+     * @param array $formOptions
      */
     public function setFormOptions($formOptions)
     {

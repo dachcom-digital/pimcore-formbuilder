@@ -50,8 +50,8 @@ interface FormFactoryInterface
     public function assignRelationDataToFormObject(FormInterface $formEntity);
 
     /**
-     * @param       $formField
-     * @param array $field
+     * @param FormFieldInterface $formField
+     * @param array              $field
      *
      * @return FormFieldInterface|FormFieldContainerInterface
      */

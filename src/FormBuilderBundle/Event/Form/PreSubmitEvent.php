@@ -21,7 +21,7 @@ class PreSubmitEvent extends Event
      * PreSubmitEvent constructor.
      *
      * @param FormEvent $formEvent
-     * @param           $formOptions
+     * @param array     $formOptions
      */
     public function __construct(FormEvent $formEvent, $formOptions)
     {

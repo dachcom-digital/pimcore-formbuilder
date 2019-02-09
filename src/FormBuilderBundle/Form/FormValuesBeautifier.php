@@ -91,7 +91,7 @@ class FormValuesBeautifier
      * @param FormBuilderFormInterface  $formEntity
      * @param FormFieldDynamicInterface $entityField
      * @param FormInterface             $formField
-     * @param                           $locale
+     * @param string                    $locale
      *
      * @return array
      */
@@ -107,7 +107,7 @@ class FormValuesBeautifier
      * @param FormBuilderFormInterface    $formEntity
      * @param FormFieldContainerInterface $entityField
      * @param FormInterface               $formField
-     * @param                             $locale
+     * @param string                      $locale
      *
      * @return array|null
      */
@@ -163,7 +163,7 @@ class FormValuesBeautifier
      * @param FormBuilderFormInterface $formEntity
      * @param FormFieldInterface       $entityField
      * @param FormInterface            $formField
-     * @param                          $locale
+     * @param string                   $locale
      *
      * @return array
      */
