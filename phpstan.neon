@@ -5,7 +5,7 @@ parameters:
     autoload_files:
         - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/compatibility-v4.php
     autoload_directories:
-        - %currentWorkingDirectory%/lib/pimcore-formbuilder
+        - src
     symfony:
         container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
     ignoreErrors:
