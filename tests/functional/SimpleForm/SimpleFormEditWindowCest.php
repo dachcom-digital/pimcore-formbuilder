@@ -4,6 +4,7 @@ namespace DachcomBundle\Test\functional\SimpleForm;
 
 use DachcomBundle\Test\Helper\Traits;
 use DachcomBundle\Test\FunctionalTester;
+use DachcomBundle\Test\Util\VersionHelper;
 
 class SimpleFormEditWindowCest
 {
@@ -77,7 +78,7 @@ class SimpleFormEditWindowCest
     /**
      * @param FunctionalTester $I
      */
-    public function testConfigFieldFormMailTemplateHref(FunctionalTester $I)
+    public function testConfigFieldFormMailTemplateRelation(FunctionalTester $I)
     {
         $this->setupAdminForm($I);
 
@@ -87,15 +88,17 @@ class SimpleFormEditWindowCest
             'subtypes' => ['document' => ['email']]
         ];
 
+        $editableTypeName = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.6.0') ? 'relation' : 'href';
+
         $I->see('Mail Template', '.form-config-window .fb-row .fb-col-full .fb-form-group label');
-        $I->seeAEditableConfiguration('sendMailTemplate', 'href', $options, null, 'script');
+        $I->seeAEditableConfiguration('sendMailTemplate', $editableTypeName, $options, null, 'script');
 
     }
 
     /**
      * @param FunctionalTester $I
      */
-    public function testConfigFieldFormMailCopyTemplateHref(FunctionalTester $I)
+    public function testConfigFieldFormMailCopyTemplateRelation(FunctionalTester $I)
     {
         $this->setupAdminForm($I);
 
@@ -105,8 +108,10 @@ class SimpleFormEditWindowCest
             'subtypes' => ['document' => ['email']]
         ];
 
+        $editableTypeName = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.6.0') ? 'relation' : 'href';
+
         $I->see('Copy Mail Template', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('sendCopyMailTemplate', 'href', $options, null, 'script');
+        $I->seeAEditableConfiguration('sendCopyMailTemplate', $editableTypeName, $options, null, 'script');
 
     }
 
