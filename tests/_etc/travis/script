@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-source $TRAVIS_BUILD_DIR/bundle_configuration
+source $TRAVIS_BUILD_DIR/_etc/bundle_configuration
 
 $DACHCOM_BUNDLE_HOME/_etc/scripts/$DACHCOM_BUNDLE_SECTION

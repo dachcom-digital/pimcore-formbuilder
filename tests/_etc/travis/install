@@ -4,7 +4,7 @@ set -e
 
 ## include global bundle test configuration
 
-source $TRAVIS_BUILD_DIR/tests/bundle_configuration
+source $TRAVIS_BUILD_DIR/tests/_etc/bundle_configuration
 
 
 ## setup php
@@ -46,7 +46,7 @@ mv $DACHCOM_BUNDLE_HOME/../lib $DACHCOM_BUNDLE_HOME
 
 ## copy _etc dir to root dir
 
-cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/bundle_configuration $DACHCOM_BUNDLE_HOME/bundle_configuration
+cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc/bundle_configuration $DACHCOM_BUNDLE_HOME/bundle_configuration
 cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc $DACHCOM_BUNDLE_HOME/etc
 chmod -R +x $DACHCOM_BUNDLE_HOME/_etc
 
