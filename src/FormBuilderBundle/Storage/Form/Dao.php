@@ -3,10 +3,10 @@
 namespace FormBuilderBundle\Storage\Form;
 
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormFieldInterface;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\AbstractModel;
 use Symfony\Component\Yaml\Yaml;
 
 class Dao extends AbstractDao
@@ -15,6 +15,11 @@ class Dao extends AbstractDao
      * @var string
      */
     protected $tableName = 'formbuilder_forms';
+
+    /**
+     * @var Form
+     */
+    protected $model;
 
     /**
      * @param string $name
@@ -82,7 +87,7 @@ class Dao extends AbstractDao
                     $value = serialize($value);
                 }
 
-                if ($value instanceof AbstractObject || $value instanceof AbstractModel) {
+                if ($value instanceof AbstractObject) {
                     $value = $value->getId();
                 }
 
@@ -151,7 +156,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      */
     protected function storeYmlData($data)
     {

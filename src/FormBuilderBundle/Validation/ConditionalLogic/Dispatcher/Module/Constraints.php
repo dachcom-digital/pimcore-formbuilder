@@ -83,7 +83,8 @@ class Constraints implements ModuleInterface
     }
 
     /**
-     * @param $options
+     * @param array $options
+     *
      * @return DataInterface
      */
     public function apply($options)
@@ -108,7 +109,8 @@ class Constraints implements ModuleInterface
     /**
      * Constraints from current conditional logic
      *
-     * @param $defaultFieldConstraints
+     * @param array $defaultFieldConstraints
+     *
      * @return array
      */
     private function checkConditionalLogicConstraints($defaultFieldConstraints)
@@ -151,7 +153,8 @@ class Constraints implements ModuleInterface
     }
 
     /**
-     * @param $constraints
+     * @param array $constraints
+     *
      * @return array
      */
     private function appendConstraintsData($constraints)

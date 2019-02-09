@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\Registry;
 
+use FormBuilderBundle\Transformer\OptionsTransformerInterface;
+
 class OptionsTransformerRegistry
 {
     /**
@@ -23,8 +25,8 @@ class OptionsTransformerRegistry
     }
 
     /**
-     * @param $identifier
-     * @param $service
+     * @param string                      $identifier
+     * @param OptionsTransformerInterface $service
      */
     public function register($identifier, $service)
     {
@@ -38,7 +40,7 @@ class OptionsTransformerRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
      *
      * @return bool
      */
@@ -48,7 +50,7 @@ class OptionsTransformerRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
      *
      * @return mixed
      * @throws \Exception

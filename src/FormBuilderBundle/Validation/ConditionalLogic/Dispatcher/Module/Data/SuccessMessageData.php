@@ -71,7 +71,8 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @param $locale
+     * @param string $locale
+     *
      * @return null|Document|Snippet|string
      */
     public function getIdentifiedData($locale)
@@ -98,7 +99,8 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @param $locale
+     * @param string $locale
+     *
      * @return null|string
      */
     public function getString($locale)
@@ -115,7 +117,8 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @param $locale
+     * @param string $locale
+     *
      * @return Snippet|null
      */
     public function getSnippet($locale)
@@ -143,7 +146,8 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @param $locale
+     * @param string $locale
+     *
      * @return Document|null
      */
     public function getDocument($locale)
@@ -192,7 +196,8 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @param $locale
+     * @param string $locale
+     *
      * @return null|string
      */
     public function getFlashMessage($locale)

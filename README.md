@@ -6,6 +6,7 @@ Pimcore 5.x FormBuilder.
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/formbuilder.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/formbuilder)
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/dachcom-digital/pimcore-formbuilder.svg?style=flat-square)](https://www.scrutinizer-ci.com/g/dachcom-digital/pimcore-formbuilder)
 [![Travis](https://img.shields.io/travis/dachcom-digital/pimcore-formbuilder/master.svg?style=flat-square)](https://travis-ci.org/dachcom-digital/pimcore-formbuilder)
+[![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat)](#)
 
 <img src="https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png">
 

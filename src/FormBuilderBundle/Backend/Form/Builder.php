@@ -411,7 +411,7 @@ class Builder
     }
 
     /**
-     * @param $formTypeBackendConfig
+     * @param array $formTypeBackendConfig
      *
      * @return mixed
      */
@@ -524,7 +524,7 @@ class Builder
     }
 
     /**
-     * @param $value
+     * @param string $value
      *
      * @return string
      */

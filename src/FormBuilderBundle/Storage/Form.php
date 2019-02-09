@@ -457,8 +457,8 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -466,7 +466,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */
@@ -481,7 +481,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return mixed|null
      */

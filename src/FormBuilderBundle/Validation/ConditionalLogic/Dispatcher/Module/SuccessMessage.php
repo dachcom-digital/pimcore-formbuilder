@@ -37,7 +37,6 @@ class SuccessMessage implements ModuleInterface
      */
     protected $availableConstraints;
 
-
     /**
      * @param DataFactory $dataFactory
      */
@@ -63,7 +62,8 @@ class SuccessMessage implements ModuleInterface
     }
 
     /**
-     * @param $options
+     * @param array $options
+     *
      * @return DataInterface
      */
     public function apply($options)

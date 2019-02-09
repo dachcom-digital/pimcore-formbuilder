@@ -88,7 +88,7 @@ class Configuration
     }
 
     /**
-     * @param $slot
+     * @param string $slot
      *
      * @return mixed
      */
@@ -98,7 +98,7 @@ class Configuration
     }
 
     /**
-     * @param $flag
+     * @param string $flag
      *
      * @return bool
      */
@@ -195,7 +195,7 @@ class Configuration
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return mixed
      */
@@ -205,7 +205,7 @@ class Configuration
     }
 
     /**
-     * @param $slot
+     * @param string $slot
      *
      * @return mixed
      */

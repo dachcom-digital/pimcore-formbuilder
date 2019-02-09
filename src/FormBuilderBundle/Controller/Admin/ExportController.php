@@ -69,7 +69,7 @@ class ExportController extends AdminController
 
     /**
      * @param array $mailData
-     * @param       $formId
+     * @param int   $formId
      *
      * @return string
      */
@@ -218,7 +218,7 @@ class ExportController extends AdminController
     }
 
     /**
-     * @param $formId
+     * @param int $formId
      *
      * @return string
      */
@@ -235,7 +235,7 @@ class ExportController extends AdminController
     }
 
     /**
-     * @param $mailType
+     * @param string $mailType
      *
      * @return string
      */
@@ -252,8 +252,8 @@ class ExportController extends AdminController
     }
 
     /**
-     * @param $header
-     * @param $data
+     * @param array $header
+     * @param array $data
      *
      * @return string
      */

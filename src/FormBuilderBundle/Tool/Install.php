@@ -274,7 +274,7 @@ class Install extends MigrationInstaller
             $property->setInheritable(/** @scrutinizer ignore-type */ false);
 
             try {
-                $property->save();
+                $property->getDao()->save();
             } catch (\Exception $e) {
                 throw new AbortMigrationException(sprintf('Failed to save property "%s". Error was: "%s"', $key, $e->getMessage()));
             }
@@ -288,7 +288,7 @@ class Install extends MigrationInstaller
     {
         // get list of types
         $list = new DocType\Listing();
-        $list->load();
+        $list->getDao()->load();
 
         $skipInstall = false;
         $elementName = 'Formbuilder Email';
@@ -315,7 +315,7 @@ class Install extends MigrationInstaller
                 'type'       => 'email',
                 'priority'   => 0
             ]);
-            $type->save();
+            $type->getDao()->save();
         } catch (\Exception $e) {
             throw new AbortMigrationException(sprintf('Failed to create document type "%s". Error was: "%s"', $elementName, $e->getMessage()));
         }

@@ -7,14 +7,14 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInt
 class DataFactory
 {
     /**
-     * @var iterable
+     * @var array
      */
     protected $dataHandler;
 
     /**
      * DataFactory constructor.
      *
-     * @param $dataHandler
+     * @param array $dataHandler
      */
     public function __construct($dataHandler)
     {
@@ -22,7 +22,7 @@ class DataFactory
     }
 
     /**
-     * @param $serviceId
+     * @param string $serviceId
      *
      * @return DataInterface
      */

@@ -133,7 +133,7 @@ class RepeaterContainerType extends AbstractType
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return array
      */

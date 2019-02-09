@@ -5,45 +5,45 @@ namespace FormBuilderBundle\Form;
 interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
 {
     /**
-     * @param $element
+     * @param mixed $element
      *
      * @return callable|string
      */
     public function getChoiceValue($element = null);
 
     /**
-     * @param $element
-     * @param $key
-     * @param $index
+     * @param mixed  $choiceValue
+     * @param string $key
+     * @param mixed  $value
      *
      * @return string|callable|bool
      */
-    public function getChoiceLabel($element, $key, $index);
+    public function getChoiceLabel($choiceValue, $key, $value);
 
     /**
-     * @param $element
-     * @param $key
-     * @param $index
+     * @param mixed  $element
+     * @param string $key
+     * @param mixed  $value
      *
      * @return array|callable|string
      */
-    public function getChoiceAttributes($element, $key, $index);
+    public function getChoiceAttributes($element, $key, $value);
 
     /**
-     * @param $element
-     * @param $key
-     * @param $index
+     * @param mixed  $element
+     * @param string $key
+     * @param mixed  $value
      *
      * @return array|callable|string
      */
-    public function getGroupBy($element, $key, $index);
+    public function getGroupBy($element, $key, $value);
 
     /**
-     * @param $element
-     * @param $key
-     * @param $index
+     * @param mixed  $element
+     * @param string $key
+     * @param mixed  $value
      *
      * @return array|callable|string
      */
-    public function getPreferredChoices($element, $key, $index);
+    public function getPreferredChoices($element, $key, $value);
 }

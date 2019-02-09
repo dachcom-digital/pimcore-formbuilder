@@ -2,6 +2,9 @@
 
 namespace FormBuilderBundle\Registry;
 
+use FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ActionInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ConditionInterface;
+
 class ConditionalLogicRegistry
 {
     /**
@@ -33,8 +36,8 @@ class ConditionalLogicRegistry
     /**
      * ConditionalLogicRegistry constructor.
      *
-     * @param $actionInterface
-     * @param $conditionInterface
+     * @param string $actionInterface
+     * @param string $conditionInterface
      */
     public function __construct($actionInterface, $conditionInterface)
     {
@@ -43,10 +46,10 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
-     * @param $service
-     * @param $type
-     * @param $configuration
+     * @param string                             $identifier
+     * @param ActionInterface|ConditionInterface $service
+     * @param string                             $type
+     * @param array                              $configuration
      */
     public function register($identifier, $service, $type = null, $configuration = [])
     {
@@ -71,8 +74,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
-     * @param $type
+     * @param string $identifier
+     * @param string $type
      *
      * @return bool
      */
@@ -82,8 +85,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
-     * @param $type
+     * @param string $identifier
+     * @param string $type
      *
      * @return mixed
      * @throws \Exception
@@ -98,7 +101,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
+     *
      * @return bool
      */
     public function hasCondition($identifier)
@@ -107,7 +111,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
+     *
      * @return mixed
      * @throws \Exception
      */
@@ -117,7 +122,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
+     *
      * @return bool
      */
     public function hasAction($identifier)
@@ -126,7 +132,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
+     *
      * @return mixed
      * @throws \Exception
      */
@@ -136,7 +143,8 @@ class ConditionalLogicRegistry
     }
 
     /**
-     * @param $type
+     * @param string $type
+     *
      * @return mixed
      */
     public function getAllConfiguration($type)

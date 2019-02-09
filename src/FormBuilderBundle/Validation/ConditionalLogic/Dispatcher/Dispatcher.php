@@ -43,9 +43,10 @@ class Dispatcher
     }
 
     /**
-     * @param       $dispatcherModule
-     * @param       $options
-     * @param array $moduleOptions
+     * @param string $dispatcherModule
+     * @param array  $options
+     * @param array  $moduleOptions
+     *
      * @return DataInterface
      * @throws \Exception
      */
@@ -61,9 +62,10 @@ class Dispatcher
     }
 
     /**
-     * @param       $dispatcherModule
-     * @param       $options
-     * @param array $moduleOptions
+     * @param string $dispatcherModule
+     * @param array  $options
+     * @param array  $moduleOptions
+     *
      * @return DataInterface
      * @throws \Exception
      */
@@ -79,9 +81,10 @@ class Dispatcher
     }
 
     /**
-     * @param $dispatcherModule
-     * @param $options
-     * @param $moduleOptions
+     * @param string $dispatcherModule
+     * @param array  $options
+     * @param array  $moduleOptions
+     *
      * @return DataInterface
      * @throws \Exception
      */
@@ -110,6 +113,7 @@ class Dispatcher
 
     /**
      * @param string $type
+     *
      * @return OptionsResolver
      */
     private function createOptionsResolver($type = 'field')

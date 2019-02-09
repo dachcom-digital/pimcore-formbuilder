@@ -6,6 +6,7 @@ use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Parser\MailParser;
+use FormBuilderBundle\Session\FlashBagManagerInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
@@ -14,15 +15,13 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class MailListener implements EventSubscriberInterface
 {
     /**
-     * @var SessionInterface
+     * @var FlashBagManagerInterface
      */
-    protected $session;
+    protected $flashBagManager;
 
     /**
      * @var MailParser
@@ -52,18 +51,18 @@ class MailListener implements EventSubscriberInterface
     /**
      * MailListener constructor.
      *
-     * @param SessionInterface $session
-     * @param MailParser       $mailParser
-     * @param IncludeRenderer  $includeRenderer
-     * @param Dispatcher       $dispatcher
+     * @param FlashBagManagerInterface $flashBagManager
+     * @param MailParser               $mailParser
+     * @param IncludeRenderer          $includeRenderer
+     * @param Dispatcher               $dispatcher
      */
     public function __construct(
-        SessionInterface $session,
+        FlashBagManagerInterface $flashBagManager,
         MailParser $mailParser,
         IncludeRenderer $includeRenderer,
         Dispatcher $dispatcher
     ) {
-        $this->session = $session;
+        $this->flashBagManager = $flashBagManager;
         $this->mailParser = $mailParser;
         $this->includeRenderer = $includeRenderer;
         $this->dispatcher = $dispatcher;
@@ -116,7 +115,7 @@ class MailListener implements EventSubscriberInterface
                 throw new \Exception('mail not sent.');
             }
         } catch (\Exception $e) {
-            $this->getFlashBag()->add('formbuilder_' . $formId . '_error', 'error while sending mail: ' . $e->getMessage());
+            $this->flashBagManager->add('formbuilder_' . $formId . '_error', 'error while sending mail: ' . $e->getMessage());
         }
 
         $this->onSuccess($event, $form, $request->getLocale());
@@ -172,9 +171,9 @@ class MailListener implements EventSubscriberInterface
     }
 
     /**
-     * @param SubmissionEvent   $event
-     * @param FormInterface     $form
-     * @param                   $locale
+     * @param SubmissionEvent $event
+     * @param FormInterface   $form
+     * @param string          $locale
      *
      * @return bool
      * @throws \Exception
@@ -196,7 +195,7 @@ class MailListener implements EventSubscriberInterface
         if ($successConditionData->hasData()) {
             $afterSuccess = $successConditionData->getIdentifiedData($locale);
             if ($successConditionData->hasFlashMessage()) {
-                $this->getFlashBag()->add('formbuilder_redirect_flash_message', $successConditionData->getFlashMessage($locale));
+                $this->flashBagManager->add('formbuilder_redirect_flash_message', $successConditionData->getFlashMessage($locale));
             }
         } else {
             $afterSuccess = $mailTemplate->getProperty('mail_successfully_sent');
@@ -214,10 +213,10 @@ class MailListener implements EventSubscriberInterface
         } elseif ($afterSuccess instanceof Document) {
             $message = $afterSuccess->getFullPath();
             $event->setRedirectUri($afterSuccess->getFullPath());
-            if (!$this->getFlashBag()->has('formbuilder_redirect_flash_message')) {
+            if (!$this->flashBagManager->has('formbuilder_redirect_flash_message')) {
                 $redirectFlashMessage = $mailTemplate->getProperty('mail_successfully_sent_flash_message');
                 if (!is_null($redirectFlashMessage)) {
-                    $this->getFlashBag()->add('formbuilder_redirect_flash_message', $redirectFlashMessage);
+                    $this->flashBagManager->add('formbuilder_redirect_flash_message', $redirectFlashMessage);
                 }
             }
         } elseif (is_string($afterSuccess)) {
@@ -229,7 +228,7 @@ class MailListener implements EventSubscriberInterface
             }
         }
 
-        $this->getFlashBag()->add($error ? 'formbuilder_' . $formId . '_error' : 'formbuilder_' . $formId . '_success', $message);
+        $this->flashBagManager->add($error ? 'formbuilder_' . $formId . '_error' : 'formbuilder_' . $formId . '_success', $message);
     }
 
     /**
@@ -246,13 +245,5 @@ class MailListener implements EventSubscriberInterface
             'formData'         => $form->getData()->getData(),
             'conditionalLogic' => $form->getData()->getConditionalLogic()
         ], $moduleOptions);
-    }
-
-    /**
-     * @return FlashBagInterface
-     */
-    private function getFlashBag()
-    {
-        return $this->session->getFlashBag();
     }
 }

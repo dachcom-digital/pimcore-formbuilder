@@ -108,7 +108,7 @@ class FileLocator
     }
 
     /**
-     * @param $dir
+     * @param string $dir
      */
     public function removeDir($dir)
     {

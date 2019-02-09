@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Storage\Form\Listing;
 
 use Pimcore\Model\Listing;
+use FormBuilderBundle\Storage\Form\Listing as ListingModel;
 
 class Dao extends Listing\Dao\AbstractDao
 {
@@ -15,6 +16,11 @@ class Dao extends Listing\Dao\AbstractDao
      * @var string
      */
     protected $modelClass = '\\Formbuilder\\Model\\Form';
+
+    /**
+     * @var ListingModel
+     */
+    protected $model;
 
     /**
      * @return mixed

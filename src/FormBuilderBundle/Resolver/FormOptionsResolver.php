@@ -65,7 +65,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @param $mainLayout
+     * @param string $mainLayout
      */
     public function setMainLayout($mainLayout)
     {
@@ -81,7 +81,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @param $preset
+     * @param string $preset
      */
     public function setFormPreset($preset = null)
     {
@@ -99,7 +99,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @param $formTemplate
+     * @param string $formTemplate
      */
     public function setFormTemplate($formTemplate)
     {
@@ -150,7 +150,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @param $sendCopy
+     * @param bool $sendCopy
      */
     public function setSendCopy($sendCopy)
     {
@@ -170,7 +170,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @param $mailTemplate
+     * @param int|Document\Email $mailTemplate
      */
     public function setMailTemplate($mailTemplate)
     {
@@ -205,7 +205,7 @@ class FormOptionsResolver
     }
 
     /**
-     * @param $mailTemplate
+     * @param int|Document\Email $mailTemplate
      */
     public function setCopyMailTemplate($mailTemplate)
     {

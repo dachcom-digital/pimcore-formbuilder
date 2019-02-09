@@ -10,3 +10,7 @@ parameters:
         container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
     ignoreErrors:
         - '#Constant PIMCORE_[A-Z\\_]+ not found\.#'
+        # Symfony DI (remove this line with symfony 4.2)
+        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)\.#'
+        # Pimcore 5.6 href/relation issue: remove this after we only support >= picore 5.6
+        - '#Call to an undefined method Pimcore\\Model\\Document\\Tag::getElement\(\)\.#'

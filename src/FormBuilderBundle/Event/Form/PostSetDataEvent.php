@@ -21,7 +21,7 @@ class PostSetDataEvent extends Event
      * PreSetDataEvent constructor.
      *
      * @param FormEvent $formEvent
-     * @param           $formOptions
+     * @param array     $formOptions
      */
     public function __construct(FormEvent $formEvent, $formOptions)
     {

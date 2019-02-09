@@ -7,8 +7,8 @@ class DefaultValueTransformer implements OptionsTransformerInterface
     /**
      * Transform empty option value to default value.
      *
-     * @param $optionValue
-     * @param $optionConfig
+     * @param array $optionValue
+     * @param array $optionConfig
      *
      * @return mixed
      */
@@ -28,8 +28,8 @@ class DefaultValueTransformer implements OptionsTransformerInterface
     /**
      * Transform default option value into empty value (since a default value only applies to empty options)
      *
-     * @param $optionValue
-     * @param $optionConfig
+     * @param array $optionValue
+     * @param array $optionConfig
      *
      * @return mixed
      */

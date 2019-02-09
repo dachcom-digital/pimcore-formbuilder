@@ -6,12 +6,12 @@ use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Builder;
 use FormBuilderBundle\Form\FormErrorsSerializerInterface;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Session\FlashBagManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -34,6 +34,11 @@ class RequestListener implements EventSubscriberInterface
     protected $session;
 
     /**
+     * @var FlashBagManagerInterface
+     */
+    protected $flashBagManager;
+
+    /**
      * @var FormErrorsSerializerInterface
      */
     protected $formErrorsSerializer;
@@ -44,17 +49,20 @@ class RequestListener implements EventSubscriberInterface
      * @param Builder                       $formBuilder
      * @param EventDispatcherInterface      $eventDispatcher
      * @param SessionInterface              $session
+     * @param FlashBagManagerInterface      $flashBagManager
      * @param FormErrorsSerializerInterface $formErrorsSerializer
      */
     public function __construct(
         Builder $formBuilder,
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
+        FlashBagManagerInterface $flashBagManager,
         FormErrorsSerializerInterface $formErrorsSerializer
     ) {
         $this->formBuilder = $formBuilder;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
+        $this->flashBagManager = $flashBagManager;
         $this->formErrorsSerializer = $formErrorsSerializer;
     }
 
@@ -136,8 +144,8 @@ class RequestListener implements EventSubscriberInterface
     }
 
     /**
-     * @param                      $event
-     * @param SubmissionEvent|null $submissionEvent
+     * @param GetResponseEvent $event
+     * @param SubmissionEvent  $submissionEvent
      */
     protected function handleDefaultSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent)
     {
@@ -168,11 +176,11 @@ class RequestListener implements EventSubscriberInterface
         foreach (['success', 'error'] as $type) {
             $messageKey = 'formbuilder_' . $formId . '_' . $type;
 
-            if (!$this->getFlashBag()->has($messageKey)) {
+            if (!$this->flashBagManager->has($messageKey)) {
                 continue;
             }
 
-            foreach ($this->getFlashBag()->get($messageKey) as $message) {
+            foreach ($this->flashBagManager->get($messageKey) as $message) {
                 if ($type === 'error') {
                     $error = true;
                 }
@@ -211,13 +219,5 @@ class RequestListener implements EventSubscriberInterface
     protected function getErrors(FormInterface $form)
     {
         return $this->formErrorsSerializer->getErrors($form);
-    }
-
-    /**
-     * @return FlashBagInterface
-     */
-    private function getFlashBag()
-    {
-        return $this->session->getFlashBag();
     }
 }

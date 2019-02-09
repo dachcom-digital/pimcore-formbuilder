@@ -61,8 +61,8 @@ class PresetManager
     }
 
     /**
-     * @param $presetName
-     * @param $presetConfig
+     * @param string $presetName
+     * @param array  $presetConfig
      *
      * @return array
      */

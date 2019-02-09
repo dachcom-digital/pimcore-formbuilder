@@ -193,7 +193,7 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @param        $input
+     * @param string $input
      * @param string $separator
      *
      * @return string

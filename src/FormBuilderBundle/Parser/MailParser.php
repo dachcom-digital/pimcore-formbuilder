@@ -42,7 +42,7 @@ class MailParser
     /**
      * @param Email         $mailTemplate
      * @param FormInterface $form
-     * @param               $locale
+     * @param string        $locale
      *
      * @return Mail
      * @throws \Exception
@@ -196,7 +196,7 @@ class MailParser
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return string
      */
@@ -262,7 +262,7 @@ class MailParser
     }
 
     /**
-     * @param        $field
+     * @param mixed  $field
      * @param string $separator
      *
      * @return string

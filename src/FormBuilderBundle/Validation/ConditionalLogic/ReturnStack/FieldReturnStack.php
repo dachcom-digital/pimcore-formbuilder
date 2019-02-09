@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\ReturnStack;
 class FieldReturnStack implements ReturnStackInterface
 {
     /**
-     * @var NULL|string
+     * @var string
      */
     public $actionType;
 
@@ -17,8 +17,9 @@ class FieldReturnStack implements ReturnStackInterface
     /**
      * FieldReturnStack constructor.
      *
-     * @param NULL|string $actionType
-     * @param array       $data
+     * @param string $actionType
+     * @param array  $data
+     *
      * @throws \Exception
      */
     public function __construct($actionType = null, $data = [])
@@ -48,7 +49,7 @@ class FieldReturnStack implements ReturnStackInterface
     }
 
     /**
-     * @param $data
+     * @param array $data
      */
     public function updateData($data)
     {
@@ -57,6 +58,7 @@ class FieldReturnStack implements ReturnStackInterface
 
     /**
      * @param array $arr
+     *
      * @return bool
      */
     private function isAssoc(array $arr)

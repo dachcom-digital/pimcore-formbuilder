@@ -26,9 +26,10 @@ class MailBehaviourAction implements ActionInterface
     protected $mailType = null;
 
     /**
-     * @param               $validationState
-     * @param               $formData
-     * @param               $ruleId
+     * @param bool  $validationState
+     * @param array $formData
+     * @param int   $ruleId
+     *
      * @return ReturnStackInterface
      */
     public function apply($validationState, $formData, $ruleId)
@@ -52,7 +53,7 @@ class MailBehaviourAction implements ActionInterface
     }
 
     /**
-     * @param string
+     * @param string $identifier
      */
     public function setIdentifier($identifier)
     {
@@ -68,7 +69,7 @@ class MailBehaviourAction implements ActionInterface
     }
 
     /**
-     * @param string
+     * @param string $value
      */
     public function setValue($value)
     {
@@ -84,7 +85,7 @@ class MailBehaviourAction implements ActionInterface
     }
 
     /**
-     * @param string
+     * @param string $mailType
      */
     public function setMailType($mailType)
     {

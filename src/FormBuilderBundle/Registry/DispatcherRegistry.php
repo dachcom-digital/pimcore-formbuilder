@@ -12,8 +12,8 @@ class DispatcherRegistry
     protected $services = [];
 
     /**
-     * @param $identifier
-     * @param $service
+     * @param string          $identifier
+     * @param ModuleInterface $service
      */
     public function register($identifier, $service)
     {
@@ -27,7 +27,7 @@ class DispatcherRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
      *
      * @return bool
      */
@@ -37,7 +37,8 @@ class DispatcherRegistry
     }
 
     /**
-     * @param $identifier
+     * @param string $identifier
+     *
      * @return ModuleInterface
      * @throws \Exception
      */

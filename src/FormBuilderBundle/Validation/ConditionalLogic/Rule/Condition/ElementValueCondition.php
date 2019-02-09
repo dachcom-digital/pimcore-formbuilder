@@ -68,7 +68,7 @@ class ElementValueCondition implements ConditionInterface
     }
 
     /**
-     * @param string
+     * @param string $comparator
      */
     public function setComparator($comparator)
     {
@@ -84,7 +84,7 @@ class ElementValueCondition implements ConditionInterface
     }
 
     /**
-     * @param array
+     * @param array $fields
      */
     public function setFields($fields)
     {
@@ -100,7 +100,7 @@ class ElementValueCondition implements ConditionInterface
     }
 
     /**
-     * @param string|array
+     * @param string|array $value
      */
     public function setValue($value)
     {
