@@ -71,9 +71,18 @@ done
 
 COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
 
-##  install $DACHCOM_BUNDLE_NAME dependencies
+composer require phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0
 
-COMPOSER_MEMORY_LIMIT=-1 composer require phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 dachcom-digital/$DACHCOM_BUNDLE_REPO_NAME:dev-$DACHCOM_BUNDLE_BRANCH#$DACHCOM_BUNDLE_COMMIT
+##  install $DACHCOM_BUNDLE_NAME dependencies
+BRANCH_REGEX="^(([[:digit:]]+\.)+[[:digit:]]+)$"
+
+if [[ ${TRAVIS_BRANCH} =~ $BRANCH_REGEX ]]; then
+    echo "composer require ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}"
+    composer require ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}
+else
+    echo "composer require ${TRAVIS_REPO_SLUG}:dev-${TRAVIS_BRANCH}"
+    composer require "${TRAVIS_REPO_SLUG}:dev-${TRAVIS_BRANCH}#${TRAVIS_COMMIT}"
+fi
 
 ##  clear cache
 
