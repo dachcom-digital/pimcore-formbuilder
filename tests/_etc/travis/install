@@ -9,7 +9,7 @@ source $TRAVIS_BUILD_DIR/tests/bundle_configuration
 
 ## setup php
 
-phpenv config-add $DACHCOM_BUNDLE_HOME/tests/etc/config/system/php.ini
+phpenv config-add $DACHCOM_BUNDLE_HOME/tests/_etc/config/system/php.ini
 
 
 # Install chrome driver
@@ -44,11 +44,11 @@ git checkout ${PIMCORE_SKELETON_BRANCH} $DACHCOM_BUNDLE_HOME
 mv $DACHCOM_BUNDLE_HOME/../lib $DACHCOM_BUNDLE_HOME
 
 
-## copy etc dir to root dir
+## copy _etc dir to root dir
 
 cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/bundle_configuration $DACHCOM_BUNDLE_HOME/bundle_configuration
-cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/etc $DACHCOM_BUNDLE_HOME/etc
-chmod -R +x $DACHCOM_BUNDLE_HOME/etc
+cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc $DACHCOM_BUNDLE_HOME/etc
+chmod -R +x $DACHCOM_BUNDLE_HOME/_etc
 
 
 ## create download dir
@@ -59,7 +59,7 @@ mkdir $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_data/downloads
 ## add config templates
 
 mkdir -p $DACHCOM_BUNDLE_HOME/var/config
-cp $DACHCOM_BUNDLE_HOME/etc/config/system/config.yml app/config/config.yml
+cp $DACHCOM_BUNDLE_HOME/_etc/config/system/config.yml app/config/config.yml
 cp app/config/parameters.example.yml app/config/parameters.yml
 
 for K in "${!DACHCOM_INSTALL_CONFIG_FILES[@]}"
@@ -73,7 +73,7 @@ COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
 
 ##  install $DACHCOM_BUNDLE_NAME dependencies
 
-COMPOSER_MEMORY_LIMIT=-1 composer require symfony/phpunit-bridge:^3 dachcom-digital/$DACHCOM_BUNDLE_REPO_NAME:dev-$DACHCOM_BUNDLE_BRANCH#$DACHCOM_BUNDLE_COMMIT
+COMPOSER_MEMORY_LIMIT=-1 composer require-dev dachcom-digital/$DACHCOM_BUNDLE_REPO_NAME:dev-$DACHCOM_BUNDLE_BRANCH#$DACHCOM_BUNDLE_COMMIT
 
 
 ##  clear cache

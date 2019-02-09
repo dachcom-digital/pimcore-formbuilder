@@ -15,26 +15,42 @@ env:
     - WEBDRIVER_URL="http://localhost:8080/"
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
     - SYMFONY_DEPRECATIONS_HELPER=weak
+    - DACHCOM_BUNDLE_SECTION=codeception
 matrix:
     include:
     -   sudo: required
-        php: 7.1
-        env:
-        # pimcore 5.4.x
-        - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-    -   sudo: required
         php: 7.2
         env:
-        - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+            # phpstan: alwoays latest pimcore
+            - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+            - DACHCOM_BUNDLE_SECTION=phpstan
     -   sudo: required
         php: 7.1
         env:
-        # pimcore 5.5.x
-        - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+            # pimcore 5.4.x
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
     -   sudo: required
         php: 7.2
         env:
-        - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+    -   sudo: required
+        php: 7.1
+        env:
+            # pimcore 5.5.x
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+    -   sudo: required
+        php: 7.2
+        env:
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+    -   sudo: required
+        php: 7.1
+        env:
+            # pimcore 5.6.x
+            - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+    -   sudo: required
+        php: 7.2
+        env:
+            - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
     fast_finish: true
 
 cache:
@@ -42,7 +58,7 @@ cache:
     - $HOME/.composer/cache
 
 install:
-- tests/etc/travis/install
+- tests/_etc/travis/install
 
 after_failure:
 - cd $TRAVIS_BUILD_DIR
@@ -52,7 +68,7 @@ script:
 - '$HOME/chromedriver --url-base=/wd/hub &'
 - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
 - 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
-- etc/travis/script
+- _etc/travis/script
 
 notifications:
     email:

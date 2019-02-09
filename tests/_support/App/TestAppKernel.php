@@ -21,7 +21,7 @@ class TestAppKernel extends Kernel
 
         if ($configName !== false) {
             \Codeception\Util\Debug::debug(sprintf('[%s] add custom config file %s', strtoupper($bundleName), $configName));
-            $loader->load($bundleClass . '/etc/config/bundle/symfony/' . $configName);
+            $loader->load($bundleClass . '/_etc/config/bundle/symfony/' . $configName);
         }
     }
 

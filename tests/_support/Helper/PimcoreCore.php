@@ -96,7 +96,7 @@ class PimcoreCore extends PimcoreCoreModule
 
         putenv('DACHCOM_BUNDLE_CONFIG_FILE=' . $configuration);
 
-        $this->kernel = require __DIR__ . '/../../kernelBuilder.php';
+        $this->kernel = require __DIR__ . '/../_boot/kernelBuilder.php';
         $this->getKernel()->boot();
 
         $this->client = new SymfonyConnector($this->kernel, $this->persistentServices, $this->config['rebootable_client']);
