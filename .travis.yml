@@ -15,39 +15,42 @@ env:
     - WEBDRIVER_URL="http://localhost:8080/"
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
     - SYMFONY_DEPRECATIONS_HELPER=weak
-    - DACHCOM_BUNDLE_SECTION=codeception
+    - DACHCOM_TEST_SECTION=codeception
 matrix:
     include:
-    -   sudo: required
+    -   name: "PHPStan with latest Pimcore"
+        sudo: required
         php: 7.2
         env:
-            # phpstan: always latest pimcore
             - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
-            - DACHCOM_BUNDLE_SECTION=phpstan
-    -   sudo: required
+            - DACHCOM_TEST_SECTION=phpstan
+    -   name: "Codeception Tests with Pimcore 5.4.x"
+        sudo: required
         php: 7.1
-        env:
-            # pimcore 5.4.x
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-    -   sudo: required
-        php: 7.2
         env:
             - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-    -   sudo: required
+    -   name: "Codeception Tests with Pimcore 5.4.x"
+        sudo: required
+        php: 7.2
+        env:
+            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+    -   name: "Codeception Tests with Pimcore 5.5.x"
+        sudo: required
         php: 7.1
         env:
-            # pimcore 5.5.x
             - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
-    -   sudo: required
+    -   name: "Codeception Tests with Pimcore 5.5.x"
+        sudo: required
         php: 7.2
         env:
             - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
-    -   sudo: required
+    -   name: "Codeception Tests with Pimcore 5.6.x"
+        sudo: required
         php: 7.1
         env:
-            # pimcore 5.6.x
             - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
-    -   sudo: required
+    -   name: "Codeception Tests with Pimcore 5.6.x"
+        sudo: required
         php: 7.2
         env:
             - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
