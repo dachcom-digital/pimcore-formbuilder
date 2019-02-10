@@ -4,8 +4,6 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     autoload_files:
         - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/compatibility-v4.php
-    autoload_directories:
-        - src
     symfony:
         container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
     ignoreErrors:
