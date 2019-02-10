@@ -35,5 +35,5 @@
         "codeception/codeception": "~2.3.0",
         "phpstan/phpstan": "^0.11.1",
         "phpstan/phpstan-symfony": "^0.11.0"
-  }
+    }
 }

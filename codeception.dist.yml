@@ -6,7 +6,7 @@ paths:
     data: tests/_data
     support: tests/_support
     envs: tests/_envs
-    log: var/logs
+    log: tests/_output/var/logs
 settings:
     bootstrap: _bootstrap.php
     memory_limit: -1
