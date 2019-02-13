@@ -205,8 +205,8 @@ class MailParser
     {
         $html = $this->templating->render(
             '@FormBuilder/Email/formData.html.twig',
-        ['fields' => $data]
-            );
+            ['fields' => $data]
+        );
 
         return $html;
     }
