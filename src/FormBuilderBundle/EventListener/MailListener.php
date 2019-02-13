@@ -91,7 +91,6 @@ class MailListener implements EventSubscriberInterface
         $formConfiguration = $event->getFormConfiguration();
 
         try {
-
             if (empty($formConfiguration)) {
                 throw new \Exception('no valid mail configuration given.');
             }
@@ -129,6 +128,7 @@ class MailListener implements EventSubscriberInterface
      * @param bool          $isCopy
      *
      * @return bool
+     *
      * @throws \Exception
      */
     private function sendForm($mailTemplateId, $userOptions, FormInterface $form, $locale, $isCopy = false)
@@ -157,7 +157,7 @@ class MailListener implements EventSubscriberInterface
 
         $mail = $this->mailParser->create($mailTemplate, $form, $locale);
 
-        $mail->setParam('_form_builder_id', (int)$form->getData()->getId());
+        $mail->setParam('_form_builder_id', (int) $form->getData()->getId());
         $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
         $mail->setParam('_form_builder_preset', $userOptions['form_preset'] === 'custom' ? null : $userOptions['form_preset']);
 
@@ -176,6 +176,7 @@ class MailListener implements EventSubscriberInterface
      * @param string          $locale
      *
      * @return bool
+     *
      * @throws \Exception
      */
     private function onSuccess(SubmissionEvent $event, FormInterface $form, $locale)
@@ -204,6 +205,7 @@ class MailListener implements EventSubscriberInterface
         $params = [];
         if ($afterSuccess instanceof Document\Snippet) {
             $params['document'] = $afterSuccess;
+
             try {
                 $message = $this->includeRenderer->render($afterSuccess, $params, false);
             } catch (\Exception $e) {
@@ -237,6 +239,7 @@ class MailListener implements EventSubscriberInterface
      * @param array         $moduleOptions
      *
      * @return DataInterface
+     *
      * @throws \Exception
      */
     private function checkMailCondition(FormInterface $form, $dispatchModule, $moduleOptions = [])

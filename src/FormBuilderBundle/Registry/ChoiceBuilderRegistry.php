@@ -41,6 +41,7 @@ class ChoiceBuilderRegistry
      * @param string $identifier
      *
      * @return ChoiceBuilderInterface
+     *
      * @throws \Exception
      */
     public function get($identifier)

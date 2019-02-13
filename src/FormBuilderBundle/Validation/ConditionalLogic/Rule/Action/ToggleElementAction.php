@@ -26,6 +26,7 @@ class ToggleElementAction implements ActionInterface
      * @param int   $ruleId
      *
      * @return FieldReturnStack|ReturnStackInterface
+     *
      * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId)

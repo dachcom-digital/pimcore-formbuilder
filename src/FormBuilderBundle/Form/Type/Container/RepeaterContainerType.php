@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Form\Type\Container;
 
-use FormBuilderBundle\Form\Type\Container\Traits;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -38,14 +37,13 @@ class RepeaterContainerType extends AbstractType
     {
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-
                 $minEntries = $options['formbuilder_configuration']['min'];
 
                 if (!is_numeric($minEntries)) {
                     return;
                 }
 
-                $minEntries = (int)$minEntries;
+                $minEntries = (int) $minEntries;
                 if ($minEntries === 0) {
                     return;
                 }
@@ -54,9 +52,7 @@ class RepeaterContainerType extends AbstractType
                 $parsedEntryOptions = $this->getFormEntryOptions($options['formbuilder_configuration']);
                 $entryOptions = array_merge($parsedEntryOptions, ['fields' => $globalEntryOptions['fields']]);
                 $this->addEmptyCollections($event->getForm(), $entryOptions, $minEntries);
-
             })->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
-
                 $data = $event->getData();
                 $minEntries = $options['formbuilder_configuration']['min'];
                 $maxEntries = $options['formbuilder_configuration']['max'];
@@ -65,7 +61,7 @@ class RepeaterContainerType extends AbstractType
                     return;
                 }
 
-                $maxEntries = (int)$maxEntries;
+                $maxEntries = (int) $maxEntries;
                 if ($maxEntries === 0) {
                     return;
                 }
@@ -121,7 +117,6 @@ class RepeaterContainerType extends AbstractType
         };
 
         $resolver->setNormalizer('entry_options', $entryOptionsNormalizer);
-
     }
 
     /**
@@ -144,7 +139,7 @@ class RepeaterContainerType extends AbstractType
         if (empty($config['block_label'])) {
             $label = false;
         } else {
-            $label = (string)$config['block_label'];
+            $label = (string) $config['block_label'];
         }
 
         $options['label'] = $label;

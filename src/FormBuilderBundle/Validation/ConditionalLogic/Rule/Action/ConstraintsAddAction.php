@@ -26,6 +26,7 @@ class ConstraintsAddAction implements ActionInterface
      * @param int   $ruleId
      *
      * @return FieldReturnStack|ReturnStackInterface
+     *
      * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId)
@@ -41,7 +42,6 @@ class ConstraintsAddAction implements ActionInterface
         }
 
         return new FieldReturnStack('addConstraints', $data);
-
     }
 
     /**

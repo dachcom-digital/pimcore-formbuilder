@@ -29,7 +29,6 @@ class SettingsController extends AdminController
         $mainItems = [];
         /** @var \FormBuilderBundle\Storage\Form $form */
         foreach ($forms as $form) {
-
             if (!is_null($form->getGroup())) {
                 if (array_search($form->getGroup(), array_column($mainItems, 'id')) === false) {
                     $mainItems[] = [
@@ -46,7 +45,7 @@ class SettingsController extends AdminController
                 $groupKey = array_search($form->getGroup(), array_column($mainItems, 'id'));
 
                 $mainItems[$groupKey]['children'][] = [
-                    'id'            => (int)$form->getId(),
+                    'id'            => (int) $form->getId(),
                     'text'          => $form->getName(),
                     'icon'          => '',
                     'leaf'          => true,
@@ -55,7 +54,7 @@ class SettingsController extends AdminController
                 ];
             } else {
                 $mainItems[] = [
-                    'id'            => (int)$form->getId(),
+                    'id'            => (int) $form->getId(),
                     'text'          => $form->getName(),
                     'icon'          => '',
                     'leaf'          => true,
@@ -196,7 +195,7 @@ class SettingsController extends AdminController
         return $this->json([
             'success' => $success,
             'message' => $message,
-            'id'      => (int)$id,
+            'id'      => (int) $id,
         ]);
     }
 
@@ -204,11 +203,12 @@ class SettingsController extends AdminController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
+     *
      * @throws \Exception
      */
     public function saveFormAction(Request $request)
     {
-        $id = (int)$request->get('form_id');
+        $id = (int) $request->get('form_id');
         $success = true;
         $message = null;
 
@@ -229,11 +229,10 @@ class SettingsController extends AdminController
             $formConditionalLogic = $formConditionalLogic['cl'];
         }
 
-        $formName = (string)$formConfig['name'];
-        $formGroup = (string)$formConfig['group'];
+        $formName = (string) $formConfig['name'];
+        $formGroup = (string) $formConfig['group'];
 
         if ($formName !== $storedFormName) {
-
             try {
                 $existingForm = $formManager->getIdByName($formName);
             } catch (\Exception $e) {
@@ -267,7 +266,7 @@ class SettingsController extends AdminController
         }
 
         return $this->json([
-            'formId'   => (int)$id,
+            'formId'   => (int) $id,
             'formName' => $formEntity->getName(),
             'success'  => $success,
             'message'  => $message
@@ -278,6 +277,7 @@ class SettingsController extends AdminController
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
+     *
      * @throws \Exception
      */
     public function importFormAction(Request $request)
@@ -390,9 +390,9 @@ class SettingsController extends AdminController
      */
     public function findFormDependenciesAction(Request $request)
     {
-        $formId = (int)$request->get('formId');
-        $offset = (int)$request->get('start', 0);
-        $limit = (int)$request->get('limit', 25);
+        $formId = (int) $request->get('formId');
+        $offset = (int) $request->get('start', 0);
+        $limit = (int) $request->get('limit', 25);
 
         $dependencyLocator = $this->get(FormDependencyLocator::class);
 
@@ -416,7 +416,6 @@ class SettingsController extends AdminController
      */
     private function getSaveName($name)
     {
-        return (string)preg_replace('/[^A-Za-z0-9aäüöÜÄÖß \-]/', '', $name);
+        return (string) preg_replace('/[^A-Za-z0-9aäüöÜÄÖß \-]/', '', $name);
     }
-
 }

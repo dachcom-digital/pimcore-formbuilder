@@ -16,7 +16,6 @@ class ChoicesTransformer implements OptionsTransformerInterface
     {
         $parsedChoices = [];
         foreach ($choices as $choice) {
-
             //groups
             if (isset($choice[0])) {
                 $groupName = $choice[0]['name'];
@@ -32,7 +31,7 @@ class ChoicesTransformer implements OptionsTransformerInterface
     }
 
     /**
-     * Transform symfony choices array into valid ExtJs Array
+     * Transform symfony choices array into valid ExtJs Array.
      *
      * @param array $choices
      * @param array $optionConfig
@@ -45,7 +44,6 @@ class ChoicesTransformer implements OptionsTransformerInterface
 
         $groupCounter = 0;
         foreach ($choices as $choiceKey => $choiceValue) {
-
             //groups
             if (is_array($choiceValue)) {
                 $groupName = $choiceKey;
@@ -58,7 +56,6 @@ class ChoicesTransformer implements OptionsTransformerInterface
                 }
 
                 $groupCounter++;
-
             } else {
                 $parsedChoices[] = ['option' => $choiceKey, 'value' => $choiceValue];
             }

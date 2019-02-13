@@ -33,6 +33,7 @@ class ConditionalLogicProcessor
      * @param null|FormFieldInterface $fieldFilter
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function process($formData, $conditionalLogic, $fieldFilter = null)
@@ -43,7 +44,6 @@ class ConditionalLogicProcessor
         }
 
         foreach ($conditionalLogic as $ruleId => $ruleData) {
-
             if (!isset($ruleData['action']) || !isset($ruleData['condition'])) {
                 continue;
             }
@@ -61,6 +61,7 @@ class ConditionalLogicProcessor
      * @param int   $ruleId
      *
      * @return bool
+     *
      * @throws \Exception
      */
     public function checkValidity($conditions, $formData, $ruleId)
@@ -74,6 +75,7 @@ class ConditionalLogicProcessor
 
             if (!$this->conditionalLogicRegistry->getCondition($condition['type'])->setValues($condition)->isValid($formData, $ruleId)) {
                 $valid = false;
+
                 break;
             }
         }
@@ -89,6 +91,7 @@ class ConditionalLogicProcessor
      * @param null|FormFieldInterface $fieldFilter
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function applyActions($validationState, $actions, $formData, $ruleId, $fieldFilter)
@@ -104,7 +107,6 @@ class ConditionalLogicProcessor
 
             //Field Filter is active: only add affected field data to return container!
             if ($fieldFilter instanceof FormFieldInterface) {
-
                 if (!$appliedData instanceof FieldReturnStack) {
                     continue;
                 }
@@ -124,6 +126,7 @@ class ConditionalLogicProcessor
                 }
             }
         }
+
         return $returnContainer;
     }
 }

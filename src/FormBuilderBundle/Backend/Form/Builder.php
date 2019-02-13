@@ -69,6 +69,7 @@ class Builder
      * @param FormInterface $form
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function generateExtJsForm(FormInterface $form)
@@ -108,6 +109,7 @@ class Builder
      * @param array $fields
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function generateExtJsFields(array $fields)
@@ -129,6 +131,7 @@ class Builder
      * @param array $data
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function generateStoreFields(array $data)
@@ -154,6 +157,7 @@ class Builder
      * @param array $conditionalData
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function generateConditionalLogicStoreFields(array $conditionalData)
@@ -182,7 +186,6 @@ class Builder
         $fieldStructure = $this->getFieldTypeGroups();
 
         foreach ($formTypes as $formType => $formTypeConfiguration) {
-
             if (!$this->isAllowedFormType($formType)) {
                 continue;
             }
@@ -213,6 +216,7 @@ class Builder
      * @param array $conditionalData
      *
      * @return array
+     *
      * @throws \Exception
      */
     private function generateConditionalLogicExtJsFields($conditionalData)
@@ -340,7 +344,6 @@ class Builder
         }
 
         foreach ($fieldConfigFields['displayGroups'] as $displayGroupId => $displayGroup) {
-
             $displayGroupData = $displayGroup;
             $displayGroupData['id'] = $displayGroupId;
             $displayGroupData['label'] = $this->translate($displayGroupData['label']);
@@ -350,13 +353,13 @@ class Builder
                 if ($tabRow['id'] === $displayGroup['tab_id']) {
                     unset($displayGroupData['tab_id']);
                     $tabRow['fields'][] = $displayGroupData;
+
                     break;
                 }
             }
         }
 
         foreach ($fieldConfigFields['fields'] as $fieldId => $field) {
-
             if ($field === false) {
                 continue;
             }
@@ -371,6 +374,7 @@ class Builder
                 foreach ($tabRow['fields'] as &$displayGroupRow) {
                     if ($displayGroupRow['id'] === $field['display_group_id']) {
                         $displayGroupRow['fields'][] = $fieldData;
+
                         break;
                     }
                 }
@@ -469,7 +473,7 @@ class Builder
     }
 
     /**
-     * Get translated Form Type Templates
+     * Get translated Form Type Templates.
      *
      * @return array
      */
@@ -542,6 +546,7 @@ class Builder
      * @param bool  $reverse
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     private function transformOptions(&$fieldData, $reverse = false)
@@ -560,14 +565,12 @@ class Builder
         }
 
         foreach ($fieldData['options'] as $optionName => $optionValue) {
-
             if (!isset($backendConfig['fields']['options.' . $optionName])) {
                 continue;
             }
 
             $optionConfig = $backendConfig['fields']['options.' . $optionName];
             if (!empty($optionConfig['options_transformer'])) {
-
                 /** @var OptionsTransformerInterface $transformer */
                 $transformer = $this->optionsTransformerRegistry->get($optionConfig['options_transformer']);
 

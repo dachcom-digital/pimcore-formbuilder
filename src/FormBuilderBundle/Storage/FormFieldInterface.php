@@ -87,8 +87,7 @@ interface FormFieldInterface
     public function toArray();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isUpdated();
-
 }

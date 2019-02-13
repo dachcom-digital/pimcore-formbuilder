@@ -27,7 +27,7 @@ class Install extends MigrationInstaller
     ];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getMigrationVersion(): string
     {
@@ -73,6 +73,7 @@ class Install extends MigrationInstaller
         $migration = $version->getMigration();
         if ($migration->isDryRun()) {
             $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping installation');
+
             return;
         }
     }
@@ -102,6 +103,7 @@ class Install extends MigrationInstaller
         $migration = $version->getMigration();
         if ($migration->isDryRun()) {
             $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping uninstallation');
+
             return;
         }
 
@@ -129,7 +131,7 @@ class Install extends MigrationInstaller
     }
 
     /**
-     * install or update config file
+     * install or update config file.
      */
     protected function setupPaths()
     {
@@ -242,7 +244,6 @@ class Install extends MigrationInstaller
                 'type'        => 'document',
                 'name'        => 'Mail: Message after Submit',
                 'description' => 'Use the mail_successfully_sent property to define a message after the form has been successfully sent. There are three options: "String", "Snippet", "Dokument"'
-
             ],
             'mail_successfully_sent_flash_message' => [
                 'ctype'       => 'document',
@@ -271,7 +272,7 @@ class Install extends MigrationInstaller
 
             $property->setDescription($propertyConfig['description']);
             $property->setCtype($propertyConfig['ctype']);
-            $property->setInheritable(/** @scrutinizer ignore-type */ false);
+            $property->setInheritable(/* @scrutinizer ignore-type */ false);
 
             try {
                 $property->getDao()->save();
@@ -296,6 +297,7 @@ class Install extends MigrationInstaller
         foreach ($list->getDocTypes() as $type) {
             if ($type->getName() === $elementName) {
                 $skipInstall = true;
+
                 break;
             }
         }

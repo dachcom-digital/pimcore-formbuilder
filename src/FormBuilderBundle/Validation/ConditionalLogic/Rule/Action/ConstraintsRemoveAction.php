@@ -31,6 +31,7 @@ class ConstraintsRemoveAction implements ActionInterface
      * @param int   $ruleId
      *
      * @return FieldReturnStack|ReturnStackInterface
+     *
      * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId)
@@ -50,7 +51,6 @@ class ConstraintsRemoveAction implements ActionInterface
         }
 
         return new FieldReturnStack('removeConstraints', $data);
-
     }
 
     /**

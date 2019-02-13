@@ -23,7 +23,7 @@ class FlashBagManager implements FlashBagManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function has($type)
     {
@@ -35,7 +35,7 @@ class FlashBagManager implements FlashBagManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function add($type, $message)
     {
@@ -47,7 +47,7 @@ class FlashBagManager implements FlashBagManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get($type, array $default = [])
     {
@@ -59,7 +59,7 @@ class FlashBagManager implements FlashBagManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function flashBagIsAvailable()
     {
@@ -67,7 +67,7 @@ class FlashBagManager implements FlashBagManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFlashBag()
     {

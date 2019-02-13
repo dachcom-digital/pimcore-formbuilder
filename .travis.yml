@@ -6,73 +6,83 @@ addons:
 
 env:
     global:
-    - PIMCORE_ENVIRONMENT=test
-    - DACHCOM_BUNDLE_TEST=1
-    - PIMCORE_TEST_URL=http://localhost
-    - CHROME_DRIVER_VERSION=2.41
-    - SELENIUM_VERSION=3.6.0
-    - WEBDRIVER_HOST=localhost
-    - WEBDRIVER_URL="http://localhost:8080/"
-    - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
-    - SYMFONY_DEPRECATIONS_HELPER=weak
-    - DACHCOM_TEST_SECTION=codeception
+        - PIMCORE_ENVIRONMENT=test
+        - DACHCOM_BUNDLE_TEST=1
+        - PIMCORE_TEST_URL=http://localhost
+        - CHROME_DRIVER_VERSION=2.41
+        - SELENIUM_VERSION=3.6.0
+        - WEBDRIVER_HOST=localhost
+        - WEBDRIVER_URL="http://localhost:8080/"
+        - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
+        - SYMFONY_DEPRECATIONS_HELPER=weak
+        - DACHCOM_TEST_SECTION=codeception
 matrix:
     include:
-    -   name: "PHPStan Static Analysis (Pimcore 5.6.x, PHP 7.2)"
-        sudo: required
-        php: 7.2
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
-            - DACHCOM_TEST_SECTION=phpstan
-    -   name: "Codeception Tests (Pimcore 5.4.x, PHP 7.1)"
-        sudo: required
-        php: 7.1
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-    -   name: "Codeception Tests ( Pimcore 5.4.x, PHP 7.2)"
-        sudo: required
-        php: 7.2
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-    -   name: "Codeception Tests ( Pimcore 5.5.x, PHP 7.1)"
-        sudo: required
-        php: 7.1
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
-    -   name: "Codeception Tests ( Pimcore 5.5.x, PHP 7.2)"
-        sudo: required
-        php: 7.2
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
-    -   name: "Codeception Tests ( Pimcore 5.6.x, PHP 7.1)"
-        sudo: required
-        php: 7.1
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
-    -   name: "Codeception Tests ( Pimcore 5.6.x, PHP 7.2)"
-        sudo: required
-        php: 7.2
-        env:
-            - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+        -   name: "PHPStan Static Analysis (Pimcore 5.6.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - DACHCOM_TEST_SECTION=phpstan
+        -   name: "PHP ECS (Pimcore 5.6.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - DACHCOM_TEST_SECTION=ecs
+        -   name: "Codeception Tests (Pimcore 5.4.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+        -   name: "Codeception Tests ( Pimcore 5.4.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+        -   name: "Codeception Tests ( Pimcore 5.5.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+        -   name: "Codeception Tests ( Pimcore 5.5.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+        -   name: "Codeception Tests ( Pimcore 5.6.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+        -   name: "Codeception Tests ( Pimcore 5.6.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+    allow_failures:
+        -   env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - DACHCOM_TEST_SECTION=ecs
     fast_finish: true
 
 cache:
     directories:
-    - $HOME/.composer/cache
+        - $HOME/.composer/cache
 
 install:
-- tests/_etc/travis/install
+    - tests/_etc/travis/install
 
 after_failure:
-- cd $TRAVIS_BUILD_DIR
-- cat ./lib/FormBuilder/tests/_output/*
+    - cd $TRAVIS_BUILD_DIR
+    - cat ./lib/FormBuilder/tests/_output/*
 
 script:
-- '$HOME/chromedriver --url-base=/wd/hub &'
-- 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
-- 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
-- _etc/travis/script
+    - '$HOME/chromedriver --url-base=/wd/hub &'
+    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
+    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
+    - _etc/travis/script
 
 notifications:
     email:
-    - shagspiel@dachcom.ch
+        - shagspiel@dachcom.ch

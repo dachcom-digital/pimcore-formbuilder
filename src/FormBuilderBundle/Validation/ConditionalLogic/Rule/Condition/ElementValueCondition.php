@@ -37,7 +37,8 @@ class ElementValueCondition implements ConditionInterface
 
             if ($this->getComparator() === 'contains') {
                 $value = is_array($this->getValue()) ? $this->getValue() : (is_string($this->getValue()) ? explode(',', $this->getValue()) : [$this->getValue()]);
-                return !empty(array_intersect($value, (array)$fieldValue));
+
+                return !empty(array_intersect($value, (array) $fieldValue));
             } elseif ($this->getComparator() === 'is_checked') {
                 return array_key_exists($conditionFieldName, $formData) && !empty($fieldValue);
             } elseif ($this->getComparator() === 'is_not_checked') {
@@ -48,7 +49,7 @@ class ElementValueCondition implements ConditionInterface
                 return $this->getValue() < $fieldValue;
             } elseif ($this->getComparator() === 'is_value') {
                 //could be an array (multiple)
-                return $this->getValue() == $fieldValue || in_array($this->getValue(), (array)$fieldValue);
+                return $this->getValue() == $fieldValue || in_array($this->getValue(), (array) $fieldValue);
             } elseif ($this->getComparator() === 'is_empty_value') {
                 return empty($fieldValue);
             } elseif ($this->getComparator() === 'is_not_value') {

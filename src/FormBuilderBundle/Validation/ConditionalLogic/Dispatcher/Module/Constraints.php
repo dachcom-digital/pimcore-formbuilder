@@ -107,7 +107,7 @@ class Constraints implements ModuleInterface
     }
 
     /**
-     * Constraints from current conditional logic
+     * Constraints from current conditional logic.
      *
      * @param array $defaultFieldConstraints
      *
@@ -121,11 +121,10 @@ class Constraints implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-
             if (!$returnStack instanceof FieldReturnStack || !in_array($returnStack->getActionType(), [
-                    'addConstraints',
-                    'removeConstraints'
-                ])) {
+                'addConstraints',
+                'removeConstraints'
+            ])) {
                 continue;
             }
 
@@ -161,7 +160,6 @@ class Constraints implements ModuleInterface
     {
         $constraintData = [];
         foreach ($constraints as $constraint) {
-
             $constraintType = $constraint['type'];
             $constraintConfig = isset($constraint['config']) ? $constraint['config'] : [];
 
@@ -188,5 +186,4 @@ class Constraints implements ModuleInterface
 
         return $constraintData;
     }
-
 }

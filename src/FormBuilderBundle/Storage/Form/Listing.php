@@ -13,11 +13,11 @@ class Listing extends Model\Listing\AbstractListing
     protected $data;
 
     /**
-     * Test if the passed key is valid
+     * Test if the passed key is valid.
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -26,8 +26,6 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $data
-     *
-     * @return void
      */
     public function setData($data)
     {
@@ -46,7 +44,6 @@ class Listing extends Model\Listing\AbstractListing
             }
 
             $this->data = $entities;
-
         }
 
         return $this->data;

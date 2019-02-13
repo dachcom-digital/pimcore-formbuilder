@@ -2,9 +2,9 @@
 
 namespace FormBuilderBundle\Transformer;
 
-interface OptionsTransformerInterface {
+interface OptionsTransformerInterface
+{
+    public function transform($values, $optionConfig = null);
 
-    public function transform($values, $optionConfig = NULL);
-
-    public function reverseTransform($values, $optionConfig = NULL);
+    public function reverseTransform($values, $optionConfig = null);
 }

@@ -57,7 +57,6 @@ class FormValuesBeautifier
 
         /** @var FormFieldInterface $field */
         foreach ($orderedFields as $field) {
-
             if (in_array($field->getName(), $ignoreFields)) {
                 continue;
             }
@@ -113,8 +112,7 @@ class FormValuesBeautifier
      */
     private function transformFormBuilderContainerField(FormBuilderFormInterface $formEntity, FormFieldContainerInterface $entityField, FormInterface $formField, $locale)
     {
-        if (
-            $formField->getConfig()->getType()->getParent() === null ||
+        if ($formField->getConfig()->getType()->getParent() === null ||
             !$formField->getConfig()->getType()->getParent()->getInnerType() instanceof ContainerType
         ) {
             return null;
@@ -171,6 +169,7 @@ class FormValuesBeautifier
     {
         $formFieldValue = $formEntity->getFieldValue($entityField->getName());
         $data = $this->beautifyFormBuilderField($entityField, $formFieldValue, $formField, $locale);
+
         return $data;
     }
 
@@ -290,12 +289,13 @@ class FormValuesBeautifier
                     'gregorian' === $calendar ? \IntlDateFormatter::GREGORIAN : \IntlDateFormatter::TRADITIONAL,
                     null
                 );
+
                 return $formatter->format($value->getTimestamp());
             }
 
             $format = 'm/d/y H:i:s';
-            return $value->format($format);
 
+            return $value->format($format);
         }
 
         if ($fieldType instanceof CountryType) {
@@ -307,6 +307,7 @@ class FormValuesBeautifier
             } else {
                 $choices = Intl::getRegionBundle()->getCountryName($value, $locale);
             }
+
             return $choices;
         } elseif ($fieldType instanceof ChoiceType) {
             $choices = $formField->getConfig()->getOption('choices');
@@ -323,5 +324,4 @@ class FormValuesBeautifier
 
         return $value;
     }
-
 }

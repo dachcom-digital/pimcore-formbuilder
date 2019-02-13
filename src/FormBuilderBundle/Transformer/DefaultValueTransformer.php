@@ -26,7 +26,7 @@ class DefaultValueTransformer implements OptionsTransformerInterface
     }
 
     /**
-     * Transform default option value into empty value (since a default value only applies to empty options)
+     * Transform default option value into empty value (since a default value only applies to empty options).
      *
      * @param array $optionValue
      * @param array $optionConfig

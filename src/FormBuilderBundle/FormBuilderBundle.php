@@ -102,7 +102,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getComposerPackageName(): string
     {

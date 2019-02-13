@@ -70,6 +70,7 @@ class FormTypeClasses implements ModuleInterface
 
     /**
      * @param array $options
+     *
      * @return DataInterface
      */
     public function apply($options)
@@ -97,9 +98,9 @@ class FormTypeClasses implements ModuleInterface
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
             if (!$returnStack instanceof FieldReturnStack || !in_array($returnStack->getActionType(), [
-                    'toggleClass',
-                    'toggleElement'
-                ])) {
+                'toggleClass',
+                'toggleElement'
+            ])) {
                 continue;
             }
 

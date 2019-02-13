@@ -6,7 +6,6 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\Form\PostSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
-use FormBuilderBundle\Form\Type\Container\ContainerType;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldDynamicInterface;
@@ -174,7 +173,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $sessionBag = $this->session->getBag('form_builder_session');
 
         if ($form->isValid()) {
-
             //handle linked assets.
             $fileData = [];
             foreach ($sessionBag->getIterator() as $key => $sessionValue) {
@@ -247,6 +245,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param array                       $formConditionalLogic
      *
      * @return array
+     *
      * @throws \Exception
      */
     private function addFormBuilderContainerField(FormFieldContainerInterface $fieldContainer, array $formData, array $formConditionalLogic)
@@ -282,6 +281,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param array              $formConditionalLogic
      *
      * @return array
+     *
      * @throws \Exception
      */
     private function addFormBuilderField(FormFieldInterface $field, array $formData, array $formConditionalLogic)
@@ -297,8 +297,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         // options enrichment:  tweak preferred choice options
         if (in_array($field->getType(), $this->getChoiceFieldTypes())) {
-            if (
-                $options['multiple'] === false
+            if ($options['multiple'] === false
                 && isset($options['data'])
                 && is_array($options['data'])
                 && !empty($options['data'])
@@ -309,7 +308,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         // options enrichment: add constraints
         if (in_array('constraints', $availableOptions)) {
-
             $constraintData = $this->dispatcher->runFieldDispatcher('constraints', [
                 'formData'         => $formData,
                 'field'            => $field,
@@ -334,10 +332,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                    array_filter($constraints, function ($constraint) {
-                        return $constraint instanceof NotBlank;
-                    })
-                ) === 1;
+                array_filter($constraints, function ($constraint) {
+                    return $constraint instanceof NotBlank;
+                })
+            ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout
@@ -380,7 +378,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         ];
 
         return $data;
-
     }
 
     /**
@@ -416,7 +413,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Add pre-filled data to value store
+     * Add pre-filled data to value store.
      *
      * @param array $fields
      * @param array $data
@@ -427,7 +424,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     {
         /** @var FormFieldInterface|FormFieldContainerInterface $field */
         foreach ($fields as $field) {
-
             if (!empty($data[$field->getName()])) {
                 continue;
             }
@@ -437,6 +433,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                     $data[$field->getName()] = [];
                 }
                 $this->preFillData($field->getFields(), $data[$field->getName()]);
+
                 continue;
             }
 

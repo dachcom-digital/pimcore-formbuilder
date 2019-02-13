@@ -62,7 +62,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTranslator(Translator $translator)
     {
@@ -70,7 +70,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOrder()
     {
@@ -78,7 +78,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setOrder(int $order)
     {
@@ -86,7 +86,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setName(string $name)
     {
@@ -94,7 +94,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -102,7 +102,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setDisplayName(string $name)
     {
@@ -110,7 +110,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDisplayName()
     {
@@ -118,7 +118,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setType(string $type)
     {
@@ -126,7 +126,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -134,7 +134,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSubType(string $subType)
     {
@@ -142,7 +142,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSubType()
     {
@@ -150,7 +150,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isUpdated()
     {
@@ -158,7 +158,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setConfiguration(array $configuration = [])
     {
@@ -168,7 +168,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConfiguration()
     {
@@ -176,7 +176,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setFields(array $fields = [])
     {
@@ -184,7 +184,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFields()
     {
@@ -192,7 +192,7 @@ class FormFieldContainer implements FormFieldContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function toArray()
     {

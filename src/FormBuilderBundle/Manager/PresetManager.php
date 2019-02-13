@@ -46,7 +46,7 @@ class PresetManager
                 $currentSite = $this->getCurrentSiteInAdminMode($document);
 
                 if ($currentSite !== null) {
-                    $allowedSites = (array)$presetConfig['sites'];
+                    $allowedSites = (array) $presetConfig['sites'];
 
                     if (!in_array($currentSite->getMainDomain(), $allowedSites)) {
                         continue;
@@ -82,7 +82,7 @@ class PresetManager
     }
 
     /**
-     * Get Site in EditMode if SiteRequest is available
+     * Get Site in EditMode if SiteRequest is available.
      *
      * @param Document $originDocument
      *

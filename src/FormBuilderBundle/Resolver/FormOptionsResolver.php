@@ -52,7 +52,7 @@ class FormOptionsResolver
     public function setFormId($formId)
     {
         if (is_numeric($formId)) {
-            $this->formId = (int)$formId;
+            $this->formId = (int) $formId;
         }
     }
 
@@ -146,6 +146,7 @@ class FormOptionsResolver
     {
         $path = '@FormBuilder/Form/%s.html.twig';
         $template = $this->getFormPreset() === 'custom' ? 'default' : 'Presets/' . $this->getFormPreset();
+
         return sprintf($path, $template);
     }
 
@@ -198,7 +199,7 @@ class FormOptionsResolver
     public function getMailTemplateId()
     {
         if ($this->mailTemplate instanceof Document\Email) {
-            return (int)$this->mailTemplate->getId();
+            return (int) $this->mailTemplate->getId();
         }
 
         return null;
@@ -233,7 +234,7 @@ class FormOptionsResolver
     public function getCopyMailTemplateId()
     {
         if ($this->mailCopyTemplate instanceof Document\Email) {
-            return (int)$this->mailCopyTemplate->getId();
+            return (int) $this->mailCopyTemplate->getId();
         }
 
         return null;
@@ -268,6 +269,5 @@ class FormOptionsResolver
         }
 
         return $mailTemplate;
-
     }
 }

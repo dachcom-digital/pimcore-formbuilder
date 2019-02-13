@@ -18,7 +18,7 @@ class FormTypeClassesData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasData()
     {
@@ -26,7 +26,7 @@ class FormTypeClassesData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getData()
     {

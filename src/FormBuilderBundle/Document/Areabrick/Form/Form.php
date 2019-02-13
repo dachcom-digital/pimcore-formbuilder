@@ -64,7 +64,9 @@ class Form extends AbstractTemplateAreabrick
 
     /**
      * @param Info $info
+     *
      * @return null|\Symfony\Component\HttpFoundation\Response|void
+     *
      * @throws \Exception
      */
     public function action(Info $info)
@@ -83,7 +85,6 @@ class Form extends AbstractTemplateAreabrick
         $view->getParameters()->set('form_builder_is_admin_mode', $view->get('editmode') === true);
 
         if ($view->get('editmode') === true) {
-
             $mains = $this->formManager->getAll();
             $formPresets = $this->presetManager->getAll($info->getDocument());
 
@@ -137,7 +138,7 @@ class Form extends AbstractTemplateAreabrick
         /** @var Select $formNameElement */
         $formNameElement = $this->getDocumentTag($info->getDocument(), 'select', 'formName');
         if (!$formNameElement->isEmpty()) {
-            $formId = (int)$formNameElement->getData();
+            $formId = (int) $formNameElement->getData();
         }
 
         $mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();

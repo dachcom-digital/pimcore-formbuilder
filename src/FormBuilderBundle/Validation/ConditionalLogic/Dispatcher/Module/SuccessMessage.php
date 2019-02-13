@@ -82,7 +82,6 @@ class SuccessMessage implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-
             if (!$returnStack instanceof SimpleReturnStack || !in_array($returnStack->getActionType(), ['successMessage'])) {
                 continue;
             }
@@ -100,5 +99,4 @@ class SuccessMessage implements ModuleInterface
 
         return $returnContainer;
     }
-
 }

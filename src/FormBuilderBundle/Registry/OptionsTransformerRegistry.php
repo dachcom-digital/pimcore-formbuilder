@@ -53,6 +53,7 @@ class OptionsTransformerRegistry
      * @param string $identifier
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function get($identifier)

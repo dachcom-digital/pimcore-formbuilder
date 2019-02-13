@@ -48,6 +48,7 @@ class Dispatcher
      * @param array  $moduleOptions
      *
      * @return DataInterface
+     *
      * @throws \Exception
      */
     public function runFieldDispatcher($dispatcherModule, $options, $moduleOptions = [])
@@ -67,6 +68,7 @@ class Dispatcher
      * @param array  $moduleOptions
      *
      * @return DataInterface
+     *
      * @throws \Exception
      */
     public function runFormDispatcher($dispatcherModule, $options, $moduleOptions = [])
@@ -86,6 +88,7 @@ class Dispatcher
      * @param array  $moduleOptions
      *
      * @return DataInterface
+     *
      * @throws \Exception
      */
     private function run($dispatcherModule, $options, $moduleOptions)
@@ -108,6 +111,7 @@ class Dispatcher
         }
 
         $moduleOptions = $optionsResolver->resolve($moduleOptions);
+
         return $dispatcherModuleClass->apply($moduleOptions);
     }
 

@@ -28,7 +28,6 @@ class Version20181214160753 extends AbstractPimcoreMigration
         if ($fileSystem->exists(PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/import')) {
             $fileSystem->remove(PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/import');
         }
-
     }
 
     /**
@@ -37,6 +36,5 @@ class Version20181214160753 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs
-
     }
 }

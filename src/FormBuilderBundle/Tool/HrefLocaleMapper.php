@@ -7,6 +7,7 @@ class HrefLocaleMapper
     /**
      * @param string $locale
      * @param array  $data
+     *
      * @return mixed
      */
     public function map(string $locale, array $data)

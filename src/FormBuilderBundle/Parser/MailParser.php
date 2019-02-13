@@ -45,15 +45,16 @@ class MailParser
      * @param string        $locale
      *
      * @return Mail
+     *
      * @throws \Exception
      */
     public function create(Email $mailTemplate, FormInterface $form, $locale)
     {
         $mail = new Mail();
 
-        $disableDefaultMailBody = (bool)$mailTemplate->getProperty('mail_disable_default_mail_body');
+        $disableDefaultMailBody = (bool) $mailTemplate->getProperty('mail_disable_default_mail_body');
 
-        $ignoreFields = (string)$mailTemplate->getProperty('mail_ignore_fields');
+        $ignoreFields = (string) $mailTemplate->getProperty('mail_ignore_fields');
         $ignoreFields = array_map('trim', explode(',', $ignoreFields));
 
         $fieldValues = $this->formValuesBeautifier->transformData($form, $ignoreFields, $locale);
@@ -116,7 +117,6 @@ class MailParser
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
-
                     if ($formField['field_type'] === 'container') {
                         if ($formField['type'] === 'fieldset' && is_array($formField['fields']) && count($formField['fields']) === 1) {
                             $this->parseSubject($mailTemplate, $formField['fields'][0], $formField['name']);
@@ -170,6 +170,7 @@ class MailParser
                         $this->setMailPlaceholders($mail, $group, $disableDefaultMailBody, $prefix);
                     }
                 }
+
                 continue;
             }
             if ($this->isEmptyFormField($formField['value'])) {
@@ -204,7 +205,8 @@ class MailParser
     {
         $html = $this->templating->render(
             '@FormBuilder/Email/formData.html.twig',
-            ['fields' => $data]);
+        ['fields' => $data]
+            );
 
         return $html;
     }
@@ -227,7 +229,6 @@ class MailParser
         if (isset($matches[1]) && count($matches[1]) > 0) {
             foreach ($matches[1] as $key => $inputValue) {
                 foreach ($fieldValues as $formField) {
-
                     // container values as placeholders is unsupported.
                     if ($formField['field_type'] === 'container') {
                         if ($formField['type'] === 'fieldset' && is_array($formField['fields']) && count($formField['fields']) === 1) {
@@ -302,5 +303,4 @@ class MailParser
 
         return $string;
     }
-
 }

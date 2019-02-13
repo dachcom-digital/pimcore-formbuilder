@@ -31,7 +31,7 @@ class MailBehaviourData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setData(array $data)
     {
@@ -39,7 +39,7 @@ class MailBehaviourData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasData()
     {
@@ -47,7 +47,7 @@ class MailBehaviourData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -80,6 +80,7 @@ class MailBehaviourData implements DataInterface
 
     /**
      * @param string $locale
+     *
      * @return null|int
      */
     public function getMailTemplateId($locale)
@@ -88,6 +89,6 @@ class MailBehaviourData implements DataInterface
             return null;
         }
 
-        return (int)$this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
+        return (int) $this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
     }
 }

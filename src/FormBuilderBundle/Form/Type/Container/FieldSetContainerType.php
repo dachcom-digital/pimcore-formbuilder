@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Form\Type\Container;
 
-use FormBuilderBundle\Form\Type\Container\Traits;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;

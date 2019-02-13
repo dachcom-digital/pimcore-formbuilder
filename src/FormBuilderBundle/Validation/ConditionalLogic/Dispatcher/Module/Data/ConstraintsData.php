@@ -10,7 +10,7 @@ class ConstraintsData implements DataInterface
     private $data = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setData(array $data)
     {
@@ -18,7 +18,7 @@ class ConstraintsData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasData()
     {
@@ -26,7 +26,7 @@ class ConstraintsData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getData()
     {

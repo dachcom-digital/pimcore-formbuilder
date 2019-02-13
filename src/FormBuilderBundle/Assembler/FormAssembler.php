@@ -62,6 +62,7 @@ class FormAssembler
 
     /**
      * @return mixed
+     *
      * @throws \Exception
      */
     public function assembleViewVars()
@@ -78,7 +79,6 @@ class FormAssembler
             try {
                 $formData = $this->formManager->getById($formId);
                 if (!$formData instanceof FormInterface || !$this->formManager->configurationFileExists($formId)) {
-
                     $errorMessage = [];
                     if (!$formData instanceof FormInterface) {
                         $errorMessage[] = sprintf('Form with id "%s" is not valid.', $formId);
@@ -107,6 +107,7 @@ class FormAssembler
         if ($builderError === true) {
             $viewVars['message'] = $exceptionMessage;
             $viewVars['form_template'] = null;
+
             return $viewVars;
         }
 
