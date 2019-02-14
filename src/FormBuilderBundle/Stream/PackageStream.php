@@ -29,6 +29,7 @@ class PackageStream
      * @param string $formName
      *
      * @return bool|null|Asset
+     *
      * @throws \Exception
      */
     public function createZipAsset($data, $formName)
@@ -84,11 +85,13 @@ class PackageStream
         } catch (\Exception $e) {
             echo $e->getMessage();
             Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
+
             return false;
         }
 
         if (!file_exists($zipPath)) {
             Logger::log('zip path does not exist (' . $zipPath . ')');
+
             return false;
         }
 
@@ -97,6 +100,7 @@ class PackageStream
 
         if (!$formDataParentFolder instanceof Asset\Folder) {
             Logger::error('parent folder does not exist (/formdata)!');
+
             return false;
         }
 
@@ -118,6 +122,7 @@ class PackageStream
 
         if (!$formDataFolder instanceof Asset\Folder) {
             Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
+
             return false;
         }
 
@@ -134,10 +139,10 @@ class PackageStream
             }
         } catch (\Exception $e) {
             Logger::log('Error while storing asset in Pimcore (' . $zipPath . '): ' . $e->getMessage());
+
             return false;
         }
 
         return $asset;
     }
-
 }

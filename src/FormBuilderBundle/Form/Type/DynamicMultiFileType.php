@@ -44,13 +44,13 @@ class DynamicMultiFileType extends AbstractType
             'engine_options' => [
                 'messages'           => $this->getInterfaceTranslations(),
                 'multiple'           => $options['multiple'] ? 1 : 0,
-                'max_file_size'      => is_numeric($options['max_file_size']) ? (int)$options['max_file_size'] * 1024 * 1024 : 0,
+                'max_file_size'      => is_numeric($options['max_file_size']) ? (int) $options['max_file_size'] * 1024 * 1024 : 0,
                 'allowed_extensions' => is_array($options['allowed_extensions']) ? $options['allowed_extensions'] : [],
-                'item_limit'         => is_numeric($options['item_limit']) ? (int)$options['item_limit'] : 0
+                'item_limit'         => is_numeric($options['item_limit']) ? (int) $options['item_limit'] : 0
             ]
         ]);
 
-        $vars['attr']['class'] = join(' ', (array)$vars['attr']['class']);
+        $vars['attr']['class'] = join(' ', (array) $vars['attr']['class']);
 
         $view->vars = $vars;
     }

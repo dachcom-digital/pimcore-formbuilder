@@ -28,7 +28,9 @@ class StaticFormExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_Function('form_builder_static', [$this, 'generateForm'],
+            new \Twig_Function(
+                'form_builder_static',
+                [$this, 'generateForm'],
                 ['needs_environment' => true, 'needs_context' => true, 'is_safe' => ['html']]
             )
         ];

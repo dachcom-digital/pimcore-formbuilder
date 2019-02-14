@@ -18,9 +18,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class FileStream
- *
- * @package FormBuilderBundle\Stream
+ * Class FileStream.
  */
 class FileStream
 {
@@ -35,7 +33,7 @@ class FileStream
     protected $requestStack;
 
     /**
-     * Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
+     * Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp").
      *
      * @var array
      */
@@ -49,7 +47,7 @@ class FileStream
     public $sizeLimit = null;
 
     /**
-     * matches Fine Uploader's default inputName value by default
+     * matches Fine Uploader's default inputName value by default.
      *
      * @var string
      */
@@ -86,6 +84,7 @@ class FileStream
         if ($masterRequest->files->has($this->inputName)) {
             /** @var UploadedFile $file */
             $file = $masterRequest->files->get($this->inputName);
+
             return $file->getFilename();
         }
 
@@ -107,7 +106,7 @@ class FileStream
     }
 
     /**
-     * Get the name of the uploaded file
+     * Get the name of the uploaded file.
      *
      * @return string
      */
@@ -117,7 +116,7 @@ class FileStream
     }
 
     /**
-     * Get the real name of the uploaded file
+     * Get the real name of the uploaded file.
      *
      * @return bool|mixed|string
      */
@@ -141,7 +140,7 @@ class FileStream
         $destinationFolderPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
         $destinationPath = join(DIRECTORY_SEPARATOR, [$destinationFolderPath, $name]);
 
-        $totalParts = $masterRequest->request->has('qqtotalparts') ? (int)$masterRequest->request->get('qqtotalparts') : 1;
+        $totalParts = $masterRequest->request->has('qqtotalparts') ? (int) $masterRequest->request->get('qqtotalparts') : 1;
         $this->uploadName = $name;
 
         if (!file_exists($destinationPath)) {
@@ -161,6 +160,7 @@ class FileStream
                         $chunkPathResource = fopen($chunkFile->getPathname(), 'rb');
                         if (!is_resource($chunkPathResource)) {
                             $chunkSuccess = false;
+
                             continue;
                         }
 
@@ -172,7 +172,6 @@ class FileStream
 
             // Success
             fclose($destinationResource);
-
         } else {
             $chunkSuccess = false;
         }
@@ -183,6 +182,7 @@ class FileStream
             $tmpDirs[] = $destinationPath;
             $tmpDirs[] = $destinationFolderPath;
             $this->cleanUpChunkProcess($tmpDirs);
+
             return [
                 'statusCode'   => 413,
                 'success'      => false,
@@ -221,6 +221,7 @@ class FileStream
         // exceed size allowed by server config
         if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit || $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
             $neededRequestSize = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
+
             return ['success' => false, 'error' => 'Server error. Increase post_max_size and upload_max_filesize to ' . $neededRequestSize];
         }
 
@@ -276,17 +277,18 @@ class FileStream
             !in_array(strtolower($ext), array_map('strtolower', $this->allowedExtensions))
         ) {
             $these = implode(', ', $this->allowedExtensions);
+
             return ['success' => false, 'error' => 'File has an invalid extension, it should be one of ' . $these . '.'];
         }
 
         // Save a chunk
-        $totalParts = $masterRequest->request->has('qqtotalparts') ? (int)$masterRequest->request->get('qqtotalparts') : 1;
+        $totalParts = $masterRequest->request->has('qqtotalparts') ? (int) $masterRequest->request->get('qqtotalparts') : 1;
         $uuid = $masterRequest->request->get('qquuid');
 
         if ($totalParts > 1) {
-            # chunked upload
+            // chunked upload
             $chunksFolder = $this->fileLocator->getChunksFolder();
-            $partIndex = (int)$masterRequest->request->get('qqpartindex');
+            $partIndex = (int) $masterRequest->request->get('qqpartindex');
 
             if (!is_writable($chunksFolder) && !is_executable($this->fileLocator->getFilesFolder())) {
                 return ['success' => false, 'error' => 'Server error. Chunks directory isn\'t writable or executable.'];
@@ -316,9 +318,8 @@ class FileStream
                 'error'   => null,
                 'uuid'    => $uuid
             ];
-
         } else {
-            # non-chunked upload
+            // non-chunked upload
             $target = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
 
             if ($target) {
@@ -341,7 +342,6 @@ class FileStream
                     'success' => true,
                     'uuid'    => $uuid
                 ];
-
             }
 
             return [
@@ -367,6 +367,7 @@ class FileStream
 
         if (is_dir($target)) {
             $this->fileLocator->removeDir($target);
+
             return [
                 'success' => true,
                 'uuid'    => $uuid
@@ -395,17 +396,20 @@ class FileStream
         }
 
         $last = strtolower($sizeStr[strlen($sizeStr) - 1]);
-        $val = (int)substr($val, 0, -1);
+        $val = (int) substr($val, 0, -1);
 
         switch ($last) {
             case 'g':
                 $val *= 1024;
+
                 break;
             case 'm':
                 $val *= 1024;
+
                 break;
             case 'k':
                 $val *= 1024;
+
                 break;
         }
 
@@ -433,9 +437,9 @@ class FileStream
     }
 
     /**
-     * Determines is the OS is Windows or not
+     * Determines is the OS is Windows or not.
      *
-     * @return boolean
+     * @return bool
      */
     protected function isWindows()
     {

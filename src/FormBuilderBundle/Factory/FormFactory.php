@@ -28,17 +28,18 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createForm()
     {
         $form = new Form();
         $form->setTranslator($this->translator);
+
         return $form;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFormById($id)
     {
@@ -57,7 +58,7 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFormIdByName(string $name)
     {
@@ -76,7 +77,7 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAllForms()
     {
@@ -94,27 +95,29 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createFormField()
     {
         $formFieldEntity = new FormField();
         $formFieldEntity->setTranslator($this->translator);
+
         return $formFieldEntity;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createFormFieldContainer()
     {
         $formFieldContainerEntity = new FormFieldContainer();
         $formFieldContainerEntity->setTranslator($this->translator);
+
         return $formFieldContainerEntity;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function assignRelationDataToFormObject(FormInterface $formEntity)
     {
@@ -161,7 +164,7 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function populateFormField($formField, array $field)
     {
@@ -177,7 +180,7 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function formHasAvailableConfigurationFile(int $formId)
     {
@@ -185,7 +188,7 @@ class FormFactory implements FormFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConfigurationPathOfForm(int $formId)
     {

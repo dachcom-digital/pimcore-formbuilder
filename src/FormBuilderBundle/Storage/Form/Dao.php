@@ -80,7 +80,7 @@ class Dao extends AbstractDao
                 $value = $this->model->$getter();
 
                 if (is_bool($value)) {
-                    $value = (int)$value;
+                    $value = (int) $value;
                 }
 
                 if (is_array($value)) {
@@ -100,7 +100,7 @@ class Dao extends AbstractDao
         }
 
         if ($this->model->getId() !== null) {
-            $this->db->update($this->tableName, $buffer, ['id' => (int)$this->model->getId()]);
+            $this->db->update($this->tableName, $buffer, ['id' => (int) $this->model->getId()]);
         } else {
             $this->db->insert($this->tableName, $buffer);
             $this->model->setId($this->db->lastInsertId());
@@ -116,7 +116,7 @@ class Dao extends AbstractDao
     {
         try {
             $this->deleteFormData();
-            $this->db->delete($this->tableName, ['id' => (int)$this->model->getId()]);
+            $this->db->delete($this->tableName, ['id' => (int) $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }

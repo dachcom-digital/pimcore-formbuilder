@@ -47,7 +47,6 @@ class Configuration
 
     /**
      * Configuration constructor.
-     *
      */
     public function __construct()
     {
@@ -128,8 +127,7 @@ class Configuration
 
         $containerData = [];
         foreach ($containerTypes as $containerId => &$container) {
-
-            if($container['enabled'] === false) {
+            if ($container['enabled'] === false) {
                 continue;
             }
 
@@ -188,7 +186,6 @@ class Configuration
 
             $constraint['config'] = $constraintConfig;
             $constraintData[$constraintId] = $constraint;
-
         }
 
         return $constraintData;

@@ -99,7 +99,6 @@ class ExportController extends AdminController
 
         /** @var Email\Log $log */
         foreach ($mailData as $log) {
-
             $mailPath = null;
             $mailParams = $this->extractMailParams($log, $formEntity, $mailHeader);
 
@@ -148,6 +147,7 @@ class ExportController extends AdminController
         }
 
         $header = array_keys($rows[0]);
+
         return $this->generateCsvStructure($header, $rows);
     }
 
@@ -174,7 +174,6 @@ class ExportController extends AdminController
         }
 
         foreach ($mailParams as $mailParam) {
-
             if (!$mailParam instanceof \stdClass) {
                 continue;
             }
@@ -211,7 +210,6 @@ class ExportController extends AdminController
             }
 
             $normalizedParams[$displayKeyName] = $value;
-
         }
 
         return $normalizedParams;
@@ -226,7 +224,7 @@ class ExportController extends AdminController
     {
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
-        $stdClass->value = (int)$formId;
+        $stdClass->value = (int) $formId;
 
         return json_encode([
             'key'  => '_form_builder_id',
@@ -278,6 +276,7 @@ class ExportController extends AdminController
         }
 
         fclose($handle);
+
         return $contents;
     }
 

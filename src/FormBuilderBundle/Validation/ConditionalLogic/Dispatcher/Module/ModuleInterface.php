@@ -17,5 +17,4 @@ interface ModuleInterface
      * @return mixed
      */
     public function apply($options);
-
 }

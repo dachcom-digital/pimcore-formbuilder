@@ -75,12 +75,11 @@ class Builder
     /**
      * @param Request $request
      *
-     * @return null|integer
+     * @return null|int
      */
     public function detectedFormIdByRequest(Request $request)
     {
         foreach ($request->request->all() as $key => $parameters) {
-
             if (strpos($key, 'formbuilder_') === false) {
                 continue;
             }
@@ -174,12 +173,12 @@ class Builder
 
             if (isset($currentAttributes[$attribute['option']])) {
                 if (is_array($currentAttributes[$attribute['option']])) {
-                    $currentAttributes[$attribute['option']] = array_merge($currentAttributes[$attribute['option']], (array)$attribute['value']);
+                    $currentAttributes[$attribute['option']] = array_merge($currentAttributes[$attribute['option']], (array) $attribute['value']);
                 } else {
-                    $currentAttributes[$attribute['option']] .= ' ' . (string)$attribute['value'];
+                    $currentAttributes[$attribute['option']] .= ' ' . (string) $attribute['value'];
                 }
             } else {
-                $currentAttributes[$attribute['option']] = (string)$attribute['value'];
+                $currentAttributes[$attribute['option']] = (string) $attribute['value'];
             }
         }
 

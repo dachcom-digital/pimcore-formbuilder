@@ -79,7 +79,7 @@ class FileLocator
     }
 
     /**
-     * return content of $path as Finder-Object
+     * return content of $path as Finder-Object.
      *
      * @param string $path
      *
@@ -92,6 +92,7 @@ class FileLocator
         }
 
         $finder = new Finder();
+
         return $finder->files()->in($path);
     }
 
@@ -127,6 +128,7 @@ class FileLocator
     {
         $finder = new Finder();
         $minStorageAge = empty($minStorageAge) ? '< 0 minute ago' : $minStorageAge;
+
         return $finder->in($folder)->date($minStorageAge)->depth('== 0')->directories();
     }
 }

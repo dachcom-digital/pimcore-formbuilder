@@ -90,7 +90,6 @@ class MailBehaviour implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-
             if (!$returnStack instanceof SimpleReturnStack || !in_array($returnStack->getActionType(), ['mailBehaviour'])) {
                 continue;
             }
@@ -107,12 +106,10 @@ class MailBehaviour implements ModuleInterface
             }
 
             $mailConfig[$returnStackData['identifier']] = $returnStackData['value'];
-
         }
 
         $returnContainer->setData($mailConfig);
 
         return $returnContainer;
     }
-
 }

@@ -21,7 +21,6 @@ class Version20181109155034 extends AbstractPimcoreMigration
         }
 
         \Pimcore\Cache::clearAll();
-
     }
 
     /**

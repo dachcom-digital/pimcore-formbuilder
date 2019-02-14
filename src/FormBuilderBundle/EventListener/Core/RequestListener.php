@@ -115,12 +115,12 @@ class RequestListener implements EventSubscriberInterface
                 ]);
                 $event->setResponse($response);
             }
+
             return;
         }
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
                 if ($sessionBag->has('form_configuration_' . $formId)) {
                     $sessionBag->remove('form_configuration_' . $formId);
                 }
@@ -134,7 +134,6 @@ class RequestListener implements EventSubscriberInterface
                     $this->handleDefaultSuccessResponse($event, $submissionEvent);
                 }
             } else {
-
                 //only ajax forms want some feedback.
                 if ($request->isXmlHttpRequest()) {
                     $this->handleAjaxErrorResponse($event, $form);

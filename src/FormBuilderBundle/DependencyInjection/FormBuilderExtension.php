@@ -15,6 +15,7 @@ class FormBuilderExtension extends Extension
     /**
      * @param array            $configs
      * @param ContainerBuilder $container
+     *
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
@@ -41,6 +42,5 @@ class FormBuilderExtension extends Extension
 
         $configManagerDefinition = $container->getDefinition(BundleConfiguration::class);
         $configManagerDefinition->addMethodCall('setConfig', [$config]);
-
     }
 }

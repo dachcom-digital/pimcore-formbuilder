@@ -49,6 +49,7 @@ class TemplateManager
         $templates = $areaConfig['field']['templates'];
         foreach ($templates as $template) {
             $defaultValue = $template['value'];
+
             break;
         }
 
@@ -76,6 +77,7 @@ class TemplateManager
             foreach ($templateData as $template) {
                 $storeTemplates[] = [$template['value'], $template['label']];
             }
+
             return $storeTemplates;
         }
 
@@ -93,6 +95,7 @@ class TemplateManager
         $templates = $areaConfig['templates'];
         foreach ($templates as $template) {
             $defaultValue = $template['value'];
+
             break;
         }
 

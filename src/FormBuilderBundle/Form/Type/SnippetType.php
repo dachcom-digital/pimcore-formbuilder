@@ -62,12 +62,13 @@ class SnippetType extends AbstractType
             'path' => $this->getSnippetId($options['path'])
         ]);
 
-        $vars['attr']['class'] = join(' ', (array)$vars['attr']['class']);
+        $vars['attr']['class'] = join(' ', (array) $vars['attr']['class']);
         $view->vars = $vars;
     }
 
     /**
      * @param string|array $data
+     *
      * @return string|null
      */
     private function getSnippetId($data)

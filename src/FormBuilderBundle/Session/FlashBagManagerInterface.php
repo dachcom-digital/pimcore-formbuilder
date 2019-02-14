@@ -2,10 +2,7 @@
 
 namespace FormBuilderBundle\Session;
 
-use Pimcore\Session\SessionConfiguratorInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 interface FlashBagManagerInterface
 {

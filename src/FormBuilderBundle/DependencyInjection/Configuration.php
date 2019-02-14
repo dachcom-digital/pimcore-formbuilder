@@ -54,7 +54,9 @@ class Configuration implements ConfigurationInterface
                                 ->canBeDisabled()
                                 ->treatNullLike(['enabled' => false])
                                 ->validate()
-                                    ->ifTrue(function($v) { return $v['enabled'] === false; })
+                                    ->ifTrue(function ($v) {
+                                        return $v['enabled'] === false;
+                                    })
                                     ->thenUnset()
                                 ->end()
                             ->end()
@@ -74,7 +76,9 @@ class Configuration implements ConfigurationInterface
                                         ->canBeDisabled()
                                         ->treatNullLike(['enabled' => false])
                                         ->validate()
-                                            ->ifTrue(function($v) { return $v['enabled'] === false; })
+                                            ->ifTrue(function ($v) {
+                                                return $v['enabled'] === false;
+                                            })
                                             ->thenUnset()
                                         ->end()
                                     ->end()
@@ -114,7 +118,9 @@ class Configuration implements ConfigurationInterface
                         ->canBeDisabled()
                         ->treatNullLike(['enabled' => false])
                         ->validate()
-                            ->ifTrue(function($v) { return $v['enabled'] === false; })
+                            ->ifTrue(function ($v) {
+                                return $v['enabled'] === false;
+                            })
                             ->thenUnset()
                         ->end()
                     ->end()
@@ -131,7 +137,9 @@ class Configuration implements ConfigurationInterface
                         ->canBeDisabled()
                         ->treatNullLike(['enabled' => false])
                         ->validate()
-                            ->ifTrue(function($v) { return $v['enabled'] === false; })
+                            ->ifTrue(function ($v) {
+                                return $v['enabled'] === false;
+                            })
                             ->thenUnset()
                         ->end()
                     ->end()
@@ -159,7 +167,9 @@ class Configuration implements ConfigurationInterface
                         ->canBeDisabled()
                         ->treatNullLike(['enabled' => false])
                         ->validate()
-                            ->ifTrue(function($v) { return $v['enabled'] === false; })
+                            ->ifTrue(function ($v) {
+                                return $v['enabled'] === false;
+                            })
                             ->thenUnset()
                         ->end()
                     ->end()
@@ -236,7 +246,7 @@ class Configuration implements ConfigurationInterface
                                             ->thenInvalid('%s is invalid, only one node can be defined ("enabled" or "disabled").')
                                         ->end()
                                         ->validate()
-                                            ->always(function($value) {
+                                            ->always(function ($value) {
                                                 if (isset($value['enabled']) && in_array('all', $value['enabled'])) {
                                                     return ['disabled' => []];
                                                 } elseif (isset($value['disabled']) && in_array('all', $value['disabled'])) {
@@ -246,6 +256,7 @@ class Configuration implements ConfigurationInterface
                                                 } elseif (isset($value['disabled']) && !empty($value['disabled'])) {
                                                     return ['disabled' => $value['disabled']];
                                                 }
+
                                                 return $value;
                                             })
                                         ->end()
@@ -299,12 +310,17 @@ class Configuration implements ConfigurationInterface
                                                 ->ifNull()
                                                 ->then(function ($v) {
                                                     $v = ['display_group_id' => null, 'type' => null, 'label' => null, 'enabled' => false];
+
                                                     return $v;
                                                 })
                                             ->end()
                                             ->validate()
-                                                ->ifTrue(function($v) { return $v['enabled'] === false; })
-                                                ->then(function($v) { return false;})
+                                                ->ifTrue(function ($v) {
+                                                    return $v['enabled'] === false;
+                                                })
+                                                ->then(function ($v) {
+                                                    return false;
+                                                })
                                             ->end()
                                         ->end()
                                     ->end()
@@ -326,11 +342,15 @@ class Configuration implements ConfigurationInterface
                                         ->useAttributeAsKey('name')
                                         ->prototype('array')
                                             ->validate()
-                                                ->ifTrue(function($v) { return !empty($v['conditional']) && empty($v['conditional_identifier']); })
+                                                ->ifTrue(function ($v) {
+                                                    return !empty($v['conditional']) && empty($v['conditional_identifier']);
+                                                })
                                                 ->thenInvalid('conditional form fields requires a valid conditional_identifier.')
                                             ->end()
                                             ->validate()
-                                                ->ifTrue(function($v) { return !empty($v['conditional']) && $v['type'] !== 'conditional_select'; })
+                                                ->ifTrue(function ($v) {
+                                                    return !empty($v['conditional']) && $v['type'] !== 'conditional_select';
+                                                })
                                                 ->thenInvalid('conditional form is only allowed for type "conditional_select".')
                                             ->end()
                                             ->children()

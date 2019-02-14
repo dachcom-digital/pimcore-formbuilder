@@ -40,6 +40,7 @@ class DispatcherRegistry
      * @param string $identifier
      *
      * @return ModuleInterface
+     *
      * @throws \Exception
      */
     public function get($identifier)

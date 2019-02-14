@@ -47,7 +47,7 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setData(array $data)
     {
@@ -55,7 +55,7 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasData()
     {
@@ -63,7 +63,7 @@ class SuccessMessageData implements DataInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -105,7 +105,7 @@ class SuccessMessageData implements DataInterface
      */
     public function getString($locale)
     {
-        return $this->isStringSuccess() ? $this->translator->trans((string)$this->data[self::IDENTIFIER_STRING], [], null, $locale) : null;
+        return $this->isStringSuccess() ? $this->translator->trans((string) $this->data[self::IDENTIFIER_STRING], [], null, $locale) : null;
     }
 
     /**
@@ -134,7 +134,6 @@ class SuccessMessageData implements DataInterface
         }
 
         return null;
-
     }
 
     /**
@@ -206,6 +205,6 @@ class SuccessMessageData implements DataInterface
             return null;
         }
 
-        return $this->hasFlashMessage() ? $this->translator->trans((string)$this->data['flashMessage'], [], null, $locale) : null;
+        return $this->hasFlashMessage() ? $this->translator->trans((string) $this->data['flashMessage'], [], null, $locale) : null;
     }
 }

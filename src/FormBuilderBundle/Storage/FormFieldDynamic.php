@@ -48,7 +48,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -56,7 +56,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -64,7 +64,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isUpdated()
     {
@@ -72,7 +72,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOptions()
     {
@@ -80,7 +80,7 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOptional()
     {
@@ -88,13 +88,13 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOrder()
     {
         $optional = $this->getOptional();
         if (isset($optional['order']) && is_numeric($optional['order'])) {
-            return (int)$optional['order'];
+            return (int) $optional['order'];
         }
 
         return 0;

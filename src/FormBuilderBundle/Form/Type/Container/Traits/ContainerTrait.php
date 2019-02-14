@@ -21,7 +21,7 @@ trait ContainerTrait
         if (empty($options['formbuilder_configuration']['label'])) {
             $label = false;
         } else {
-            $label = (string)$options['formbuilder_configuration']['label'];
+            $label = (string) $options['formbuilder_configuration']['label'];
         }
 
         return $label;

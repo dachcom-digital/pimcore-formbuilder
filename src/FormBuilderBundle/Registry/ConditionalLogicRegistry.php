@@ -89,6 +89,7 @@ class ConditionalLogicRegistry
      * @param string $type
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function get($identifier, $type)
@@ -114,6 +115,7 @@ class ConditionalLogicRegistry
      * @param string $identifier
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getCondition($identifier)
@@ -135,6 +137,7 @@ class ConditionalLogicRegistry
      * @param string $identifier
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getAction($identifier)

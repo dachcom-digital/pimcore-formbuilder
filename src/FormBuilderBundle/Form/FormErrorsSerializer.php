@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 class FormErrorsSerializer implements FormErrorsSerializerInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getErrors(FormInterface $form)
     {
@@ -30,7 +30,7 @@ class FormErrorsSerializer implements FormErrorsSerializerInterface
                 $errors = array_merge($errors, $this->recursiveFormErrors($formError, array_merge($prefixes, [$formError->getForm()->getName()])));
             } elseif ($formError instanceof FormError) {
                 $index = count($prefixes) === 1 ? 'general' : implode('_', $prefixes);
-                /** @scrutinizer ignore-call */
+                /* @scrutinizer ignore-call */
                 $errors[$index][] = $formError->getMessage();
             }
         }

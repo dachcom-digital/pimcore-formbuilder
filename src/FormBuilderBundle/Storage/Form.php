@@ -79,7 +79,7 @@ class Form extends Model\AbstractModel implements FormInterface
     private $data = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getById(int $id)
     {
@@ -89,14 +89,14 @@ class Form extends Model\AbstractModel implements FormInterface
             return null;
         }
 
-        $obj = new self;
+        $obj = new self();
         $obj->getDao()->getById($id);
 
         return $obj;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getByName(string $name)
     {
@@ -104,45 +104,46 @@ class Form extends Model\AbstractModel implements FormInterface
             return null;
         }
 
-        $obj = new self;
+        $obj = new self();
         $obj->getDao()->getByName($name);
 
         return $obj;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getAll()
     {
-        $list = new Form\Listing;
+        $list = new Form\Listing();
+
         return $list->getData();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getNameById(int $id)
     {
-        $obj = new self;
+        $obj = new self();
         $obj->getDao()->getById($id);
 
         return $obj->name;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getIdByName(string $name)
     {
-        $obj = new self;
+        $obj = new self();
         $obj->getDao()->getByName($name);
 
         return $obj->id;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTranslator(Translator $translator)
     {
@@ -150,7 +151,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rename(string $newName)
     {
@@ -159,7 +160,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save()
     {
@@ -167,7 +168,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function delete()
     {
@@ -175,7 +176,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setId($id)
     {
@@ -183,15 +184,15 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getId()
     {
-        return is_numeric($this->id) ? (int)$this->id : null;
+        return is_numeric($this->id) ? (int) $this->id : null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setName(string $name)
     {
@@ -199,7 +200,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -207,7 +208,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setGroup(string $groupName = null)
     {
@@ -215,7 +216,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getGroup()
     {
@@ -223,7 +224,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setCreationDate(string $date)
     {
@@ -231,7 +232,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCreationDate()
     {
@@ -239,7 +240,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setModificationDate(string $date)
     {
@@ -247,7 +248,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getModificationDate()
     {
@@ -255,7 +256,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setModifiedBy(int $userId)
     {
@@ -263,15 +264,15 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getModifiedBy()
     {
-        return (int)$this->modifiedBy;
+        return (int) $this->modifiedBy;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setCreatedBy(int $userId)
     {
@@ -279,15 +280,15 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCreatedBy()
     {
-        return (int)$this->createdBy;
+        return (int) $this->createdBy;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setConfig(array $config)
     {
@@ -296,7 +297,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConfig()
     {
@@ -304,7 +305,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConditionalLogic()
     {
@@ -312,7 +313,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setConditionalLogic(array $config)
     {
@@ -320,7 +321,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addDynamicField(string $name, string $type, array $options = [], array $optional = [])
     {
@@ -342,7 +343,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeDynamicField(string $name)
     {
@@ -356,7 +357,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setFields(array $fields)
     {
@@ -364,7 +365,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFields()
     {
@@ -372,7 +373,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFieldsByType(string $type)
     {
@@ -387,7 +388,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getField(string $name)
     {
@@ -401,7 +402,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFieldContainer(string $name)
     {
@@ -414,7 +415,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFieldType(string $name)
     {
@@ -428,7 +429,7 @@ class Form extends Model\AbstractModel implements FormInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFieldValue(string $name)
     {
@@ -458,7 +459,7 @@ class Form extends Model\AbstractModel implements FormInterface
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __set($name, $value)
     {
@@ -477,6 +478,7 @@ class Form extends Model\AbstractModel implements FormInterface
         }
 
         $data = $this->getData();
+
         return isset($data[$name]);
     }
 

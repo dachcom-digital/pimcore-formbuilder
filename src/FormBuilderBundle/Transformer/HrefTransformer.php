@@ -7,7 +7,7 @@ use Pimcore\Model\Element\Service;
 class HrefTransformer implements OptionsTransformerInterface
 {
     /**
-     * Transform href data
+     * Transform href data.
      *
      * @param array $optionValue
      * @param array $optionConfig
@@ -28,7 +28,7 @@ class HrefTransformer implements OptionsTransformerInterface
     }
 
     /**
-     * Transform href path/id to detailed info array
+     * Transform href path/id to detailed info array.
      *
      * @param array $optionValue
      * @param array $optionConfig
@@ -51,7 +51,6 @@ class HrefTransformer implements OptionsTransformerInterface
 
         $optionValues = [];
         foreach ($values as $locale => $value) {
-
             $optionValues[$locale] = [];
 
             $type = $value['type'];
@@ -75,6 +74,5 @@ class HrefTransformer implements OptionsTransformerInterface
         }
 
         return $optionValues;
-
     }
 }

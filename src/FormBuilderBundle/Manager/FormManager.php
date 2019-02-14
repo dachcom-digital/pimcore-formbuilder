@@ -16,7 +16,7 @@ class FormManager
     protected $formFactory;
 
     /**
-     * TokenStorageUserResolver
+     * TokenStorageUserResolver.
      */
     protected $storageUserResolver;
 
@@ -87,6 +87,7 @@ class FormManager
      * @param null|int $id
      *
      * @return FormInterface|null
+     *
      * @throws \Exception
      */
     public function save(array $data, $id = null)
@@ -114,6 +115,7 @@ class FormManager
      * @param int $id
      *
      * @return FormInterface|null
+     *
      * @throws \Exception
      */
     public function delete($id)
@@ -134,6 +136,7 @@ class FormManager
      * @param string $newName
      *
      * @return FormInterface|null
+     *
      * @throws \Exception
      */
     public function rename(int $id, string $newName)
@@ -156,7 +159,7 @@ class FormManager
      */
     protected function updateFormAttributes(array $data, FormInterface $form, $isUpdate = false)
     {
-        $form->setName((string)$data['form_name']);
+        $form->setName((string) $data['form_name']);
 
         if (isset($data['form_group'])) {
             $form->setGroup($data['form_group']);
@@ -192,7 +195,6 @@ class FormManager
         $fields = [];
 
         foreach ($this->getValue($data, 'fields', []) as $fieldData) {
-
             //allow some space for dynamic fields.
             $order += 100;
 
@@ -217,6 +219,7 @@ class FormManager
      * @param int           $order
      *
      * @throws \Exception
+     *
      * @return FormFieldContainerInterface
      */
     protected function generateFormFieldContainer(FormInterface $form, array $fieldData, int $order)
@@ -337,6 +340,7 @@ class FormManager
     protected function getValueAsString($data, $value, $default = '')
     {
         $value = $this->getValue($data, $value, $default);
+
         return is_string($value) ? $value : $default;
     }
 
@@ -346,6 +350,7 @@ class FormManager
     protected function getAdminUserId()
     {
         $user = $this->storageUserResolver->getUser();
-        return $user instanceof \Pimcore\Model\User ? (int)$user->getId() : 0;
+
+        return $user instanceof \Pimcore\Model\User ? (int) $user->getId() : 0;
     }
 }

@@ -12,6 +12,7 @@ class HelpExtension extends AbstractTypeExtension
 {
     /**
      * Returns the name of the type being extended.
+     *
      * @return string The name of the type being extended
      */
     public function getExtendedType()
@@ -34,7 +35,6 @@ class HelpExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['help_text'] = isset($options['help_text']) ? $options['help_text'] : NULL;
+        $view->vars['help_text'] = isset($options['help_text']) ? $options['help_text'] : null;
     }
-
 }

@@ -29,6 +29,7 @@ class Dao extends Listing\Dao\AbstractDao
     {
         $objects = $this->db->fetchAll('SELECT * FROM ' . $this->tableName);
         $this->model->setData($objects);
+
         return $objects;
     }
 }

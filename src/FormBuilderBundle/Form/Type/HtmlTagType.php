@@ -37,7 +37,7 @@ class HtmlTagType extends AbstractType
             'tag'  => empty($options['tag']) ? 'label' : $options['tag']
         ]);
 
-        $vars['attr']['class'] = join(' ', (array)$vars['attr']['class']);
+        $vars['attr']['class'] = join(' ', (array) $vars['attr']['class']);
         $view->vars = $vars;
     }
 

@@ -19,6 +19,7 @@ class AjaxController extends FrontendController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse|Response
      */
     public function fileAddAction(Request $request)
@@ -43,7 +44,6 @@ class AjaxController extends FrontendController
             }
 
             return $this->json($result);
-
         } elseif ($method === 'DELETE') {
             return $this->fileDeleteAction($request, $request->request->get('uuid'));
         } else {
@@ -51,6 +51,7 @@ class AjaxController extends FrontendController
             $response->headers->set('Content-Type', 'text/plain');
             $response->headers->set('Cache-Control', 'no-cache');
             $response->setStatusCode(405);
+
             return $response;
         }
     }

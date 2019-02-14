@@ -3,7 +3,6 @@
 namespace FormBuilderBundle\EventListener\Core;
 
 use FormBuilderBundle\Tool\FileLocator;
-use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,9 +34,6 @@ class CleanUpListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @return void
-     */
     public function onMaintenance()
     {
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {

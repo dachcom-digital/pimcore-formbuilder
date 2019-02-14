@@ -62,7 +62,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setTranslator(Translator $translator)
     {
@@ -70,7 +70,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOrder()
     {
@@ -78,7 +78,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setOrder(int $order)
     {
@@ -86,7 +86,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setName(string $name)
     {
@@ -94,7 +94,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -102,7 +102,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setDisplayName(string $name)
     {
@@ -110,7 +110,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDisplayName()
     {
@@ -118,7 +118,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setType(string $type)
     {
@@ -126,7 +126,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getType()
     {
@@ -134,7 +134,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isUpdated()
     {
@@ -142,7 +142,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setOptions(array $options = [])
     {
@@ -152,7 +152,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOptions()
     {
@@ -160,7 +160,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setOptional(array $options = [])
     {
@@ -170,7 +170,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getOptional()
     {
@@ -178,7 +178,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setConstraints(array $constraints = [])
     {
@@ -186,7 +186,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConstraints()
     {
@@ -194,7 +194,7 @@ class FormField implements FormFieldInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function toArray()
     {
@@ -205,6 +205,7 @@ class FormField implements FormFieldInterface
         }
 
         $removeKeys = ['translator', 'update'];
+
         return array_diff_key($array, array_flip($removeKeys));
     }
 }

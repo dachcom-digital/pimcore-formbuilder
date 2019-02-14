@@ -6,6 +6,7 @@ trait ConditionTrait
 {
     /**
      * @param array $values
+     *
      * @return $this
      */
     public function setValues(array $values)
