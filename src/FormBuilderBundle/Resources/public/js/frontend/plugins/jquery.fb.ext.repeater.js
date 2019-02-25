@@ -25,7 +25,7 @@
          * Add Container Events and populate available containers with controls
          */
         init: function () {
-            this.$repeaterContainer = $(this.containerClass);
+            this.$repeaterContainer = this.$form.find(this.containerClass);
             this.$repeaterContainer.each(this.setupContainer.bind(this));
             this.$repeaterContainer.on('click', '.add-block', this.onAdd.bind(this));
             this.$repeaterContainer.on('click', '.remove-block', this.onRemove.bind(this));
