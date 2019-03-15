@@ -371,9 +371,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     },
 
     getRepeaterWithKeyValue: function (fieldConfig) {
-
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
-            fieldConfig,
+            fieldConfig.id,
+            fieldConfig.label,
             this.getFieldValue(fieldConfig.id)
         );
 
@@ -382,9 +382,9 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
     },
 
     getRepeaterWithOptions: function (fieldConfig) {
-
         var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
-            fieldConfig,
+            fieldConfig.id,
+            fieldConfig.label,
             this.getFieldValue(fieldConfig.id),
             fieldConfig.config.options,
             false

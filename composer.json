@@ -29,7 +29,7 @@
         }
     },
     "require": {
-        "pimcore/core-version": "^5.1.0"
+        "pimcore/core-version": "^5.4.0"
     },
     "require-dev": {
         "codeception/codeception": "~2.3.0",

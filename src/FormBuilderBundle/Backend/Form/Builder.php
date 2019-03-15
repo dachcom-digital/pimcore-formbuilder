@@ -41,8 +41,6 @@ class Builder
     protected $conditionalLogicRegistry;
 
     /**
-     * Builder constructor.
-     *
      * @param Configuration              $configuration
      * @param TemplateManager            $templateManager
      * @param Translator                 $translator
@@ -116,11 +114,12 @@ class Builder
     {
         foreach ($fields as &$fieldData) {
             if ($fieldData['type'] === 'container' && is_array($fieldData['fields'])) {
+                $this->transformContainerOptions($fieldData, true);
                 foreach ($fieldData['fields'] as &$subFieldData) {
-                    $this->transformOptions($subFieldData, true);
+                    $this->transformFieldOptions($subFieldData, true);
                 }
             } else {
-                $this->transformOptions($fieldData, true);
+                $this->transformFieldOptions($fieldData, true);
             }
         }
 
@@ -142,11 +141,12 @@ class Builder
 
         foreach ($data['fields'] as &$fieldData) {
             if ($fieldData['type'] === 'container' && is_array($fieldData['fields'])) {
+                $this->transformContainerOptions($fieldData);
                 foreach ($fieldData['fields'] as &$subFieldData) {
-                    $this->transformOptions($subFieldData);
+                    $this->transformFieldOptions($subFieldData);
                 }
             } else {
-                $this->transformOptions($fieldData);
+                $this->transformFieldOptions($fieldData);
             }
         }
 
@@ -295,10 +295,10 @@ class Builder
         $containerData = [];
         foreach ($containerTypes as $containerId => &$container) {
             $container['label'] = $this->translate($container['label']);
-            if (isset($container['config']) && is_array($container['config'])) {
-                foreach ($container['config'] as $index => $configNode) {
-                    if (isset($container['config'][$index]['label'])) {
-                        $container['config'][$index]['label'] = $this->translate($configNode['label']);
+            if (isset($container['configuration']) && is_array($container['configuration'])) {
+                foreach ($container['configuration'] as $index => $configNode) {
+                    if (isset($container['configuration'][$index]['label'])) {
+                        $container['configuration'][$index]['label'] = $this->translate($configNode['label']);
                     }
                 }
             }
@@ -545,23 +545,21 @@ class Builder
      * @param array $fieldData
      * @param bool  $reverse
      *
-     * @return mixed
-     *
      * @throws \Exception
      */
-    private function transformOptions(&$fieldData, $reverse = false)
+    private function transformFieldOptions(&$fieldData, $reverse = false)
     {
         $formTypes = $this->configuration->getConfig('types');
 
         if (!isset($fieldData['options']) || !is_array($fieldData['options'])) {
-            return $fieldData;
+            return;
         }
 
         $formTypeConfig = $formTypes[$fieldData['type']];
         $backendConfig = $this->getMergedFormTypeConfig($fieldData['type'], $formTypeConfig['backend']);
 
         if (!isset($backendConfig['fields'])) {
-            return $fieldData;
+            return;
         }
 
         foreach ($fieldData['options'] as $optionName => $optionValue) {
@@ -578,6 +576,51 @@ class Builder
                     $fieldData['options'][$optionName] = $transformer->transform($optionValue, $optionConfig);
                 } else {
                     $fieldData['options'][$optionName] = $transformer->reverseTransform($optionValue, $optionConfig);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $fieldData
+     * @param bool  $reverse
+     *
+     * @throws \Exception
+     */
+    private function transformContainerOptions(&$fieldData, $reverse = false)
+    {
+        if (!isset($fieldData['configuration']) || !is_array($fieldData['configuration'])) {
+            return;
+        }
+
+        $formContainerTypes = $this->configuration->getAvailableContainer();
+        $containerData = $formContainerTypes[$fieldData['sub_type']];
+        if (!isset($containerData['configuration']) || !is_array($containerData['configuration'])) {
+            return;
+        }
+
+        $containerConfigurations = $containerData['configuration'];
+        $currentConfiguration = $fieldData['configuration'];
+
+        foreach ($containerConfigurations as $containerConfiguration) {
+
+            $configName = $containerConfiguration['name'];
+            if (!isset($currentConfiguration[$configName])) {
+                continue;
+            }
+
+            $blockValue = $currentConfiguration[$configName];
+            $blockConfig = $containerConfiguration['config'];
+
+            if (!empty($containerConfiguration['options_transformer'])) {
+
+                /** @var OptionsTransformerInterface $transformer */
+                $transformer = $this->optionsTransformerRegistry->get($containerConfiguration['options_transformer']);
+
+                if ($reverse === false) {
+                    $fieldData['configuration'][$configName] = $transformer->transform($blockValue, $blockConfig);
+                } else {
+                    $fieldData['configuration'][$configName] = $transformer->reverseTransform($blockValue, $blockConfig);
                 }
             }
         }

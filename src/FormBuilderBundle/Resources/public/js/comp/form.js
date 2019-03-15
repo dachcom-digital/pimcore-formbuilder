@@ -661,10 +661,8 @@ Formbuilder.comp.form = Class.create({
                 ]
             }),
             keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
-                {
-                    'label': t('form_builder_form_attribute_name') + ' & ' + t('form_builder_form_attribute_value'),
-                    'id': 'attributes'
-                },
+                'attributes',
+                t('form_builder_form_attribute_name') + ' & ' + t('form_builder_form_attribute_value'),
                 this.formConfig['attributes'] ? this.formConfig['attributes'] : [],
                 this.formConfigStore.attributes,
                 false

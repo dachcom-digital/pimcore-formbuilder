@@ -230,6 +230,16 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
                         anchor: '100%'
                     });
                     break;
+                case 'options_repeater' :
+                    var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
+                        'configuration.' + configElement.name,
+                        configElement.label,
+                        this.getFieldValue(configElement.name),
+                        configElement.config.options,
+                        false
+                    );
+                    field = keyValueRepeater.getRepeater();
+                    break;
             }
 
             if (field) {
