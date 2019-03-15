@@ -15,7 +15,6 @@ class FieldAttributesCest extends AbstractExtJs
     protected function setupDefaultField(AcceptanceTester $I)
     {
         $this->amOnFormBuilderBackendBuilder($I);
-
         $formId = $this->seeExtJsForm($I);
 
         return $formId;
