@@ -1,0 +1,6 @@
+modules:
+    config:
+        \DachcomBundle\Test\Helper\Browser\WebDriver:
+            capabilities:
+                chromeOptions:
+                    args: ['--headless', '--disable-gpu', '--no-sandbox',  '--window-size=1280,1024']
