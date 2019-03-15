@@ -603,7 +603,6 @@ class Builder
         $currentConfiguration = $fieldData['configuration'];
 
         foreach ($containerConfigurations as $containerConfiguration) {
-
             $configName = $containerConfiguration['name'];
             if (!isset($currentConfiguration[$configName])) {
                 continue;
@@ -613,7 +612,6 @@ class Builder
             $blockConfig = $containerConfiguration['config'];
 
             if (!empty($containerConfiguration['options_transformer'])) {
-
                 /** @var OptionsTransformerInterface $transformer */
                 $transformer = $this->optionsTransformerRegistry->get($containerConfiguration['options_transformer']);
 
