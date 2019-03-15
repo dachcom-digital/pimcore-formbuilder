@@ -18,7 +18,7 @@ Formbuilder.comp.type.formFieldContainer = Class.create({
         this.iconClass = containerConfig.icon_class;
         this.subType = containerConfig.id;
         this.typeName = containerConfig.label;
-        this.config = containerConfig.config;
+        this.config = containerConfig.configuration;
         this.containerTemplates = availableContainerTemplates;
         // we don't have a real display name field, so define it here.
         this.displayName = values ? values.display_name : null;
