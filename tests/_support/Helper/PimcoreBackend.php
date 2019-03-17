@@ -397,6 +397,31 @@ class PimcoreBackend extends Module
     }
 
     /**
+     * @param string $key
+     * @param string $translation
+     * @param string $language
+     *
+     * @return \Pimcore\Model\Translation\Website|null
+     */
+    public function haveAFrontendTranslatedKey(string $key, string $translation, string $language)
+    {
+        $t = null;
+
+        try {
+            /** @var Translator $translator */
+            $t = \Pimcore\Model\Translation\Website::getByKey($key, true);
+            $t->addTranslation($language, $translation);
+            $t->save();
+        } catch (\Exception $e) {
+            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating translation. message was: ' . $e->getMessage()));
+        }
+
+        $this->assertInstanceOf(\Pimcore\Model\Translation\Website::class, $t);
+
+        return $t;
+    }
+
+    /**
      * @param array $documentIds
      *
      * @return Log[]

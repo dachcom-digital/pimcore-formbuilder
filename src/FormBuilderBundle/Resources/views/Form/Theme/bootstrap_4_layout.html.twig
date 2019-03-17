@@ -24,6 +24,22 @@
     {% endif %}
 {%- endblock form_widget_compound -%}
 
+{% block checkbox_radio_label %}
+    {% if label is not same as(false) %}
+        {% set temp_label = translation_domain is same as(false) ? label : label|trans({}, translation_domain) %}
+        {% if temp_label matches '/<\s*\\w[^>]*>/' %}
+            {% set translation_domain = false %}
+            {% set label = 'HTML_LABEL' %}
+            {% set rendered_label = parent() %}
+            {{- rendered_label|replace({'HTML_LABEL': temp_label})|raw -}}
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock checkbox_radio_label %}
+
 {% block help_text_label %}
     <small class="text-muted">{{ help_text|trans }}</small>
 {% endblock help_text_label %}
