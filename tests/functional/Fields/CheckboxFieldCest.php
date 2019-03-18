@@ -122,4 +122,45 @@ class CheckboxFieldCest extends AbstractFieldCest
 
         $I->seeInRenderedEmailBody($adminEmail, 'Checkbox Email Field');
     }
+
+    /**
+     * @param FunctionalTester $I
+     */
+    public function testCheckboxLabelTranslationDefault(FunctionalTester $I)
+    {
+        $translatedLabel = 'Translated Checkbox Field 1';
+
+        $options = [
+            'label' => 'formbuilder.label.checkbox_field_1'
+        ];
+
+        $I->haveAFrontendTranslatedKey('formbuilder.label.checkbox_field_1', $translatedLabel, 'en');
+
+        $this->setupField($I, $options);
+
+        $I->seeElement('input#formbuilder_1_checkbox_field');
+        $I->seeKeyInFrontendTranslations('formbuilder.label.checkbox_field_1');
+        $I->see($translatedLabel, 'label[for="formbuilder_1_checkbox_field"]');
+    }
+
+    /**
+     * @param FunctionalTester $I
+     */
+    public function testCheckboxLabelTranslationWithHtml(FunctionalTester $I)
+    {
+        $translatedLabel = 'Translated <a href="/test-link">Checkbox Field 1 with Link!</a>';
+
+        $options = [
+            'label' => 'formbuilder.label.checkbox_field_1'
+        ];
+
+        $I->haveAFrontendTranslatedKey('formbuilder.label.checkbox_field_1', $translatedLabel, 'en');
+
+        $this->setupField($I, $options);
+
+        $I->seeElement('input#formbuilder_1_checkbox_field');
+        $I->seeKeyInFrontendTranslations('formbuilder.label.checkbox_field_1');
+        $I->see($translatedLabel, 'label[for="formbuilder_1_checkbox_field"]');
+    }
+
 }
