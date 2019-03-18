@@ -3,7 +3,9 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     allowGroupSelector: true,
 
-    fieldConfig: null,
+    fieldIdentifier: null,
+
+    fieldLabel: null,
 
     storeData: null,
 
@@ -15,9 +17,10 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     optionStore: null,
 
-    initialize: function (fieldConfig, storeData, optionStore, allowGroup) {
+    initialize: function (identifier, label, storeData, optionStore, allowGroup) {
 
-        this.fieldConfig = fieldConfig;
+        this.fieldIdentifier = identifier;
+        this.fieldLabel = label;
         this.storeData = storeData;
         this.optionStore = optionStore;
 
@@ -108,8 +111,7 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
         }
 
         this.repeater = new Ext.form.FieldSet({
-
-            title: this.fieldConfig.label,
+            title: this.fieldLabel,
             collapsible: false,
             autoHeight: true,
             width: '100%',
@@ -356,10 +358,10 @@ Formbuilder.comp.types.keyValueRepeater = Class.create({
 
     generateFieldName: function (fieldSetIndex, fieldContainerIndex, name) {
         if (fieldSetIndex === null) {
-            return this.fieldConfig.id + '.' + fieldContainerIndex + '.' + name;
+            return this.fieldIdentifier + '.' + fieldContainerIndex + '.' + name;
         }
 
-        return this.fieldConfig.id + '.' + fieldSetIndex + '.' + fieldContainerIndex + '.' + name;
+        return this.fieldIdentifier + '.' + fieldSetIndex + '.' + fieldContainerIndex + '.' + name;
     },
 
     updateIndex: function () {

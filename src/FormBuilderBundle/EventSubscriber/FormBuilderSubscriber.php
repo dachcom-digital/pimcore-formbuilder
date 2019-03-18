@@ -256,18 +256,27 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         $typeClass = $this->configuration->getContainerFieldClass($fieldContainer->getSubType());
+        $configuration = $fieldContainer->getConfiguration();
+
+        $containerAttributes = isset($configuration['attr']) ? $configuration['attr'] : [];
+
+        $containerClasses = ['formbuilder-container formbuilder-container-' . strtolower($fieldContainer->getSubType())];
+        if (isset($containerAttributes['class']) && is_string($containerAttributes['class'])) {
+            $containerClasses[] = $containerAttributes['class'];
+        }
+
+        // merge core and attributes class definition
+        $containerAttributes['class'] = join(' ', $containerClasses);
 
         $data = [
             'name'    => $fieldContainer->getName(),
             'type'    => $typeClass,
             'options' => [
-                'formbuilder_configuration' => $fieldContainer->getConfiguration(),
+                'attr'                      => $containerAttributes,
+                'formbuilder_configuration' => $configuration,
                 'entry_options'             => [
                     'fields'         => $fields,
                     'container_type' => $fieldContainer->getSubType()
-                ],
-                'attr'                      => [
-                    'class' => 'formbuilder-container formbuilder-container-' . strtolower($fieldContainer->getSubType())
                 ]
             ]
         ];

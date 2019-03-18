@@ -8,10 +8,10 @@ Pimcore 5.x FormBuilder.
 [![Travis](https://img.shields.io/travis/dachcom-digital/pimcore-formbuilder/master.svg?style=flat-square)](https://travis-ci.org/dachcom-digital/pimcore-formbuilder)
 [![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
 
-<img src="https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png">
+![FormBuilder](https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png)
 
 #### Requirements
-* Pimcore 5.1+
+* Pimcore >= 5.4.0
 
 #### Pimcore 4 
 Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).

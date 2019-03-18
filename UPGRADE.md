@@ -6,6 +6,10 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 2.6.x to Version 2.6.1
+- **[NEW FEATURE]**: [Attributes in Container Fields](https://github.com/dachcom-digital/pimcore-formbuilder/issues/146)
+- [Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/19?closed=1))
+
 #### Update from Version 2.5.x to Version 2.6.0
 - **[BC BREAK]** (Js): `.formbuilder-row` Class added to each form element. `jquery.fb.ext.conditional-logic.js` now only listens to this class
 - **[BC BREAK]** (Js): Validation allocation changed. Since we have sub forms now, we need the full form element id to validate against.

@@ -183,12 +183,12 @@ abstract class AbstractExtJs
         // POPULATE CONDITION
 
         // field
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.fields"]', $id, $conditionBlockIndex), 60, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.fields"]', $id, $conditionBlockIndex), 145, 10);
         $I->waitForText($fieldsToSelect[0], 10, 'ul.x-list-plain[aria-hidden="false"]');
         $I->clickWithLeftButton(sprintf('//ul[@aria-hidden="false"]//li[text()="%s"]', $fieldsToSelect[0]));
 
         // comparator
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.comparator"]', $id, $conditionBlockIndex), 60, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.comparator"]', $id, $conditionBlockIndex), 145, 10);
         $I->clickWithLeftButton('//ul[@aria-hidden="false"]//li[text()="Contains"]');
 
         // value
@@ -232,12 +232,12 @@ abstract class AbstractExtJs
         // POPULATE ACTION
 
         // field
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.fields"]', $id, $actionBlockIndex), 100, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.fields"]', $id, $actionBlockIndex), 230, 10);
         $I->waitForText($fieldsToSelect[0], 10, 'ul.x-list-plain[aria-hidden="false"]');
         $I->clickWithLeftButton(sprintf('//ul[@aria-hidden="false"]//li[text()="%s"]', $fieldsToSelect[0]));
 
         // state
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.state"]', $id, $actionBlockIndex), 100, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.state"]', $id, $actionBlockIndex), 230, 10);
         $I->clickWithLeftButton('//ul[@aria-hidden="false"]//li[text()="Hide"]');
 
         return ['selector' => $id, 'index' => $actionBlockIndex];

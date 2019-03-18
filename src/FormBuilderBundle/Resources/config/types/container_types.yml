@@ -4,16 +4,23 @@ form_builder:
             class: FormBuilderBundle\Form\Type\Container\FieldSetContainerType
             label: 'form_builder_container_type.fieldset'
             icon_class: form_builder_icon_container_type
-            config:
+            configuration:
                 -
                     name: label
                     type: string
                     label: 'form_builder_type_container.repeater.option.label'
+                -
+                    name: attr
+                    type: options_repeater
+                    label: 'form_builder_type_field_base.attributes'
+                    options_transformer: FormBuilderBundle\Transformer\ChoicesTransformer
+                    config:
+                        options: '%form_builder_field_attributes%'
         repeater:
             class: FormBuilderBundle\Form\Type\Container\RepeaterContainerType
             label: 'form_builder_container_type.repeater'
             icon_class: form_builder_icon_container_type
-            config:
+            configuration:
                 -
                     name: label
                     type: string
@@ -42,3 +49,10 @@ form_builder:
                     name: label_remove_block
                     type: string
                     label: 'form_builder_type_container.repeater.option.label.remove_block'
+                -
+                    name: attr
+                    type: options_repeater
+                    label: 'form_builder_type_field_base.attributes'
+                    options_transformer: FormBuilderBundle\Transformer\ChoicesTransformer
+                    config:
+                        options: '%form_builder_field_attributes%'
