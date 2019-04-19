@@ -67,7 +67,17 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/comp/conditionalLogic/action/successMessage.js',
             '/bundles/formbuilder/js/comp/formTypeBuilder.js',
             '/bundles/formbuilder/js/comp/formFieldConstraint.js',
-            '/bundles/formbuilder/js/comp/formFieldContainer.js'
+            '/bundles/formbuilder/js/comp/formFieldContainer.js',
+            '/bundles/formbuilder/js/comp/config_fields/abstract.js',
+            '/bundles/formbuilder/js/comp/config_fields/checkbox.js',
+            '/bundles/formbuilder/js/comp/config_fields/href.js',
+            '/bundles/formbuilder/js/comp/config_fields/key_value_repeater.js',
+            '/bundles/formbuilder/js/comp/config_fields/label.js',
+            '/bundles/formbuilder/js/comp/config_fields/numberfield.js',
+            '/bundles/formbuilder/js/comp/config_fields/options_repeater.js',
+            '/bundles/formbuilder/js/comp/config_fields/select.js',
+            '/bundles/formbuilder/js/comp/config_fields/tagfield.js',
+            '/bundles/formbuilder/js/comp/config_fields/textfield.js',
         ];
     }
 
