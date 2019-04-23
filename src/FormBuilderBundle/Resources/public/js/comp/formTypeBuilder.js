@@ -234,181 +234,21 @@ Formbuilder.comp.type.formTypeBuilder = Class.create({
 
     generateField: function (fieldConfig) {
 
-        var field = null;
-
-        switch (fieldConfig.type) {
-
-            case 'label':
-
-                field = new Ext.form.Label({
-                    style: 'display:block; padding:5px; margin:0 0 20px 0; background:#f5f5f5;border:1px solid #eee;',
-                    text: fieldConfig.label
-                });
-
-                break;
-
-            case 'tagfield':
-
-                var hasStore = fieldConfig.config && Ext.isArray(fieldConfig.config.store),
-                    tagStore = new Ext.data.ArrayStore({
-                        fields: ['index', 'name'],
-                        data: hasStore ? fieldConfig.config.store : []
-                    });
-
-                field = new Ext.form.field.Tag({
-                    name: fieldConfig.id,
-                    fieldLabel: fieldConfig.label,
-                    queryDelay: 0,
-                    store: tagStore,
-                    value: this.getFieldValue(fieldConfig.id),
-                    createNewOnEnter: !hasStore,
-                    createNewOnBlur: !hasStore,
-                    filterPickList: hasStore,
-                    mode: 'local',
-                    displayField: 'name',
-                    valueField: 'index',
-                    hideTrigger: true,
-                    editable: !hasStore,
-                    anchor: '100%'
-                });
-
-                break;
-
-            case 'numberfield':
-
-                field = new Ext.form.field.Number({
-                    name: fieldConfig.id,
-                    fieldLabel: fieldConfig.label,
-                    allowDecimals: false,
-                    anchor: '100%',
-                    value: this.getFieldValue(fieldConfig.id)
-                });
-
-                break;
-
-            case 'checkbox':
-
-                field = new Ext.form.Checkbox({
-                    fieldLabel: fieldConfig.label,
-                    name: fieldConfig.id,
-                    checked: false,
-                    uncheckedValue: false,
-                    inputValue: true,
-                    value: this.getFieldValue(fieldConfig.id)
-                });
-
-                break;
-
-            case 'textfield':
-
-                field = new Ext.form.TextField({
-                    fieldLabel: fieldConfig.label,
-                    name: fieldConfig.id,
-                    value: fieldConfig.config && fieldConfig.config.data ? fieldConfig.config.data : this.getFieldValue(fieldConfig.id),
-                    allowBlank: true,
-                    anchor: '100%',
-                    enableKeyEvents: true,
-                    disabled: fieldConfig.config ? (fieldConfig.config.disabled === true) : false
-                });
-
-                break;
-
-            case 'select' :
-
-                var selectStore;
-
-                if (fieldConfig.config.store_url) {
-                    selectStore = new Ext.data.JsonStore({
-                        autoLoad: true,
-                        fields: ['label', 'value'],
-                        proxy: {
-                            type: 'ajax',
-                            url: fieldConfig.config.store_url,
-                            reader: {
-                                type: 'json'
-                            }
-                        }
-                    });
-                } else {
-                    selectStore = new Ext.data.ArrayStore({
-                        fields: ['label', 'value'],
-                        data: fieldConfig.config.options
-                    });
-                }
-
-                field = new Ext.form.ComboBox({
-                    fieldLabel: fieldConfig.label,
-                    name: fieldConfig.id,
-                    value: this.getFieldValue(fieldConfig.id),
-                    queryDelay: 0,
-                    displayField: 'label',
-                    valueField: 'value',
-                    mode: 'local',
-                    store: selectStore,
-                    editable: false,
-                    triggerAction: 'all',
-                    anchor: '100%',
-                    allowBlank: false
-                });
-
-                break;
-
-            case 'key_value_repeater' :
-                field = this.getRepeaterWithKeyValue(fieldConfig);
-                break;
-
-            case 'options_repeater' :
-                field = this.getRepeaterWithOptions(fieldConfig);
-                break;
-
-            case 'href' :
-                field = this.getHrefElement(fieldConfig);
-
-        }
-
-        return field;
-
-    },
-
-    getRepeaterWithKeyValue: function (fieldConfig) {
-        var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
-            fieldConfig.id,
-            fieldConfig.label,
-            this.getFieldValue(fieldConfig.id)
-        );
-
-        return keyValueRepeater.getRepeater();
-
-    },
-
-    getRepeaterWithOptions: function (fieldConfig) {
-        var keyValueRepeater = new Formbuilder.comp.types.keyValueRepeater(
-            fieldConfig.id,
-            fieldConfig.label,
-            this.getFieldValue(fieldConfig.id),
-            fieldConfig.config.options,
-            false
-        );
-
-        return keyValueRepeater.getRepeater();
-
-    },
-
-    getHrefElement: function (fieldConfig) {
-
-        var fieldData = this.getFieldValue(fieldConfig.id),
-            localizedField = new Formbuilder.comp.types.localizedField(
-                function (locale) {
-                    var localeValue = fieldData && fieldData.hasOwnProperty(locale) ? fieldData[locale] : null,
-                        field;
-
-                    field = new Formbuilder.comp.types.href(fieldConfig, localeValue, locale);
-
-                    return field.getHref();
-                }
+        var field = null,
+            fields = Object.keys(Formbuilder.comp.type.config_fields).filter(
+            function(value) {return value !== 'abstract';}
             );
 
-        return localizedField.getField()
+        if (fields.indexOf(fieldConfig.type) !== -1) {
+            field = new Formbuilder.comp.type.config_fields[fieldConfig.type]().getField(
+                fieldConfig,
+                this.getFieldValue(fieldConfig.id)
+            );
+
+            return field;
+        }
+
+        new Error('Unrecognized field type ' + fieldConfig.type);
     },
 
     /**
