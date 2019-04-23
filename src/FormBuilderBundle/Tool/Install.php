@@ -7,6 +7,7 @@ use Doctrine\DBAL\Migrations\MigrationException;
 use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Schema\Schema;
 use FormBuilderBundle\Configuration\Configuration;
+use Pimcore\Db\PimcoreExtensionsTrait;
 use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
 use Pimcore\Migrations\Migration\InstallMigration;
 use Pimcore\Model\Asset;
@@ -171,6 +172,7 @@ class Install extends MigrationInstaller
      */
     protected function installDbStructure()
     {
+        /** @var PimcoreExtensionsTrait $db */
         $db = \Pimcore\Db::get();
         $db->query(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
     }
