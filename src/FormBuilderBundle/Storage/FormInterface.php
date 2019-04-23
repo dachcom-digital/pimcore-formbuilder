@@ -9,36 +9,36 @@ interface FormInterface
     /**
      * @param int $id
      *
-     * @throws \Exception
-     *
      * @return FormInterface
+     *
+     * @throws \Exception
      */
     public static function getById(int $id);
 
     /**
      * @param string $name
      *
-     * @throws \Exception
-     *
      * @return FormInterface
+     *
+     * @throws \Exception
      */
     public static function getByName(string $name);
 
     /**
      * @param int $id
      *
-     * @throws \Exception
-     *
      * @return string
+     *
+     * @throws \Exception
      */
     public static function getNameById(int $id);
 
     /**
      * @param string $name
      *
-     * @throws \Exception
-     *
      * @return int
+     *
+     * @throws \Exception
      */
     public static function getIdByName(string $name);
 
@@ -202,9 +202,9 @@ interface FormInterface
     /**
      * @param string $name
      *
-     * @throws \Exception
-     *
      * @return null|FormFieldContainerInterface
+     *
+     * @throws \Exception
      */
     public function getFieldContainer(string $name);
 
@@ -221,4 +221,25 @@ interface FormInterface
      * @return mixed
      */
     public function getFieldValue(string $name);
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function setFieldValue(string $name, $value);
+
+    /**
+     * @return bool
+     */
+    public function hasAttachments();
+
+    /**
+     * @return array
+     */
+    public function getAttachments();
+
+    /**
+     * @param array $attachmentFileInfo
+     */
+    public function addAttachment(array $attachmentFileInfo);
 }

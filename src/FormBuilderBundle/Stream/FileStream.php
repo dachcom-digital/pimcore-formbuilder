@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Class FileStream.
  */
-class FileStream
+class FileStream implements FileStreamInterface
 {
     /**
      * @var FileLocator
@@ -59,8 +59,6 @@ class FileStream
     protected $uploadName;
 
     /**
-     * PackageStream constructor.
-     *
      * @param FileLocator  $fileLocator
      * @param RequestStack $requestStack
      */
@@ -71,7 +69,7 @@ class FileStream
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -92,7 +90,7 @@ class FileStream
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getInitialFiles()
     {
@@ -106,9 +104,7 @@ class FileStream
     }
 
     /**
-     * Get the name of the uploaded file.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getUploadName()
     {
@@ -116,9 +112,7 @@ class FileStream
     }
 
     /**
-     * Get the real name of the uploaded file.
-     *
-     * @return bool|mixed|string
+     * {@inheritdoc}
      */
     public function getRealFileName()
     {
@@ -126,7 +120,7 @@ class FileStream
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function combineChunks()
     {
@@ -211,7 +205,7 @@ class FileStream
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function handleUpload()
     {
@@ -352,9 +346,7 @@ class FileStream
     }
 
     /**
-     * @param string $uuid
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function handleDelete($uuid)
     {

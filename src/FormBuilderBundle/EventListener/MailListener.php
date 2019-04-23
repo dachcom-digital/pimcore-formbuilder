@@ -15,6 +15,7 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
+use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 
 class MailListener implements EventSubscriberInterface
 {
@@ -49,8 +50,6 @@ class MailListener implements EventSubscriberInterface
     private $successMailTemplateProviderId;
 
     /**
-     * MailListener constructor.
-     *
      * @param FlashBagManagerInterface $flashBagManager
      * @param MailParser               $mailParser
      * @param IncludeRenderer          $includeRenderer
@@ -65,6 +64,7 @@ class MailListener implements EventSubscriberInterface
         $this->flashBagManager = $flashBagManager;
         $this->mailParser = $mailParser;
         $this->includeRenderer = $includeRenderer;
+        $this->dispatcher = $dispatcher;
         $this->dispatcher = $dispatcher;
     }
 
@@ -87,7 +87,9 @@ class MailListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $form = $event->getForm();
-        $formId = $form->getData()->getId();
+        /** @var FormBuilderFormInterface $data */
+        $data = $form->getData();
+        $formId = $data->getId();
         $formConfiguration = $event->getFormConfiguration();
 
         try {
@@ -133,6 +135,9 @@ class MailListener implements EventSubscriberInterface
      */
     private function sendForm($mailTemplateId, $userOptions, FormInterface $form, $locale, $isCopy = false)
     {
+        /** @var FormBuilderFormInterface $data */
+        $data = $form->getData();
+
         /** @var MailBehaviourData $mailConditionData */
         $mailConditionData = $this->checkMailCondition($form, 'mail_behaviour', ['isCopy' => $isCopy]);
 
@@ -155,9 +160,14 @@ class MailListener implements EventSubscriberInterface
             $mailTemplate->setTo($mailConditionData->getRecipient());
         }
 
-        $mail = $this->mailParser->create($mailTemplate, $form, $locale);
+        $attachments = [];
+        if ($data->hasAttachments()) {
+            $attachments = $data->getAttachments();
+        }
 
-        $mail->setParam('_form_builder_id', (int) $form->getData()->getId());
+        $mail = $this->mailParser->create($mailTemplate, $form, $attachments, $locale);
+
+        $mail->setParam('_form_builder_id', (int) $data->getId());
         $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
         $mail->setParam('_form_builder_preset', $userOptions['form_preset'] === 'custom' ? null : $userOptions['form_preset']);
 

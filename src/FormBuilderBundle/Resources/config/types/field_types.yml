@@ -300,6 +300,15 @@ form_builder:
                         display_group_id: attributes
                         type: label
                         label: 'form_builder_type_field.max_file_size_desc'
+                    options.submit_as_attachment:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.submit_as_attachment'
+                        config: ~
+                    options.submit_as_attachment_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.submit_as_attachment_desc'
         html_tag:
             class: FormBuilderBundle\Form\Type\HtmlTagType
             backend:

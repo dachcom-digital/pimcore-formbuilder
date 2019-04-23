@@ -384,6 +384,25 @@ class PimcoreBackend extends Module
     }
 
     /**
+     * @param FormInterface $form
+     * @param string        $fieldName
+     *
+     * @throws \Exception
+     */
+    public function cantSeeZipFileInPimcoreAssetsFromField(FormInterface $form, string $fieldName)
+    {
+        $assetList = Asset::getList([
+            'condition' => sprintf(
+                'path = "/formdata/%s/" AND filename LIKE "%s-%%"',
+                File::getValidFilename($form->getName()), $fieldName
+            )
+        ]);
+
+        $this->assertEquals(0, count($assetList));
+
+    }
+
+    /**
      * Actor Function to see if a key has been stored in admin translations
      *
      * @param string $key
@@ -435,10 +454,10 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param  TestFormBuilder $formBuilder
+     * @param TestFormBuilder $formBuilder
      *
-     * @throws \Exception
      * @return FormInterface
+     * @throws \Exception
      */
     protected function createForm(TestFormBuilder $formBuilder)
     {

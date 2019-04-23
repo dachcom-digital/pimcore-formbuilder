@@ -6,7 +6,9 @@ services:
         public: true
 
      # stream: files
+    FormBuilderBundle\Stream\FileStreamInterface: '@FormBuilderBundle\Stream\FileStream'
     FormBuilderBundle\Stream\FileStream: ~
 
-     # stream: packages
-    FormBuilderBundle\Stream\PackageStream: ~
+     # stream: attachment
+    FormBuilderBundle\Stream\AttachmentStreamInterface: '@FormBuilderBundle\Stream\AttachmentStream'
+    FormBuilderBundle\Stream\AttachmentStream: ~

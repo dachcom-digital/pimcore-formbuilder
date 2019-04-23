@@ -402,4 +402,50 @@ class FineUploaderCest
             '.qq-dialog-message-selector'
         );
     }
+
+    /**
+     * @param AcceptanceTester $I
+     *
+     * @throws \Exception
+     */
+    public function testUploadFormWithFilesAsAttachment(AcceptanceTester $I)
+    {
+        $testFormBuilder = $this->generateSimpleForm(true);
+
+        $testFormBuilder->addFormField(
+            'dynamic_multi_file',
+            'file_upload',
+            'File Upload',
+            [],
+            [
+                'submit_as_attachment' => true,
+            ]
+        );
+
+        $form = $I->haveAForm($testFormBuilder);
+
+        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $adminEmail = $I->haveAEmailDocumentForAdmin();
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+
+        $I->amOnPage('/form-test');
+
+        $I->waitForElement('div.qq-upload-button', 5);
+
+        $this->fillSimpleForm($testFormBuilder, $I);
+
+        $fileName = 'test.txt';
+        $I->haveFile($fileName, 1);
+        $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
+
+        $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
+
+        $this->clickSimpleFormSubmit($testFormBuilder, $I);
+
+        $I->waitForText('Success!', 15, '.form-success-wrapper');
+
+        $I->cantSeePropertyKeysInEmail($adminEmail, ['file_upload']);
+        $I->cantSeeZipFileInPimcoreAssetsFromField($form, 'file_upload');
+    }
 }
