@@ -7,7 +7,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 
-class PackageStream
+class AttachmentStream implements AttachmentStreamInterface
 {
     /**
      * @var FileLocator
@@ -15,8 +15,6 @@ class PackageStream
     protected $fileLocator;
 
     /**
-     * PackageStream constructor.
-     *
      * @param FileLocator $fileLocator
      */
     public function __construct(FileLocator $fileLocator)
@@ -25,39 +23,34 @@ class PackageStream
     }
 
     /**
-     * @param array  $data
-     * @param string $formName
-     *
-     * @return bool|null|Asset
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function createZipAsset($data, $formName)
+    public function createAttachmentLinks($data, $formName)
     {
-        if (!is_array($data)) {
-            return false;
-        }
-
-        $files = [];
-        $fieldName = null;
-
-        foreach ($data as $fileData) {
-            $fieldName = $fileData['fieldName'];
-            $fileDir = $this->fileLocator->getFilesFolder() . '/' . $fileData['uuid'];
-            if (is_dir($fileDir)) {
-                $dirFiles = glob($fileDir . '/*');
-                if (count($dirFiles) === 1) {
-                    $files[] = [
-                        'name' => $fileData['fileName'],
-                        'uuid' => $fileData['uuid'],
-                        'path' => $dirFiles[0]
-                    ];
-                }
-            }
-        }
+        $fieldName = $this->extractFieldName($data);
+        $files = $this->extractFiles($data);
 
         if (empty($files)) {
-            return false;
+            return [];
+        }
+
+        return $files;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createAttachmentAsset($data, $formName)
+    {
+        if (!is_array($data)) {
+            return null;
+        }
+
+        $fieldName = $this->extractFieldName($data);
+        $files = $this->extractFiles($data);
+
+        if (empty($files)) {
+            return null;
         }
 
         $key = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 5);
@@ -76,23 +69,19 @@ class PackageStream
 
             //clean up!
             foreach ($files as $fileInfo) {
-                $targetFolder = $this->fileLocator->getFilesFolder();
-                $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['uuid']]);
-                if (is_dir($target)) {
-                    $this->fileLocator->removeDir($target);
-                }
+                $this->removeAttachmentByFileInfo($fileInfo);
             }
         } catch (\Exception $e) {
             echo $e->getMessage();
             Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
 
-            return false;
+            return null;
         }
 
         if (!file_exists($zipPath)) {
             Logger::log('zip path does not exist (' . $zipPath . ')');
 
-            return false;
+            return null;
         }
 
         $formDataFolder = null;
@@ -101,7 +90,7 @@ class PackageStream
         if (!$formDataParentFolder instanceof Asset\Folder) {
             Logger::error('parent folder does not exist (/formdata)!');
 
-            return false;
+            return null;
         }
 
         $formName = File::getValidFilename($formName);
@@ -115,7 +104,12 @@ class PackageStream
             $formDataFolder->setUserModification(0);
             $formDataFolder->setParentId($formDataParentFolder->getId());
             $formDataFolder->setFilename($formName);
-            $formDataFolder->save();
+
+            try {
+                $formDataFolder->save();
+            } catch (\Exception $e) {
+                // fail silently.
+            }
         } else {
             $formDataFolder = Asset\Folder::getByPath('/formdata/' . $formName);
         }
@@ -123,7 +117,7 @@ class PackageStream
         if (!$formDataFolder instanceof Asset\Folder) {
             Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
 
-            return false;
+            return null;
         }
 
         $assetData = [
@@ -140,9 +134,65 @@ class PackageStream
         } catch (\Exception $e) {
             Logger::log('Error while storing asset in Pimcore (' . $zipPath . '): ' . $e->getMessage());
 
-            return false;
+            return null;
         }
 
         return $asset;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAttachmentByFileInfo(array $fileInfo)
+    {
+        $targetFolder = $this->fileLocator->getFilesFolder();
+        $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['uuid']]);
+
+        if (!is_dir($target)) {
+            return;
+        }
+
+        $this->fileLocator->removeDir($target);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function extractFiles(array $data)
+    {
+        $files = [];
+        foreach ($data as $fileData) {
+            $fileDir = $this->fileLocator->getFilesFolder() . '/' . $fileData['uuid'];
+            if (is_dir($fileDir)) {
+                $dirFiles = glob($fileDir . '/*');
+                if (count($dirFiles) === 1) {
+                    $files[] = [
+                        'name' => $fileData['fileName'],
+                        'uuid' => $fileData['uuid'],
+                        'path' => $dirFiles[0]
+                    ];
+                }
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return string|null
+     */
+    protected function extractFieldName(array $data)
+    {
+        $fieldName = null;
+
+        if (count($data) > 0) {
+            return $data[0]['fieldName'];
+        }
+
+        return $fieldName;
     }
 }

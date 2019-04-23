@@ -11,7 +11,7 @@ use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldDynamicInterface;
 use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use FormBuilderBundle\Stream\PackageStream;
+use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -36,9 +36,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $configuration;
 
     /**
-     * @var PackageStream
+     * @var AttachmentStreamInterface
      */
-    protected $packageStream;
+    protected $attachmentStream;
 
     /**
      * @var EventDispatcherInterface
@@ -73,23 +73,23 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     /**
      * FormListener constructor.
      *
-     * @param Configuration            $configuration
-     * @param PackageStream            $packageStream
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param SessionInterface         $session
-     * @param Dispatcher               $dispatcher
-     * @param FormRegistryInterface    $formRegistry
+     * @param Configuration             $configuration
+     * @param AttachmentStreamInterface $attachmentStream
+     * @param EventDispatcherInterface  $eventDispatcher
+     * @param SessionInterface          $session
+     * @param Dispatcher                $dispatcher
+     * @param FormRegistryInterface     $formRegistry
      */
     public function __construct(
         Configuration $configuration,
-        PackageStream $packageStream,
+        AttachmentStreamInterface $attachmentStream,
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
         Dispatcher $dispatcher,
         FormRegistryInterface $formRegistry
     ) {
         $this->configuration = $configuration;
-        $this->packageStream = $packageStream;
+        $this->attachmentStream = $attachmentStream;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
         $this->dispatcher = $dispatcher;
@@ -166,34 +166,48 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     public function onPostSubmit(FormEvent $event)
     {
         $form = $event->getForm();
-        $eventData = $event->getData();
+        /** @var FormBuilderFormInterface $data */
+        $data = $event->getData();
         $formEntity = $form->getData();
+
+        if (!$form->isValid()) {
+            return;
+        }
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
 
-        if ($form->isValid()) {
-            //handle linked assets.
-            $fileData = [];
-            foreach ($sessionBag->getIterator() as $key => $sessionValue) {
-                $formKey = 'file_' . $formEntity->getId();
-                if (substr($key, 0, strlen($formKey)) !== $formKey) {
-                    continue;
-                }
-                $fileData[$sessionValue['fieldName']][] = $sessionValue;
-                $sessionBag->remove($key);
+        //handle linked assets.
+        $fileData = [];
+        foreach ($sessionBag->getIterator() as $key => $sessionValue) {
+            $formKey = 'file_' . $formEntity->getId();
+            if (substr($key, 0, strlen($formKey)) !== $formKey) {
+                continue;
             }
+            $fileData[$sessionValue['fieldName']][] = $sessionValue;
+            $sessionBag->remove($key);
+        }
 
-            foreach ($fileData as $fieldName => $files) {
-                $asset = $this->packageStream->createZipAsset($files, $formEntity->getName());
+        foreach ($fileData as $fieldName => $files) {
+            $formField = $data->getField($fieldName);
+            $formFieldOptions = $formField instanceof FormFieldInterface ? $formField->getOptions() : [];
+            if (isset($formFieldOptions['submit_as_attachment']) && $formFieldOptions['submit_as_attachment'] === true) {
+                $attachmentLinks = $this->attachmentStream->createAttachmentLinks($files, $formEntity->getName());
+                foreach ($attachmentLinks as $attachmentLink) {
+                    $data->addAttachment($attachmentLink);
+                    // set value to null to skip field in mail template
+                    $data->setFieldValue($fieldName, null);
+                }
+            } else {
+                $asset = $this->attachmentStream->createAttachmentAsset($files, $formEntity->getName());
                 if ($asset instanceof Asset) {
                     $hostUrl = \Pimcore\Tool::getHostUrl();
-                    $eventData->$fieldName = $hostUrl . $asset->getRealFullPath();
+                    $data->setFieldValue($fieldName, $hostUrl . $asset->getRealFullPath());
                 }
             }
-
-            $event->setData($eventData);
         }
+
+        $event->setData($data);
     }
 
     /**

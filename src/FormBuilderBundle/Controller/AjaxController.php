@@ -2,10 +2,12 @@
 
 namespace FormBuilderBundle\Controller;
 
-use FormBuilderBundle\Stream\FileStream;
+use FormBuilderBundle\Stream\FileStreamInterface;
 use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class AjaxController extends FrontendController
 {
@@ -20,7 +22,7 @@ class AjaxController extends FrontendController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse|Response
+     * @return JsonResponse|Response
      */
     public function fileAddAction(Request $request)
     {
@@ -29,9 +31,9 @@ class AjaxController extends FrontendController
         $formId = $request->request->get('formId');
         $fieldName = $request->request->get('fieldName');
 
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->container->get(FileStream::class);
+        $fileStream = $this->getFileStream();
 
         if ($method === 'POST') {
             $result = $fileStream->handleUpload();
@@ -60,15 +62,15 @@ class AjaxController extends FrontendController
      * @param Request $request
      * @param string  $uuid
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function fileDeleteAction(Request $request, $uuid = '')
     {
         $formId = $request->request->get('formId');
 
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->container->get(FileStream::class);
+        $fileStream = $this->getFileStream();
 
         //remove tmp element from session!
         $sessionKey = 'file_' . $formId . '_' . $uuid;
@@ -82,16 +84,16 @@ class AjaxController extends FrontendController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function fileChunkDoneAction(Request $request)
     {
         $formId = $request->request->get('formId');
         $fieldName = $request->request->get('fieldName');
 
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->container->get(FileStream::class);
+        $fileStream = $this->getFileStream();
 
         $result = $fileStream->combineChunks();
 
@@ -109,7 +111,7 @@ class AjaxController extends FrontendController
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getAjaxUrlStructureAction()
     {
@@ -121,5 +123,13 @@ class AjaxController extends FrontendController
             'file_add'        => $router->generate('form_builder.controller.ajax.file_add'),
             'file_delete'     => $router->generate('form_builder.controller.ajax.file_delete'),
         ]);
+    }
+
+    /**
+     * @return FileStreamInterface
+     */
+    protected function getFileStream()
+    {
+        return $this->container->get(FileStreamInterface::class);
     }
 }

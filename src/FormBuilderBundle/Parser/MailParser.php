@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Parser;
 
 use FormBuilderBundle\Form\FormValuesBeautifier;
+use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
@@ -26,29 +27,36 @@ class MailParser
     protected $formValuesBeautifier;
 
     /**
-     * MailParser constructor.
-     *
-     * @param EngineInterface      $templating
-     * @param FormValuesBeautifier $formValuesBeautifier
+     * @var AttachmentStreamInterface
+     */
+    protected $attachmentStream;
+
+    /**
+     * @param EngineInterface           $templating
+     * @param FormValuesBeautifier      $formValuesBeautifier
+     * @param AttachmentStreamInterface $attachmentStream
      */
     public function __construct(
         EngineInterface $templating,
-        FormValuesBeautifier $formValuesBeautifier
+        FormValuesBeautifier $formValuesBeautifier,
+        AttachmentStreamInterface $attachmentStream
     ) {
         $this->templating = $templating;
         $this->formValuesBeautifier = $formValuesBeautifier;
+        $this->attachmentStream = $attachmentStream;
     }
 
     /**
      * @param Email         $mailTemplate
      * @param FormInterface $form
+     * @param array         $attachments
      * @param string        $locale
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, $locale)
+    public function create(Email $mailTemplate, FormInterface $form, array $attachments, $locale)
     {
         $mail = new Mail();
 
@@ -64,6 +72,8 @@ class MailParser
         $this->parseReplyTo($mailTemplate, $fieldValues);
         $this->parseSubject($mailTemplate, $fieldValues);
         $this->setMailPlaceholders($mail, $fieldValues, $disableDefaultMailBody);
+        $this->parseMailAttachment($mail, $attachments);
+
         $mail->setDocument($mailTemplate);
 
         return $mail;
@@ -187,11 +197,31 @@ class MailParser
     }
 
     /**
+     * @param Mail  $mail
+     * @param array $attachments
+     */
+    public function parseMailAttachment(Mail $mail, array $attachments)
+    {
+        foreach ($attachments as $attachmentFileInfo) {
+            try {
+                $attachment = new \Swift_Attachment();
+                $attachment->setBody(file_get_contents($attachmentFileInfo['path']));
+                $attachment->setFilename($attachmentFileInfo['name']);
+                $mail->attach($attachment);
+            } catch (\Exception $e) {
+                // fail silently.
+            }
+
+            $this->attachmentStream->removeAttachmentByFileInfo($attachmentFileInfo);
+        }
+    }
+
+    /**
      * @param mixed $formFieldValue
      *
      * @return bool
      */
-    private function isEmptyFormField($formFieldValue)
+    protected function isEmptyFormField($formFieldValue)
     {
         return empty($formFieldValue) && $formFieldValue !== 0 && $formFieldValue !== '0';
     }
@@ -201,7 +231,7 @@ class MailParser
      *
      * @return string
      */
-    private function getBodyTemplate($data)
+    protected function getBodyTemplate($data)
     {
         $html = $this->templating->render(
             '@FormBuilder/Email/formData.html.twig',
@@ -220,7 +250,7 @@ class MailParser
      *
      * @return mixed|string
      */
-    private function extractPlaceHolder($str, $fieldValues, $prefix = '')
+    protected function extractPlaceHolder($str, $fieldValues, $prefix = '')
     {
         $extractedValue = $str;
 
@@ -268,7 +298,7 @@ class MailParser
      *
      * @return string
      */
-    private function getSingleRenderedValue($field, $separator = '<br>')
+    protected function getSingleRenderedValue($field, $separator = '<br>')
     {
         $data = '';
         if (is_array($field)) {
@@ -295,7 +325,7 @@ class MailParser
      *
      * @return string
      */
-    private function parseStringForOutput($string = '')
+    protected function parseStringForOutput($string = '')
     {
         if (strstr($string, "\n")) {
             return nl2br($string);

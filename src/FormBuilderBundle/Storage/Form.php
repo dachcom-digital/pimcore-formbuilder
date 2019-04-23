@@ -79,6 +79,11 @@ class Form extends Model\AbstractModel implements FormInterface
     private $data = [];
 
     /**
+     * @var array
+     */
+    private $attachments = [];
+
+    /**
      * {@inheritdoc}
      */
     public static function getById(int $id)
@@ -439,6 +444,38 @@ class Form extends Model\AbstractModel implements FormInterface
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFieldValue(string $name, $value)
+    {
+        $this->data[$name] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasAttachments()
+    {
+        return count($this->attachments) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAttachment(array $attachmentFileInfo)
+    {
+        $this->attachments[] = $attachmentFileInfo;
     }
 
     /**
