@@ -132,6 +132,8 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
      *
      * @param string $submissionType
      * @param Email  $email
+     *
+     * @throws \ReflectionException
      */
     public function seeEmailSubmissionType(string $submissionType, Email $email)
     {
@@ -139,7 +141,16 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
-            $this->assertEquals($submissionType, $message->getBodyContentType());
+            if (method_exists($message, 'getBodyContentType')) {
+                $contentType = $message->getBodyContentType();
+            } else {
+                // swift mailer < 6.0
+                $reflectionClass = new \ReflectionClass($message);
+                $contentTypeProperty = $reflectionClass->getProperty('_userContentType');
+                $contentTypeProperty->setAccessible(true);
+                $contentType = $contentTypeProperty->getValue($message);
+            }
+            $this->assertEquals($submissionType, $contentType);
         }
     }
 
@@ -162,7 +173,7 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
     /**
      * Actor Function to see if submitted mail body is empty
      *
-     * @param Email  $email
+     * @param Email $email
      */
     public function seeEmptySubmittedEmailBody(Email $email)
     {
