@@ -66,6 +66,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [Export Forms](docs/02_ExportForms.md)
 - [Mail Template Configuration](docs/10_MailTemplates.md)
 - [Success Messages](docs/11_SuccessMessage.md)
+- [Mail Submission Types (html/plain-text)](docs/12_MailSubmissionTypes.md)
 - [Dynamic Fields](docs/20_AjaxForms.md)
 - [Available Form Types](docs/30_FormTypes.md)
   - [Dynamic Choice Type](docs/82_DynamicChoice.md)

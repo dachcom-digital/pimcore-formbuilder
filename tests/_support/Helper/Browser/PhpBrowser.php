@@ -102,7 +102,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         }
 
         $this->assertContains($recipient, array_keys($recipients));
-
     }
 
     /**
@@ -123,6 +122,92 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
                 $this->assertContains($value, array_keys($getterData));
             } else {
                 $this->assertEquals($value, $getterData);
+            }
+        }
+    }
+
+    /**
+     * Actor Function to see if given email has been with specified address
+     * Only works with PhpBrowser (Symfony Client)
+     *
+     * @param string $submissionType
+     * @param Email  $email
+     */
+    public function seeEmailSubmissionType(string $submissionType, Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            $this->assertEquals($submissionType, $message->getBodyContentType());
+        }
+    }
+
+    /**
+     * Actor Function to see if given string is in real submitted mail body
+     *
+     * @param string $string
+     * @param Email  $email
+     */
+    public function seeInSubmittedEmailBody(string $string, Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            $this->assertContains($string, $message->getBody());
+        }
+    }
+
+    /**
+     * Actor Function to see if submitted mail body is empty
+     *
+     * @param Email  $email
+     */
+    public function seeEmptySubmittedEmailBody(Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            $this->assertEmpty($message->getBody());
+        }
+    }
+
+    /**
+     * Actor Function to see if given string is in real submitted child body
+     *
+     * @param string $string
+     * @param Email  $email
+     */
+    public function seeInSubmittedEmailChildrenBody(string $string, Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            /** @var \Swift_Mime_SimpleMimeEntity $child */
+            foreach ($message->getChildren() as $child) {
+                $this->assertContains($string, $child->getBody());
+            }
+        }
+    }
+
+    /**
+     * Actor Function to see if given string is not in real submitted child body
+     *
+     * @param string $string
+     * @param Email  $email
+     */
+    public function dontSeeInSubmittedEmailChildrenBody(string $string, Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            /** @var \Swift_Mime_SimpleMimeEntity $child */
+            foreach ($message->getChildren() as $child) {
+                $this->assertNotContains($string, $child->getBody());
             }
         }
     }
@@ -196,6 +281,44 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
      */
     protected function getCollectedEmails(Email $email)
     {
+        $mailCollector = $this->getMailCollector($email);
+
+        $this->assertGreaterThan(0, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+
+        $emails = [];
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            if ($email->getProperty('test_identifier') !== $message->getDocument()->getProperty('test_identifier')) {
+                continue;
+            }
+            $emails[] = $message;
+        }
+
+        return $emails;
+
+    }
+
+    /**
+     * @param Email $email
+     *
+     * @return array
+     */
+    protected function getCollectedMailerData(Email $email)
+    {
+        $mailCollector = $this->getMailCollector($email);
+
+        return $mailCollector->getMailerData('default');
+    }
+
+    /**
+     * @param Email $email
+     *
+     * @return MessageDataCollector
+     */
+    protected function getMailCollector(Email $email)
+    {
         $this->assertInstanceOf(Email::class, $email);
 
         /** @var Profiler $profiler */
@@ -219,18 +342,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         $this->assertGreaterThan(0, $mailCollector->getMessageCount());
 
-        $collectedMessages = $mailCollector->getMessages();
-
-        $emails = [];
-        /** @var \Pimcore\Mail $message */
-        foreach ($collectedMessages as $message) {
-            if ($email->getProperty('test_identifier') !== $message->getDocument()->getProperty('test_identifier')) {
-                continue;
-            }
-            $emails[] = $message;
-        }
-
-        return $emails;
-
+        return $mailCollector;
     }
 }

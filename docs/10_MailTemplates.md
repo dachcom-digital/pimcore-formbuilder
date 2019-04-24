@@ -9,7 +9,6 @@ You also may want to add some placeholder in the subject of your mail template.
 To do so, just add a placeholder like `%emailaddress%` to the subject field. They will get transformed automatically.
 
 ### Available Properties
-
 Add those properties to your mail template.
 
 #### mail_successfully_sent *(String|Document|Snippet)*
@@ -30,7 +29,6 @@ Use a Snippet to return some complex html stuff.
 Add a Document to redirect after your form has been successfully submitted.
 
 #### mail_disable_default_mail_body *(Checkbox)*
-
 If the `mail_disable_default_mail_body` property is defined and checked, you need to add your own data to the mail template.
 You can use all the field names as placeholder. For example:
 
@@ -44,10 +42,13 @@ Mail: %Text(mailaddress);
 ```
 
 #### mail_ignore_fields *(String)*
-
 In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user.
 To do so, just define the `mail_ignore_fields` property in your email template. Add one or multiple (comma separated) fields as string.
 *Notice:* The field name needs be identical to the field name in your form configuration.
+
+#### mail_force_plain_text *(Checkbox)*
+If you want to force the plain text submission, you need to check this option. Read more about the submission types [here](./12_MailSubmissionTypes.md).
+Please aware that this option requires the [html2text](http://www.mbayer.de/html2text/index.shtml) binary.
 
 ## Conditional Logic
 It's also possible to change the email template identification based on different conditions. 

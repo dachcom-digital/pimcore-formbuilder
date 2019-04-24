@@ -11,6 +11,7 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SuccessMessageData;
+use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -133,7 +134,7 @@ class MailListener implements EventSubscriberInterface
      *
      * @throws \Exception
      */
-    private function sendForm($mailTemplateId, $userOptions, FormInterface $form, $locale, $isCopy = false)
+    protected function sendForm($mailTemplateId, $userOptions, FormInterface $form, $locale, $isCopy = false)
     {
         /** @var FormBuilderFormInterface $data */
         $data = $form->getData();
@@ -166,6 +167,7 @@ class MailListener implements EventSubscriberInterface
         }
 
         $mail = $this->mailParser->create($mailTemplate, $form, $attachments, $locale);
+        $forceSubmissionAsPlainText = (bool) $mailTemplate->getProperty('mail_force_plain_text');
 
         $mail->setParam('_form_builder_id', (int) $data->getId());
         $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
@@ -175,9 +177,45 @@ class MailListener implements EventSubscriberInterface
         \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
 
         $mail = $mailEvent->getEmail();
-        $mail->send();
+
+        if ($mail::getHtml2textInstalled()) {
+            $mail->enableHtml2textBinary();
+        }
+
+        if ($forceSubmissionAsPlainText === true && $mail::determineHtml2TextIsInstalled() === false) {
+            throw new \Exception('trying to enable html2text binary, but html2text is not installed!');
+        }
+
+        if ($forceSubmissionAsPlainText === true) {
+            $this->sendPlainTextOnly($mail);
+        } else {
+            $this->sendDefault($mail);
+        }
 
         return true;
+    }
+
+    /**
+     * @param Mail $mail
+     */
+    protected function sendPlainTextOnly(Mail $mail)
+    {
+        $mail->setSubject($mail->getSubjectRendered());
+        $bodyTextRendered = $mail->getBodyTextRendered();
+
+        if ($bodyTextRendered) {
+            $mail->addPart($bodyTextRendered, 'text/plain');
+        }
+
+        $mail->sendWithoutRendering();
+    }
+
+    /**
+     * @param Mail $mail
+     */
+    protected function sendDefault(Mail $mail)
+    {
+        $mail->send();
     }
 
     /**
@@ -189,7 +227,7 @@ class MailListener implements EventSubscriberInterface
      *
      * @throws \Exception
      */
-    private function onSuccess(SubmissionEvent $event, FormInterface $form, $locale)
+    protected function onSuccess(SubmissionEvent $event, FormInterface $form, $locale)
     {
         $formId = $form->getData()->getId();
         $error = false;
@@ -252,7 +290,7 @@ class MailListener implements EventSubscriberInterface
      *
      * @throws \Exception
      */
-    private function checkMailCondition(FormInterface $form, $dispatchModule, $moduleOptions = [])
+    protected function checkMailCondition(FormInterface $form, $dispatchModule, $moduleOptions = [])
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
             'formData'         => $form->getData()->getData(),
