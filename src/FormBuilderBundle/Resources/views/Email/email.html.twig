@@ -14,6 +14,10 @@
                 <strong>Admin:</strong> {{ 'form_builder.email.placeholder_list_available'|trans({},'admin')|format('<code>%Text(firstname);</code>')|raw }}
             </div>
 
+            {% if document.getProperty('mail_force_plain_text') == true %}
+                <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.forced_plain_text_enabled'|trans({},'admin') }}</div>
+            {% endif %}
+
             {% if document.getProperty('mail_disable_default_mail_body') != true %}
                 <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.form_renders_automatically'|trans({},'admin') }}</div>
             {% else %}
@@ -31,7 +35,6 @@
         </table>
 
         {% if document.getProperty('mail_disable_default_mail_body') != true %}
-
             <table class="row">
                 <tr>
                     <th class="large-12 small-12 columns first last">
@@ -43,7 +46,6 @@
                     </th>
                 </tr>
             </table>
-
         {% endif %}
 
     </div>

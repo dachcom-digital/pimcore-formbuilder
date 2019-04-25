@@ -1,5 +1,5 @@
 # Usage
-There are three ways to render your form.
+There are **three** ways to render your form.
 > **Important:** It's possible to use multiple forms per page but **never** render the same form twice on the same page.
 
 ### Options
@@ -15,11 +15,11 @@ Before we start, check out the available options. Those are needed for the twig 
 | copy_mail_template | The Copy Mail Template or Copy Mail Template Id |
 | preset | Optional: set a custom preset |
 
-## Area Brick
+## I. Area Brick
 This is the most used one. Just place a form element (Area Brick) somewhere on your document. 
 Configure it via the available edit button.
 
-## Twig
+## II. Twig
 Create a Form using the Twig Extension.
 
 ```twig
@@ -35,7 +35,8 @@ Create a Form using the Twig Extension.
     {{ form_builder_static(config) }}
 </div>
 ```
-## Controller
+
+## III. Controller
 Create a Form within a Controller. You may have noticed the `main_layout` parameter. 
 This value is important to render your form within a given main layout.
 

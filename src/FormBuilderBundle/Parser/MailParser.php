@@ -192,7 +192,7 @@ class MailParser
         }
 
         if ($disableDefaultMailBody === false) {
-            $mail->setParam('body', $this->getBodyTemplate($fieldValues));
+            $mail->setParam('body', $this->getBodyHtmlTemplate($fieldValues));
         }
     }
 
@@ -231,7 +231,7 @@ class MailParser
      *
      * @return string
      */
-    protected function getBodyTemplate($data)
+    protected function getBodyHtmlTemplate($data)
     {
         $html = $this->templating->render(
             '@FormBuilder/Email/formData.html.twig',

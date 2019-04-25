@@ -3,6 +3,9 @@ language: php
 addons:
     chrome: stable
     mariadb: '10.1'
+    apt:
+        packages:
+            - html2text
 
 env:
     global:

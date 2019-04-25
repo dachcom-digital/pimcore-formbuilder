@@ -121,13 +121,9 @@ class Install extends MigrationInstaller
 
     /**
      * @param string|null $version
-     *
-     * @throws AbortMigrationException
      */
     protected function beforeUpdateMigration(string $version = null)
     {
-        $this->installTranslations();
-        $this->installProperties();
         $this->setupPaths();
     }
 
@@ -144,6 +140,16 @@ class Install extends MigrationInstaller
         if (!$fileSystem->exists(Configuration::STORE_PATH)) {
             $fileSystem->mkdir(Configuration::STORE_PATH, 0755);
         }
+    }
+
+    /**
+     * Only an alias to allow migrations to execute.
+     *
+     * @throws AbortMigrationException
+     */
+    public function updateTranslations()
+    {
+        $this->installTranslations();
     }
 
     /**
@@ -230,6 +236,16 @@ class Install extends MigrationInstaller
     }
 
     /**
+     * Only an alias to allow migrations to execute.
+     *
+     * @throws AbortMigrationException
+     */
+    public function updateProperties()
+    {
+        $this->installProperties();
+    }
+
+    /**
      * @throws AbortMigrationException
      */
     protected function installProperties()
@@ -245,7 +261,7 @@ class Install extends MigrationInstaller
                 'ctype'       => 'document',
                 'type'        => 'document',
                 'name'        => 'Mail: Message after Submit',
-                'description' => 'Use the mail_successfully_sent property to define a message after the form has been successfully sent. There are three options: "String", "Snippet", "Dokument"'
+                'description' => 'Use the mail_successfully_sent property to define a message after the form has been successfully sent. There are three options: "String", "Snippet", "Document"'
             ],
             'mail_successfully_sent_flash_message' => [
                 'ctype'       => 'document',
@@ -258,7 +274,13 @@ class Install extends MigrationInstaller
                 'type'        => 'text',
                 'name'        => 'Mail: Ignored Fields in Email',
                 'description' => 'In some cases, you don\'t want to send specific fields via mail. Add one or multiple (comma separated) fields as string.'
-            ]
+            ],
+            'mail_force_plain_text'                => [
+                'ctype'       => 'document',
+                'type'        => 'bool',
+                'name'        => 'Mail: Force plain text submission',
+                'description' => 'If checked, FormBuilder will submit this document in simple text/plain format.'
+            ],
         ];
 
         foreach ($properties as $key => $propertyConfig) {

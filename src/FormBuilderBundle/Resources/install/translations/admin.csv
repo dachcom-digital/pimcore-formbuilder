@@ -12,6 +12,7 @@
 "form_builder.email.custom_style_activated_use_placeholder","Custom style mode has been activated. Please use placeholder like %s to display form value fields.","Benutzerdefiniertes Formular-Layout wurde aktiviert. Bitte benutzen Sie Platzhalter (zb. %s), um Formular-Elemente im E-Mail anzuzeigen."
 "form_builder.email.form_will_placed_here","Your form content will be placed here.","Formular-Inhalt wird hier angezeigt."
 "form_builder.email.placeholder_list_available","Depending on your selected form, some placeholder like %s are available.","Je nach ausgewähltem Formular stehen Ihnen Platzhalter wie zb. %s zur Verfügung."
+"form_builder.email.forced_plain_text_enabled","This document will be submitted in plain text only. All HTML-Tags will be removed.","Dieses Dokument wird als einfaches Text-E-Mail versendet. Alle HTML-Werte werden automatisch entfernt."
 "form_builder_type_group.text_fields","Text Fields","Textfelder"
 "form_builder_type_group.choice_fields","Choice Fields","Auswahlfelder"
 "form_builder_type_group.datetime_fields","DateTime Fields","Datumsfelder"
@@ -105,4 +106,3 @@
 "form_builder_type_container.repeater.option.add_block_counter","Add Block Counter","Blockzähler hinzufügen"
 "form_builder_type_container.repeater.option.label.add_block","'Add Block' Button Label (Js)","'Block hinzufügen' Label (Js)"
 "form_builder_type_container.repeater.option.label.remove_block","'Remove Block' Button Label (Js)","'Block entfernen' Label (Js)"
-
