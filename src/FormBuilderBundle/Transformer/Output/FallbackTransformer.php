@@ -30,7 +30,7 @@ class FallbackTransformer implements OutputTransformerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getValue(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
     {
@@ -42,7 +42,7 @@ class FallbackTransformer implements OutputTransformerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getLabel(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
     {
@@ -125,6 +125,7 @@ class FallbackTransformer implements OutputTransformerInterface
 
         if (!class_exists('IntlDateFormatter')) {
             $format = 'm/d/y H:i:s';
+
             return $value->format($format);
         }
 
@@ -155,7 +156,6 @@ class FallbackTransformer implements OutputTransformerInterface
         );
 
         return $formatter->format($value->getTimestamp());
-
     }
 
     /**
@@ -253,6 +253,5 @@ class FallbackTransformer implements OutputTransformerInterface
         return isset($fieldOptions['label']) && !empty($fieldOptions['label'])
             ? $this->translator->trans($fieldOptions['label'], [], null, $locale)
             : $field->getName();
-
     }
 }

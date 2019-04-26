@@ -20,8 +20,12 @@ class OutputTransformerRegistry
     {
         if (!in_array(OutputTransformerInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), OutputTransformerInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    OutputTransformerInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 
@@ -68,6 +72,7 @@ class OutputTransformerRegistry
 
     /**
      * @return OutputTransformerInterface
+     *
      * @throws \Exception
      */
     public function getFallbackTransformer()

@@ -21,6 +21,8 @@ class DateWidget implements MailEditorWidgetInterface
 
     public function getValueForOutput(array $config)
     {
-        return date('d.m.Y');
+        $format = isset($config['format']) ? $config['format'] : 'm/d/y H:i:s';
+
+        return date($format);
     }
 }

@@ -19,8 +19,12 @@ class MailEditorWidgetRegistry
     {
         if (!in_array(MailEditorWidgetInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), MailEditorWidgetInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    MailEditorWidgetInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 
@@ -59,5 +63,13 @@ class MailEditorWidgetRegistry
     public function getAll()
     {
         return $this->provider;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllIdentifier()
+    {
+        return array_keys($this->provider);
     }
 }

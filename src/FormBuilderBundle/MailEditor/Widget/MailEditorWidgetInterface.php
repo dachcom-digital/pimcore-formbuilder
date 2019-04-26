@@ -25,5 +25,4 @@ interface MailEditorWidgetInterface
      * @return string
      */
     public function getValueForOutput(array $config);
-
 }

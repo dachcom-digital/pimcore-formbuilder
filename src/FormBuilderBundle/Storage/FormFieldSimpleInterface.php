@@ -24,4 +24,3 @@ interface FormFieldSimpleInterface
      */
     public function isUpdated();
 }
-

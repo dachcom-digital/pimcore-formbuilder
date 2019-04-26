@@ -7,7 +7,7 @@ use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataWidgetInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWidgetGroupName()
     {
@@ -15,7 +15,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWidgetIdentifierByField(array $field)
     {
@@ -23,7 +23,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWidgetLabelByField(array $field)
     {
@@ -31,7 +31,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWidgetConfigByField(array $field)
     {
@@ -41,7 +41,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getValueForOutput(array $config)
     {
@@ -95,7 +95,6 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
             if ($blockIndex + 1 !== count($outputData['fields'])) {
                 $fieldValue .= '<br>';
             }
-
         }
 
         return $fieldValue;
@@ -132,7 +131,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWidgetLabel()
     {
@@ -140,11 +139,10 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getWidgetConfig()
     {
         throw new \RuntimeException('"getWidgetConfig" is not allowed within implemented MailEditorFieldDataWidgetInterface');
     }
-
 }

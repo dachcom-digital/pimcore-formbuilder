@@ -240,8 +240,11 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             },
             init: function (editor) {
 
+                CKEDITOR.dialog.add( 'form_mail_editor_placeholder', '/bundles/formbuilder/js/comp/extensions/dialogs/placeholder.js' );
+
                 editor.widgets.add('form_mail_editor_placeholder', {
 
+                    dialog: 'form_mail_editor_placeholder',
                     template: '<span class="fme-placeholder">[[]]</span>',
                     pathName: 'form_mail_editor_placeholder',
 

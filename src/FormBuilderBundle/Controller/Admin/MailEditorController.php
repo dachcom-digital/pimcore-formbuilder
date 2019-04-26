@@ -18,6 +18,7 @@ class MailEditorController extends AdminController
      * @param Request $request
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function getMailEditorDataAction(Request $request)
@@ -44,7 +45,6 @@ class MailEditorController extends AdminController
 
         $allWidgets = [];
         foreach ($widgets as $widgetType => $widget) {
-
             $groupName = $widget->getWidgetGroupName();
 
             if (!isset($allWidgets[$groupName])) {

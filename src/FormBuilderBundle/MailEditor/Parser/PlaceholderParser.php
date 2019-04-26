@@ -25,7 +25,7 @@ class PlaceholderParser implements PlaceholderParserInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function replacePlaceholderWithOutputData(string $layout, array $outputData)
     {
@@ -34,13 +34,13 @@ class PlaceholderParser implements PlaceholderParserInterface
         $data = preg_replace_callback($this->getPlaceholderRegex(), [$this, 'parseSquareBracketsTag'], $layout);
 
         return $data;
-
     }
 
     /**
      * @param array $tag
      *
      * @return null|string
+     *
      * @throws \Exception
      */
     protected function parseSquareBracketsTag($tag)
@@ -63,7 +63,7 @@ class PlaceholderParser implements PlaceholderParserInterface
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return array
      */
@@ -96,6 +96,7 @@ class PlaceholderParser implements PlaceholderParserInterface
         } else {
             $attributes = [ltrim($text)];
         }
+
         return $attributes;
     }
 
@@ -112,7 +113,8 @@ class PlaceholderParser implements PlaceholderParserInterface
      */
     protected function getPlaceholderRegex()
     {
-        $allowedRex = join('|', ['date', 'formbuilder_field']);
+        $allowedRex = join('|', $this->mailEditorWidgetRegistry->getAllIdentifier());
+
         return '/\\[\\[(' . $allowedRex . ')(.*?)\\]\\]/';
     }
 }

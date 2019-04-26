@@ -45,7 +45,7 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function applyForChannel(FormInterface $form, array $ignoreFields, string $channel, $locale)
     {
@@ -92,7 +92,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     protected function parseField(FormBuilderFormInterface $formEntity, $entityField, FormInterface $formField, $locale, $fieldRawValue)
     {
         if ($entityField instanceof FormFieldContainerInterface) {
-
             $subFieldValues = [];
             foreach ($this->getFormSubFields($formField) as $index => $subFieldCollection) {
                 $subCollectionFieldValues = [];
@@ -114,13 +113,9 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
             }
 
             return $this->transformFormBuilderContainerField($formEntity, $entityField, $subFieldValues, $locale);
-
         } elseif ($entityField instanceof FormFieldDynamicInterface) {
-
             return $this->transformDynamicField($formEntity, $entityField, $formField, $fieldRawValue, $locale);
-
         } elseif ($entityField instanceof FormFieldInterface) {
-
             return $this->transformFormBuilderField($formEntity, $entityField, $formField, $fieldRawValue, $locale);
         }
 
@@ -276,7 +271,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
             if ($this->outputTransformerRegistry->hasForChannel($identifier, $this->channel)) {
                 return $this->outputTransformerRegistry->getForChannel($identifier, $this->channel);
             }
-
         } catch (\Exception $e) {
             // fail silently.
         }
@@ -307,5 +301,4 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     {
         return empty($formFieldValue) && $formFieldValue !== 0 && $formFieldValue !== '0';
     }
-
 }
