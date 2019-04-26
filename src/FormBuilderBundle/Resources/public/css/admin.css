@@ -46,6 +46,10 @@
     background: url(/bundles/formbuilder/img/application_form_add.svg) left center no-repeat !important;
 }
 
+.pimcore_icon_mail_editor {
+    background: url(/bundles/formbuilder/img/mail_editor.svg) left center no-repeat !important;
+}
+
 /*
     Fields
 */
@@ -195,3 +199,62 @@
 .form_builder_cl_success_message {
     background: url(/bundles/formbuilder/img/cl_success_message.svg) left center no-repeat !important;
 }
+
+/*
+    Mail Editor
+*/
+
+.formbuilder-mail-editor {
+
+}
+
+.formbuilder-mail-editor .mail-editor-columns {
+}
+
+.formbuilder-mail-editor .mail-editor-columns:after {
+    content: "";
+    clear: both;
+    display: block;
+}
+
+.formbuilder-mail-editor .mail-editor-columns > .mail-editor {
+    float: left;
+    width: 70%;
+    position: relative;
+    z-index: 1;
+}
+
+.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection {
+    float: right;
+    width: 30%;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection h4 {
+    padding: 0;
+    margin: 0;
+}
+
+.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection ul {
+    list-style: none;
+    padding: 0;
+}
+
+.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection ul li {
+    line-height: 1.8;
+    cursor: pointer;
+    list-style: none;
+    background: #eaeaea;
+    border-radius: 4px;
+    margin: 0 0 2px 0;
+    padding: 2px 5px;
+}
+
+.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection ul li span.tag {
+    text-align:right;
+    float: right;
+    font-size: 11px;
+    color: #717171;
+}
+

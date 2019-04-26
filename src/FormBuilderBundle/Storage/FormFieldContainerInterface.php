@@ -4,7 +4,7 @@ namespace FormBuilderBundle\Storage;
 
 use Pimcore\Translation\Translator;
 
-interface FormFieldContainerInterface
+interface FormFieldContainerInterface extends FormFieldSimpleInterface
 {
     /**
      * @param Translator $translator
@@ -17,19 +17,9 @@ interface FormFieldContainerInterface
     public function setOrder(int $order);
 
     /**
-     * @return int
-     */
-    public function getOrder();
-
-    /**
      * @param string $name
      */
     public function setName(string $name);
-
-    /**
-     * @return string
-     */
-    public function getName();
 
     /**
      * @param string $name
@@ -45,11 +35,6 @@ interface FormFieldContainerInterface
      * @param string $type
      */
     public function setType(string $type);
-
-    /**
-     * @return string
-     */
-    public function getType();
 
     /**
      * @param string $subType
@@ -85,9 +70,4 @@ interface FormFieldContainerInterface
      * @return array
      */
     public function toArray();
-
-    /**
-     * @return bool
-     */
-    public function isUpdated();
 }

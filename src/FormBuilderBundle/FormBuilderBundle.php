@@ -4,7 +4,9 @@ namespace FormBuilderBundle;
 
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
@@ -25,6 +27,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new OptionsTransformerPass());
         $container->addCompilerPass(new DispatcherPass());
         $container->addCompilerPass(new ChoiceBuilderPass());
+        $container->addCompilerPass(new MailEditorWidgetPass());
+        $container->addCompilerPass(new OutputTransformerPass());
     }
 
     /**
@@ -51,6 +55,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/comp/importer.js',
             '/bundles/formbuilder/js/comp/form.js',
             '/bundles/formbuilder/js/comp/extensions/formMetaData.js',
+            '/bundles/formbuilder/js/comp/extensions/formMailEditor.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/builder.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/form.js',
             '/bundles/formbuilder/js/comp/conditionalLogic/condition/abstract.js',

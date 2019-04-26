@@ -20,7 +20,7 @@ use Symfony\Component\Yaml\Yaml;
 class SettingsController extends AdminController
 {
     /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getTreeAction()
     {
@@ -68,7 +68,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getSettingsAction()
     {
@@ -81,7 +81,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getDynamicChoiceBuilderAction()
     {
@@ -98,7 +98,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getFormAction(Request $request)
     {
@@ -135,7 +135,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function addFormAction(Request $request)
     {
@@ -177,7 +177,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function deleteFormAction(Request $request)
     {
@@ -202,7 +202,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      *
      * @throws \Exception
      */
@@ -276,7 +276,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      *
      * @throws \Exception
      */
@@ -355,7 +355,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function checkPathAction(Request $request)
     {
@@ -366,7 +366,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getGroupTemplatesAction()
     {
@@ -386,7 +386,7 @@ class SettingsController extends AdminController
     /**
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function findFormDependenciesAction(Request $request)
     {

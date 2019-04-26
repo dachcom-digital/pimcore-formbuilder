@@ -6,9 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 class Version20181214160753 extends AbstractPimcoreMigration
 {
     /**

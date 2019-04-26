@@ -139,6 +139,16 @@ interface FormInterface
     public function getCreatedBy();
 
     /**
+     * @param string $mailLayout
+     */
+    public function setMailLayout(string $mailLayout = null);
+
+    /**
+     * @return null|string
+     */
+    public function getMailLayout();
+
+    /**
      * @param array $config
      */
     public function setConfig(array $config);

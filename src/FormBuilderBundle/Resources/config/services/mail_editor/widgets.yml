@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\MailEditor\Widget\FormFieldWidget:
+        tags:
+            - { name: form_builder.mail_editor.widget, type: formbuilder_field }
+
+    FormBuilderBundle\MailEditor\Widget\DateWidget:
+        tags:
+            - { name: form_builder.mail_editor.widget, type: date }

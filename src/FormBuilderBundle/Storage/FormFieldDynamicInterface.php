@@ -2,18 +2,8 @@
 
 namespace FormBuilderBundle\Storage;
 
-interface FormFieldDynamicInterface
+interface FormFieldDynamicInterface extends FormFieldSimpleInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getType();
-
     /**
      * @return array
      */
@@ -23,14 +13,4 @@ interface FormFieldDynamicInterface
      * @return array
      */
     public function getOptional();
-
-    /**
-     * @return int
-     */
-    public function getOrder();
-
-    /**
-     * @return bool
-     */
-    public function isUpdated();
 }

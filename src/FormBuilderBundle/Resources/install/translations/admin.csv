@@ -106,3 +106,5 @@
 "form_builder_type_container.repeater.option.add_block_counter","Add Block Counter","Blockzähler hinzufügen"
 "form_builder_type_container.repeater.option.label.add_block","'Add Block' Button Label (Js)","'Block hinzufügen' Label (Js)"
 "form_builder_type_container.repeater.option.label.remove_block","'Remove Block' Button Label (Js)","'Block entfernen' Label (Js)"
+"form_builder.mail_editor.widget_provider.form_fields","Form Fields","Formular-Felder"
+"form_builder.mail_editor.widget_provider.others","Others","Allgemein"

@@ -59,6 +59,11 @@ class Form extends Model\AbstractModel implements FormInterface
     public $createdBy;
 
     /**
+     * @var string
+     */
+    public $mailLayout;
+
+    /**
      * @var array
      */
     public $config = [];
@@ -76,12 +81,12 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var array
      */
-    private $data = [];
+    protected $data = [];
 
     /**
      * @var array
      */
-    private $attachments = [];
+    protected $attachments = [];
 
     /**
      * {@inheritdoc}
@@ -290,6 +295,22 @@ class Form extends Model\AbstractModel implements FormInterface
     public function getCreatedBy()
     {
         return (int) $this->createdBy;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMailLayout(string $mailLayout = null)
+    {
+        $this->mailLayout = $mailLayout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMailLayout()
+    {
+        return $this->mailLayout;
     }
 
     /**
