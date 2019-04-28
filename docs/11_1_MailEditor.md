@@ -1,6 +1,6 @@
 ## Mail Editor
 
-[](http://g.recordit.co/OJ7uM6FxY0.gif)
+![](http://g.recordit.co/OJ7uM6FxY0.gif)
 
 > **Attention**: This mail editor will currently only transform admin mails and does not respect any special mail template language (like inky)!
  
