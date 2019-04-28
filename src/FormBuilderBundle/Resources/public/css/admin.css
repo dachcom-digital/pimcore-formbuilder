@@ -208,40 +208,21 @@
 
 }
 
-.formbuilder-mail-editor .mail-editor-columns {
-}
-
-.formbuilder-mail-editor .mail-editor-columns:after {
-    content: "";
-    clear: both;
-    display: block;
-}
-
-.formbuilder-mail-editor .mail-editor-columns > .mail-editor {
-    float: left;
-    width: 70%;
-    position: relative;
-    z-index: 1;
-}
-
-.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection {
-    float: right;
-    width: 30%;
-    box-sizing: border-box;
+.formbuilder-mail-editor .mail-editor-selection {
     padding: 20px;
 }
 
-.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection h4 {
+.formbuilder-mail-editor .mail-editor-selection h4 {
     padding: 0;
     margin: 0;
 }
 
-.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection ul {
+.formbuilder-mail-editor  .mail-editor-selection ul {
     list-style: none;
     padding: 0;
 }
 
-.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection ul li {
+.formbuilder-mail-editor .mail-editor-selection ul li {
     line-height: 1.8;
     cursor: pointer;
     list-style: none;
@@ -251,7 +232,7 @@
     padding: 2px 5px;
 }
 
-.formbuilder-mail-editor .mail-editor-columns > .mail-editor-selection ul li span.tag {
+.formbuilder-mail-editor .mail-editor-selection ul li span.tag {
     text-align:right;
     float: right;
     font-size: 11px;

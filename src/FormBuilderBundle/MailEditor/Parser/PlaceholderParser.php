@@ -55,11 +55,21 @@ class PlaceholderParser implements PlaceholderParserInterface
         $widget = $this->mailEditorWidgetRegistry->get($type);
 
         // add field value to widget.
-        if (isset($config['identifier']) && isset($this->outputData[$config['identifier']])) {
-            $config['outputData'] = $this->outputData[$config['identifier']];
+        if (isset($config['sub-type']) && isset($this->outputData[$config['sub-type']])) {
+            $config['outputData'] = $this->outputData[$config['sub-type']];
         }
 
-        return $widget->getValueForOutput($config);
+        $cleanConfig = [];
+        foreach ($config as $key => $value) {
+
+            if ($value === 'true' || $value === 'false') {
+                $value = $value === 'true';
+            }
+
+            $cleanConfig[$key] = $value;
+        }
+
+        return $widget->getValueForOutput($cleanConfig);
     }
 
     /**

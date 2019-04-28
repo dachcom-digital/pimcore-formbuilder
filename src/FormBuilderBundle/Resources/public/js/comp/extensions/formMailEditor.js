@@ -5,16 +5,17 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
     fields: {},
     detailWindow: null,
     editPanel: null,
-    editorId: null,
     selectionId: null,
-    ckEditor: null,
+    ckEditors: {},
 
     configuration: null,
     editorData: null,
 
     initialize: function (formId) {
+
         this.formId = formId;
-        this.editorId = 'form_mail_editor_' + Ext.id();
+        this.ckEditors = {};
+
         this.selectionId = 'form_mail_selection_' + Ext.id();
 
         this.getInputWindow();
@@ -45,11 +46,11 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
         return false;
     },
 
-    onClose: function () {
+    onClose: function (editorId) {
 
-        if (this.ckEditor) {
-            this.ckEditor.destroy();
-            this.ckEditor = null;
+        if (this.ckEditors[editorId]) {
+            this.ckEditors[editorId]['editor'].destroy();
+            delete this.ckEditors[editorId];
         }
     },
 
@@ -92,36 +93,96 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
 
     createPanel: function () {
 
-        var htmlData = '' +
-            '<div class="mail-editor-columns">' +
-            '<div class="mail-editor" id="' + this.editorId + '"></div>' +
-            '<div class="mail-editor-selection" id="' + this.selectionId + '"></div>' +
-            '</div>';
+        var rightHtml = '' +
+            '<div class="mail-editor-selection" id="' + this.selectionId + '"></div>';
 
         this.editPanel = new Ext.Panel({
             closable: false,
             bodyStyle: 'position:relative;',
-            html: htmlData,
             border: false,
-            layout: 'fit',
+            layout: 'hbox',
             autoScroll: false
         });
 
-        this.editPanel.on('afterlayout', this.initCkEditor.bind(this));
-        this.editPanel.on('beforedestroy', this.onClose.bind(this));
+        this.leftPanel = new Ext.Panel({
+            closable: false,
+            border: false,
+            title: 'Editor',
+            layout: 'fit',
+            flex: 3,
+            align: 'stretch',
+            autoScroll: false
+        });
 
+        this.rightPanel = new Ext.Panel({
+            closable: false,
+            html: rightHtml,
+            border: false,
+            layout: 'fit',
+            flex: 1,
+            align: 'stretch',
+            title: 'Fields',
+            autoScroll: false
+        });
+
+        this.initCkEditorPlugins();
+        this.initializeLocalizedEditor();
+
+        this.rightPanel.on('afterrender', this.initSelectionFields.bind(this));
+
+        this.editPanel.add([this.leftPanel, this.rightPanel]);
         this.detailWindow.add(this.editPanel);
     },
 
-    initCkEditor: function () {
+    initializeLocalizedEditor: function () {
 
-        var editorConfig, selectionField;
+        var tabs = [],
+            editorField;
 
-        if (this.ckEditor) {
-            return;
-        }
+        var pimcoreLocale = Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : [],
+            locales = Ext.Array.merge(['default'], pimcoreLocale);
 
-        this.initCkEditorPlugin();
+        Ext.each(locales, function (locale) {
+
+            var editorId = 'form_mail_editor_' + Ext.id(),
+                oldHtml = '<div class="mail-editor" id="' + editorId + '"></div>';
+
+            tabs.push({
+                title: locale === 'default' ? t('default') : pimcore.available_languages[locale],
+                iconCls: locale === 'default' ? 'pimcore_icon_white_flag' : 'pimcore_icon_language_' + locale.toLowerCase(),
+                layout: 'anchor',
+                height: 560,
+                listeners: {
+                    afterrender: this.initCkEditor.bind(this, editorId, locale.toLowerCase()),
+                    beforedestroy: this.onClose.bind(this, editorId),
+                },
+                html: oldHtml
+            });
+        }.bind(this));
+
+        editorField = new Ext.form.FieldSet({
+            cls: 'form_builder_mail_editor_localized_field',
+            layout: 'anchor',
+            hideLabel: false,
+            items: [{
+                xtype: 'tabpanel',
+                activeTab: 0,
+                layout: 'anchor',
+                width: '100%',
+                defaults: {
+                    autoHeight: true,
+                },
+                items: tabs
+            }]
+        });
+
+        this.leftPanel.add(editorField);
+
+    },
+
+    initSelectionFields: function () {
+
+        var selectionField;
 
         selectionField = Ext.get(this.selectionId);
         Ext.Array.each(this.configuration.widgetGroups, function (groupData) {
@@ -129,14 +190,24 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             selectionField.createChild('<h4>' + groupData.label + '</h4>');
             group = selectionField.createChild('<ul class="group"></ul>');
             Ext.Array.each(groupData.elements, function (element) {
-                var identifierTag = element.identifier !== element.type ? '<span class="tag">[' + element.identifier + ']</span>' : '';
-                group.createChild('<li draggable="true" data-identifier="' + element.identifier + '">' + element.label + '' + identifierTag + '</li>');
+                var subTypeTag = element.subType !== null ? '<span class="tag">[' + element.subType + ']</span>' : '';
+                group.createChild('<li draggable="true" data-type="' + element.type + '" data-sub-type="' + element.subType + '">' + element.label + '' + subTypeTag + '</li>');
             }.bind(this));
 
         }.bind(this));
 
+    },
+
+    initCkEditor: function (editorId, locale) {
+
+        var editorConfig, ckEditor;
+
+        if (this.ckEditors.hasOwnProperty(editorId)) {
+            return;
+        }
+
         editorConfig = {
-            height: 614,
+            height: 490,
             language: pimcore.settings['language'],
             resize_enabled: false,
             entities: false,
@@ -145,17 +216,21 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             baseFloatZIndex: 40000,
             enterMode: CKEDITOR.ENTER_BR,
             tabSpaces: 0,
-            extraPlugins: 'form_mail_editor_placeholder,sourcedialog',
+            _formMailEditorWidgetFields: this.getWidgetFieldsAsList(),
+            _formMailEditorConfiguration: this.configuration.widgetConfiguration,
+            extraPlugins: 'formmaileditor,sourcedialog',
             toolbar: [
                 ['Sourcedialog'],
             ]
         };
 
-        this.ckEditor = CKEDITOR.appendTo(this.editorId, editorConfig);
+        ckEditor = CKEDITOR.appendTo(editorId, editorConfig);
 
-        this.ckEditor.setData(this.editorData);
+        if (typeof this.editorData === 'object' && this.editorData.hasOwnProperty(locale)) {
+            ckEditor.setData(this.editorData[locale]);
+        }
 
-        this.ckEditor.on('instanceReady', function (ev) {
+        ckEditor.on('instanceReady', function (ev) {
             var $el = CKEDITOR.document.getById(this.selectionId);
 
             $el.on('dragstart', function (evt) {
@@ -163,24 +238,13 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
                 target = evt.data.getTarget().getAscendant('li', true);
                 CKEDITOR.plugins.clipboard.initDragDataTransfer(evt);
                 dataTransfer = evt.data.dataTransfer;
-                dataTransfer.setData('mail_editor_field', this.findDataRelation(target.data('identifier')));
+                dataTransfer.setData('mail_editor_widget', {type: target.data('type'), subType: target.data('sub-type')});
                 dataTransfer.setData('text/html', target.getText());
             }.bind(this));
 
         }.bind(this));
-    },
 
-    findDataRelation: function (identifier) {
-        var searchElement = {};
-        Ext.Array.each(this.configuration.widgetGroups, function (groupData) {
-            Ext.Array.each(groupData.elements, function (element) {
-                if (element.identifier === identifier) {
-                    searchElement = element;
-                }
-            });
-        });
-
-        return searchElement;
+        this.ckEditors[editorId] = {'editor': ckEditor, 'locale': locale};
     },
 
     loadEditorData: function () {
@@ -204,13 +268,19 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
 
     saveEditorData: function () {
 
+        var data = {};
+
+        Ext.Object.each(this.ckEditors, function (index, editorData) {
+            data[editorData['locale']] = editorData['editor'].getData();
+        });
+
         this.editPanel.setLoading(true);
 
         Ext.Ajax.request({
             url: '/admin/formbuilder/mail-editor/save',
             params: {
                 id: this.formId,
-                data: this.ckEditor.getData()
+                data: Ext.encode(data)
             },
             success: function () {
                 this.editPanel.setLoading(false);
@@ -218,100 +288,25 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
         });
     },
 
-    initCkEditorPlugin: function () {
+    initCkEditorPlugins: function () {
 
-        var plugin = CKEDITOR.plugins.get('form_mail_editor_placeholder');
-
-        if (plugin !== null) {
-            return;
-        }
-
-        Ext.Array.each(['widget', 'widgetselection', 'lineutils'], function (pluginName) {
+        Ext.Array.each(['widget', 'widgetselection', 'lineutils', 'formmaileditor'], function (pluginName) {
             if (CKEDITOR.plugins.get(pluginName) === null) {
                 CKEDITOR.plugins.addExternal(pluginName, '/bundles/formbuilder/js/comp/ckeditor/' + pluginName + '/', 'plugin.js');
             }
         });
+    },
 
-        CKEDITOR.plugins.add('form_mail_editor_placeholder', {
-            requires: 'widget',
+    getWidgetFieldsAsList: function () {
 
-            onLoad: function () {
-                CKEDITOR.addCss('.fme-placeholder{background-color:#ff0}');
-            },
-            init: function (editor) {
+        var widgetFields = [];
 
-                CKEDITOR.dialog.add( 'form_mail_editor_placeholder', '/bundles/formbuilder/js/comp/extensions/dialogs/placeholder.js' );
-
-                editor.widgets.add('form_mail_editor_placeholder', {
-
-                    dialog: 'form_mail_editor_placeholder',
-                    template: '<span class="fme-placeholder">[[]]</span>',
-                    pathName: 'form_mail_editor_placeholder',
-
-                    downcast: function (el) {
-                        return new CKEDITOR.htmlParser.text('[[' + this.data.name + ']]');
-                    },
-
-                    init: function () {
-                        this.setData('name', this.element.getText().slice(2, -2));
-                    },
-
-                    data: function () {
-                        this.element.setText('[[' + this.data.name + ']]');
-                    },
-
-                    getLabel: function () {
-                        return this.editor.lang.widget.label.replace(/%1/, this.data.name + ' ' + this.pathName);
-                    }
-                });
-
-                editor.on('paste', function (evt) {
-
-                    var attributes = [],
-                        renderedAttributes,
-                        configElements,
-                        mailEditorField;
-
-                    mailEditorField = evt.data.dataTransfer.getData('mail_editor_field');
-
-                    if (!mailEditorField) {
-                        return;
-                    }
-
-                    configElements = mailEditorField.config ? mailEditorField.config : [];
-                    Ext.Object.each(configElements, function (key, value) {
-                        attributes.push(key + '="' + value + '"');
-                    });
-
-                    renderedAttributes = attributes.length > 0 ? (' ' + attributes.join(' ')) : '';
-                    evt.data.dataValue = '<span class="fme-placeholder">[[' + mailEditorField.type + renderedAttributes + ']]</span>';
-
-                });
-            },
-            afterInit: function (editor) {
-                var placeholderReplaceRegex = /\[\[([^\[\]])+\]\]/g;
-
-                editor.dataProcessor.dataFilter.addRules({
-                    text: function (text, node) {
-                        var dtd = node.parent && CKEDITOR.dtd[node.parent.name];
-
-                        if (dtd && !dtd.span)
-                            return;
-
-                        return text.replace(placeholderReplaceRegex, function (match) {
-                            var widgetWrapper,
-                                innerElement = new CKEDITOR.htmlParser.element('span', {
-                                    'class': 'fme-placeholder'
-                                });
-
-                            innerElement.add(new CKEDITOR.htmlParser.text(match));
-                            widgetWrapper = editor.widgets.wrapElement(innerElement, 'form_mail_editor_placeholder');
-
-                            return widgetWrapper.getOuterHtml();
-                        });
-                    }
-                });
-            }
+        Ext.Array.each(this.configuration.widgetGroups, function (groupData) {
+            Ext.Array.each(groupData.elements, function (element) {
+                widgetFields.push(element);
+            });
         });
-    }
+
+        return widgetFields;
+    },
 });

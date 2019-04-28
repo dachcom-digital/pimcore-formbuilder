@@ -83,7 +83,8 @@ class MailParser
         $this->setMailPlaceholders($mail, $fieldValues);
 
         if ($disableDefaultMailBody === false) {
-            $this->setMailBodyPlaceholder($mail, $fieldValues, $form->getData()->getMailLayout());
+            $mailLayout = $form->getData()->getMailLayoutBasedOnLocale($locale);
+            $this->setMailBodyPlaceholder($mail, $fieldValues, $mailLayout);
         }
 
         $this->parseMailAttachment($mail, $attachments);

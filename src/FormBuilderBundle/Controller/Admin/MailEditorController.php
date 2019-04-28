@@ -44,6 +44,8 @@ class MailEditorController extends AdminController
         $widgets = $this->get(MailEditorWidgetRegistry::class)->getAll();
 
         $allWidgets = [];
+        $widgetsConfiguration = [];
+
         foreach ($widgets as $widgetType => $widget) {
             $groupName = $widget->getWidgetGroupName();
 
@@ -56,31 +58,37 @@ class MailEditorController extends AdminController
 
             if ($widget instanceof MailEditorFieldDataWidgetInterface) {
                 foreach ($formFields as $field) {
+                    $widgetFieldType = $widget->getWidgetIdentifierByField($widgetType, $field);
+                    $widgetsConfiguration[$widgetFieldType] = $widget->getWidgetConfigByField($field);
                     $allWidgets[$groupName]['elements'][] = [
-                        'type'       => $widgetType,
-                        'identifier' => $widget->getWidgetIdentifierByField($field),
-                        'label'      => $widget->getWidgetLabelByField($field),
-                        'config'     => $widget->getWidgetConfigByField($field),
+                        'type'             => $widgetType,
+                        'subType'          => $widget->getSubTypeByField($field),
+                        'label'            => $widget->getWidgetLabelByField($field),
+                        'configIdentifier' => $widgetFieldType,
                     ];
                 }
             } else {
+                $widgetsConfiguration[$widgetType] = $widget->getWidgetConfig();
                 $allWidgets[$groupName]['elements'][] = [
-                    'type'       => $widgetType,
-                    'identifier' => $widgetType,
-                    'label'      => $widget->getWidgetLabel(),
-                    'config'     => $widget->getWidgetConfig(),
+                    'type'             => $widgetType,
+                    'subType'          => null,
+                    'label'            => $widget->getWidgetLabel(),
+                    'configIdentifier' => $widgetType,
                 ];
             }
         }
 
         $allWidgets = array_values($allWidgets);
 
+        $mailLayouts = $formEntity->getMailLayout();
+
         return $this->json([
             'formId'        => (int) $formId,
-            'data'          => $formEntity->getMailLayout(),
+            'data'          => $mailLayouts,
             'configuration' => [
-                'help'         => '',
-                'widgetGroups' => $allWidgets,
+                'help'                => '',
+                'widgetGroups'        => $allWidgets,
+                'widgetConfiguration' => $widgetsConfiguration
             ]
         ]);
     }
@@ -96,17 +104,29 @@ class MailEditorController extends AdminController
         $message = '';
 
         $formId = $request->get('id');
-        $mailLayout = $request->get('data');
+        $mailLayouts = json_decode($request->get('data'), true);
 
         /** @var FormManager $formManager */
         $formManager = $this->get(FormManager::class);
 
         $formEntity = $formManager->getById($formId);
 
-        $mailLayout = str_replace('&nbsp;', ' ', $mailLayout);
-        $mailLayout = preg_replace('/\s+/', ' ', $mailLayout);
+        $storedMailLayout = is_array($formEntity->getMailLayout()) ? $formEntity->getMailLayout() : [];
+        $normalizedMailLayouts = $storedMailLayout;
 
-        $formEntity->setMailLayout(empty($mailLayout) ? null : $mailLayout);
+        foreach ($mailLayouts as $locale => $mailLayout) {
+            $mailLayout = str_replace('&nbsp;', ' ', $mailLayout);
+            $mailLayout = preg_replace('/\s+/', ' ', $mailLayout);
+
+            if (empty($mailLayout) && isset($normalizedMailLayouts[$locale])) {
+                unset($normalizedMailLayouts[$locale]);
+                continue;
+            }
+
+            $normalizedMailLayouts[$locale] = $mailLayout;
+        }
+
+        $formEntity->setMailLayout(count($normalizedMailLayouts) === 0 ? null : $normalizedMailLayouts);
         $formEntity->setModificationDate(date('Y-m-d H:i:s'));
 
         try {

@@ -17,9 +17,17 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     /**
      * {@inheritdoc}
      */
-    public function getWidgetIdentifierByField(array $field)
+    public function getSubTypeByField(array $field)
     {
         return $field['name'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWidgetIdentifierByField(string $widgetType, array $field)
+    {
+        return sprintf('%s_%s', $widgetType, $field['type']);
     }
 
     /**
@@ -36,7 +44,25 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     public function getWidgetConfigByField(array $field)
     {
         return [
-            'identifier' => $field['name']
+            'show_label' => [
+                'type'         => 'checkbox',
+                'defaultValue' => true,
+                'label'        => 'Label anzeigen'
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWidgetCoreDefinitionsByField(array $field)
+    {
+        return [
+            'identifier' => [
+                'type'         => 'read-only',
+                'defaultValue' => $field['name'],
+                'label'        => 'Identifier'
+            ]
         ];
     }
 
@@ -45,6 +71,8 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
      */
     public function getValueForOutput(array $config)
     {
+        $renderLabels = !isset($config['show_label']) || $config['show_label'] === true;
+
         $outputData = $config['outputData'];
         $fieldType = $outputData['field_type'];
 
@@ -54,9 +82,9 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
 
         $fieldValue = '';
         if ($fieldType === FormValuesOutputApplierInterface::FIELD_TYPE_CONTAINER) {
-            $fieldValue .= $this->parseContainerField($outputData);
+            $fieldValue .= $this->parseContainerField($outputData, $renderLabels);
         } else {
-            $fieldValue .= $this->parseSimpleField($outputData);
+            $fieldValue .= $this->parseSimpleField($outputData, $renderLabels);
         }
 
         return $fieldValue;
@@ -64,10 +92,11 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
 
     /**
      * @param array $outputData
+     * @param bool  $renderLabels
      *
      * @return string
      */
-    protected function parseContainerField(array $outputData)
+    protected function parseContainerField(array $outputData, bool $renderLabels)
     {
         $fieldValue = '';
 
@@ -85,9 +114,9 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
             foreach ($subFieldCollection as $subFieldOutputData) {
                 $subFieldType = $subFieldOutputData['field_type'];
                 if ($subFieldType === FormValuesOutputApplierInterface::FIELD_TYPE_CONTAINER) {
-                    $fieldValue .= $this->parseContainerField($subFieldOutputData);
+                    $fieldValue .= $this->parseContainerField($subFieldOutputData, $renderLabels);
                 } else {
-                    $fieldValue .= $this->parseSimpleField($subFieldOutputData);
+                    $fieldValue .= $this->parseSimpleField($subFieldOutputData, $renderLabels);
                     $fieldValue .= '<br>';
                 }
             }
@@ -102,15 +131,19 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
 
     /**
      * @param array $outputData
+     * @param bool  $renderLabels
      *
      * @return string
      */
-    protected function parseSimpleField(array $outputData)
+    protected function parseSimpleField(array $outputData, bool $renderLabels)
     {
         $fieldValue = '';
 
         $label = $outputData['label'];
-        $fieldValue .= !empty($label) ? sprintf('%s: ', $label) : '';
+        if ($renderLabels === true) {
+            $fieldValue .= !empty($label) ? sprintf('%s: ', $label) : '';
+        }
+
         $fieldValue .= $this->parseFieldValue($outputData['value']);
 
         return $fieldValue;

@@ -2,7 +2,9 @@
 
 namespace FormBuilderBundle\Registry;
 
+use FormBuilderBundle\MailEditor\Widget\MailEditorFieldDataWidgetInterface;
 use FormBuilderBundle\MailEditor\Widget\MailEditorWidgetInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MailEditorWidgetRegistry
 {
@@ -10,6 +12,11 @@ class MailEditorWidgetRegistry
      * @var array
      */
     protected $provider = [];
+
+    /**
+     * @var OptionsResolver
+     */
+    protected $widgetOptionsResolver;
 
     /**
      * @param string                    $identifier
@@ -26,6 +33,15 @@ class MailEditorWidgetRegistry
                     implode(', ', class_implements($service))
                 )
             );
+        }
+
+        $widgetConfig = $service instanceof MailEditorFieldDataWidgetInterface
+            ? $service->getWidgetConfigByField([]) : $service->getWidgetConfig();
+
+        if (count($widgetConfig) > 0) {
+            foreach ($widgetConfig as $config) {
+                $this->getOptionsResolver()->resolve($config);
+            }
         }
 
         $this->provider[$identifier] = $service;
@@ -71,5 +87,26 @@ class MailEditorWidgetRegistry
     public function getAllIdentifier()
     {
         return array_keys($this->provider);
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    protected function getOptionsResolver()
+    {
+        if ($this->widgetOptionsResolver !== null) {
+            return $this->widgetOptionsResolver;
+        }
+
+        $optionsResolver = new OptionsResolver();
+
+        $optionsResolver->setRequired(['defaultValue', 'type', 'label']);
+        $optionsResolver->setAllowedTypes('label', ['string']);
+        $optionsResolver->setAllowedTypes('defaultValue', ['null', 'string', 'bool']);
+        $optionsResolver->setAllowedValues('type', ['checkbox', 'input', 'read-only']);
+
+        $this->widgetOptionsResolver = $optionsResolver;
+
+        return $this->widgetOptionsResolver;
     }
 }

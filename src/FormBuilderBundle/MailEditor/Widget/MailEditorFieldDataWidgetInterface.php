@@ -9,7 +9,15 @@ interface MailEditorFieldDataWidgetInterface
      *
      * @return string
      */
-    public function getWidgetIdentifierByField(array $field);
+    public function getSubTypeByField(array $field);
+
+    /**
+     * @param string $widgetType
+     * @param array $field
+     *
+     * @return string
+     */
+    public function getWidgetIdentifierByField(string $widgetType, array $field);
 
     /**
      * @param array $field

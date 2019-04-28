@@ -139,14 +139,21 @@ interface FormInterface
     public function getCreatedBy();
 
     /**
-     * @param string $mailLayout
+     * @param array $mailLayout
      */
-    public function setMailLayout(string $mailLayout = null);
+    public function setMailLayout($mailLayout = null);
 
     /**
-     * @return null|string
+     * @return null|array
      */
     public function getMailLayout();
+
+    /**
+     * @param string|null $locale
+     *
+     * @return string|null
+     */
+    public function getMailLayoutBasedOnLocale(string $locale = null);
 
     /**
      * @param array $config

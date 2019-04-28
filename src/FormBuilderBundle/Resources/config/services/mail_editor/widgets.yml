@@ -7,7 +7,7 @@ services:
 
     FormBuilderBundle\MailEditor\Widget\FormFieldWidget:
         tags:
-            - { name: form_builder.mail_editor.widget, type: formbuilder_field }
+            - { name: form_builder.mail_editor.widget, type: fb_field }
 
     FormBuilderBundle\MailEditor\Widget\DateWidget:
         tags:
