@@ -166,7 +166,7 @@ class MailListener implements EventSubscriberInterface
             $attachments = $data->getAttachments();
         }
 
-        $mail = $this->mailParser->create($mailTemplate, $form, $attachments, $locale);
+        $mail = $this->mailParser->create($mailTemplate, $form, $attachments, $locale, $isCopy);
         $forceSubmissionAsPlainText = (bool) $mailTemplate->getProperty('mail_force_plain_text');
 
         $mail->setParam('_form_builder_id', (int) $data->getId());

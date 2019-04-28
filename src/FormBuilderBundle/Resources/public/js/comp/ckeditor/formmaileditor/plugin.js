@@ -16,17 +16,6 @@
                 template: '<span class="fme-placeholder">[[]]</span>',
                 pathName: 'formmaileditor',
 
-                downcast: function (el) {
-                    var attributes = '';
-                    if (this.data.hasOwnProperty('additionalData')) {
-                        Object.keys(this.data.additionalData).forEach(function (key) {
-                            attributes += (' ' + key + '="' + this.data.additionalData[key] + '"');
-                        }.bind(this));
-                    }
-
-                    return new CKEDITOR.htmlParser.text('[[' + this.data.attribute + attributes + ']]');
-                },
-
                 init: function () {
 
                     var attribute = this.element.getText().slice(2, -2),
@@ -44,14 +33,46 @@
                 },
 
                 data: function () {
+                    var type = this.data.type,
+                        subType = this.data.subType;
+
+                    if (subType !== null) {
+                        subType = ' sub-type="' + subType + '"';
+                    } else {
+                        subType = '';
+                    }
+
                     var attributes = '';
                     if (this.data.hasOwnProperty('additionalData')) {
                         Object.keys(this.data.additionalData).forEach(function (key) {
                             attributes += (' ' + key + '="' + this.data.additionalData[key] + '"');
                         }.bind(this));
+                        this.element.setText('[[' + type + subType + attributes + ']]');
+                    } else {
+                        this.element.setText('[[' + this.data.attribute + ']]');
+                    }
+                },
+
+                downcast: function (el) {
+
+                    var attributes = '',
+                        type = this.data.type,
+                        subType = this.data.subType;
+
+                    if (subType !== null) {
+                        subType = ' sub-type="' + subType + '"';
+                    } else {
+                        subType = '';
                     }
 
-                    this.element.setText('[[' + this.data.attribute + attributes + ']]');
+                    if (this.data.hasOwnProperty('additionalData')) {
+                        Object.keys(this.data.additionalData).forEach(function (key) {
+                            attributes += (' ' + key + '="' + this.data.additionalData[key] + '"');
+                        }.bind(this));
+                        return new CKEDITOR.htmlParser.text('[[' + type + subType + attributes + ']]');
+                    } else {
+                        return new CKEDITOR.htmlParser.text('[[' + this.data.attribute + ']]');
+                    }
                 },
 
                 getLabel: function () {

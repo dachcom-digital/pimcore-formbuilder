@@ -17,7 +17,7 @@ class DateWidget implements MailEditorWidgetInterface
      */
     public function getWidgetLabel()
     {
-        return 'Date';
+        return 'form_builder.mail_editor.widget_provider.date.date';
     }
 
     /**
@@ -29,7 +29,7 @@ class DateWidget implements MailEditorWidgetInterface
             'format' => [
                 'type'         => 'input',
                 'defaultValue' => null,
-                'label'        => 'Date Format'
+                'label'        => 'form_builder.mail_editor.widget_provider.date.date_format'
             ],
         ];
     }

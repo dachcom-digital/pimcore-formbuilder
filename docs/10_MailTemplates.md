@@ -53,3 +53,6 @@ Please aware that this option requires the [html2text](http://www.mbayer.de/html
 ## Conditional Logic
 It's also possible to change the email template identification based on different conditions. 
 Read more about conditional logic [here](81_ConditionalLogic.md).
+
+## Mail Layout Designer
+Read more about the Layout Designer [here](11_1_MailEditor.md)

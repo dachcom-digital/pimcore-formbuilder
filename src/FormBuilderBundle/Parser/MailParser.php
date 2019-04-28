@@ -60,12 +60,13 @@ class MailParser
      * @param FormInterface $form
      * @param array         $attachments
      * @param string        $locale
+     * @param bool          $isCopy
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, array $attachments, $locale)
+    public function create(Email $mailTemplate, FormInterface $form, array $attachments, $locale, $isCopy)
     {
         $mail = new Mail();
 
@@ -83,8 +84,8 @@ class MailParser
         $this->setMailPlaceholders($mail, $fieldValues);
 
         if ($disableDefaultMailBody === false) {
-            $mailLayout = $form->getData()->getMailLayoutBasedOnLocale($locale);
-            $this->setMailBodyPlaceholder($mail, $fieldValues, $mailLayout);
+            $mailLayout = $isCopy === true ? null : $form->getData()->getMailLayoutBasedOnLocale($locale);
+            $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
         }
 
         $this->parseMailAttachment($mail, $attachments);
@@ -200,11 +201,12 @@ class MailParser
     }
 
     /**
-     * @param Mail        $mail
-     * @param array       $fieldValues
-     * @param null|string $mailLayout
+     * @param Mail          $mail
+     * @param FormInterface $form
+     * @param array         $fieldValues
+     * @param null|string   $mailLayout
      */
-    protected function setMailBodyPlaceholder(Mail $mail, array $fieldValues, $mailLayout = null)
+    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, $mailLayout = null)
     {
         if ($mailLayout === null) {
             $body = $this->templating->render(
@@ -212,7 +214,7 @@ class MailParser
                 ['fields' => $fieldValues]
             );
         } else {
-            $body = $this->placeholderParser->replacePlaceholderWithOutputData($mailLayout, $fieldValues);
+            $body = $this->placeholderParser->replacePlaceholderWithOutputData($mailLayout, $form, $fieldValues);
         }
 
         $mail->setParam('body', $body);

@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\MailEditor\Parser;
 
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
+use Symfony\Component\Form\FormInterface;
 
 class PlaceholderParser implements PlaceholderParserInterface
 {
@@ -10,6 +11,11 @@ class PlaceholderParser implements PlaceholderParserInterface
      * @var array
      */
     protected $outputData;
+
+    /**
+     * @var FormInterface
+     */
+    protected $form;
 
     /**
      * @var MailEditorWidgetRegistry
@@ -27,9 +33,10 @@ class PlaceholderParser implements PlaceholderParserInterface
     /**
      * {@inheritdoc}
      */
-    public function replacePlaceholderWithOutputData(string $layout, array $outputData)
+    public function replacePlaceholderWithOutputData(string $layout, FormInterface $form, array $outputData)
     {
         $this->outputData = $outputData;
+        $this->form = $form;
 
         $data = preg_replace_callback($this->getPlaceholderRegex(), [$this, 'parseSquareBracketsTag'], $layout);
 
@@ -59,7 +66,10 @@ class PlaceholderParser implements PlaceholderParserInterface
             $config['outputData'] = $this->outputData[$config['sub-type']];
         }
 
-        $cleanConfig = [];
+        $cleanConfig = [
+            'form' => $this->form
+        ];
+
         foreach ($config as $key => $value) {
 
             if ($value === 'true' || $value === 'false') {

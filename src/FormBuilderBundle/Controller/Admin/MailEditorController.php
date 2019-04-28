@@ -59,7 +59,7 @@ class MailEditorController extends AdminController
             if ($widget instanceof MailEditorFieldDataWidgetInterface) {
                 foreach ($formFields as $field) {
                     $widgetFieldType = $widget->getWidgetIdentifierByField($widgetType, $field);
-                    $widgetsConfiguration[$widgetFieldType] = $widget->getWidgetConfigByField($field);
+                    $widgetsConfiguration[$widgetFieldType] = $this->translateWidgetConfig($widget->getWidgetConfigByField($field));
                     $allWidgets[$groupName]['elements'][] = [
                         'type'             => $widgetType,
                         'subType'          => $widget->getSubTypeByField($field),
@@ -68,11 +68,11 @@ class MailEditorController extends AdminController
                     ];
                 }
             } else {
-                $widgetsConfiguration[$widgetType] = $widget->getWidgetConfig();
+                $widgetsConfiguration[$widgetType] = $this->translateWidgetConfig($widget->getWidgetConfig());
                 $allWidgets[$groupName]['elements'][] = [
                     'type'             => $widgetType,
                     'subType'          => null,
-                    'label'            => $widget->getWidgetLabel(),
+                    'label'            => $this->get('translator')->trans($widget->getWidgetLabel(), [], 'admin'),
                     'configIdentifier' => $widgetType,
                 ];
             }
@@ -141,5 +141,14 @@ class MailEditorController extends AdminController
             'success' => $success,
             'message' => $message
         ]);
+    }
+
+    protected function translateWidgetConfig(array $config)
+    {
+        foreach ($config as $index => $element) {
+            $config[$index]['label'] = $this->get('translator')->trans($element['label'], [], 'admin');
+        }
+
+        return $config;
     }
 }

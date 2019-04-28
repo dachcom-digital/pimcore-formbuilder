@@ -118,11 +118,11 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             closable: false,
             html: rightHtml,
             border: false,
-            layout: 'fit',
             flex: 1,
+            height: 645,
             align: 'stretch',
             title: 'Fields',
-            autoScroll: false
+            autoScroll: true
         });
 
         this.initCkEditorPlugins();
@@ -185,6 +185,9 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
         var selectionField;
 
         selectionField = Ext.get(this.selectionId);
+
+        selectionField.createChild('<span><strong>Attention! </strong>This mail editor will currently <strong>only</strong> transform admin mails and does not respect any special mail template language (like inky)!<br><br></span>');
+
         Ext.Array.each(this.configuration.widgetGroups, function (groupData) {
             var group;
             selectionField.createChild('<h4>' + groupData.label + '</h4>');
@@ -226,7 +229,7 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
 
         ckEditor = CKEDITOR.appendTo(editorId, editorConfig);
 
-        if (typeof this.editorData === 'object' && this.editorData.hasOwnProperty(locale)) {
+        if (this.editorData !== null && typeof this.editorData === 'object' && this.editorData.hasOwnProperty(locale)) {
             ckEditor.setData(this.editorData[locale]);
         }
 

@@ -47,22 +47,8 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
             'show_label' => [
                 'type'         => 'checkbox',
                 'defaultValue' => true,
-                'label'        => 'Label anzeigen'
+                'label'        => 'form_builder.mail_editor.widget_provider.form_fields.show_labels'
             ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetCoreDefinitionsByField(array $field)
-    {
-        return [
-            'identifier' => [
-                'type'         => 'read-only',
-                'defaultValue' => $field['name'],
-                'label'        => 'Identifier'
-            ]
         ];
     }
 
