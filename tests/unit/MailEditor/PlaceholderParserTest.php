@@ -4,6 +4,9 @@ namespace DachcomBundle\Test\unit\MailEditor;
 
 use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use FormBuilderBundle\MailEditor\Parser\PlaceholderParser;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormConfigBuilder;
 
 class PlaceholderParserTest extends DachcomBundleTestCase
 {
@@ -13,10 +16,13 @@ class PlaceholderParserTest extends DachcomBundleTestCase
     public function testNewFormFieldContainerRepeaterField()
     {
         $placeholder = $this->getContainer()->get(PlaceholderParser::class);
-        $data = $placeholder->replacePlaceholderWithOutputData($this->getTestString(), $this->getTestFields());
+
+        $config = new FormConfigBuilder('name', '\stdClass',  new EventDispatcher());
+        $form = new Form($config);
+
+        $data = $placeholder->replacePlaceholderWithOutputData($this->getTestString(), $form, $this->getTestFields());
 
         $this->assertEquals($this->getExpectedString(), $data);
-
     }
 
     /**
