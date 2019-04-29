@@ -61,6 +61,11 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var array
      */
+    public $mailLayout;
+
+    /**
+     * @var array
+     */
     public $config = [];
 
     /**
@@ -76,12 +81,12 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * @var array
      */
-    private $data = [];
+    protected $data = [];
 
     /**
      * @var array
      */
-    private $attachments = [];
+    protected $attachments = [];
 
     /**
      * {@inheritdoc}
@@ -290,6 +295,43 @@ class Form extends Model\AbstractModel implements FormInterface
     public function getCreatedBy()
     {
         return (int) $this->createdBy;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMailLayout($mailLayout = null)
+    {
+        if (is_string($mailLayout)) {
+            $mailLayout = unserialize($mailLayout);
+        }
+
+        $this->mailLayout = $mailLayout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMailLayout()
+    {
+        return $this->mailLayout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMailLayoutBasedOnLocale(string $locale = null)
+    {
+        $mailLayout = $this->getMailLayout();
+        if (is_null($mailLayout)) {
+            return null;
+        }
+
+        if (isset($mailLayout[$locale]) && !empty($mailLayout[$locale])) {
+            return $mailLayout[$locale];
+        }
+
+        return $mailLayout['default'];
     }
 
     /**

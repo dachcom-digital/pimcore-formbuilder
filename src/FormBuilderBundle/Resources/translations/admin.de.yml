@@ -48,15 +48,12 @@ form_builder_invalid_form_type_configuration: 'Es wurden Fehler bei der Form-Kon
 form_builder_upload_configuration_file: 'Konfigurationsdatei'
 form_builder_file: 'Datei wählen'
 formbuilder_permission_settings: 'Form Builder'
-
 form_builder_conditional_logic: 'Bedingungslogik'
 form_builder_conditional_section: 'Bedingungslogik Sektion'
 form_builder_delete_conditional_section: 'Sektion entfernen'
-
 form_builder_change_value_fields: 'Felder'
 form_builder_change_value_value: 'Wert'
 form_builder_change_value_description: 'Bitte beachten Sie, dass aktuell nur Werte von Text- und Nummernfelder bzw. bestehende Werte von Dropdowns geändert werden können.'
-
 form_builder_element_value_fields: 'Felder'
 form_builder_element_value_type: 'Typ'
 form_builder_element_value_type_contains: 'Werte beinhalten'
@@ -107,8 +104,6 @@ form_builder_success_message_document: 'Dokument'
 form_builder_success_message_external_url: 'Externe Url'
 form_builder_success_message_external_url_text_empty: 'http://'
 form_builder_success_message_flash_message_text: 'Flash-Mitteilung'
-
-# CI action / condition names
 form_builder.cl.action.toggle_element: 'Sichtbarkeit wechseln'
 form_builder.cl.action.constraints_add: 'Validierung hinzufügen'
 form_builder.cl.action.constraints_remove: 'Validierung entfernen'
@@ -119,3 +114,8 @@ form_builder.cl.action.toggle_availability: 'Verfügbarkeit wechseln'
 form_builder.cl.action.mail_behaviour: 'E-Mail Verhalten ändern'
 form_builder.cl.action.success_message: 'Bestätigungstext ändern'
 form_builder.cl.condition.element_value: 'Element Wert'
+form_builder.mail_editor.open_editor: 'Mail Editor öffnen'
+form_builder.mail_editor.close_confirmation_title: 'Bestätigung'
+form_builder.mail_editor.close_confirmation_message: 'Wollen Sie den Mail-Editor wirklich beenden?'
+form_builder.mail_editor.field_editor: 'Editor'
+form_builder.mail_editor.field_selector: 'Verfügbare Elemente'

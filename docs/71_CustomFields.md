@@ -89,13 +89,8 @@ class FormListener implements EventSubscriberInterface
 
                 // form builder usually tries to render the value for the email by itself.
                 
-                // 1. if you need to transform the value: use a closure
-                //'email_value_transformer' => function(FormInterface $field, $value, $locale) {
-                //    return 'YOUR_TRANSFORMED_VALUE'
-                //},
-
-                // 2. or a class method
-                //'email_value_transformer' => [$this, 'checkValue']
+                //optional: add a output transformer (only affects this element)
+                'output_transformer' => 'my_output_transformer',
             ]
         );
     }

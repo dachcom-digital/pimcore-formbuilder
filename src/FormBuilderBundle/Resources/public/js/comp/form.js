@@ -15,6 +15,7 @@ Formbuilder.comp.form = Class.create({
     formConditionalsStore: {},
     formFields: null,
     copyNode: null,
+    mailLayout: null,
     allowedMoveElements: {
         'root': [
             'field',
@@ -53,6 +54,7 @@ Formbuilder.comp.form = Class.create({
         this.availableContainerTypes = formData.container_types;
         this.availableConstraints = formData.validation_constraints;
         this.availableFormFieldTemplates = formData.fields_template;
+        this.mailLayout = formData.mail_layout;
 
         this.addLayout();
         this.initLayoutFields();
@@ -828,6 +830,12 @@ Formbuilder.comp.form = Class.create({
             handler: this.showFormMetaInfo.bind(this)
         });
 
+        items.push({
+            tooltip: t('form_builder.mail_editor.open_editor'),
+            iconCls: 'pimcore_icon_mail_editor',
+            scale: 'medium',
+            handler: this.showMailEditor.bind(this)
+        });
 
         toolbar.add(items);
 
@@ -839,6 +847,10 @@ Formbuilder.comp.form = Class.create({
      */
     showFormMetaInfo: function () {
         new Formbuilder.comp.extensions.formMetaData(this.formId, this.formMeta);
+    },
+
+    showMailEditor: function () {
+        new Formbuilder.comp.extensions.formMailEditor(this.formId);
     },
 
     /**

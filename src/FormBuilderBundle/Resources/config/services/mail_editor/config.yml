@@ -1,0 +1,11 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Registry\MailEditorWidgetRegistry: ~
+
+    FormBuilderBundle\MailEditor\Parser\PlaceholderParser: ~
+    FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface: '@FormBuilderBundle\MailEditor\Parser\PlaceholderParser'

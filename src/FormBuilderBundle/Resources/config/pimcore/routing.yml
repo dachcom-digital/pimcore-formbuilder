@@ -21,6 +21,13 @@ form_builder.controller.admin.delete_form:
     path: /admin/formbuilder/settings/delete-form
     defaults: { _controller: FormBuilderBundle:Admin/Settings:deleteForm }
 
+form_builder.controller.admin.load_form_mail_editor_data:
+    path: /admin/formbuilder/mail-editor/load
+    defaults: { _controller: FormBuilderBundle:Admin/MailEditor:getMailEditorData }
+form_builder.controller.admin.save_form_mail_editor_data:
+    path: /admin/formbuilder/mail-editor/save
+    defaults: { _controller: FormBuilderBundle:Admin/MailEditor:saveFormMailEditorData }
+
 form_builder.controller.admin.export_form:
     path: /admin/formbuilder/settings/export-form/{id}
     defaults: { _controller: FormBuilderBundle:Admin/Settings:exportForm }

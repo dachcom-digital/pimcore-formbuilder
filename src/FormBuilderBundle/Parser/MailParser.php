@@ -2,7 +2,8 @@
 
 namespace FormBuilderBundle\Parser;
 
-use FormBuilderBundle\Form\FormValuesBeautifier;
+use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
 use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
@@ -22,9 +23,14 @@ class MailParser
     protected $mailTemplate;
 
     /**
-     * @var FormValuesBeautifier
+     * @var FormValuesOutputApplierInterface
      */
-    protected $formValuesBeautifier;
+    protected $formValuesOutputApplier;
+
+    /**
+     * @var PlaceholderParserInterface
+     */
+    protected $placeholderParser;
 
     /**
      * @var AttachmentStreamInterface
@@ -32,17 +38,20 @@ class MailParser
     protected $attachmentStream;
 
     /**
-     * @param EngineInterface           $templating
-     * @param FormValuesBeautifier      $formValuesBeautifier
-     * @param AttachmentStreamInterface $attachmentStream
+     * @param EngineInterface                  $templating
+     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
+     * @param PlaceholderParserInterface       $placeholderParser
+     * @param AttachmentStreamInterface        $attachmentStream
      */
     public function __construct(
         EngineInterface $templating,
-        FormValuesBeautifier $formValuesBeautifier,
+        FormValuesOutputApplierInterface $formValuesOutputApplier,
+        PlaceholderParserInterface $placeholderParser,
         AttachmentStreamInterface $attachmentStream
     ) {
         $this->templating = $templating;
-        $this->formValuesBeautifier = $formValuesBeautifier;
+        $this->formValuesOutputApplier = $formValuesOutputApplier;
+        $this->placeholderParser = $placeholderParser;
         $this->attachmentStream = $attachmentStream;
     }
 
@@ -51,12 +60,13 @@ class MailParser
      * @param FormInterface $form
      * @param array         $attachments
      * @param string        $locale
+     * @param bool          $isCopy
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, array $attachments, $locale)
+    public function create(Email $mailTemplate, FormInterface $form, array $attachments, $locale, $isCopy)
     {
         $mail = new Mail();
 
@@ -65,13 +75,19 @@ class MailParser
         $ignoreFields = (string) $mailTemplate->getProperty('mail_ignore_fields');
         $ignoreFields = array_map('trim', explode(',', $ignoreFields));
 
-        $fieldValues = $this->formValuesBeautifier->transformData($form, $ignoreFields, $locale);
+        $fieldValues = $this->formValuesOutputApplier->applyForChannel($form, $ignoreFields, 'mail', $locale);
 
         $this->parseMailRecipients($mailTemplate, $fieldValues);
         $this->parseMailSender($mailTemplate, $fieldValues);
         $this->parseReplyTo($mailTemplate, $fieldValues);
         $this->parseSubject($mailTemplate, $fieldValues);
-        $this->setMailPlaceholders($mail, $fieldValues, $disableDefaultMailBody);
+        $this->setMailPlaceholders($mail, $fieldValues);
+
+        if ($disableDefaultMailBody === false) {
+            $mailLayout = $isCopy === true ? null : $form->getData()->getMailLayoutBasedOnLocale($locale);
+            $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
+        }
+
         $this->parseMailAttachment($mail, $attachments);
 
         $mail->setDocument($mailTemplate);
@@ -83,7 +99,7 @@ class MailParser
      * @param Email $mailTemplate
      * @param array $data
      */
-    private function parseMailRecipients(Email $mailTemplate, $data = [])
+    protected function parseMailRecipients(Email $mailTemplate, $data = [])
     {
         $parsedTo = $this->extractPlaceHolder($mailTemplate->getTo(), $data);
         $mailTemplate->setTo($parsedTo);
@@ -93,7 +109,7 @@ class MailParser
      * @param Email $mailTemplate
      * @param array $data
      */
-    private function parseMailSender(Email $mailTemplate, $data = [])
+    protected function parseMailSender(Email $mailTemplate, $data = [])
     {
         $from = $mailTemplate->getFrom();
         $parsedFrom = $this->extractPlaceHolder($from, $data);
@@ -105,7 +121,7 @@ class MailParser
      * @param Email $mailTemplate
      * @param array $data
      */
-    private function parseReplyTo(Email $mailTemplate, $data = [])
+    protected function parseReplyTo(Email $mailTemplate, $data = [])
     {
         $replyTo = $mailTemplate->getReplyTo();
         $parsedReplyTo = $this->extractPlaceHolder($replyTo, $data);
@@ -118,7 +134,7 @@ class MailParser
      * @param array  $fieldValues
      * @param string $prefix
      */
-    private function parseSubject(Email $mailTemplate, $fieldValues = [], $prefix = '')
+    protected function parseSubject(Email $mailTemplate, $fieldValues = [], $prefix = '')
     {
         $realSubject = $mailTemplate->getSubject();
 
@@ -133,10 +149,6 @@ class MailParser
                             $realSubject = $mailTemplate->getSubject();
                         }
                         // repeatable container values as placeholders is unsupported.
-                        continue;
-                    }
-
-                    if ($this->isEmptyFormField($formField['value'])) {
                         continue;
                     }
 
@@ -161,10 +173,9 @@ class MailParser
     /**
      * @param Mail   $mail
      * @param array  $fieldValues
-     * @param bool   $disableDefaultMailBody
      * @param string $prefix
      */
-    private function setMailPlaceholders(Mail $mail, array $fieldValues, bool $disableDefaultMailBody, string $prefix = '')
+    protected function setMailPlaceholders(Mail $mail, array $fieldValues, string $prefix = '')
     {
         //allow access to all form placeholders
         foreach ($fieldValues as $formField) {
@@ -177,30 +188,43 @@ class MailParser
                         if ($formField['type'] === 'fieldset') {
                             $prefix = $formField['name'];
                         }
-                        $this->setMailPlaceholders($mail, $group, $disableDefaultMailBody, $prefix);
+                        $this->setMailPlaceholders($mail, $group, $prefix);
                     }
                 }
 
-                continue;
-            }
-            if ($this->isEmptyFormField($formField['value'])) {
                 continue;
             }
 
             $paramName = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
             $mail->setParam($paramName, $this->getSingleRenderedValue($formField['value']));
         }
+    }
 
-        if ($disableDefaultMailBody === false) {
-            $mail->setParam('body', $this->getBodyHtmlTemplate($fieldValues));
+    /**
+     * @param Mail          $mail
+     * @param FormInterface $form
+     * @param array         $fieldValues
+     * @param null|string   $mailLayout
+     */
+    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, $mailLayout = null)
+    {
+        if ($mailLayout === null) {
+            $body = $this->templating->render(
+                '@FormBuilder/Email/formData.html.twig',
+                ['fields' => $fieldValues]
+            );
+        } else {
+            $body = $this->placeholderParser->replacePlaceholderWithOutputData($mailLayout, $form, $fieldValues);
         }
+
+        $mail->setParam('body', $body);
     }
 
     /**
      * @param Mail  $mail
      * @param array $attachments
      */
-    public function parseMailAttachment(Mail $mail, array $attachments)
+    protected function parseMailAttachment(Mail $mail, array $attachments)
     {
         foreach ($attachments as $attachmentFileInfo) {
             try {
@@ -214,31 +238,6 @@ class MailParser
 
             $this->attachmentStream->removeAttachmentByFileInfo($attachmentFileInfo);
         }
-    }
-
-    /**
-     * @param mixed $formFieldValue
-     *
-     * @return bool
-     */
-    protected function isEmptyFormField($formFieldValue)
-    {
-        return empty($formFieldValue) && $formFieldValue !== 0 && $formFieldValue !== '0';
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    protected function getBodyHtmlTemplate($data)
-    {
-        $html = $this->templating->render(
-            '@FormBuilder/Email/formData.html.twig',
-            ['fields' => $data]
-        );
-
-        return $html;
     }
 
     /**

@@ -1,0 +1,12 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\Registry\OutputTransformerRegistry: ~
+
+    FormBuilderBundle\Transformer\Output\FallbackTransformer:
+        tags:
+            - {name: form_builder.transformer.output, type: fallback_transformer, channel: _all }
