@@ -93,7 +93,9 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
             return $fieldValue;
         }
 
-        $fieldValue .= !empty($label) ? sprintf('%s:<br>', $label) : '';
+        if ($renderLabels === true) {
+            $fieldValue .= !empty($label) ? sprintf('%s:<br>', $label) : '';
+        }
 
         foreach ($outputData['fields'] as $blockIndex => $subFieldCollection) {
             $fieldValue .= !empty($blockLabel) ? sprintf('%s:<br>', $blockLabel) : '';
@@ -102,7 +104,9 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
                 if ($subFieldType === FormValuesOutputApplierInterface::FIELD_TYPE_CONTAINER) {
                     $fieldValue .= $this->parseContainerField($subFieldOutputData, $renderLabels);
                 } else {
-                    $fieldValue .= $this->parseSimpleField($subFieldOutputData, $renderLabels);
+                    // currently we need to force subfields labels in container
+                    // since we have no options to define their states.
+                    $fieldValue .= $this->parseSimpleField($subFieldOutputData, true);
                     $fieldValue .= '<br>';
                 }
             }

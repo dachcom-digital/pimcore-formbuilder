@@ -4,6 +4,11 @@
 
 > **Attention**: This mail editor will currently only transform admin mails and does not respect any special mail template language (like inky)!
  
+## Things to know
+- Always save your form before opening the mail editor
+- The mail editor is locale aware. However, there is a `default` row which will be used, if no localized data is available
+
+## Custom Service
 Use the mail editor to specify some special mail templates.
 It's very easy to add some custom template widgets (Eg. date field).
 
