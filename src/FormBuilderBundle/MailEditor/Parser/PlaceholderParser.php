@@ -71,7 +71,6 @@ class PlaceholderParser implements PlaceholderParserInterface
         ];
 
         foreach ($config as $key => $value) {
-
             if ($value === 'true' || $value === 'false') {
                 $value = $value === 'true';
             }

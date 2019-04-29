@@ -47,8 +47,6 @@ class Builder
     protected $router;
 
     /**
-     * Builder constructor.
-     *
      * @param FormBuilderSubscriber $formBuilderSubscriber
      * @param Configuration         $configuration
      * @param RequestStack          $requestStack

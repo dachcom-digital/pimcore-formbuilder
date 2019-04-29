@@ -13,7 +13,7 @@ interface MailEditorFieldDataWidgetInterface
 
     /**
      * @param string $widgetType
-     * @param array $field
+     * @param array  $field
      *
      * @return string
      */

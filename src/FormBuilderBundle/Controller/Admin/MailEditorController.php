@@ -120,6 +120,7 @@ class MailEditorController extends AdminController
 
             if (empty($mailLayout) && isset($normalizedMailLayouts[$locale])) {
                 unset($normalizedMailLayouts[$locale]);
+
                 continue;
             }
 
