@@ -194,7 +194,7 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             group = selectionField.createChild('<ul class="group"></ul>');
             Ext.Array.each(groupData.elements, function (element) {
                 var subTypeTag = element.subType !== null ? '<span class="tag">[' + element.subType + ']</span>' : '';
-                group.createChild('<li draggable="true" data-type="' + element.type + '" data-sub-type="' + element.subType + '">' + element.label + '' + subTypeTag + '</li>');
+                group.createChild('<li draggable="true" data-type="' + element.type + '" data-sub-type="' + element.subType + '">' + subTypeTag + '' + element.label + '</li>');
             }.bind(this));
 
         }.bind(this));
