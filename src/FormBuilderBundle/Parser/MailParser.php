@@ -75,6 +75,7 @@ class MailParser
         $ignoreFields = (string) $mailTemplate->getProperty('mail_ignore_fields');
         $ignoreFields = array_map('trim', explode(',', $ignoreFields));
 
+        $initialCharset = $mail->getCharset();
         $fieldValues = $this->formValuesOutputApplier->applyForChannel($form, $ignoreFields, 'mail', $locale);
 
         $this->parseMailRecipients($mailTemplate, $fieldValues);
@@ -91,6 +92,11 @@ class MailParser
         $this->parseMailAttachment($mail, $attachments);
 
         $mail->setDocument($mailTemplate);
+
+        // fix charset
+        if ($mail->getCharset() === null) {
+            $mail->setCharset($initialCharset);
+        }
 
         return $mail;
     }
