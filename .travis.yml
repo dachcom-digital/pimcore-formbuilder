@@ -21,61 +21,71 @@ env:
         - DACHCOM_TEST_SECTION=codeception
 matrix:
     include:
-        -   name: "PHPStan Static Analysis (Pimcore 5.7.x, PHP 7.2)"
+        -   name: "PHPStan Static Analysis (Pimcore 5.8.x, PHP 7.3)"
             sudo: required
-            php: 7.2
+            php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.2.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
                 - DACHCOM_TEST_SECTION=phpstan
-        -   name: "PHP ECS (Pimcore 5.6.x, PHP 7.2)"
+        -   name: "PHP ECS (Pimcore 5.8.x, PHP 7.3)"
             sudo: required
-            php: 7.2
+            php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
                 - DACHCOM_TEST_SECTION=ecs
-        -   name: "Codeception Tests (Pimcore 5.4.x, PHP 7.1)"
-            sudo: required
-            php: 7.1
-            env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
         -   name: "Codeception Tests (Pimcore 5.4.x, PHP 7.2)"
             sudo: required
             php: 7.2
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
-        -   name: "Codeception Tests (Pimcore 5.5.x, PHP 7.1)"
+        -   name: "Codeception Tests (Pimcore 5.4.x, PHP 7.3)"
             sudo: required
-            php: 7.1
+            php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
         -   name: "Codeception Tests (Pimcore 5.5.x, PHP 7.2)"
             sudo: required
             php: 7.2
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
-        -   name: "Codeception Tests (Pimcore 5.6.x, PHP 7.1)"
+        -   name: "Codeception Tests (Pimcore 5.5.x, PHP 7.3)"
             sudo: required
-            php: 7.1
+            php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
         -   name: "Codeception Tests (Pimcore 5.6.x, PHP 7.2)"
             sudo: required
             php: 7.2
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
-        -   name: "Codeception Tests (Pimcore 5.7.x, PHP 7.1)"
+        -   name: "Codeception Tests (Pimcore 5.6.x, PHP 7.3)"
             sudo: required
-            php: 7.1
+            php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.2.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
         -   name: "Codeception Tests (Pimcore 5.7.x, PHP 7.2)"
             sudo: required
             php: 7.2
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v1.2.0"
+        -   name: "Codeception Tests (Pimcore 5.7.x, PHP 7.3)"
+            sudo: required
+            php: 7.3
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.2.0"
+        -   name: "Codeception Tests (Pimcore 5.8.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
+        -   name: "Codeception Tests (Pimcore 5.8.x, PHP 7.3)"
+            sudo: required
+            php: 7.3
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
     allow_failures:
         -   env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
                 - DACHCOM_TEST_SECTION=ecs
     fast_finish: true
 
