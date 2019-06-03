@@ -22,6 +22,9 @@ Max file size will be calculated in MB. Empty or Zero means no Limit
 ### Allowed Extensions
 Define allowed extensions, for example: `pdf, zip`.
 
+### Item limit
+The maximum number of files that can be uploaded. Empty or Zero means no Limit
+
 ## Implementation
 
 ### Styling
