@@ -6,7 +6,7 @@ use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Parser\MailParser;
-use FormBuilderBundle\Session\FlashBagManagerInterface;
+use FormBuilderBundle\Session\FlashBagManager;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
@@ -21,7 +21,7 @@ use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
 class MailListener implements EventSubscriberInterface
 {
     /**
-     * @var FlashBagManagerInterface
+     * @var FlashBagManager
      */
     protected $flashBagManager;
 
@@ -51,13 +51,13 @@ class MailListener implements EventSubscriberInterface
     private $successMailTemplateProviderId;
 
     /**
-     * @param FlashBagManagerInterface $flashBagManager
+     * @param FlashBagManager $flashBagManager
      * @param MailParser               $mailParser
      * @param IncludeRenderer          $includeRenderer
      * @param Dispatcher               $dispatcher
      */
     public function __construct(
-        FlashBagManagerInterface $flashBagManager,
+        FlashBagManager $flashBagManager,
         MailParser $mailParser,
         IncludeRenderer $includeRenderer,
         Dispatcher $dispatcher

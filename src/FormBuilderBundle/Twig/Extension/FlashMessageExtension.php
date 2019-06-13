@@ -2,24 +2,25 @@
 
 namespace FormBuilderBundle\Twig\Extension;
 
-use FormBuilderBundle\Session\FlashBagManagerInterface;
+use FormBuilderBundle\Session\FlashBagManager;
 
 class FlashMessageExtension extends \Twig_Extension
 {
     /**
-     * @var FlashBagManagerInterface
+     * @var FlashBagManager
      */
     protected $flashBagManager;
 
     /**
      * RequestListener constructor.
      *
-     * @param FlashBagManagerInterface $flashBagManager
+     * @param FlashBagManager $flashBagManager
      */
-    public function __construct(FlashBagManagerInterface $flashBagManager)
+    public function __construct(FlashBagManager $flashBagManager)
     {
         $this->flashBagManager = $flashBagManager;
     }
+
 
     /**
      * {@inheritdoc}

@@ -6,7 +6,7 @@ use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Builder;
 use FormBuilderBundle\Form\FormErrorsSerializerInterface;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Session\FlashBagManagerInterface;
+use FormBuilderBundle\Session\FlashBagManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
@@ -34,7 +34,7 @@ class RequestListener implements EventSubscriberInterface
     protected $session;
 
     /**
-     * @var FlashBagManagerInterface
+     * @var FlashBagManager
      */
     protected $flashBagManager;
 
@@ -49,14 +49,14 @@ class RequestListener implements EventSubscriberInterface
      * @param Builder                       $formBuilder
      * @param EventDispatcherInterface      $eventDispatcher
      * @param SessionInterface              $session
-     * @param FlashBagManagerInterface      $flashBagManager
+     * @param FlashBagManager      $flashBagManager
      * @param FormErrorsSerializerInterface $formErrorsSerializer
      */
     public function __construct(
         Builder $formBuilder,
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
-        FlashBagManagerInterface $flashBagManager,
+        FlashBagManager $flashBagManager,
         FormErrorsSerializerInterface $formErrorsSerializer
     ) {
         $this->formBuilder = $formBuilder;

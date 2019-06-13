@@ -6,8 +6,9 @@ use FormBuilderBundle\Tool\FileLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Pimcore\Maintenance;
 
-class CleanUpListener implements EventSubscriberInterface
+class CleanUpListener implements TaskInterface
 {
     /**
      * @var FileLocator
@@ -24,17 +25,8 @@ class CleanUpListener implements EventSubscriberInterface
         $this->fileLocator = $fileLocator;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            SystemEvents::MAINTENANCE => ['onMaintenance'],
-        ];
-    }
 
-    public function onMaintenance()
+    public function execute()
     {
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {
             Logger::log('Remove form builder files folder: ' . $file);
