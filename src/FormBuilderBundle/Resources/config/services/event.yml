@@ -17,6 +17,8 @@ services:
 
     # core event: clean up unused tmp files
     FormBuilderBundle\EventListener\Core\CleanUpListener:
+        arguments:
+            - "@FormBuilderBundle\\Tool\\FileLocator"
         tags:
             - { name: pimcore.maintenance.task, type: formbuilder_maintenance }
 

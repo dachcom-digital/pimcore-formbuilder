@@ -6,7 +6,7 @@ use FormBuilderBundle\Tool\FileLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Pimcore\Maintenance;
+use Pimcore\Maintenance\TaskInterface;
 
 class CleanUpListener implements TaskInterface
 {
