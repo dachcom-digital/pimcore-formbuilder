@@ -6,7 +6,8 @@ addons:
     apt:
         packages:
             - html2text
-
+services:
+    - mysql
 env:
     global:
         - PIMCORE_ENVIRONMENT=test
