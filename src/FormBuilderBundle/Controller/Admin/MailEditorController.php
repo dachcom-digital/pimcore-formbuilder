@@ -24,6 +24,7 @@ class MailEditorController extends AdminController
     public function getMailEditorDataAction(Request $request)
     {
         $formId = $request->get('id');
+        $mailType = $request->get('mailType');
 
         /** @var FormManager $formManager */
         $formManager = $this->get(FormManager::class);
@@ -40,6 +41,8 @@ class MailEditorController extends AdminController
         }
 
         $formFields = $backendFormBuilder->generateExtJsFields($fieldData);
+
+        $mailLayouts = $formEntity->getMailLayout();
 
         $widgets = $this->get(MailEditorWidgetRegistry::class)->getAll();
 
@@ -80,11 +83,9 @@ class MailEditorController extends AdminController
 
         $allWidgets = array_values($allWidgets);
 
-        $mailLayouts = $formEntity->getMailLayout();
-
         return $this->json([
             'formId'        => (int) $formId,
-            'data'          => $mailLayouts,
+            'data'          => isset($mailLayouts[$mailType]) ? $mailLayouts[$mailType] : null,
             'configuration' => [
                 'help'                => '',
                 'widgetGroups'        => $allWidgets,
@@ -104,30 +105,25 @@ class MailEditorController extends AdminController
         $message = '';
 
         $formId = $request->get('id');
+        $mailType = $request->get('mailType');
+
         $mailLayouts = json_decode($request->get('data'), true);
 
         /** @var FormManager $formManager */
         $formManager = $this->get(FormManager::class);
 
         $formEntity = $formManager->getById($formId);
-
         $storedMailLayout = is_array($formEntity->getMailLayout()) ? $formEntity->getMailLayout() : [];
-        $normalizedMailLayouts = $storedMailLayout;
 
         foreach ($mailLayouts as $locale => $mailLayout) {
             $mailLayout = str_replace('&nbsp;', ' ', $mailLayout);
             $mailLayout = preg_replace('/\s+/', ' ', $mailLayout);
-
-            if (empty($mailLayout) && isset($normalizedMailLayouts[$locale])) {
-                unset($normalizedMailLayouts[$locale]);
-
-                continue;
-            }
-
-            $normalizedMailLayouts[$locale] = $mailLayout;
+            $storedMailLayout[$mailType][$locale] = $mailLayout;
         }
 
-        $formEntity->setMailLayout(count($normalizedMailLayouts) === 0 ? null : $normalizedMailLayouts);
+        $storedMailLayout = $this->cleanupMailLayout($storedMailLayout);
+
+        $formEntity->setMailLayout(count($storedMailLayout) === 0 ? null : $storedMailLayout);
         $formEntity->setModificationDate(date('Y-m-d H:i:s'));
 
         try {
@@ -144,6 +140,32 @@ class MailEditorController extends AdminController
         ]);
     }
 
+    /**
+     * @param array $mailLayout
+     *
+     * @return array
+     */
+    protected function cleanupMailLayout(array $mailLayout)
+    {
+        foreach ($mailLayout as $mailType => $layout) {
+
+            $mailLayout[$mailType] = array_filter($layout, function ($localizedLayout) {
+                return !empty($localizedLayout);
+            });
+
+            if (count($mailLayout[$mailType]) === 0) {
+                unset($mailLayout[$mailType]);
+            }
+        }
+
+        return $mailLayout;
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return array
+     */
     protected function translateWidgetConfig(array $config)
     {
         foreach ($config as $index => $element) {

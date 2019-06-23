@@ -85,7 +85,7 @@ class MailParser
         $this->setMailPlaceholders($mail, $fieldValues);
 
         if ($disableDefaultMailBody === false) {
-            $mailLayout = $isCopy === true ? null : $form->getData()->getMailLayoutBasedOnLocale($locale);
+            $mailLayout = $form->getData()->getMailLayoutBasedOnLocale($isCopy === false ? 'main' : 'copy', $locale);
             $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
         }
 
