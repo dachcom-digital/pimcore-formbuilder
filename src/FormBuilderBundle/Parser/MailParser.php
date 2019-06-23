@@ -136,73 +136,47 @@ class MailParser
     }
 
     /**
-     * @param Email  $mailTemplate
-     * @param array  $fieldValues
-     * @param string $prefix
+     * @param Email $mailTemplate
+     * @param array $fieldValues
      */
-    protected function parseSubject(Email $mailTemplate, $fieldValues = [], $prefix = '')
+    protected function parseSubject(Email $mailTemplate, $fieldValues = [])
     {
         $realSubject = $mailTemplate->getSubject();
+        $availableValues = $this->findPlaceholderValues($fieldValues);
 
-        preg_match_all("/\%(.+?)\%/", $realSubject, $matches);
+        preg_match_all('/\%(.+?)\%/', $realSubject, $matches);
 
-        if (isset($matches[1]) && count($matches[1]) > 0) {
-            foreach ($matches[1] as $key => $inputValue) {
-                foreach ($fieldValues as $formField) {
-                    if ($formField['field_type'] === 'container') {
-                        if ($formField['type'] === 'fieldset' && is_array($formField['fields']) && count($formField['fields']) === 1) {
-                            $this->parseSubject($mailTemplate, $formField['fields'][0], $formField['name']);
-                            $realSubject = $mailTemplate->getSubject();
-                        }
-                        // repeatable container values as placeholders is unsupported.
-                        continue;
-                    }
+        if (!isset($matches[1]) || count($matches[1]) === 0) {
+            return;
+        }
 
-                    $name = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
-                    if ($name == $inputValue) {
-                        $realSubject = str_replace(
-                            $matches[0][$key],
-                            $this->getSingleRenderedValue($formField['value'], ', '),
-                            $realSubject
-                        );
-                    }
-                }
+        foreach ($matches[1] as $key => $inputValue) {
 
+            if (!array_key_exists($inputValue, $availableValues)) {
                 //replace with '' if not found.
                 $realSubject = str_replace($matches[0][$key], '', $realSubject);
+                continue;
             }
+
+            $realSubject = str_replace(
+                $matches[0][$key],
+                $this->getSingleRenderedValue($availableValues[$inputValue], ', '),
+                $realSubject
+            );
         }
 
         $mailTemplate->setSubject($realSubject);
     }
 
     /**
-     * @param Mail   $mail
-     * @param array  $fieldValues
-     * @param string $prefix
+     * @param Mail  $mail
+     * @param array $fieldValues
      */
-    protected function setMailPlaceholders(Mail $mail, array $fieldValues, string $prefix = '')
+    protected function setMailPlaceholders(Mail $mail, array $fieldValues)
     {
-        //allow access to all form placeholders
-        foreach ($fieldValues as $formField) {
-            if ($formField['field_type'] === 'container') {
-                if (is_array($formField['fields']) && count($formField['fields']) > 0) {
-                    foreach ($formField['fields'] as $groupIndex => $group) {
-                        $prefix = sprintf('%s_%s', $formField['name'], $groupIndex);
-                        // do not add numeric index to fieldset (not repeatable)
-                        // to allow better placeholder versatility
-                        if ($formField['type'] === 'fieldset') {
-                            $prefix = $formField['name'];
-                        }
-                        $this->setMailPlaceholders($mail, $group, $prefix);
-                    }
-                }
-
-                continue;
-            }
-
-            $paramName = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
-            $mail->setParam($paramName, $this->getSingleRenderedValue($formField['value']));
+        $availablePlaceholder = $this->findPlaceholderValues($fieldValues);
+        foreach ($availablePlaceholder as $placeHolderName => $placeholderValue) {
+            $mail->setParam($placeHolderName, $this->getSingleRenderedValue($placeholderValue));
         }
     }
 
@@ -251,46 +225,39 @@ class MailParser
      *
      * @param string $str
      * @param array  $fieldValues
-     * @param string $prefix
      *
      * @return mixed|string
      */
-    protected function extractPlaceHolder($str, $fieldValues, $prefix = '')
+    protected function extractPlaceHolder($str, $fieldValues)
     {
-        $extractedValue = $str;
+        $availablePlaceholder = $this->findPlaceholderValues($fieldValues);
 
-        preg_match_all("/\%(.+?)\%/", $str, $matches);
+        preg_match_all('/\%(.+?)\%/', $str, $matches);
 
-        if (isset($matches[1]) && count($matches[1]) > 0) {
-            foreach ($matches[1] as $key => $inputValue) {
-                foreach ($fieldValues as $formField) {
-                    // container values as placeholders is unsupported.
-                    if ($formField['field_type'] === 'container') {
-                        if ($formField['type'] === 'fieldset' && is_array($formField['fields']) && count($formField['fields']) === 1) {
-                            $str = $this->extractPlaceHolder($str, $formField['fields'][0], $formField['name']);
-                        }
-                        // repeatable container values as placeholders is unsupported.
-                        continue;
-                    }
+        if (!isset($matches[1]) || count($matches[1]) === 0) {
+            return $str;
+        }
 
-                    $name = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
-                    if ($name == $inputValue) {
-                        $value = $formField['value'];
-                        //if is array, use first value since this is the best what we can do...
-                        if (is_array($value)) {
-                            $value = reset($value);
-                        }
-                        $str = str_replace($matches[0][$key], $value, $str);
-                    }
-                }
+        foreach ($matches[1] as $key => $inputValue) {
 
+            if (!array_key_exists($inputValue, $availablePlaceholder)) {
                 //replace with '' if not found.
-                $extractedValue = str_replace($matches[0][$key], '', $str);
+                $str = str_replace($matches[0][$key], '', $str);
+                continue;
             }
+
+            $value = $availablePlaceholder[$inputValue];
+
+            //if is array, use first value since this is the best what we can do...
+            if (is_array($value)) {
+                $value = reset($value);
+            }
+
+            $str = str_replace($matches[0][$key], $value, $str);
         }
 
         //remove invalid commas
-        $fragments = preg_split('@,@', $extractedValue, null, PREG_SPLIT_NO_EMPTY);
+        $fragments = preg_split('@,@', $str, null, PREG_SPLIT_NO_EMPTY);
         $fragmentsGlued = is_array($fragments) ? implode(',', $fragments) : $fragments;
         $extractedValue = is_string($fragmentsGlued) ? trim($fragmentsGlued) : $fragmentsGlued;
 
@@ -337,5 +304,43 @@ class MailParser
         }
 
         return $string;
+    }
+
+    /**
+     * @param array  $fieldValues
+     * @param string $prefix
+     * @param array  $values
+     *
+     * @return array
+     */
+    protected function findPlaceholderValues(array $fieldValues, string $prefix = '', array &$values = [])
+    {
+        //allow access to all form placeholders
+        foreach ($fieldValues as $formField) {
+            if ($formField['field_type'] === 'container') {
+                if (is_array($formField['fields']) && count($formField['fields']) > 0) {
+                    foreach ($formField['fields'] as $groupIndex => $group) {
+
+                        $prefix = sprintf('%s_%s', $formField['name'], $groupIndex);
+                        // do not add numeric index to fieldset (not repeatable)
+                        // to allow better placeholder versatility
+                        if ($formField['type'] === 'fieldset') {
+                            $prefix = $formField['name'];
+                        }
+
+                        $this->findPlaceholderValues($group, $prefix, $values);
+                    }
+
+                    $prefix = '';
+                }
+
+                continue;
+            }
+
+            $paramName = empty($prefix) ? $formField['name'] : sprintf('%s_%s', $prefix, $formField['name']);
+            $values[$paramName] = $formField['value'];
+        }
+
+        return $values;
     }
 }
