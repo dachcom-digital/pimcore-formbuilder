@@ -1,12 +1,13 @@
-sudo: required
+sudo: true
 language: php
 addons:
     chrome: stable
-    mariadb: '10.1'
+    mariadb: '10.2'
     apt:
         packages:
             - html2text
-
+services:
+    - mysql
 env:
     global:
         - PIMCORE_ENVIRONMENT=test
