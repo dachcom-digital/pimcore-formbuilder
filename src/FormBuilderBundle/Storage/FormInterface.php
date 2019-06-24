@@ -149,11 +149,12 @@ interface FormInterface
     public function getMailLayout();
 
     /**
+     * @param string      $mailType
      * @param string|null $locale
      *
      * @return string|null
      */
-    public function getMailLayoutBasedOnLocale(string $locale = null);
+    public function getMailLayoutBasedOnLocale(string $mailType, string $locale = null);
 
     /**
      * @param array $config

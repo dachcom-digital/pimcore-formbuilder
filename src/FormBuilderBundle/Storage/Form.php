@@ -320,18 +320,26 @@ class Form extends Model\AbstractModel implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function getMailLayoutBasedOnLocale(string $locale = null)
+    public function getMailLayoutBasedOnLocale(string $mailType, string $locale = null)
     {
         $mailLayout = $this->getMailLayout();
         if (is_null($mailLayout)) {
             return null;
         }
 
-        if (isset($mailLayout[$locale]) && !empty($mailLayout[$locale])) {
-            return $mailLayout[$locale];
+        if (!isset($mailLayout[$mailType])) {
+            return null;
         }
 
-        return $mailLayout['default'];
+        if (isset($mailLayout[$mailType][$locale])) {
+            return $mailLayout[$mailType][$locale];
+        }
+
+        if (isset($mailLayout[$mailType]['default'])) {
+            return $mailLayout[$mailType]['default'];
+        }
+
+        return null;
     }
 
     /**
