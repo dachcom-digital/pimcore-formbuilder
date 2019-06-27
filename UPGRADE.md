@@ -6,6 +6,12 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 2.6.x to Version 2.7.0
+- **[NEW FEATURE]**: [Mail Editor](https://github.com/dachcom-digital/pimcore-formbuilder/issues/158)
+- **[NEW FEATURE]**: [Allow Plain Text Mail Submission](https://github.com/dachcom-digital/pimcore-formbuilder/issues/157)
+- **[NEW FEATURE]**: [File As Attachment Option](https://github.com/dachcom-digital/pimcore-formbuilder/issues/156)
+- [Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/20?closed=1)
+
 #### Update from Version 2.6.x to Version 2.6.1
 - **[NEW FEATURE]**: [Attributes in Container Fields](https://github.com/dachcom-digital/pimcore-formbuilder/issues/146)
 - **[NEW FEATURE]**: [Allow HTML in Checkbox/Radio Label](https://github.com/dachcom-digital/pimcore-formbuilder/issues/111)
