@@ -1,5 +1,5 @@
 # Pimcore FormBuilder
-Pimcore 5.x FormBuilder.
+Pimcore 5/6 FormBuilder
 
 [![Join the chat at https://gitter.im/pimcore/pimcore](https://img.shields.io/gitter/room/pimcore/pimcore.svg?style=flat-square)](https://gitter.im/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -11,7 +11,7 @@ Pimcore 5.x FormBuilder.
 ![FormBuilder](https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png)
 
 #### Requirements
-* Pimcore >= 5.4.0
+Pimcore >= `5.8.0` | Pimcore >= `6.0.0`
 
 #### Pimcore 4 
 Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).
@@ -20,7 +20,7 @@ Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formb
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~2.7.0"
+    "dachcom-digital/formbuilder" : "~2.8.0"
 }
 ```
 
