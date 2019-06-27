@@ -8,12 +8,97 @@ use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
+use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class MailEditorController extends AdminController
 {
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getMailEditorAvailableMailTypesAction(Request $request)
+    {
+        $formId = $request->get('id');
+
+        /** @var FormManager $formManager */
+        $formManager = $this->get(FormManager::class);
+
+        $formEntity = $formManager->getById($formId);
+
+        if (!$formEntity instanceof FormInterface) {
+            return $this->json(['success' => false, 'message' => 'form is not available']);
+        }
+
+        $mailLayouts = $formEntity->getMailLayout();
+
+        $availableTypes = [];
+        foreach (['main', 'copy'] as $validType) {
+            $availableTypes[] =
+                [
+                    'identifier'  => $validType,
+                    'isAvailable' => isset($mailLayouts[$validType])
+                ];
+
+        }
+
+        return $this->json(['success' => true, 'types' => $availableTypes]);
+
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteMailEditorMailTypeAction(Request $request)
+    {
+        $success = true;
+        $message = null;
+
+        $formId = $request->get('id');
+        $mailType = $request->get('mailType');
+
+        /** @var FormManager $formManager */
+        $formManager = $this->get(FormManager::class);
+
+        $formEntity = $formManager->getById($formId);
+
+        if (!$formEntity instanceof FormInterface) {
+            return $this->json(['success' => false, 'message' => 'form is not available']);
+        }
+
+        $mailLayout = $formEntity->getMailLayout();
+
+        if (!isset($mailLayout[$mailType])) {
+            return $this->json(['success' => false, 'message' => sprintf('mailtype %s is not available', $mailType)]);
+        }
+
+        unset($mailLayout[$mailType]);
+
+        $mailLayout = $this->cleanupMailLayout($mailLayout);
+
+        $formEntity->setMailLayout(count($mailLayout) === 0 ? null : $mailLayout);
+        $formEntity->setModificationDate(date('Y-m-d H:i:s'));
+
+        try {
+            $formEntity->save();
+        } catch (\Exception $e) {
+            $success = false;
+            $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());
+        }
+
+        return $this->json([
+            'formId'  => (int) $formId,
+            'success' => $success,
+            'message' => $message
+        ]);
+
+    }
+
     /**
      * @param Request $request
      *
