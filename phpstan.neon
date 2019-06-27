@@ -2,14 +2,14 @@ includes:
 	- ../../vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
     reportUnmatchedIgnoredErrors: false
-    autoload_files:
-        - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/compatibility-v4.php
     symfony:
-        container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
+        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
     ignoreErrors:
         # There is no global constants definition file we could include, ignore it:
         - '#Constant PIMCORE_[A-Z\\_]+ not found\.#'
-        # Symfony DI (remove this line with symfony 4.2):
+        # Symfony DI (remove this line after symfony 4 support only):
+        - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required\.#'
+        # Symfony DI (split up configuration):
         - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)\.#'
         # Pimcore 5.6 href/relation issue: remove this after we only support pimcore >= 5.6:
         - '#Call to an undefined method Pimcore\\Model\\Document\\Tag::getElement\(\)\.#'
