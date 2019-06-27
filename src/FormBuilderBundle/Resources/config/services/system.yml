@@ -28,5 +28,6 @@ services:
             - { name: pimcore.session.configurator }
 
     # session: flash bag manager
+    FormBuilderBundle\Session\FlashBagManagerInterface: '@FormBuilderBundle\Session\FlashBagManager'
     FormBuilderBundle\Session\FlashBagManager:
         public: false
