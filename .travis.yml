@@ -73,7 +73,7 @@ after_failure:
 
 script:
     - '$HOME/chromedriver --url-base=/wd/hub &'
-    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
+    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080 -d web'
     - 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
     - _etc/travis/script
 
