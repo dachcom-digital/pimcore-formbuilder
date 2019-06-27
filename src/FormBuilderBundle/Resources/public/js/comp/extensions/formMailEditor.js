@@ -10,18 +10,17 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
 
     configuration: null,
     editorData: null,
+    mailType: null,
 
     initialize: function (formId) {
 
         this.formId = formId;
         this.ckEditors = {};
+        this.mailType = null;
 
         this.selectionId = 'form_mail_selection_' + Ext.id();
 
-        this.getInputWindow();
-        this.detailWindow.show();
-
-        this.loadEditorData();
+        this.getMailTypeSelectorWindow();
     },
 
     checkClose: function (win) {
@@ -52,6 +51,79 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             this.ckEditors[editorId]['editor'].destroy();
             delete this.ckEditors[editorId];
         }
+    },
+
+    getMailTypeSelectorWindow: function () {
+
+        var selectionWindow;
+
+        selectionWindow = new Ext.Window({
+            width: 450,
+            height: 150,
+            iconCls: 'pimcore_icon_mail_editor',
+            layout: 'fit',
+            closeAction: 'destroy',
+            plain: true,
+            autoScroll: false,
+            preventRefocus: true,
+            modal: true,
+            buttons: [
+                {
+                    text: t('select'),
+                    iconCls: 'pimcore_icon_save',
+                    handler: function (button) {
+                        var windowField = button.up('window'),
+                            form = windowField.down('panel').getForm(),
+                            values = form.getValues();
+
+                        if (form.isValid()) {
+                            this.mailType = values.mailType;
+                            this.getInputWindow();
+                            this.loadEditorData();
+                            windowField.close();
+                        }
+                    }.bind(this)
+                },
+                {
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_cancel',
+                    handler: function (button) {
+                        button.up('window').close();
+                    }
+                }
+            ]
+        });
+
+        selectionWindow.add(new Ext.form.Panel({
+            closable: false,
+            border: false,
+            layout: 'vbox',
+            autoScroll: false,
+            bodyStyle: 'padding: 10px;',
+            items: [
+                {
+                    xtype: 'combo',
+                    name: 'mailType',
+                    fieldLabel: t('form_builder.mail_editor.editor_type_selection'),
+                    queryDelay: 0,
+                    displayField: 'key',
+                    valueField: 'value',
+                    mode: 'local',
+                    labelAlign: 'left',
+                    labelWidth: 150,
+                    allowBlank: false,
+                    store: new Ext.data.ArrayStore({
+                        fields: ['value', 'key'],
+                        data: [
+                            ['main', t('form_builder.mail_editor.mail_type_main')],
+                            ['copy', t('form_builder.mail_editor.mail_type_copy')]
+                        ]
+                    }),
+                }
+            ]
+        }));
+
+        selectionWindow.show();
     },
 
     getInputWindow: function () {
@@ -89,6 +161,8 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
                 }
             ]
         });
+
+        this.detailWindow.show();
     },
 
     createPanel: function () {
@@ -107,7 +181,7 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
         this.leftPanel = new Ext.Panel({
             closable: false,
             border: false,
-            title: 'Editor',
+            title: 'Editor' + ' (Mail Type: ' + (t('form_builder.mail_editor.mail_type_' + this.mailType)) + ')',
             layout: 'fit',
             flex: 3,
             align: 'stretch',
@@ -186,7 +260,7 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
 
         selectionField = Ext.get(this.selectionId);
 
-        selectionField.createChild('<span><strong>Attention! </strong>This mail editor will currently <strong>only</strong> transform admin mails and does not respect any special mail template language (like inky)!<br><br></span>');
+        selectionField.createChild('<span><strong>Attention! </strong>This mail editor does not respect any special mail template language (like inky)!<br><br></span>');
 
         Ext.Array.each(this.configuration.widgetGroups, function (groupData) {
             var group;
@@ -257,7 +331,8 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
         Ext.Ajax.request({
             url: '/admin/formbuilder/mail-editor/load',
             params: {
-                id: this.formId
+                id: this.formId,
+                mailType: this.mailType
             },
             success: function (resp) {
                 var data = Ext.decode(resp.responseText);
@@ -283,6 +358,7 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
             url: '/admin/formbuilder/mail-editor/save',
             params: {
                 id: this.formId,
+                mailType: this.mailType,
                 data: Ext.encode(data)
             },
             success: function () {
