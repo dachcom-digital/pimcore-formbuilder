@@ -1,5 +1,4 @@
 # Pimcore FormBuilder
-Pimcore 5/6 FormBuilder
 
 [![Join the chat at https://gitter.im/pimcore/pimcore](https://img.shields.io/gitter/room/pimcore/pimcore.svg?style=flat-square)](https://gitter.im/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -10,17 +9,19 @@ Pimcore 5/6 FormBuilder
 
 ![FormBuilder](https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png)
 
-#### Requirements
-Pimcore >= `5.8.0` | Pimcore >= `6.0.0`
+### Release Plan
 
-#### Pimcore 4 
-Get the Pimcore4 Version [here](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4).
+| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
+|---------|-----------------------------------|----------------------------|--------------|----------------|------------|
+| **3.0** | `6.0`                             | `3.4`, `^4.0`               | --          | Feature Branch | dev-master |
+| **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Bugfix only    | 2.7        |
+| **1.5** | `4.0`                             | `3.4`                      | 18.03.2017   | Unsupported    | pimcore4   |
 
 ## Installation
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~2.8.0"
+    "dachcom-digital/formbuilder" : "~3.0.0"
 }
 ```
 

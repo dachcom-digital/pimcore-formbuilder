@@ -12,7 +12,6 @@ export DACHCOM_BUNDLE_INSTALLER_CLASS='FormBuilderBundle\Tool\Install'
 declare -A DACHCOM_INSTALL_CONFIG_FILES=(
  # system files
  ["$DACHCOM_BUNDLE_HOME/_etc/config/bundle/extensions.template.php"]="var/config/extensions.php"
- ["$DACHCOM_BUNDLE_HOME/_etc/config/bundle/system.template.php"]="var/config/system.php"
  ["$DACHCOM_BUNDLE_HOME/_etc/config/bundle/system.template.yml"]="var/config/system.yml"
  ["$DACHCOM_BUNDLE_HOME/_etc/config/bundle/appKernel"]="app/AppKernel.php"
  # template files

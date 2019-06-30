@@ -2,7 +2,7 @@
     "name": "dachcom-digital/formbuilder",
     "type": "pimcore-bundle",
     "license": "GPL-3.0-or-later",
-    "description": "Pimcore 5.x FormBuilder - create forms easily!",
+    "description": "Pimcore FormBuilder - create forms easily!",
     "keywords": ["pimcore", "formbuilder"],
     "homepage": "https://github.com/dachcom-digital/pimcore-formbuilder",
     "authors": [
@@ -29,7 +29,7 @@
         }
     },
     "require": {
-        "pimcore/pimcore": "^5.8.0 | ^6.0.0"
+        "pimcore/pimcore": "^6.0.0"
     },
     "require-dev": {
         "codeception/codeception": "~2.4.0",
