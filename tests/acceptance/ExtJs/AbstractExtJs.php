@@ -44,7 +44,7 @@ abstract class AbstractExtJs
         $I->submitForm('form', ['username' => 'backendTester', 'password' => 'backendTester']);
 
         // wait for pimcore gui
-        $I->waitForElement('div.pimcore_icon_object', 10);
+        $I->waitForElement('div#pimcore_panel_tree_documents', 10);
 
         // close left pimcore tree
         $I->click('.pimcore_main_accordion + .x-splitter > div');
@@ -114,13 +114,13 @@ abstract class AbstractExtJs
 
         $I->waitForText('Add form element', 10);
 
-        $I->click('Add form element', 'div.x-menu[aria-hidden="false"]:last-child');
-        $I->waitForText('Text Fields', 10, 'div.x-menu[aria-hidden="false"]:last-child');
+        $I->click('Add form element');
+        $I->waitForText('Text Fields', 10);
 
-        $I->click('Text Fields', 'div.x-menu[aria-hidden="false"]:last-child');
-        $I->waitForText('Text Type', 10, 'div.x-menu[aria-hidden="false"]:last-child');
+        $I->click('Text Fields');
+        $I->waitForText('Text Type', 10);
 
-        $I->click('Text Type', 'div.x-menu[aria-hidden="false"]:last-child');
+        $I->click('Text Type');
         $I->waitForElementVisible(sprintf('%s input[name="display_name"]', $this->getFormPanelSelector($formId)), 10);
 
         $I->fillField(sprintf('%s input[name="display_name"]', $this->getFormPanelSelector($formId)), $displayName);

@@ -20,39 +20,36 @@ env:
         - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
         - SYMFONY_DEPRECATIONS_HELPER=weak
         - DACHCOM_TEST_SECTION=codeception
+        - SYMFONY_VERSION=^4.0
 matrix:
     include:
-        -   name: "PHPStan Static Analysis (Pimcore 6.0.x, PHP 7.3)"
+        -   name: "PHPStan Static Analysis (Pimcore 6.0.x, Symfony ^4.0, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
                 - DACHCOM_TEST_SECTION=phpstan
-        -   name: "PHP ECS (Pimcore 6.0.x, PHP 7.3)"
+        -   name: "PHP ECS (Pimcore 6.0.x, Symfony ^4.0, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
                 - DACHCOM_TEST_SECTION=ecs
-        -   name: "Codeception Tests (Pimcore 5.8.x, PHP 7.2)"
+        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^4.0, PHP 7.2)"
             sudo: required
             php: 7.2
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
-        -   name: "Codeception Tests (Pimcore 5.8.x, PHP 7.3)"
+                - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
+        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^4.0, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v1.3.0"
-        -   name: "Codeception Tests (Pimcore 6.0.x, PHP 7.2)"
-            sudo: required
-            php: 7.2
-            env:
-            - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
-        -   name: "Codeception Tests (Pimcore 6.0.x, PHP 7.3)"
+                - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
+        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^3.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
+                - SYMFONY_VERSION=^3.4
                 - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
     allow_failures:
         -   env:
@@ -73,7 +70,7 @@ after_failure:
 
 script:
     - '$HOME/chromedriver --url-base=/wd/hub &'
-    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080'
+    - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080 -d web'
     - 'php ${TRAVIS_BUILD_DIR}/bin/console server:status'
     - _etc/travis/script
 

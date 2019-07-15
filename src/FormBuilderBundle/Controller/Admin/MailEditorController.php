@@ -42,11 +42,9 @@ class MailEditorController extends AdminController
                     'identifier'  => $validType,
                     'isAvailable' => isset($mailLayouts[$validType])
                 ];
-
         }
 
         return $this->json(['success' => true, 'types' => $availableTypes]);
-
     }
 
     /**
@@ -96,7 +94,6 @@ class MailEditorController extends AdminController
             'success' => $success,
             'message' => $message
         ]);
-
     }
 
     /**
@@ -233,7 +230,6 @@ class MailEditorController extends AdminController
     protected function cleanupMailLayout(array $mailLayout)
     {
         foreach ($mailLayout as $mailType => $layout) {
-
             $mailLayout[$mailType] = array_filter($layout, function ($localizedLayout) {
                 return !empty($localizedLayout);
             });
