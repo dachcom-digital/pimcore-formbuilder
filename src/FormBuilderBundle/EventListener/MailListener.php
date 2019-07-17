@@ -162,7 +162,7 @@ class MailListener implements EventSubscriberInterface
         }
 
         $attachments = [];
-        if ($data->hasAttachments()) {
+        if ($data->hasAttachments() && $isCopy === false) {
             $attachments = $data->getAttachments();
         }
 
