@@ -1,6 +1,3 @@
-imports:
-    - { resource: base_config.yml }
-
 form_builder:
     area:
         presets:

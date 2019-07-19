@@ -2,8 +2,13 @@
 
 namespace DachcomBundle\Test\App;
 
+use DachcomBundle\Test\DependencyInjection\MakeServicesPublicPass;
+use DachcomBundle\Test\DependencyInjection\MonologChannelLoggerPass;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class TestAppKernel extends Kernel
@@ -15,26 +20,22 @@ class TestAppKernel extends Kernel
     {
         parent::registerContainerConfiguration($loader);
 
-        $bundleClass = getenv('DACHCOM_BUNDLE_HOME');
-        $bundleName = getenv('DACHCOM_BUNDLE_NAME');
-        $configName = getenv('DACHCOM_BUNDLE_CONFIG_FILE');
+        $runtimeConfigDir = codecept_data_dir() . 'config' . DIRECTORY_SEPARATOR;
+        $runtimeConfigDirConfig = $runtimeConfigDir . DIRECTORY_SEPARATOR . 'config.yml';
 
-        if ($configName !== false) {
-            \Codeception\Util\Debug::debug(sprintf('[%s] add custom config file %s', strtoupper($bundleName), $configName));
-            $loader->load($bundleClass . '/_etc/config/bundle/symfony/' . $configName);
-        }
+        $loader->load($runtimeConfigDirConfig);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function registerBundlesToCollection(\Pimcore\HttpKernel\BundleCollection\BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection)
     {
         if (class_exists('\\AppBundle\\AppBundle')) {
             $collection->addBundle(new \AppBundle\AppBundle());
         }
 
-        $collection->addBundle(new \Symfony\Bundle\WebProfilerBundle\WebProfilerBundle());
+        $collection->addBundle(new WebProfilerBundle());
 
         $bundleClass = getenv('DACHCOM_BUNDLE_CLASS');
         $collection->addBundle(new $bundleClass());
@@ -45,10 +46,10 @@ class TestAppKernel extends Kernel
      */
     protected function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new \DachcomBundle\Test\DependencyInjection\MakeServicesPublicPass(),
-            \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, -100000);
-        $container->addCompilerPass(new \DachcomBundle\Test\DependencyInjection\MonologChannelLoggerPass(),
-            \Symfony\Component\DependencyInjection\Compiler\PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
+        $container->addCompilerPass(new MakeServicesPublicPass(),
+            PassConfig::TYPE_BEFORE_OPTIMIZATION, -100000);
+        $container->addCompilerPass(new MonologChannelLoggerPass(),
+            PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
     }
 
     /**

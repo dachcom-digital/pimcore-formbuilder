@@ -1,6 +1,3 @@
-imports:
-    - { resource: base_config.yml }
-
 services:
     DachcomBundle\Test\App\Services\TestSimpleDynamicChoices:
         autowire: true
