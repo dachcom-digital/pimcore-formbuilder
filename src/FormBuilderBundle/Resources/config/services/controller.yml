@@ -3,6 +3,21 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
+        public: true
 
-    FormBuilderBundle\Controller\Admin\ExportController: ~
+    FormBuilderBundle\Controller\AjaxController:
+        calls:
+            - [setContainer, ['@service_container']]
+
+    FormBuilderBundle\Controller\Admin\ExportController:
+        calls:
+            - [setContainer, ['@service_container']]
+
+    FormBuilderBundle\Controller\Admin\MailEditorController:
+        calls:
+            - [setContainer, ['@service_container']]
+
+    FormBuilderBundle\Controller\Admin\SettingsController:
+        calls:
+            - [setContainer, ['@service_container']]
+

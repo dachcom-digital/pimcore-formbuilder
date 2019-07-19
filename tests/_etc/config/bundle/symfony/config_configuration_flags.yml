@@ -1,3 +1,6 @@
+imports:
+    - { resource: base_config.yml }
+
 form_builder:
     flags:
         use_custom_radio_checkbox: false
