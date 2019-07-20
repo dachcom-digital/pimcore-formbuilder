@@ -4,8 +4,11 @@ namespace FormBuilderBundle\Twig\Extension;
 
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Assembler\FormAssembler;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class StaticFormExtension extends \Twig_Extension
+class StaticFormExtension extends AbstractExtension
 {
     /**
      * @var FormAssembler
@@ -13,8 +16,6 @@ class StaticFormExtension extends \Twig_Extension
     protected $formAssembler;
 
     /**
-     * LayoutExtension constructor.
-     *
      * @param FormAssembler $formAssembler
      */
     public function __construct(FormAssembler $formAssembler)
@@ -28,7 +29,7 @@ class StaticFormExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_Function(
+            new TwigFunction(
                 'form_builder_static',
                 [$this, 'generateForm'],
                 ['needs_environment' => true, 'needs_context' => true, 'is_safe' => ['html']]
@@ -36,7 +37,19 @@ class StaticFormExtension extends \Twig_Extension
         ];
     }
 
-    public function generateForm(\Twig_Environment $environment, $context, $formOptions = [])
+    /**
+     * @param Environment $environment
+     * @param             $context
+     * @param array       $formOptions
+     *
+     * @return string
+     *
+     * @throws \Exception
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function generateForm(Environment $environment, $context, $formOptions = [])
     {
         $defaultOptions = [
             'form_id'            => null,
