@@ -2,21 +2,30 @@
 
 namespace DachcomBundle\Test\Helper;
 
-use Codeception\Lib\ModuleContainer;
 use Codeception\Lib\Connector\Symfony as SymfonyConnector;
+use Codeception\Lib\ModuleContainer;
+use Codeception\TestInterface;
 use Codeception\Util\Debug;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Event\TestEvents;
 use Pimcore\Tests\Helper\Pimcore as PimcoreCoreModule;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Kernel;
 
 class PimcoreCore extends PimcoreCoreModule
 {
+    const DEFAULT_CONFIG_FILE = 'config_default.yml';
+
     /**
      * @var bool
      */
     protected $kernelHasCustomConfig = false;
+
+    /**
+     * @var bool
+     */
+    protected $kernelHasCustomSuiteConfig = false;
 
     /**
      * @inheritDoc
@@ -43,17 +52,25 @@ class PimcoreCore extends PimcoreCoreModule
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
-    public function _after(\Codeception\TestInterface $test)
+    public function _beforeSuite($settings = [])
     {
-        parent::_after($test);
+        parent::_beforeSuite($settings);
 
-        // config has changed, we need to restore default config before starting a new test!
-        if ($this->kernelHasCustomConfig === true) {
-            $this->bootKernelWithConfiguration(null);
-            $this->kernelHasCustomConfig = false;
+        if ($this->config['configuration_file'] === null) {
+            return;
         }
+
+        if ($this->config['configuration_file'] === self::DEFAULT_CONFIG_FILE) {
+            return;
+        }
+
+        $configuration = $this->config['configuration_file'];
+
+        $this->kernelHasCustomSuiteConfig = true;
+        $this->bootKernelWithConfiguration($configuration);
+
     }
 
     /**
@@ -62,7 +79,33 @@ class PimcoreCore extends PimcoreCoreModule
     public function _afterSuite()
     {
         parent::_afterSuite();
+
+        if ($this->kernelHasCustomSuiteConfig !== true) {
+            return;
+        }
+
+        // config has changed!
+        // we need to restore default config before starting a new test!
         $this->bootKernelWithConfiguration(null);
+        $this->kernelHasCustomSuiteConfig = false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function _after(TestInterface $test)
+    {
+        parent::_after($test);
+
+        if ($this->kernelHasCustomConfig !== true) {
+            return;
+        }
+
+        // config has changed!
+        // we need to restore default config before starting a new test!
+        $this->bootKernelWithConfiguration(null);
+        $this->kernelHasCustomConfig = false;
+
     }
 
     /**
@@ -111,7 +154,7 @@ class PimcoreCore extends PimcoreCoreModule
     /**
      * @param string|null $configFile
      */
-    protected function bootKernelWithConfiguration($configFile)
+    protected function bootKernelWithConfiguration($configFile = null)
     {
         $this->setConfiguration($configFile);
 
@@ -137,18 +180,26 @@ class PimcoreCore extends PimcoreCoreModule
         $bundleClass = getenv('DACHCOM_BUNDLE_HOME');
 
         if ($configuration === null) {
-            $configuration = 'config_default.yml';
+            $configuration = self::DEFAULT_CONFIG_FILE;
         }
 
         Debug::debug(sprintf('[%s] add custom config file %s', strtoupper($bundleName), $configuration));
 
-
         $fileSystem = new Filesystem();
-        $runtimeConfigDir = codecept_data_dir() . 'config' . DIRECTORY_SEPARATOR;
-        $runtimeConfigDirConfig = $runtimeConfigDir . DIRECTORY_SEPARATOR . 'config.yml';
+        $runtimeConfigDir = codecept_data_dir() . 'config';
+        $runtimeConfigDirConfig = $runtimeConfigDir . '/config.yml';
 
-        $resource = $bundleClass . '/_etc/config/bundle/symfony' . DIRECTORY_SEPARATOR . $configuration;
+        $resource = $bundleClass . '/_etc/config/bundle/symfony/' . $configuration;
+
         $fileSystem->dumpFile($runtimeConfigDirConfig, file_get_contents($resource));
+
+        if ($this->kernel === null) {
+            return;
+        }
+
+        if (Kernel::MAJOR_VERSION === 3) {
+            $this->clearCache();
+        }
     }
 
     /**
@@ -170,5 +221,29 @@ class PimcoreCore extends PimcoreCoreModule
             Cache::enable();
         }
     }
+
+    protected function clearCache()
+    {
+        Debug::debug('[PIMCORE] Clear Cache!');
+
+        $fileSystem = new Filesystem();
+        $cacheDir = PIMCORE_SYMFONY_CACHE_DIRECTORY;
+
+        if (!$fileSystem->exists($cacheDir)) {
+            return;
+        }
+
+        // see Symfony's cache:clear command
+        $oldCacheDir = substr($cacheDir, 0, -1) . ('~' === substr($cacheDir, -1) ? '+' : '~');
+
+        if ($fileSystem->exists($oldCacheDir)) {
+            $fileSystem->remove($oldCacheDir);
+        }
+
+        $fileSystem->rename($cacheDir, $oldCacheDir);
+        $fileSystem->mkdir($cacheDir);
+        $fileSystem->remove($oldCacheDir);
+    }
+
 }
 
