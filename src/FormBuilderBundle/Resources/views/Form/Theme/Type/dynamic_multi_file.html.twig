@@ -1,5 +1,5 @@
 {% block form_builder_dynamicmultifile_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         <div {{ block('attributes') }}>
             <div class="qq-upload-container">
                 {% set translationVarName = name ~ '_dmf_config' %}
@@ -12,5 +12,5 @@
             </div>
             <input type="{{ type }}" value="{{ value }}" rel="theme" />
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}

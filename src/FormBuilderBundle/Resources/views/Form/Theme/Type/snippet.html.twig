@@ -1,11 +1,11 @@
 {% block form_builder_snippet_type_label %}{% endblock %}
 
 {% block form_builder_snippet_type_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         <div {{ block('attributes') }}>
         {% if path is not empty %}
             {{ pimcore_inc(path) }}
         {% endif%}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
