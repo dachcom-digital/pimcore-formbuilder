@@ -156,9 +156,10 @@ class PimcoreCore extends PimcoreCoreModule
      */
     protected function bootKernelWithConfiguration($configFile = null)
     {
+        $this->kernel = require __DIR__ . '/../_boot/kernelBuilder.php';
+
         $this->setConfiguration($configFile);
 
-        $this->kernel = require __DIR__ . '/../_boot/kernelBuilder.php';
         $this->getKernel()->boot();
 
         $this->client = new SymfonyConnector($this->kernel, $this->persistentServices, $this->config['rebootable_client']);
