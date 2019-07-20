@@ -39,7 +39,7 @@ class StaticFormExtension extends AbstractExtension
 
     /**
      * @param Environment $environment
-     * @param             $context
+     * @param array       $context
      * @param array       $formOptions
      *
      * @return string
