@@ -88,10 +88,8 @@ class SimpleFormEditWindowCest
             'subtypes' => ['document' => ['email']]
         ];
 
-        $editableTypeName = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.6.0') ? 'relation' : 'href';
-
         $I->see('Mail Template', '.form-config-window .fb-row .fb-col-full .fb-form-group label');
-        $I->seeAEditableConfiguration('sendMailTemplate', $editableTypeName, $options, null, 'script');
+        $I->seeAEditableConfiguration('sendMailTemplate', 'relation', $options, null, 'script');
 
     }
 
@@ -108,10 +106,8 @@ class SimpleFormEditWindowCest
             'subtypes' => ['document' => ['email']]
         ];
 
-        $editableTypeName = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.6.0') ? 'relation' : 'href';
-
         $I->see('Copy Mail Template', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('sendCopyMailTemplate', $editableTypeName, $options, null, 'script');
+        $I->seeAEditableConfiguration('sendCopyMailTemplate', 'relation', $options, null, 'script');
 
     }
 

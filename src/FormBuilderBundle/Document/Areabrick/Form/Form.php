@@ -141,8 +141,8 @@ class Form extends AbstractTemplateAreabrick
             $formId = (int) $formNameElement->getData();
         }
 
-        $mailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendMailTemplate')->getElement();
-        $copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'href', 'sendCopyMailTemplate')->getElement();
+        $mailTemplate = $this->getDocumentTag($info->getDocument(), 'relation', 'sendMailTemplate')->getElement();
+        $copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'relation', 'sendCopyMailTemplate')->getElement();
 
         $optionBuilder = new FormOptionsResolver();
         $optionBuilder->setFormId($formId);
