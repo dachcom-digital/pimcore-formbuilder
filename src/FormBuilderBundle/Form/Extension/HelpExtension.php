@@ -21,7 +21,7 @@ class HelpExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedTypes()
+    public static function getExtendedTypes()
     {
         return [FormType::class];
     }
