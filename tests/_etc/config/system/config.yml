@@ -12,6 +12,18 @@ services:
         calls:
             - [setContainer, ['@service_container']]
 
+    DachcomBundle\Test\App\Services\TestSimpleDynamicChoices:
+        autowire: true
+        public: false
+        tags:
+        - { name: form_builder.dynamic_choice_builder, label: 'Simple Test Selector' }
+
+    DachcomBundle\Test\App\Services\TestAdvancedDynamicChoices:
+        autowire: true
+        public: false
+        tags:
+        - { name: form_builder.dynamic_choice_builder, label: 'Advanced Test Selector' }
+
 # don't send real emails in functional tests
 swiftmailer:
     disable_delivery: true
