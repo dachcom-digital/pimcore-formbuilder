@@ -6,6 +6,13 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 2.x to Version 3.0.0
+- **[NEW FEATURE]**: Pimcore 6.0.0 ready
+- **[BC BREAK]**: All Controllers are registered as services now!
+- **[ATTENTION]**: All `href`, `multihref` elements has been replaced by `relation`, `relations`
+
+***
+
 #### Update from Version 2.6.x to Version 2.7.0
 - **[NEW FEATURE]**: [Mail Editor](https://github.com/dachcom-digital/pimcore-formbuilder/issues/158)
 - **[NEW FEATURE]**: [Allow Plain Text Mail Submission](https://github.com/dachcom-digital/pimcore-formbuilder/issues/157)
@@ -87,6 +94,8 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[BC BREAK]**: *"Mark field as required"* has been removed. Please check your form and add a "not-blank" constraint to every required field!
 - **[BC BREAK]**: `formbuilder.js` has been moved to `bundles/formbuilder/js/frontend/legacy`. This file is now deprecated and will be removed in Version 3.0.0!
 - **[BC BREAK]**: `jquery.fine-uploader.js` has been moved to `bundles/formbuilder/js/frontend/vendor`.
+
+***
 
 #### Update from Version 1.x to Version 2.0.0
 - TBD
