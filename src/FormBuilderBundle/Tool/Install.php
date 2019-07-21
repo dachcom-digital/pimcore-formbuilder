@@ -335,7 +335,7 @@ class Install extends MigrationInstaller
             $type->setValues([
                 'name'       => $elementName,
                 'module'     => 'FormBuilderBundle',
-                'controller' => 'Email',
+                'controller' => '@FormBuilderBundle\Controller\EmailController',
                 'action'     => 'email',
                 'template'   => 'FormBuilderBundle:Email:email.html.twig',
                 'type'       => 'email',

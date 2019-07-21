@@ -8,6 +8,5 @@ class EmailController extends FrontendController
 {
     public function emailAction()
     {
-        //$this->disableViewAutoRender();
     }
 }

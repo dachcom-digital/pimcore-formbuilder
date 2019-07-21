@@ -11,9 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class HelpExtension extends AbstractTypeExtension
 {
     /**
-     * Returns the name of the type being extended.
-     *
-     * @return string The name of the type being extended
+     * {@inheritdoc}
      */
     public function getExtendedType()
     {
@@ -21,7 +19,15 @@ class HelpExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param OptionsResolver $resolver
+     * {@inheritdoc}
+     */
+    public function getExtendedTypes()
+    {
+        return [FormType::class];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -29,9 +35,7 @@ class HelpExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param FormView      $view
-     * @param FormInterface $form
-     * @param array         $options
+     * {@inheritdoc}
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {

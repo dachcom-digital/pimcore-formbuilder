@@ -9,6 +9,10 @@ services:
         calls:
             - [setContainer, ['@service_container']]
 
+    FormBuilderBundle\Controller\EmailController:
+        calls:
+            - [setContainer, ['@service_container']]
+
     FormBuilderBundle\Controller\Admin\ExportController:
         calls:
             - [setContainer, ['@service_container']]
