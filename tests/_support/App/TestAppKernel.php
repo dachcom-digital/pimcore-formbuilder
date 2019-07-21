@@ -3,6 +3,7 @@
 namespace DachcomBundle\Test\App;
 
 use Pimcore\Kernel;
+use DachcomBundle\Test\Util\Autoloader;
 use DachcomBundle\Test\DependencyInjection\MakeServicesPublicPass;
 use DachcomBundle\Test\DependencyInjection\MonologChannelLoggerPass;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -37,6 +38,8 @@ class TestAppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         parent::registerContainerConfiguration($loader);
+
+        Autoloader::addNamespace('DachcomBundle\Test\App\Services', __DIR__ . '/Services');
 
         $loader->load(function (ContainerBuilder $container) {
             $runtimeConfigDir = codecept_data_dir() . 'config' . DIRECTORY_SEPARATOR;
