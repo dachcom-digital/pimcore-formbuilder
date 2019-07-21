@@ -14,6 +14,7 @@ Bootstrap::bootstrap();
  * @var $loader \Composer\Autoload\ClassLoader
  */
 Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/_support');
+Autoloader::addNamespace('DachcomBundle\Test\App\Services', __DIR__ . '/_support/App/Services');
 
 if (!defined('TESTS_PATH')) {
     define('TESTS_PATH', __DIR__);
