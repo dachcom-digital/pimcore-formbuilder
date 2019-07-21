@@ -15,10 +15,10 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
+use Pimcore\Model\Document\Tag\Relation;
 use Pimcore\Model\Tool\Email\Log;
 use Pimcore\Model\Document\Tag\Areablock;
 use Pimcore\Model\Document\Tag\Checkbox;
-use Pimcore\Model\Document\Tag\Href;
 use Pimcore\Model\Document\Tag\Select;
 use Pimcore\Tests\Util\TestHelper;
 use Pimcore\Translation\Translator;
@@ -622,8 +622,8 @@ class PimcoreBackend extends Module
         $formTypeSelect->setName(sprintf('%s:1.formType', FormHelper::AREA_TEST_NAMESPACE));
         $formTypeSelect->setDataFromEditmode($formType);
 
-        $sendMailTemplateHref = new Href();
-        $sendMailTemplateHref->setName(sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
+        $sendMailTemplateRelation = new Relation();
+        $sendMailTemplateRelation->setName(sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
 
         $data = [];
         if ($mailTemplate instanceof Email) {
@@ -634,14 +634,14 @@ class PimcoreBackend extends Module
             ];
         }
 
-        $sendMailTemplateHref->setDataFromEditmode($data);
+        $sendMailTemplateRelation->setDataFromEditmode($data);
 
         $userCopyCheckbox = new Checkbox();
         $userCopyCheckbox->setName(sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE));
         $userCopyCheckbox->setDataFromEditmode($sendUserCopy);
 
-        $sendCopyMailTemplateHref = new Href();
-        $sendCopyMailTemplateHref->setName(sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
+        $sendCopyMailTemplateRelation = new Relation();
+        $sendCopyMailTemplateRelation->setName(sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
 
         $data = [];
         if ($copyMailTemplate instanceof Email && $sendUserCopy === true) {
@@ -652,7 +652,7 @@ class PimcoreBackend extends Module
             ];
         }
 
-        $sendCopyMailTemplateHref->setDataFromEditmode($data);
+        $sendCopyMailTemplateRelation->setDataFromEditmode($data);
 
         $blockArea->setDataFromEditmode([
             [
@@ -666,8 +666,8 @@ class PimcoreBackend extends Module
             sprintf('%s', FormHelper::AREA_TEST_NAMESPACE)                        => $blockArea,
             sprintf('%s:1.formName', FormHelper::AREA_TEST_NAMESPACE)             => $formNameSelect,
             sprintf('%s:1.formType', FormHelper::AREA_TEST_NAMESPACE)             => $formTypeSelect,
-            sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE) => $sendCopyMailTemplateHref,
-            sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE)     => $sendMailTemplateHref,
+            sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE) => $sendCopyMailTemplateRelation,
+            sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE)     => $sendMailTemplateRelation,
             sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE)             => $userCopyCheckbox
         ];
 
