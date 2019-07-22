@@ -71,7 +71,7 @@ done
 rm composer.lock
 
 ## add autoload-dev paths
-sed -i '0,/{/a \    "autoload-dev": { "psr-4": { "DachcomBundle\\Test\\App\\Services\\": "'$DACHCOM_BUNDLE_HOME'/lib/'$DACHCOM_BUNDLE_NAME'tests/_support/App/Services"  } },\' composer.json
+sed -i '0,/{/a \    "autoload-dev": { "psr-4": { "DachcomBundle\\Test\\App\\Services\\": "'$DACHCOM_BUNDLE_HOME'/lib/'$DACHCOM_BUNDLE_NAME'/tests/_support/App/Services"  } },\' composer.json
 
 cat composer.json
 
