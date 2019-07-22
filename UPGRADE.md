@@ -8,7 +8,7 @@ Just click the "update" button or execute the migration command to finish the bu
 
 #### Update from Version 2.x to Version 3.0.0
 - **[NEW FEATURE]**: Pimcore 6.0.0 ready
-- **[BC BREAK]**: All Controllers are registered as services now!
+- **[BC BREAK]**: All Controllers are registered as services now! (Also check your email controller definition!)
 - **[ATTENTION]**: All `href`, `multihref` elements has been replaced by `relation`, `relations`
 
 ***
