@@ -5,7 +5,7 @@ use DachcomBundle\Test\Util\Autoloader;
 
 include __DIR__ . '/../../../vendor/autoload.php';
 
-define('PIMCORE_KERNEL_CLASS', '\DachcomBundle\Test\FormBuilder\TestAppKernel');
+define('PIMCORE_KERNEL_CLASS', '\DachcomBundle\Test\App\TestAppKernel');
 
 Bootstrap::setProjectRoot();
 Bootstrap::bootstrap();

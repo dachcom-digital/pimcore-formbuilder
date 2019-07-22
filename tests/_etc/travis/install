@@ -70,6 +70,9 @@ done
 ##  install composer dependencies
 rm composer.lock
 
+## add autoload-dev paths
+sed -i '0,/{/a \    "autoload-dev": { "psr-4": { "DachcomBundle\\Test\\App\\Services\\": "'$DACHCOM_BUNDLE_HOME'/lib/'$DACHCOM_BUNDLE_NAME'tests/_support/App/Services"  } },\' $(pwd)/lib/pimcore-$1/composer.json
+
 COMPOSER_MEMORY_LIMIT=-1 composer require symfony/symfony:$SYMFONY_VERSION phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 symplify/easy-coding-standard:^5.4 --no-scripts --no-interaction --no-update
 COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
 
