@@ -2,7 +2,7 @@
 
 namespace DachcomBundle\Test\functional\Fields;
 
-use DachcomBundle\Test\App\Services\TestAdvancedDynamicChoices;
+use DachcomBundle\Test\FormBuilder\Services\TestAdvancedDynamicChoices;
 use DachcomBundle\Test\FunctionalTester;
 
 class DynamicChoiceFieldAdvancedCest extends AbstractFieldCest
@@ -25,8 +25,6 @@ class DynamicChoiceFieldAdvancedCest extends AbstractFieldCest
             'placeholder' => false,
             'label'       => 'Advanced Dynamic Choice Selection',
         ];
-
-        $I->haveADynamicChoiceBuilder($options['service'], 'Advanced Test Selector');
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace DachcomBundle\Test\App;
+namespace DachcomBundle\Test\FormBuilder;
 
 use Pimcore\Kernel;
 use DachcomBundle\Test\DependencyInjection\MakeServicesPublicPass;

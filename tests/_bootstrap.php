@@ -5,14 +5,11 @@ use DachcomBundle\Test\Util\Autoloader;
 
 include __DIR__ . '/../../../vendor/autoload.php';
 
-define('PIMCORE_KERNEL_CLASS', '\DachcomBundle\Test\App\TestAppKernel');
+define('PIMCORE_KERNEL_CLASS', '\DachcomBundle\Test\FormBuilder\TestAppKernel');
 
 Bootstrap::setProjectRoot();
 Bootstrap::bootstrap();
 
-/**
- * @var $loader \Composer\Autoload\ClassLoader
- */
 Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/_support');
 
 if (!defined('TESTS_PATH')) {

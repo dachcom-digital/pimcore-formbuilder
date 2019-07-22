@@ -18,6 +18,11 @@
             "FormBuilderBundle\\": "src/FormBuilderBundle"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "DachcomBundle\\Test\\FormBuilder\\Services\\": "tests/_support/FormBuilder/Services"
+        }
+    },
     "extra": {
         "pimcore": {
             "bundles": [
