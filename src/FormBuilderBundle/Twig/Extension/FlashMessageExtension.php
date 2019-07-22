@@ -3,8 +3,10 @@
 namespace FormBuilderBundle\Twig\Extension;
 
 use FormBuilderBundle\Session\FlashBagManagerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class FlashMessageExtension extends \Twig_Extension
+class FlashMessageExtension extends AbstractExtension
 {
     /**
      * @var FlashBagManagerInterface
@@ -12,8 +14,6 @@ class FlashMessageExtension extends \Twig_Extension
     protected $flashBagManager;
 
     /**
-     * RequestListener constructor.
-     *
      * @param FlashBagManagerInterface $flashBagManager
      */
     public function __construct(FlashBagManagerInterface $flashBagManager)
@@ -27,8 +27,8 @@ class FlashMessageExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_Function('form_builder_get_flash_messages', [$this, 'getFlashMessagesForForm']),
-            new \Twig_Function('form_builder_get_redirect_flash_messages', [$this, 'getFlashMessagesForRedirectForm'])
+            new TwigFunction('form_builder_get_flash_messages', [$this, 'getFlashMessagesForForm']),
+            new TwigFunction('form_builder_get_redirect_flash_messages', [$this, 'getFlashMessagesForRedirectForm'])
         ];
     }
 

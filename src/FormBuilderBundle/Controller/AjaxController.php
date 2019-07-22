@@ -12,6 +12,19 @@ use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 class AjaxController extends FrontendController
 {
     /**
+     * @var FileStreamInterface
+     */
+    protected $fileStream;
+
+    /**
+     * @param FileStreamInterface $fileStream
+     */
+    public function __construct(FileStreamInterface $fileStream)
+    {
+        $this->fileStream = $fileStream;
+    }
+
+    /**
      * @throws \RuntimeException
      */
     public function parseAction()
@@ -33,11 +46,10 @@ class AjaxController extends FrontendController
 
         /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->getFileStream();
 
         if ($method === 'POST') {
-            $result = $fileStream->handleUpload();
-            $result['uploadName'] = $fileStream->getRealFileName();
+            $result = $this->fileStream->handleUpload();
+            $result['uploadName'] = $this->fileStream->getRealFileName();
 
             if ($result['success'] === true) {
                 $sessionKey = 'file_' . $formId . '_' . $result['uuid'];
@@ -70,13 +82,12 @@ class AjaxController extends FrontendController
 
         /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->getFileStream();
 
         //remove tmp element from session!
         $sessionKey = 'file_' . $formId . '_' . $uuid;
         $sessionBag->remove($sessionKey);
 
-        $result = $fileStream->handleDelete($uuid);
+        $result = $this->fileStream->handleDelete($uuid);
 
         return $this->json($result);
     }
@@ -93,12 +104,11 @@ class AjaxController extends FrontendController
 
         /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-        $fileStream = $this->getFileStream();
 
-        $result = $fileStream->combineChunks();
+        $result = $this->fileStream->combineChunks();
 
         // To return a name used for uploaded file you can use the following line.
-        $result['uploadName'] = $fileStream->getRealFileName();
+        $result['uploadName'] = $this->fileStream->getRealFileName();
 
         if ($result['success'] === true) {
             //add uuid to session to find it again later!
@@ -123,13 +133,5 @@ class AjaxController extends FrontendController
             'file_add'        => $router->generate('form_builder.controller.ajax.file_add'),
             'file_delete'     => $router->generate('form_builder.controller.ajax.file_delete'),
         ]);
-    }
-
-    /**
-     * @return FileStreamInterface
-     */
-    protected function getFileStream()
-    {
-        return $this->container->get(FileStreamInterface::class);
     }
 }

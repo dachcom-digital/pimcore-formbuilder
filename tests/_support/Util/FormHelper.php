@@ -2,7 +2,10 @@
 
 namespace DachcomBundle\Test\Util;
 
+use Codeception\Util\Debug;
 use FormBuilderBundle\Configuration\Configuration;
+use Pimcore\Db;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 class FormHelper
@@ -17,17 +20,17 @@ class FormHelper
         $formPath = Configuration::STORE_PATH;
 
         $finder = new Finder();
-        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+        $fileSystem = new Filesystem();
 
         foreach ($finder->in($formPath)->name('*.yml') as $file) {
             $fileSystem->remove($file);
         }
 
         try {
-            $db = \Pimcore\Db::get();
+            $db = Db::get();
             $db->exec('TRUNCATE TABLE formbuilder_forms');
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while removing forms. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while removing forms. message was: ' . $e->getMessage()));
         }
     }
 
@@ -41,12 +44,8 @@ class FormHelper
      */
     public static function generateEditableConfiguration(string $name, string $type, array $options, $data = null)
     {
-        $dotSuffix = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.0') ? '_' : '.';
-        $colonSuffix = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.0') ? '_' : ':';
-        $prettyJson = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('5.5.4');
-
         $editableConfig = [
-            'id'        => sprintf('pimcore_editable_%s%s1%s%s', FormHelper::AREA_TEST_NAMESPACE, $colonSuffix, $dotSuffix, $name),
+            'id'        => sprintf('pimcore_editable_%s%s1%s%s', FormHelper::AREA_TEST_NAMESPACE, '_', '_', $name),
             'name'      => sprintf('%s:1.%s', FormHelper::AREA_TEST_NAMESPACE, $name),
             'realName'  => $name,
             'options'   => $options,
@@ -55,7 +54,7 @@ class FormHelper
             'inherited' => false,
         ];
 
-        $data = sprintf('editableConfigurations.push(%s);', json_encode($editableConfig, ($prettyJson ? JSON_PRETTY_PRINT : JSON_ERROR_NONE)));
+        $data = sprintf('editableConfigurations.push(%s);', json_encode($editableConfig, JSON_PRETTY_PRINT));
 
         return $data;
     }

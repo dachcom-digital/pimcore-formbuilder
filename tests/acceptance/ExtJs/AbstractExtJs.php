@@ -44,7 +44,7 @@ abstract class AbstractExtJs
         $I->submitForm('form', ['username' => 'backendTester', 'password' => 'backendTester']);
 
         // wait for pimcore gui
-        $I->waitForElement('div#pimcore_panel_tree_documents', 10);
+        $I->waitForElement('div#pimcore_panel_tree_objects', 10);
 
         // close left pimcore tree
         $I->click('.pimcore_main_accordion + .x-splitter > div');

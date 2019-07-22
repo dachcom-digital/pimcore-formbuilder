@@ -1,5 +1,6 @@
 | Q             | A
 | ------------- | ---
+| Branch?       | dev-master for features / 2.7 for bug fixes
 | Bug fix?      | yes/no
 | New feature?  | yes/no
 | BC breaks?    | no
