@@ -26,6 +26,8 @@ class DynamicChoiceFieldAdvancedCest extends AbstractFieldCest
             'label'       => 'Advanced Dynamic Choice Selection',
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Advanced Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
         $I->seeElement('select#formbuilder_1_dynamic_choice_advanced_field');

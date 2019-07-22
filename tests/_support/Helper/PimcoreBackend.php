@@ -8,6 +8,7 @@ use DachcomBundle\Test\Util\FileGeneratorHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
 use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\File;
@@ -67,6 +68,8 @@ class PimcoreBackend extends Module
      * @param TestFormBuilder $formBuilder
      *
      * @return FormInterface
+     *
+     * @throws \Codeception\Exception\ModuleException
      */
     public function haveAForm(TestFormBuilder $formBuilder)
     {
@@ -74,6 +77,21 @@ class PimcoreBackend extends Module
         $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
 
         return $form;
+    }
+
+    /**
+     * Actor Function to add a choice builder to registry
+     *
+     * @param string $class
+     * @param string $label
+     *
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function haveADynamicChoiceBuilder(string $class, string $label)
+    {
+        $registry = $this->getContainer()->get(ChoiceBuilderRegistry::class);
+
+        $registry->register($class, $label, new $class);
     }
 
     /**

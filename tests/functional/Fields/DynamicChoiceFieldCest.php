@@ -26,6 +26,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'label'       => 'Dynamic Choice Selection',
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
         $I->seeElement('select#formbuilder_1_dynamic_choice_field');
@@ -44,6 +46,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'placeholder' => false,
             'help_text'   => 'This is a Helptext',
         ];
+
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
 
@@ -64,6 +68,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'placeholder' => false,
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
 
         $I->seeOptionIsSelected('select#formbuilder_1_dynamic_choice_field', 'Entity 2');
@@ -83,6 +89,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'placeholder' => false,
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
 
         $I->seeOptionIsSelected('input[type="radio"]#formbuilder_1_dynamic_choice_field_1', '2');
@@ -101,6 +109,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'multiple'    => true,
             'placeholder' => false,
         ];
+
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
 
@@ -124,6 +134,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             ]
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
 
         $I->see('Entity 2', 'select#formbuilder_1_dynamic_choice_field option:first-child');
@@ -141,6 +153,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'multiple'    => false,
             'placeholder' => 'Please Select',
         ];
+
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
 
@@ -163,6 +177,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'email_label' => 'Dynamic Choice Email Selection'
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, $optionals);
 
         $I->selectOption('select#formbuilder_1_dynamic_choice_field', 2);
@@ -183,6 +199,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
 
         ];
 
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
+
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
         $I->selectOption('select#formbuilder_1_dynamic_choice_field', 1);
@@ -201,6 +219,8 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
             'expanded' => true,
             'multiple' => true,
         ];
+
+        $I->haveADynamicChoiceBuilder($options['service'], 'Simple Test Selector');
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
