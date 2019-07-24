@@ -151,10 +151,10 @@ class MailParser
         }
 
         foreach ($matches[1] as $key => $inputValue) {
-
             if (!array_key_exists($inputValue, $availableValues)) {
                 //replace with '' if not found.
                 $realSubject = str_replace($matches[0][$key], '', $realSubject);
+
                 continue;
             }
 
@@ -239,10 +239,10 @@ class MailParser
         }
 
         foreach ($matches[1] as $key => $inputValue) {
-
             if (!array_key_exists($inputValue, $availablePlaceholder)) {
                 //replace with '' if not found.
                 $str = str_replace($matches[0][$key], '', $str);
+
                 continue;
             }
 
@@ -320,7 +320,6 @@ class MailParser
             if ($formField['field_type'] === 'container') {
                 if (is_array($formField['fields']) && count($formField['fields']) > 0) {
                     foreach ($formField['fields'] as $groupIndex => $group) {
-
                         $prefix = sprintf('%s_%s', $formField['name'], $groupIndex);
                         // do not add numeric index to fieldset (not repeatable)
                         // to allow better placeholder versatility
