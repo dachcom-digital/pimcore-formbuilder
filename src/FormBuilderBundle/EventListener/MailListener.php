@@ -204,7 +204,7 @@ class MailListener implements EventSubscriberInterface
         $bodyTextRendered = $mail->getBodyTextRendered();
 
         if ($bodyTextRendered) {
-            $mail->addPart($bodyTextRendered, 'text/plain');
+            $mail->setBody($bodyTextRendered, 'text/plain');
         }
 
         $mail->sendWithoutRendering();
