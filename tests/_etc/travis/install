@@ -2,7 +2,7 @@
 set -e
 
 ## include global bundle test configuration
-source $DACHCOM_BUNDLE_HOME/tests/_etc/bundle_configuration
+source $TRAVIS_BUILD_DIR/tests/_etc/bundle_configuration
 
 ## setup php
 phpenv config-add ./tests/_etc/config/system/php.ini
