@@ -166,7 +166,9 @@ $forms.formBuilderRepeater({
 
 ## Tracker Extension
 This Plugin will enable the tracker functionality. 
-If enabled, it tries to submit insensible data like dropdown selection, checked radios/boxes to google analytics or matomo.
+If enabled, this extension tries to submit insensible data like dropdown selection, checked radios/boxes to google analytics or matomo.
+
+> **Configuration:**: You need to listen to the `form_builder_submission` event in your tag manager!
 
 ### Enable Extension
 
