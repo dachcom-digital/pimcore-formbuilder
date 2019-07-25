@@ -61,8 +61,8 @@ class SubmissionTypesCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailSubmissionType('text/plain', $adminEmail);
-        $I->seeEmptySubmittedEmailBody($adminEmail);
-        $I->seeInSubmittedEmailChildrenBody('Single_checkbox:', $adminEmail);
-        $I->dontSeeInSubmittedEmailChildrenBody('<strong>Single_checkbox:</strong>', $adminEmail);
+        $I->dontHaveSubmittedEmailChildren($adminEmail);
+        $I->seeInSubmittedEmailBody('Single_checkbox:', $adminEmail);
+        $I->dontSeeInSubmittedEmailBody('<strong>Single_checkbox:</strong>', $adminEmail);
     }
 }

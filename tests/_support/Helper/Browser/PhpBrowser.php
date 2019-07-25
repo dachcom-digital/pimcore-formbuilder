@@ -166,22 +166,53 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
-            $this->assertContains($string, $message->getBody());
+            $this->assertContains($string, is_null($message->getBody()) ? '' : $message->getBody());
         }
     }
 
     /**
-     * Actor Function to see if submitted mail body is empty
+     * Actor Function to see if given string is in real submitted mail body
      *
-     * @param Email $email
+     * @param string $string
+     * @param Email  $email
      */
-    public function seeEmptySubmittedEmailBody(Email $email)
+    public function dontSeeInSubmittedEmailBody(string $string, Email $email)
     {
         $collectedMessages = $this->getCollectedEmails($email);
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
-            $this->assertEmpty($message->getBody());
+            $this->assertNotContains($string, is_null($message->getBody()) ? '' : $message->getBody());
+        }
+    }
+
+    /**
+     * Actor Function to see if message has children
+     *
+     * @param Email $email
+     */
+    public function haveSubmittedEmailChildren(Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            $this->assertGreaterThan(0, count($message->getChildren()));
+        }
+    }
+
+    /**
+     * Actor Function to see if message has no children
+     *
+     * @param Email $email
+     */
+    public function dontHaveSubmittedEmailChildren(Email $email)
+    {
+        $collectedMessages = $this->getCollectedEmails($email);
+
+        /** @var \Pimcore\Mail $message */
+        foreach ($collectedMessages as $message) {
+            $this->assertEquals(0, count($message->getChildren()));
         }
     }
 
@@ -197,9 +228,12 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
+
+            $this->assertGreaterThan(0, count($message->getChildren()));
+
             /** @var \Swift_Mime_SimpleMimeEntity $child */
             foreach ($message->getChildren() as $child) {
-                $this->assertContains($string, $child->getBody());
+                $this->assertContains($string, is_null($child->getBody()) ? '' : $child->getBody());
             }
         }
     }
@@ -218,7 +252,7 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         foreach ($collectedMessages as $message) {
             /** @var \Swift_Mime_SimpleMimeEntity $child */
             foreach ($message->getChildren() as $child) {
-                $this->assertNotContains($string, $child->getBody());
+                $this->assertNotContains($string, is_null($child->getBody()) ? '' : $child->getBody());
             }
         }
     }
@@ -341,7 +375,7 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         }
 
         $token = $tokens[0]['token'];
-        /** @var \Symfony\Component\HttpKernel\Profiler\Profile $profile */
+        /** @var Profile $profile */
         $profile = $profiler->loadProfile($token);
 
         if (!$profile instanceof Profile) {
