@@ -50,13 +50,12 @@ done
 ##  install composer dependencies
 rm composer.lock
 
-composer config repositories.pimcore-${DACHCOM_BUNDLE_REPO_NAME} '{"type": "path", "url": "./lib/pimcore-'${DACHCOM_BUNDLE_REPO_NAME}'", "options": {"symlink": true}}'
+composer config repositories.pimcore-${DACHCOM_BUNDLE_REPO_NAME} '{"type": "path", "url": "./lib/'${DACHCOM_BUNDLE_NAME}'", "options": {"symlink": true}}'
 
 cat composer.json
 
 COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
-COMPOSER_MEMORY_LIMIT=-1 composer require phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 symplify/easy-coding-standard:^5.4 --no-scripts
-COMPOSER_MEMORY_LIMIT=-1 composer require dachcom-digital/formbuilder @dev
+COMPOSER_MEMORY_LIMIT=-1 composer require phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 symplify/easy-coding-standard:^5.4 dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME} @dev
 
 ##  clear cache
 rm -rf var/cache
