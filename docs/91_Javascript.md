@@ -5,14 +5,15 @@ Of course it's up to you to copy those files into your project and modify them a
 > Note: Be sure that jQuery has been initialized, before you load formbuilder.js.
 
 ## Overview
-- [Core Plugin](#core-plugin)
-- [Conditional Logic Extension](#conditional-logic-plugin)
-- [Repeater Extension](#repeater-plugin)
+- [Core Extension](#core-extension)
+- [Conditional Logic Extension](#conditional-logic-extension)
+- [Repeater Extension](#repeater-extension)
+- [Tracker Extension](#tracker-extension)
 
-## Core Plugin
+## Core Extension
 This Plugin will enable the ajax functionality and also the multi file handling:
 
-### Enable Plugin
+### Enable Extension
 
 ```html
 <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
@@ -56,10 +57,10 @@ $('form.ajax-form')
 });
 ```
 
-## Conditional Logic Plugin
+## Conditional Logic Extension
 This Plugin will enable the conditional logic functionality.
 
-### Enable Plugin
+### Enable Extension
 
 ```html
 <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.conditional-logic.js') }}"></script>
@@ -91,10 +92,10 @@ $('form.formbuilder').formBuilderConditionalLogic({
 });
 ```
 
-## Repeater Plugin
+## Repeater Extension
 This Plugin will enable the repeater functionality.
 
-### Enable Plugin
+### Enable Extension
 
 ```html
 <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.repeater.js') }}"></script>
@@ -159,5 +160,43 @@ $forms.formBuilderRepeater({
         $containerBlock.prepend($element);
     }
 
+});
+```
+
+
+## Tracker Extension
+This Plugin will enable the tracker functionality. 
+If enabled, this extension tries to submit insensible data like dropdown selection, checked radios/boxes to google analytics or matomo.
+
+> **Configuration:**: You need to listen to the `form_builder_submission` event in your tag manager!
+
+### Enable Extension
+
+```html
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.tracker.js') }}"></script>
+```
+
+```javascript
+$(function () {
+    $('form.formbuilder').formBuilderTracker();
+});
+```
+
+### Extended Usage
+```javascript
+$('form.formbuilder').formBuilderTracker({
+    onBeforeSubmitDataToProvider: function(data, formName, $form) {
+        
+        // add some special value to data
+        // warning: in some cases, no data will be submitted (gtag, ga)
+        
+        return data;
+    },
+    provider: 'google', // choose between "google" or "matomo"
+    trackDropDownSelection: true,
+    trackCheckboxSelection: true,
+    trackRadioSelection: true,
+    trackHiddenInputs: true,
+    invalidFieldNames: ['_token', 'formCl']
 });
 ```
