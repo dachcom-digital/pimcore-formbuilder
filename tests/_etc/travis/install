@@ -28,38 +28,33 @@ mysql -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
 
 ## move bundle temporarily and clean dir in order to install pimcore
 
-mkdir -p $DACHCOM_BUNDLE_HOME/../lib/$DACHCOM_BUNDLE_NAME
-mv $DACHCOM_BUNDLE_HOME/{.[!.],}* $DACHCOM_BUNDLE_HOME/../lib/$DACHCOM_BUNDLE_NAME
-rm -rf $DACHCOM_BUNDLE_HOME/{.[!.],}*
-
+mkdir -p ../lib/$DACHCOM_BUNDLE_NAME
+mv {.[!.],}* ../lib/$DACHCOM_BUNDLE_NAME
+rm -rf {.[!.],}*
 
 ## clone pimcore
 
 git clone https://github.com/pimcore/skeleton.git $DACHCOM_BUNDLE_HOME
 git checkout ${PIMCORE_SKELETON_BRANCH} $DACHCOM_BUNDLE_HOME
 
-
 ## move bundle back into lib/$DACHCOM_BUNDLE_NAME
 
-mv $DACHCOM_BUNDLE_HOME/../lib $DACHCOM_BUNDLE_HOME
-
+mv ../lib .
 
 ## copy _etc dir to root dir
 
-cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc/bundle_configuration $DACHCOM_BUNDLE_HOME/bundle_configuration
-cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc $DACHCOM_BUNDLE_HOME/_etc
-chmod -R +x $DACHCOM_BUNDLE_HOME/_etc
-
+cp -r ./lib/$DACHCOM_BUNDLE_NAME/tests/_etc/bundle_configuration ./bundle_configuration
+cp -r ./lib/$DACHCOM_BUNDLE_NAME/tests/_etc ./_etc
+chmod -R +x ./_etc
 
 ## create download dir
 
-mkdir $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_data/downloads
-
+mkdir ./lib/$DACHCOM_BUNDLE_NAME/tests/_data/downloads
 
 ## add config templates
 
-mkdir -p $DACHCOM_BUNDLE_HOME/var/config
-cp $DACHCOM_BUNDLE_HOME/_etc/config/system/config.yml app/config/config.yml
+mkdir -p ./var/config
+cp ./_etc/config/system/config.yml app/config/config.yml
 cp app/config/parameters.example.yml app/config/parameters.yml
 
 for K in "${!DACHCOM_INSTALL_CONFIG_FILES[@]}"
@@ -70,20 +65,11 @@ done
 ##  install composer dependencies
 rm composer.lock
 
+composer config repositories.pimcore-${DACHCOM_BUNDLE_REPO_NAME} '{"type": "path", "url": "./lib/pimcore-${DACHCOM_BUNDLE_REPO_NAME}", "options": {"symlink": true}}'
+
 COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
 COMPOSER_MEMORY_LIMIT=-1 composer require phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 symplify/easy-coding-standard:^5.4 --no-scripts
-
-##  install $DACHCOM_BUNDLE_NAME dependencies
-BRANCH_REGEX="^(([[:digit:]]+\.)+[[:digit:]]+)$"
-
-if [[ ${TRAVIS_BRANCH} =~ $BRANCH_REGEX ]]; then
-    echo "composer require dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME}:${TRAVIS_BRANCH}"
-    COMPOSER_MEMORY_LIMIT=-1 composer require dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME}:${TRAVIS_BRANCH}
-else
-    echo "composer require dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME}:dev-${TRAVIS_BRANCH}"
-    COMPOSER_MEMORY_LIMIT=-1 composer require "dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME}:dev-${TRAVIS_BRANCH}#${TRAVIS_COMMIT}"
-fi
+COMPOSER_MEMORY_LIMIT=-1 composer require dachcom-digital/formbuilder @dev
 
 ##  clear cache
-
 rm -rf var/cache
