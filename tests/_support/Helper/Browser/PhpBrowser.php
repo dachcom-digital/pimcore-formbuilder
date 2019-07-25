@@ -8,7 +8,6 @@ use Codeception\Exception\ModuleException;
 use DachcomBundle\Test\Helper\PimcoreCore;
 use DachcomBundle\Test\Helper\PimcoreUser;
 use DachcomBundle\Test\Util\FormHelper;
-use DachcomBundle\Test\Util\VersionHelper;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\User;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
@@ -167,11 +166,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
-
-            if ($this->canTestMessageText($message) === false) {
-                continue;
-            }
-
             $this->assertContains($string, is_null($message->getBody()) ? '' : $message->getBody());
         }
     }
@@ -188,11 +182,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
-
-            if ($this->canTestMessageText($message) === false) {
-                continue;
-            }
-
             $this->assertNotContains($string, is_null($message->getBody()) ? '' : $message->getBody());
         }
     }
@@ -240,10 +229,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
 
-            if ($this->canTestMessageText($message) === false) {
-                continue;
-            }
-
             $this->assertGreaterThan(0, count($message->getChildren()));
 
             /** @var \Swift_Mime_SimpleMimeEntity $child */
@@ -265,11 +250,6 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
 
         /** @var \Pimcore\Mail $message */
         foreach ($collectedMessages as $message) {
-
-            if ($this->canTestMessageText($message) === false) {
-                continue;
-            }
-
             /** @var \Swift_Mime_SimpleMimeEntity $child */
             foreach ($message->getChildren() as $child) {
                 $this->assertNotContains($string, is_null($child->getBody()) ? '' : $child->getBody());
@@ -395,7 +375,7 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         }
 
         $token = $tokens[0]['token'];
-        /** @var \Symfony\Component\HttpKernel\Profiler\Profile $profile */
+        /** @var Profile $profile */
         $profile = $profiler->loadProfile($token);
 
         if (!$profile instanceof Profile) {
@@ -408,24 +388,5 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         $this->assertGreaterThan(0, $mailCollector->getMessageCount());
 
         return $mailCollector;
-    }
-
-    /**
-     *
-     * hacky! There is bug in pimcores simple_html_dom class, so there are no valid text parts in given message!
-     *
-     * @see https://github.com/pimcore/pimcore/commit/640aabf73e4dccdb701628c9f64c6bf36195037b
-     *
-     * @param \Pimcore\Mail $message
-     *
-     * @return bool
-     */
-    protected function canTestMessageText(\Pimcore\Mail $message)
-    {
-        if ($message->getBodyTextRendered() === '' && VersionHelper::pimcoreVersionIsEqualThan('5.4.4') && version_compare(phpversion(), '7.3.0', '>=')) {
-            return false;
-        }
-
-        return true;
     }
 }
