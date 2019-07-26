@@ -15,3 +15,7 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[NEW FEATURE]**: Pimcore 6.0.0 ready
 - **[BC BREAK]**: All Controllers are registered as services now! (Also check your email controller definition!)
 - **[ATTENTION]**: All `href`, `multihref` elements has been replaced by `relation`, `relations`
+
+***
+
+FormBuilder 2.x Upgrade Notes: https://github.com/dachcom-digital/pimcore-formbuilder/blob/2.7/UPGRADE.md
