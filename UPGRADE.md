@@ -6,6 +6,10 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 2.7.x to Version 2.7.2
+- **[NEW FEATURE]**: [Tracker Extension](https://github.com/dachcom-digital/pimcore-formbuilder/issues/183)
+- [Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/23?closed=1)
+
 #### Update from Version 2.6.x to Version 2.7.0
 - **[NEW FEATURE]**: [Mail Editor](https://github.com/dachcom-digital/pimcore-formbuilder/issues/158)
 - **[NEW FEATURE]**: [Allow Plain Text Mail Submission](https://github.com/dachcom-digital/pimcore-formbuilder/issues/157)
