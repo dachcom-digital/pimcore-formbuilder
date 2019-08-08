@@ -8,7 +8,7 @@ form_builder:
                 icon_class: 'form_builder_icon_date'
                 constraints:
                     disabled:
-                    - 'dynamic_multi_file_not_blank'
+                        - 'dynamic_multi_file_not_blank'
                 fields:
                     options.data: ~
                     options.value: ~
@@ -36,6 +36,12 @@ form_builder:
                         type: tagfield
                         label: 'form_builder_type_field.date_years'
                         config: ~
+                    options.html5:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'use HTML5 type=date (do not use with class="custom-datepicker")'
+                        config:
+                            checked: true
         date_time:
             class: Symfony\Component\Form\Extension\Core\Type\DateTimeType
             backend:
@@ -184,6 +190,12 @@ form_builder:
                         type: tagfield
                         label: 'form_builder_type_field.date_years'
                         config: ~
+                    options.html5:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'use HTML5 type=date (do not use with class="custom-datepicker")'
+                        config:
+                            checked: true
         text:
             class: Symfony\Component\Form\Extension\Core\Type\TextType
             backend:
