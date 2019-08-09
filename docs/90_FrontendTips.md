@@ -44,7 +44,7 @@ $('.custom-datepicker').datepicker();
 ````
 
 ### Multilanguage support
-For date-fields, there needs to be done more, since symfony expects the date to match following pattern, which only works in english:
+For date-fields, there needs to be done more, since symfony expects the date to match following pattern:
 
 ```php
     # Symfony\Component\Form\Extension\Core\Type\DateType.php:
