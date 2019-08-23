@@ -53,12 +53,13 @@ For date-fields, there needs to be done more, since symfony expects the date to 
 
 Here is a way to implement the use of a different language for the frontend, while sending the correct format to symfony.
 
-In this example, following npm-packages are used: 
-- "@chenfengyuan/datepicker": "^1.0.8",
-- "moment": "^2.24.0",
-        
-... and only english and german is supported. (Make sure that your datepicker supports multiple languages and include them.)
-
+In following example, these npm-packages are used: 
+````json
+{
+    "@chenfengyuan/datepicker": "^1.0.8",
+    "moment": "^2.24.0"
+}
+````
 
 ```javascript
     var langIso = WEBSITE_CONFIG.language === 'en' ? 'en-GB' : 'de-DE',
