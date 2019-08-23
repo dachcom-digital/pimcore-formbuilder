@@ -33,8 +33,6 @@ class FileLocator
     private $zipFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . 'formbuilder-cache/zip';
 
     /**
-     * FileLocator constructor.
-     *
      * @param Filesystem $filesystem
      */
     public function __construct(Filesystem $filesystem)

@@ -72,8 +72,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     private $availableFormTypes;
 
     /**
-     * FormListener constructor.
-     *
      * @param Configuration             $configuration
      * @param AttachmentStreamInterface $attachmentStream
      * @param EventDispatcherInterface  $eventDispatcher

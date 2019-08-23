@@ -15,8 +15,6 @@ class PresetManager
     protected $configuration;
 
     /**
-     * PresetManager constructor.
-     *
      * @param Configuration $configuration
      */
     public function __construct(Configuration $configuration)

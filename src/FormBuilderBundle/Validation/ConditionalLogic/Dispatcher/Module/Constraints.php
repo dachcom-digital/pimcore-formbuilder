@@ -50,8 +50,6 @@ class Constraints implements ModuleInterface
     protected $appliedConditions;
 
     /**
-     * Constraints constructor.
-     *
      * @param TranslatorInterface $translator
      * @param DataFactory         $dataFactory
      */

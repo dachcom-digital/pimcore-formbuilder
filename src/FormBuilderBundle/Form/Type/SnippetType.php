@@ -23,8 +23,6 @@ class SnippetType extends AbstractType
     protected $hrefLocaleMapper;
 
     /**
-     * DynamicChoiceType constructor.
-     *
      * @param RequestStack     $requestStack
      * @param HrefLocaleMapper $hrefLocaleMapper
      */

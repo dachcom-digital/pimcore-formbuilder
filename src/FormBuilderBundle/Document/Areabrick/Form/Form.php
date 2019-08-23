@@ -40,8 +40,6 @@ class Form extends AbstractTemplateAreabrick
     protected $translator;
 
     /**
-     * Form constructor.
-     *
      * @param FormManager     $formManager
      * @param PresetManager   $presetManager
      * @param FormAssembler   $formAssembler

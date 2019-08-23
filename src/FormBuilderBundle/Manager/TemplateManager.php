@@ -12,8 +12,6 @@ class TemplateManager
     protected $configuration;
 
     /**
-     * TemplateManager constructor.
-     *
      * @param Configuration $configuration
      */
     public function __construct(Configuration $configuration)

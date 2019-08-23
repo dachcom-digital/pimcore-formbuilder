@@ -13,8 +13,6 @@ class FlashBagManager implements FlashBagManagerInterface
     protected $session;
 
     /**
-     * MailListener constructor.
-     *
      * @param SessionInterface $session
      */
     public function __construct(SessionInterface $session)

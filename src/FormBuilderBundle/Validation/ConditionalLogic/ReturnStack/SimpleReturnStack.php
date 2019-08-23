@@ -15,8 +15,6 @@ class SimpleReturnStack implements ReturnStackInterface
     public $data = [];
 
     /**
-     * EmptyReturnStack constructor.
-     *
      * @param null|string $actionType
      * @param array       $data
      */

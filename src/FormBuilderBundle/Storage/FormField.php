@@ -52,8 +52,6 @@ class FormField implements FormFieldInterface
     private $optional = [];
 
     /**
-     * FormField constructor.
-     *
      * @param bool $update
      */
     public function __construct($update = false)

@@ -17,8 +17,6 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
     protected $session;
 
     /**
-     * DynamicMultiFileNotBlankValidator constructor.
-     *
      * @param SessionInterface $session
      */
     public function __construct(SessionInterface $session)

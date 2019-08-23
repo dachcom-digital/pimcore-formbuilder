@@ -21,8 +21,6 @@ class FormManager
     protected $storageUserResolver;
 
     /**
-     * FormManager constructor.
-     *
      * @param FormFactoryInterface     $formFactory
      * @param TokenStorageUserResolver $storageUserResolver
      */

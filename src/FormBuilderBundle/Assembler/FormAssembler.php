@@ -36,8 +36,6 @@ class FormAssembler
     protected $preset = '';
 
     /**
-     * Form constructor.
-     *
      * @param SessionInterface $session
      * @param Builder          $formBuilder
      * @param FormManager      $formManager

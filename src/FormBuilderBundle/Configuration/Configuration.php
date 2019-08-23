@@ -45,9 +45,6 @@ class Configuration
      */
     private $backendConfig;
 
-    /**
-     * Configuration constructor.
-     */
     public function __construct()
     {
         $this->fileSystem = new FileSystem();

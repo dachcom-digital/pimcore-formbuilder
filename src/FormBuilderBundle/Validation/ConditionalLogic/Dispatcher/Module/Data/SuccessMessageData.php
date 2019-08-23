@@ -33,8 +33,6 @@ class SuccessMessageData implements DataInterface
     private $data = [];
 
     /**
-     * SuccessMessageData constructor.
-     *
      * @param HrefLocaleMapper $hrefLocaleMapper
      * @param Translator       $translator
      */

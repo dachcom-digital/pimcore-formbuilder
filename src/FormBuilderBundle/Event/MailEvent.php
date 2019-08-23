@@ -29,8 +29,6 @@ class MailEvent extends Event
     private $isCopy;
 
     /**
-     * MailEvent constructor.
-     *
      * @param FormInterface $form
      * @param Mail          $email
      * @param array         $userOptions

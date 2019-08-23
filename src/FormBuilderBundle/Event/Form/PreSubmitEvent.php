@@ -18,8 +18,6 @@ class PreSubmitEvent extends Event
     private $formOptions;
 
     /**
-     * PreSubmitEvent constructor.
-     *
      * @param FormEvent $formEvent
      * @param array     $formOptions
      */

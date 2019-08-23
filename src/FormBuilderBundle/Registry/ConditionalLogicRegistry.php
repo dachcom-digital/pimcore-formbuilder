@@ -34,8 +34,6 @@ class ConditionalLogicRegistry
     private $conditionInterface;
 
     /**
-     * ConditionalLogicRegistry constructor.
-     *
      * @param string $actionInterface
      * @param string $conditionInterface
      */

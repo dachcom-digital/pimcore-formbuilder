@@ -15,8 +15,6 @@ class ConditionalLogicProcessor
     protected $conditionalLogicRegistry;
 
     /**
-     * ConditionalLogicProcessor constructor.
-     *
      * @param ConditionalLogicRegistry $conditionalLogicRegistry
      */
     public function __construct(ConditionalLogicRegistry $conditionalLogicRegistry)

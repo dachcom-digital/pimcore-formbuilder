@@ -21,8 +21,6 @@ class MailBehaviourData implements DataInterface
     private $data = [];
 
     /**
-     * DynamicChoiceType constructor.
-     *
      * @param HrefLocaleMapper $hrefLocaleMapper
      */
     public function __construct(HrefLocaleMapper $hrefLocaleMapper)

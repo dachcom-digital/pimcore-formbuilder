@@ -45,8 +45,6 @@ class TestFormBuilder
     protected $fieldTypeMapper;
 
     /**
-     * TestFormBuilder constructor.
-     *
      * @param string $formName
      */
     public function __construct(string $formName = '')

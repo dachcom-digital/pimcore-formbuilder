@@ -30,8 +30,6 @@ class DynamicChoiceType extends AbstractType
     protected $service;
 
     /**
-     * DynamicChoiceType constructor.
-     *
      * @param ChoiceBuilderRegistry $builderRegistry
      */
     public function __construct(ChoiceBuilderRegistry $builderRegistry)

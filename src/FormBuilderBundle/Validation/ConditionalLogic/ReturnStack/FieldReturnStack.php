@@ -15,8 +15,6 @@ class FieldReturnStack implements ReturnStackInterface
     public $data = [];
 
     /**
-     * FieldReturnStack constructor.
-     *
      * @param string $actionType
      * @param array  $data
      *

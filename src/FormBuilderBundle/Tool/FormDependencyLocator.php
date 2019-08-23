@@ -12,8 +12,6 @@ class FormDependencyLocator
     protected $db;
 
     /**
-     * FormDependencyLocator constructor.
-     *
      * @param \Pimcore\Db\Connection $db
      */
     public function __construct(\Pimcore\Db\Connection $db)

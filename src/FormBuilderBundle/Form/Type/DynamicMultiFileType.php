@@ -17,8 +17,6 @@ class DynamicMultiFileType extends AbstractType
     protected $translator;
 
     /**
-     * DynamicMultiFileType constructor.
-     *
      * @param TranslatorInterface $translator
      */
     public function __construct(TranslatorInterface $translator)

@@ -18,8 +18,6 @@ class PostSetDataEvent extends Event
     private $formOptions;
 
     /**
-     * PreSetDataEvent constructor.
-     *
      * @param FormEvent $formEvent
      * @param array     $formOptions
      */

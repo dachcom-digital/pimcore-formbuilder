@@ -18,8 +18,6 @@ class FormFactory implements FormFactoryInterface
     protected $translator;
 
     /**
-     * FormFactory constructor.
-     *
      * @param Translator $translator
      */
     public function __construct(Translator $translator)

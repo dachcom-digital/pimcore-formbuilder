@@ -12,8 +12,6 @@ class DataFactory
     protected $dataHandler;
 
     /**
-     * DataFactory constructor.
-     *
      * @param array $dataHandler
      */
     public function __construct($dataHandler)

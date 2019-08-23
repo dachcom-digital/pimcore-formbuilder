@@ -30,8 +30,6 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     protected $update = false;
 
     /**
-     * FormFieldDynamic constructor.
-     *
      * @param string $name
      * @param string $type
      * @param array  $options

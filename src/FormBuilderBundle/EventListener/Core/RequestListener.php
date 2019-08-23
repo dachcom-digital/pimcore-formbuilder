@@ -44,8 +44,6 @@ class RequestListener implements EventSubscriberInterface
     protected $formErrorsSerializer;
 
     /**
-     * RequestListener constructor.
-     *
      * @param Builder                       $formBuilder
      * @param EventDispatcherInterface      $eventDispatcher
      * @param SessionInterface              $session
