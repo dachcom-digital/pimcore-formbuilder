@@ -39,7 +39,7 @@ form_builder:
                     options.html5:
                         display_group_id: attributes
                         type: checkbox
-                        label: 'use HTML5 type=date (do not use with class="custom-datepicker")'
+                        label: 'form_builder_type_field.date_html5'
                         config:
                             checked: true
         date_time:
@@ -193,7 +193,7 @@ form_builder:
                     options.html5:
                         display_group_id: attributes
                         type: checkbox
-                        label: 'use HTML5 type=date (do not use with class="custom-datepicker")'
+                        label: 'form_builder_type_field.date_html5'
                         config:
                             checked: true
         text:
