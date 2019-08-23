@@ -111,4 +111,4 @@
 "form_builder.mail_editor.widget_provider.form_fields.show_labels","Show Labels","Labels anzeigen"
 "form_builder.mail_editor.widget_provider.date.date","Date","Datum"
 "form_builder.mail_editor.widget_provider.date.date_format","Date Format","Datum-Format"
-"form_builder_type_field.date_html5","use HTML5 type"
+"form_builder_type_field.date_html5","use HTML5 type", "HTML5-Typ benutzen"
