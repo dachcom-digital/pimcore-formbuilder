@@ -110,6 +110,12 @@ form_builder:
                         display_group_id: attributes
                         type: checkbox
                         label: 'form_builder_type_field.date_with_seconds'
+                    options.html5:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.date_html5'
+                        config:
+                            checked: true
         time:
             class: Symfony\Component\Form\Extension\Core\Type\TimeType
             backend:
