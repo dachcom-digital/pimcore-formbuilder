@@ -58,7 +58,7 @@ class DynamicChoiceType extends AbstractType
             'choice_translation_domain' => false,
             'choice_loader'             => function (Options $options) {
                 $initialChoiceBuilder = false;
-                if (!$this->service) {
+                if (!$this->service || get_class($this->service) !== $options['service']) {
                     $serviceName = $options['service'];
                     $this->service = $this->builderRegistry->get($serviceName);
                     $initialChoiceBuilder = true;
