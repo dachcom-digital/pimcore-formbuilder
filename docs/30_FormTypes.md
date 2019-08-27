@@ -16,7 +16,7 @@ There are several form types available (updated continuously).
 | Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
 | Snippet | Other Fields | Place a custom (localized) snippet in your form. |
 | [Dynamic Multi File](80_FileUpload.md) | Other Fields | Multi-File Upload field. |
-| Date | Date and Time Fields | A field that allows the user to modify date information via a variety of different HTML elements. |
+| Date | Date and Time Fields | A field that allows the user to modify date information via a variety of different HTML elements. Now supports usage of text- or html5-datetype |
 | Date Time | Date and Time Fields | This field type allows the user to modify data that represents a specific date and time (e.g. 1984-06-05 12:15:30). |
 | Time | Date and Time Fields | This can be rendered as a text field, a series of text fields (e.g. hour, minute, second) or a series of select fields. The underlying data can be stored as a DateTime object, a string, a timestamp or an array. |
 | Birthday | Date and Time Fields | Can be rendered as a single text box, three text boxes (month, day and year), or three select boxes. |
