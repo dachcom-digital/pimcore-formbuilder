@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.0.x to Version 3.0.3
+- **[NEW FEATURE]**: Date-fields support choice for usage of html5 date-type
+- **[BUGFIX]**: Fix dynamic choice type service detection
 
 #### Update from Version 3.0.x to Version 3.0.2
 - **[NEW FEATURE]**: [Tracker Extension](https://github.com/dachcom-digital/pimcore-formbuilder/issues/183)
