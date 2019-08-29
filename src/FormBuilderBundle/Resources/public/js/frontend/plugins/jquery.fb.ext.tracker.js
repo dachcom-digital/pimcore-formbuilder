@@ -64,15 +64,15 @@
 
         submitToGoogle: function (data) {
 
-            if (typeof window.gtag === 'function') {
+            if (typeof window.dataLayer === 'object') {
+                window.dataLayer.push(data);
+            } else if (typeof window.gtag === 'function') {
                 gtag('event', data.event, {
                     'event_category': data.type,
                     'event_label': data.form_name
                 });
             } else if (typeof window.ga === 'function') {
                 ga('send', 'event', data.event, data.type, data.form_name);
-            } else if (typeof window.dataLayer === 'object') {
-                window.dataLayer.push(data);
             }
         },
 
