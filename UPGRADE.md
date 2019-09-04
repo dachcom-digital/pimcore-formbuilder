@@ -6,8 +6,12 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 2.7.4 to Version 2.7.5
+- **[BUGFIX]**: Check if checkbox configuration is available
+
 #### Update from Version 2.7.3 to Version 2.7.4
 - **[BUGFIX]**: Fix dynamic choice type service detection
+- **[BUGFIX]**: [TRACKER] Check `window.dataLayer` first
 
 #### Update from Version 2.7.2 to Version 2.7.3
 - **[NEW FEATURE]**: Date-fields support choice for usage of html5 date-type
