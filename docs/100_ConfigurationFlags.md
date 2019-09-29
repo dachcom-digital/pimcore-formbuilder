@@ -3,6 +3,7 @@
 | Name | Type | Default
 |------|------|------------|
 | `use_custom_radio_checkbox` | bool | true |
+| `use_honeypot_field` | bool | true |
 
 ***
 
@@ -13,4 +14,13 @@ Change `use_custom_radio_checkbox` to false, if you don't want to use the bootst
 form_builder:
     flags:
         use_custom_radio_checkbox: false
+```
+
+## 🚩 use_honeypot_field flag
+Change `use_honeypot_field` to false, if you don't want a honeypot field added to your forms.
+
+```yaml
+form_builder:
+    flags:
+        use_honeypot_field: false
 ```

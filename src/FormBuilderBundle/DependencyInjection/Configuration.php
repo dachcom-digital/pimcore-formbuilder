@@ -19,6 +19,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('use_custom_radio_checkbox')->defaultValue(true)->end()
+                        ->booleanNode('use_honeypot_field')->defaultValue(true)->end()
                     ->end()
                 ->end()
                 ->arrayNode('area')

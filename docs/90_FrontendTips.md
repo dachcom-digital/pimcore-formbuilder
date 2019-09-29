@@ -23,6 +23,9 @@ input[name$='[inputUserName]'] {
 
 ```
 
+You can also disable the honeypot field entirely by setting the `use_honeypot_field`
+[configuration flag](100_ConfigurationFlags.md) to false.
+
 ## HTML in Checkbox / Radio Labels
 Formbuilder allows you to use HTML tags in checkbox and radio labels.
 Just use the translation html editor to define some html label:
