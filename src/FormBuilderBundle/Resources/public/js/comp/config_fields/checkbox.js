@@ -4,7 +4,7 @@ Formbuilder.comp.type.config_fields.checkbox = Class.create(Formbuilder.comp.typ
         return new Ext.form.Checkbox({
             fieldLabel: fieldConfig.label,
             name: fieldConfig.id,
-            checked: fieldConfig.config !== null && fieldConfig.config.hasOwnProperty('checked') ? fieldConfig.config.checked : false,
+            checked: fieldConfig.config !== null && fieldConfig.config !== undefined && fieldConfig.config.hasOwnProperty('checked') ? fieldConfig.config.checked : false,
             uncheckedValue: false,
             inputValue: true,
             value: value
