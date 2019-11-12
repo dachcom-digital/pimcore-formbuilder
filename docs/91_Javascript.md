@@ -20,41 +20,50 @@ This Plugin will enable the ajax functionality and also the multi file handling:
 ```
 
 ```javascript
-$(function () {
-    $('form.formbuilder.ajax-form').formBuilderAjaxManager();
-});
+new Formbuilder(
+    $('form.formbuilder'))
+    .FormBuilderAjaxManager();
 ```
 ### Extended Usage
 ```javascript
-$('form.formbuilder.ajax-form').formBuilderConditionalLogic({
-    setupFileUpload: true, // initialize upload fields
-    resetFormMethod: null, // reset method after success
-    validationTransformer: {
-        addValidationMessage: function($fields, messages) {
-            console.log($fields, messages);
-        },
-        removeFormValidations: function($form) {
-            console.log($form);
-        }
-    }
-});
+new Formbuilder(
+    $('form.formbuilder'))
+    .FormBuilderAjaxManager(
+        {
+            checkOnChange: true, // check if invalid fields after the submit were corrected
+            setupFileUpload: true, // initialize upload fields
+            resetFormMethod: null, // reset method after success,
+            validationTransformer: {
+                addValidationMessage: function($fields, messages) {
+                    console.log($fields, messages);
+                },
+                removeFormValidations: function($form) {
+                    console.log($form);
+                }
+            }
+        });
 ```
 
 ### Events
 
 ```javascript
-$('form.ajax-form')
-   .on('formbuilder.success', function(ev, message, redirect, $form) {
-         console.log(message, redirect);
- }).on('formbuilder.error', function(ev, messages, $form) {
-         console.log(messages);
- }).on('formbuilder.error-form', function (ev, messages, $form) {
+$(form)
+    .on('formbuilder.success', function (ev, message, redirect, $form) {
+        console.log(message, redirect);
+    })
+    .on('formbuilder.error', function (ev, messages, $form) {
+        console.log(messages);
+    })
+    .on('formbuilder.error-form', function (ev, messages, $form) {
         console.error('error-form', messages);
- }).on('formbuilder.error-field', function(ev, data, $form) {
-         console.log(data.field, data.messages);
- }).on('formbuilder.fatal', function (ev, response, $form) {
+    })
+    .on('formbuilder.error-field', function (ev, data, $form) {
+        console.log(data.field, data.messages);
+    })
+    .on('formbuilder.fatal', function (ev, response, $form) {
         console.error('fatal', response.error, response.trace);
 });
+
 ```
 
 ## Conditional Logic Extension
