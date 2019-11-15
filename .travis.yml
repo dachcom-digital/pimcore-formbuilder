@@ -68,7 +68,7 @@ matrix:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.3.0"
     allow_failures:
         -   env:
-                - PIMCORE_SKELETON_BRANCH="tags/v2.2.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v2.3.0"
                 - DACHCOM_TEST_SECTION=ecs
     fast_finish: true
 
