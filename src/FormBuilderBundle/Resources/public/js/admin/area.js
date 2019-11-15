@@ -99,7 +99,6 @@ var FormBuilderAreaWatcher = Class.create({
     showEls: function (els) {
         els.forEach(function (item) {
             item.style.display = 'block';
-
         });
     },
 
