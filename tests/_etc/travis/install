@@ -58,8 +58,8 @@ sed -i '0,/{/a \    "conflict": { "monolog/monolog": ">=2" },\' composer.json
 
 composer config repositories.pimcore-${DACHCOM_BUNDLE_REPO_NAME} '{"type": "path", "url": "./lib/'${DACHCOM_BUNDLE_NAME}'", "options": {"symlink": true}}'
 
-COMPOSER_MEMORY_LIMIT=-1 composer install --no-scripts
-COMPOSER_MEMORY_LIMIT=-1 composer require symfony/symfony:$SYMFONY_VERSION phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 symplify/easy-coding-standard:^5.4 dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME} @dev
+COMPOSER_MEMORY_LIMIT=-1 composer require symfony/symfony:$SYMFONY_VERSION --no-scripts
+COMPOSER_MEMORY_LIMIT=-1 composer require phpstan/phpstan:^0.11.1 phpstan/phpstan-symfony:^0.11.0 symplify/easy-coding-standard:^5.4 dachcom-digital/${DACHCOM_BUNDLE_REPO_NAME} @dev
 
 ##  clear cache
 rm -rf var/cache
