@@ -431,8 +431,7 @@ Formbuilder.comp.extensions.formMailEditor = Class.create({
     },
 
     initCkEditorPlugins: function () {
-
-        Ext.Array.each(['widget', 'widgetselection', 'lineutils', 'formmaileditor'], function (pluginName) {
+        Ext.Array.each(['widget', 'widgetselection', 'lineutils', 'formmaileditor', 'clipboard', 'notification'], function (pluginName) {
             if (CKEDITOR.plugins.get(pluginName) === null) {
                 CKEDITOR.plugins.addExternal(pluginName, '/bundles/formbuilder/js/comp/ckeditor/' + pluginName + '/', 'plugin.js');
             }

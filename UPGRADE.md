@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.0.x to Version 3.1.0
+- **[NEW FEATURE]**: Pimcore 6.3.0 ready
+
 #### Update from Version 3.0.4 to Version 3.0.5
 - **[BUGFIX]**: Check if checkbox configuration is available
 

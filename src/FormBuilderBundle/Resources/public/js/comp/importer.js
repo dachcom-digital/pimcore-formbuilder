@@ -14,7 +14,7 @@ Formbuilder.comp.importer = Class.create({
     showPanel: function () {
 
         var url = '/admin/formbuilder/settings/import-form/' + this.importId,
-            uploadForm;
+            uploadForm, requestParams = {};
 
         this.uploadWindow = new Ext.Window({
             autoHeight: true,
@@ -24,8 +24,8 @@ Formbuilder.comp.importer = Class.create({
             modal: true
         });
 
-        if (Ext.isFunction(pimcore.helpers.addCsrfTokenToUrl)) {
-            url = pimcore.helpers.addCsrfTokenToUrl(url);
+        if (pimcore.hasOwnProperty('settings') && pimcore.settings.hasOwnProperty('csrfToken')) {
+            requestParams = {csrfToken: pimcore.settings['csrfToken']};
         }
 
         uploadForm = new Ext.form.FormPanel({
@@ -47,6 +47,7 @@ Formbuilder.comp.importer = Class.create({
                     change: function () {
                         uploadForm.getForm().submit({
                             url: url,
+                            params: requestParams,
                             waitMsg: t('please_wait'),
                             success: this.getImportComplete.bind(this),
                             failure: function (el, data) {
