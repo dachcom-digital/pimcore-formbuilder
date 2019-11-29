@@ -3,6 +3,7 @@
 namespace DachcomBundle\Test\functional\Constraints;
 
 use DachcomBundle\Test\FunctionalTester;
+use Symfony\Component\HttpKernel\Kernel;
 
 class RangeConstraintCest extends AbstractConstraintCest
 {
@@ -10,6 +11,11 @@ class RangeConstraintCest extends AbstractConstraintCest
      * @var array
      */
     protected $validFieldsForCurrentConstraint = ['text'];
+
+    /**
+     * @var string
+     */
+    protected $defaultInvalidErrorMessage = 'This value should be a valid number';
 
     /**
      * @var string
@@ -24,7 +30,7 @@ class RangeConstraintCest extends AbstractConstraintCest
     /**
      * @var string
      */
-    protected $defaultInvalidErrorMessage = 'This value should be a valid number';
+    protected $defaultBetweenRangeErrorMessage = 'This value should be between 10 and 20';
 
     /**
      * @var string
@@ -39,47 +45,12 @@ class RangeConstraintCest extends AbstractConstraintCest
     /**
      * @var string
      */
+    protected $customNotInRageErrorMessage = 'my.special.not_in_range.message';
+
+    /**
+     * @var string
+     */
     protected $customInvalidErrorMessage = 'my.special.range.exact.message';
-
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testRangeConstraintWithAllFieldsAndMinValue(FunctionalTester $I)
-    {
-        list($testFormBuilder, $form) = $this->setupForm($I, [['range', ['min' => 10, 'max' => 20]]]);
-
-        $this->fillForm($I, ['text_0' => 5]);
-
-        $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
-
-        $I->dontSee('Success!', '.message.message-success');
-
-        foreach ($this->getFieldsToTest() as $fields) {
-            foreach ($fields['selector'] as $message => $selector) {
-                $I->see($this->defaultMinErrorMessage, sprintf('//form[@name="formbuilder_1"]%s', $selector));
-            }
-        }
-    }
-
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testRangeConstraintWithAllFieldsAndMaxValue(FunctionalTester $I)
-    {
-        list($testFormBuilder, $form) = $this->setupForm($I, [['range', ['min' => 10, 'max' => 20]]]);
-
-        $this->fillForm($I, ['text_0' => 30]);
-
-        $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
-
-        $I->dontSee('Success!', '.message.message-success');
-
-        foreach ($this->getFieldsToTest() as $fields) {
-            foreach ($fields['selector'] as $message => $selector) {
-                $I->see($this->defaultMaxErrorMessage, sprintf('//form[@name="formbuilder_1"]%s', $selector));
-            }
-        }
-    }
 
     /**
      * @param FunctionalTester $I
@@ -104,9 +75,49 @@ class RangeConstraintCest extends AbstractConstraintCest
     /**
      * @param FunctionalTester $I
      */
+    public function testRangeConstraintWithAllFieldsAndMinValue(FunctionalTester $I)
+    {
+        list($testFormBuilder, $form) = $this->setupForm($I, [['range', ['min' => 10, 'max' => 20]]]);
+
+        $this->fillForm($I, ['text_0' => 5]);
+
+        $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
+
+        $I->dontSee('Success!', '.message.message-success');
+
+        foreach ($this->getFieldsToTest() as $fields) {
+            foreach ($fields['selector'] as $message => $selector) {
+                $I->see($this->getRangeMessage('min'), sprintf('//form[@name="formbuilder_1"]%s', $selector));
+            }
+        }
+    }
+
+    /**
+     * @param FunctionalTester $I
+     */
+    public function testRangeConstraintWithAllFieldsAndMaxValue(FunctionalTester $I)
+    {
+        list($testFormBuilder, $form) = $this->setupForm($I, [['range', ['min' => 10, 'max' => 20]]]);
+
+        $this->fillForm($I, ['text_0' => 30]);
+
+        $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
+
+        $I->dontSee('Success!', '.message.message-success');
+
+        foreach ($this->getFieldsToTest() as $fields) {
+            foreach ($fields['selector'] as $message => $selector) {
+                $I->see($this->getRangeMessage('max'), sprintf('//form[@name="formbuilder_1"]%s', $selector));
+            }
+        }
+    }
+
+    /**
+     * @param FunctionalTester $I
+     */
     public function testRangeConstraintWithOverriddenMinMessageProperty(FunctionalTester $I)
     {
-        list($testFormBuilder, $form) = $this->setupForm($I, [['range', ['min' => 10, 'max' => 20, 'minMessage' => $this->customMinErrorMessage]]]);
+        list($testFormBuilder, $form) = $this->setupForm($I, [['range', array_merge(['min' => 10, 'max' => 20], $this->getNotInRangeMessageConfig('min'))]]);
 
         $this->fillForm($I, ['text_0' => 2]);
 
@@ -116,7 +127,7 @@ class RangeConstraintCest extends AbstractConstraintCest
 
         foreach ($this->getFieldsToTest() as $fields) {
             foreach ($fields['selector'] as $message => $selector) {
-                $I->see($this->customMinErrorMessage, sprintf('//form[@name="formbuilder_1"]%s', $selector));
+                $I->see($this->getNotInRangeMessageMessage('min'), sprintf('//form[@name="formbuilder_1"]%s', $selector));
             }
         }
 
@@ -129,7 +140,7 @@ class RangeConstraintCest extends AbstractConstraintCest
      */
     public function testRangeConstraintWithOverriddenMaxMessageProperty(FunctionalTester $I)
     {
-        list($testFormBuilder, $form) = $this->setupForm($I, [['range', ['min' => 0, 'max' => 10, 'maxMessage' => $this->customMaxErrorMessage]]]);
+        list($testFormBuilder, $form) = $this->setupForm($I, [['range', array_merge(['min' => 0, 'max' => 10], $this->getNotInRangeMessageConfig('max'))]]);
 
         $this->fillForm($I, ['text_0' => 12]);
 
@@ -139,7 +150,7 @@ class RangeConstraintCest extends AbstractConstraintCest
 
         foreach ($this->getFieldsToTest() as $fields) {
             foreach ($fields['selector'] as $message => $selector) {
-                $I->see($this->customMaxErrorMessage, sprintf('//form[@name="formbuilder_1"]%s', $selector));
+                $I->see($this->getNotInRangeMessageMessage('max'), sprintf('//form[@name="formbuilder_1"]%s', $selector));
             }
         }
 
@@ -181,5 +192,51 @@ class RangeConstraintCest extends AbstractConstraintCest
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
         $I->see('Success!', '.message.message-success');
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return array
+     */
+    protected function getNotInRangeMessageConfig($type = 'min')
+    {
+        if ($type === 'min') {
+            return version_compare(Kernel::VERSION, '4.4.0', '>=')
+                ? ['notInRangeMessage' => $this->customNotInRageErrorMessage]
+                : ['minMessage' => $this->customMinErrorMessage];
+        } elseif ($type === 'max') {
+            return version_compare(Kernel::VERSION, '4.4.0', '>=')
+                ? ['notInRangeMessage' => $this->customNotInRageErrorMessage]
+                : ['maxMessage' => $this->customMaxErrorMessage];
+        }
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getNotInRangeMessageMessage($type = 'min')
+    {
+        if ($type === 'min') {
+            return version_compare(Kernel::VERSION, '4.4.0', '>=') ? $this->customNotInRageErrorMessage : $this->customMinErrorMessage;
+        } elseif ($type === 'max') {
+            return version_compare(Kernel::VERSION, '4.4.0', '>=') ? $this->customNotInRageErrorMessage : $this->customMaxErrorMessage;
+        }
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getRangeMessage($type = 'min')
+    {
+        if ($type === 'min') {
+            return version_compare(Kernel::VERSION, '4.4.0', '>=') ? $this->defaultBetweenRangeErrorMessage : $this->defaultMinErrorMessage;
+        } elseif ($type === 'max') {
+            return version_compare(Kernel::VERSION, '4.4.0', '>=') ? $this->defaultBetweenRangeErrorMessage : $this->defaultMaxErrorMessage;
+        }
     }
 }
