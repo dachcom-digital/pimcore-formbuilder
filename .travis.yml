@@ -35,20 +35,23 @@ matrix:
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.3.0"
                 - DACHCOM_TEST_SECTION=ecs
-        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^4.3, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
+                - SYMFONY_VERSION="~4.3.0"
                 - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
-        -   name: "Codeception Tests (Pimcore 6.1.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.1.x, Symfony ^4.3, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
+                - SYMFONY_VERSION="~4.3.0"
                 - PIMCORE_SKELETON_BRANCH="tags/v2.1.0"
-        -   name: "Codeception Tests (Pimcore 6.2.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.2.x, Symfony ^4.3, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
+                - SYMFONY_VERSION="~4.3.0"
                 - PIMCORE_SKELETON_BRANCH="tags/v2.2.0"
         -   name: "Codeception Tests (Pimcore 6.3.x, Symfony ^4.0, PHP 7.2)"
             sudo: required
