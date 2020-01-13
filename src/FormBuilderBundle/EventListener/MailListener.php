@@ -231,7 +231,6 @@ class MailListener implements EventSubscriberInterface
     {
         $formId = $form->getData()->getId();
         $error = false;
-        $message = 'Success!';
 
         $mailTemplate = Document\Email::getById($this->successMailTemplateProviderId);
         if (!$mailTemplate instanceof Document\Email) {
@@ -261,12 +260,11 @@ class MailListener implements EventSubscriberInterface
                 $message = $e->getMessage();
             }
         } elseif ($afterSuccess instanceof Document) {
-            $message = $afterSuccess->getFullPath();
             $event->setRedirectUri($afterSuccess->getFullPath());
             if (!$this->flashBagManager->has('formbuilder_redirect_flash_message')) {
                 $redirectFlashMessage = $mailTemplate->getProperty('mail_successfully_sent_flash_message');
                 if (!is_null($redirectFlashMessage)) {
-                    $this->flashBagManager->add('formbuilder_redirect_flash_message', $redirectFlashMessage);
+                    $message = $redirectFlashMessage;
                 }
             }
         } elseif (is_string($afterSuccess)) {
@@ -276,9 +274,11 @@ class MailListener implements EventSubscriberInterface
             } else {
                 $message = $afterSuccess;
             }
+        } else {
+          $message = 'Success!';
         }
 
-        $this->flashBagManager->add($error ? 'formbuilder_' . $formId . '_error' : 'formbuilder_' . $formId . '_success', $message);
+        if (isset($message)) $this->flashBagManager->add($error ? 'formbuilder_' . $formId . '_error' : 'formbuilder_' . $formId . '_success', $message);
     }
 
     /**
