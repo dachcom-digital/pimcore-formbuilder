@@ -22,8 +22,11 @@ class DynamicFormType extends AbstractType
             ])
             ->add('formCl', HiddenType::class, [
                 'data' => !empty($options['conditional_logic']) ? json_encode($options['conditional_logic']) : null,
-            ])
-            ->add('inputUserName', HoneypotType::class);
+            ]);
+
+        if ($options['add_honeypot']) {
+            $builder->add('inputUserName', HoneypotType::class);
+        }
     }
 
     /**
@@ -34,6 +37,7 @@ class DynamicFormType extends AbstractType
         $resolver->setDefaults([
             'current_form_id'    => 0,
             'conditional_logic'  => [],
+            'add_honeypot'       => true,
             'allow_extra_fields' => true,
             'csrf_protection'    => true,
             'data_class'         => Form::class
