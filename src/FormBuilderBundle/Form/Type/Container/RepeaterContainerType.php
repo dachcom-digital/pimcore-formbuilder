@@ -143,7 +143,7 @@ class RepeaterContainerType extends AbstractType
         }
 
         $options['label'] = $label;
-        $options['add_block_counter'] = $config['add_block_counter'];
+        $options['add_block_counter'] = isset($config['add_block_counter']) ? $config['add_block_counter'] : false;
 
         return $options;
     }

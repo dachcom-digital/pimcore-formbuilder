@@ -658,6 +658,7 @@ class PimcoreBackend extends Module
 
         $blockArea->setDataFromEditmode([
             [
+                'id'     => null,
                 'key'    => '1',
                 'type'   => 'formbuilder_form',
                 'hidden' => false
