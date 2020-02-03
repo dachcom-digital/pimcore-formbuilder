@@ -14,7 +14,6 @@ Formbuilder.comp.form = Class.create({
     formConditionalsStructured: {},
     formConditionalsStore: {},
     formFields: null,
-    copyNode: null,
     mailLayout: null,
     allowedMoveElements: {
         'root': [
@@ -340,7 +339,7 @@ Formbuilder.comp.form = Class.create({
             deleteAllowed = false;
         }
 
-        //add form items
+        // add form items
         if (in_array(parentType, ['root', 'container']) && this.availableFormFields.length > 0) {
 
             Ext.Array.each(this.availableFormFields, function (formGroup) {
@@ -377,17 +376,7 @@ Formbuilder.comp.form = Class.create({
 
         }
 
-        //delete menu
-        if (parentType !== 'root') {
-            menu.add(new Ext.menu.Item({
-                text: t('copy'),
-                iconCls: 'pimcore_icon_copy',
-                hideOnClick: true,
-                handler: this.copyFormField.bind(this, tree, record)
-            }));
-        }
-
-        //constraint menu
+        // constraint menu
         if (parentType === 'field' && record.data.object.allowedConstraints.length > 0) {
 
             var constraintElements = [];
@@ -431,20 +420,40 @@ Formbuilder.comp.form = Class.create({
 
         }
 
-        if (this.copyNode !== null) {
-            if (parentType === 'root' && this.copyNode.data.type !== 'validator') {
-                showPaste = true;
-            }
-        }
-
-        if (showPaste === true) {
+        // copy menu
+        if (parentType !== 'root') {
             menu.add(new Ext.menu.Item({
-                text: t('paste'),
-                iconCls: 'pimcore_icon_paste',
-                handler: this.pasteFormField.bind(this, tree, record)
+                text: t('copy'),
+                iconCls: "pimcore_icon_copy",
+                hideOnClick: true,
+                handler: this.copyNode.bind(this, tree, record)
             }));
         }
 
+        // paste menu
+        if (pimcore && pimcore.formBuilderEditor && pimcore.formBuilderEditor.clipboard) {
+            var copiedNodeType = pimcore.formBuilderEditor.clipboard.data.fbType;
+
+            if (copiedNodeType === 'container' && parentType !== 'container' && parentType !== 'field' && parentType !== 'constraint') {
+                showPaste = true;
+            }
+            if (copiedNodeType === 'field' && parentType !== 'field') {
+                showPaste = true;
+            }
+            if (copiedNodeType === 'constraint' && parentType === 'field') {
+                showPaste = true;
+            }
+            if (showPaste) {
+                menu.add(new Ext.menu.Item({
+                    text: t('paste'),
+                    iconCls: "pimcore_icon_paste",
+                    hideOnClick: true,
+                    handler: this.dropNode.bind(this, tree, record)
+                }));
+            }
+        }
+
+        // delete menu
         if (deleteAllowed) {
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
@@ -454,6 +463,24 @@ Formbuilder.comp.form = Class.create({
         }
 
         menu.showAt(ev.pageX, ev.pageY);
+    },
+
+    copyNode: function(tree, record) {
+        if (!pimcore.formBuilderEditor) {
+            pimcore.formBuilderEditor = {};
+        }
+
+        var newNode = this.cloneChild(tree, record);
+        pimcore.formBuilderEditor.clipboard = newNode;
+    },
+
+    dropNode: function(tree, record) {
+        var node = pimcore.formBuilderEditor.clipboard;
+        var newNode = this.cloneChild(tree, node);
+
+        record.appendChild(newNode);
+        tree.updateLayout();
+        tree.getSelectionModel().select(newNode, true);
     },
 
     /**
@@ -988,29 +1015,6 @@ Formbuilder.comp.form = Class.create({
             expandable: true,
             expanded: true
         };
-    },
-
-    /**
-     * @param tree
-     * @param record
-     */
-    copyFormField: function (tree, record) {
-        this.copyNode = record;
-    },
-
-    /**
-     * @param tree
-     * @param record
-     */
-    pasteFormField: function (tree, record) {
-
-        var node = this.copyNode,
-            newNode = this.cloneChild(tree, node);
-
-        record.appendChild(newNode);
-        tree.updateLayout();
-        tree.getSelectionModel().select(newNode, true);
-
     },
 
     /**
