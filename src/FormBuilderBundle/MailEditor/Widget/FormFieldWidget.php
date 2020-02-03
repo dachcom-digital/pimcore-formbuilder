@@ -60,7 +60,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
         $renderLabels = !isset($config['show_label']) || $config['show_label'] === true;
 
         $outputData = $config['outputData'];
-        $fieldType = $outputData['field_type'];
+        $fieldType = isset($outputData['field_type']) ? $outputData['field_type'] : null;
 
         if (!is_array($outputData)) {
             return '';
