@@ -64,7 +64,6 @@ matrix:
             sudo: required
             php: 7.3
             env:
-                - PIMCORE_PHP_ERROR_REPORTING=30711 # E_ALL & ~E_NOTICE & ~E_STRICT
                 - PIMCORE_SKELETON_BRANCH="tags/v2.4.0"
         -   name: "Codeception Tests (Pimcore 6.4.x, Symfony ^3.4, PHP 7.3)"
             sudo: required

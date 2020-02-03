@@ -17,3 +17,11 @@ if (!defined('TESTS_PATH')) {
 }
 
 define('PIMCORE_TEST', true);
+
+if (!isset($_SERVER['REQUEST_URI'])) {
+    $_SERVER['REQUEST_URI'] = '';
+}
+
+if (!isset($_SERVER['HTTP_USER_AGENT'])) {
+    $_SERVER['HTTP_USER_AGENT'] = '';
+}
