@@ -20,14 +20,9 @@ class DynamicChoiceType extends AbstractType
     protected $builderRegistry;
 
     /**
-     * @var CallbackChoiceLoader
+     * @var ChoiceBuilderInterface[]
      */
-    protected $choiceBuilder;
-
-    /**
-     * @var ChoiceBuilderInterface
-     */
-    protected $service;
+    protected $services;
 
     /**
      * @param ChoiceBuilderRegistry $builderRegistry
@@ -55,58 +50,67 @@ class DynamicChoiceType extends AbstractType
             'conditionalLogic'          => null,
             'choice_translation_domain' => false,
             'choice_loader'             => function (Options $options) {
-                $initialChoiceBuilder = false;
-                if (!$this->service || get_class($this->service) !== $options['service']) {
-                    $serviceName = $options['service'];
-                    $this->service = $this->builderRegistry->get($serviceName);
-                    $initialChoiceBuilder = true;
-                }
 
-                //if conditional logic is available, we need to re-add the CallbackChoiceLoader
-                if (!is_null($options['conditionalLogic']) || $initialChoiceBuilder) {
-                    $this->choiceBuilder = new CallbackChoiceLoader(function () {
-                        return $this->service->getList();
-                    });
-                }
+                $serviceName = $options['service'];
+                $serviceKey = $this->getServiceClassKey($serviceName);
+                $this->services[$serviceKey] = $this->builderRegistry->get($serviceName);
 
-                return $this->choiceBuilder;
+                return new CallbackChoiceLoader(function () use ($options) {
+                    return $this->getServiceClassByOptions($options)->getList();
+                });
             },
-            'choice_label'              => function ($choiceValue, $key, $value) {
-                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getChoiceLabel($choiceValue, $key, $value);
+            'choice_label'              => function (Options $options, $previousValue) {
+                $service = $this->getServiceClassByOptions($options);
+                if ($service instanceof AdvancedChoiceBuilderInterface) {
+                    return function ($choiceValue, $key, $value) use ($service) {
+                        return call_user_func_array([$service, 'getChoiceLabel'], [$choiceValue, $key, $value]);
+                    };
                 }
 
-                return $key;
+                return $previousValue;
             },
-            'choice_attr'               => function ($element, $key, $value) {
-                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getChoiceAttributes($element, $key, $value);
+            'choice_attr'               => function (Options $options, $previousValue) {
+                $service = $this->getServiceClassByOptions($options);
+                if ($service instanceof AdvancedChoiceBuilderInterface) {
+                    return function ($element, $key, $value) use ($service) {
+                        return call_user_func_array([$service, 'getChoiceAttributes'], [$element, $key, $value]);
+                    };
                 }
 
-                return [];
+                return $previousValue;
             },
-            'group_by'                  => function ($element, $key, $value) {
-                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getGroupBy($element, $key, $value);
+            'group_by'                  => function (Options $options, $previousValue) {
+                $service = $this->getServiceClassByOptions($options);
+                if ($service instanceof AdvancedChoiceBuilderInterface) {
+                    return function ($element, $key, $value) use ($service) {
+                        return call_user_func_array([$service, 'getGroupBy'], [$element, $key, $value]);
+                    };
                 }
 
-                return null;
+                return $previousValue;
             },
-            'preferred_choices'         => function ($element, $key, $value) {
-                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getPreferredChoices($element, $key, $value);
+            'preferred_choices'         => function (Options $options, $previousValue) {
+                $service = $this->getServiceClassByOptions($options);
+                if ($service instanceof AdvancedChoiceBuilderInterface) {
+                    return function ($element, $key, $value) use ($service) {
+                        return call_user_func_array([$service, 'getPreferredChoices'], [$element, $key, $value]);
+                    };
                 }
 
-                return null;
+                return $previousValue;
             },
-            'choice_value'              => function ($element = null) {
-                if ($this->service instanceof AdvancedChoiceBuilderInterface) {
-                    return $this->service->getChoiceValue($element);
+            'choice_value'              => function (Options $options, $previousValue) {
+                $service = $this->getServiceClassByOptions($options);
+                if ($service instanceof AdvancedChoiceBuilderInterface) {
+                    return function ($element = null) use ($service) {
+                        return call_user_func_array([$service, 'getChoiceValue'], [$element]);
+                    };
                 }
 
-                return $element;
+                return $previousValue;
             },
         ]);
+
     }
 
     /**
@@ -114,6 +118,38 @@ class DynamicChoiceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->service->setFormBuilder($builder);
+        $this->getServiceClassByArray($options)->setFormBuilder($builder);
+    }
+
+    /**
+     * @param Options $options
+     *
+     * @return ChoiceBuilderInterface
+     */
+    protected function getServiceClassByOptions(Options $options)
+    {
+        return $this->getServiceClassByArray(['service' => $options->offsetGet('service')]);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return ChoiceBuilderInterface
+     */
+    protected function getServiceClassByArray(array $options)
+    {
+        $serviceKey = $this->getServiceClassKey($options['service']);
+
+        return $this->services[$serviceKey];
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return string
+     */
+    protected function getServiceClassKey(string $serviceName)
+    {
+        return md5($serviceName);
     }
 }
