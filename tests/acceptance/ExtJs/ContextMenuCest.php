@@ -152,7 +152,8 @@ class ContextMenuCest extends AbstractExtJs
         $I->waitForText('Paste', 10);
         $I->click('Paste');
 
-        $I->see('field_name_one field_name_one', $this->getFormElementsTreeSelector($formId));
+        // new element has been added, node text will be empty after inserting
+        $I->see('', sprintf('%s table:last-child .x-tree-node-text', $this->getFormElementsTreeSelector($formId)));
 
         $I->clickWithRightButton(
             sprintf('%s table:last-child', $this->getFormElementsTreeSelector($formId))
