@@ -1,3 +1,4 @@
 form_builder:
     flags:
         use_custom_radio_checkbox: false
+        use_honeypot_field: false
