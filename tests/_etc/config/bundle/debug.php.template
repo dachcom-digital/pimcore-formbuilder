@@ -1,7 +1,7 @@
 <?php 
 
 return [
-    "active" => FALSE,
+    "active" => TRUE,
     "ip" => "",
     "devmode" => FALSE
 ];
