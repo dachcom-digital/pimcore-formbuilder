@@ -37,7 +37,9 @@ class RepeaterContainerType extends AbstractType
     {
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-                $minEntries = $options['formbuilder_configuration']['min'];
+
+                $formBuilderConfig = $options['formbuilder_configuration'];
+                $minEntries = $formBuilderConfig['min'] ?? 0;
 
                 if (!is_numeric($minEntries)) {
                     return;
@@ -49,13 +51,14 @@ class RepeaterContainerType extends AbstractType
                 }
 
                 $globalEntryOptions = $event->getForm()->getConfig()->getOption('entry_options');
-                $parsedEntryOptions = $this->getFormEntryOptions($options['formbuilder_configuration']);
+                $parsedEntryOptions = $this->getFormEntryOptions($formBuilderConfig);
                 $entryOptions = array_merge($parsedEntryOptions, ['fields' => $globalEntryOptions['fields']]);
                 $this->addEmptyCollections($event->getForm(), $entryOptions, $minEntries);
             })->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
                 $data = $event->getData();
-                $minEntries = $options['formbuilder_configuration']['min'];
-                $maxEntries = $options['formbuilder_configuration']['max'];
+                $formBuilderConfig = $options['formbuilder_configuration'];
+                $minEntries = $formBuilderConfig['min'] ?? 0;
+                $maxEntries = $formBuilderConfig['max'] ?? 0;
 
                 if (!is_numeric($maxEntries)) {
                     return;
@@ -93,11 +96,13 @@ class RepeaterContainerType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $formBuilderConfig = $options['formbuilder_configuration'];
+
         $view->vars['label'] = $this->getContainerLabel($options);
-        $view->vars['attr']['data-label-add-block'] = $options['formbuilder_configuration']['label_add_block'];
-        $view->vars['attr']['data-label-remove-block'] = $options['formbuilder_configuration']['label_remove_block'];
-        $view->vars['attr']['data-repeater-min'] = $options['formbuilder_configuration']['min'];
-        $view->vars['attr']['data-repeater-max'] = $options['formbuilder_configuration']['max'];
+        $view->vars['attr']['data-label-add-block'] = $formBuilderConfig['label_add_block'] ?? '';
+        $view->vars['attr']['data-label-remove-block'] = $formBuilderConfig['label_remove_block'] ?? '';
+        $view->vars['attr']['data-repeater-min'] = $formBuilderConfig['min'] ?? '';
+        $view->vars['attr']['data-repeater-max'] = $formBuilderConfig['max'] ?? '';
     }
 
     /**
