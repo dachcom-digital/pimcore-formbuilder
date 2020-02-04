@@ -8,6 +8,8 @@ services:
 
     FormBuilderBundle\Form\Type\DynamicFormType:
         public: false
+        arguments:
+            - '@FormBuilderBundle\Configuration\Configuration'
         tags:
             - { name: form.type }
 
@@ -20,6 +22,8 @@ services:
 
     FormBuilderBundle\Form\Type\HoneypotType:
         public: false
+        arguments:
+            - '@FormBuilderBundle\Configuration\Configuration'
         tags:
             - { name: form.type }
 

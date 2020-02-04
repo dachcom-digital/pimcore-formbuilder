@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Form\Type;
 
+use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Storage\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -11,11 +12,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class DynamicFormType extends AbstractType
 {
     /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * @param Configuration $configuration
+     */
+    public function __construct(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $addHoneypot = $this->configuration->getConfigFlag('use_honeypot_field');
+        $spamProtectionConfig = $this->configuration->getConfig('spam_protection');
+        $honeyPotConfig = $spamProtectionConfig['honeypot'];
+
         $builder
             ->add('formId', HiddenType::class, [
                 'data' => $options['current_form_id'],
@@ -24,8 +42,8 @@ class DynamicFormType extends AbstractType
                 'data' => !empty($options['conditional_logic']) ? json_encode($options['conditional_logic']) : null,
             ]);
 
-        if ($options['add_honeypot']) {
-            $builder->add('inputUserName', HoneypotType::class);
+        if ($addHoneypot === true) {
+            $builder->add($honeyPotConfig['field_name'], HoneypotType::class);
         }
     }
 
@@ -37,7 +55,6 @@ class DynamicFormType extends AbstractType
         $resolver->setDefaults([
             'current_form_id'    => 0,
             'conditional_logic'  => [],
-            'add_honeypot'       => true,
             'allow_extra_fields' => true,
             'csrf_protection'    => true,
             'data_class'         => Form::class

@@ -3,6 +3,14 @@
 ## HoneyPot
 The Honeypot Field is enabled by default. You can disable it via [configuration flags](100_ConfigurationFlags.md).
 
+```yaml
+form_builder:
+    spam_protection:
+        honeypot:
+            field_name: 'inputUserName'     # this is the default value
+            enable_inline_style: true       # ths is the default value
+```
+
 ***
 
 ## reCAPTCHA v3
@@ -15,9 +23,10 @@ Register reCAPTCHA v3 keys [here](https://g.co/recaptcha/v3).
 
 ```yaml
 form_builder:
-    recaptcha_v3:
-        secret_key: 'YOUR_SECRET_KEY'
-        site_key: 'YOUR_SITE_KEY'
+    spam_protection:
+        recaptcha_v3:
+            secret_key: 'YOUR_SECRET_KEY'
+            site_key: 'YOUR_SITE_KEY'
 ```
 
 3. Add the reCAPTCHA field to your form

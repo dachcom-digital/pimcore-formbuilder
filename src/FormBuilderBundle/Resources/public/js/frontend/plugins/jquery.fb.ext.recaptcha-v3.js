@@ -14,7 +14,7 @@
         this.siteKey = null;
         this.token = null;
         this.action = 'homepage';
-        this.reCaptchaFieldClass = 'input.re-captacha-v3';
+        this.reCaptchaFieldClass = 'input.re-captcha-v3';
         this.$reCaptchaField = null;
         this.$form = $(form);
         this.options = $.extend({}, $.fn.formBuilderReCaptchaV3.defaults, options);

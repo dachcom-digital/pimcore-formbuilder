@@ -138,7 +138,6 @@ class Builder
                 'action'            => $formConfig['action'] === '/' ? $request->getUri() : $formConfig['action'],
                 'current_form_id'   => $formEntity->getId(),
                 'conditional_logic' => $formEntity->getConditionalLogic(),
-                'add_honeypot'      => $this->configuration->getConfigFlag('use_honeypot_field'),
                 'attr'              => $formAttributes,
             ]
         );

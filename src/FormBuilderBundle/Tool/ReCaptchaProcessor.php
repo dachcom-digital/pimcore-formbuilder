@@ -41,12 +41,13 @@ class ReCaptchaProcessor implements ReCaptchaProcessorInterface
     {
         $client = new Client();
         $config = $this->configuration->getConfig('recaptcha_v3');
+        $reCaptchaConfig = $config['recaptcha_v3'];
 
         $response = $client->post(
             $this->url,
             [
                 'form_params' => [
-                    'secret'   => $config['secret_key'],
+                    'secret'   => $reCaptchaConfig['secret_key'],
                     'remoteip' => $this->getClientIp(),
                     'response' => $value
                 ]

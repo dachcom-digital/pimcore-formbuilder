@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Form\Type;
 
+use FormBuilderBundle\Configuration\Configuration;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -11,10 +12,26 @@ use Symfony\Component\Validator\Constraints\Blank;
 class HoneypotType extends AbstractType
 {
     /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * @param Configuration $configuration
+     */
+    public function __construct(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $config = $this->configuration->getConfig('spam_protection');
+        $honeyPotConfig = $config['honeypot'];
+
         $resolver->setDefaults([
             'required'       => false,
             'mapped'         => false,
@@ -22,7 +39,7 @@ class HoneypotType extends AbstractType
             'attr'           => [
                 'autocomplete' => 'off',
                 'tabindex'     => -1,
-                'style'        => 'position: absolute; left: -500%; top: -500%;'
+                'style'        => $honeyPotConfig['enable_inline_style'] === true ? 'position: absolute; left: -500%; top: -500%;' : ''
             ],
             'constraints'    => [
                 new Blank(

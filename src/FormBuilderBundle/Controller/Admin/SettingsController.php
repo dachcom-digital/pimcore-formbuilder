@@ -120,7 +120,8 @@ class SettingsController extends AdminController
     public function getSettingsAction()
     {
         $settings = $this->configuration->getConfigArray();
-        $settings['forbidden_form_field_names'] = Configuration::INVALID_FIELD_NAMES;
+        $honeypotFieldName = $settings['spam_protection']['honeypot']['field_name'];
+        $settings['forbidden_form_field_names'] = array_merge(Configuration::INVALID_FIELD_NAMES, [$honeypotFieldName]);
 
         return $this->json(['settings' => $settings]);
     }

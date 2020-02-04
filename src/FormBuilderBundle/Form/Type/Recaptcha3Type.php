@@ -32,10 +32,11 @@ final class Recaptcha3Type extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $config = $this->configuration->getConfig('recaptcha_v3');
+        $config = $this->configuration->getConfig('spam_protection');
+        $reCaptchaConfig = $config['recaptcha_v3'];
 
-        $view->vars['attr']['class'] = 're-captacha-v3';
-        $view->vars['attr']['data-site-key'] = $config['site_key'];
+        $view->vars['attr']['class'] = 're-captcha-v3';
+        $view->vars['attr']['data-site-key'] = $reCaptchaConfig['site_key'];
         $view->vars['attr']['data-action-name'] = $options['action_name'];
     }
 
