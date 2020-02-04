@@ -38,6 +38,8 @@
 
             this.disableFormSubmission();
 
+            $('html').addClass('form-builder-rec3-available');
+
             this.siteKey = this.$reCaptchaField.data('site-key');
             this.action = this.$reCaptchaField.data('action-name');
 
