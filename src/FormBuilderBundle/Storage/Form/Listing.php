@@ -25,11 +25,21 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
+     * @deprecated
+     *
      * @param array $data
+     *
+     * @return $this|Listing
      */
-    public function setData($data)
+    public function setFormBuilderData($data)
     {
+        if (method_exists($this, 'setData')) {
+            return $this->setData($data);
+        }
+
         $this->data = $data;
+
+        return $this;
     }
 
     /**

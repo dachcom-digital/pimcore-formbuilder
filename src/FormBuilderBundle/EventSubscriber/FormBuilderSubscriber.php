@@ -319,7 +319,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         // options enrichment:  tweak preferred choice options
         if (in_array($field->getType(), $this->getChoiceFieldTypes())) {
-            if ($options['multiple'] === false
+            if (isset($options['multiple']) && $options['multiple'] === false
                 && isset($options['data'])
                 && is_array($options['data'])
                 && !empty($options['data'])
@@ -366,7 +366,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 if (in_array($field->getType(), ['checkbox'])) {
                     $options['label_attr'] = ['class' => 'checkbox-custom'];
                 } elseif (in_array($field->getType(), $this->getChoiceFieldTypes())) {
-                    if ($options['expanded'] === true) {
+                    if (isset($options['expanded']) && $options['expanded'] === true) {
                         $options['label_attr'] = ['class' => $options['multiple'] === true ? 'checkbox-custom' : 'radio-custom'];
                     }
                 }

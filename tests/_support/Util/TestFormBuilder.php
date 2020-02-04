@@ -406,7 +406,7 @@ class TestFormBuilder
 
         switch ($type) {
             case 'choice':
-                if ($options['expanded'] === false) {
+                if (isset($options['expanded']) && $options['expanded'] === false) {
                     $selector = 'select';
                 } else {
                     $selector = 'input';

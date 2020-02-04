@@ -1,4 +1,5 @@
 actor: UnitTester
+error_level: 'getenv("PIMCORE_PHP_ERROR_REPORTING")'
 modules:
     enabled:
         - \DachcomBundle\Test\Helper\PimcoreCore:

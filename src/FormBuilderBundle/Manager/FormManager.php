@@ -103,7 +103,7 @@ class FormManager
         }
 
         $this->updateFormAttributes($data, $form, $isUpdate);
-        $this->updateFields($data['form_fields'], $form);
+        $this->updateFields(isset($data['form_fields']) ? $data['form_fields'] : [], $form);
         $form->save();
 
         return $form;
