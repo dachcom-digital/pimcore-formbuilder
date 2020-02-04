@@ -40,7 +40,7 @@ class ReCaptchaProcessor implements ReCaptchaProcessorInterface
     public function verify($value)
     {
         $client = new Client();
-        $config = $this->configuration->getConfig('recaptcha_v3');
+        $config = $this->configuration->getConfig('spam_protection');
         $reCaptchaConfig = $config['recaptcha_v3'];
 
         $response = $client->post(
