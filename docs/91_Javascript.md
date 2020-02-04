@@ -9,6 +9,7 @@ Of course it's up to you to copy those files into your project and modify them a
 - [Conditional Logic Extension](#conditional-logic-extension)
 - [Repeater Extension](#repeater-extension)
 - [Tracker Extension](#tracker-extension)
+- [reCAPTCHA V3 Extension](#recaptcha-v3-extension)
 
 ## Core Extension
 This Plugin will enable the ajax functionality and also the multi file handling:
@@ -198,5 +199,30 @@ $('form.formbuilder').formBuilderTracker({
     trackRadioSelection: true,
     trackHiddenInputs: true,
     invalidFieldNames: ['_token', 'formCl']
+});
+```
+
+## reCAPTCHA V3 Extension
+
+This Plugin will enable reCAPTCHA v3 functionality on your form. Workflow: 
+- Loads `https://www.google.com/recaptcha/api.js` if not available
+- Adds token to captcha field on your form
+
+### Enable Extension
+
+```html
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.recaptcha-v3.js') }}"></script>
+```
+
+```javascript
+$(function () {
+    $('form.formbuilder').formBuilderReCaptchaV3();
+});
+```
+
+### Extended Usage
+```javascript
+$('form.formbuilder').formBuilderReCaptchaV3({
+    disableFormWhileLoading: true
 });
 ```

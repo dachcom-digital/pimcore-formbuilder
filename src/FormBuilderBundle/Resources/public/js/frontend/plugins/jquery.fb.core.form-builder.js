@@ -238,11 +238,6 @@
                                 $fbHtmlFile.fineUploader('reset');
                                 $fbHtmlFile.find('input[type="hidden"]').val('');
                             }
-
-                            //@todo: recaptcha is currently not implemented
-                            //if (typeof grecaptcha === 'object' && $form.find('.g-recaptcha:first').length > 0) {
-                            //    grecaptcha.reset();
-                            //}
                         }
                     }
                 });
