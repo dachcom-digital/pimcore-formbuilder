@@ -12,6 +12,7 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[NEW FEATURE]**: Allow global copy/paste of fields from form to form [@albertmueller](https://github.com/dachcom-digital/pimcore-formbuilder/pull/207)
 - **[NEW FEATURE]**: Allow specific honeypot config [#212](https://github.com/dachcom-digital/pimcore-formbuilder/issues/212)
 - **[NEW FEATURE]**: Implement reCAPTCHA v3 Field [#165](https://github.com/dachcom-digital/pimcore-formbuilder/issues/165)
+- **[NEW FEATURE]**: Allow passing custom options in Twig- or Controller-Forms [#208](https://github.com/dachcom-digital/pimcore-formbuilder/issues/208)
 - **[BUGFIX]**: Fix (multiple) dynamic choice data mapping [#205](https://github.com/dachcom-digital/pimcore-formbuilder/issues/205)
 
 #### Update from Version 3.0.x to Version 3.1.0
