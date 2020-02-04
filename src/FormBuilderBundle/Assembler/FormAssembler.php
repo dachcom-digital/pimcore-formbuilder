@@ -123,8 +123,9 @@ class FormAssembler
         //store current configuration for further events.
         $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
             'user_options' => [
-                'form_preset'   => $this->optionsResolver->getFormPreset(),
-                'form_template' => $this->optionsResolver->getFormTemplateName()
+                'form_preset'    => $this->optionsResolver->getFormPreset(),
+                'form_template'  => $this->optionsResolver->getFormTemplateName(),
+                'custom_options' => $this->optionsResolver->getCustomOptions()
             ],
             'email'        => [
                 'send_copy'             => $this->optionsResolver->getSendCopy(),

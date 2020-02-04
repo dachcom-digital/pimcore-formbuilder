@@ -32,6 +32,11 @@ class FormOptionsResolver
     protected $preset = 'custom';
 
     /**
+     * @var array
+     */
+    protected $customOptions = [];
+
+    /**
      * @var bool
      */
     protected $sendCopy = false;
@@ -96,6 +101,22 @@ class FormOptionsResolver
     public function getFormPreset()
     {
         return $this->preset;
+    }
+
+    /**
+     * @param array $customOptions
+     */
+    public function setCustomOptions(array $customOptions = [])
+    {
+        $this->customOptions = $customOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomOptions()
+    {
+        return $this->customOptions;
     }
 
     /**

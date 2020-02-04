@@ -57,7 +57,8 @@ class StaticFormExtension extends AbstractExtension
             'send_copy'          => false,
             'mail_template'      => null,
             'copy_mail_template' => null,
-            'preset'             => null
+            'preset'             => null,
+            'custom_options'     => []
         ];
 
         $options = array_merge($defaultOptions, $formOptions);
@@ -69,6 +70,7 @@ class StaticFormExtension extends AbstractExtension
         $optionBuilder->setMailTemplate($options['mail_template']);
         $optionBuilder->setCopyMailTemplate($options['copy_mail_template']);
         $optionBuilder->setFormPreset($options['preset']);
+        $optionBuilder->setCustomOptions($options['custom_options']);
 
         $this->formAssembler->setFormOptionsResolver($optionBuilder);
 
