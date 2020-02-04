@@ -19,6 +19,9 @@ form_builder:
         hidden_fields:
             label: 'form_builder_type_group.hidden_fields'
             icon_class: form_builder_icon_container
+        security_fields:
+            label: 'form_builder_type_group.security_fields'
+            icon_class: form_builder_icon_container
         date_time_fields:
             label: 'form_builder_type_group.date_time_fields'
             icon_class: form_builder_icon_container

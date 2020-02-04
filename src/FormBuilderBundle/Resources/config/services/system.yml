@@ -19,6 +19,10 @@ services:
     # tool: href locale mapper
     FormBuilderBundle\Tool\HrefLocaleMapper: ~
 
+    # tool: recaptcha processor
+    FormBuilderBundle\Tool\ReCaptchaProcessorInterface: '@FormBuilderBundle\Tool\ReCaptchaProcessor'
+    FormBuilderBundle\Tool\ReCaptchaProcessor: ~
+
     # configuration
     FormBuilderBundle\Configuration\Configuration: ~
 

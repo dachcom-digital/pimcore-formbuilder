@@ -8,3 +8,8 @@ services:
     FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlankValidator:
         tags:
             - { name: validator.constraint_validator }
+
+    FormBuilderBundle\Validator\Constraints\Recaptcha3Validator:
+        public: false
+        tags:
+            - { name: validator.constraint_validator }

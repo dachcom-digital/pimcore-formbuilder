@@ -9,6 +9,7 @@ Of course it's up to you to copy those files into your project and modify them a
 - [Conditional Logic Extension](#conditional-logic-extension)
 - [Repeater Extension](#repeater-extension)
 - [Tracker Extension](#tracker-extension)
+- [reCAPTCHA V3 Extension](#recaptcha-v3-extension)
 
 ## Core Extension
 This Plugin will enable the ajax functionality and also the multi file handling:
@@ -198,5 +199,35 @@ $('form.formbuilder').formBuilderTracker({
     trackRadioSelection: true,
     trackHiddenInputs: true,
     invalidFieldNames: ['_token', 'formCl']
+});
+```
+
+## reCAPTCHA V3 Extension
+
+This Plugin will enable reCAPTCHA v3 functionality on your form. Workflow: 
+- Loads `https://www.google.com/recaptcha/api.js` if not available
+- Adds token to captcha field on your form
+
+### Enable Extension
+
+```html
+<!-- optional but recommended by google to load the api on every page -->
+<!-- "form_builder_spam_protection_recaptcha_v3_site_key" is a twig global which comes with formbuilder by default -->
+<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?render={{ form_builder_spam_protection_recaptcha_v3_site_key }}" async defer>></script>
+
+<!-- required to populate the recaptcha field on your form -->
+<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.recaptcha-v3.js') }}"></script>
+```
+
+```javascript
+$(function () {
+    $('form.formbuilder').formBuilderReCaptchaV3();
+});
+```
+
+### Extended Usage
+```javascript
+$('form.formbuilder').formBuilderReCaptchaV3({
+    disableFormWhileLoading: true
 });
 ```

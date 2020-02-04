@@ -502,3 +502,21 @@ form_builder:
                         label: 'form_builder_type_field.service_name'
                         config:
                             store_url: '/admin/formbuilder/settings/get-dynamic-choice-builder'
+        recaptcha_v3:
+            class: FormBuilderBundle\Form\Type\Recaptcha3Type
+            backend:
+                form_type_group: security_fields
+                label: 'form_builder_type.recaptcha_v3'
+                icon_class: 'form_builder_icon_recaptcha_v3'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~
+                    options.action_name:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.recaptcha_v3.action_name'
+                        config:
+                            default_value: 'homepage'

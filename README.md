@@ -51,7 +51,7 @@ Does actually the same as the update command and preferred in CI-Workflow:
 
 ## Usage
 ![](http://g.recordit.co/39nEX5OhQK.gif)
-1. Go to `Settings` => `Form Builder Settings` and create your form.
+1. Go to `Settings` => `Form Builder Settings` and create your form (Be sure your [spam protection](docs/03_SpamProtection.md) is covered!).
 2. Open a document and place the form area brick like any other bricks via drag and drop. 
 3. Use the edit button at the right top corner to configure your form. 
 
@@ -62,6 +62,7 @@ It's also possible to render a form via Twig or even within a controller method.
 Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templating/overriding.html) standard.
 
 ## Further Information
+- [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
 - [Backend Administration of Forms](docs/01_BackendUsage.md)
 - [Export Forms](docs/02_ExportForms.md)
