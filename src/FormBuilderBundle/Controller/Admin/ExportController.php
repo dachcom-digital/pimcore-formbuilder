@@ -262,10 +262,10 @@ class ExportController extends AdminController
             return '';
         }
 
-        fputcsv($handle, $header, ',', '""');
+        fputcsv($handle, $header, ',', '"');
 
         foreach ($data as $line) {
-            fputcsv($handle, array_values($line), ',', '""');
+            fputcsv($handle, array_values($line), ',', '"');
         }
 
         rewind($handle);
