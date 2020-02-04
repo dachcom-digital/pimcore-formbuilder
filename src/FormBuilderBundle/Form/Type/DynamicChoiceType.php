@@ -50,7 +50,6 @@ class DynamicChoiceType extends AbstractType
             'conditionalLogic'          => null,
             'choice_translation_domain' => false,
             'choice_loader'             => function (Options $options) {
-
                 $serviceName = $options['service'];
                 $serviceKey = $this->getServiceClassKey($serviceName);
                 $this->services[$serviceKey] = $this->builderRegistry->get($serviceName);
@@ -110,7 +109,6 @@ class DynamicChoiceType extends AbstractType
                 return $previousValue;
             },
         ]);
-
     }
 
     /**
