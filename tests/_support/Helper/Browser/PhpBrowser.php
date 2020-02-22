@@ -288,6 +288,8 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         $token = new UsernamePasswordToken($user, null, $firewallName, $pimcoreUser->getRoles());
         $this->pimcoreCore->getContainer()->get('security.token_storage')->setToken($token);
 
+        $session->save();
+
         \Pimcore\Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser, $session) {
             $session->setId(\Pimcore\Tool\Session::getSessionId());
             $adminSession->set('user', $pimcoreUser);
