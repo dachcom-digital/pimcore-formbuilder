@@ -8,6 +8,7 @@ use Codeception\Exception\ModuleException;
 use DachcomBundle\Test\Helper\PimcoreCore;
 use DachcomBundle\Test\Helper\PimcoreUser;
 use DachcomBundle\Test\Util\FormHelper;
+use DachcomBundle\Test\Util\VersionHelper;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\User;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
@@ -287,6 +288,12 @@ class PhpBrowser extends Module implements Lib\Interfaces\DependsOnModule
         $user = new \Pimcore\Bundle\AdminBundle\Security\User\User($pimcoreUser);
         $token = new UsernamePasswordToken($user, null, $firewallName, $pimcoreUser->getRoles());
         $this->pimcoreCore->getContainer()->get('security.token_storage')->setToken($token);
+
+        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.5.0')) {
+            if ($session->isStarted()) {
+                $session->save();
+            }
+        }
 
         \Pimcore\Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser, $session) {
             $session->setId(\Pimcore\Tool\Session::getSessionId());

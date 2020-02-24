@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.2.0 to Version 3.2.1
+- **[NEW FEATURE]**: Pimcore 6.5 ready
+
 #### Update from Version 3.1.x to Version 3.2.0
 - **[NEW FEATURE]**: Pimcore 6.4 ready
 - **[NEW FEATURE]**: Make Honeypot field optional [@ihmels](https://github.com/dachcom-digital/pimcore-formbuilder/issues/167)
