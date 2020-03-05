@@ -6,9 +6,8 @@ use FormBuilderBundle\Backend\Form\Builder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Model\FormInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
-use FormBuilderBundle\Storage\Form as StorageForm;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,7 +73,7 @@ class SettingsController extends AdminController
         $forms = $this->formManager->getAll();
 
         $mainItems = [];
-        /** @var StorageForm $form */
+        /** @var FormInterface $form */
         foreach ($forms as $form) {
             if (!is_null($form->getGroup())) {
                 if (array_search($form->getGroup(), array_column($mainItems, 'id')) === false) {

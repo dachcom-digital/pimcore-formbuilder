@@ -2,15 +2,8 @@
 
 namespace FormBuilderBundle\Storage;
 
-use Pimcore\Translation\Translator;
-
 interface FormFieldInterface extends FormFieldSimpleInterface
 {
-    /**
-     * @param Translator $translator
-     */
-    public function setTranslator(Translator $translator);
-
     /**
      * @param int $order
      */

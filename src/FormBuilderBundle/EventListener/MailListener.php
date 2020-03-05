@@ -16,7 +16,7 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
+use FormBuilderBundle\Model\FormInterface as FormBuilderFormInterface;
 
 class MailListener implements EventSubscriberInterface
 {

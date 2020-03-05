@@ -6,9 +6,9 @@ use FormBuilderBundle\Backend\Form\Builder;
 use FormBuilderBundle\MailEditor\Widget\MailEditorFieldDataWidgetInterface;
 use FormBuilderBundle\Manager\FormManager;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
+use FormBuilderBundle\Model\FormInterface;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use FormBuilderBundle\Storage\FormInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,10 +80,9 @@ class MailEditorController extends AdminController
         $mailLayout = $this->cleanupMailLayout($mailLayout);
 
         $formEntity->setMailLayout(count($mailLayout) === 0 ? null : $mailLayout);
-        $formEntity->setModificationDate(date('Y-m-d H:i:s'));
 
         try {
-            $formEntity->save();
+            $formManager->saveRawEntity($formEntity);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());
@@ -206,10 +205,9 @@ class MailEditorController extends AdminController
         $storedMailLayout = $this->cleanupMailLayout($storedMailLayout);
 
         $formEntity->setMailLayout(count($storedMailLayout) === 0 ? null : $storedMailLayout);
-        $formEntity->setModificationDate(date('Y-m-d H:i:s'));
 
         try {
-            $formEntity->save();
+            $formManager->saveRawEntity($formEntity);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());

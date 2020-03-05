@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Model\FormInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;

@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle;
 
+use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
@@ -24,6 +25,9 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
+
+        $this->configureDoctrineExtension($container);
+
         $container->addCompilerPass(new OptionsTransformerPass());
         $container->addCompilerPass(new DispatcherPass());
         $container->addCompilerPass(new ChoiceBuilderPass());
@@ -122,5 +126,41 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     protected function getComposerPackageName(): string
     {
         return self::PACKAGE_NAME;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function configureDoctrineExtension(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(
+            DoctrineOrmMappingsPass::createYamlMappingDriver(
+                [$this->getNameSpacePath() => $this->getNamespaceName()],
+                ['form_builder.persistence.doctrine.manager'],
+                'form_builder.persistence.doctrine.enabled'
+            )
+        );
+    }
+
+
+    /**
+     * @return string|null
+     */
+    protected function getNamespaceName()
+    {
+        return 'FormBuilderBundle\Model';
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getNameSpacePath()
+    {
+        return sprintf(
+            '%s/Resources/config/doctrine/%s',
+            $this->getPath(),
+            'model'
+        );
     }
 }

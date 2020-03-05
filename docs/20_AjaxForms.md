@@ -20,8 +20,7 @@ namespace AppBundle\EventListener;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Model\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -55,7 +54,7 @@ class FormBuilderListener implements EventSubscriberInterface
             return;
         }
 
-        /** @var FormBuilderFormInterface $formClass */
+        /** @var FormInterface $formClass */
         $formData = $formEvent->getData();
         
         //create some choices based on a request value.

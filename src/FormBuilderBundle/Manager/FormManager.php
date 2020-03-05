@@ -2,11 +2,15 @@
 
 namespace FormBuilderBundle\Manager;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FormBuilderBundle\Factory\FormFactoryInterface;
+use FormBuilderBundle\Repository\FormRepositoryInterface;
+use FormBuilderBundle\Model\FormInterface;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Storage\DataConnector\FormDataConnectorInterface;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Model\User;
 
 class FormManager
 {
@@ -16,20 +20,44 @@ class FormManager
     protected $formFactory;
 
     /**
-     * TokenStorageUserResolver.
+     * @var FormRepositoryInterface
+     */
+    protected $formRepository;
+
+    /**
+     * @var FormDataConnectorInterface
+     */
+    protected $formDataConnector;
+
+    /**
+     * TokenStorageUserResolver
      */
     protected $storageUserResolver;
 
     /**
-     * @param FormFactoryInterface     $formFactory
-     * @param TokenStorageUserResolver $storageUserResolver
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * @param FormFactoryInterface       $formFactory
+     * @param FormRepositoryInterface    $formRepository
+     * @param FormDataConnectorInterface $formDataConnector
+     * @param TokenStorageUserResolver   $storageUserResolver
+     * @param EntityManagerInterface     $entityManager
      */
     public function __construct(
         FormFactoryInterface $formFactory,
-        TokenStorageUserResolver $storageUserResolver
+        FormRepositoryInterface $formRepository,
+        FormDataConnectorInterface $formDataConnector,
+        TokenStorageUserResolver $storageUserResolver,
+        EntityManagerInterface $entityManager
     ) {
         $this->formFactory = $formFactory;
+        $this->formRepository = $formRepository;
+        $this->formDataConnector = $formDataConnector;
         $this->storageUserResolver = $storageUserResolver;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -39,7 +67,7 @@ class FormManager
      */
     public function getById(int $id)
     {
-        return $this->formFactory->getFormById($id);
+        return $this->formRepository->findById($id);
     }
 
     /**
@@ -49,7 +77,7 @@ class FormManager
      */
     public function configurationFileExists(int $id)
     {
-        return $this->formFactory->formHasAvailableConfigurationFile($id);
+        return $this->formDataConnector->formHasAvailableConfigurationFile($id);
     }
 
     /**
@@ -59,7 +87,7 @@ class FormManager
      */
     public function getConfigurationPath(int $id)
     {
-        return $this->formFactory->getConfigurationPathOfForm($id);
+        return $this->formDataConnector->getConfigurationPathOfForm($id);
     }
 
     /**
@@ -67,7 +95,7 @@ class FormManager
      */
     public function getAll()
     {
-        return $this->formFactory->getAllForms();
+        return $this->formRepository->findAll();
     }
 
     /**
@@ -77,7 +105,7 @@ class FormManager
      */
     public function getIdByName(string $name)
     {
-        return $this->formFactory->getFormIdByName($name);
+        return $this->formRepository->findByName($name);
     }
 
     /**
@@ -104,29 +132,46 @@ class FormManager
 
         $this->updateFormAttributes($data, $form, $isUpdate);
         $this->updateFields(isset($data['form_fields']) ? $data['form_fields'] : [], $form);
-        $form->save();
+
+        $this->entityManager->persist($form);
+        $this->entityManager->flush();
+
+        $this->formDataConnector->storeFormData($form);
 
         return $form;
     }
 
     /**
-     * @param int $id
+     * @param FormInterface $form
      *
-     * @return FormInterface|null
+     * @throws \Exception
+     */
+    public function saveRawEntity(FormInterface $form)
+    {
+        $date = new \DateTime();
+        $form->setModificationDate($date);
+
+        $this->entityManager->persist($form);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param int $id
      *
      * @throws \Exception
      */
     public function delete($id)
     {
-        $object = $this->getById($id);
+        $form = $this->getById($id);
 
-        if (!$object) {
-            return null;
+        if (!$form instanceof FormInterface) {
+            return;
         }
 
-        $object->delete();
+        $this->formDataConnector->deleteFormData($form);
 
-        return $object;
+        $this->entityManager->remove($form);
+        $this->entityManager->flush();
     }
 
     /**
@@ -139,15 +184,18 @@ class FormManager
      */
     public function rename(int $id, string $newName)
     {
-        $object = $this->getById($id);
+        $form = $this->getById($id);
 
-        if (!$object) {
+        if (!$form instanceof FormInterface) {
             return null;
         }
 
-        $object->rename($newName);
+        $form->setName($newName);
 
-        return $object;
+        $this->entityManager->persist($form);
+        $this->entityManager->flush();
+
+        return $form;
     }
 
     /**
@@ -163,7 +211,7 @@ class FormManager
             $form->setGroup($data['form_group']);
         }
 
-        $date = date('Y-m-d H:i:s');
+        $date = new \DateTime();
         if ($isUpdate === false) {
             $form->setCreationDate($date);
             $form->setCreatedBy($this->getAdminUserId());
@@ -216,9 +264,9 @@ class FormManager
      * @param array         $fieldData
      * @param int           $order
      *
+     * @return FormFieldContainerInterface
      * @throws \Exception
      *
-     * @return FormFieldContainerInterface
      */
     protected function generateFormFieldContainer(FormInterface $form, array $fieldData, int $order)
     {
@@ -343,12 +391,12 @@ class FormManager
     }
 
     /**
-     * @return int|null|\Pimcore\Model\User
+     * @return int
      */
     protected function getAdminUserId()
     {
         $user = $this->storageUserResolver->getUser();
 
-        return $user instanceof \Pimcore\Model\User ? (int) $user->getId() : 0;
+        return $user instanceof User ? (int) $user->getId() : 0;
     }
 }

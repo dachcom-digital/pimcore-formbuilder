@@ -1,0 +1,210 @@
+<?php
+
+namespace FormBuilderBundle\Model;
+
+use FormBuilderBundle\Storage\FormFieldContainerInterface;
+use FormBuilderBundle\Storage\FormFieldInterface;
+
+interface FormInterface
+{
+    const ALLOWED_FORM_KEYS = [
+        'action',
+        'method',
+        'enctype',
+        'noValidate',
+        'useAjax',
+        'attributes'
+    ];
+
+    /**
+     * @return null|int
+     */
+    public function getId();
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name);
+
+    /**
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * @param string $groupName
+     */
+    public function setGroup(string $groupName);
+
+    /**
+     * @return null|string
+     */
+    public function getGroup();
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setCreationDate(\DateTime $date);
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreationDate();
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setModificationDate(\DateTime $date);
+
+    /**
+     * @return \DateTime
+     */
+    public function getModificationDate();
+
+    /**
+     * @param int $userId
+     *
+     * @return int
+     */
+    public function setModifiedBy(int $userId);
+
+    /**
+     * @return int
+     */
+    public function getModifiedBy();
+
+    /**
+     * @param int $userId
+     *
+     * @return int
+     */
+    public function setCreatedBy(int $userId);
+
+    /**
+     * @return int
+     */
+    public function getCreatedBy();
+
+    /**
+     * @param array $mailLayout
+     */
+    public function setMailLayout($mailLayout = null);
+
+    /**
+     * @return null|array
+     */
+    public function getMailLayout();
+
+    /**
+     * @param string      $mailType
+     * @param string|null $locale
+     *
+     * @return string|null
+     */
+    public function getMailLayoutBasedOnLocale(string $mailType, string $locale = null);
+
+    /**
+     * @param array $config
+     */
+    public function setConfig(array $config);
+
+    /**
+     * @return array
+     */
+    public function getConfig();
+
+    /**
+     * @param array $data
+     */
+    public function setConditionalLogic(array $data);
+
+    /**
+     * @return array
+     */
+    public function getConditionalLogic();
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param array  $options
+     * @param array  $optional
+     *
+     * @throws \Exception
+     */
+    public function addDynamicField(string $name, string $type, array $options = [], array $optional = []);
+
+    /**
+     * @param string $name
+     *
+     * @throws \Exception
+     */
+    public function removeDynamicField(string $name);
+
+    /**
+     * @param FormFieldInterface[] $fields
+     */
+    public function setFields(array $fields);
+
+    /**
+     * @return FormFieldInterface[]
+     */
+    public function getFields();
+
+    /**
+     * @param string $type
+     *
+     * @return FormFieldInterface[]
+     */
+    public function getFieldsByType(string $type);
+
+    /**
+     * @param string $name
+     *
+     * @return null|FormFieldInterface
+     */
+    public function getField(string $name);
+
+    /**
+     * @param string $name
+     *
+     * @return null|FormFieldContainerInterface
+     *
+     * @throws \Exception
+     */
+    public function getFieldContainer(string $name);
+
+    /**
+     * @param string $name
+     *
+     * @return null|string
+     */
+    public function getFieldType(string $name);
+
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function getFieldValue(string $name);
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function setFieldValue(string $name, $value);
+
+    /**
+     * @return bool
+     */
+    public function hasAttachments();
+
+    /**
+     * @return array
+     */
+    public function getAttachments();
+
+    /**
+     * @param array $attachmentFileInfo
+     */
+    public function addAttachment(array $attachmentFileInfo);
+}

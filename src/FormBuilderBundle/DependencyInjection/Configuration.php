@@ -12,6 +12,8 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('form_builder');
 
+        $rootNode->append($this->createPersistenceNode());
+
         $rootNode
             ->children()
                 ->variableNode('form_attributes')->end()
@@ -445,5 +447,31 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
+    }
+
+    private function createPersistenceNode()
+    {
+        $treeBuilder = new TreeBuilder('persistence');
+        $node = $treeBuilder->getRootNode();
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->performNoDeepMerging()
+            ->children()
+                ->arrayNode('doctrine')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('entity_manager')
+                            ->info('Name of the entity manager that you wish to use for managing clients and tokens.')
+                            ->cannotBeEmpty()
+                            ->defaultValue('default')
+                        ->end()
+                    ->end()
+                ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 }

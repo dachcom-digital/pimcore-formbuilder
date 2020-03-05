@@ -1,0 +1,9 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\Repository\FormRepositoryInterface: '@FormBuilderBundle\Repository\FormRepository'
+    FormBuilderBundle\Repository\FormRepository: ~

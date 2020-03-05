@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
+use FormBuilderBundle\Model\FormInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
-use FormBuilderBundle\Storage\FormInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\FormTypeClassesData;
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;

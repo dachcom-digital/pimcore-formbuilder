@@ -2,19 +2,12 @@
 
 namespace FormBuilderBundle\Storage;
 
-use Pimcore\Translation\Translator;
-
 class FormFieldContainer implements FormFieldContainerInterface
 {
     /**
      * @var bool
      */
     protected $update = false;
-
-    /**
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * @var string
@@ -57,14 +50,6 @@ class FormFieldContainer implements FormFieldContainerInterface
     public function __construct($update = false)
     {
         $this->update = $update;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setTranslator(Translator $translator)
-    {
-        $this->translator = $translator;
     }
 
     /**
@@ -200,7 +185,7 @@ class FormFieldContainer implements FormFieldContainerInterface
             $array[ltrim($key, '_')] = $value;
         }
 
-        $removeKeys = ['translator', 'update', 'fields'];
+        $removeKeys = ['update', 'fields'];
         $data = array_diff_key($array, array_flip($removeKeys));
 
         // parse fields

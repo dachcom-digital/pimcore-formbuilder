@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Assembler;
 use FormBuilderBundle\Form\Builder;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Model\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormAssembler

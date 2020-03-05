@@ -25,7 +25,7 @@ namespace AppBundle\EventListener;
 
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
+use FormBuilderBundle\Model\FormInterface as FormBuilderFormInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;

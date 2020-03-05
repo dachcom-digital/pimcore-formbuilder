@@ -1,0 +1,37 @@
+FormBuilderBundle\Model\Form:
+    type: entity
+    table: formbuilder_forms
+    fields:
+        id:
+            type: integer
+            column: id
+            id: true
+            generator:
+                strategy: AUTO
+        name:
+            column: '`name`'
+            nullable: true
+            type: string
+            unique: true
+        group:
+            column: '`group`'
+            nullable: true
+            type: string
+        creationDate:
+            column: creationDate
+            type: datetime
+            nullable: false
+        modificationDate:
+            column: modificationDate
+            type: datetime
+            nullable: false
+        createdBy:
+            column: createdBy
+            type: integer
+        modifiedBy:
+            column: modifiedBy
+            type: integer
+        mailLayout:
+            column: mailLayout
+            type: object
+            nullable: true

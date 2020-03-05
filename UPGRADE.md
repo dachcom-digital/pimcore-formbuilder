@@ -6,6 +6,10 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.2.0 to Version 3.3.0
+- **[IMPROVEMENT]**: Use doctrine ORM instead of DAO for Form Data
+- **[DEPRECATION]**: `\Formbuilder\Storage\Form` and `\Formbuilder\Storage\FormInterface` has been marked as deprecated and will be removed with version 4.0. Use `\Formbuilder\Model\Form` and `\Formbuilder\Model\FormInterface` instead.
+
 #### Update from Version 3.2.0 to Version 3.2.1
 - **[NEW FEATURE]**: Pimcore 6.5 ready
 
