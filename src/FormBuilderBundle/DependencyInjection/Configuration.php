@@ -462,7 +462,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('entity_manager')
-                            ->info('Name of the entity manager that you wish to use for managing clients and tokens.')
+                            ->info('Name of the entity manager that you wish to use for managing form builder entities.')
                             ->cannotBeEmpty()
                             ->defaultValue('default')
                         ->end()
