@@ -1,0 +1,50 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\OutputWorkflowType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\OutputWorkflowChannelType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\OutputWorkflowCollectionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\OutputWorkflowChannelCollectionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\OutputWorkflowChannelChoiceType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\FixedCollectionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\LocalizedValuesCollectionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\PimcoreHrefType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\SuccessManagementType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\EmailChannelType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ObjectChannelType:
+        tags:
+            - { name: form.type }

@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\OutputWorkflow\Channel\Email\EmailOutputChannel:
+        tags:
+            - { name: form_builder.output_workflow.channel, type: email }
+
+    FormBuilderBundle\OutputWorkflow\Channel\Object\ObjectOutputChannel:
+        tags:
+            - { name: form_builder.output_workflow.channel, type: object }

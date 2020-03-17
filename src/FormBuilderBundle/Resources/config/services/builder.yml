@@ -11,6 +11,9 @@ services:
     # backend form builder
     FormBuilderBundle\Backend\Form\Builder: ~
 
+    # backend output workflow builder
+    FormBuilderBundle\Backend\OutputWorkflow\Builder:
+
     # form values output applier
     FormBuilderBundle\Form\FormValuesOutputApplier: ~
     FormBuilderBundle\Form\FormValuesOutputApplierInterface: '@FormBuilderBundle\Form\FormValuesOutputApplier'

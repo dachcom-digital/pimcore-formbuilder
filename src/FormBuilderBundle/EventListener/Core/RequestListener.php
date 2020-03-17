@@ -126,6 +126,8 @@ class RequestListener implements EventSubscriberInterface
                 $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
                 $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
+                // implement output workflow here
+
                 if ($request->isXmlHttpRequest()) {
                     $this->handleAjaxSuccessResponse($event, $submissionEvent, $formId);
                 } else {

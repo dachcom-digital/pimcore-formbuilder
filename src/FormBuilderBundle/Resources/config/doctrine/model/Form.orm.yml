@@ -35,3 +35,9 @@ FormBuilderBundle\Model\Form:
             column: mailLayout
             type: object
             nullable: true
+    oneToMany:
+        outputWorkflows:
+            targetEntity: FormBuilderBundle\Model\OutputWorkflow
+            mappedBy: form
+            cascade:
+                - all

@@ -9,6 +9,10 @@ services:
     FormBuilderBundle\Manager\FormManager:
         public: true
 
+    # manager: output workflow
+    FormBuilderBundle\Manager\OutputWorkflowManager:
+        public: true
+
     # manager: preset
     FormBuilderBundle\Manager\PresetManager: ~
 

@@ -8,3 +8,7 @@ services:
     # factory: form
     FormBuilderBundle\Factory\FormFactoryInterface: '@FormBuilderBundle\Factory\FormFactory'
     FormBuilderBundle\Factory\FormFactory: ~
+
+    # factory: output workflow
+    FormBuilderBundle\Factory\OutputWorkflowFactoryInterface: '@FormBuilderBundle\Factory\OutputWorkflowFactory'
+    FormBuilderBundle\Factory\OutputWorkflowFactory: ~

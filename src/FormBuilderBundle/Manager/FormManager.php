@@ -40,11 +40,11 @@ class FormManager
     protected $entityManager;
 
     /**
-     * @param FormFactoryInterface       $formFactory
-     * @param FormRepositoryInterface    $formRepository
-     * @param FormDataConnectorInterface $formDataConnector
-     * @param TokenStorageUserResolver   $storageUserResolver
-     * @param EntityManagerInterface     $entityManager
+     * @param FormFactoryInterface              $formFactory
+     * @param FormRepositoryInterface           $formRepository
+     * @param FormDataConnectorInterface        $formDataConnector
+     * @param TokenStorageUserResolver          $storageUserResolver
+     * @param EntityManagerInterface            $entityManager
      */
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -157,8 +157,6 @@ class FormManager
 
     /**
      * @param int $id
-     *
-     * @throws \Exception
      */
     public function delete($id)
     {

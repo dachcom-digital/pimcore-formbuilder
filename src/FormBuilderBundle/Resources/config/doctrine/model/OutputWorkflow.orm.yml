@@ -1,0 +1,36 @@
+FormBuilderBundle\Model\OutputWorkflow:
+    type: entity
+    table: formbuilder_output_workflow
+    fields:
+        id:
+            type: integer
+            column: id
+            id: true
+            generator:
+                strategy: AUTO
+        name:
+            column: '`name`'
+            nullable: true
+            type: string
+        successManagement:
+            column: success_management
+            nullable: true
+            type: object
+    manyToOne:
+        form:
+            targetEntity: FormBuilderBundle\Model\Form
+            orphanRemoval: true
+            inversedBy: outputWorkflows
+            joinColumn:
+                name: form
+                referencedColumnName: id
+    oneToMany:
+        channels:
+            targetEntity: FormBuilderBundle\Model\OutputWorkflowChannel
+            orphanRemoval: true
+            mappedBy: outputWorkflow
+            cascade:
+                - all
+    uniqueConstraints:
+        name_form:
+            columns: [name, form]

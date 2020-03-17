@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldInterface;
 
@@ -94,6 +95,33 @@ interface FormInterface
      * @return null|array
      */
     public function getMailLayout();
+
+    /**
+     * @return bool
+     */
+    public function hasOutputWorkflows();
+
+    /**
+     * @param OutputWorkflowInterface $outputWorkflow
+     *
+     * @return bool
+     */
+    public function hasOutputWorkflow(OutputWorkflowInterface $outputWorkflow);
+
+    /**
+     * @param OutputWorkflowInterface $outputWorkflow
+     */
+    public function addOutputWorkflow(OutputWorkflowInterface $outputWorkflow);
+
+    /**
+     * @param OutputWorkflowInterface $outputWorkflow
+     */
+    public function removeOutputWorkflow(OutputWorkflowInterface $outputWorkflow);
+
+    /**
+     * @return Collection|OutputWorkflowInterface[]
+     */
+    public function getOutputWorkflows();
 
     /**
      * @param string      $mailType

@@ -12,8 +12,9 @@ class Version20200304172137 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('ALTER TABLE formbuilder_forms CHANGE mailLayout mailLayout LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:object)\';');
-        $this->addSql('ALTER TABLE formbuilder_forms RENAME INDEX name TO UNIQ_29DA5346999517A;');
+        $this->addSql('ALTER TABLE formbuilder_forms ENGINE=InnoDB;');
+
+        // @todo: add migration data!!
     }
 
     /**

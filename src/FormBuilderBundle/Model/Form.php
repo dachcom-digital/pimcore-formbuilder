@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
 use FormBuilderBundle\Storage\FormFieldDynamic;
@@ -50,6 +52,11 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
     protected $mailLayout;
 
     /**
+     * @var Collection|OutputWorkflowInterface[]
+     */
+    protected $outputWorkflows;
+
+    /**
      * @var array
      */
     public $config = [];
@@ -73,6 +80,11 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
      * @var array
      */
     protected $attachments = [];
+
+    public function __construct()
+    {
+        $this->outputWorkflows = new ArrayCollection();
+    }
 
     /**
      * {@inheritdoc}
@@ -200,6 +212,52 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
     public function getMailLayout()
     {
         return $this->mailLayout;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOutputWorkflows()
+    {
+        return !$this->outputWorkflows->isEmpty();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    {
+        return $this->outputWorkflows->contains($outputWorkflow);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    {
+        if (!$this->hasOutputWorkflow($outputWorkflow)) {
+            $this->outputWorkflows->add($outputWorkflow);
+            $outputWorkflow->setForm($this);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    {
+        if ($this->hasOutputWorkflow($outputWorkflow)) {
+            $this->outputWorkflows->removeElement($outputWorkflow);
+            $outputWorkflow->setForm(null);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOutputWorkflows()
+    {
+        return $this->outputWorkflows;
     }
 
     /**

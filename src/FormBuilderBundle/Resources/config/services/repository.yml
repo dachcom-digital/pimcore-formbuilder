@@ -7,3 +7,6 @@ services:
 
     FormBuilderBundle\Repository\FormRepositoryInterface: '@FormBuilderBundle\Repository\FormRepository'
     FormBuilderBundle\Repository\FormRepository: ~
+
+    FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface: '@FormBuilderBundle\Repository\OutputWorkflowRepository'
+    FormBuilderBundle\Repository\OutputWorkflowRepository: ~
