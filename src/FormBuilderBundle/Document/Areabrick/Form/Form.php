@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Document\Areabrick\Form;
 
 use FormBuilderBundle\Resolver\FormOptionsResolver;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Assembler\FormAssembler;
@@ -15,9 +15,9 @@ use Pimcore\Translation\Translator;
 class Form extends AbstractTemplateAreabrick
 {
     /**
-     * @var FormManager
+     * @var FormDefinitionManager
      */
-    protected $formManager;
+    protected $formDefinitionManager;
 
     /**
      * @var PresetManager
@@ -40,20 +40,20 @@ class Form extends AbstractTemplateAreabrick
     protected $translator;
 
     /**
-     * @param FormManager     $formManager
-     * @param PresetManager   $presetManager
-     * @param FormAssembler   $formAssembler
-     * @param TemplateManager $templateManager
-     * @param Translator      $translator
+     * @param FormDefinitionManager $formDefinitionManager
+     * @param PresetManager         $presetManager
+     * @param FormAssembler         $formAssembler
+     * @param TemplateManager       $templateManager
+     * @param Translator            $translator
      */
     public function __construct(
-        FormManager $formManager,
+        FormDefinitionManager $formDefinitionManager,
         PresetManager $presetManager,
         FormAssembler $formAssembler,
         TemplateManager $templateManager,
         Translator $translator
     ) {
-        $this->formManager = $formManager;
+        $this->formDefinitionManager = $formDefinitionManager;
         $this->presetManager = $presetManager;
         $this->formAssembler = $formAssembler;
         $this->templateManager = $templateManager;
@@ -83,7 +83,7 @@ class Form extends AbstractTemplateAreabrick
         $view->getParameters()->set('form_builder_is_admin_mode', $view->get('editmode') === true);
 
         if ($view->get('editmode') === true) {
-            $mains = $this->formManager->getAll();
+            $mains = $this->formDefinitionManager->getAll();
             $formPresets = $this->presetManager->getAll($info->getDocument());
 
             $formPresetsStore = [];
@@ -91,7 +91,7 @@ class Form extends AbstractTemplateAreabrick
             $availableForms = [];
 
             if (!empty($mains)) {
-                /** @var \FormBuilderBundle\Storage\Form $form */
+                /** @var \FormBuilderBundle\Model\FormDefinition $form */
                 foreach ($mains as $form) {
                     $availableForms[] = [$form->getId(), $form->getName()];
                 }

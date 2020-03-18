@@ -25,7 +25,7 @@ namespace AppBundle\EventListener;
 
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Model\FormInterface as FormBuilderFormInterface;
+use FormBuilderBundle\Form\Data\FormDataInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -44,12 +44,12 @@ class FormListener implements EventSubscriberInterface
     {
         $formEvent = $event->getFormEvent();
 
-        /** @var FormBuilderFormInterface $dataClass */
-        $dataClass = $formEvent->getData();
+        /** @var FormDataInterface $formData */
+        $formData = $formEvent->getData();
 
         // get the form id/name from backend
-        $formId = $dataClass->getId();
-        $formName = $dataClass->getName();
+        $formId = $formData->getFormDefinition()->getId();
+        $formName = $formData->getFormDefinition()->getName();
 
         // get form options like the selected form preset
         $formOptions = $event->getFormOptions();
@@ -58,7 +58,7 @@ class FormListener implements EventSubscriberInterface
         var_dump($formOptions['form_preset']);
 
         // add your fields
-        $dataClass->addDynamicField(
+        $formData->getFormDefinition()->addDynamicField(
             
             //field name
             'your_dynamic_field_name',

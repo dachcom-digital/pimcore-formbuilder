@@ -32,14 +32,14 @@ interface OutputWorkflowInterface
     public function getSuccessManagement();
 
     /**
-     * @param FormInterface $form
+     * @param FormDefinitionInterface $formDefinition
      */
-    public function setForm(FormInterface $form);
+    public function setFormDefinition(FormDefinitionInterface $formDefinition);
 
     /**
-     * @return FormInterface
+     * @return FormDefinitionInterface
      */
-    public function getForm();
+    public function getFormDefinition();
 
     /**
      * @return bool

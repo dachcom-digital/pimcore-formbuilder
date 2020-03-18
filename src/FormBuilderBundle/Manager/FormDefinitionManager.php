@@ -3,26 +3,26 @@
 namespace FormBuilderBundle\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
-use FormBuilderBundle\Factory\FormFactoryInterface;
-use FormBuilderBundle\Repository\FormRepositoryInterface;
-use FormBuilderBundle\Model\FormInterface;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
-use FormBuilderBundle\Storage\DataConnector\FormDataConnectorInterface;
+use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Repository\FormDefinitionRepositoryInterface;
+use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\User;
 
-class FormManager
+class FormDefinitionManager
 {
     /**
-     * @var FormFactoryInterface
+     * @var FormDefinitionFactoryInterface
      */
-    protected $formFactory;
+    protected $formDefinitionFactory;
 
     /**
-     * @var FormRepositoryInterface
+     * @var FormDefinitionRepositoryInterface
      */
-    protected $formRepository;
+    protected $formDefinitionRepository;
 
     /**
      * @var FormDataConnectorInterface
@@ -40,21 +40,21 @@ class FormManager
     protected $entityManager;
 
     /**
-     * @param FormFactoryInterface              $formFactory
-     * @param FormRepositoryInterface           $formRepository
+     * @param FormDefinitionFactoryInterface    $formDefinitionFactory
+     * @param FormDefinitionRepositoryInterface $formDefinitionRepository
      * @param FormDataConnectorInterface        $formDataConnector
      * @param TokenStorageUserResolver          $storageUserResolver
      * @param EntityManagerInterface            $entityManager
      */
     public function __construct(
-        FormFactoryInterface $formFactory,
-        FormRepositoryInterface $formRepository,
+        FormDefinitionFactoryInterface $formDefinitionFactory,
+        FormDefinitionRepositoryInterface $formDefinitionRepository,
         FormDataConnectorInterface $formDataConnector,
         TokenStorageUserResolver $storageUserResolver,
         EntityManagerInterface $entityManager
     ) {
-        $this->formFactory = $formFactory;
-        $this->formRepository = $formRepository;
+        $this->formDefinitionFactory = $formDefinitionFactory;
+        $this->formDefinitionRepository = $formDefinitionRepository;
         $this->formDataConnector = $formDataConnector;
         $this->storageUserResolver = $storageUserResolver;
         $this->entityManager = $entityManager;
@@ -63,11 +63,11 @@ class FormManager
     /**
      * @param int $id
      *
-     * @return FormInterface|null
+     * @return FormDefinitionInterface|null
      */
     public function getById(int $id)
     {
-        return $this->formRepository->findById($id);
+        return $this->formDefinitionRepository->findById($id);
     }
 
     /**
@@ -91,28 +91,28 @@ class FormManager
     }
 
     /**
-     * @return array
+     * @return FormDefinitionInterface[]
      */
     public function getAll()
     {
-        return $this->formRepository->findAll();
+        return $this->formDefinitionRepository->findAll();
     }
 
     /**
      * @param string $name
      *
-     * @return FormInterface|null
+     * @return FormDefinitionInterface|null
      */
     public function getIdByName(string $name)
     {
-        return $this->formRepository->findByName($name);
+        return $this->formDefinitionRepository->findByName($name);
     }
 
     /**
      * @param array    $data
      * @param null|int $id
      *
-     * @return FormInterface|null
+     * @return FormDefinitionInterface|null
      *
      * @throws \Exception
      */
@@ -123,10 +123,10 @@ class FormManager
             $isUpdate = true;
             $form = $this->getById($id);
         } else {
-            $form = $this->formFactory->createForm();
+            $form = $this->formDefinitionFactory->createFormDefinition();
         }
 
-        if (!$form instanceof FormInterface) {
+        if (!$form instanceof FormDefinitionInterface) {
             return null;
         }
 
@@ -142,11 +142,11 @@ class FormManager
     }
 
     /**
-     * @param FormInterface $form
+     * @param FormDefinitionInterface $form
      *
      * @throws \Exception
      */
-    public function saveRawEntity(FormInterface $form)
+    public function saveRawEntity(FormDefinitionInterface $form)
     {
         $date = new \DateTime();
         $form->setModificationDate($date);
@@ -162,7 +162,7 @@ class FormManager
     {
         $form = $this->getById($id);
 
-        if (!$form instanceof FormInterface) {
+        if (!$form instanceof FormDefinitionInterface) {
             return;
         }
 
@@ -176,7 +176,7 @@ class FormManager
      * @param int    $id
      * @param string $newName
      *
-     * @return FormInterface|null
+     * @return FormDefinitionInterface|null
      *
      * @throws \Exception
      */
@@ -184,7 +184,7 @@ class FormManager
     {
         $form = $this->getById($id);
 
-        if (!$form instanceof FormInterface) {
+        if (!$form instanceof FormDefinitionInterface) {
             return null;
         }
 
@@ -197,11 +197,11 @@ class FormManager
     }
 
     /**
-     * @param array         $data
-     * @param FormInterface $form
-     * @param bool          $isUpdate
+     * @param array                   $data
+     * @param FormDefinitionInterface $form
+     * @param bool                    $isUpdate
      */
-    protected function updateFormAttributes(array $data, FormInterface $form, $isUpdate = false)
+    protected function updateFormAttributes(array $data, FormDefinitionInterface $form, $isUpdate = false)
     {
         $form->setName((string) $data['form_name']);
 
@@ -230,8 +230,8 @@ class FormManager
     /**
      * Updates the contained fields in the form.
      *
-     * @param array         $data
-     * @param FormInterface $form
+     * @param array                   $data
+     * @param FormDefinitionInterface $form
      */
     protected function updateFields($data, $form)
     {
@@ -258,15 +258,15 @@ class FormManager
     }
 
     /**
-     * @param FormInterface $form
-     * @param array         $fieldData
-     * @param int           $order
+     * @param FormDefinitionInterface $form
+     * @param array                   $fieldData
+     * @param int                     $order
      *
-     * @return FormFieldContainerInterface
+     * @return FormFieldContainerDefinitionInterface
      * @throws \Exception
      *
      */
-    protected function generateFormFieldContainer(FormInterface $form, array $fieldData, int $order)
+    protected function generateFormFieldContainer(FormDefinitionInterface $form, array $fieldData, int $order)
     {
         $fieldType = $this->getValueAsString($fieldData, 'type');
         $fieldSubType = $this->getValueAsString($fieldData, 'sub_type');
@@ -277,8 +277,8 @@ class FormManager
 
         $fieldContainer = $form->getFieldContainer($fieldName);
 
-        if (!$fieldContainer instanceof FormFieldContainerInterface) {
-            $fieldContainer = $this->formFactory->createFormFieldContainer();
+        if (!$fieldContainer instanceof FormFieldContainerDefinitionInterface) {
+            $fieldContainer = $this->formDefinitionFactory->createFormFieldContainerDefinition();
         }
 
         $fieldContainer->setName($fieldName);
@@ -311,13 +311,13 @@ class FormManager
     }
 
     /**
-     * @param FormInterface $form
-     * @param array         $fieldData
-     * @param int           $order
+     * @param FormDefinitionInterface $form
+     * @param array                   $fieldData
+     * @param int                     $order
      *
-     * @return FormFieldInterface
+     * @return FormFieldDefinitionInterface
      */
-    protected function generateFormField(FormInterface $form, array $fieldData, int $order)
+    protected function generateFormField(FormDefinitionInterface $form, array $fieldData, int $order)
     {
         $fieldType = $this->getValueAsString($fieldData, 'type');
         $fieldName = $this->getValueAsString($fieldData, 'name');
@@ -328,8 +328,8 @@ class FormManager
 
         $field = $form->getField($fieldName);
 
-        if (!$field instanceof FormFieldInterface) {
-            $field = $this->formFactory->createFormField();
+        if (!$field instanceof FormFieldDefinitionInterface) {
+            $field = $this->formDefinitionFactory->createFormFieldDefinition();
         }
 
         $field->setName($fieldName);

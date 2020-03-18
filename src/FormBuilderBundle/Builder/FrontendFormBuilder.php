@@ -1,20 +1,19 @@
 <?php
 
-namespace FormBuilderBundle\Form;
+namespace FormBuilderBundle\Builder;
 
 use FormBuilderBundle\EventSubscriber\FormBuilderSubscriber;
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Factory\FormDataFactoryInterface;
 use FormBuilderBundle\Form\Type\DynamicFormType;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * Builds a dynamic form.
- */
-class Builder
+class FrontendFormBuilder
 {
     /**
      * @var FormBuilderSubscriber
@@ -32,14 +31,19 @@ class Builder
     protected $requestStack;
 
     /**
-     * @var FormManager
+     * @var FormDefinitionManager
      */
-    protected $formManager;
+    protected $formDefinitionManager;
 
     /**
      * @var FormFactoryInterface
      */
     protected $formFactory;
+
+    /**
+     * @var FormDataFactoryInterface
+     */
+    protected $formDataFactory;
 
     /**
      * @var UrlGeneratorInterface
@@ -50,23 +54,26 @@ class Builder
      * @param FormBuilderSubscriber $formBuilderSubscriber
      * @param Configuration         $configuration
      * @param RequestStack          $requestStack
-     * @param FormManager           $formManager
+     * @param FormDefinitionManager $formDefinitionManager
      * @param FormFactoryInterface  $formFactory
+     * @param FormDataFactoryInterface  $formDataFactory
      * @param UrlGeneratorInterface $router
      */
     public function __construct(
         FormBuilderSubscriber $formBuilderSubscriber,
         Configuration $configuration,
         RequestStack $requestStack,
-        FormManager $formManager,
+        FormDefinitionManager $formDefinitionManager,
         FormFactoryInterface $formFactory,
+        FormDataFactoryInterface $formDataFactory,
         UrlGeneratorInterface $router
     ) {
         $this->formBuilderSubscriber = $formBuilderSubscriber;
         $this->configuration = $configuration;
         $this->requestStack = $requestStack;
-        $this->formManager = $formManager;
+        $this->formDefinitionManager = $formDefinitionManager;
         $this->formFactory = $formFactory;
+        $this->formDataFactory = $formDataFactory;
         $this->router = $router;
     }
 
@@ -75,7 +82,7 @@ class Builder
      *
      * @return null|int
      */
-    public function detectedFormIdByRequest(Request $request)
+    public function findFormIdByRequest(Request $request)
     {
         foreach ($request->request->all() as $key => $parameters) {
             if (strpos($key, 'formbuilder_') === false) {
@@ -94,7 +101,7 @@ class Builder
      * @param int   $id
      * @param array $userOptions
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     public function buildForm($id, $userOptions = [])
     {
@@ -106,18 +113,18 @@ class Builder
         $formOptions = array_merge($defaults, $userOptions);
 
         $request = $this->requestStack->getCurrentRequest();
-        $formEntity = $this->formManager->getById($id);
-        $formConfig = $formEntity->getConfig();
+        $formDefinition = $this->formDefinitionManager->getById($id);
+        $formDefinitionConfig = $formDefinition->getConfig();
 
         $formAttributes = [];
-        if ($formConfig['noValidate'] === false) {
+        if ($formDefinitionConfig['noValidate'] === false) {
             $formAttributes['novalidate'] = 'novalidate';
         }
 
         $formAttributes['class'] = 'formbuilder';
         $formAttributes['data-template'] = $formOptions['form_template'];
 
-        if ($formConfig['useAjax'] === true) {
+        if ($formDefinitionConfig['useAjax'] === true) {
             $formAttributes['data-ajax-structure-url'] = $this->router->generate('form_builder.controller.ajax.url_structure');
             $formAttributes['class'] = $formAttributes['class'] . ' ajax-form';
         }
@@ -125,19 +132,21 @@ class Builder
         //@todo: implement inline functionality.
         //$formAttributes['class'] = 'form-inline';
 
-        if (isset($formConfig['attributes']) && is_array($formConfig['attributes'])) {
-            $formAttributes = $this->addFormAttributes($formAttributes, $formConfig['attributes']);
+        if (isset($formDefinitionConfig['attributes']) && is_array($formDefinitionConfig['attributes'])) {
+            $formAttributes = $this->addFormAttributes($formAttributes, $formDefinitionConfig['attributes']);
         }
 
+        $formData = $this->formDataFactory->createFormData($formDefinition);
+
         $builder = $this->formFactory->createNamedBuilder(
-            'formbuilder_' . $formEntity->getId(),
+            'formbuilder_' . $formDefinition->getId(),
             DynamicFormType::class,
-            $formEntity,
+            $formData,
             [
-                'method'            => $formConfig['method'],
-                'action'            => $formConfig['action'] === '/' ? $request->getUri() : $formConfig['action'],
-                'current_form_id'   => $formEntity->getId(),
-                'conditional_logic' => $formEntity->getConditionalLogic(),
+                'method'            => $formDefinitionConfig['method'],
+                'action'            => $formDefinitionConfig['action'] === '/' ? $request->getUri() : $formDefinitionConfig['action'],
+                'current_form_id'   => $formDefinition->getId(),
+                'conditional_logic' => $formDefinition->getConditionalLogic(),
                 'attr'              => $formAttributes,
             ]
         );

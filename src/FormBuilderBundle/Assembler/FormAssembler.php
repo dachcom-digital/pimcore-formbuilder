@@ -2,10 +2,10 @@
 
 namespace FormBuilderBundle\Assembler;
 
-use FormBuilderBundle\Form\Builder;
+use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
-use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Model\FormInterface;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormAssembler
@@ -21,14 +21,14 @@ class FormAssembler
     protected $session;
 
     /**
-     * @var FormManager
+     * @var FormDefinitionManager
      */
-    protected $formManager;
+    protected $formDefinitionManager;
 
     /**
-     * @var Builder
+     * @var FrontendFormBuilder
      */
-    protected $formBuilder;
+    protected $frontendFormBuilder;
 
     /**
      * @var string
@@ -36,18 +36,18 @@ class FormAssembler
     protected $preset = '';
 
     /**
-     * @param SessionInterface $session
-     * @param Builder          $formBuilder
-     * @param FormManager      $formManager
+     * @param SessionInterface      $session
+     * @param FrontendFormBuilder   $frontendFormBuilder
+     * @param FormDefinitionManager $formDefinitionManager
      */
     public function __construct(
         SessionInterface $session,
-        Builder $formBuilder,
-        FormManager $formManager
+        FrontendFormBuilder $frontendFormBuilder,
+        FormDefinitionManager $formDefinitionManager
     ) {
         $this->session = $session;
-        $this->formBuilder = $formBuilder;
-        $this->formManager = $formManager;
+        $this->frontendFormBuilder = $frontendFormBuilder;
+        $this->formDefinitionManager = $formDefinitionManager;
     }
 
     /**
@@ -75,15 +75,15 @@ class FormAssembler
         $formId = $this->optionsResolver->getFormId();
         if (!empty($formId)) {
             try {
-                $formData = $this->formManager->getById($formId);
-                if (!$formData instanceof FormInterface || !$this->formManager->configurationFileExists($formId)) {
+                $formDefinition = $this->formDefinitionManager->getById($formId);
+                if (!$formDefinition instanceof FormDefinitionInterface || !$this->formDefinitionManager->configurationFileExists($formId)) {
                     $errorMessage = [];
-                    if (!$formData instanceof FormInterface) {
+                    if (!$formDefinition instanceof FormDefinitionInterface) {
                         $errorMessage[] = sprintf('Form with id "%s" is not valid.', $formId);
                     }
 
-                    if (!$this->formManager->configurationFileExists($formId)) {
-                        $formConfigurationPath = $this->formManager->getConfigurationPath($formId);
+                    if (!$this->formDefinitionManager->configurationFileExists($formId)) {
+                        $formConfigurationPath = $this->formDefinitionManager->getConfigurationPath($formId);
                         $errorMessage[] = sprintf('Configuration file is not available. This file needs to be generated as "%s".', $formConfigurationPath);
                     }
 
@@ -115,7 +115,7 @@ class FormAssembler
         ];
 
         /** @var \Symfony\Component\Form\Form $form */
-        $form = $this->formBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
+        $form = $this->frontendFormBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
 
         /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');

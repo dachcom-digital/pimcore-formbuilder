@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\unit\SimpleForm;
 
 use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use DachcomBundle\Test\Util\FormHelper;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Storage\FormField;
 
 class FormFieldStorageTest extends DachcomBundleTestCase
@@ -15,7 +15,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldSimpleDropDown()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_dropdown');
@@ -33,7 +33,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldInput1()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_1');
@@ -51,7 +51,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldInput2()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_2');
@@ -69,7 +69,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldInput3()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_3');
@@ -87,7 +87,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldInput4()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_input_4');
@@ -105,7 +105,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldSingleCheckbox()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('single_checkbox');
@@ -123,7 +123,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldCheckboxes()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('checkboxes');
@@ -141,7 +141,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldRadios()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('radios');
@@ -159,7 +159,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldTextArea()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('simple_text_area');
@@ -177,7 +177,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldSubmitButton()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
         $field = $form->getField('submit');
@@ -195,7 +195,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testFormFieldOptions()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $testFormBuilder->addFormFieldInput('input_with_options', ['class' => 'my-shiny-class']);
         $form = $manager->save($testFormBuilder->build());
@@ -213,7 +213,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
      */
     public function testFormFieldOptionals()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $testFormBuilder->addFormFieldInput('input_with_optional', [], ['template' => 'default']);
         $form = $manager->save($testFormBuilder->build());

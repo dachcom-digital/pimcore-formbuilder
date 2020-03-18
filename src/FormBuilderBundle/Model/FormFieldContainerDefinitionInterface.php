@@ -1,8 +1,8 @@
 <?php
 
-namespace FormBuilderBundle\Storage;
+namespace FormBuilderBundle\Model;
 
-interface FormFieldContainerInterface extends FormFieldSimpleInterface
+interface FormFieldContainerDefinitionInterface extends FieldDefinitionInterface
 {
     /**
      * @param int $order
@@ -48,19 +48,4 @@ interface FormFieldContainerInterface extends FormFieldSimpleInterface
      * @return array
      */
     public function getConfiguration();
-
-    /**
-     * @param FormFieldInterface[] $fields
-     */
-    public function setFields(array $fields = []);
-
-    /**
-     * @return FormFieldInterface[]
-     */
-    public function getFields();
-
-    /**
-     * @return array
-     */
-    public function toArray();
 }

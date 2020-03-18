@@ -1,14 +1,11 @@
 <?php
 
-namespace FormBuilderBundle\Storage;
+namespace FormBuilderBundle\Model;
 
-class FormField implements FormFieldInterface
+use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
+
+class FormFieldDefinition implements FormFieldDefinitionInterface, EntityToArrayAwareInterface
 {
-    /**
-     * @var bool
-     */
-    protected $update = false;
-
     /**
      * @var string
      */
@@ -43,14 +40,6 @@ class FormField implements FormFieldInterface
      * @var array
      */
     private $optional = [];
-
-    /**
-     * @param bool $update
-     */
-    public function __construct($update = false)
-    {
-        $this->update = $update;
-    }
 
     /**
      * {@inheritdoc}
@@ -119,14 +108,6 @@ class FormField implements FormFieldInterface
     /**
      * {@inheritdoc}
      */
-    public function isUpdated()
-    {
-        return $this->update;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setOptions(array $options = [])
     {
         $this->options = array_filter($options, function ($option) {
@@ -187,7 +168,7 @@ class FormField implements FormFieldInterface
             $array[ltrim($key, '_')] = $value;
         }
 
-        $removeKeys = ['update'];
+        $removeKeys = [];
 
         return array_diff_key($array, array_flip($removeKeys));
     }

@@ -2,13 +2,12 @@
 
 namespace FormBuilderBundle\Controller\Admin;
 
-use FormBuilderBundle\Backend\Form\Builder;
+use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\MailEditor\Widget\MailEditorFieldDataWidgetInterface;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
-use FormBuilderBundle\Model\FormInterface;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,16 +23,16 @@ class MailEditorController extends AdminController
     {
         $formId = $request->get('id');
 
-        /** @var FormManager $formManager */
-        $formManager = $this->get(FormManager::class);
+        /** @var FormDefinitionManager $formDefinitionManager */
+        $formDefinitionManager = $this->get(FormDefinitionManager::class);
 
-        $formEntity = $formManager->getById($formId);
+        $formDefinition = $formDefinitionManager->getById($formId);
 
-        if (!$formEntity instanceof FormInterface) {
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json(['success' => false, 'message' => 'form is not available']);
         }
 
-        $mailLayouts = $formEntity->getMailLayout();
+        $mailLayouts = $formDefinition->getMailLayout();
 
         $availableTypes = [];
         foreach (['main', 'copy'] as $validType) {
@@ -60,16 +59,16 @@ class MailEditorController extends AdminController
         $formId = $request->get('id');
         $mailType = $request->get('mailType');
 
-        /** @var FormManager $formManager */
-        $formManager = $this->get(FormManager::class);
+        /** @var FormDefinitionManager $formDefinitionManager */
+        $formDefinitionManager = $this->get(FormDefinitionManager::class);
 
-        $formEntity = $formManager->getById($formId);
+        $formDefinition = $formDefinitionManager->getById($formId);
 
-        if (!$formEntity instanceof FormInterface) {
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json(['success' => false, 'message' => 'form is not available']);
         }
 
-        $mailLayout = $formEntity->getMailLayout();
+        $mailLayout = $formDefinition->getMailLayout();
 
         if (!isset($mailLayout[$mailType])) {
             return $this->json(['success' => false, 'message' => sprintf('mailtype %s is not available', $mailType)]);
@@ -79,10 +78,10 @@ class MailEditorController extends AdminController
 
         $mailLayout = $this->cleanupMailLayout($mailLayout);
 
-        $formEntity->setMailLayout(count($mailLayout) === 0 ? null : $mailLayout);
+        $formDefinition->setMailLayout(count($mailLayout) === 0 ? null : $mailLayout);
 
         try {
-            $formManager->saveRawEntity($formEntity);
+            $formDefinitionManager->saveRawEntity($formDefinition);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());
@@ -107,23 +106,24 @@ class MailEditorController extends AdminController
         $formId = $request->get('id');
         $mailType = $request->get('mailType');
 
-        /** @var FormManager $formManager */
-        $formManager = $this->get(FormManager::class);
+        /** @var FormDefinitionManager $formDefinitionManager */
+        $formDefinitionManager = $this->get(FormDefinitionManager::class);
 
-        /** @var Builder $backendFormBuilder */
-        $backendFormBuilder = $this->get(Builder::class);
+        /** @var ExtJsFormBuilder $backendFormBuilder */
+        $backendFormBuilder = $this->get(ExtJsFormBuilder::class);
 
-        $formEntity = $formManager->getById($formId);
+        $formDefinition = $formDefinitionManager->getById($formId);
 
         $fieldData = [];
-        /** @var FormFieldInterface|FormFieldContainerInterface $field */
-        foreach ($formEntity->getFields() as $field) {
-            $fieldData[] = $field->toArray();
+        foreach ($formDefinition->getFields() as $field) {
+            if ($field instanceof EntityToArrayAwareInterface) {
+                $fieldData[] = $field->toArray();
+            }
         }
 
         $formFields = $backendFormBuilder->generateExtJsFields($fieldData);
 
-        $mailLayouts = $formEntity->getMailLayout();
+        $mailLayouts = $formDefinition->getMailLayout();
 
         $widgets = $this->get(MailEditorWidgetRegistry::class)->getAll();
 
@@ -190,11 +190,11 @@ class MailEditorController extends AdminController
 
         $mailLayouts = json_decode($request->get('data'), true);
 
-        /** @var FormManager $formManager */
-        $formManager = $this->get(FormManager::class);
+        /** @var FormDefinitionManager $formDefinitionManager */
+        $formDefinitionManager = $this->get(FormDefinitionManager::class);
 
-        $formEntity = $formManager->getById($formId);
-        $storedMailLayout = is_array($formEntity->getMailLayout()) ? $formEntity->getMailLayout() : [];
+        $formDefinition = $formDefinitionManager->getById($formId);
+        $storedMailLayout = is_array($formDefinition->getMailLayout()) ? $formDefinition->getMailLayout() : [];
 
         foreach ($mailLayouts as $locale => $mailLayout) {
             $mailLayout = str_replace('&nbsp;', ' ', $mailLayout);
@@ -204,10 +204,10 @@ class MailEditorController extends AdminController
 
         $storedMailLayout = $this->cleanupMailLayout($storedMailLayout);
 
-        $formEntity->setMailLayout(count($storedMailLayout) === 0 ? null : $storedMailLayout);
+        $formDefinition->setMailLayout(count($storedMailLayout) === 0 ? null : $storedMailLayout);
 
         try {
-            $formManager->saveRawEntity($formEntity);
+            $formDefinitionManager->saveRawEntity($formDefinition);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());

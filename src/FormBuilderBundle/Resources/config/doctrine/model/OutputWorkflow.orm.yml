@@ -17,12 +17,12 @@ FormBuilderBundle\Model\OutputWorkflow:
             nullable: true
             type: object
     manyToOne:
-        form:
-            targetEntity: FormBuilderBundle\Model\Form
+        formDefinition:
+            targetEntity: FormBuilderBundle\Model\FormDefinition
             orphanRemoval: true
             inversedBy: outputWorkflows
             joinColumn:
-                name: form
+                name: form_definition
                 referencedColumnName: id
     oneToMany:
         channels:
@@ -33,4 +33,4 @@ FormBuilderBundle\Model\OutputWorkflow:
                 - all
     uniqueConstraints:
         name_form:
-            columns: [name, form]
+            columns: [name, form_definition]

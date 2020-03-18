@@ -42,7 +42,7 @@ class OutputWorkflowRepository implements OutputWorkflowRepositoryInterface
             return null;
         }
 
-        return $this->repository->findOneBy(['name' => $name, 'form' => $formId]);
+        return $this->repository->findOneBy(['name' => $name, 'formDefinition' => $formId]);
     }
 
     /**
@@ -60,7 +60,7 @@ class OutputWorkflowRepository implements OutputWorkflowRepositoryInterface
      */
     public function findIdByName(string $name)
     {
-        $outputWorkflow = $this->findByName($name);
+        $outputWorkflow = $this->repository->findOneBy(['name' => $name]);
 
         return $outputWorkflow->getId();
     }

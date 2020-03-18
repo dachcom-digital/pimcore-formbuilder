@@ -1,4 +1,4 @@
-FormBuilderBundle\Model\Form:
+FormBuilderBundle\Model\FormDefinition:
     type: entity
     table: formbuilder_forms
     fields:
@@ -38,6 +38,6 @@ FormBuilderBundle\Model\Form:
     oneToMany:
         outputWorkflows:
             targetEntity: FormBuilderBundle\Model\OutputWorkflow
-            mappedBy: form
+            mappedBy: formDefinition
             cascade:
                 - all

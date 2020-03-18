@@ -1,24 +1,31 @@
 <?php
 
-namespace FormBuilderBundle\Backend\Form;
+namespace FormBuilderBundle\Builder;
 
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\TemplateManager;
+use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
-use FormBuilderBundle\Model\FormInterface;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
+use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Pimcore\Translation\Translator;
+use Symfony\Component\Serializer\SerializerInterface;
 
-class Builder
+class ExtJsFormBuilder
 {
     /**
      * @var Configuration
      */
     protected $configuration;
+
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
 
     /**
      * @var TemplateManager
@@ -41,54 +48,66 @@ class Builder
     protected $conditionalLogicRegistry;
 
     /**
+     * @var OutputWorkflowChannelRegistry
+     */
+    protected $outputWorkflowChannelRegistry;
+
+    /**
      * @param Configuration              $configuration
+     * @param SerializerInterface           $serializer
      * @param TemplateManager            $templateManager
      * @param Translator                 $translator
      * @param OptionsTransformerRegistry $optionsTransformerRegistry
      * @param ConditionalLogicRegistry   $conditionalLogicRegistry
+     * @param OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry
      */
     public function __construct(
         Configuration $configuration,
+        SerializerInterface $serializer,
         TemplateManager $templateManager,
         Translator $translator,
         OptionsTransformerRegistry $optionsTransformerRegistry,
-        ConditionalLogicRegistry $conditionalLogicRegistry
+        ConditionalLogicRegistry $conditionalLogicRegistry,
+        OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry
     ) {
         $this->configuration = $configuration;
+        $this->serializer = $serializer;
         $this->templateManager = $templateManager;
         $this->translator = $translator;
         $this->optionsTransformerRegistry = $optionsTransformerRegistry;
         $this->conditionalLogicRegistry = $conditionalLogicRegistry;
+        $this->outputWorkflowChannelRegistry = $outputWorkflowChannelRegistry;
     }
 
     /**
      * Generate array form with form attributes and available form types structure.
      *
-     * @param FormInterface $form
+     * @param FormDefinitionInterface $formDefinition
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function generateExtJsForm(FormInterface $form)
+    public function generateExtJsForm(FormDefinitionInterface $formDefinition)
     {
         $data = [
-            'id'     => $form->getId(),
-            'name'   => $form->getName(),
-            'group'  => $form->getGroup(),
-            'config' => $form->getConfig(),
+            'id'     => $formDefinition->getId(),
+            'name'   => $formDefinition->getName(),
+            'group'  => $formDefinition->getGroup(),
+            'config' => $formDefinition->getConfig(),
             'meta'   => [
-                'creation_date'     => $form->getCreationDate(),
-                'modification_date' => $form->getModificationDate(),
-                'created_by'        => $form->getCreatedBy(),
-                'modified_by'       => $form->getModifiedBy(),
+                'creation_date'     => $formDefinition->getCreationDate(),
+                'modification_date' => $formDefinition->getModificationDate(),
+                'created_by'        => $formDefinition->getCreatedBy(),
+                'modified_by'       => $formDefinition->getModifiedBy(),
             ]
         ];
 
         $fieldData = [];
-        /** @var FormFieldInterface|FormFieldContainerInterface $field */
-        foreach ($form->getFields() as $field) {
-            $fieldData[] = $field->toArray();
+        foreach ($formDefinition->getFields() as $field) {
+            if ($field instanceof EntityToArrayAwareInterface) {
+                $fieldData[] = $field->toArray();
+            }
         }
 
         $data['fields'] = $this->generateExtJsFields($fieldData);
@@ -97,8 +116,30 @@ class Builder
         $data['config_store'] = $this->getFormStoreData();
         $data['container_types'] = $this->getTranslatedContainerTypes();
         $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
-        $data['conditional_logic'] = $this->generateConditionalLogicExtJsFields($form->getConditionalLogic());
+        $data['conditional_logic'] = $this->generateConditionalLogicExtJsFields($formDefinition->getConditionalLogic());
         $data['conditional_logic_store'] = $this->generateConditionalLogicStore();
+
+        return $data;
+    }
+
+    /**
+     * @param OutputWorkflowInterface $outputWorkflow
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function generateExtJsOutputWorkflowForm(OutputWorkflowInterface $outputWorkflow)
+    {
+        $data = [
+            'id'   => $outputWorkflow->getId(),
+            'name' => $outputWorkflow->getName(),
+            'meta' => []
+        ];
+
+        $data['output_workflow_channels'] = $this->serializer->normalize($outputWorkflow->getChannels(), 'array', ['groups' => ['ExtJs']]);
+        $data['output_workflow_channels_store'] = $this->generateAvailableWorkflowChannelsList();
+        $data['output_workflow_success_management'] = $outputWorkflow->getSuccessManagement();
 
         return $data;
     }
@@ -175,6 +216,23 @@ class Builder
         }
 
         return $conditionalData;
+    }
+
+    /**
+     * @return array
+     */
+    private function generateAvailableWorkflowChannelsList()
+    {
+        $data = [];
+        foreach ($this->outputWorkflowChannelRegistry->getAllIdentifier() as $availableChannel) {
+            $data[] = [
+                'identifier' => $availableChannel,
+                'label'      => $this->translate(sprintf('form_builder.output_workflow.channel.%s', strtolower($availableChannel))),
+                'icon_class' => sprintf('form_builder_output_workflow_channel_%s', strtolower($availableChannel))
+            ];
+        }
+
+        return $data;
     }
 
     /**

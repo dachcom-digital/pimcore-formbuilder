@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Parser;
 
+use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
 use FormBuilderBundle\Stream\AttachmentStreamInterface;
@@ -85,7 +86,9 @@ class MailParser
         $this->setMailPlaceholders($mail, $fieldValues);
 
         if ($disableDefaultMailBody === false) {
-            $mailLayout = $form->getData()->getMailLayoutBasedOnLocale($isCopy === false ? 'main' : 'copy', $locale);
+            /** @var FormDataInterface $formData */
+            $formData = $form->getData();
+            $mailLayout = $formData->getFormDefinition()->getMailLayoutBasedOnLocale($isCopy === false ? 'main' : 'copy', $locale);
             $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
         }
 

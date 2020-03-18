@@ -20,7 +20,7 @@ namespace AppBundle\EventListener;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Model\FormInterface;
+use FormBuilderBundle\Storage\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -60,6 +60,10 @@ class FormBuilderListener implements EventSubscriberInterface
         //create some choices based on a request value.
         $entryId = $this->requestStack->getMasterRequest()->get('entry');
 
+        if($entryId === null) {
+            return;
+        }
+
         // 1. Add a hidden field to keep the value
         // since the request value gets lost during the ajax request.
         $formData->addDynamicField(
@@ -85,12 +89,8 @@ class FormBuilderListener implements EventSubscriberInterface
         $form = $formEvent->getForm();
         $formData = $formEvent->getData();        
 
-        //remove the entry id field, since we don't need it anymore!
-        $formEvent->getData()->removeDynamicField('entry_id');
-        
         //re-add the event date and populate it again!
         $this->addEventDateField($form->getData(), $formData['entry_id']);
-        
     }
 
     private function addEventDateField(FormInterface $form, $id)

@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\unit\SimpleForm;
 
 use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use DachcomBundle\Test\Util\FormHelper;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Storage\FormField;
 use FormBuilderBundle\Storage\FormFieldContainer;
 use FormBuilderBundle\Storage\FormFieldContainerInterface;
@@ -17,7 +17,7 @@ class FormFieldContainerStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldContainerRepeaterField()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $testFormBuilder->addFormFieldContainer(
             'repeater',
@@ -58,7 +58,7 @@ class FormFieldContainerStorageTest extends DachcomBundleTestCase
      */
     public function testNewFormFieldContainerFieldsetField()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $testFormBuilder->addFormFieldContainer(
             'fieldset',

@@ -5,11 +5,9 @@ namespace FormBuilderBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldDynamic;
-use FormBuilderBundle\Storage\FormFieldDynamicInterface;
+use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 
-class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
+class FormDefinition implements FormDefinitionInterface, SubFieldsAwareInterface
 {
     /**
      * @var int|null
@@ -70,16 +68,6 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
      * @var array
      */
     public $fields = [];
-
-    /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * @var array
-     */
-    protected $attachments = [];
 
     public function __construct()
     {
@@ -237,7 +225,7 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
     {
         if (!$this->hasOutputWorkflow($outputWorkflow)) {
             $this->outputWorkflows->add($outputWorkflow);
-            $outputWorkflow->setForm($this);
+            $outputWorkflow->setFormDefinition($this);
         }
     }
 
@@ -248,7 +236,7 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
     {
         if ($this->hasOutputWorkflow($outputWorkflow)) {
             $this->outputWorkflows->removeElement($outputWorkflow);
-            $outputWorkflow->setForm(null);
+            $outputWorkflow->setFormDefinition(null);
         }
     }
 
@@ -327,16 +315,13 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
             throw new \Exception(sprintf('\'%s\' is a reserved form field name used by the form builder bundle and cannot be used.', $name));
         }
 
-        $update = false;
         if (isset($this->fields[$name])) {
-            if (!$this->fields[$name] instanceof FormFieldDynamicInterface) {
+            if (!$this->fields[$name] instanceof FormFieldDynamicDefinitionInterface) {
                 throw new \Exception(sprintf('"%s" as field name is already used by form builder fields.', $name));
-            } else {
-                $update = true;
             }
         }
 
-        $dynamicField = new FormFieldDynamic($name, $type, $options, $optional, $update);
+        $dynamicField = new FormFieldDynamicDefinition($name, $type, $options, $optional);
         $this->fields[$name] = $dynamicField;
     }
 
@@ -349,7 +334,7 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
             throw new \Exception(sprintf('cannot remove dynamic field, "%s" does not exists', $name));
         }
 
-        if (isset($this->fields[$name]) && $this->fields[$name] instanceof FormFieldDynamicInterface) {
+        if (isset($this->fields[$name]) && $this->fields[$name] instanceof FormFieldDynamicDefinitionInterface) {
             unset($this->fields[$name]);
         }
     }
@@ -404,12 +389,12 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
      */
     public function getFieldContainer(string $name)
     {
-        $fieldContainer = $this->getField($name);
-        if ($fieldContainer !== null && !$fieldContainer instanceof FormFieldContainerInterface) {
-            throw new \Exception(sprintf('Requested field "%s" container is not an instance of FormFieldContainerInterface', $name));
+        $fieldContainerDefinition = $this->getField($name);
+        if ($fieldContainerDefinition !== null && !$fieldContainerDefinition instanceof FormFieldContainerDefinitionInterface) {
+            throw new \Exception(sprintf('Requested field "%s" container is not an instance of FormFieldContainerDefinitionInterface', $name));
         }
 
-        return $fieldContainer;
+        return $fieldContainerDefinition;
     }
 
     /**
@@ -426,91 +411,4 @@ class Form extends \FormBuilderBundle\Storage\Form implements FormInterface
         return $field->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFieldValue(string $name)
-    {
-        $array = $this->getData();
-        if (isset($array[$name])) {
-            return $array[$name];
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFieldValue(string $name, $value)
-    {
-        $this->data[$name] = $value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasAttachments()
-    {
-        return count($this->attachments) > 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttachments()
-    {
-        return $this->attachments;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addAttachment(array $attachmentFileInfo)
-    {
-        $this->attachments[] = $attachmentFileInfo;
-    }
-
-    /**
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function __set($name, $value)
-    {
-        $this->data[$name] = $value;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset($name)
-    {
-        if (!is_string($name)) {
-            return false;
-        }
-
-        $data = $this->getData();
-
-        return isset($data[$name]);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed|null
-     */
-    public function __get($name)
-    {
-        return $this->getFieldValue($name);
-    }
 }

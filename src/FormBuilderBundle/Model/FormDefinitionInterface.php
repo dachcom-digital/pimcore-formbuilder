@@ -3,10 +3,8 @@
 namespace FormBuilderBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
 
-interface FormInterface
+interface FormDefinitionInterface
 {
     const ALLOWED_FORM_KEYS = [
         'action',
@@ -169,33 +167,23 @@ interface FormInterface
     public function removeDynamicField(string $name);
 
     /**
-     * @param FormFieldInterface[] $fields
-     */
-    public function setFields(array $fields);
-
-    /**
-     * @return FormFieldInterface[]
-     */
-    public function getFields();
-
-    /**
      * @param string $type
      *
-     * @return FormFieldInterface[]
+     * @return FormFieldDefinitionInterface[]
      */
     public function getFieldsByType(string $type);
 
     /**
      * @param string $name
      *
-     * @return null|FormFieldInterface
+     * @return null|FormFieldDefinitionInterface
      */
     public function getField(string $name);
 
     /**
      * @param string $name
      *
-     * @return null|FormFieldContainerInterface
+     * @return null|FormFieldContainerDefinitionInterface
      *
      * @throws \Exception
      */
@@ -208,31 +196,4 @@ interface FormInterface
      */
     public function getFieldType(string $name);
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getFieldValue(string $name);
-
-    /**
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function setFieldValue(string $name, $value);
-
-    /**
-     * @return bool
-     */
-    public function hasAttachments();
-
-    /**
-     * @return array
-     */
-    public function getAttachments();
-
-    /**
-     * @param array $attachmentFileInfo
-     */
-    public function addAttachment(array $attachmentFileInfo);
 }

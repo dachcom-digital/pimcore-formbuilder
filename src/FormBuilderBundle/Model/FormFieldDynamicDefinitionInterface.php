@@ -1,8 +1,8 @@
 <?php
 
-namespace FormBuilderBundle\Storage;
+namespace FormBuilderBundle\Model;
 
-interface FormFieldDynamicInterface extends FormFieldSimpleInterface
+interface FormFieldDynamicDefinitionInterface extends FieldDefinitionInterface
 {
     /**
      * @return array

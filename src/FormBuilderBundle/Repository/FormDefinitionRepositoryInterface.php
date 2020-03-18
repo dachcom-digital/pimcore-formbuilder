@@ -2,40 +2,40 @@
 
 namespace FormBuilderBundle\Repository;
 
-use FormBuilderBundle\Model\FormInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 
-interface FormRepositoryInterface
+interface FormDefinitionRepositoryInterface
 {
     /**
      * @param int $id
      *
-     * @return null|FormInterface
+     * @return null|FormDefinitionInterface
      */
     public function findById($id);
 
     /**
      * @param string $name
      *
-     * @return null|FormInterface
+     * @return null|FormDefinitionInterface
      */
     public function findByName(string $name);
 
     /**
      * @param int $id
      *
-     * @return null|FormInterface
+     * @return null|FormDefinitionInterface
      */
     public function findNameById($id);
 
     /**
      * @param string $name
      *
-     * @return null|FormInterface
+     * @return null|FormDefinitionInterface
      */
     public function findIdByName(string $name);
 
     /**
-     * @return FormInterface[]
+     * @return FormDefinitionInterface[]
      */
     public function findAll();
 }

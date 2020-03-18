@@ -5,4 +5,6 @@ services:
         autoconfigure: true
         public: false
 
+    FormBuilderBundle\OutputWorkflow\OutputWorkflowDispatcher: ~
+
     FormBuilderBundle\Registry\OutputWorkflowChannelRegistry: ~

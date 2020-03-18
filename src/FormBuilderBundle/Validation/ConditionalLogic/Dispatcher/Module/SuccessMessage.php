@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
-use FormBuilderBundle\Model\FormInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SuccessMessageData;
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
@@ -16,11 +15,6 @@ class SuccessMessage implements ModuleInterface
      * @var DataFactory
      */
     protected $dataFactory;
-
-    /**
-     * @var FormInterface
-     */
-    protected $form;
 
     /**
      * @var array

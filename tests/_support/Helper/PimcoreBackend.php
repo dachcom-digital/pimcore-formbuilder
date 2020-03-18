@@ -7,9 +7,9 @@ use Codeception\TestInterface;
 use DachcomBundle\Test\Util\FileGeneratorHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
-use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Model\Form;
-use FormBuilderBundle\Model\FormInterface;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinition;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
@@ -66,16 +66,16 @@ class PimcoreBackend extends Module
      *
      * @param TestFormBuilder $formBuilder
      *
-     * @return FormInterface
+     * @return FormDefinitionInterface
      *
      * @throws \Codeception\Exception\ModuleException
      */
     public function haveAForm(TestFormBuilder $formBuilder)
     {
-        $form = $this->createForm($formBuilder);
-        $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
+        $formDefinition = $this->createForm($formBuilder);
+        $this->assertInstanceOf(FormDefinition::class, $this->getFormManager()->getById($formDefinition->getId()));
 
-        return $form;
+        return $formDefinition;
     }
 
     /**
@@ -458,7 +458,7 @@ class PimcoreBackend extends Module
     /**
      * @param TestFormBuilder $formBuilder
      *
-     * @return FormInterface
+     * @return FormDefinitionInterface
      * @throws \Exception
      */
     protected function createForm(TestFormBuilder $formBuilder)
@@ -470,12 +470,12 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @return FormManager
+     * @return FormDefinitionManager
      */
     protected function getFormManager()
     {
         try {
-            $manager = $this->getContainer()->get(FormManager::class);
+            $manager = $this->getContainer()->get(FormDefinitionManager::class);
         } catch (\Exception $e) {
             \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating form. message was: ' . $e->getMessage()));
             return null;

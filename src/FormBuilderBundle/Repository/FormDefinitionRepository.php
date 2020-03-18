@@ -4,11 +4,11 @@ namespace FormBuilderBundle\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use FormBuilderBundle\Model\Form;
-use FormBuilderBundle\Model\FormInterface;
-use FormBuilderBundle\Storage\DataConnector\FormDataConnectorInterface;
+use FormBuilderBundle\Model\FormDefinition;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 
-class FormRepository implements FormRepositoryInterface
+class FormDefinitionRepository implements FormDefinitionRepositoryInterface
 {
     /**
      * @var FormDataConnectorInterface
@@ -29,7 +29,7 @@ class FormRepository implements FormRepositoryInterface
         EntityManagerInterface $entityManager
     ) {
         $this->formDataConnector = $formDataConnector;
-        $this->repository = $entityManager->getRepository(Form::class);
+        $this->repository = $entityManager->getRepository(FormDefinition::class);
     }
 
     /**
@@ -41,7 +41,7 @@ class FormRepository implements FormRepositoryInterface
             return null;
         }
 
-        /** @var FormInterface $object */
+        /** @var FormDefinitionInterface $object */
         $object = $this->repository->find($id);
 
         return $this->assembleSingle($object);
@@ -56,7 +56,7 @@ class FormRepository implements FormRepositoryInterface
             return null;
         }
 
-        /** @var FormInterface $object */
+        /** @var FormDefinitionInterface $object */
         $object = $this->repository->findOneBy(['name' => $name]);
 
         return $this->assembleSingle($object);
@@ -93,36 +93,36 @@ class FormRepository implements FormRepositoryInterface
     }
 
     /**
-     * @param FormInterface|null $form
+     * @param FormDefinitionInterface|null $formDefinition
      *
-     * @return FormInterface|null
+     * @return FormDefinitionInterface|null
      */
-    protected function assembleSingle(?FormInterface $form)
+    protected function assembleSingle(?FormDefinitionInterface $formDefinition)
     {
-        if (!$form instanceof FormInterface) {
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return null;
         }
 
-        $this->formDataConnector->assignRelationDataToFormObject($form);
+        $this->formDataConnector->assignRelationDataToFormObject($formDefinition);
 
-        return $form;
+        return $formDefinition;
     }
 
     /**
-     * @param FormInterface[] $forms
+     * @param FormDefinitionInterface[] $formDefinitions
      *
-     * @return FormInterface[]
+     * @return FormDefinitionInterface[]
      */
-    protected function assembleMultiple(array $forms)
+    protected function assembleMultiple(array $formDefinitions)
     {
-        $assembledForms = [];
-        foreach ($forms as $form) {
-            if ($form instanceof FormInterface) {
-                $this->formDataConnector->assignRelationDataToFormObject($form);
-                $assembledForms[] = $form;
+        $assembledFormDefinitions = [];
+        foreach ($formDefinitions as $formDefinition) {
+            if ($formDefinition instanceof FormDefinitionInterface) {
+                $this->formDataConnector->assignRelationDataToFormObject($formDefinition);
+                $assembledFormDefinitions[] = $formDefinition;
             }
         }
 
-        return $assembledForms;
+        return $assembledFormDefinitions;
     }
 }

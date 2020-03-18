@@ -1,14 +1,12 @@
 <?php
 
-namespace FormBuilderBundle\Storage;
+namespace FormBuilderBundle\Model;
 
-class FormFieldContainer implements FormFieldContainerInterface
+use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
+use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
+
+class FormFieldContainerDefinition implements FormFieldContainerDefinitionInterface, EntityToArrayAwareInterface, SubFieldsAwareInterface
 {
-    /**
-     * @var bool
-     */
-    protected $update = false;
-
     /**
      * @var string
      */
@@ -43,14 +41,6 @@ class FormFieldContainer implements FormFieldContainerInterface
      * @var array
      */
     private $fields = [];
-
-    /**
-     * @param bool $update
-     */
-    public function __construct($update = false)
-    {
-        $this->update = $update;
-    }
 
     /**
      * {@inheritdoc}
@@ -135,14 +125,6 @@ class FormFieldContainer implements FormFieldContainerInterface
     /**
      * {@inheritdoc}
      */
-    public function isUpdated()
-    {
-        return $this->update;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setConfiguration(array $configuration = [])
     {
         $this->configuration = array_filter($configuration, function ($configElement) {
@@ -185,7 +167,7 @@ class FormFieldContainer implements FormFieldContainerInterface
             $array[ltrim($key, '_')] = $value;
         }
 
-        $removeKeys = ['update', 'fields'];
+        $removeKeys = ['fields'];
         $data = array_diff_key($array, array_flip($removeKeys));
 
         // parse fields

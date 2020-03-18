@@ -2,8 +2,7 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
-use FormBuilderBundle\Model\FormInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\ConstraintsData;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
@@ -25,17 +24,12 @@ class Constraints implements ModuleInterface
     protected $dataFactory;
 
     /**
-     * @var FormInterface
-     */
-    protected $form;
-
-    /**
      * @var array
      */
     protected $formData;
 
     /**
-     * @var FormFieldInterface
+     * @var FormFieldDefinitionInterface
      */
     protected $field;
 
@@ -74,7 +68,7 @@ class Constraints implements ModuleInterface
         ]);
 
         $resolver->setRequired(['formData', 'field', 'availableConstraints', 'appliedConditions']);
-        $resolver->setAllowedTypes('field', FormFieldInterface::class);
+        $resolver->setAllowedTypes('field', FormFieldDefinitionInterface::class);
         $resolver->setAllowedTypes('formData', ['array', 'null']);
         $resolver->setAllowedTypes('availableConstraints', 'array');
         $resolver->setAllowedTypes('appliedConditions', 'array');

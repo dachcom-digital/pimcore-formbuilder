@@ -23,9 +23,9 @@ class OutputWorkflow implements OutputWorkflowInterface
     protected $successManagement;
 
     /**
-     * @var FormInterface
+     * @var FormDefinitionInterface
      */
-    protected $form;
+    protected $formDefinition;
 
     /**
      * @var Collection|OutputWorkflowChannelInterface[]
@@ -88,17 +88,17 @@ class OutputWorkflow implements OutputWorkflowInterface
     /**
      * {@inheritdoc}
      */
-    public function setForm(FormInterface $form)
+    public function setFormDefinition(FormDefinitionInterface $formDefinition)
     {
-        $this->form = $form;
+        $this->formDefinition = $formDefinition;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getForm()
+    public function getFormDefinition()
     {
-        return $this->form;
+        return $this->formDefinition;
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Storage\Form;
+use FormBuilderBundle\Form\Data\FormData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -57,7 +57,7 @@ class DynamicFormType extends AbstractType
             'conditional_logic'  => [],
             'allow_extra_fields' => true,
             'csrf_protection'    => true,
-            'data_class'         => Form::class
+            'data_class'         => FormData::class
         ]);
     }
 }

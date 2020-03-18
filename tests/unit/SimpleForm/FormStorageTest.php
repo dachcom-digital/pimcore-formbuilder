@@ -4,7 +4,7 @@ namespace DachcomBundle\Test\unit\SimpleForm;
 
 use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use DachcomBundle\Test\Util\FormHelper;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 
 class FormStorageTest extends DachcomBundleTestCase
 {
@@ -14,7 +14,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormConfig()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -42,7 +42,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormNameConfig()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -55,7 +55,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormGroupEmptyConfig()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -68,7 +68,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormGroupPopulatedConfig()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $testFormBuilder->setGroup('group1');
         $form = $manager->save($testFormBuilder->build());
@@ -82,7 +82,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormAttribute()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $testFormBuilder->addFormAttributes('class', 'my-shiny-class');
         $form = $manager->save($testFormBuilder->build());
@@ -103,7 +103,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMultipleAttributes()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $testFormBuilder->addFormAttributes('class', 'my-shiny-class');
         $testFormBuilder->addFormAttributes('maxlength', 30);
@@ -128,7 +128,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMetaCreationDate()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -145,7 +145,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMetaCreationDateHasNotChangedAfterUpdating()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -165,7 +165,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMetaModificationDate()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -182,7 +182,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMetaModificationDateHasChangedAfterUpdating()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -202,7 +202,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMetaCreatedBy()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
@@ -217,7 +217,7 @@ class FormStorageTest extends DachcomBundleTestCase
      */
     public function testFormMetaModifiedBy()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 

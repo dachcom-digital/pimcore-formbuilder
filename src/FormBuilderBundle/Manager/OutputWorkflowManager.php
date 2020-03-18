@@ -73,8 +73,8 @@ class OutputWorkflowManager
             $outputWorkflow->setName($data['name']);
         }
 
-        if (isset($data['form'])) {
-            $outputWorkflow->setForm($data['form']);
+        if (isset($data['formDefinition'])) {
+            $outputWorkflow->setFormDefinition($data['formDefinition']);
         }
 
         $this->entityManager->persist($outputWorkflow);

@@ -1,8 +1,8 @@
 <?php
 
-namespace FormBuilderBundle\Storage;
+namespace FormBuilderBundle\Model;
 
-class FormFieldDynamic implements FormFieldDynamicInterface
+class FormFieldDynamicDefinition implements FormFieldDynamicDefinitionInterface
 {
     /**
      * @var string
@@ -25,24 +25,17 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     protected $optional;
 
     /**
-     * @var bool
-     */
-    protected $update = false;
-
-    /**
      * @param string $name
      * @param string $type
      * @param array  $options
      * @param array  $optional
-     * @param bool   $update
      */
-    public function __construct(string $name, string $type, array $options, array $optional = [], bool $update = false)
+    public function __construct(string $name, string $type, array $options, array $optional = [])
     {
         $this->name = $name;
         $this->type = $type;
         $this->options = $options;
         $this->optional = $optional;
-        $this->update = $update;
     }
 
     /**
@@ -59,14 +52,6 @@ class FormFieldDynamic implements FormFieldDynamicInterface
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isUpdated()
-    {
-        return $this->update;
     }
 
     /**

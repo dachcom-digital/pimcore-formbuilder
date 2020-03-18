@@ -2,12 +2,12 @@
 
 namespace FormBuilderBundle\Controller\Admin;
 
-use FormBuilderBundle\Backend\OutputWorkflow\Builder;
+use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\OutputWorkflowType;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\OutputWorkflowManager;
-use FormBuilderBundle\Model\FormInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\Form\FormError;
@@ -28,9 +28,9 @@ class OutputWorkflowController extends AdminController
     protected $formFactory;
 
     /**
-     * @var FormManager
+     * @var FormDefinitionManager
      */
-    protected $formManager;
+    protected $formDefinitionManager;
 
     /**
      * @var OutputWorkflowManager
@@ -38,29 +38,29 @@ class OutputWorkflowController extends AdminController
     protected $outputWorkflowManager;
 
     /**
-     * @var Builder
+     * @var ExtJsFormBuilder
      */
-    protected $builder;
+    protected $extJsFormBuilder;
 
     /**
      * @param Configuration         $configuration
      * @param FormFactoryInterface  $formFactory
-     * @param FormManager           $formManager
+     * @param FormDefinitionManager $formDefinitionManager
      * @param OutputWorkflowManager $outputWorkflowManager
-     * @param Builder               $builder
+     * @param ExtJsFormBuilder      $extJsFormBuilder
      */
     public function __construct(
         Configuration $configuration,
         FormFactoryInterface $formFactory,
-        FormManager $formManager,
+        FormDefinitionManager $formDefinitionManager,
         OutputWorkflowManager $outputWorkflowManager,
-        Builder $builder
+        ExtJsFormBuilder $extJsFormBuilder
     ) {
         $this->configuration = $configuration;
         $this->formFactory = $formFactory;
-        $this->formManager = $formManager;
+        $this->formDefinitionManager = $formDefinitionManager;
         $this->outputWorkflowManager = $outputWorkflowManager;
-        $this->builder = $builder;
+        $this->extJsFormBuilder = $extJsFormBuilder;
     }
 
     /**
@@ -73,17 +73,17 @@ class OutputWorkflowController extends AdminController
     {
         $mainItems = [];
 
-        $form = $this->formManager->getById($formId);
+        $formDefinition = $this->formDefinitionManager->getById($formId);
 
-        if (!$form instanceof FormInterface) {
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json($mainItems);
         }
 
-        if (!$form->hasOutputWorkflows()) {
+        if (!$formDefinition->hasOutputWorkflows()) {
             return $this->json($mainItems);
         }
 
-        foreach ($form->getOutputWorkflows() as $outputWorkflow) {
+        foreach ($formDefinition->getOutputWorkflows() as $outputWorkflow) {
             $mainItems[] = [
                 'id'            => $outputWorkflow->getId(),
                 'text'          => $outputWorkflow->getName(),
@@ -113,7 +113,7 @@ class OutputWorkflowController extends AdminController
         try {
             $outputWorkflow = $this->outputWorkflowManager->getById($outputWorkflowId);
             if ($outputWorkflow instanceof OutputWorkflowInterface) {
-                $data['data'] = $this->builder->generateExtJsForm($outputWorkflow);
+                $data['data'] = $this->extJsFormBuilder->generateExtJsOutputWorkflowForm($outputWorkflow);
             } else {
                 throw new \Exception(sprintf('No output workflow for id %d found.', $outputWorkflowId));
             }
@@ -141,9 +141,9 @@ class OutputWorkflowController extends AdminController
         $message = null;
         $id = null;
 
-        $form = $this->formManager->getById($formId);
+        $formDefinition = $this->formDefinitionManager->getById($formId);
 
-        if (!$form instanceof FormInterface) {
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             $success = false;
             $message = sprintf('No form for ID "%s" found.', $name);
         } elseif ($this->outputWorkflowManager->getFormOutputWorkflowByName($name, $formId) instanceof OutputWorkflowInterface) {
@@ -151,7 +151,7 @@ class OutputWorkflowController extends AdminController
             $message = sprintf('Output Workflow with name "%s" already exists!', $name);
         } else {
             try {
-                $outputWorkflow = $this->outputWorkflowManager->save(['form' => $form, 'name' => $name]);
+                $outputWorkflow = $this->outputWorkflowManager->save(['formDefinition' => $formDefinition, 'name' => $name]);
                 $id = $outputWorkflow->getId();
             } catch (\Exception $e) {
                 $success = false;
@@ -188,7 +188,7 @@ class OutputWorkflowController extends AdminController
         $existingWorkflow = null;
         if ($outputWorkflowName !== $storedOutputWorkflowName) {
             try {
-                $existingWorkflow = $this->outputWorkflowManager->getFormOutputWorkflowByName($outputWorkflowName, $outputWorkflow->getForm()->getId());
+                $existingWorkflow = $this->outputWorkflowManager->getFormOutputWorkflowByName($outputWorkflowName, $outputWorkflow->getFormDefinition()->getId());
             } catch (\Exception $e) {
                 // fail silently.
             }

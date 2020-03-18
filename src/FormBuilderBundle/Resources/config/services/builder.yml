@@ -6,13 +6,10 @@ services:
         public: true
 
     # form builder
-    FormBuilderBundle\Form\Builder: ~
+    FormBuilderBundle\Builder\FrontendFormBuilder: ~
 
     # backend form builder
-    FormBuilderBundle\Backend\Form\Builder: ~
-
-    # backend output workflow builder
-    FormBuilderBundle\Backend\OutputWorkflow\Builder:
+    FormBuilderBundle\Builder\ExtJsFormBuilder: ~
 
     # form values output applier
     FormBuilderBundle\Form\FormValuesOutputApplier: ~
@@ -23,5 +20,5 @@ services:
     FormBuilderBundle\Form\FormErrorsSerializerInterface: '@FormBuilderBundle\Form\FormErrorsSerializer'
 
     # form data connector
-    FormBuilderBundle\Storage\DataConnector\FormDataConnectorInterface: '@FormBuilderBundle\Storage\DataConnector\FormDataConnector'
-    FormBuilderBundle\Storage\DataConnector\FormDataConnector: ~
+    FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface: '@FormBuilderBundle\Form\Data\Connector\FormDataConnector'
+    FormBuilderBundle\Form\Data\Connector\FormDataConnector: ~

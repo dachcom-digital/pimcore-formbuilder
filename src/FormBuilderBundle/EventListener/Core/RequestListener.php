@@ -3,15 +3,17 @@
 namespace FormBuilderBundle\EventListener\Core;
 
 use FormBuilderBundle\Event\SubmissionEvent;
-use FormBuilderBundle\Form\Builder;
+use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Form\FormErrorsSerializerInterface;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\OutputWorkflow\OutputWorkflowDispatcher;
 use FormBuilderBundle\Session\FlashBagManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -19,9 +21,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RequestListener implements EventSubscriberInterface
 {
     /**
-     * @var Builder
+     * @var FrontendFormBuilder
      */
-    protected $formBuilder;
+    protected $frontendFormBuilder;
 
     /**
      * @var EventDispatcherInterface
@@ -44,24 +46,32 @@ class RequestListener implements EventSubscriberInterface
     protected $formErrorsSerializer;
 
     /**
-     * @param Builder                       $formBuilder
+     * @var OutputWorkflowDispatcher
+     */
+    protected $outputWorkflowDispatcher;
+
+    /**
+     * @param FrontendFormBuilder           $frontendFormBuilder
      * @param EventDispatcherInterface      $eventDispatcher
      * @param SessionInterface              $session
      * @param FlashBagManagerInterface      $flashBagManager
      * @param FormErrorsSerializerInterface $formErrorsSerializer
+     * @param OutputWorkflowDispatcher      $outputWorkflowDispatcher
      */
     public function __construct(
-        Builder $formBuilder,
+        FrontendFormBuilder $frontendFormBuilder,
         EventDispatcherInterface $eventDispatcher,
         SessionInterface $session,
         FlashBagManagerInterface $flashBagManager,
-        FormErrorsSerializerInterface $formErrorsSerializer
+        FormErrorsSerializerInterface $formErrorsSerializer,
+        OutputWorkflowDispatcher $outputWorkflowDispatcher
     ) {
-        $this->formBuilder = $formBuilder;
+        $this->frontendFormBuilder = $frontendFormBuilder;
         $this->eventDispatcher = $eventDispatcher;
         $this->session = $session;
         $this->flashBagManager = $flashBagManager;
         $this->formErrorsSerializer = $formErrorsSerializer;
+        $this->outputWorkflowDispatcher = $outputWorkflowDispatcher;
     }
 
     /**
@@ -79,7 +89,7 @@ class RequestListener implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
         $formConfiguration = [];
 
@@ -92,7 +102,7 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        $formId = $this->formBuilder->detectedFormIdByRequest($request);
+        $formId = $this->frontendFormBuilder->findFormIdByRequest($request);
         if (is_null($formId)) {
             return;
         }
@@ -103,7 +113,7 @@ class RequestListener implements EventSubscriberInterface
 
         try {
             $userOptions = isset($formConfiguration['user_options']) ? $formConfiguration['user_options'] : [];
-            $form = $this->formBuilder->buildForm($formId, $userOptions);
+            $form = $this->frontendFormBuilder->buildForm($formId, $userOptions);
         } catch (\Exception $e) {
             if ($request->isXmlHttpRequest()) {
                 $response = new JsonResponse([
@@ -117,29 +127,34 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                if ($sessionBag->has('form_configuration_' . $formId)) {
-                    $sessionBag->remove('form_configuration_' . $formId);
-                }
-
-                $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
-                $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
-
-                // implement output workflow here
-
-                if ($request->isXmlHttpRequest()) {
-                    $this->handleAjaxSuccessResponse($event, $submissionEvent, $formId);
-                } else {
-                    $this->handleDefaultSuccessResponse($event, $submissionEvent);
-                }
-            } else {
-                //only ajax forms want some feedback.
-                if ($request->isXmlHttpRequest()) {
-                    $this->handleAjaxErrorResponse($event, $form);
-                }
-            }
+        if (!$form->isSubmitted()) {
+            return;
         }
+
+        if (!$form->isValid()) {
+            if ($request->isXmlHttpRequest()) {
+                $this->handleAjaxErrorResponse($event, $form);
+            }
+
+            return;
+        }
+
+        if ($sessionBag->has('form_configuration_' . $formId)) {
+            $sessionBag->remove('form_configuration_' . $formId);
+        }
+
+        $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
+
+        // implement output workflow here
+        $this->outputWorkflowDispatcher->dispatch($submissionEvent);
+
+        if ($request->isXmlHttpRequest()) {
+            $this->handleAjaxSuccessResponse($event, $submissionEvent, $formId);
+        } else {
+            $this->handleDefaultSuccessResponse($event, $submissionEvent);
+        }
+
     }
 
     /**

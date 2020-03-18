@@ -2,6 +2,10 @@
 
 namespace FormBuilderBundle\EventListener;
 
+use Pimcore\Mail;
+use Pimcore\Model\Document;
+use Pimcore\Templating\Renderer\IncludeRenderer;
+use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\FormBuilderEvents;
@@ -11,12 +15,8 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SuccessMessageData;
-use Pimcore\Mail;
-use Pimcore\Model\Document;
-use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Model\FormInterface as FormBuilderFormInterface;
 
 class MailListener implements EventSubscriberInterface
 {
@@ -88,9 +88,9 @@ class MailListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $form = $event->getForm();
-        /** @var FormBuilderFormInterface $data */
+        /** @var FormDataInterface $data */
         $data = $form->getData();
-        $formId = $data->getId();
+        $formId = $data->getFormDefinition()->getId();
         $formConfiguration = $event->getFormConfiguration();
 
         try {
@@ -136,11 +136,11 @@ class MailListener implements EventSubscriberInterface
      */
     protected function sendForm($mailTemplateId, $userOptions, FormInterface $form, $locale, $isCopy = false)
     {
-        /** @var FormBuilderFormInterface $data */
-        $data = $form->getData();
+        /** @var FormDataInterface $formData */
+        $formData = $form->getData();
 
         /** @var MailBehaviourData $mailConditionData */
-        $mailConditionData = $this->checkMailCondition($form, 'mail_behaviour', ['isCopy' => $isCopy]);
+        $mailConditionData = $this->checkMailCondition($formData, 'mail_behaviour', ['isCopy' => $isCopy]);
 
         if ($mailConditionData->hasMailTemplate()) {
             $conditionalMailTemplateId = $mailConditionData->getMailTemplateId($locale);
@@ -162,14 +162,14 @@ class MailListener implements EventSubscriberInterface
         }
 
         $attachments = [];
-        if ($data->hasAttachments() && $isCopy === false) {
-            $attachments = $data->getAttachments();
+        if ($formData->hasAttachments() && $isCopy === false) {
+            $attachments = $formData->getAttachments();
         }
 
         $mail = $this->mailParser->create($mailTemplate, $form, $attachments, $locale, $isCopy);
         $forceSubmissionAsPlainText = (bool) $mailTemplate->getProperty('mail_force_plain_text');
 
-        $mail->setParam('_form_builder_id', (int) $data->getId());
+        $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
         $mail->setParam('_form_builder_preset', $userOptions['form_preset'] === 'custom' ? null : $userOptions['form_preset']);
 
@@ -229,7 +229,10 @@ class MailListener implements EventSubscriberInterface
      */
     protected function onSuccess(SubmissionEvent $event, FormInterface $form, $locale)
     {
-        $formId = $form->getData()->getId();
+        /** @var FormDataInterface $formData */
+        $formData = $form->getData();
+
+        $formId = $formData->getFormDefinition()->getId();
         $error = false;
         $message = 'Success!';
 
@@ -238,8 +241,7 @@ class MailListener implements EventSubscriberInterface
             return false;
         }
 
-        /** @var SuccessMessageData $successConditionData */
-        $successConditionData = $this->checkMailCondition($form, 'success_message');
+        $successConditionData = $this->checkMailCondition($formData, 'success_message');
 
         if ($successConditionData->hasData()) {
             $afterSuccess = $successConditionData->getIdentifiedData($locale);
@@ -282,19 +284,19 @@ class MailListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FormInterface $form
-     * @param string        $dispatchModule
-     * @param array         $moduleOptions
+     * @param FormDataInterface $formData
+     * @param string            $dispatchModule
+     * @param array             $moduleOptions
      *
      * @return DataInterface
      *
      * @throws \Exception
      */
-    protected function checkMailCondition(FormInterface $form, $dispatchModule, $moduleOptions = [])
+    protected function checkMailCondition(FormDataInterface $formData, $dispatchModule, $moduleOptions = [])
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
-            'formData'         => $form->getData()->getData(),
-            'conditionalLogic' => $form->getData()->getConditionalLogic()
+            'formData'         => $formData->getData(),
+            'conditionalLogic' => $formData->getFormDefinition()->getConditionalLogic()
         ], $moduleOptions);
     }
 }

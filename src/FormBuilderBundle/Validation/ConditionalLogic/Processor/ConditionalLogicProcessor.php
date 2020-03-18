@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Processor;
 
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
-use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 
@@ -26,9 +26,9 @@ class ConditionalLogicProcessor
      * Cycle through each cl block.
      * If $filterField is not NULL, the action applier requests a FieldReturnStack with valid $fielderField field in return data.
      *
-     * @param array                   $formData
-     * @param array                   $conditionalLogic
-     * @param null|FormFieldInterface $fieldFilter
+     * @param array                             $formData
+     * @param array                             $conditionalLogic
+     * @param null|FormFieldDefinitionInterface $fieldFilter
      *
      * @return array
      *
@@ -82,11 +82,11 @@ class ConditionalLogicProcessor
     }
 
     /**
-     * @param bool                    $validationState
-     * @param array                   $actions
-     * @param array                   $formData
-     * @param int                     $ruleId
-     * @param null|FormFieldInterface $fieldFilter
+     * @param bool                              $validationState
+     * @param array                             $actions
+     * @param array                             $formData
+     * @param int                               $ruleId
+     * @param null|FormFieldDefinitionInterface $fieldFilter
      *
      * @return array
      *
@@ -104,7 +104,7 @@ class ConditionalLogicProcessor
             $appliedData = $this->conditionalLogicRegistry->getAction($action['type'])->setValues($action)->apply($validationState, $formData, $ruleId);
 
             //Field Filter is active: only add affected field data to return container!
-            if ($fieldFilter instanceof FormFieldInterface) {
+            if ($fieldFilter instanceof FormFieldDefinitionInterface) {
                 if (!$appliedData instanceof FieldReturnStack) {
                     continue;
                 }
