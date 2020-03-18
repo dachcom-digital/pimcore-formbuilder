@@ -60,21 +60,22 @@ class MailParser
      * @param Email         $mailTemplate
      * @param FormInterface $form
      * @param array         $attachments
+     * @param array         $channelConfiguration
      * @param string        $locale
-     * @param bool          $isCopy
      *
      * @return Mail
      *
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, array $attachments, $locale, $isCopy)
+    public function create(Email $mailTemplate, FormInterface $form, array $attachments, array $channelConfiguration, $locale)
     {
         $mail = new Mail();
 
-        $disableDefaultMailBody = (bool) $mailTemplate->getProperty('mail_disable_default_mail_body');
+        $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
+        $ignoreFields = is_null($channelConfiguration['ignoreFields']) ? [] : $channelConfiguration['ignoreFields'];
 
-        $ignoreFields = (string) $mailTemplate->getProperty('mail_ignore_fields');
-        $ignoreFields = array_map('trim', explode(',', $ignoreFields));
+        $hasIsCopyFlag = isset($channelConfiguration['legacyIsCopy']);
+        $isCopy = $hasIsCopyFlag && $channelConfiguration['legacyIsCopy'] === true;
 
         $initialCharset = $mail->getCharset();
         $fieldValues = $this->formValuesOutputApplier->applyForChannel($form, $ignoreFields, 'mail', $locale);

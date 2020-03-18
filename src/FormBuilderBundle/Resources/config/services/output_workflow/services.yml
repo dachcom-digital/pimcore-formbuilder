@@ -5,6 +5,16 @@ services:
         autoconfigure: true
         public: false
 
+    FormBuilderBundle\OutputWorkflow\SuccessManagementWorkerInterface: '@FormBuilderBundle\OutputWorkflow\SuccessManagementWorker'
+    FormBuilderBundle\OutputWorkflow\SuccessManagementWorker: ~
+
+    FormBuilderBundle\OutputWorkflow\FormSubmissionFinisherInterface: '@FormBuilderBundle\OutputWorkflow\FormSubmissionFinisher'
+    FormBuilderBundle\OutputWorkflow\FormSubmissionFinisher: ~
+
+    FormBuilderBundle\OutputWorkflow\OutputWorkflowDispatcherInterface: '@FormBuilderBundle\OutputWorkflow\OutputWorkflowDispatcher'
     FormBuilderBundle\OutputWorkflow\OutputWorkflowDispatcher: ~
+
+    FormBuilderBundle\OutputWorkflow\OutputWorkflowResolverInterface: '@FormBuilderBundle\OutputWorkflow\OutputWorkflowResolver'
+    FormBuilderBundle\OutputWorkflow\OutputWorkflowResolver: ~
 
     FormBuilderBundle\Registry\OutputWorkflowChannelRegistry: ~

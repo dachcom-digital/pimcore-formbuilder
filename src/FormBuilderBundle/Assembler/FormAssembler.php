@@ -6,6 +6,8 @@ use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormAssembler
@@ -114,15 +116,15 @@ class FormAssembler
             'form_template' => $this->optionsResolver->getFormTemplateName()
         ];
 
-        /** @var \Symfony\Component\Form\Form $form */
+        /** @var FormInterface $form */
         $form = $this->frontendFormBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
 
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
 
         //store current configuration for further events.
         $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
-            'user_options' => [
+            'form_runtime_options' => [
                 'form_preset'    => $this->optionsResolver->getFormPreset(),
                 'form_template'  => $this->optionsResolver->getFormTemplateName(),
                 'custom_options' => $this->optionsResolver->getCustomOptions()

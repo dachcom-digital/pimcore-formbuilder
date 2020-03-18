@@ -5,6 +5,7 @@ services:
         autoconfigure: true
         public: false
 
+    FormBuilderBundle\OutputWorkflow\Channel\Email\EmailOutputChannelWorker: ~
     FormBuilderBundle\OutputWorkflow\Channel\Email\EmailOutputChannel:
         tags:
             - { name: form_builder.output_workflow.channel, type: email }

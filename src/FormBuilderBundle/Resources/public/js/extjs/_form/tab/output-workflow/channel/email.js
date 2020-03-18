@@ -59,12 +59,23 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
                 filterPickList: false,
                 editable: true,
                 hideTrigger: true,
-                allowBlank: false,
+                allowBlank: true,
                 anchor: '100%',
                 flex: 1,
                 autoEl: {
                     tag: 'div',
                     'data-qtip': t('form_builder.output_workflow.output_workflow_channel.email.ignore_fields_help')
+                }
+            },{
+                xtype: 'checkbox',
+                value: localeData !== null ? localeData['allowAttachments'] : null,
+                inputValue: true,
+                uncheckedValue: false,
+                fieldLabel: t('form_builder.output_workflow.output_workflow_channel.email.allow_attachments'),
+                name: locale + '.allowAttachments',
+                autoEl: {
+                    tag: 'div',
+                    'data-qtip': t('form_builder.output_workflow.output_workflow_channel.email.allow_attachments_help')
                 }
             },
             {

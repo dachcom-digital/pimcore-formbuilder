@@ -29,6 +29,11 @@ class SubmissionEvent extends Event
     private $redirectUri = null;
 
     /**
+     * @var bool
+     */
+    private $outputWorkflowFinisherDisabled = false;
+
+    /**
      * @param Request       $request
      * @param array         $formConfiguration
      * @param FormInterface $form
@@ -38,6 +43,19 @@ class SubmissionEvent extends Event
         $this->request = $request;
         $this->formConfiguration = $formConfiguration;
         $this->form = $form;
+    }
+
+    public function disableOutputWorkflowFinisher()
+    {
+        $this->outputWorkflowFinisherDisabled = true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function outputWorkflowFinisherIsDisabled()
+    {
+        return $this->outputWorkflowFinisherDisabled === true;
     }
 
     /**

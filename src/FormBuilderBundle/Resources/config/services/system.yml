@@ -16,8 +16,8 @@ services:
     # tool: file locator
     FormBuilderBundle\Tool\FormDependencyLocator: ~
 
-    # tool: href locale mapper
-    FormBuilderBundle\Tool\HrefLocaleMapper: ~
+    # tool: locale data mapper
+    FormBuilderBundle\Tool\LocaleDataMapper: ~
 
     # tool: recaptcha processor
     FormBuilderBundle\Tool\ReCaptchaProcessorInterface: '@FormBuilderBundle\Tool\ReCaptchaProcessor'

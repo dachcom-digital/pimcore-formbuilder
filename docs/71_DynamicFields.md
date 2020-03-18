@@ -26,6 +26,7 @@ namespace AppBundle\EventListener;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -46,10 +47,12 @@ class FormListener implements EventSubscriberInterface
 
         /** @var FormDataInterface $formData */
         $formData = $formEvent->getData();
+        /** @var FormDefinitionInterface $formDefinition */
+        $formDefinition = $formData->getFormDefinition();
 
         // get the form id/name from backend
-        $formId = $formData->getFormDefinition()->getId();
-        $formName = $formData->getFormDefinition()->getName();
+        $formId = $formDefinition->getId();
+        $formName = $formDefinition->getName();
 
         // get form options like the selected form preset
         $formOptions = $event->getFormOptions();
@@ -101,4 +104,4 @@ class FormListener implements EventSubscriberInterface
     }
 }
 ```
-> Info: Checkout the [ajax form example](20_AjaxForms.md) to learn how to combine dynamic fields with ajax forms.
+> Info: Checkout the [dynamic fields with ajax example](72_DynamicFieldsWithAjax.md) to learn how to combine dynamic fields with ajax forms.

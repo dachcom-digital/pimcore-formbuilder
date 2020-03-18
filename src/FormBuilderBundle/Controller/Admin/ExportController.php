@@ -82,6 +82,7 @@ class ExportController extends AdminController
             'email_id',
             'preset',
             'is_copy',
+            'output_workflow_name',
             'to',
             'cc',
             'bcc',
@@ -187,6 +188,8 @@ class ExportController extends AdminController
                 $key = 'preset';
             } elseif ($key === '_form_builder_is_copy') {
                 $key = 'is_copy';
+            } elseif ($key === '_form_builder_output_workflow_name') {
+                $key = 'output_workflow_name';
             }
 
             $formField = $formDefinition->getField($key);
