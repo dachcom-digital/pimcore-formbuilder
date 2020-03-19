@@ -1,15 +1,16 @@
 <?php
 
-namespace FormBuilderBundle\Parser;
+namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
-use FormBuilderBundle\Form\Data\FormDataInterface;
-use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
-use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
-use FormBuilderBundle\Stream\AttachmentStreamInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Templating\EngineInterface;
+use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
+use FormBuilderBundle\Stream\AttachmentStreamInterface;
 
 class MailParser
 {
@@ -89,7 +90,7 @@ class MailParser
         if ($disableDefaultMailBody === false) {
             /** @var FormDataInterface $formData */
             $formData = $form->getData();
-            $mailLayout = $formData->getFormDefinition()->getMailLayoutBasedOnLocale($isCopy === false ? 'main' : 'copy', $locale);
+            $mailLayout = $this->getMailLayout($formData->getFormDefinition(), $channelConfiguration, $isCopy, $locale);
             $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
         }
 
@@ -346,4 +347,54 @@ class MailParser
 
         return $values;
     }
+
+    /**
+     * @param FormDefinitionInterface $formDefinition
+     * @param array                   $channelConfiguration
+     * @param bool                    $isCopy
+     * @param string                  $locale
+     *
+     * @return string|null
+     */
+    public function getMailLayout(FormDefinitionInterface $formDefinition, array $channelConfiguration, bool $isCopy, string $locale)
+    {
+        if (!empty($channelConfiguration['mailLayoutData'])) {
+            return $channelConfiguration['mailLayoutData'];
+        }
+
+        $formMailLayout = $formDefinition->getMailLayout();
+
+        if ($formMailLayout !== null) {
+            return $this->getFallbackMailLayoutBasedOnLocale($formMailLayout, $isCopy === false ? 'main' : 'copy', $locale);
+        }
+
+        return null;
+    }
+
+    /**
+     * Fallback mail layout
+     *
+     * @param array       $mailLayout
+     * @param string      $mailType
+     * @param string|null $locale
+     *
+     * @return string|null
+     */
+    public function getFallbackMailLayoutBasedOnLocale(array $mailLayout, string $mailType, string $locale = null)
+    {
+        if (!isset($mailLayout[$mailType])) {
+            return null;
+        }
+
+        if (isset($mailLayout[$mailType][$locale])) {
+            return $mailLayout[$mailType][$locale];
+        }
+
+        if (isset($mailLayout[$mailType]['default'])) {
+            return $mailLayout[$mailType]['default'];
+        }
+
+        return null;
+    }
+
 }

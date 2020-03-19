@@ -10,6 +10,9 @@ services:
         tags:
             - { name: form_builder.output_workflow.channel, type: email }
 
+    FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser:
+        shared: false
+
     FormBuilderBundle\OutputWorkflow\Channel\Object\ObjectOutputChannel:
         tags:
             - { name: form_builder.output_workflow.channel, type: object }

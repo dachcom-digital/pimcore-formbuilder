@@ -3,10 +3,14 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.abstractChannel = Class.creat
 
     type: null,
     data: null,
+    formId: null,
+    channelId: null,
     panel: null,
 
-    initialize: function (type, data) {
+    initialize: function (type, data, formId) {
         this.type = type;
+        this.formId = formId;
+        this.channelId = data && data.hasOwnProperty('id') ? data.id : null;
         this.data = data && data.hasOwnProperty('configuration') ? data.configuration : null;
     },
 

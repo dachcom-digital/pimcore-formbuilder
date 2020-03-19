@@ -10,14 +10,16 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
     channelPanelConfigClasses: null,
 
     workflowData: null,
+    formId: null,
     outputWorkflowChannelStore: null,
     outputWorkflowChannels: null,
     outputWorkflowSuccessManagementData: null,
 
-    initialize: function (workflowData, parentPanel) {
+    initialize: function (workflowData, formId, parentPanel) {
         this.channelPanelConfigClasses = [];
         this.parentPanel = parentPanel;
         this.workflowData = workflowData;
+        this.formId = formId;
         this.outputWorkflowChannelStore = this.workflowData.hasOwnProperty('output_workflow_channels_store') ? this.workflowData.output_workflow_channels_store : [];
         this.outputWorkflowChannels = this.workflowData.hasOwnProperty('output_workflow_channels') ? this.workflowData.output_workflow_channels : [];
         this.outputWorkflowSuccessManagementData = this.workflowData.hasOwnProperty('output_workflow_success_management') ? this.workflowData.output_workflow_success_management : {};
@@ -236,7 +238,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             return null;
         }
 
-        channelConfigPanel = new Formbuilder.extjs.formPanel.outputWorkflow.channel[channelIdentifier](channelIdentifier, data);
+        channelConfigPanel = new Formbuilder.extjs.formPanel.outputWorkflow.channel[channelIdentifier](channelIdentifier, data, this.formId);
 
         return channelConfigPanel;
     },

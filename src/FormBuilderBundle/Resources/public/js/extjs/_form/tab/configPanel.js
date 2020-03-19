@@ -14,6 +14,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
     formId: null,
     formName: null,
     formMeta: {},
+    formHasOutputWorkflows: false,
     formConfig: null,
     formConfigStore: {},
     formConditionalsStructured: {},
@@ -48,6 +49,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
         this.formName = formData.name;
         this.formGroup = formData.group;
         this.formMeta = formData.meta;
+        this.formHasOutputWorkflows = formData.has_output_workflows;
         this.formConfig = formData.config.length === 0 ? {} : formData.config;
         this.formConfigStore = formData.config_store;
         this.formConditionalsStructured = formData.conditional_logic;
@@ -842,12 +844,14 @@ Formbuilder.extjs.formPanel.config = Class.create({
             handler: this.showFormMetaInfo.bind(this)
         });
 
-        items.push({
-            tooltip: t('form_builder.mail_editor.open_editor'),
-            iconCls: 'pimcore_icon_mail_editor',
-            scale: 'medium',
-            handler: this.showMailEditor.bind(this)
-        });
+        if (this.formHasOutputWorkflows === false) {
+            items.push({
+                tooltip: t('form_builder.mail_editor.open_editor'),
+                iconCls: 'pimcore_icon_mail_editor',
+                scale: 'medium',
+                handler: this.showMailEditor.bind(this)
+            });
+        }
 
         toolbar.add(items);
 

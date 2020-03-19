@@ -251,31 +251,6 @@ class FormDefinition implements FormDefinitionInterface, SubFieldsAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function getMailLayoutBasedOnLocale(string $mailType, string $locale = null)
-    {
-        $mailLayout = $this->getMailLayout();
-        if (is_null($mailLayout)) {
-            return null;
-        }
-
-        if (!isset($mailLayout[$mailType])) {
-            return null;
-        }
-
-        if (isset($mailLayout[$mailType][$locale])) {
-            return $mailLayout[$mailType][$locale];
-        }
-
-        if (isset($mailLayout[$mailType]['default'])) {
-            return $mailLayout[$mailType]['default'];
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setConfig(array $config)
     {
         $validConfig = array_intersect_key($config, array_flip(self::ALLOWED_FORM_KEYS));

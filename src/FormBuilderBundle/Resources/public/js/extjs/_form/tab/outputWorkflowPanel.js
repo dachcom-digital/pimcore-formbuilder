@@ -225,7 +225,8 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
         }
 
         this.activeWorkflowId = responseData.data.id;
-        formPanel = new Formbuilder.extjs.formPanel.outputWorkflow.configPanel(responseData.data, this);
+
+        formPanel = new Formbuilder.extjs.formPanel.outputWorkflow.configPanel(responseData.data, this.formId, this);
 
         this.editPanel.add(formPanel.getLayout());
     },

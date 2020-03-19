@@ -53,12 +53,12 @@ class ExtJsFormBuilder
     protected $outputWorkflowChannelRegistry;
 
     /**
-     * @param Configuration              $configuration
+     * @param Configuration                 $configuration
      * @param SerializerInterface           $serializer
-     * @param TemplateManager            $templateManager
-     * @param Translator                 $translator
-     * @param OptionsTransformerRegistry $optionsTransformerRegistry
-     * @param ConditionalLogicRegistry   $conditionalLogicRegistry
+     * @param TemplateManager               $templateManager
+     * @param Translator                    $translator
+     * @param OptionsTransformerRegistry    $optionsTransformerRegistry
+     * @param ConditionalLogicRegistry      $conditionalLogicRegistry
      * @param OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry
      */
     public function __construct(
@@ -91,15 +91,16 @@ class ExtJsFormBuilder
     public function generateExtJsForm(FormDefinitionInterface $formDefinition)
     {
         $data = [
-            'id'     => $formDefinition->getId(),
-            'name'   => $formDefinition->getName(),
-            'group'  => $formDefinition->getGroup(),
-            'config' => $formDefinition->getConfig(),
-            'meta'   => [
+            'id'                   => $formDefinition->getId(),
+            'name'                 => $formDefinition->getName(),
+            'group'                => $formDefinition->getGroup(),
+            'config'               => $formDefinition->getConfig(),
+            'has_output_workflows' => $formDefinition->hasOutputWorkflows(),
+            'meta'                 => [
                 'creation_date'     => $formDefinition->getCreationDate(),
                 'modification_date' => $formDefinition->getModificationDate(),
                 'created_by'        => $formDefinition->getCreatedBy(),
-                'modified_by'       => $formDefinition->getModifiedBy(),
+                'modified_by'       => $formDefinition->getModifiedBy()
             ]
         ];
 

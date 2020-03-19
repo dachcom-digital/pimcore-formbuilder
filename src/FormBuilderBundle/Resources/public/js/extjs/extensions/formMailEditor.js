@@ -2,29 +2,49 @@ pimcore.registerNS('Formbuilder.extjs.extensions.formMailEditor');
 Formbuilder.extjs.extensions.formMailEditor = Class.create({
 
     formId: null,
+    isLocal: null,
+    specificLocale: null,
+    callbacks: null,
     fields: {},
     selectionWindow: null,
     detailWindow: null,
     editPanel: null,
     selectionId: null,
     ckEditors: {},
+    additionalParameter: {},
 
+    forceClose: false,
     configuration: null,
     editorData: null,
     mailType: null,
 
-    initialize: function (formId) {
+    initialize: function (formId, identifier, additionalParameter, isLocal, specificLocale, callbacks) {
 
         this.formId = formId;
+        this.specificLocale = specificLocale ? specificLocale : null;
+        this.isLocal = isLocal === true;
+        this.callbacks = callbacks;
+        this.additionalParameter = additionalParameter ? additionalParameter : {};
+
         this.ckEditors = {};
         this.mailType = null;
-
+        this.forceClose = false;
         this.selectionId = 'form_mail_selection_' + Ext.id();
 
-        this.getMailTypeSelectorWindow();
+        if (identifier) {
+            this.mailType = identifier;
+            this.loadMailEditor();
+        } else {
+            this.getMailTypeSelectorWindow();
+        }
     },
 
     checkClose: function (win) {
+
+        if (this.forceClose === true) {
+            win.closeMe = true;
+            return true;
+        }
 
         if (win.closeMe) {
             win.closeMe = false;
@@ -47,7 +67,6 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
     },
 
     onClose: function (editorId) {
-
         if (this.ckEditors[editorId]) {
             this.ckEditors[editorId]['editor'].destroy();
             delete this.ckEditors[editorId];
@@ -156,7 +175,8 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
                                 method: 'DELETE',
                                 params: {
                                     id: this.formId,
-                                    mailType: data.get('identifier')
+                                    mailType: data.get('identifier'),
+                                    additionalParameter: this.additionalParameter
                                 },
                                 success: function () {
                                     this.selectionWindow.setLoading(false);
@@ -204,13 +224,18 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             cls: 'formbuilder-mail-editor',
             modal: true,
             listeners: {
-                beforeClose: this.checkClose
+                beforeClose: this.checkClose.bind(this)
             },
             buttons: [
                 {
                     text: t('save'),
                     iconCls: 'pimcore_icon_save',
                     handler: this.saveEditorData.bind(this)
+                },
+                {
+                    text: t('save_close'),
+                    iconCls: 'pimcore_icon_save',
+                    handler: this.saveEditorDataAndClose.bind(this)
                 },
                 {
                     text: t('close'),
@@ -244,7 +269,7 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
         this.leftPanel = new Ext.Panel({
             closable: false,
             border: false,
-            title: 'Editor' + ' (Mail Type: ' + (t('form_builder.mail_editor.mail_type_' + this.mailType)) + ')',
+            title: 'Editor' + ' (' + t('form_builder.mail_editor.mail_type_slug') + ': ' + t('form_builder.mail_editor.mail_type_' + this.mailType) + ')',
             layout: 'fit',
             flex: 3,
             align: 'stretch',
@@ -274,10 +299,15 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
     initializeLocalizedEditor: function () {
 
         var tabs = [],
-            editorField;
+            editorField,
+            locales,
+            pimcoreLocales = Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : [];
 
-        var pimcoreLocale = Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : [],
-            locales = Ext.Array.merge(['default'], pimcoreLocale);
+        if (this.specificLocale === null) {
+            locales = Ext.Array.merge(['default'], pimcoreLocales)
+        } else {
+            locales = [this.specificLocale]
+        }
 
         Ext.each(locales, function (locale) {
 
@@ -322,7 +352,6 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
         var selectionField;
 
         selectionField = Ext.get(this.selectionId);
-
         selectionField.createChild('<span><strong>Attention! </strong>This mail editor does not respect any special mail template language (like inky)!<br><br></span>');
 
         Ext.Array.each(this.configuration.widgetGroups, function (groupData) {
@@ -389,31 +418,52 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
 
     loadEditorData: function () {
 
+        var loadSuccess = function (data) {
+            this.editorData = this.isLocal ? this.callbacks.loadData() : data.data;
+            this.configuration = data.configuration;
+            this.detailWindow.setLoading(false);
+            this.createPanel();
+        }.bind(this);
+
         this.detailWindow.setLoading(true);
 
         Ext.Ajax.request({
             url: '/admin/formbuilder/mail-editor/load',
             params: {
                 id: this.formId,
-                mailType: this.mailType
+                mailType: this.mailType,
+                additionalParameter: this.additionalParameter,
+                externalData: this.isLocal === true
             },
             success: function (resp) {
                 var data = Ext.decode(resp.responseText);
-                this.editorData = data.data;
-                this.configuration = data.configuration;
-                this.detailWindow.setLoading(false);
-                this.createPanel();
+                loadSuccess(data);
             }.bind(this)
         });
     },
 
-    saveEditorData: function () {
+    saveEditorDataAndClose: function () {
+        this.saveEditorData(null, null, function () {
+            this.forceClose = true;
+            this.detailWindow.close();
+        }.bind(this));
+    },
+
+    saveEditorData: function (el, ev, callback) {
 
         var data = {};
 
         Ext.Object.each(this.ckEditors, function (index, editorData) {
             data[editorData['locale']] = editorData['editor'].getData();
         });
+
+        if (this.isLocal === true) {
+            this.callbacks.saveData(data);
+            if (typeof callback === 'function') {
+                callback();
+            }
+            return;
+        }
 
         this.editPanel.setLoading(true);
 
@@ -424,16 +474,30 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
                 mailType: this.mailType,
                 data: Ext.encode(data)
             },
-            success: function () {
+            success: function (resp) {
+
+                var data = Ext.decode(resp.responseText);
                 this.editPanel.setLoading(false);
+
+                if (data.success === false) {
+                    Ext.Msg.alert(t('error'), data.message);
+                    return;
+                }
+
+                if (typeof callback === 'function') {
+                    callback();
+                }
             }.bind(this)
         });
     },
 
+    /**
+     * @todo: remove "clipboard" in version 4.0
+     */
     initCkEditorPlugins: function () {
         Ext.Array.each(['widget', 'widgetselection', 'lineutils', 'formmaileditor', 'clipboard', 'notification'], function (pluginName) {
             if (CKEDITOR.plugins.get(pluginName) === null) {
-                CKEDITOR.plugins.addExternal(pluginName, '/bundles/formbuilder/js/comp/ckeditor/' + pluginName + '/', 'plugin.js');
+                CKEDITOR.plugins.addExternal(pluginName, '/bundles/formbuilder/js/extjs/ckeditor/' + pluginName + '/', 'plugin.js');
             }
         });
     },

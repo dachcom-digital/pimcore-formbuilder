@@ -2,18 +2,18 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email;
 
-use FormBuilderBundle\Event\MailEvent;
-use FormBuilderBundle\Form\Data\FormDataInterface;
-use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Parser\MailParser;
-use FormBuilderBundle\Session\FlashBagManagerInterface;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\Form\FormInterface;
+use FormBuilderBundle\Event\MailEvent;
+use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Session\FlashBagManagerInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 
 class EmailOutputChannelWorker
 {

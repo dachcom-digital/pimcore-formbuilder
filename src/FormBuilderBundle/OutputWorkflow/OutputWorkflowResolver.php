@@ -108,6 +108,7 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
                     'type'    => 'document',
                     'subtype' => 'email',
                 ],
+                'mailLayoutData'         => null,
                 'legacyIsCopy'           => $isCopy,
                 'allowAttachments'       => $isCopy === false,
                 'ignoreFields'           => $ignoreFields,

@@ -122,14 +122,6 @@ interface FormDefinitionInterface
     public function getOutputWorkflows();
 
     /**
-     * @param string      $mailType
-     * @param string|null $locale
-     *
-     * @return string|null
-     */
-    public function getMailLayoutBasedOnLocale(string $mailType, string $locale = null);
-
-    /**
      * @param array $config
      */
     public function setConfig(array $config);

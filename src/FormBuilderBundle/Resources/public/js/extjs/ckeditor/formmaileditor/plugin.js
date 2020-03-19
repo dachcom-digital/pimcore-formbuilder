@@ -8,7 +8,7 @@
 
         init: function (editor) {
 
-            CKEDITOR.dialog.add('formmaileditor', '/bundles/formbuilder/js/comp/ckeditor/formmaileditor/dialogs/placeholder.js');
+            CKEDITOR.dialog.add('formmaileditor', '/bundles/formbuilder/js/extjs/ckeditor/formmaileditor/dialogs/placeholder.js');
 
             editor.widgets.add('formmaileditor', {
 

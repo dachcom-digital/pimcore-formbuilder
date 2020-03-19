@@ -105,6 +105,7 @@ class MailEditorController extends AdminController
     {
         $formId = $request->get('id');
         $mailType = $request->get('mailType');
+        $externalData = $request->get('externalData', 'false');
 
         /** @var FormDefinitionManager $formDefinitionManager */
         $formDefinitionManager = $this->get(FormDefinitionManager::class);
@@ -122,8 +123,6 @@ class MailEditorController extends AdminController
         }
 
         $formFields = $backendFormBuilder->generateExtJsFields($fieldData);
-
-        $mailLayouts = $formDefinition->getMailLayout();
 
         $widgets = $this->get(MailEditorWidgetRegistry::class)->getAll();
 
@@ -164,15 +163,21 @@ class MailEditorController extends AdminController
 
         $allWidgets = array_values($allWidgets);
 
-        return $this->json([
+        $data = [
             'formId'        => (int) $formId,
-            'data'          => isset($mailLayouts[$mailType]) ? $mailLayouts[$mailType] : null,
             'configuration' => [
                 'help'                => '',
                 'widgetGroups'        => $allWidgets,
                 'widgetConfiguration' => $widgetsConfiguration
             ]
-        ]);
+        ];
+
+        if ($externalData === 'false') {
+            $mailLayouts = $formDefinition->getMailLayout();
+            $data['data'] = isset($mailLayouts[$mailType]) ? $mailLayouts[$mailType] : null;
+        }
+
+        return $this->json($data);
     }
 
     /**
@@ -194,6 +199,15 @@ class MailEditorController extends AdminController
         $formDefinitionManager = $this->get(FormDefinitionManager::class);
 
         $formDefinition = $formDefinitionManager->getById($formId);
+
+        if ($formDefinition->hasOutputWorkflows()) {
+            return $this->json([
+                'formId'  => (int) $formId,
+                'success' => false,
+                'message' => 'You cannot use the global mail editor because this form already has some configured output workflows.'
+            ]);
+        }
+
         $storedMailLayout = is_array($formDefinition->getMailLayout()) ? $formDefinition->getMailLayout() : [];
 
         foreach ($mailLayouts as $locale => $mailLayout) {
