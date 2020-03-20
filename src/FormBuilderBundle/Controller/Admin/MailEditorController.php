@@ -11,9 +11,48 @@ use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class MailEditorController extends AdminController
 {
+    /**
+     * @var MailEditorWidgetRegistry
+     */
+    protected $mailEditorWidgetRegistry;
+
+    /**
+     * @var FormDefinitionManager
+     */
+    protected $formDefinitionManager;
+
+    /**
+     * @var ExtJsFormBuilder
+     */
+    protected $extJsFormBuilder;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param MailEditorWidgetRegistry $mailEditorWidgetRegistry
+     * @param FormDefinitionManager    $formDefinitionManager
+     * @param ExtJsFormBuilder         $extJsFormBuilder
+     * @param TranslatorInterface      $translator
+     */
+    public function __construct(
+        MailEditorWidgetRegistry $mailEditorWidgetRegistry,
+        FormDefinitionManager $formDefinitionManager,
+        ExtJsFormBuilder $extJsFormBuilder,
+        TranslatorInterface $translator
+    ) {
+        $this->mailEditorWidgetRegistry = $mailEditorWidgetRegistry;
+        $this->formDefinitionManager = $formDefinitionManager;
+        $this->extJsFormBuilder = $extJsFormBuilder;
+        $this->translator = $translator;
+    }
+
     /**
      * @param Request $request
      *
@@ -23,10 +62,7 @@ class MailEditorController extends AdminController
     {
         $formId = $request->get('id');
 
-        /** @var FormDefinitionManager $formDefinitionManager */
-        $formDefinitionManager = $this->get(FormDefinitionManager::class);
-
-        $formDefinition = $formDefinitionManager->getById($formId);
+        $formDefinition = $this->formDefinitionManager->getById($formId);
 
         if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json(['success' => false, 'message' => 'form is not available']);
@@ -59,10 +95,7 @@ class MailEditorController extends AdminController
         $formId = $request->get('id');
         $mailType = $request->get('mailType');
 
-        /** @var FormDefinitionManager $formDefinitionManager */
-        $formDefinitionManager = $this->get(FormDefinitionManager::class);
-
-        $formDefinition = $formDefinitionManager->getById($formId);
+        $formDefinition = $this->formDefinitionManager->getById($formId);
 
         if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json(['success' => false, 'message' => 'form is not available']);
@@ -81,7 +114,7 @@ class MailEditorController extends AdminController
         $formDefinition->setMailLayout(count($mailLayout) === 0 ? null : $mailLayout);
 
         try {
-            $formDefinitionManager->saveRawEntity($formDefinition);
+            $this->formDefinitionManager->saveRawEntity($formDefinition);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());
@@ -107,13 +140,7 @@ class MailEditorController extends AdminController
         $mailType = $request->get('mailType');
         $externalData = $request->get('externalData', 'false');
 
-        /** @var FormDefinitionManager $formDefinitionManager */
-        $formDefinitionManager = $this->get(FormDefinitionManager::class);
-
-        /** @var ExtJsFormBuilder $backendFormBuilder */
-        $backendFormBuilder = $this->get(ExtJsFormBuilder::class);
-
-        $formDefinition = $formDefinitionManager->getById($formId);
+        $formDefinition = $this->formDefinitionManager->getById($formId);
 
         $fieldData = [];
         foreach ($formDefinition->getFields() as $field) {
@@ -122,9 +149,9 @@ class MailEditorController extends AdminController
             }
         }
 
-        $formFields = $backendFormBuilder->generateExtJsFields($fieldData);
+        $formFields = $this->extJsFormBuilder->generateExtJsFields($fieldData);
 
-        $widgets = $this->get(MailEditorWidgetRegistry::class)->getAll();
+        $widgets = $this->mailEditorWidgetRegistry->getAll();
 
         $allWidgets = [];
         $widgetsConfiguration = [];
@@ -134,7 +161,7 @@ class MailEditorController extends AdminController
 
             if (!isset($allWidgets[$groupName])) {
                 $allWidgets[$groupName] = [
-                    'label'    => $this->get('translator')->trans($groupName, [], 'admin'),
+                    'label'    => $this->translator->trans($groupName, [], 'admin'),
                     'elements' => []
                 ];
             }
@@ -155,7 +182,7 @@ class MailEditorController extends AdminController
                 $allWidgets[$groupName]['elements'][] = [
                     'type'             => $widgetType,
                     'subType'          => null,
-                    'label'            => $this->get('translator')->trans($widget->getWidgetLabel(), [], 'admin'),
+                    'label'            => $this->translator->trans($widget->getWidgetLabel(), [], 'admin'),
                     'configIdentifier' => $widgetType,
                 ];
             }
@@ -195,10 +222,7 @@ class MailEditorController extends AdminController
 
         $mailLayouts = json_decode($request->get('data'), true);
 
-        /** @var FormDefinitionManager $formDefinitionManager */
-        $formDefinitionManager = $this->get(FormDefinitionManager::class);
-
-        $formDefinition = $formDefinitionManager->getById($formId);
+        $formDefinition = $this->formDefinitionManager->getById($formId);
 
         if ($formDefinition->hasOutputWorkflows()) {
             return $this->json([
@@ -221,7 +245,7 @@ class MailEditorController extends AdminController
         $formDefinition->setMailLayout(count($storedMailLayout) === 0 ? null : $storedMailLayout);
 
         try {
-            $formDefinitionManager->saveRawEntity($formDefinition);
+            $this->formDefinitionManager->saveRawEntity($formDefinition);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form mail layout with id %d. Error was: %s', $formId, $e->getMessage());
@@ -262,7 +286,7 @@ class MailEditorController extends AdminController
     protected function translateWidgetConfig(array $config)
     {
         foreach ($config as $index => $element) {
-            $config[$index]['label'] = $this->get('translator')->trans($element['label'], [], 'admin');
+            $config[$index]['label'] = $this->translator->trans($element['label'], [], 'admin');
         }
 
         return $config;

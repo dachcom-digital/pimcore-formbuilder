@@ -30,7 +30,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         this.panel = new Ext.form.FormPanel({
             title: t('general_settings'),
             bodyStyle: 'padding: 10px;',
-            autoScroll : true,
+            autoScroll: true,
             anchor: '100%',
             defaults: {
                 labelWidth: 200
@@ -163,7 +163,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
         var items = [{
             xtype: 'tbtext',
-            text: channelConfig.hasOwnProperty('label') ? channelConfig.label : ('Channel ' + index),
+            html: channelConfig.hasOwnProperty('label') ? '<strong>' + channelConfig.label + '</strong>' : ('Channel ' + index),
             iconCls: channelConfig.hasOwnProperty('icon_class') ? channelConfig.icon_class : 'pimcore_icon_output_workflow_channel',
         }];
 
@@ -245,7 +245,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
     saveOutputChannel: function (ev) {
 
-        var channelData = [], successManagementData, formData;
+        var channelData = [], successManagementData, formData, hasInvalidConfigChannel = false;
 
         Ext.each(this.channelPanelConfigClasses, function (channelWrapper) {
             var transposedData, compiledData = {}, dataClass = channelWrapper.dataClass;
@@ -254,8 +254,16 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
                 compiledData['configuration'] = transposedData.data();
                 compiledData['type'] = dataClass.getType();
                 channelData.push(compiledData);
+            } else {
+                hasInvalidConfigChannel = true;
+                return false;
             }
         }.bind(this));
+
+        if (hasInvalidConfigChannel === true) {
+            Ext.Msg.alert(t('error'), t('form_builder.output_workflow.output_workflow_channel_invalid_configuration'));
+            return;
+        }
 
         successManagementData = DataObjectParser.transpose(this.channelSuccessManagementPanel.getForm().getValues());
         successManagementData = successManagementData.data();

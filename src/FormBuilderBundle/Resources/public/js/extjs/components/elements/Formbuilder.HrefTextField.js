@@ -25,7 +25,8 @@ Ext.define('FormBuilder.HrefTextField', {
      */
     setHrefObject: function (href) {
         this.href = href;
-        this.setValue(this.href.path);
+        this.lastValue = null;
+        this.setValue(this.href.hasOwnProperty('path') ? this.href.path : null);
     },
 
     /**

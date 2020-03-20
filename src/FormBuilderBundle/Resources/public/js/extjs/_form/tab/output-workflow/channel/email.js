@@ -208,7 +208,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
     },
 
     isValid: function () {
-        return true;
+        return this.panel.form.isValid();
     },
 
     getValues: function () {

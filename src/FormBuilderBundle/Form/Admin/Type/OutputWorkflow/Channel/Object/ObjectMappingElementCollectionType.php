@@ -1,23 +1,13 @@
 <?php
 
-namespace FormBuilderBundle\Form\Admin\Type\OutputWorkflow;
+namespace FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object;
 
-use FormBuilderBundle\Model\OutputWorkflow;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OutputWorkflowCollectionType extends AbstractType
+class ObjectMappingElementCollectionType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -30,7 +20,16 @@ class OutputWorkflowCollectionType extends AbstractType
             'auto_initialize' => false,
             'allow_add'       => true,
             'allow_delete'    => true,
-            'entry_type'      => OutputWorkflow::class
+            'by_reference'    => false,
+            'entry_type'      => ObjectMappingElementConfigType::class,
+            'delete_empty'    => function ($data) {
+
+                if ($data['type'] === 'form_field') {
+                    return !isset($data['childs']) || !is_array($data['childs']) || count($data['childs']) === 0;
+                }
+
+                return empty($data);
+            }
         ]);
     }
 

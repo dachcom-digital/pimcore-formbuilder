@@ -124,6 +124,47 @@ class ExtJsFormBuilder
     }
 
     /**
+     * @param FormDefinitionInterface $formDefinition
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function generateExtJsFormFields(FormDefinitionInterface $formDefinition)
+    {
+        $data = [];
+        $fieldData = [];
+        foreach ($formDefinition->getFields() as $field) {
+            if ($field instanceof EntityToArrayAwareInterface) {
+                $fieldData[] = $field->toArray();
+            }
+        }
+
+        $fields = $this->generateExtJsFields($fieldData);
+        $fieldsTypesData = $this->generateExtJsFormTypesStructure(true);
+        $containerTypes = $this->getTranslatedContainerTypes();
+
+        foreach ($fields as $field) {
+
+            $fieldType = $field['type'];
+
+            if ($fieldType === 'container') {
+                $fieldDataIndex = array_search($field['sub_type'], array_column($containerTypes, 'id'));
+                $typeData = $fieldDataIndex !== false ? $containerTypes[$fieldDataIndex] : [];
+            } else {
+                $fieldDataIndex = array_search($fieldType, array_column($fieldsTypesData, 'type'));
+                $typeData = $fieldDataIndex !== false ? $fieldsTypesData[$fieldDataIndex] : [];
+            }
+
+            $data[] = [
+                'data' => $field,
+                'type' => $typeData
+            ];
+        }
+
+        return $data;
+    }
+
+    /**
      * @param OutputWorkflowInterface $outputWorkflow
      *
      * @return array
@@ -237,12 +278,14 @@ class ExtJsFormBuilder
     }
 
     /**
+     * @param bool $flat
+     *
      * @return array
      */
-    private function generateExtJsFormTypesStructure()
+    private function generateExtJsFormTypesStructure(bool $flat = false)
     {
         $formTypes = $this->configuration->getConfig('types');
-        $fieldStructure = $this->getFieldTypeGroups();
+        $fieldStructure = $flat === true ? [] : $this->getFieldTypeGroups();
 
         foreach ($formTypes as $formType => $formTypeConfiguration) {
             if (!$this->isAllowedFormType($formType)) {
@@ -257,6 +300,11 @@ class ExtJsFormBuilder
                 'constraints'          => $this->getFormTypeAllowedConstraints($beConfig),
                 'configuration_layout' => $this->getFormTypeBackendConfiguration($beConfig, $formType)
             ];
+
+            if ($flat === true) {
+                $fieldStructure[] = $fieldStructureElement;
+                continue;
+            }
 
             $groupIndex = array_search($this->getFormTypeGroup($beConfig), array_column($fieldStructure, 'id'));
 

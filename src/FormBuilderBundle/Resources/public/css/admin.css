@@ -236,6 +236,10 @@
     background: url(/bundles/formbuilder/img/ow_channel_object.svg) left center no-repeat !important;
 }
 
+.form_builder_output_workflow_channel_object_mapper {
+    background: url(/bundles/formbuilder/img/ow_channel_object.svg) left center no-repeat !important;
+}
+
 /*
     Mail Editor
 */

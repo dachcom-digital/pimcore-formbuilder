@@ -102,3 +102,15 @@ form_builder.controller.admin.output_workflow.get_output_workflow_data:
     path: /admin/formbuilder/output-workflow/get-output-workflow-data/{outputWorkflowId}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::getOutputWorkflowDataAction }
     methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_object_classes:
+    path: /admin/formbuilder/output-workflow/object/get-object-classes
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getObjectClassesAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_form_data:
+    path: /admin/formbuilder/output-workflow/object/get-form-data
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFormDataAction }
+    methods: [GET]
+
+
