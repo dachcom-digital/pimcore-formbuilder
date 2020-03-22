@@ -34,7 +34,7 @@ class ObjectChannelType extends AbstractType
                 return;
             }
 
-            // reset old form data
+            // reset old form data to allow conditional switches
             $form->setData(null);
 
             if ($data['resolveStrategy'] === 'existingObject') {

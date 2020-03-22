@@ -240,6 +240,11 @@
     background: url(/bundles/formbuilder/img/ow_channel_object.svg) left center no-repeat !important;
 }
 
+.form_builder_output_workflow_apply_data {
+    background: url(/bundles/formbuilder/img/ow_apply_data.svg) left center no-repeat !important;
+}
+
+
 /*
     Mail Editor
 */
@@ -279,6 +284,29 @@
     color: #717171;
 }
 
+/*
+    Object Mapping Editor
+*/
+
+.formbuilder-object-editor-disabled .x-tree-node-text {
+    color: #8e8e8e !important;
+}
+
+.formbuilder-object-editor-grid-ok {
+    background: url(/bundles/formbuilder/img/grid_ok.svg) left center no-repeat !important;
+}
+
+.formbuilder-object-editor-grid-ok-edit {
+    background: url(/bundles/formbuilder/img/grid_ok_edit.svg) left center no-repeat !important;
+}
+
+.formbuilder-object-editor-grid-attention {
+    background: url(/bundles/formbuilder/img/grid_attention.svg) left center no-repeat !important;
+}
+
+.formbuilder-object-editor-grid-unavailable {
+    background: url(/bundles/formbuilder/img/grid_unavailable.svg) left center no-repeat !important;
+}
 /*
     Pimcore 6
 */

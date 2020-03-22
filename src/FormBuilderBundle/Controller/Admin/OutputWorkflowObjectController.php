@@ -89,28 +89,76 @@ class OutputWorkflowObjectController extends AdminController
      *
      * @return JsonResponse
      */
+    public function getFieldCollectionTypesForDataTypeAction(Request $request)
+    {
+        $classId = $request->get('classId');
+        $fieldCollectionKey = $request->get('fieldCollectionKey');
+
+        try {
+            $classDefinition = DataObject\ClassDefinition::getById($classId);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+
+        if (!$classDefinition instanceof DataObject\ClassDefinition) {
+            return $this->json(['success' => false, 'message' => 'No class definition found.']);
+        }
+
+        $classDefinitionField = $classDefinition->getFieldDefinition($fieldCollectionKey);
+        if (!$classDefinitionField instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+            return $this->json(['success' => false, 'message' => 'No valid field field collection found.']);
+        }
+
+        $allowedTypes = [];
+        foreach ($classDefinitionField->getAllowedTypes() as $type) {
+            $allowedTypes[] = [
+                'key'   => $type,
+                'label' => $type
+            ];
+        }
+
+        return $this->adminJson([
+                'success' => true,
+                'types'   => $allowedTypes
+            ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function getFormDataAction(Request $request)
     {
         $formId = $request->get('id');
         $baseConfiguration = json_decode($request->get('baseConfiguration', ''), true);
 
+        $classDefinition = null;
         $formDefinition = $this->formDefinitionManager->getById($formId);
+
         if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json(['success' => false, 'message' => 'form is not available']);
         }
 
         $resolveStrategy = $baseConfiguration['resolveStrategy'];
-        $configuration = [];
 
         if ($resolveStrategy === 'newObject') {
             $resolvingObjectClass = $baseConfiguration['resolvingObjectClass'];
             $classDefinition = DataObject\ClassDefinition::getByName($resolvingObjectClass);
-            $configuration = ['classId' => $classDefinition->getId(), 'className' => $classDefinition->getName()];
         } elseif ($resolveStrategy === 'existingObject') {
             $dataObject = DataObject::getById($baseConfiguration['resolvingObject']['id']);
-            $classDefinition = $dataObject->getClass();
-            $configuration = ['classId' => $classDefinition->getId(), 'className' => $classDefinition->getName()];
+            $classDefinition = $dataObject instanceof DataObject\Concrete ? $dataObject->getClass() : null;
         }
+
+        if (!$classDefinition instanceof DataObject\ClassDefinition) {
+            return $this->json(['success' => false, 'message' => 'No class definition found.']);
+        }
+
+        $configuration = [
+            'classId'   => $classDefinition->getId(),
+            'className' => $classDefinition->getName()
+        ];
 
         try {
             $extJsFormFields = $this->extJsFormBuilder->generateExtJsFormFields($formDefinition);
@@ -121,8 +169,8 @@ class OutputWorkflowObjectController extends AdminController
         $configuration['formFieldDefinitions'] = $extJsFormFields;
 
         return $this->adminJson([
-            'success'              => true,
-            'configuration'        => $configuration
+            'success'       => true,
+            'configuration' => $configuration
         ]);
     }
 }

@@ -33,7 +33,7 @@ class SuccessManagementType extends AbstractType
                 return;
             }
 
-            // reset old form data
+            // reset old form data to allow conditional switches
             $form->setData(null);
 
             $this->buildConditionalForm($form, $data['identifier']);

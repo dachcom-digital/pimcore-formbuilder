@@ -228,13 +228,13 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             },
             buttons: [
                 {
-                    text: t('save'),
-                    iconCls: 'pimcore_icon_save',
+                    text: this.isLocal ? t('form_builder.output_workflow.apply') : t('save'),
+                    iconCls: this.isLocal ? 'form_builder_output_workflow_apply_data' : 'pimcore_icon_save',
                     handler: this.saveEditorData.bind(this)
                 },
                 {
-                    text: t('save_close'),
-                    iconCls: 'pimcore_icon_save',
+                    text: this.isLocal ? t('form_builder.output_workflow.apply_and_close') : t('save_close'),
+                    iconCls: this.isLocal ? 'form_builder_output_workflow_apply_data' : 'pimcore_icon_save',
                     handler: this.saveEditorDataAndClose.bind(this)
                 },
                 {

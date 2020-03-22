@@ -75,7 +75,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                 displayField: 'key',
                 valueField: 'value',
                 mode: 'local',
-                labelAlign: 'top',
+                labelAlign: 'left',
                 store: new Ext.data.ArrayStore({
                     fields: ['value', 'key'],
                     data: [
@@ -106,7 +106,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
         }
 
         this.objectResolverPanel = new Ext.form.FieldSet({
-            title: value,
+            title: value === 'newObject'
+                ? t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_new_object')
+                : t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_existing_object'),
             collapsible: false,
             collapsed: false,
             autoHeight: true,
@@ -136,8 +138,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                 valueField: 'key',
                 mode: 'local',
                 queryMode: 'local',
-                labelAlign: 'top',
-                store: store,
+                labelAlign: 'left',
                 value: null,
                 triggerAction: 'all',
                 anchor: '100%',

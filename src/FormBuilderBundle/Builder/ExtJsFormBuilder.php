@@ -150,6 +150,21 @@ class ExtJsFormBuilder
             if ($fieldType === 'container') {
                 $fieldDataIndex = array_search($field['sub_type'], array_column($containerTypes, 'id'));
                 $typeData = $fieldDataIndex !== false ? $containerTypes[$fieldDataIndex] : [];
+
+                if (isset($field['fields']) && is_array($field['fields'])) {
+                    $subData = [];
+                    foreach ($field['fields'] as $subField) {
+                        $subFieldType = $subField['type'];
+                        $subFieldDataIndex = array_search($subFieldType, array_column($fieldsTypesData, 'type'));
+                        $subTypeData = $subFieldDataIndex !== false ? $fieldsTypesData[$subFieldDataIndex] : [];
+                        $subData[] = [
+                            'data' => $subField,
+                            'type' => $subTypeData
+                        ];
+                    }
+
+                    $field['fields'] = $subData;
+                }
             } else {
                 $fieldDataIndex = array_search($fieldType, array_column($fieldsTypesData, 'type'));
                 $typeData = $fieldDataIndex !== false ? $fieldsTypesData[$fieldDataIndex] : [];
@@ -298,6 +313,7 @@ class ExtJsFormBuilder
                 'label'                => $this->getFormTypeLabel($beConfig),
                 'icon_class'           => $this->getFormTypeIcon($beConfig),
                 'constraints'          => $this->getFormTypeAllowedConstraints($beConfig),
+                'output_workflow'      => $this->getFormTypeOutputWorkflowConfiguration($beConfig),
                 'configuration_layout' => $this->getFormTypeBackendConfiguration($beConfig, $formType)
             ];
 
@@ -577,6 +593,16 @@ class ExtJsFormBuilder
         }
 
         return [];
+    }
+
+    /**
+     * @param array $formTypeBackendConfig
+     *
+     * @return array
+     */
+    private function getFormTypeOutputWorkflowConfiguration($formTypeBackendConfig)
+    {
+        return $formTypeBackendConfig['output_workflow'];
     }
 
     /**

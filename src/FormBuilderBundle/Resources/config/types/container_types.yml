@@ -4,6 +4,10 @@ form_builder:
             class: FormBuilderBundle\Form\Type\Container\FieldSetContainerType
             label: 'form_builder_container_type.fieldset'
             icon_class: form_builder_icon_container_type
+            output_workflow:
+                object:
+                    allowed_class_types:
+                        - fieldcollections
             configuration:
                 -
                     name: label
@@ -20,6 +24,10 @@ form_builder:
             class: FormBuilderBundle\Form\Type\Container\RepeaterContainerType
             label: 'form_builder_container_type.repeater'
             icon_class: form_builder_icon_container_type
+            output_workflow:
+                object:
+                    allowed_class_types:
+                        - fieldcollections
             configuration:
                 -
                     name: label

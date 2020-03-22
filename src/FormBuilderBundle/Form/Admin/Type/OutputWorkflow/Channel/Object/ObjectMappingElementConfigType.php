@@ -23,17 +23,13 @@ class ObjectMappingElementConfigType extends AbstractType
             $data = $event->getData();
             $form = $event->getForm();
 
-            // reset old form data
-            $form->setData(null);
-
             if (isset($data['childs'])) {
                 $form->add('childs', ObjectMappingElementCollectionType::class);
             }
 
-            if (isset($data['type'])) {
+            if (isset($data['config'])) {
                 $form->add('config', FieldConfigType::class, ['config_type' => $data['type'], 'field_config_type' => $data['fieldType']]);
             }
         });
     }
-
 }

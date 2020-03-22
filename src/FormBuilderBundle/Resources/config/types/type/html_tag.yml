@@ -1,0 +1,20 @@
+form_builder:
+    types:
+        html_tag:
+            class: FormBuilderBundle\Form\Type\HtmlTagType
+            backend:
+                form_type_group: other_fields
+                label: 'form_builder_type.html_tag_type'
+                icon_class: 'form_builder_icon_html_tag'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~
+                    options.tag:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.tag_element'
+                        config:
+                            options: '%form_builder_html_tag_elements%'

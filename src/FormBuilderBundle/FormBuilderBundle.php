@@ -76,6 +76,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/extensions/formMetaData.js',
             '/bundles/formbuilder/js/extjs/extensions/formMailEditor.js',
             '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor.js',
+            '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor/formObjectTreeMapper.js',
+            '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor/worker/fieldCollectionWorker.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/builder.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/form.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/condition/abstract.js',

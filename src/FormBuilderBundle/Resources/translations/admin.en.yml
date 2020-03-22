@@ -130,6 +130,8 @@ form_builder.mail_editor.mail_type_main: 'Admin-Mail'
 form_builder.mail_editor.mail_type_copy: 'User-Mail (Copy)'
 form_builder.mail_editor.mail_type_output_workflow_channel: 'Output Workflow Channel'
 form_builder.output_workflow.open_editor: 'Open Output Workflow Editor'
+form_builder.output_workflow.apply: 'Apply'
+form_builder.output_workflow.apply_and_close: 'Apply and close'
 form_builder.output_workflow.add_output_workflow: 'Add Output Workflow'
 form_builder.output_workflow.new_output_workflow_name_title: 'New Output Workflow'
 form_builder.output_workflow.new_output_workflow_name: 'Name of new Output Workflow'
@@ -166,6 +168,8 @@ form_builder.output_workflow.output_workflow_channel.object.object_mapping.statu
 form_builder.output_workflow.output_workflow_channel.object.object_mapping.status_disabled: 'Status: No Data!'
 form_builder.output_workflow.output_workflow_channel.save_successful: 'Workflow successfully saved'
 form_builder.output_workflow.output_workflow_channel.save_failed: 'Workflow could not be saved'
+form_builder.output_workflow.output_workflow_channel.object.editor.invalid_configuration: "Invalid Object mapping configuration detected. Please check your settings and try again."
 form_builder.output_workflow.output_workflow_channel.object.close_confirmation_title: 'Close confirmation'
-form_builder.output_workflow.output_workflow_channel.object.close_confirmation_message: 'Do you really want to close the mail editor?'
+form_builder.output_workflow.output_workflow_channel.object.close_confirmation_message: 'Do you really want to close the object editor?'
+form_builder.output_workflow.output_workflow_channel.object.fc_worker_fieldcollection: 'Select Field Collection'
 
