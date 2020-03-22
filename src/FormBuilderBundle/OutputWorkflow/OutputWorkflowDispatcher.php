@@ -35,7 +35,7 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
                     sprintf('"%s" workflow channel "%s" errored at step %d: %s',
                         $outputWorkflow->getName(),
                         $channel->getType(),
-                        $index,
+                        $index+1,
                         $e->getMessage()
                     )
                 );

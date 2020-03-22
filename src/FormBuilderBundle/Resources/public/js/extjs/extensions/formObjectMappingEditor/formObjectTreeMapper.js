@@ -321,7 +321,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
 
                         if (target !== source) {
                             if (this.formTreePanel.getRootNode().findChildBy(function (ss) {
-                                return ss.data.omFieldTypeIdentifier === this.FIELD_TYPE_DATA_CLASS_FIELD && ss.data.key === record.data.key;
+                                return ss.data.omFieldTypeIdentifier === this.FIELD_TYPE_DATA_CLASS_FIELD && ss.data.name === record.data.name;
                             }.bind(this), null, true)) {
                                 dropHandlers.cancelDrop();
                             } else {
@@ -481,7 +481,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                 config = {name: fieldData.omFieldAttributesData.name}
             } else if (omFieldTypeIdentifier === this.FIELD_TYPE_DATA_CLASS_FIELD) {
                 obj.fieldType = child.data.dataType;
-                config = {name: child.data.key}
+                config = {name: child.data.name}
             }
 
             if (fieldData.omFieldTypeNeedsConfiguration === true) {
@@ -578,7 +578,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
             }
 
             if (fieldWorker !== null) {
-                subItem.data.omFieldConfigurationWorker = this.getWorker(fieldWorker, subItem.data.key, fieldTypeConfig.workerData);
+                subItem.data.omFieldConfigurationWorker = this.getWorker(fieldWorker, subItem.data.name, fieldTypeConfig.workerData);
                 subItem.data.omFieldTypeNeedsConfiguration = true;
             }
 
@@ -599,7 +599,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
     getWorkerByNode: function (record, attr) {
 
         if (attr.dataType === 'fieldcollections') {
-            return this.getWorker('fieldCollectionWorker', attr.key, null);
+            return this.getWorker('fieldCollectionWorker', attr.name, null);
         }
 
         return null;
