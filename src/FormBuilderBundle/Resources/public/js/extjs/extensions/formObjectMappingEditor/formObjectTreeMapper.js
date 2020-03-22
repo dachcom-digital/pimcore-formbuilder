@@ -25,6 +25,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
         this.formRootIconCls = formRootIconCls ? formRootIconCls : 'form_builder_icon_root';
 
         this.formDataHasInvalidFields = false;
+        this.onlyContainerElementsAllowed = false;
 
         this.editorData = editorData;
         this.formFieldDefinitions = formFieldDefinitions;

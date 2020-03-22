@@ -139,7 +139,6 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
 
     createPanel: function () {
 
-
         this.formObjectTreeMapper = new Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeMapper(
             this.editorData,
             this.configuration.formFieldDefinitions,
@@ -147,7 +146,9 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
             this.configuration.classId
         );
 
-        this.formObjectTreeMapper.setOnlyContainerElementsAllowed();
+        if (this.baseConfiguration.resolveStrategy === 'existingObject') {
+            this.formObjectTreeMapper.setOnlyContainerElementsAllowed();
+        }
 
         this.detailWindow.add(this.formObjectTreeMapper.getLayout());
 
