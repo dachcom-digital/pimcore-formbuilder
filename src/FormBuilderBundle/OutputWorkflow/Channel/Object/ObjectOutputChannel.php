@@ -43,19 +43,28 @@ class ObjectOutputChannel implements ChannelInterface
      */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
     {
+        $formConfiguration = $submissionEvent->getFormConfiguration();
         $locale = $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
 
+        $storagePath = $channelConfiguration['storagePath'];
+        $objectMappingData = $channelConfiguration['objectMappingData'];
+
         if ($channelConfiguration['resolveStrategy'] === 'newObject') {
-            $objectResolver = $this->objectResolverFactory->createForNewObject($channelConfiguration['storagePath'], $channelConfiguration['objectMappingData']);
+            $objectResolver = $this->objectResolverFactory->createForNewObject($storagePath, $objectMappingData);
             $objectResolver->setResolvingObjectClass($channelConfiguration['resolvingObjectClass']);
         } elseif ($channelConfiguration['resolveStrategy'] === 'existingObject') {
-            $objectResolver = $this->objectResolverFactory->createForExistingObject($channelConfiguration['storagePath'], $channelConfiguration['objectMappingData']);
+            $objectResolver = $this->objectResolverFactory->createForExistingObject($storagePath, $objectMappingData);
             $objectResolver->setResolvingObject($channelConfiguration['resolvingObject']);
         } else {
             throw new \Exception(sprintf('no object resolver for strategy "%s" found.', $channelConfiguration['resolveStrategy']));
         }
 
-        $objectResolver->resolve($form, $workflowName, $locale);
+        $objectResolver->setForm($form);
+        $objectResolver->setLocale($locale);
+        $objectResolver->setWorkflowName($workflowName);
+        $objectResolver->setFormRuntimeOptions($formConfiguration['form_runtime_options']);
+
+        $objectResolver->resolve();
     }
 }

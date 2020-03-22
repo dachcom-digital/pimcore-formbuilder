@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
-use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\ModelInterface;
@@ -24,6 +23,26 @@ abstract class AbstractObjectResolver
      * @var array
      */
     protected $objectMappingData;
+
+    /**
+     * @var FormInterface
+     */
+    protected $form;
+
+    /**
+     * @var array
+     */
+    protected $formRuntimeOptions;
+
+    /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
+     * @var string
+     */
+    protected $workflowName;
 
     /**
      * @param FormValuesOutputApplierInterface $formValuesOutputApplier
@@ -55,6 +74,70 @@ abstract class AbstractObjectResolver
     public abstract function fieldTypeAllowedToProcess($fieldType);
 
     /**
+     * @param FormInterface $form
+     */
+    public function setForm(FormInterface $form)
+    {
+        $this->form = $form;
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * @param array $formRuntimeOptions
+     */
+    public function setFormRuntimeOptions(array $formRuntimeOptions)
+    {
+        $this->formRuntimeOptions = $formRuntimeOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormRuntimeOptions()
+    {
+        return $this->formRuntimeOptions;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale(string $locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param string $workflowName
+     */
+    public function setWorkflowName(string $workflowName)
+    {
+        $this->workflowName = $workflowName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkflowName()
+    {
+        return $this->workflowName;
+    }
+
+    /**
      * @return array
      */
     public function getStoragePath()
@@ -71,17 +154,24 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param FormInterface $form
-     * @param string        $workflowName
-     * @param string        $locale
+     * @throws \Exception
+     */
+    public function resolve()
+    {
+        $object = $this->getStorageObject();
+
+        $this->processObject($object);
+
+        $object->save();
+    }
+
+    /**
+     * @return DataObject\Folder
      *
      * @throws \Exception
      */
-    public function resolve(FormInterface $form, string $workflowName, string $locale)
+    public function getStorageFolder()
     {
-        /** @var FormDataInterface $formData */
-        $formData = $form->getData();
-
         $storageFolderInfo = $this->getStoragePath();
         $storageFolderId = $storageFolderInfo['id'];
         $storageFolder = DataObject\Folder::getById($storageFolderId);
@@ -90,31 +180,20 @@ abstract class AbstractObjectResolver
             throw new \Exception(sprintf('Storage Folder with id "%s" not found.', $storageFolderId));
         }
 
-        $object = $this->getStorageObject();
-        $object->setParent($storageFolder);
-
-        // @todo: add object setup resolver (key, published)?
-        $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId())));
-        $object->setPublished(true);
-
-        $this->processObject($object, $form, $locale);
-
-        $object->save();
+        return $storageFolder;
     }
 
     /**
      * @param DataObject\Concrete $object
-     * @param FormInterface       $form
-     * @param string              $locale
      */
-    protected function processObject(DataObject\Concrete $object, FormInterface $form, string $locale)
+    protected function processObject(DataObject\Concrete $object)
     {
         $definition = $this->getObjectMappingData();
         if (empty($definition)) {
             return;
         }
 
-        $formData = $this->formValuesOutputApplier->applyForChannel($form, [], 'object', $locale);
+        $formData = $this->formValuesOutputApplier->applyForChannel($this->getForm(), [], 'object', $this->getLocale());
 
         if (!is_array($formData)) {
             return;

@@ -2,6 +2,9 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
+use FormBuilderBundle\Form\Data\FormDataInterface;
+use Pimcore\Model\DataObject\Concrete;
+
 class NewObjectResolver extends AbstractObjectResolver
 {
     /**
@@ -30,9 +33,22 @@ class NewObjectResolver extends AbstractObjectResolver
      */
     public function getStorageObject()
     {
+        /** @var FormDataInterface $formData */
+        $formData = $this->getForm()->getData();
+
+        $storageFolder = $this->getStorageFolder();
         $pathName = sprintf('\Pimcore\Model\DataObject\%s', $this->getResolvingObjectClass());
 
-        return new $pathName();
+        /** @var Concrete $object */
+        $object = new $pathName();
+
+        $object->setParent($storageFolder);
+
+        // @todo: add object setup resolver (key, published)?
+        $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId())));
+        $object->setPublished(true);
+
+        return $object;
     }
 
     /**
