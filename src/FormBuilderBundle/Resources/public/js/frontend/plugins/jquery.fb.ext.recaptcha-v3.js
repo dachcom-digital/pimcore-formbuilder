@@ -104,7 +104,7 @@
             this.$form.find('[type="submit"]').attr('disabled', 'disabled');
         },
 
-        enableFormSubmission() {
+        enableFormSubmission: function () {
 
             if (this.options.disableFormWhileLoading !== true) {
                 return;
