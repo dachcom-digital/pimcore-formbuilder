@@ -3,7 +3,7 @@
     <div class="fb-row">
         <div class="fb-col fb-col-half">
             <div class="fb-form-group">
-                <label for="form">{{'form_builder.area.form'|trans({}, 'admin') }}</label><br>
+                <label for="form">{{ 'form_builder.area.form'|trans({}, 'admin') }}</label><br>
                 {{ pimcore_select('formName', { width: 240, store: formStore }) }}
             </div>
         </div>
@@ -42,27 +42,52 @@
 
     {% endif %}
 
-    <div class="fb-row">
-        <div class="fb-col fb-col-full">
-            <div class="fb-form-group">
-                <label for="sendMailTemplate">{{ 'form_builder.area.mail_template'|trans({}, 'admin') }}</label><br>
-                {{ pimcore_href('sendMailTemplate', {'width': 505, 'types': ['document'], 'subtypes': { 'document': ['email'] } }) }}
+    <div class="output-data-wrapper" data-output-workflows="{{ allOutputWorkflowStore|json_encode }}" data-output-workflow-none-translation="{{ 'form_builder.area.no_output_workflow'|trans({}, 'admin') }}">
+
+        <div class="output-workflow-selector" style="display:{{ hasValidOutputWorkflows ? 'block' : 'none' }};">
+            <div class="fb-row">
+                <div class="fb-col fb-col-half">
+                    <div class="fb-form-group">
+                        <label for="form">{{ 'form_builder.area.output_workflow'|trans({}, 'admin') }}</label><br>
+                        {{ pimcore_select('outputWorkflow', { width: 240, store: outputWorkflowStore }) }}
+                    </div>
+                </div>
             </div>
         </div>
+
+        <div class="legacy-output-selector" style="display:{{ hasValidOutputWorkflows ? 'none' : 'block' }};">
+
+            <div class="fb-row">
+                <div class="fb-col fb-col-full">
+                    <div class="fb-form-group">
+                        <label for="sendMailTemplate">{{ 'form_builder.area.mail_template'|trans({}, 'admin') }}</label><br>
+                        {{ pimcore_href('sendMailTemplate', {'width': 505, 'types': ['document'], 'subtypes': { 'document': ['email'] } }) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="fb-row">
+                <div class="fb-col fb-col-half">
+                    <div class="fb-form-group">
+                        <label for="userCopy">{{ 'form_builder.area.send_copy_to_user'|trans({}, 'admin') }}</label><br>
+                        {{ pimcore_checkbox('userCopy') }}
+                    </div>
+                </div>
+                <div class="fb-col fb-col-half">
+                    <div class="fb-form-group">
+                        <label for="sendCopyMailTemplate">{{ 'form_builder.area.copy_mail_template'|trans({}, 'admin') }}</label><br>
+                        {{ pimcore_href('sendCopyMailTemplate', {'width': 240, 'types': ['document'], 'subtypes': { 'document': ['email'] } }) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="legacy-output-nag">
+                <strong>{{ 'form_builder.area.output_workflow.legacy.trigger'|trans({}, 'admin') }}!</strong>
+                {{ 'form_builder.area.output_workflow.legacy.note'|trans({}, 'admin') }}
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="fb-row">
-        <div class="fb-col fb-col-half">
-            <div class="fb-form-group">
-                <label for="userCopy">{{ 'form_builder.area.send_copy_to_user'|trans({}, 'admin') }}</label><br>
-                {{ pimcore_checkbox('userCopy') }}
-            </div>
-        </div>
-        <div class="fb-col fb-col-half">
-            <div class="fb-form-group">
-                <label for="sendCopyMailTemplate">{{'form_builder.area.copy_mail_template'|trans({}, 'admin') }}</label><br>
-                {{ pimcore_href('sendCopyMailTemplate', {'width': 240, 'types': ['document'], 'subtypes': { 'document': ['email'] } }) }}
-            </div>
-        </div>
-    </div>
 </div>

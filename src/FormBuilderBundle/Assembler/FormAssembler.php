@@ -112,8 +112,9 @@ class FormAssembler
         }
 
         $userOptions = [
-            'form_preset'   => $this->optionsResolver->getFormPreset(),
-            'form_template' => $this->optionsResolver->getFormTemplateName()
+            'form_preset'          => $this->optionsResolver->getFormPreset(),
+            'form_output_workflow' => $this->optionsResolver->getOutputWorkflow(),
+            'form_template'        => $this->optionsResolver->getFormTemplateName()
         ];
 
         /** @var FormInterface $form */
@@ -125,11 +126,12 @@ class FormAssembler
         //store current configuration for further events.
         $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
             'form_runtime_options' => [
-                'form_preset'    => $this->optionsResolver->getFormPreset(),
-                'form_template'  => $this->optionsResolver->getFormTemplateName(),
-                'custom_options' => $this->optionsResolver->getCustomOptions()
+                'form_preset'          => $this->optionsResolver->getFormPreset(),
+                'form_output_workflow' => $this->optionsResolver->getOutputWorkflow(),
+                'form_template'        => $this->optionsResolver->getFormTemplateName(),
+                'custom_options'       => $this->optionsResolver->getCustomOptions()
             ],
-            'email'        => [
+            'email'                => [
                 'send_copy'             => $this->optionsResolver->getSendCopy(),
                 'mail_template_id'      => $this->optionsResolver->getMailTemplateId(),
                 'copy_mail_template_id' => $this->optionsResolver->getCopyMailTemplateId()
@@ -140,6 +142,7 @@ class FormAssembler
         $viewVars['form_template'] = $this->optionsResolver->getFormTemplate();
         $viewVars['form_id'] = $this->optionsResolver->getFormId();
         $viewVars['form_preset'] = $this->optionsResolver->getFormPreset();
+        $viewVars['form_output_workflow'] = $this->optionsResolver->getOutputWorkflow();
         $viewVars['main_layout'] = $this->optionsResolver->getMainLayout();
         $viewVars['form'] = $form->createView();
 

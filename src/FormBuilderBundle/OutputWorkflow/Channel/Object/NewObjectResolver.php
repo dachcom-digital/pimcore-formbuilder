@@ -37,7 +37,7 @@ class NewObjectResolver extends AbstractObjectResolver
         $formData = $this->getForm()->getData();
 
         $storageFolder = $this->getStorageFolder();
-        $pathName = sprintf('\Pimcore\Model\DataObject\%s', $this->getResolvingObjectClass());
+        $pathName = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($this->getResolvingObjectClass()));
 
         /** @var Concrete $object */
         $object = new $pathName();

@@ -2,13 +2,21 @@
 
 namespace FormBuilderBundle\Migrations;
 
+use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
+use FormBuilderBundle\Tool\Install;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class Version20200304172137 extends AbstractPimcoreMigration
+class Version20200304172137 extends AbstractPimcoreMigration implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @param Schema $schema
+     *
+     * @throws AbortMigrationException
      */
     public function up(Schema $schema)
     {
@@ -19,6 +27,9 @@ class Version20200304172137 extends AbstractPimcoreMigration
         $this->addSql('ALTER TABLE formbuilder_output_workflow ADD CONSTRAINT FK_BCB7909761F7634C FOREIGN KEY (form_definition) REFERENCES formbuilder_forms (id);');
         $this->addSql('ALTER TABLE formbuilder_forms CHANGE mailLayout mailLayout LONGTEXT DEFAULT NULL COMMENT "(DC2Type:object)";');
         $this->addSql('ALTER TABLE formbuilder_forms RENAME INDEX name TO UNIQ_29DA5346999517A;');
+
+        $installer = $this->container->get(Install::class);
+        $installer->updateTranslations();
     }
 
     /**

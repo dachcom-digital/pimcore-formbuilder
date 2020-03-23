@@ -7,6 +7,7 @@ use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflow;
 use FormBuilderBundle\Model\OutputWorkflowChannel;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Email;
 
@@ -17,26 +18,32 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
      */
     public function resolve(SubmissionEvent $submissionEvent)
     {
-        // find workflow.
         $form = $submissionEvent->getForm();
+
         /** @var FormDataInterface $data */
         $data = $form->getData();
         $formDefinition = $data->getFormDefinition();
 
         $formConfiguration = $submissionEvent->getFormConfiguration();
+        $runtimeOptions = $formConfiguration['form_runtime_options'];
+        $userSelectedOutputWorkflow = isset($runtimeOptions['form_output_workflow']) ? $runtimeOptions['form_output_workflow'] : null;
 
         if ($formDefinition->hasOutputWorkflows() === false) {
             return $this->buildFallBackWorkflow($formDefinition, $formConfiguration);
         }
 
+        $outputWorkflow = null;
         $outputWorkflows = $formDefinition->getOutputWorkflows();
 
-        // find out, which workflow should get applied.
-        if ($outputWorkflows->count() === 1) {
+        if ($userSelectedOutputWorkflow === null && $outputWorkflows->count() === 1) {
             return $outputWorkflows->first();
+        } elseif ($userSelectedOutputWorkflow !== null) {
+            $selectedOutputWorkflows = $outputWorkflows->filter(function (OutputWorkflowInterface $outputWorkflow) use ($userSelectedOutputWorkflow) {
+                return $outputWorkflow->getId() === $userSelectedOutputWorkflow;
+            });
+            return $selectedOutputWorkflows->count() === 1 ? $selectedOutputWorkflows->first() : null;
         }
 
-        // @todo: get requested workflow from $formConfiguration
         return null;
     }
 

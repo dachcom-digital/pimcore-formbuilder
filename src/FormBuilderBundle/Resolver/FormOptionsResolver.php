@@ -27,6 +27,11 @@ class FormOptionsResolver
     protected $formBlockTemplate = null;
 
     /**
+     * @var null|int
+     */
+    protected $outputWorkflow = null;
+
+    /**
      * @var string
      */
     protected $preset = 'custom';
@@ -83,6 +88,24 @@ class FormOptionsResolver
     public function getMainLayout()
     {
         return $this->mainLayout;
+    }
+
+    /**
+     * @param int $outputWorkflow
+     */
+    public function setOutputWorkflow($outputWorkflow = null)
+    {
+        if (is_numeric($outputWorkflow)) {
+            $this->outputWorkflow = $outputWorkflow;
+        }
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getOutputWorkflow()
+    {
+        return $this->outputWorkflow;
     }
 
     /**
