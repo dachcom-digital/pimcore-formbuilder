@@ -329,4 +329,12 @@ class Form extends AbstractTemplateAreabrick
     {
         return '';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIcon()
+    {
+        return '/bundles/formbuilder/img/application_form.svg';
+    }
 }

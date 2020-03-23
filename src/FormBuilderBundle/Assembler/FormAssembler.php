@@ -107,6 +107,7 @@ class FormAssembler
         if ($builderError === true) {
             $viewVars['message'] = $exceptionMessage;
             $viewVars['form_template'] = null;
+            $viewVars['form_id'] = null;
 
             return $viewVars;
         }

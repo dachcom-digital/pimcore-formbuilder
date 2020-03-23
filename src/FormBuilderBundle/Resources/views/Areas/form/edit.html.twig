@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <div class="legacy-output-selector" style="display:{{ hasValidOutputWorkflows ? 'none' : 'block' }};">
+        <div class="legacy-output-selector" style="display:{{ (hasValidOutputWorkflows or form_id is null) ? 'none' : 'block' }};">
 
             <div class="fb-row">
                 <div class="fb-col fb-col-full">
