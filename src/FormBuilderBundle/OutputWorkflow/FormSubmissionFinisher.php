@@ -3,6 +3,8 @@
 namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\SubmissionEvent;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardStackedException;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\FormErrorsSerializerInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
@@ -11,6 +13,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
@@ -84,7 +87,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         }
 
         // no need to redirect finished error: we're in a getResponseEvent, let symfony do the rest.
-
         if ($response instanceof Response) {
             $event->setResponse($response);
         }
@@ -95,6 +97,9 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
      */
     public function finishWithSuccess(GetResponseEvent $event, SubmissionEvent $submissionEvent)
     {
+        /** @var NamespacedAttributeBag $sessionBag */
+        $sessionBag = $this->session->getBag('form_builder_session');
+
         if ($submissionEvent->outputWorkflowFinisherIsDisabled() === true) {
             return;
         }
@@ -115,11 +120,20 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         try {
             $this->outputWorkflowDispatcher->dispatch($outputWorkflow, $submissionEvent);
         } catch (\Exception $e) {
-            $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
+
+            if ($e instanceof GuardOutputWorkflowException) {
+                $errorMessage = $e->getMessage();
+            } elseif ($e instanceof GuardStackedException) {
+                $errorMessage = $e->getGuardExceptionMessages();
+            } else {
+                $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
+            }
+
             $event->setResponse($request->isXmlHttpRequest()
                 ? $this->generateAjaxFinisherErrorResponse($errorMessage)
                 : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage)
             );
+
             return;
         }
 
@@ -132,6 +146,15 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
                 : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage)
             );
             return;
+        }
+
+        $form = $submissionEvent->getForm();
+        /** @var FormDataInterface $data */
+        $data = $form->getData();
+        $formId = $data->getFormDefinition()->getId();
+
+        if ($sessionBag->has('form_configuration_' . $formId)) {
+            $sessionBag->remove('form_configuration_' . $formId);
         }
 
         $event->setResponse($request->isXmlHttpRequest()

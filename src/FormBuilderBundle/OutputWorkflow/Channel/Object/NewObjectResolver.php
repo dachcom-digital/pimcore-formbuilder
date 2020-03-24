@@ -43,8 +43,6 @@ class NewObjectResolver extends AbstractObjectResolver
         $object = new $pathName();
 
         $object->setParent($storageFolder);
-
-        // @todo: add object setup resolver (key, published)?
         $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId())));
         $object->setPublished(true);
 

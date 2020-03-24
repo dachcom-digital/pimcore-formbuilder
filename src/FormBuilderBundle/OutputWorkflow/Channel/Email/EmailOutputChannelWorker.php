@@ -2,9 +2,14 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email;
 
+use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
@@ -38,21 +43,29 @@ class EmailOutputChannelWorker
     protected $dispatcher;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param FlashBagManagerInterface $flashBagManager
      * @param MailParser               $mailParser
      * @param IncludeRenderer          $includeRenderer
      * @param Dispatcher               $dispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         FlashBagManagerInterface $flashBagManager,
         MailParser $mailParser,
         IncludeRenderer $includeRenderer,
-        Dispatcher $dispatcher
+        Dispatcher $dispatcher,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->flashBagManager = $flashBagManager;
         $this->mailParser = $mailParser;
         $this->includeRenderer = $includeRenderer;
         $this->dispatcher = $dispatcher;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -113,10 +126,15 @@ class EmailOutputChannelWorker
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_preset', $formRuntimeOptions['form_preset'] === 'custom' ? null : $formRuntimeOptions['form_preset']);
 
+        // dispatch legacy event
         $mailEvent = new MailEvent($form, $mail, $formRuntimeOptions, $isCopy);
-        \Pimcore::getEventDispatcher()->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
-
+        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
         $mail = $mailEvent->getEmail();
+
+        // dispatch subject guard event
+        if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeOptions)) {
+            return;
+        }
 
         if ($mail::getHtml2textInstalled()) {
             $mail->enableHtml2textBinary();
@@ -173,5 +191,33 @@ class EmailOutputChannelWorker
             'formData'         => $formData->getData(),
             'conditionalLogic' => $formData->getFormDefinition()->getConditionalLogic()
         ], $moduleOptions);
+    }
+
+    /**
+     * @param FormDataInterface $formData
+     * @param Mail    $subject
+     * @param string            $workflowName
+     * @param array             $formRuntimeOptions
+     *
+     * @return Mail|null
+     *
+     * @throws GuardException
+     */
+    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeOptions)
+    {
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeOptions);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
+
+        if ($channelSubjectGuardEvent->isSuspended()) {
+            return null;
+        }
+
+        if ($channelSubjectGuardEvent->shouldStopChannel()) {
+            throw new GuardChannelException($channelSubjectGuardEvent->getFailMessage());
+        } elseif ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
+            throw new GuardOutputWorkflowException($channelSubjectGuardEvent->getFailMessage());
+        }
+
+        return $channelSubjectGuardEvent->getSubject();
     }
 }

@@ -2,10 +2,16 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
-use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
+use FormBuilderBundle\FormBuilderEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\ModelInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 
 abstract class AbstractObjectResolver
 {
@@ -13,6 +19,11 @@ abstract class AbstractObjectResolver
      * @var FormValuesOutputApplierInterface
      */
     protected $formValuesOutputApplier;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var array
@@ -46,15 +57,18 @@ abstract class AbstractObjectResolver
 
     /**
      * @param FormValuesOutputApplierInterface $formValuesOutputApplier
+     * @param EventDispatcherInterface         $eventDispatcher
      * @param array                            $storagePath
      * @param array                            $objectMappingData
      */
     public function __construct(
         FormValuesOutputApplierInterface $formValuesOutputApplier,
+        EventDispatcherInterface $eventDispatcher,
         array $storagePath,
         array $objectMappingData
     ) {
         $this->formValuesOutputApplier = $formValuesOutputApplier;
+        $this->eventDispatcher = $eventDispatcher;
         $this->storagePath = $storagePath;
         $this->objectMappingData = $objectMappingData;
     }
@@ -160,6 +174,10 @@ abstract class AbstractObjectResolver
     {
         $object = $this->getStorageObject();
 
+        if (null === $object = $this->dispatchGuardEvent($object)) {
+            return;
+        }
+
         $this->processObject($object);
 
         $object->save();
@@ -185,6 +203,8 @@ abstract class AbstractObjectResolver
 
     /**
      * @param DataObject\Concrete $object
+     *
+     * @throws GuardException
      */
     protected function processObject(DataObject\Concrete $object)
     {
@@ -205,6 +225,8 @@ abstract class AbstractObjectResolver
     /**
      * @param DataObject\Concrete $object
      * @param array               $formData
+     *
+     * @throws GuardException
      */
     protected function processObjectData(DataObject\Concrete $object, array $formData)
     {
@@ -243,6 +265,8 @@ abstract class AbstractObjectResolver
     /**
      * @param DataObject\Concrete $object
      * @param array               $containerFieldData
+     *
+     * @throws GuardException
      */
     protected function mapContainerField(DataObject\Concrete $object, array $containerFieldData)
     {
@@ -297,6 +321,8 @@ abstract class AbstractObjectResolver
      * @param string              $fieldCollectionMethodName
      * @param array               $workerData
      * @param array               $containerFieldData
+     *
+     * @throws GuardException
      */
     protected function appendToFieldCollection(DataObject\Concrete $object, string $fieldCollectionMethodName, array $workerData, array $containerFieldData)
     {
@@ -353,6 +379,10 @@ abstract class AbstractObjectResolver
                 }
 
                 $this->assignChildDataToObject($fieldCollection, $fieldDefinition, $fieldValue);
+            }
+
+            if (null === $fieldCollection = $this->dispatchGuardEvent($fieldCollection)) {
+                continue;
             }
 
             $objectFieldCollections->add($fieldCollection);
@@ -415,12 +445,37 @@ abstract class AbstractObjectResolver
             }
 
             if (isset($definitionField['childs']) && is_array($definitionField['childs'])) {
-                if (($subField = $this->findMapDefinition($definitionField['childs'], $formFieldName)) !== false) {
+                if (false !== $subField = $this->findMapDefinition($definitionField['childs'], $formFieldName)) {
                     return $subField;
                 }
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param $subject
+     *
+     * @return DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|null
+     *
+     * @throws GuardException
+     */
+    protected function dispatchGuardEvent($subject)
+    {
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($this->getForm()->getData(), $subject, $this->getWorkflowName(), 'object', $this->getFormRuntimeOptions());
+        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
+
+        if ($channelSubjectGuardEvent->isSuspended()) {
+            return null;
+        }
+
+        if ($channelSubjectGuardEvent->shouldStopChannel()) {
+            throw new GuardChannelException($channelSubjectGuardEvent->getFailMessage());
+        } elseif ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
+            throw new GuardOutputWorkflowException($channelSubjectGuardEvent->getFailMessage());
+        }
+
+        return $channelSubjectGuardEvent->getSubject();
     }
 }

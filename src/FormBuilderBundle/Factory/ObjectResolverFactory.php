@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Factory;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Object\ExistingObjectResolver;
 use FormBuilderBundle\OutputWorkflow\Channel\Object\NewObjectResolver;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ObjectResolverFactory implements ObjectResolverFactoryInterface
 {
@@ -14,11 +15,21 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
     protected $formValuesOutputApplier;
 
     /**
-     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
+     * @var EventDispatcherInterface
      */
-    public function __construct(FormValuesOutputApplierInterface $formValuesOutputApplier)
-    {
+    protected $eventDispatcher;
+
+    /**
+     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
+     *
+     * @param EventDispatcherInterface         $eventDispatcher
+     */
+    public function __construct(
+        FormValuesOutputApplierInterface $formValuesOutputApplier,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->formValuesOutputApplier = $formValuesOutputApplier;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -26,7 +37,7 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
      */
     public function createForNewObject(array $storagePath, array $objectMappingData)
     {
-        return new NewObjectResolver($this->formValuesOutputApplier, $storagePath, $objectMappingData);
+        return new NewObjectResolver($this->formValuesOutputApplier, $this->eventDispatcher, $storagePath, $objectMappingData);
     }
 
     /**
@@ -34,6 +45,6 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
      */
     public function createForExistingObject(array $storagePath, array $objectMappingData)
     {
-        return new ExistingObjectResolver($this->formValuesOutputApplier, $storagePath, $objectMappingData);
+        return new ExistingObjectResolver($this->formValuesOutputApplier, $this->eventDispatcher, $storagePath, $objectMappingData);
     }
 }

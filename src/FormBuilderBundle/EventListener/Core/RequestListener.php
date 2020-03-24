@@ -71,7 +71,6 @@ class RequestListener implements EventSubscriberInterface
     {
         /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
-        $formConfiguration = [];
 
         if (!$event->isMasterRequest()) {
             return;
@@ -89,20 +88,18 @@ class RequestListener implements EventSubscriberInterface
 
         if ($sessionBag->has('form_configuration_' . $formId)) {
             $formConfiguration = $sessionBag->get('form_configuration_' . $formId);
+        } else {
+            $this->generateErroredJsonReturn($event, null, 'Session expired. Please reload the page.');
+
+            return;
         }
 
         try {
             $userOptions = isset($formConfiguration['form_runtime_options']) ? $formConfiguration['form_runtime_options'] : [];
             $form = $this->frontendFormBuilder->buildForm($formId, $userOptions);
         } catch (\Exception $e) {
-            if ($request->isXmlHttpRequest()) {
-                $response = new JsonResponse([
-                    'success' => false,
-                    'error'   => $e->getMessage(),
-                    'trace'   => $e->getTrace()
-                ]);
-                $event->setResponse($response);
-            }
+
+            $this->generateErroredJsonReturn($event, $e);
 
             return;
         }
@@ -116,13 +113,31 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        if ($sessionBag->has('form_configuration_' . $formId)) {
-            $sessionBag->remove('form_configuration_' . $formId);
-        }
-
         $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
         $this->formSubmissionFinisher->finishWithSuccess($event, $submissionEvent);
+    }
+
+    /**
+     * @param GetResponseEvent $event
+     * @param \Exception|null  $e
+     * @param string|null      $message
+     */
+    protected function generateErroredJsonReturn(GetResponseEvent $event, ?\Exception $e, string $message = null)
+    {
+        $request = $event->getRequest();
+
+        if (!$request->isXmlHttpRequest()) {
+            return;
+        }
+
+        $response = new JsonResponse([
+            'success' => false,
+            'error'   => $e instanceof \Exception ? $e->getMessage() : $message,
+            'trace'   => $e instanceof \Exception ? $e->getTrace() : [],
+        ]);
+
+        $event->setResponse($response);
     }
 }

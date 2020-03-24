@@ -6,6 +6,9 @@ use Pimcore\Mail;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * @deprecated since version 3.3; use \FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent instead.
+ */
 class MailEvent extends Event
 {
     /**

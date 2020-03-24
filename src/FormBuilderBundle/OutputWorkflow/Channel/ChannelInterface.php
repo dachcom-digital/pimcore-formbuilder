@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel;
 
 use FormBuilderBundle\Event\SubmissionEvent;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 
 interface ChannelInterface
 {
@@ -22,6 +23,7 @@ interface ChannelInterface
      * @param array           $channelConfiguration
      *
      * @throws \Exception
+     * @throws GuardException
      */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration);
 }

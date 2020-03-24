@@ -42,7 +42,13 @@ final class FormBuilderEvents
     const FORM_SUBMIT_SUCCESS = 'form_builder.submit.success';
 
     /**
-     *  The FORM_MAIL_PRE_SUBMIT event occurs before sending an email.
+     * The FORM_MAIL_PRE_SUBMIT event occurs before sending an email.
+     * @deprecated
      */
     const FORM_MAIL_PRE_SUBMIT = 'form_builder.mail.pre_submit';
+
+    /**
+     * @see \FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent
+     */
+    const OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH = 'form_builder.output_workflow.guard.subject.pre_dispatch';
 }
