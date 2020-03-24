@@ -1173,7 +1173,9 @@ Formbuilder.extjs.formPanel.config = Class.create({
             return;
         }
 
-        pimcore.helpers.download('/admin/formbuilder/settings/export-form/' + this.formId);
+        Ext.Msg.alert(t('export'), t('form_builder.export_note'), function (btn) {
+            pimcore.helpers.download('/admin/formbuilder/settings/export-form/' + this.formId);
+        }.bind(this));
     },
 
     /**
