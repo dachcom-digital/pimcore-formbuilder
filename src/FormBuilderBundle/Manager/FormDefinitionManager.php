@@ -233,7 +233,7 @@ class FormDefinitionManager
      * @param array                   $data
      * @param FormDefinitionInterface $form
      */
-    protected function updateFields($data, $form)
+    public function updateFields($data, $form)
     {
         $order = 0;
         $fields = [];

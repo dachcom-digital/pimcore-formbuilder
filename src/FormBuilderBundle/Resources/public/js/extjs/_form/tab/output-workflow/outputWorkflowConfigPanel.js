@@ -27,35 +27,64 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
     getLayout: function () {
 
+        var observerListener;
+
         this.panel = new Ext.form.FormPanel({
-            title: t('general_settings'),
-            bodyStyle: 'padding: 10px;',
+            title: t('form_builder.tab.output_workflow') + ' "' + this.workflowData.name + '"',
+            bodyStyle: '',
             autoScroll: true,
-            anchor: '100%',
-            defaults: {
-                labelWidth: 200
-            },
-            buttons: [
+            border: false,
+            tools: [
                 {
+                    xtype: 'tbfill'
+                },
+                {
+                    xtype: 'button',
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_cancel',
+                    handler: function (btn) {
+                        this.fireObserverEvent('output_workflow.required_form_fields_reset', {workflowId: this.workflowData.id});
+                        this.parentPanel.clearEditPanel();
+                    }.bind(this)
+                },
+                {
+                    xtype: 'button',
                     text: t('save'),
                     iconCls: 'pimcore_icon_save',
                     handler: this.saveOutputChannel.bind(this)
                 }
             ],
+            defaults: {
+                labelWidth: 200
+            },
             items: [
                 {
-                    xtype: 'textfield',
-                    width: 600,
-                    name: 'output_workflow_name',
-                    fieldLabel: t('name'),
-                    value: this.workflowData.name
+                    xtype: 'panel',
+                    bodyStyle: 'padding: 10px;',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            width: 600,
+                            name: 'output_workflow_name',
+                            fieldLabel: t('name'),
+                            value: this.workflowData.name
+                        },
+                    ]
                 },
+
                 this.getOutputSuccessManagementPanel(),
                 this.getOutputChannelPanel()
             ]
         });
 
+        observerListener = Formbuilder.eventObserver.getObserver(this.formId).addListener(
+            'output_workflow.required_form_fields_requested',
+            this.getUsedFormFields.bind(this),
+            null, {destroyable: true}
+        );
+
         this.panel.on('beforedestroy', function () {
+            observerListener.destroy();
             this.channelPanelConfigClasses = null;
         }.bind(this));
 
@@ -83,8 +112,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
         this.channelSuccessManagementPanel = new Ext.form.Panel({
             iconCls: 'pimcore_icon_output_workflow_channel',
-            style: 'margin-top: 20px',
             title: t('form_builder.output_workflow.output_workflow_channel_success_management'),
+            autoScroll: true,
+            border: false,
             items: [
                 {
                     xtype: 'label',
@@ -104,6 +134,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             iconCls: 'pimcore_icon_output_workflow_channel',
             style: 'margin-top: 20px',
             title: t('form_builder.output_workflow.output_workflow_channel_configuration'),
+            autoScroll: true,
+            border: false,
             items: [
                 this.getAddControl()
             ]
@@ -193,6 +225,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         }.bind(this));
 
         this.channelPanel.remove(panel);
+
+        this.fireObserverEvent('output_workflow.required_form_fields_refreshed', {workflowId: this.workflowData.id});
     },
 
     addOutputChannel: function (data, channelConfig) {
@@ -224,6 +258,10 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         });
 
         this.channelPanel.add(element);
+
+        if (this.panel) {
+            this.panel.updateLayout();
+        }
     },
 
     createChannelConfigPanel: function (data, channelConfig) {
@@ -238,14 +276,17 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             return null;
         }
 
-        channelConfigPanel = new Formbuilder.extjs.formPanel.outputWorkflow.channel[channelIdentifier](channelIdentifier, data, this.formId);
+        channelConfigPanel = new Formbuilder.extjs.formPanel.outputWorkflow.channel[channelIdentifier](channelIdentifier, data, this.formId, this.workflowData.id);
 
         return channelConfigPanel;
     },
 
     saveOutputChannel: function (ev) {
 
-        var channelData = [], successManagementData, formData, hasInvalidConfigChannel = false;
+        var channelData = [],
+            hasInvalidConfigChannel = false,
+            successManagementData,
+            formData;
 
         Ext.each(this.channelPanelConfigClasses, function (channelWrapper) {
             var transposedData, compiledData = {}, dataClass = channelWrapper.dataClass;
@@ -285,6 +326,19 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         });
     },
 
+    getUsedFormFields: function () {
+
+        var usedFormFields = [];
+        Ext.each(this.channelPanelConfigClasses, function (channelWrapper) {
+            usedFormFields = Ext.Array.merge(channelWrapper.dataClass.getUsedFormFields(), usedFormFields);
+        }.bind(this));
+
+        this.fireObserverEvent('output_workflow.required_form_fields_updated', {
+            fields: usedFormFields,
+            workflowId: this.workflowData.id
+        });
+    },
+
     saveOnComplete: function (response) {
 
         var res = Ext.decode(response.responseText);
@@ -296,10 +350,16 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
         this.parentPanel.tree.getStore().load();
 
+        this.fireObserverEvent('output_workflow.required_form_fields_persisted', {workflowId: this.workflowData.id});
+
         pimcore.helpers.showNotification(t('success'), t('form_builder.output_workflow.output_workflow_channel.save_successful'), 'success');
     },
 
     saveOnError: function () {
         pimcore.helpers.showNotification(t('error'), t('form_builder.output_workflow.output_workflow_channel.save_failed'), 'error');
     },
+
+    fireObserverEvent: function (name, data) {
+        Formbuilder.eventObserver.getObserver(this.formId).fireEvent(name, data);
+    }
 });

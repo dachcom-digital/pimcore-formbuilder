@@ -111,6 +111,7 @@ class ExtJsFormBuilder
             }
         }
 
+        $data['sensitive_field_names'] = $this->getSensitiveFormFieldNames($formDefinition);
         $data['fields'] = $this->generateExtJsFields($fieldData);
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
@@ -273,6 +274,39 @@ class ExtJsFormBuilder
         }
 
         return $conditionalData;
+    }
+
+    /**
+     * @param FormDefinitionInterface $formDefinition
+     *
+     * @return array
+     * @throws \Exception
+     */
+    protected function getSensitiveFormFieldNames(FormDefinitionInterface $formDefinition)
+    {
+        if (!$formDefinition->hasOutputWorkflows()) {
+            return [];
+        }
+
+        $fieldNames = [];
+        foreach ($formDefinition->getOutputWorkflows() as $outputWorkflow) {
+
+            $workflowFieldNames = [];
+
+            if (!$outputWorkflow->hasChannels()) {
+                $fieldNames[$outputWorkflow->getId()] = [];
+                continue;
+            }
+
+            foreach ($outputWorkflow->getChannels() as $channel) {
+                $channelDefinition = $this->outputWorkflowChannelRegistry->get($channel->getType());
+                $workflowFieldNames = array_merge($workflowFieldNames, $channelDefinition->getUsedFormFieldNames($channel->getConfiguration()));
+            }
+
+            $fieldNames[$outputWorkflow->getId()] = array_unique($workflowFieldNames);
+        }
+
+        return $fieldNames;
     }
 
     /**

@@ -117,5 +117,3 @@ form_builder.controller.admin.output_workflow.object.get_form_data:
     path: /admin/formbuilder/output-workflow/object/get-form-data
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFormDataAction }
     methods: [GET]
-
-

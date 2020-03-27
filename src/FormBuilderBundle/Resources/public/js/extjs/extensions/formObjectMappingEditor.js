@@ -89,8 +89,8 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
                     handler: this.saveEditorDataAndClose.bind(this)
                 },
                 {
-                    text: t('close'),
-                    iconCls: 'pimcore_icon_empty',
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_cancel',
                     handler: function () {
                         this.detailWindow.close();
                     }.bind(this)
@@ -140,6 +140,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
     createPanel: function () {
 
         this.formObjectTreeMapper = new Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeMapper(
+            this.formId,
             this.editorData,
             this.configuration.formFieldDefinitions,
             'object',
@@ -197,16 +198,18 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
 
         if (this.isLocal === true) {
             this.callbacks.saveData(data);
+
             if (typeof callback === 'function') {
                 callback();
             }
-            return;
         }
 
-        this.detailWindow.setLoading(true);
+        /**
+         * @TODO: implement non-local persistence
 
-        //@todo: implement non-local persistence
-        Ext.Ajax.request({
+         this.detailWindow.setLoading(true);
+
+         Ext.Ajax.request({
             url: '/admin/formbuilder/output-workflow/object/save-object-mapping-data',
             params: {
                 id: this.formId,
@@ -227,5 +230,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
                 }
             }.bind(this)
         });
+
+         **/
     }
 });

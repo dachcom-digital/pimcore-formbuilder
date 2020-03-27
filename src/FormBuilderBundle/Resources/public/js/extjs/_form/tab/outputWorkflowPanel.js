@@ -12,15 +12,14 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
     formId: null,
     formName: null,
 
+    activeWorkflowId: null,
     loading: false,
 
-    activeWorkflowId: null,
-
     initialize: function (formData, formSelectionPanel) {
-        this.activeWorkflowId = null;
         this.formSelectionPanel = formSelectionPanel;
         this.formId = formData.id;
         this.formName = formData.name;
+        this.activeWorkflowId = null;
     },
 
     getLayout: function (parentPanel) {
@@ -37,7 +36,7 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
             },
             listeners: {
                 load: function (tree, records, success, opt) {
-                    if (opt.formId !== undefined) {
+                    if (opt.outputWorkflowId !== undefined) {
                         var record = _self.tree.getRootNode().findChild('id', opt.outputWorkflowId, true);
                         _self.tree.getSelectionModel().select(record);
                     }
@@ -55,13 +54,16 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
             split: true,
             width: 200,
             cls: 'form-builder-output-workflow-elements-tree',
+            rootVisible: false,
             root: {
                 draggable: false,
                 allowChildren: false,
                 id: '0',
                 expanded: true
             },
-            rootVisible: false,
+            selModel: {
+                ignoreRightMouseSelection: true
+            },
             tbar: {
                 items: [
                     {
@@ -77,11 +79,12 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
             region: 'center',
             bodyStyle: 'padding: 10px;',
             cls: 'form-builder-form-output-workflow-panel',
-            autoScroll: true
+            autoScroll: true,
+            border: false,
         });
 
         this.panel = new Ext.Panel({
-            title: 'Output Workflow',
+            title: t('form_builder.tab.output_workflow'),
             closable: false,
             iconCls: 'pimcore_icon_output_workflow',
             autoScroll: true,
@@ -103,10 +106,18 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
         this.panel.destroy();
     },
 
+    clearEditPanel: function () {
+        this.releaseTree();
+        this.editPanel.removeAll();
+        this.tree.getSelectionModel().select(this.tree.getRootNode(), true);
+        this.activeWorkflowId = null;
+    },
+
     getTreeNodeListeners: function () {
 
         return {
-            itemclick: this.onTreeNodeClick.bind(this),
+            beforeselect: this.onTreeNodeBeforeSelect.bind(this),
+            select: this.onTreeNodeSelect.bind(this),
             itemcontextmenu: this.onTreeNodeContextMenu.bind(this),
             render: function () {
                 this.getRootNode().expand();
@@ -117,31 +128,65 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
         };
     },
 
-    onTreeNodeClick: function (tree, record) {
-        if (!record.isLeaf()) {
+    releaseTree: function () {
+
+        this.tree.getDockedItems('toolbar[dock="top"]')[0].items.each(function (btn) {
+            btn.enable();
+        });
+
+        this.tree.getRootNode().cascade(function (record) {
+            record.set('cls', '');
+        });
+    },
+
+    lockTree: function (selectedRecord) {
+
+        this.tree.getDockedItems('toolbar[dock="top"]')[0].items.each(function (btn) {
+            btn.disable();
+        });
+
+        this.tree.getRootNode().cascade(function (record) {
+            if (selectedRecord.get('id') !== record.get('id')) {
+                record.set('cls', 'formbuilder-object-editor-disabled');
+            }
+        });
+    },
+
+    onTreeNodeBeforeSelect: function (view, record) {
+        if (record.get('cls') === 'formbuilder-object-editor-disabled') {
+            Ext.Msg.alert(t('error'), t('form_builder.tab.output_workflow_locked'));
+            return false;
+        }
+    },
+
+    onTreeNodeSelect: function (tree, selectedRecord) {
+        if (!selectedRecord.isLeaf()) {
             return;
         }
-        this.createOutputWorkflowPanel(record.data.id);
+
+        this.createOutputWorkflowPanel(selectedRecord.get('id'));
+        this.lockTree(selectedRecord);
     },
 
     onTreeNodeContextMenu: function (tree, record, item, index, e) {
 
-        var menu;
+        var menu = new Ext.menu.Menu();
 
         e.stopEvent();
-        tree.select();
 
-        if (!record.isLeaf()) {
+        if (record.get('cls') === 'formbuilder-object-editor-disabled') {
             return;
         }
-
-        menu = new Ext.menu.Menu();
 
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: 'pimcore_icon_delete',
             handler: this.deleteOutputWorkflow.bind(this, tree, record)
         }));
+
+        menu.on('hide', function (menu) {
+            menu.destroy()
+        }, this, {delay: 200});
 
         menu.showAt(e.pageX, e.pageY);
     },
@@ -201,8 +246,6 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
 
         this.loading = true;
         this.tree.disable();
-
-        /** @todo: ask for unsaved changes! **/
         this.editPanel.removeAll();
 
         Ext.Ajax.request({
@@ -239,16 +282,42 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
                 return;
             }
 
+            this.loading = true;
+            this.tree.disable();
+
             Ext.Ajax.request({
-                url: '/admin/formbuilder/output-workflow/delete-output-workflow/' + record.id
+                url: '/admin/formbuilder/output-workflow/delete-output-workflow/' + record.id,
+                success: function (response) {
+
+                    var res = Ext.decode(response.responseText);
+
+                    this.loading = false;
+                    this.tree.enable();
+
+                    if (res.success === false) {
+                        Ext.MessageBox.alert(t('error'), res.message);
+                        return;
+                    }
+
+                    // remove active edit panel => it's the deleted one!
+                    if (record.id === this.activeWorkflowId) {
+                        this.clearEditPanel();
+                    }
+
+                    record.remove();
+                    this.releaseTree();
+
+                    Formbuilder.eventObserver
+                    .getObserver(this.formId)
+                    .fireEvent('output_workflow.required_form_fields_refreshed', {workflowId: record.id});
+                }.bind(this),
+
+                failure: function () {
+                    this.loading = false;
+                    this.tree.enable();
+                    pimcore.helpers.showNotification(t('error'), t('error'), 'error');
+                }.bind(this)
             });
-
-            // remove active edit panel => it's the deleted one!
-            if (record.id === this.activeWorkflowId) {
-                this.editPanel.removeAll();
-            }
-
-            record.remove();
 
         }.bind(this));
     }

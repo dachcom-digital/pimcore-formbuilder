@@ -13,6 +13,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
     getLayout: function () {
 
         var formConfig;
+
         this.objectResolverPanel = null;
         this.objectMappingDataIsConsistent = true;
         this.objectMappingData = this.data !== null && this.data.hasOwnProperty('objectMappingData') ? this.data['objectMappingData'] : null;
@@ -182,7 +183,6 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
         comboBox.setStore(store);
 
         return [comboBox];
-
     },
 
     generateExistingObjectResolverPanel: function () {
@@ -259,7 +259,6 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                 },
                 {
                     xtype: 'button',
-                    disable: true,
                     cls: 'form_builder_cme_status_button',
                     style: 'background: ' + (hasData ? (hasInconsistentData ? '#d64517' : '#3e943e') : '#7f8a7f') + '; border-color: transparent; cursor: default !important;',
                     text: t('form_builder.output_workflow.output_workflow_channel.object.object_mapping.' + (hasData ? (hasInconsistentData ? 'status_inconsistent' : 'status_in_sync') : 'status_disabled'))
@@ -286,6 +285,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                     this.lastConsistentConfigHash = md5(Ext.encode(this.panel.form.getValues()));
                     this.objectMappingDataIsConsistent = true;
                     this.checkObjectMappingEditorSignals();
+
+                    Formbuilder.eventObserver.getObserver(this.formId).fireEvent('output_workflow.required_form_fields_refreshed', {workflowId: this.workflowId});
+
                 }.bind(this)
             };
 
@@ -300,7 +302,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
         if (statusButtons.length > 0) {
             statusButtons[0].setStyle('background', hasData ? (hasInconsistentData ? '#d64517' : '#3e943e') : '#7f8a7f');
-            statusButtons[0].setText(t('form_builder.output_workflow.output_workflow_channel.object.object_mapping.' + (hasData ? (hasInconsistentData ? 'status_inconsistent' : 'status_in_sync') : 'status_disabled')));
+            statusButtons[0].updateText(t('form_builder.output_workflow.output_workflow_channel.object.object_mapping.' + (hasData ? (hasInconsistentData ? 'status_inconsistent' : 'status_in_sync') : 'status_disabled')));
         }
     },
 
@@ -315,5 +317,38 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
         formValues['objectMappingData'] = this.objectMappingData;
 
         return formValues;
+    },
+
+    getUsedFormFields: function () {
+
+        if (this.objectMappingData === null) {
+            return [];
+        }
+
+        return this.getRequiredFormFieldNamesRecursive(this.objectMappingData, []);
+    },
+
+    getRequiredFormFieldNamesRecursive: function (fields, fieldNames) {
+
+        Ext.Array.each(fields, function (node) {
+
+            var hasChilds = node.hasOwnProperty('childs') && Ext.isArray(node.childs) && node.childs.length > 0,
+                hasWorkerFieldMapping = node.config.hasOwnProperty('workerData') && node.config.workerData.hasOwnProperty('fieldMapping');
+
+            if (node.hasOwnProperty('type')
+                && node.type === 'form_field'
+                && hasChilds === true) {
+                fieldNames.push(node.config.name)
+            }
+
+            if (hasChilds === true) {
+                this.getRequiredFormFieldNamesRecursive(node.childs, fieldNames);
+            } else if (hasWorkerFieldMapping === true) {
+                this.getRequiredFormFieldNamesRecursive(node.config.workerData.fieldMapping, fieldNames);
+            }
+
+        }.bind(this));
+
+        return fieldNames;
     }
 });

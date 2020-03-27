@@ -23,6 +23,8 @@ Formbuilder.settings = Class.create({
             return this.panel;
         }
 
+        Formbuilder.eventObserver = new Formbuilder.eventObserver();
+
         this.panel = new Ext.Panel({
             id: 'form_builder_settings',
             title: t('form_builder_settings'),
@@ -38,6 +40,7 @@ Formbuilder.settings = Class.create({
         tabPanel.setActiveItem('form_builder_settings');
 
         this.panel.on('destroy', function () {
+            Formbuilder.eventObserver = null;
             pimcore.globalmanager.remove('form_builder_settings');
         }.bind(this));
 

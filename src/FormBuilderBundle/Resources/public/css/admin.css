@@ -1,5 +1,6 @@
 .form-builder-form-elements-tree .tree_node_error {
-    background: url(/bundles/formbuilder/img/danger.svg) 95% 50% no-repeat !important;
+    background: url(/bundles/formbuilder/img/danger.svg) right center no-repeat !important;
+    background-size: 10% 80% !important;
 }
 
 .form_builder_icon_root {
@@ -242,6 +243,11 @@
 
 .form_builder_output_workflow_apply_data {
     background: url(/bundles/formbuilder/img/ow_apply_data.svg) left center no-repeat !important;
+}
+
+.form_builder_output_workflow_aware_form_item {
+    background: url(/bundles/formbuilder/img/lock.svg) right center no-repeat !important;
+    background-size: 10% 80% !important;
 }
 
 

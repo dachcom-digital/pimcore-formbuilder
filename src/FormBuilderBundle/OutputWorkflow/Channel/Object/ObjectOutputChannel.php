@@ -41,6 +41,18 @@ class ObjectOutputChannel implements ChannelInterface
     /**
      * {@inheritdoc}
      */
+    public function getUsedFormFieldNames(array $channelConfiguration)
+    {
+        if (count($channelConfiguration['objectMappingData']) === 0) {
+            return [];
+        }
+
+        return $this->findUsedFormFieldsInConfiguration($channelConfiguration['objectMappingData']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
     {
         $formConfiguration = $submissionEvent->getFormConfiguration();
@@ -66,5 +78,32 @@ class ObjectOutputChannel implements ChannelInterface
         $objectResolver->setFormRuntimeOptions($formConfiguration['form_runtime_options']);
 
         $objectResolver->resolve();
+    }
+
+    /**
+     * @param array $definitionFields
+     * @param array $fieldNames
+     *
+     * @return array
+     */
+    protected function findUsedFormFieldsInConfiguration(array $definitionFields, $fieldNames = [])
+    {
+        foreach ($definitionFields as $definitionField) {
+
+            $hasChildren = isset($definitionField['childs']) && is_array($definitionField['childs']) && count($definitionField['childs']) > 0;
+            $hasWorkerFieldMapping = isset($definitionField['config']['workerData']) && isset($definitionField['config']['workerData']['fieldMapping']);
+
+            if ($definitionField['type'] === 'form_field' && $hasChildren) {
+                $fieldNames[] = $definitionField['config']['name'];
+            }
+
+            if ($hasChildren === true) {
+                $fieldNames = $this->findUsedFormFieldsInConfiguration($definitionField['childs'], $fieldNames);
+            } elseif ($hasWorkerFieldMapping === true) {
+                $fieldNames = $this->findUsedFormFieldsInConfiguration($definitionField['config']['workerData']['fieldMapping'], $fieldNames);
+            }
+        }
+
+        return $fieldNames;
     }
 }

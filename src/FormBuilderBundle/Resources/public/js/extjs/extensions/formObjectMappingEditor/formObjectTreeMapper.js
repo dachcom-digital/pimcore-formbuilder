@@ -4,33 +4,35 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
     FIELD_TYPE_FORM_BUILDER: 'form_field',
     FIELD_TYPE_DATA_CLASS_FIELD: 'data_class_field',
 
-    formDataHasInvalidFields: false,
+    formId: null,
+    formRootName: null,
+    formRootIconCls: null,
     editorData: null,
     formFieldDefinitions: null,
     pimcoreClassType: null,
     pimcoreClassId: null,
 
+    formDataHasInvalidFields: false,
+    onlyContainerElementsAllowed: false,
+
     editPanel: null,
     formTreePanel: null,
     classTreePanel: null,
     classDefinitionTreePanel: null,
-    formRootName: null,
-    formRootIconCls: null,
 
-    onlyContainerElementsAllowed: false,
+    initialize: function (formId, editorData, formFieldDefinitions, pimcoreClassType, pimcoreClassId, formRootName, formRootIconCls) {
 
-    initialize: function (editorData, formFieldDefinitions, pimcoreClassType, pimcoreClassId, formRootName, formRootIconCls) {
-
+        this.formId = formId;
         this.formRootName = formRootName ? formRootName : t('form_builder_base');
         this.formRootIconCls = formRootIconCls ? formRootIconCls : 'form_builder_icon_root';
-
-        this.formDataHasInvalidFields = false;
-        this.onlyContainerElementsAllowed = false;
-
         this.editorData = editorData;
         this.formFieldDefinitions = formFieldDefinitions;
         this.pimcoreClassType = pimcoreClassType;
         this.pimcoreClassId = pimcoreClassId;
+
+        this.formDataHasInvalidFields = false;
+        this.onlyContainerElementsAllowed = false;
+
     },
 
     setOnlyContainerElementsAllowed: function () {
@@ -606,6 +608,6 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
     },
 
     getWorker: function (workerName, correspondingFieldName, data) {
-        return new Formbuilder.extjs.extensions.formObjectMappingEditorWorker[workerName](this.pimcoreClassId, correspondingFieldName, data);
+        return new Formbuilder.extjs.extensions.formObjectMappingEditorWorker[workerName](this.formId, this.pimcoreClassId, correspondingFieldName, data);
     }
 });

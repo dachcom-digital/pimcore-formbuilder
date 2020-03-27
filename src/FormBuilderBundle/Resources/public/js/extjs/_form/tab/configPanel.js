@@ -39,10 +39,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         'fields': {}
     },
 
-    /**
-     * @param formData
-     * @param formSelectionPanel
-     */
     initialize: function (formData, formSelectionPanel) {
         this.formSelectionPanel = formSelectionPanel;
         this.formId = formData.id;
@@ -101,7 +97,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
         });
 
         this.panel = new Ext.Panel({
-            title: 'Form Configuration',
+            title: t('form_builder.tab.form_configuration'),
             closable: false,
             iconCls: 'form_builder_icon_form_configuration',
             autoScroll: true,
@@ -221,34 +217,31 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return newNode;
     },
 
-    /**
-     * @returns {{beforeselect, select, itemcontextmenu, beforeitemmove}}
-     */
     getTreeNodeListeners: function () {
 
         return {
-            'beforeselect': this.onTreeNodeBeforeSelect.bind(this),
-            'select': this.onTreeNodeSelect.bind(this),
-            'itemcontextmenu': this.onTreeNodeContextMenu.bind(this),
-            'beforeitemmove': this.onTreeNodeBeforeMove.bind(this)
+            beforeselect: this.onTreeNodeBeforeSelect.bind(this),
+            select: this.onTreeNodeSelect.bind(this),
+            itemcontextmenu: this.onTreeNodeContextMenu.bind(this),
+            beforeitemmove: this.onTreeNodeBeforeMove.bind(this)
         };
-
     },
 
     /**
      * @param node
      * @param oldParent
      * @param newParent
-     * @param index
-     * @param eOpts
      */
-    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts) {
+    onTreeNodeBeforeMove: function (node, oldParent, newParent) {
 
         var targetType = newParent.data.fbType,
             elementType = node.data.fbType;
 
-        return Ext.Array.contains(this.allowedMoveElements[targetType], elementType);
+        if (node.get('fbSensitiveLocked') === true && oldParent.get('fbType') === 'container' || newParent.get('fbType') === 'container') {
+            return false;
+        }
 
+        return Ext.Array.contains(this.allowedMoveElements[targetType], elementType);
     },
 
     /**
@@ -292,6 +285,13 @@ Formbuilder.extjs.formPanel.config = Class.create({
             if (displayField !== null) {
                 displayField.focus(true, true);
             }
+
+            var nameField = fbObject.form.getForm().findField('name');
+            if (nameField !== null) {
+                if (record.get('fbSensitiveLocked') === true) {
+                    nameField.setReadOnly(true);
+                }
+            }
         }
 
         this.editPanel.updateLayout();
@@ -323,6 +323,10 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
         deleteAllowed = parentType !== 'root';
         if (record.data.object && record.data.object.storeData.locked) {
+            deleteAllowed = false;
+        }
+
+        if (record.get('fbSensitiveLocked') === true) {
             deleteAllowed = false;
         }
 
@@ -457,8 +461,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
             pimcore.formBuilderEditor = {};
         }
 
-        var newNode = this.cloneChild(tree, record);
-        pimcore.formBuilderEditor.clipboard = newNode;
+        pimcore.formBuilderEditor.clipboard = this.cloneChild(tree, record);
     },
 
     dropNode: function (tree, record) {
@@ -638,12 +641,13 @@ Formbuilder.extjs.formPanel.config = Class.create({
             node = this.tree.getRootNode();
         }
 
-        node.set('cls', '');
+        node.set('cls', Ext.isString(node.get('cls')) ? node.get('cls').replace('tree_node_error', '') : '');
 
         if (typeof node.data.object === 'object') {
             if (Ext.isArray(this.formValidator.fields[node.getId()]) && this.formValidator.fields[node.getId()].length > 0) {
                 Ext.Array.each(this.formValidator.fields[node.getId()], function (validation) {
-                    node.set('cls', 'tree_node_error');
+                    var nodeClass = node.get('cls');
+                    node.set('cls', Ext.isString(nodeClass) ? nodeClass + ' tree_node_error' : 'tree_node_error');
                     this.getDataSuccess = false;
                     Ext.MessageBox.alert('Field ' + t('error'), validation.message);
                     return false;
@@ -881,6 +885,11 @@ Formbuilder.extjs.formPanel.config = Class.create({
             newNode = this.createFormFieldNode(label, formType.icon_class);
 
         newNode = tree.appendChild(newNode);
+
+        if (formTypeValues !== null && formTypeValues.hasOwnProperty('name') && formTypeValues.name) {
+            newNode.set('fbSensitiveFieldName', formTypeValues.name);
+        }
+
         newNode.set(
             'object',
             new Formbuilder.extjs.components.formTypeBuilder(
@@ -972,6 +981,11 @@ Formbuilder.extjs.formPanel.config = Class.create({
             newNode = this.createContainerFieldNode(label, container.icon_class);
 
         newNode = tree.appendChild(newNode);
+
+        if (containerValues !== null && containerValues.hasOwnProperty('name') && containerValues.name) {
+            newNode.set('fbSensitiveFieldName', containerValues.name);
+        }
+
         newNode.set(
             'object',
             new Formbuilder.extjs.components.formFieldContainer(
@@ -1084,7 +1098,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
             node = this.tree.getRootNode();
         }
 
-        node.set('cls', '');
+        node.set('cls', Ext.isString(node.get('cls')) ? node.get('cls').replace('tree_node_error', '') : '');
 
         if (typeof node.data.object === 'object') {
             formFieldData = node.data.object.getData();
@@ -1245,7 +1259,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
         this.formSelectionPanel.tree.getStore().load();
         pimcore.helpers.showNotification(t('success'), t('form_builder_builder_saved_successfully'), 'success');
-
     },
 
     /**

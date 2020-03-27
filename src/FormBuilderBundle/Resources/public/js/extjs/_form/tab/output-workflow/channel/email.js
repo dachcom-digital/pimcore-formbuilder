@@ -129,7 +129,6 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
                     },
                     {
                         xtype: 'button',
-                        disable: true,
                         cls: 'form_builder_cme_status_button',
                         style: 'background: ' + (hasMailLayoutData ? '#3e943e' : '#7f8a7f') + '; border-color: transparent; cursor: default !important;',
                         text: t('form_builder.output_workflow.output_workflow_channel.email.mail_editor.' + (hasMailLayoutData ? 'status_enabled' : 'status_disabled'))
@@ -200,6 +199,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
 
                     this.mailTemplateData[locale] = data[locale];
                     this.changeMailEditorSignals(locale);
+
+                    // @TODO: currently not supported.
+                    //Formbuilder.eventObserver.getObserver(this.formId).fireEvent('output_workflow.required_form_fields_refreshed', {workflowId: this.workflowId});
 
                 }.bind(this)
             };

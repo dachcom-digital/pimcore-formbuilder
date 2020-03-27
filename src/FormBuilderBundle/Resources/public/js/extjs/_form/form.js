@@ -2,9 +2,14 @@ pimcore.registerNS('Formbuilder.extjs.rootForm');
 Formbuilder.extjs.rootForm = Class.create({
 
     parentPanel: null,
+    panel: null,
+    formConfigurationPanel: null,
+    formOutputWorkflowPanel: null,
+
+    formData: null,
     formId: null,
     formName: null,
-    formData: null,
+    sensitiveFormFields: null,
 
     /**
      * @param formData
@@ -13,9 +18,18 @@ Formbuilder.extjs.rootForm = Class.create({
     initialize: function (formData, parentPanel) {
 
         this.parentPanel = parentPanel;
+        this.formData = formData;
         this.formId = formData.id;
         this.formName = formData.name;
-        this.formData = formData;
+        this.sensitiveFormFields = {};
+        this.sensitiveFormFieldsBackup = {};
+
+        Formbuilder.eventObserver.registerForm(this.formId);
+
+        if (formData.has_output_workflows === true) {
+            this.sensitiveFormFields = formData.sensitive_field_names;
+            this.sensitiveFormFieldsBackup = Ext.isObject(this.sensitiveFormFields) ? Ext.apply({}, this.sensitiveFormFields) : {};
+        }
 
         this.addLayout();
     },
@@ -26,8 +40,16 @@ Formbuilder.extjs.rootForm = Class.create({
 
     addLayout: function () {
 
-        var formConfigurationPanel = new Formbuilder.extjs.formPanel.config(this.formData, this.parentPanel),
-            formOutputWorkflowPanel = new Formbuilder.extjs.formPanel.outputWorkflowPanel(this.formData, this.parentPanel);
+        var eventListeners = Formbuilder.eventObserver.getObserver(this.formId).on({
+            'output_workflow.required_form_fields_refreshed': this.onSensitiveFormFieldsRefreshed.bind(this),
+            'output_workflow.required_form_fields_updated': this.onSensitiveFormFieldsUpdated.bind(this),
+            'output_workflow.required_form_fields_persisted': this.onSensitiveFormFieldsPersisted.bind(this),
+            'output_workflow.required_form_fields_reset': this.onSensitiveFormFieldsReset.bind(this),
+            destroyable: true
+        });
+
+        this.formConfiguration = new Formbuilder.extjs.formPanel.config(this.formData, this.parentPanel);
+        this.formOutputWorkflow = new Formbuilder.extjs.formPanel.outputWorkflowPanel(this.formData, this.parentPanel);
 
         this.panel = new Ext.TabPanel({
             title: this.formName + ' (ID: ' + this.formId + ')',
@@ -43,23 +65,31 @@ Formbuilder.extjs.rootForm = Class.create({
 
         });
 
-        this.panel.add([formConfigurationPanel.getLayout(this.panel), formOutputWorkflowPanel.getLayout(this.panel)]);
+        this.formConfigurationPanel = this.formConfiguration.getLayout(this.panel);
+        this.formConfigurationPanel.on('afterrender', this.checkSensitiveFields.bind(this));
 
-        this.panel.on('beforedestroy', function () {
+        this.formOutputWorkflowPanel = this.formOutputWorkflow.getLayout(this.panel);
 
-            if (this.formId && this.parentPanel.panels['form_' + this.formId]) {
-                delete this.parentPanel.panels['form_' + this.formId];
+        this.panel.add([this.formConfigurationPanel, this.formOutputWorkflowPanel]);
+
+        this.panel.on({
+            'beforedestroy': function () {
+
+                eventListeners.destroy();
+                Formbuilder.eventObserver.unregisterForm(this.formId);
+
+                if (this.formId && this.parentPanel.panels['form_' + this.formId]) {
+                    delete this.parentPanel.panels['form_' + this.formId];
+                }
+
+                if (this.parentPanel.tree.initialConfig !== null &&
+                    Object.keys(this.parentPanel.panels).length === 0) {
+                    this.parentPanel.tree.getSelectionModel().deselectAll();
+                }
+            }.bind(this),
+            'render': function () {
+                this.setActiveTab(0);
             }
-
-            if (this.parentPanel.tree.initialConfig !== null &&
-                Object.keys(this.parentPanel.panels).length === 0) {
-                this.parentPanel.tree.getSelectionModel().deselectAll();
-            }
-
-        }.bind(this));
-
-        this.panel.on('render', function () {
-            this.setActiveTab(0);
         });
 
         this.parentPanel.getEditPanel().add(this.panel);
@@ -70,5 +100,93 @@ Formbuilder.extjs.rootForm = Class.create({
 
     activate: function () {
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
+    },
+
+    onSensitiveFormFieldsRefreshed: function (data) {
+
+        if (data.hasOwnProperty('workflowId')) {
+            this.sensitiveFormFields[data.workflowId] = [];
+            this.checkSensitiveFields();
+        }
+
+        // broadcast to every active channel to provide require forms!
+        Formbuilder.eventObserver.getObserver(this.formId).fireEvent('output_workflow.required_form_fields_requested');
+    },
+
+    onSensitiveFormFieldsReset: function (data) {
+
+        if (!data.hasOwnProperty('workflowId')) {
+            return;
+        }
+
+        if (!this.sensitiveFormFieldsBackup.hasOwnProperty(data.workflowId)) {
+            this.sensitiveFormFieldsBackup[data.workflowId] = [];
+        }
+
+        if (!this.sensitiveFormFields.hasOwnProperty(data.workflowId)) {
+            this.sensitiveFormFields[data.workflowId] = [];
+        }
+
+        this.sensitiveFormFields[data.workflowId] = Ext.Array.clone(this.sensitiveFormFieldsBackup[data.workflowId]);
+
+        this.checkSensitiveFields();
+    },
+
+    onSensitiveFormFieldsUpdated: function (data) {
+
+        if (!data.hasOwnProperty('fields') || !data.hasOwnProperty('workflowId') || !Ext.isArray(data.fields)) {
+            return;
+        }
+
+        if (!this.sensitiveFormFields.hasOwnProperty(data.workflowId)) {
+            this.sensitiveFormFields[data.workflowId] = [];
+        }
+
+        this.sensitiveFormFields[data.workflowId] = Ext.Array.merge(data.fields, this.sensitiveFormFields[data.workflowId]);
+
+        this.checkSensitiveFields();
+    },
+
+    onSensitiveFormFieldsPersisted: function (data) {
+
+        if (!data.hasOwnProperty('workflowId')) {
+            return;
+        }
+
+        if (!this.sensitiveFormFieldsBackup.hasOwnProperty(data.workflowId)) {
+            this.sensitiveFormFieldsBackup[data.workflowId] = [];
+        }
+
+        if (!this.sensitiveFormFields.hasOwnProperty(data.workflowId)) {
+            this.sensitiveFormFields[data.workflowId] = [];
+        }
+
+        this.sensitiveFormFieldsBackup[data.workflowId] = Ext.Array.clone(this.sensitiveFormFields[data.workflowId]);
+
+        this.checkSensitiveFields();
+    },
+
+    checkSensitiveFields: function () {
+
+        this.formConfiguration.tree.getRootNode().cascade(function (record) {
+            var nodeClass = record.get('cls');
+            if (record.get('fbSensitiveFieldName') !== undefined) {
+                record.set('cls', Ext.isString(nodeClass) ? nodeClass.replace('form_builder_output_workflow_aware_form_item', '') : '');
+                record.set('fbSensitiveLocked', false);
+            }
+        });
+
+        Ext.Object.each(this.sensitiveFormFields, function (workflowId, workflowFields) {
+            Ext.Array.each(workflowFields, function (sensitiveFieldName) {
+                var record = this.formConfiguration.tree.getRootNode().findChild('fbSensitiveFieldName', sensitiveFieldName, true),
+                    nodeClass;
+                if (record !== null) {
+                    nodeClass = record.get('cls');
+                    nodeClass = Ext.isString(nodeClass) ? nodeClass.replace('form_builder_output_workflow_aware_form_item', '') : '';
+                    record.set('cls', (nodeClass + ' form_builder_output_workflow_aware_form_item').replace('  ', ' '));
+                    record.set('fbSensitiveLocked', true);
+                }
+            }.bind(this));
+        }.bind(this));
     }
 });

@@ -57,6 +57,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/types/localizedField.js',
             '/bundles/formbuilder/js/extjs/types/href.js',
             '/bundles/formbuilder/js/extjs/_form/form.js',
+            '/bundles/formbuilder/js/extjs/eventObserver.js',
             '/bundles/formbuilder/js/extjs/_form/tab/configPanel.js',
             '/bundles/formbuilder/js/extjs/_form/tab/outputWorkflowPanel.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/outputWorkflowConfigPanel.js',

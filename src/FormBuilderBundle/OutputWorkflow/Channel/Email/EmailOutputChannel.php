@@ -46,6 +46,16 @@ class EmailOutputChannel implements ChannelInterface
     }
 
     /**
+     * Currently unsupported for EmailOutputChanel
+     *
+     * {@inheritdoc}
+     */
+    public function getUsedFormFieldNames(array $channelConfiguration)
+    {
+        return [];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)

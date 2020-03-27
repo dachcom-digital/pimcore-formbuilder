@@ -1,8 +1,9 @@
 pimcore.registerNS('Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker');
 Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker = Class.create({
 
-    fieldCollectionKey: null,
+    formId: null,
     classId: null,
+    fieldCollectionKey: null,
     data: null,
 
     window: null,
@@ -13,8 +14,9 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
     formObjectTreeMapper: null,
     formObjectTreeMapperPanel: null,
 
-    initialize: function (classId, fieldCollectionKey, data) {
+    initialize: function (formId, classId, fieldCollectionKey, data) {
 
+        this.formId = formId;
         this.classId = classId;
         this.fieldCollectionKey = fieldCollectionKey;
         this.data = data;
@@ -156,6 +158,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
         }
 
         this.formObjectTreeMapper = new Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeMapper(
+            this.formId,
             values,
             containerFields,
             pimcoreClassType,
@@ -206,5 +209,4 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
             cb();
         }
     }
-
 });

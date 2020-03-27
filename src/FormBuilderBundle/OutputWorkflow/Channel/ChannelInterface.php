@@ -18,6 +18,13 @@ interface ChannelInterface
     public function isLocalizedConfiguration();
 
     /**
+     * @param array $channelConfiguration
+     *
+     * @return array
+     */
+    public function getUsedFormFieldNames(array $channelConfiguration);
+
+    /**
      * @param SubmissionEvent $submissionEvent
      * @param string          $workflowName
      * @param array           $channelConfiguration
