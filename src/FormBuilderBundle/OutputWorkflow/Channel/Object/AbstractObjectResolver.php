@@ -455,7 +455,7 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param $subject
+     * @param mixed $subject
      *
      * @return DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|null
      *

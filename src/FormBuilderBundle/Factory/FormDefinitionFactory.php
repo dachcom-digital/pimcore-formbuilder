@@ -40,11 +40,16 @@ class FormDefinitionFactory implements FormDefinitionFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param string $type
+     * @param array  $options
+     * @param array  $optional
+     *
+     * @return FormFieldDynamicDefinition
      */
-    public function createFormFieldDynamicDefinition()
+    public function createFormFieldDynamicDefinition(string $name, string $type, array $options, array $optional = [])
     {
-        $formFieldDynamicEntity = new FormFieldDynamicDefinition();
+        $formFieldDynamicEntity = new FormFieldDynamicDefinition($name, $type, $options, $optional);
 
         return $formFieldDynamicEntity;
     }

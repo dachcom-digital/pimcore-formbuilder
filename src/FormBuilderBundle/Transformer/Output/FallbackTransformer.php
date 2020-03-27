@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Transformer\Output;
 
 use Pimcore\Translation\Translator;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
 use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -234,7 +235,7 @@ class FallbackTransformer implements OutputTransformerInterface
      */
     protected function parseDefaultLabel(FormFieldSimpleInterface $field, $locale)
     {
-        if (!$field instanceof FormFieldSimpleInterface) {
+        if (!$field instanceof FormFieldDefinitionInterface) {
             return null;
         }
 

@@ -197,15 +197,15 @@ class PimcoreBackend extends Module
     /**
      * Actor Function to place a form area on a document
      *
-     * @param Page          $document
-     * @param FormInterface $form
-     * @param bool          $mailTemplate
-     * @param bool          $copyMailTemplate
-     * @param string        $formTemplate
+     * @param Page                    $document
+     * @param FormDefinitionInterface $form
+     * @param bool                    $mailTemplate
+     * @param bool                    $copyMailTemplate
+     * @param string                  $formTemplate
      */
     public function seeAFormAreaElementPlacedOnDocument(
         Page $document,
-        FormInterface $form,
+        FormDefinitionInterface $form,
         $mailTemplate = null,
         $copyMailTemplate = null,
         $formTemplate = 'form_div_layout.html.twig'
@@ -364,12 +364,12 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param FormInterface $form
-     * @param string        $fieldName
+     * @param FormDefinitionInterface $form
+     * @param string                  $fieldName
      *
      * @throws \Exception
      */
-    public function seeZipFileInPimcoreAssetsFromField(FormInterface $form, string $fieldName)
+    public function seeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName)
     {
         $assetList = Asset::getList([
             'condition' => sprintf(
@@ -386,12 +386,12 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param FormInterface $form
-     * @param string        $fieldName
+     * @param FormDefinitionInterface $form
+     * @param string                  $fieldName
      *
      * @throws \Exception
      */
-    public function cantSeeZipFileInPimcoreAssetsFromField(FormInterface $form, string $fieldName)
+    public function cantSeeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName)
     {
         $assetList = Asset::getList([
             'condition' => sprintf(

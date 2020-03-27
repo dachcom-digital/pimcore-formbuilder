@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Form\Data\Connector;
 
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 use Symfony\Component\Yaml\Yaml;
 use FormBuilderBundle\Configuration\Configuration;
@@ -150,7 +151,9 @@ class FormDataConnector implements FormDataConnectorInterface
 
         /** @var FormFieldDefinitionInterface $field */
         foreach ($formDefinition->getFields() as $field) {
-            $formFields[] = $field->toArray();
+            if ($field instanceof EntityToArrayAwareInterface) {
+                $formFields[] = $field->toArray();
+            }
         }
 
         return $formFields;

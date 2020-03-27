@@ -3,8 +3,9 @@
 namespace FormBuilderBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
+use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 
-interface FormDefinitionInterface
+interface FormDefinitionInterface extends SubFieldsAwareInterface
 {
     const ALLOWED_FORM_KEYS = [
         'action',

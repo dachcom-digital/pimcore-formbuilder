@@ -2,7 +2,9 @@
 
 namespace FormBuilderBundle\Model;
 
-interface FormFieldContainerDefinitionInterface extends FieldDefinitionInterface
+use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
+
+interface FormFieldContainerDefinitionInterface extends FieldDefinitionInterface, SubFieldsAwareInterface
 {
     /**
      * @param int $order

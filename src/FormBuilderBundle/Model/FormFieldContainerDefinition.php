@@ -3,9 +3,8 @@
 namespace FormBuilderBundle\Model;
 
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
-use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 
-class FormFieldContainerDefinition implements FormFieldContainerDefinitionInterface, EntityToArrayAwareInterface, SubFieldsAwareInterface
+class FormFieldContainerDefinition implements FormFieldContainerDefinitionInterface, EntityToArrayAwareInterface
 {
     /**
      * @var string
@@ -173,7 +172,9 @@ class FormFieldContainerDefinition implements FormFieldContainerDefinitionInterf
         // parse fields
         $fieldData = [];
         foreach ($this->getFields() as $field) {
-            $fieldData[] = $field->toArray();
+            if ($field instanceof EntityToArrayAwareInterface) {
+                $fieldData[] = $field->toArray();
+            }
         }
 
         $data['fields'] = $fieldData;

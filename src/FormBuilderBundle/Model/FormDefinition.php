@@ -5,9 +5,8 @@ namespace FormBuilderBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 
-class FormDefinition implements FormDefinitionInterface, SubFieldsAwareInterface
+class FormDefinition implements FormDefinitionInterface
 {
     /**
      * @var int|null

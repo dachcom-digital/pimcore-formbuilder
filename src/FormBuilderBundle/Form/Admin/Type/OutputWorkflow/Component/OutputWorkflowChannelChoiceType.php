@@ -10,9 +10,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class OutputWorkflowChannelChoiceType extends AbstractType
 {
     /**
-     * @var array
+     * @var OutputWorkflowChannelRegistry
      */
-    private $channelRegistry;
+    protected $channelRegistry;
 
     /**
      * @param OutputWorkflowChannelRegistry $channelRegistry

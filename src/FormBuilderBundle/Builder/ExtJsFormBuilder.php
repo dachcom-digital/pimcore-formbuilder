@@ -13,6 +13,7 @@ use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Pimcore\Translation\Translator;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ExtJsFormBuilder
@@ -185,7 +186,7 @@ class ExtJsFormBuilder
      *
      * @return array
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function generateExtJsOutputWorkflowForm(OutputWorkflowInterface $outputWorkflow)
     {
@@ -195,7 +196,11 @@ class ExtJsFormBuilder
             'meta' => []
         ];
 
-        $data['output_workflow_channels'] = $this->serializer->normalize($outputWorkflow->getChannels(), 'array', ['groups' => ['ExtJs']]);
+        $outputWorkflowChannels = $this->serializer instanceof NormalizerInterface
+            ? $this->serializer->normalize($outputWorkflow->getChannels(), 'array', ['groups' => ['ExtJs']])
+            : [];
+
+        $data['output_workflow_channels'] = $outputWorkflowChannels;
         $data['output_workflow_channels_store'] = $this->generateAvailableWorkflowChannelsList();
         $data['output_workflow_success_management'] = $outputWorkflow->getSuccessManagement();
 
