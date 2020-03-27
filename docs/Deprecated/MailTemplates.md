@@ -1,5 +1,12 @@
 # Mail Templates
 
+## Deprecated!
+**Warning!** This feature has been deprecated within version 3.3. 
+It still will be available for BC reasons but is not recommended anymore.
+Please use the [Email Channel](../OutputWorkflow/10_EmailChannel.md) within the [Output Workflows](../OutputWorkflow/0_Usage.md) instead.
+
+***
+
 Place your form somewhere on your Website.
 If you want to submit the form to the user, you can use your field names as placeholders. Formbuilder automatically will transform the field into the given address.
 For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
@@ -47,12 +54,12 @@ To do so, just define the `mail_ignore_fields` property in your email template. 
 *Notice:* The field name needs be identical to the field name in your form configuration.
 
 #### mail_force_plain_text *(Checkbox)*
-If you want to force the plain text submission, you need to check this option. Read more about the submission types [here](./12_MailSubmissionTypes.md).
+If you want to force the plain text submission, you need to check this option. Read more about the submission types [here](12_MailSubmissionTypes.md).
 Please aware that this option requires the [html2text](http://www.mbayer.de/html2text/index.shtml) binary.
 
 ## Conditional Logic
 It's also possible to change the email template identification based on different conditions. 
-Read more about conditional logic [here](81_ConditionalLogic.md).
+Read more about conditional logic [here](../81_ConditionalLogic.md).
 
 ## Mail Layout Designer
 Read more about the Layout Designer [here](11_1_MailEditor.md)

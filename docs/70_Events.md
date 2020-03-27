@@ -73,6 +73,9 @@ use FormBuilderBundle\FormBuilderEvents;
 ```
 
 ## Mail Pre Submit
+This Event has been marked as deprecated since version 3.3.
+Use the `OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH` event instead.
+
 The `FORM_MAIL_PRE_SUBMIT` event occurs before sending an email.
 
 **Example**  
@@ -83,5 +86,20 @@ use FormBuilderBundle\FormBuilderEvents;
 
 [
     FormBuilderEvents::FORM_MAIL_PRE_SUBMIT => 'formMailPreSubmit'
+];
+```
+
+## Output Workflow Guard - Subject Pre Dispatch
+
+Read more about this event [here](./OutputWorkflow/30_Events.md).
+
+**Example**  
+```php
+<?php
+
+use FormBuilderBundle\FormBuilderEvents;
+
+[
+    FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH => 'checkSubject'
 ];
 ```

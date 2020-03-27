@@ -16,8 +16,7 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\ObjectMappin
 class ObjectChannelType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -46,7 +45,7 @@ class ObjectChannelType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {

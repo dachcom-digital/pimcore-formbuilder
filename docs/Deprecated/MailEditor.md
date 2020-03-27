@@ -1,5 +1,12 @@
 ## Mail Editor
 
+## Deprecated!
+**Warning!** This feature has been deprecated within version 3.3. 
+It still will be available for BC reasons but is not recommended anymore.
+Please use the mail layout editor module in [Email Channel](../OutputWorkflow/10_EmailChannel.md) within the [Output Workflows](../OutputWorkflow/0_Usage.md) instead.
+
+***
+
 ![](http://g.recordit.co/OJ7uM6FxY0.gif)
 
 > **Attention**: This mail editor does not respect any special mail template language (like inky)!

@@ -1,5 +1,12 @@
 # Mail Submission Types
 
+## Deprecated!
+**Warning!** This feature has been deprecated within version 3.3. 
+It still will be available for BC reasons but is not recommended anymore.
+Please use the [Email Channel](../OutputWorkflow/10_EmailChannel.md) within the [Output Workflows](../OutputWorkflow/0_Usage.md) instead.
+
+***
+
 ### HTML
 FormBuilder always submits html mails. 
 However, if you have installed the [html2text](http://www.mbayer.de/html2text/index.shtml) library, it will also append a text/plain version to each email.

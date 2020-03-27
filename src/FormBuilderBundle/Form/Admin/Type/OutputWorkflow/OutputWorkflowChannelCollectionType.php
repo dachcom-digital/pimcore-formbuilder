@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputWorkflowChannelCollectionType extends AbstractType
 {
-
     /**
      * {@inheritdoc}
      */

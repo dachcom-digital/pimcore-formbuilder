@@ -14,8 +14,7 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\PimcoreHrefType;
 class EmailChannelType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -47,7 +46,7 @@ class EmailChannelType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {

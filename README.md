@@ -51,11 +51,11 @@ Does actually the same as the update command and preferred in CI-Workflow:
 
 ## Usage
 ![](http://g.recordit.co/39nEX5OhQK.gif)
-1. Go to `Settings` => `Form Builder Settings` and create your form (Be sure your [spam protection](docs/03_SpamProtection.md) is covered!).
+1. Go to `Settings` => `Form Builder Settings` and create your form (Make sure your [spam protection](docs/03_SpamProtection.md) is covered!).
 2. Open a document and place the form area brick like any other bricks via drag and drop. 
 3. Use the edit button at the right top corner to configure your form. 
 
-Also make sure you've included the [flash template](docs/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
+Also make sure you've included the [flash template](docs/Deprecated/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
 It's also possible to render a form via Twig or even within a controller method. [Click here](docs/0_Usage.md) to learn more about the form rendering types.
 
 ## Overriding Templates
@@ -64,15 +64,16 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 ## Further Information
 - [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
+- [Output Workflows (new!)](docs/OutputWorkflow/0_Usage.md)
+  - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)
+  - [Object Channel](docs/OutputWorkflow/11_ObjectChannel.md)
+  - [Custom Channel](docs/OutputWorkflow/12_CustomChannel.md)
+  - [Success Management](docs/OutputWorkflow/20_SuccessManagement.md)
 - [Backend Administration of Forms](docs/01_BackendUsage.md)
 - [Export Forms](docs/02_ExportForms.md)
-- [Mail Template Configuration](docs/10_MailTemplates.md)
-  - [Mail Editor (new!)](docs/11_1_MailEditor.md)
-- [Success Messages](docs/11_SuccessMessage.md)
-- [Mail Submission Types (html/plain-text)](docs/12_MailSubmissionTypes.md)
-- [Output Transformer (new!)](docs/13_OutputTransformer.md)
+- [Output Transformer](docs/13_OutputTransformer.md)
 - [Ajax Forms](docs/20_AjaxForms.md)
-- [Dynamic Fields](docs/71_DynamicFields.md)
+- [Dynamic Fields (Add form elements via events)](docs/71_DynamicFields.md)
   - [Dynamic Fields with Ajax Forms](docs/72_DynamicFieldsWithAjax.md)
 - [Available Form Types](docs/30_FormTypes.md)
   - [Dynamic Choice Type](docs/82_DynamicChoice.md)
@@ -88,6 +89,12 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [Frontend Tips](docs/90_FrontendTips.md)
 - [FormBuilder Javascript Plugins](docs/91_Javascript.md)
 - [Configuration Flags](docs/100_ConfigurationFlags.md)
+
+## Deprecated
+- [Mail Template Configuration](docs/Deprecated/MailTemplates.md)
+  - [Global Mail Editor](docs/Deprecated/MailEditor.md)
+- [Mail Template Success Messages Properties](docs/Deprecated/SuccessMessage.md)
+- [Mail Template Submission Types (html/plain-text)](docs/Deprecated/MailSubmissionTypes.md)
 
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
