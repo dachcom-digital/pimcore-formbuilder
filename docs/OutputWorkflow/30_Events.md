@@ -36,7 +36,7 @@ class OutputWorkflowEventListener implements EventSubscriberInterface
             return;
         }
     
-        if($event->getWorkflowName() === 'my_second_evil_workflow') {
+        if($event->getWorkflowName() === 'my_second_weird_workflow') {
             $event->shouldFail('My invalid message! If this happens, no further channel will be executed!', false);
             return;
         }

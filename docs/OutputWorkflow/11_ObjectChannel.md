@@ -2,25 +2,25 @@
 
 ![image](https://user-images.githubusercontent.com/700119/77756495-91cb1200-702f-11ea-83b5-e05ba5716be5.png)
 
-Use the mail channel to generate or enrich DataObjects.
+Use the object channel to generate or enrich DataObjects.
 
 ## Configuration 
 
 ### Object Storage Path
-Define, where all the objects should be stored.
+Define where all the objects should be stored.
 
 ### Resolver Strategy
 Create a new object or append data to an existing one:
 
 #### Create new Object
 If you want to create a new object after each form submission, use this one. 
-You need to choose a Dataclass afterwards.
+You need to choose a data class afterwards.
 
 You're able to map fields and field collections.
 
 #### Use exiting One
 If you want to append data to a existing object after each form submission, use this one.
-You nee to define a object afterwards.
+You need to define an object afterwards.
 
 **Attention:** You're able to map field collections only!
 

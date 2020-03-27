@@ -478,7 +478,7 @@ class Configuration implements ConfigurationInterface
     private function createPersistenceNode()
     {
         $treeBuilder = new TreeBuilder('persistence');
-        $node = $treeBuilder->getRootNode();
+        $node = $treeBuilder->root('persistence');
 
         $node
             ->addDefaultsIfNotSet()
