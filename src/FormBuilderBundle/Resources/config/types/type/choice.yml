@@ -9,6 +9,10 @@ form_builder:
                 constraints:
                     disabled:
                         - 'dynamic_multi_file_not_blank'
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - input
                 fields:
                     options.value: ~
                     options.data:

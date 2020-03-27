@@ -7,6 +7,12 @@ form_builder:
                 label: 'form_builder_type.hidden_type'
                 icon_class: 'form_builder_icon_hidden'
                 constraints: false
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - input
+                            - textarea
+                            - wysiwyg
                 fields:
                     options.value: ~
                     options.help_text: ~

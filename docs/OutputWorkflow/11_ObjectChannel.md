@@ -25,27 +25,36 @@ You nee to define a object afterwards.
 **Attention:** You're able to map field collections only!
 
 ## Available Mapping Data
+
+![image](https://user-images.githubusercontent.com/700119/77777088-4f193200-704f-11ea-8d1b-168955d568f7.png)
+
 This table shows all possible data mapping fields:
 
-| FormBuilder Type | Allowed Pimcore Type |
-|------------------|----------------------|
-| `Text`           | `Text/Input`         |
-| `Hidden` | unsupported                  |
-| `Text Area` | unsupported               |
-| `Integer` | unsupported                 |
-| `Checkbox` | unsupported                |
-| `Submit` | unsupported                  |
+| FormBuilder Type | Allowed Pimcore Type                                           |
+|------------------|----------------------------------------------------------------|
+| `Text`           | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`                  |
+| `Hidden`         | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`                  |
+| `Text Area`      | `Text/Textarea`, `Text/Wysiwyg`                                |
+| `Integer`        | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `Number/Number` |
+| `Checkbox`       | `Other/Checkbox`                                               |
+| `Date`           | `Date/Date`                                                    |
+| `Date Time`      | `Date/DateTime`                                                |
+| `Time`           | `Date/Time`                                                    |
+| `Birthday`       | `Date/Date`                                                    | 
+| `Choice`         | `Text/Input`                                                   |
+| `Dynamic Choice` | `Text/Input`                                                   |
 | `Country` | unsupported                 |
-| `Choice` | unsupported                  |
-| `Dynamic Choice` | unsupported          |
-| `Date` | unsupported                    |
-| `Date Time` | unsupported               |
-| `Time` | unsupported                    |
-| `Birthday` | unsupported                |  
 | `Html Tag` | unsupported                |
 | `Snippet` | unsupported                 |
 | `reCAPTCHA v3` | unsupported            |
 | `File` | unsupported                    |
+| `Submit` | unsupported                  |
+
+## Container Mapping
+![image](https://user-images.githubusercontent.com/700119/77777525-fdbd7280-704f-11ea-9480-e89ac1c66edd.png)
+
+This Channel also allows you to store `1:N` container data (Repeater, Fieldset) by storing them as a field collection in your data object.
+You need to add the field collection relation to your form field. After that you're able to sub-map the field collection object.
 
 ## Events
 You're able to implement a guard and enrichment event. Read more about it [here](./30_Events.md).

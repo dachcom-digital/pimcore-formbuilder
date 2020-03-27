@@ -10,3 +10,7 @@ services:
     FormBuilderBundle\Transformer\Output\FallbackTransformer:
         tags:
             - {name: form_builder.transformer.output, type: fallback_transformer, channel: _all }
+
+    FormBuilderBundle\Transformer\Output\DateObjectTransformer:
+        tags:
+            - {name: form_builder.transformer.output, type: date_transformer, channel: object }

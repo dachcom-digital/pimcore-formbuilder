@@ -11,7 +11,7 @@ You simply want to send all the form data as email to a given admin and to the u
 - Create Output Workflow
     - Add a new Email-Channel and select a valid pimcore mail template
     - Add another Email-Channel and select a valid pimcore mail template 
-        - **Note**: Using the `%FIELD_NAME%` placeholders in the `to` field is still valid!) 
+        - **Note**: Using the `%FIELD_NAME%` placeholders in the `to` field for example is still valid!) 
         
 ### Extended Scenario I
 You want to offer an event registration form. After a client has submitted the form,

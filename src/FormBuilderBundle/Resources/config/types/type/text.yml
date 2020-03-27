@@ -13,5 +13,7 @@ form_builder:
                     object:
                         allowed_class_types:
                             - input
+                            - textarea
+                            - wysiwyg
                 fields:
                     options.value: ~

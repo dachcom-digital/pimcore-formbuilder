@@ -2,6 +2,7 @@ form_builder:
     types:
         birthday:
             class: Symfony\Component\Form\Extension\Core\Type\BirthdayType
+            output_transformer: date_transformer
             backend:
                 form_type_group: date_time_fields
                 label: 'form_builder_type.birthday_type'
@@ -9,6 +10,10 @@ form_builder:
                 constraints:
                     disabled:
                         - 'dynamic_multi_file_not_blank'
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - date
                 fields:
                     options.data: ~
                     options.value: ~
