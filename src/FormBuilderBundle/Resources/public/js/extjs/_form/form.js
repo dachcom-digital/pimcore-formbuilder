@@ -69,12 +69,12 @@ Formbuilder.extjs.rootForm = Class.create({
         this.formConfigurationPanel.on('afterrender', this.checkSensitiveFields.bind(this));
 
         this.formOutputWorkflowPanel = this.formOutputWorkflow.getLayout(this.panel);
+        this.formConfigurationPanel.on('beforeactivate', this.checkSensitiveFieldsInEditPanel.bind(this));
 
         this.panel.add([this.formConfigurationPanel, this.formOutputWorkflowPanel]);
 
         this.panel.on({
-            'beforedestroy': function () {
-
+            beforedestroy: function () {
                 eventListeners.destroy();
                 Formbuilder.eventObserver.unregisterForm(this.formId);
 
@@ -87,7 +87,7 @@ Formbuilder.extjs.rootForm = Class.create({
                     this.parentPanel.tree.getSelectionModel().deselectAll();
                 }
             }.bind(this),
-            'render': function () {
+            render: function () {
                 this.setActiveTab(0);
             }
         });
@@ -177,16 +177,43 @@ Formbuilder.extjs.rootForm = Class.create({
         });
 
         Ext.Object.each(this.sensitiveFormFields, function (workflowId, workflowFields) {
-            Ext.Array.each(workflowFields, function (sensitiveFieldName) {
-                var record = this.formConfiguration.tree.getRootNode().findChild('fbSensitiveFieldName', sensitiveFieldName, true),
-                    nodeClass;
-                if (record !== null) {
-                    nodeClass = record.get('cls');
-                    nodeClass = Ext.isString(nodeClass) ? nodeClass.replace('form_builder_output_workflow_aware_form_item', '') : '';
-                    record.set('cls', (nodeClass + ' form_builder_output_workflow_aware_form_item').replace('  ', ' '));
-                    record.set('fbSensitiveLocked', true);
-                }
-            }.bind(this));
+            if (Ext.isArray(workflowFields)) {
+                Ext.Array.each(workflowFields, function (sensitiveFieldName) {
+                    var record = this.formConfiguration.tree.getRootNode().findChild('fbSensitiveFieldName', sensitiveFieldName, true),
+                        nodeClass;
+                    if (record !== null) {
+                        nodeClass = record.get('cls');
+                        nodeClass = Ext.isString(nodeClass) ? nodeClass.replace('form_builder_output_workflow_aware_form_item', '') : '';
+                        record.set('cls', (nodeClass + ' form_builder_output_workflow_aware_form_item').replace('  ', ' '));
+                        record.set('fbSensitiveLocked', true);
+                    }
+                }.bind(this));
+            }
         }.bind(this));
+    },
+
+    checkSensitiveFieldsInEditPanel: function () {
+
+        var nameField, record;
+
+        if (!this.formConfiguration.editPanel) {
+            return;
+        }
+
+        nameField = this.formConfiguration.editPanel.query('tabpanel textfield[name="name"]');
+        if (nameField.length !== 1) {
+            return;
+        }
+
+        record = this.formConfiguration.tree.getRootNode().findChild('fbSensitiveFieldName', nameField[0].getValue(), true);
+        if (!record) {
+            return;
+        }
+
+        if (record.get('fbSensitiveLocked') === undefined) {
+            return;
+        }
+
+        nameField[0].setReadOnly(record.get('fbSensitiveLocked'));
     }
 });

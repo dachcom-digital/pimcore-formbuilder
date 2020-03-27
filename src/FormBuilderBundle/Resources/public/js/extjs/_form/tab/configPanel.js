@@ -1112,6 +1112,10 @@ Formbuilder.extjs.formPanel.config = Class.create({
             delete formFieldData['constraints'];
         }
 
+        if (formFieldData !== null && formFieldData.hasOwnProperty('name') && formFieldData.name) {
+            node.set('fbSensitiveFieldName', formFieldData.name);
+        }
+
         if (node.hasOwnProperty('childNodes') && Ext.isArray(node.childNodes)) {
             Ext.Array.each(node.childNodes, function (childNode, i) {
                 var type = childNode.data.fbTypeContainer;

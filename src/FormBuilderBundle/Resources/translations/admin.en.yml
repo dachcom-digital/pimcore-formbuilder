@@ -135,6 +135,7 @@ form_builder.export_note: 'Important: This will export form definition and condi
 form_builder.mail_editor.mail_type_output_workflow_channel: 'Output Workflow Channel'
 form_builder.output_workflow.open_editor: 'Open Output Workflow Editor'
 form_builder.output_workflow.apply: 'Apply'
+form_builder.output_workflow.cancel_close: 'Cancel / Close'
 form_builder.output_workflow.apply_and_close: 'Apply and close'
 form_builder.output_workflow.add_output_workflow: 'Add Output Workflow'
 form_builder.output_workflow.new_output_workflow_name_title: 'New Output Workflow'

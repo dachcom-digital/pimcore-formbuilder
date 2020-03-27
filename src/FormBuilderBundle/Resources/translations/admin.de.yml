@@ -135,6 +135,7 @@ form_builder.export_note: 'Wichtig: Es werden nur Formulardefinition und Bedingu
 form_builder.mail_editor.mail_type_output_workflow_channel: 'Output Workflow Channel'
 form_builder.output_workflow.open_editor: 'Output Workflow Editor öffnen'
 form_builder.output_workflow.apply: 'Anwenden'
+form_builder.output_workflow.cancel_close: 'Abbrechen / Beenden'
 form_builder.output_workflow.apply_and_close: 'Anwenden and beenden'
 form_builder.output_workflow.add_output_workflow: 'Output Workflow hinzufügen'
 form_builder.output_workflow.new_output_workflow_name_title: 'Neuer Output Workflow'

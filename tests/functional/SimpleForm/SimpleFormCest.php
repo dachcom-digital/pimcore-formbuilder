@@ -89,7 +89,7 @@ class SimpleFormCest
 
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->see('error while sending mail: mail not sent.', '.message.message-error');
+        $I->see('No valid output workflow found.', '.message.message-error');
     }
 
     /**

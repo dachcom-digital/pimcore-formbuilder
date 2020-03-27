@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Transformer\Output;
 
 use Carbon\Carbon;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 
@@ -14,13 +15,13 @@ class DateObjectTransformer implements OutputTransformerInterface
     public function getValue(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         if (!$rawValue instanceof \DateTime) {
-           return null;
+            return null;
         }
 
-        $type = $field->getType();
+        $type = $field instanceof FieldDefinitionInterface ? $field->getType() : null;
         $carbon = Carbon::instance($rawValue);
 
-        if($type === 'time') {
+        if ($type === 'time') {
             return $carbon->toTimeString('minute');
         }
 

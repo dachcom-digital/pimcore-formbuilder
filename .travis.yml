@@ -24,15 +24,15 @@ env:
         - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 matrix:
     include:
-        -   name: "PHPStan Static Analysis (Pimcore 6.5.x, Symfony ^4.0, PHP 7.4)"
+        -   name: "PHPStan Static Analysis (Pimcore 6.5.x, Symfony ^4.0, PHP 7.3)"
             sudo: required
-            php: 7.4
+            php: 7.3
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.5.0"
                 - DACHCOM_TEST_SECTION=phpstan
-        -   name: "PHP ECS (Pimcore 6.5.x, Symfony ^4.0, PHP 7.4)"
+        -   name: "PHP ECS (Pimcore 6.5.x, Symfony ^4.0, PHP 7.3)"
             sudo: required
-            php: 7.4
+            php: 7.3
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.5.0"
                 - DACHCOM_TEST_SECTION=ecs

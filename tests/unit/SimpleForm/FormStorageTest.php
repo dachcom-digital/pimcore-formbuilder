@@ -2,14 +2,13 @@
 
 namespace DachcomBundle\Test\unit\SimpleForm;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use DachcomBundle\Test\Util\FormHelper;
+use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 
 class FormStorageTest extends DachcomBundleTestCase
 {
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormConfig()
@@ -37,7 +36,6 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormNameConfig()
@@ -50,7 +48,6 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormGroupEmptyConfig()
@@ -63,7 +60,6 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormGroupPopulatedConfig()
@@ -77,7 +73,6 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormAttribute()
@@ -98,7 +93,6 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormMultipleAttributes()
@@ -123,7 +117,6 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormMetaCreationDate()
@@ -132,15 +125,14 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
-        $date1 = new \DateTime($form->getCreationDate());
+        $date1 = $form->getCreationDate();
         $date2 = new \DateTime();
 
-        $this->assertInternalType('string', $form->getCreationDate());
+        $this->assertInstanceOf(\DateTime::class, $form->getCreationDate());
         $this->assertEquals($date2->format('d.m.Y'), $date1->format('d.m.Y'));
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormMetaCreationDateHasNotChangedAfterUpdating()
@@ -149,18 +141,17 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
-        $date1 = new \DateTime($form->getCreationDate());
+        $date1 = $form->getCreationDate();
 
         sleep(2);
 
         $updatedForm = $manager->save($testFormBuilder->build(), $form->getId());
-        $date2 = new \DateTime($updatedForm->getCreationDate());
+        $date2 = $updatedForm->getCreationDate();
 
         $this->assertEquals($date1->format('d.m.Y H:i:s'), $date2->format('d.m.Y H:i:s'));
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormMetaModificationDate()
@@ -169,15 +160,14 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
-        $date1 = new \DateTime($form->getModificationDate());
+        $date1 = $form->getModificationDate();
         $date2 = new \DateTime();
 
-        $this->assertInternalType('string', $form->getModificationDate());
+        $this->assertInstanceOf(\DateTime::class, $form->getModificationDate());
         $this->assertEquals($date2->format('d.m.Y'), $date1->format('d.m.Y'));
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormMetaModificationDateHasChangedAfterUpdating()
@@ -186,18 +176,17 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
-        $date1 = new \DateTime($form->getModificationDate());
+        $date1 = $form->getModificationDate();
 
         sleep(2);
 
         $updatedForm = $manager->save($testFormBuilder->build(), $form->getId());
-        $date2 = new \DateTime($updatedForm->getModificationDate());
+        $date2 = $updatedForm->getModificationDate();
 
         $this->assertNotEquals($date1->format('d.m.Y H:i:s'), $date2->format('d.m.Y H:i:s'));
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testFormMetaCreatedBy()
@@ -213,7 +202,7 @@ class FormStorageTest extends DachcomBundleTestCase
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
+     * @throws \Exception
      */
     public function testFormMetaModifiedBy()
     {

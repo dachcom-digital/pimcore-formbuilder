@@ -5,42 +5,37 @@ namespace DachcomBundle\Test\unit\Form;
 use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use DachcomBundle\Test\Util\FormHelper;
 use FormBuilderBundle\Manager\FormDefinitionManager;
-use FormBuilderBundle\Storage\Form;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 
 class FormManagerTest extends DachcomBundleTestCase
 {
-    /**
-     * @throws \Codeception\Exception\ModuleException
-     */
     public function testSaveNewForm()
     {
+        /** @var FormDefinitionManager $manager */
         $manager = $this->getContainer()->get(FormDefinitionManager::class);
 
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
-        $this->assertInstanceOf(Form::class, $form);
+        $this->assertInstanceOf(FormDefinitionInterface::class, $form);
     }
 
-    /**
-     * @throws \Codeception\Exception\ModuleException
-     */
     public function testDeleteForm()
     {
+        /** @var FormDefinitionManager $manager */
         $manager = $this->getContainer()->get(FormDefinitionManager::class);
 
         $testFormBuilder = FormHelper::generateSimpleForm();
         $form = $manager->save($testFormBuilder->build());
 
-        $manager->delete($form->getId());
-        $form = $manager->getById($form->getId());
+        $formId = $form->getId();
+        $manager->delete($formId);
+        $form = $manager->getById($formId);
         $this->assertNull($form);
     }
 
-    /**
-     * @throws \Codeception\Exception\ModuleException
-     */
     public function testSaveNewFormId()
     {
+        /** @var FormDefinitionManager $manager */
         $manager = $this->getContainer()->get(FormDefinitionManager::class);
 
         $testFormBuilder = FormHelper::generateSimpleForm();
@@ -48,11 +43,9 @@ class FormManagerTest extends DachcomBundleTestCase
         $this->assertEquals(1, $form->getId());
     }
 
-    /**
-     * @throws \Codeception\Exception\ModuleException
-     */
     public function testRenameForm()
     {
+        /** @var FormDefinitionManager $manager */
         $manager = $this->getContainer()->get(FormDefinitionManager::class);
 
         $testFormBuilder = FormHelper::generateSimpleForm();
@@ -60,5 +53,32 @@ class FormManagerTest extends DachcomBundleTestCase
 
         $renamedForm = $manager->rename($form->getId(), 'MOCK_NEW_FORM');
         $this->assertEquals('MOCK_NEW_FORM', $renamedForm->getName());
+    }
+
+    public function testFormGetterById()
+    {
+        /** @var FormDefinitionManager $manager */
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
+
+        $form = $manager->getById(99);
+        $this->assertNull($form);
+    }
+
+    public function testFormGetterIdByName()
+    {
+        /** @var FormDefinitionManager $manager */
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
+
+        $form = $manager->getIdByName('form');
+        $this->assertNull($form);
+    }
+
+    public function testFormGetAll()
+    {
+        /** @var FormDefinitionManager $manager */
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
+
+        $forms = $manager->getAll();
+        $this->assertCount(0, $forms);
     }
 }

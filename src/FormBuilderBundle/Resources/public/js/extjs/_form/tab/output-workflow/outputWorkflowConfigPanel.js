@@ -40,7 +40,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
                 },
                 {
                     xtype: 'button',
-                    text: t('cancel'),
+                    text: t('form_builder.output_workflow.cancel_close'),
                     iconCls: 'pimcore_icon_cancel',
                     handler: function (btn) {
                         this.fireObserverEvent('output_workflow.required_form_fields_reset', {workflowId: this.workflowData.id});
