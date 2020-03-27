@@ -43,6 +43,7 @@ final class FormBuilderEvents
 
     /**
      * The FORM_MAIL_PRE_SUBMIT event occurs before sending an email.
+     *
      * @deprecated
      */
     const FORM_MAIL_PRE_SUBMIT = 'form_builder.mail.pre_submit';

@@ -10,5 +10,4 @@ interface OutputWorkflowFactoryInterface
      * @return OutputWorkflowInterface
      */
     public function createOutputWorkflow();
-
 }

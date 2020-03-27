@@ -98,7 +98,6 @@ class RequestListener implements EventSubscriberInterface
             $userOptions = isset($formConfiguration['form_runtime_options']) ? $formConfiguration['form_runtime_options'] : [];
             $form = $this->frontendFormBuilder->buildForm($formId, $userOptions);
         } catch (\Exception $e) {
-
             $this->generateErroredJsonReturn($event, $e);
 
             return;
@@ -110,6 +109,7 @@ class RequestListener implements EventSubscriberInterface
 
         if (!$form->isValid()) {
             $this->formSubmissionFinisher->finishWithError($event, $form);
+
             return;
         }
 

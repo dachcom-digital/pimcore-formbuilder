@@ -47,7 +47,6 @@ class FormDataConnector implements FormDataConnectorInterface
         }
 
         if ($formDefinition instanceof SubFieldsAwareInterface && !empty($data['fields'])) {
-
             $fields = [];
             foreach ($data['fields'] as $field) {
                 if ($field['type'] === 'container') {

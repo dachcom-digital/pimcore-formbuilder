@@ -46,7 +46,7 @@ class EmailOutputChannel implements ChannelInterface
     }
 
     /**
-     * Currently unsupported for EmailOutputChanel
+     * Currently unsupported for EmailOutputChanel.
      *
      * {@inheritdoc}
      */

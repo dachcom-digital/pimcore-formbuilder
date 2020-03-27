@@ -372,7 +372,7 @@ class MailParser
     }
 
     /**
-     * Fallback mail layout
+     * Fallback mail layout.
      *
      * @param array       $mailLayout
      * @param string      $mailType
@@ -396,5 +396,4 @@ class MailParser
 
         return null;
     }
-
 }

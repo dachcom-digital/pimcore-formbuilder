@@ -346,10 +346,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                    array_filter($constraints, function ($constraint) {
-                        return $constraint instanceof NotBlank;
-                    })
-                ) === 1;
+                array_filter($constraints, function ($constraint) {
+                    return $constraint instanceof NotBlank;
+                })
+            ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout

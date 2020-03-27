@@ -51,13 +51,13 @@ class FrontendFormBuilder
     protected $router;
 
     /**
-     * @param FormBuilderSubscriber $formBuilderSubscriber
-     * @param Configuration         $configuration
-     * @param RequestStack          $requestStack
-     * @param FormDefinitionManager $formDefinitionManager
-     * @param FormFactoryInterface  $formFactory
-     * @param FormDataFactoryInterface  $formDataFactory
-     * @param UrlGeneratorInterface $router
+     * @param FormBuilderSubscriber    $formBuilderSubscriber
+     * @param Configuration            $configuration
+     * @param RequestStack             $requestStack
+     * @param FormDefinitionManager    $formDefinitionManager
+     * @param FormFactoryInterface     $formFactory
+     * @param FormDataFactoryInterface $formDataFactory
+     * @param UrlGeneratorInterface    $router
      */
     public function __construct(
         FormBuilderSubscriber $formBuilderSubscriber,

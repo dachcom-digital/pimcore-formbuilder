@@ -155,7 +155,6 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         );
     }
 
-
     /**
      * @return string|null
      */
@@ -163,7 +162,6 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     {
         return 'FormBuilderBundle\Model';
     }
-
 
     /**
      * @return string

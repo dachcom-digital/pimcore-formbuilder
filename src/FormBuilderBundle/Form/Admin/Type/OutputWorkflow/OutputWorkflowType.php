@@ -28,7 +28,7 @@ class OutputWorkflowType extends AbstractType
     {
         $resolver->setDefaults([
             'csrf_protection' => false,
-            'data_class' => OutputWorkflow::class
+            'data_class'      => OutputWorkflow::class
         ]);
     }
 }

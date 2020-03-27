@@ -25,7 +25,7 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent)
     {
@@ -40,7 +40,8 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
                 throw $e;
             } catch (\Throwable $e) {
                 throw new \Exception(
-                    sprintf('"%s" workflow channel "%s" errored at step %d: %s',
+                    sprintf(
+                        '"%s" workflow channel "%s" errored at step %d: %s',
                         $outputWorkflow->getName(),
                         $channel->getType(),
                         $index + 1,
@@ -50,7 +51,7 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
             }
         }
 
-        if(count($exceptionStack) > 0) {
+        if (count($exceptionStack) > 0) {
             throw new GuardStackedException($exceptionStack);
         }
     }

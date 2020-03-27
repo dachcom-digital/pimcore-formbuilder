@@ -122,7 +122,7 @@ class ChannelSubjectGuardEvent extends Event
     }
 
     /**
-     * Silently suspend current process without any notices
+     * Silently suspend current process without any notices.
      */
     public function shouldSuspend()
     {
@@ -133,7 +133,7 @@ class ChannelSubjectGuardEvent extends Event
     }
 
     /**
-     * Suspend current channel only or complete output workflow with a message
+     * Suspend current channel only or complete output workflow with a message.
      *
      * @param string $failMessage
      * @param bool   $onlyCurrentChannel
@@ -148,6 +148,7 @@ class ChannelSubjectGuardEvent extends Event
 
     /**
      * @return bool
+     *
      * @internal
      */
     public function isSuspended()
@@ -157,6 +158,7 @@ class ChannelSubjectGuardEvent extends Event
 
     /**
      * @return bool
+     *
      * @internal
      */
     public function shouldStopChannel()
@@ -166,6 +168,7 @@ class ChannelSubjectGuardEvent extends Event
 
     /**
      * @return bool
+     *
      * @internal
      */
     public function shouldStopOutputWorkflow()
@@ -175,6 +178,7 @@ class ChannelSubjectGuardEvent extends Event
 
     /**
      * @return string|null
+     *
      * @internal
      */
     public function getFailMessage()

@@ -384,5 +384,4 @@ class FormDefinition implements FormDefinitionInterface
 
         return $field->getType();
     }
-
 }

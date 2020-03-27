@@ -29,7 +29,7 @@ class NewObjectResolver extends AbstractObjectResolver
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getStorageObject()
     {
@@ -50,7 +50,7 @@ class NewObjectResolver extends AbstractObjectResolver
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fieldTypeAllowedToProcess($fieldType)
     {

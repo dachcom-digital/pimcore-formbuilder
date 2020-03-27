@@ -195,7 +195,7 @@ class EmailOutputChannelWorker
 
     /**
      * @param FormDataInterface $formData
-     * @param Mail    $subject
+     * @param Mail              $subject
      * @param string            $workflowName
      * @param array             $formRuntimeOptions
      *

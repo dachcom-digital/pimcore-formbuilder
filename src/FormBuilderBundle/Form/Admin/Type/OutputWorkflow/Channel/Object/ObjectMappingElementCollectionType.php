@@ -12,7 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ObjectMappingElementCollectionType extends AbstractType
 {
-
     /**
      * {@inheritdoc}
      */
@@ -22,7 +21,6 @@ class ObjectMappingElementCollectionType extends AbstractType
         $builder->add('fieldType', TextType::class);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $form = $event->getForm();
 
@@ -33,8 +31,7 @@ class ObjectMappingElementCollectionType extends AbstractType
             // remove all form fields that don't contain any child data
             // therefor we need to re-index the collection storage
             foreach ($data as $index => $collectionData) {
-
-                if($collectionData['type'] !== 'form_field') {
+                if ($collectionData['type'] !== 'form_field') {
                     continue;
                 }
 
@@ -65,7 +62,6 @@ class ObjectMappingElementCollectionType extends AbstractType
             'by_reference'    => false,
             'entry_type'      => ObjectMappingElementConfigType::class,
             'delete_empty'    => function ($data) {
-
                 if ($data['type'] === 'form_field') {
                     return !isset($data['childs']) || !is_array($data['childs']) || count($data['childs']) === 0;
                 }

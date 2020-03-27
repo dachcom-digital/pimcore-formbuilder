@@ -7,5 +7,4 @@ namespace FormBuilderBundle\Storage;
  */
 interface FormFieldSimpleInterface
 {
-
 }

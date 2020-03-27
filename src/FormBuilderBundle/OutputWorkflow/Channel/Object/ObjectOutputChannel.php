@@ -89,7 +89,6 @@ class ObjectOutputChannel implements ChannelInterface
     protected function findUsedFormFieldsInConfiguration(array $definitionFields, $fieldNames = [])
     {
         foreach ($definitionFields as $definitionField) {
-
             $hasChildren = isset($definitionField['childs']) && is_array($definitionField['childs']) && count($definitionField['childs']) > 0;
             $hasWorkerFieldMapping = isset($definitionField['config']['workerData']) && isset($definitionField['config']['workerData']['fieldMapping']);
 

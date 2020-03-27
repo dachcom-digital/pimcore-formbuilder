@@ -19,7 +19,6 @@ class ObjectMappingElementConfigType extends AbstractType
         $builder->add('fieldType', TextType::class);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $form = $event->getForm();
 

@@ -75,7 +75,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function finishWithError(GetResponseEvent $event, FormInterface $form)
     {
@@ -93,7 +93,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function finishWithSuccess(GetResponseEvent $event, SubmissionEvent $submissionEvent)
     {
@@ -112,15 +112,14 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             $errorMessage = 'No valid output workflow found.';
             $event->setResponse($request->isXmlHttpRequest()
                 ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage)
-            );
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
+
             return;
         }
 
         try {
             $this->outputWorkflowDispatcher->dispatch($outputWorkflow, $submissionEvent);
         } catch (\Exception $e) {
-
             if ($e instanceof GuardOutputWorkflowException) {
                 $errorMessage = $e->getMessage();
             } elseif ($e instanceof GuardStackedException) {
@@ -131,8 +130,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 
             $event->setResponse($request->isXmlHttpRequest()
                 ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage)
-            );
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
 
             return;
         }
@@ -143,8 +141,8 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             $errorMessage = sprintf('Error while processing success management of workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
             $event->setResponse($request->isXmlHttpRequest()
                 ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage)
-            );
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
+
             return;
         }
 
@@ -159,8 +157,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 
         $event->setResponse($request->isXmlHttpRequest()
             ? $this->generateAjaxFormSuccessResponse($submissionEvent)
-            : $this->generateRedirectFormSuccessResponse($submissionEvent)
-        );
+            : $this->generateRedirectFormSuccessResponse($submissionEvent));
     }
 
     /**
@@ -198,7 +195,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         $data = $form->getData();
 
         foreach (['success', 'error'] as $type) {
-
             $messageKey = sprintf('formbuilder_%s_%s', $data->getFormDefinition()->getId(), $type);
 
             if (!$this->flashBagManager->has($messageKey)) {

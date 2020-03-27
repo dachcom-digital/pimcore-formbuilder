@@ -176,6 +176,7 @@ class Form extends AbstractTemplateAreabrick
         if ($formTemplateSelection->isEmpty()) {
             $formTemplateSelection->setDataFromResource($this->templateManager->getDefaultFormTemplate());
         }
+
         return $editViewVars;
     }
 
@@ -233,11 +234,9 @@ class Form extends AbstractTemplateAreabrick
         $hasValidOutputWorkflows = false;
 
         if ($selectedFormId !== null && isset($formOutputWorkflows[$selectedFormId]) && count($formOutputWorkflows[$selectedFormId]) > 0) {
-
             $hasValidOutputWorkflows = true;
             $formOutputWorkflowStore = [];
             foreach ($formOutputWorkflows[$selectedFormId] as $index => $outputWorkflow) {
-
                 if ($index === 0) {
                     $preSelectedOutputWorkflow = $outputWorkflow[0];
                 }

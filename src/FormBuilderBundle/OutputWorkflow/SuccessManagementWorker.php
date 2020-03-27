@@ -63,7 +63,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(SubmissionEvent $submissionEvent, array $successManagementConfiguration)
     {
@@ -132,7 +132,6 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         $key = sprintf('formbuilder_%s_%s', $formId, ($error ? 'error' : 'success'));
 
         $this->flashBagManager->add($key, $message);
-
     }
 
     /**

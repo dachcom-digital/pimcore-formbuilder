@@ -14,7 +14,7 @@ use Pimcore\Model\Document\Email;
 class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resolve(SubmissionEvent $submissionEvent)
     {
@@ -41,6 +41,7 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
             $selectedOutputWorkflows = $outputWorkflows->filter(function (OutputWorkflowInterface $outputWorkflow) use ($userSelectedOutputWorkflow) {
                 return $outputWorkflow->getId() === $userSelectedOutputWorkflow;
             });
+
             return $selectedOutputWorkflows->count() === 1 ? $selectedOutputWorkflows->first() : null;
         }
 
@@ -125,7 +126,6 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         ]);
 
         return $defaultChannel;
-
     }
 
     /**
@@ -151,7 +151,6 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
                     'subtype' => 'snippet',
                 ]
             ];
-
         } elseif ($afterSuccessData instanceof Document) {
             $type = 'redirect';
             $value = [
@@ -167,11 +166,9 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
             if (!empty($flashMessage)) {
                 $extraField = ['flashMessage' => $flashMessage];
             }
-
         } elseif (is_string($afterSuccessData)) {
             $type = substr($afterSuccessData, 0, 4) === 'http' ? 'redirect_external' : 'string';
             $value = $afterSuccessData;
-
         } else {
             $type = 'string';
             $value = 'Success!';

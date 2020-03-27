@@ -17,7 +17,6 @@ class Form implements FormInterface
     {
         if (property_exists($this, 'formDefinition')) {
             if (method_exists($this->formDefinition, $method)) {
-
                 @trigger_error(
                     sprintf('Calling $formData->%s() has been deprecated with FormBuilder 3.3 and will be removed with 4.0, use $formData->getFormDefinition()->%s() instead.', $method, $method),
                     E_USER_DEPRECATED

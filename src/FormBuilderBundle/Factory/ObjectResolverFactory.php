@@ -21,7 +21,6 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
 
     /**
      * @param FormValuesOutputApplierInterface $formValuesOutputApplier
-     *
      * @param EventDispatcherInterface         $eventDispatcher
      */
     public function __construct(
@@ -33,7 +32,7 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
     }
 
     /**
-     *{@inheritDoc}
+     *{@inheritdoc}
      */
     public function createForNewObject(array $storagePath, array $objectMappingData)
     {
@@ -41,7 +40,7 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
     }
 
     /**
-     *{@inheritDoc}
+     *{@inheritdoc}
      */
     public function createForExistingObject(array $storagePath, array $objectMappingData)
     {

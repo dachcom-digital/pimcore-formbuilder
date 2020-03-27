@@ -25,7 +25,6 @@ class SuccessManagementType extends AbstractType
         $builder->add('identifier', TextType::class);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $form = $event->getForm();
 
@@ -37,7 +36,6 @@ class SuccessManagementType extends AbstractType
             $form->setData(null);
 
             $this->buildConditionalForm($form, $data['identifier']);
-
         });
     }
 
@@ -48,15 +46,18 @@ class SuccessManagementType extends AbstractType
     protected function buildConditionalForm(FormInterface $form, string $identifier)
     {
         switch ($identifier) {
-            case 'snippet' :
+            case 'snippet':
                 $form->add('value', LocalizedValuesCollectionType::class, ['entry_type' => PimcoreHrefType::class]);
+
                 break;
-            case 'redirect' :
+            case 'redirect':
                 $form->add('value', LocalizedValuesCollectionType::class, ['entry_type' => PimcoreHrefType::class]);
                 $form->add('flashMessage', TextType::class);
+
                 break;
-            case 'redirect_external' :
+            case 'redirect_external':
                 $form->add('value', UrlType::class);
+
                 break;
             default:
                 $form->add('value', TextType::class);

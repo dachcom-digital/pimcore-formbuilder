@@ -118,10 +118,9 @@ class OutputWorkflowObjectController extends AdminController
         }
 
         return $this->adminJson([
-                'success' => true,
-                'types'   => $allowedTypes
-            ]
-        );
+            'success' => true,
+            'types'   => $allowedTypes
+        ]);
     }
 
     /**

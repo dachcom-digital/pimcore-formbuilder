@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class FieldCollectionWorkerType extends AbstractType
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

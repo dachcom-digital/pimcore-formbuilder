@@ -30,7 +30,7 @@ class FormDefinitionManager
     protected $formDataConnector;
 
     /**
-     * TokenStorageUserResolver
+     * TokenStorageUserResolver.
      */
     protected $storageUserResolver;
 
@@ -263,8 +263,8 @@ class FormDefinitionManager
      * @param int                     $order
      *
      * @return FormFieldContainerDefinitionInterface
-     * @throws \Exception
      *
+     * @throws \Exception
      */
     protected function generateFormFieldContainer(FormDefinitionInterface $form, array $fieldData, int $order)
     {

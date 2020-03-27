@@ -25,7 +25,6 @@ class ObjectChannelType extends AbstractType
         $builder->add('objectMappingData', ObjectMappingElementCollectionType::class, []);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $form = $event->getForm();
 

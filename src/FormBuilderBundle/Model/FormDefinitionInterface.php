@@ -188,5 +188,4 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      * @return null|string
      */
     public function getFieldType(string $name);
-
 }

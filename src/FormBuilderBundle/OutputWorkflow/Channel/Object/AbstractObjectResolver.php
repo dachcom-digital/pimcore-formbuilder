@@ -78,14 +78,14 @@ abstract class AbstractObjectResolver
      *
      * @throws \Exception
      */
-    public abstract function getStorageObject();
+    abstract public function getStorageObject();
 
     /**
      * @param string $fieldType
      *
      * @return bool
      */
-    public abstract function fieldTypeAllowedToProcess($fieldType);
+    abstract public function fieldTypeAllowedToProcess($fieldType);
 
     /**
      * @param FormInterface $form
@@ -231,7 +231,6 @@ abstract class AbstractObjectResolver
     protected function processObjectData(DataObject\Concrete $object, array $formData)
     {
         foreach ($formData as $fieldData) {
-
             if ($this->fieldTypeAllowedToProcess($fieldData['field_type']) === false) {
                 continue;
             }
@@ -284,7 +283,6 @@ abstract class AbstractObjectResolver
 
         // there could be more than just one data field assignment
         foreach ($fieldDefinition['childs'] as $formDefinitionChild) {
-
             if ($formDefinitionChild['type'] !== 'data_class_field') {
                 continue;
             }
@@ -355,13 +353,11 @@ abstract class AbstractObjectResolver
 
         // cycle to each repeater / field-collection block
         foreach ($containerFieldData['fields'] as $containerFieldDataBlock) {
-
             // every block needs a field-collection
             $fieldCollection = new $fieldCollectionPath();
 
             // now append each field to the field collection - if available in definition!
             foreach ($containerFieldDataBlock as $containerFieldDataBlockItem) {
-
                 $fieldType = $containerFieldDataBlockItem['field_type'];
                 $fieldName = $containerFieldDataBlockItem['name'];
                 $fieldValue = $containerFieldDataBlockItem['value'];
@@ -369,6 +365,7 @@ abstract class AbstractObjectResolver
                 // currently not possible, but maybe there will be a nested container in the near future.
                 if ($fieldType === 'container') {
                     $this->processObjectData($object, $containerFieldDataBlockItem);
+
                     continue;
                 }
 
@@ -404,7 +401,6 @@ abstract class AbstractObjectResolver
 
         // there could be more than just one data field assignment
         foreach ($definition['childs'] as $formDefinitionChild) {
-
             if ($formDefinitionChild['type'] !== 'data_class_field') {
                 continue;
             }
@@ -439,7 +435,6 @@ abstract class AbstractObjectResolver
     protected function findMapDefinition(array $definitionFields, $formFieldName)
     {
         foreach ($definitionFields as $definitionField) {
-
             if ($definitionField['type'] === 'form_field' && $definitionField['config']['name'] === $formFieldName) {
                 return $definitionField;
             }

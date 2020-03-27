@@ -129,6 +129,7 @@ class ExtJsFormBuilder
      * @param FormDefinitionInterface $formDefinition
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function generateExtJsFormFields(FormDefinitionInterface $formDefinition)
@@ -146,7 +147,6 @@ class ExtJsFormBuilder
         $containerTypes = $this->getTranslatedContainerTypes();
 
         foreach ($fields as $field) {
-
             $fieldType = $field['type'];
 
             if ($fieldType === 'container') {
@@ -285,6 +285,7 @@ class ExtJsFormBuilder
      * @param FormDefinitionInterface $formDefinition
      *
      * @return array
+     *
      * @throws \Exception
      */
     protected function getSensitiveFormFieldNames(FormDefinitionInterface $formDefinition)
@@ -295,11 +296,11 @@ class ExtJsFormBuilder
 
         $fieldNames = [];
         foreach ($formDefinition->getOutputWorkflows() as $outputWorkflow) {
-
             $workflowFieldNames = [];
 
             if (!$outputWorkflow->hasChannels()) {
                 $fieldNames[$outputWorkflow->getId()] = [];
+
                 continue;
             }
 
@@ -358,6 +359,7 @@ class ExtJsFormBuilder
 
             if ($flat === true) {
                 $fieldStructure[] = $fieldStructureElement;
+
                 continue;
             }
 
