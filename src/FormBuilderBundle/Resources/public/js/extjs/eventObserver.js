@@ -1,5 +1,4 @@
-pimcore.registerNS('Formbuilder.eventObserver');
-Formbuilder.eventObserver = Class.create({
+FormbuilderEventObserver = Class.create({
 
     observerSections: {},
 

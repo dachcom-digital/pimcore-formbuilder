@@ -1,3 +1,4 @@
+pimcore.registerNS('Formbuilder.eventObserver');
 pimcore.registerNS('Formbuilder.settings');
 Formbuilder.settings = Class.create({
 
@@ -23,7 +24,7 @@ Formbuilder.settings = Class.create({
             return this.panel;
         }
 
-        Formbuilder.eventObserver = new Formbuilder.eventObserver();
+        Formbuilder.eventObserver = new FormbuilderEventObserver();
 
         this.panel = new Ext.Panel({
             id: 'form_builder_settings',

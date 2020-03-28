@@ -17,6 +17,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
     formObjectTreeMapper: null,
 
     detailWindow: null,
+    DragDropMgrNotifyOccluded: false,
 
     initialize: function (formId, additionalParameter, baseConfiguration, isLocal, callbacks) {
 
@@ -35,11 +36,13 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
 
         if (this.forceClose === true) {
             win.closeMe = true;
+            this.restoreNotifyOccludedState();
             return true;
         }
 
         if (win.closeMe) {
             win.closeMe = false;
+            this.restoreNotifyOccludedState();
             return true;
         }
 
@@ -56,10 +59,6 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
         });
 
         return false;
-    },
-
-    onClose: function (editorId) {
-
     },
 
     loadObjectEditor: function () {
@@ -100,8 +99,25 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
 
         this.detailWindow.show();
 
+        this.backupAndDisableNotifyOccludedState();
         this.loadEditorData();
 
+    },
+
+    /**
+     * @see pimcore.document.edit.dnd
+     * @see https://docs.sencha.com/extjs/6.0.1/classic/Ext.dd.DragDropManager.html#property-notifyOccluded
+     *
+     * This will lead to a drag and drop mismatch between multiple modal windows and tree panels.
+     * To fix that, we need to reset the setting to false, as long our mapping editor is active.
+     */
+    backupAndDisableNotifyOccludedState: function () {
+        this.DragDropMgrNotifyOccluded = Ext.dd.DragDropMgr.notifyOccluded;
+        Ext.dd.DragDropMgr.notifyOccluded = false;
+    },
+
+    restoreNotifyOccludedState: function () {
+        Ext.dd.DragDropMgr.notifyOccluded = this.DragDropMgrNotifyOccluded;
     },
 
     loadEditorData: function () {
