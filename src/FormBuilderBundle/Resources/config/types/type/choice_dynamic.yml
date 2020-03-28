@@ -2,6 +2,7 @@ form_builder:
     types:
         dynamic_choice:
             class: FormBuilderBundle\Form\Type\DynamicChoiceType
+            output_transformer: choice_transformer
             backend:
                 form_type_group: choice_fields
                 label: 'form_builder_type.dynamic_choice_type'
@@ -13,6 +14,8 @@ form_builder:
                     object:
                         allowed_class_types:
                             - input
+                            - select
+                            - multiselect
                 fields:
                     options.value: ~
                     options.data:

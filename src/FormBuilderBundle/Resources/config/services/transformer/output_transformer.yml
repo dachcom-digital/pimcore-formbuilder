@@ -11,6 +11,14 @@ services:
         tags:
             - {name: form_builder.transformer.output, type: fallback_transformer, channel: _all }
 
-    FormBuilderBundle\Transformer\Output\DateObjectTransformer:
+    FormBuilderBundle\Transformer\Output\DateDataObjectTransformer:
         tags:
             - {name: form_builder.transformer.output, type: date_transformer, channel: object }
+
+    FormBuilderBundle\Transformer\Output\ChoiceDataObjectTransformer:
+        tags:
+            - {name: form_builder.transformer.output, type: choice_transformer, channel: object }
+
+    FormBuilderBundle\Transformer\Output\CountryDataObjectTransformer:
+        tags:
+            - {name: form_builder.transformer.output, type: country_transformer, channel: object }

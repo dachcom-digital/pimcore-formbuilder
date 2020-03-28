@@ -2,6 +2,7 @@ form_builder:
     types:
         country:
             class: Symfony\Component\Form\Extension\Core\Type\CountryType
+            output_transformer: country_transformer
             backend:
                 form_type_group: choice_fields
                 label: 'form_builder_type.country_type'
@@ -9,6 +10,12 @@ form_builder:
                 constraints:
                     disabled:
                         - 'dynamic_multi_file_not_blank'
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - input
+                            - country
+                            - countrymultiselect
                 fields:
                     options.value: ~
                     options.data:

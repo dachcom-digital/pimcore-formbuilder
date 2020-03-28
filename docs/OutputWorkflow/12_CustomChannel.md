@@ -11,6 +11,8 @@ services:
             - { name: form_builder.output_workflow.channel, type: myChannel }
 
 ```
+## Output Transformer
+Read [here](./15_OutputTransformer.md#custom-output-transformer) how to add a single output transformer to your new custom channel.
 
 ## PHP Configuration Form Type Class
 
@@ -43,7 +45,6 @@ class MyChannelType extends AbstractType
     }
 }
 
-
 ```
 ## PHP Service Class
 
@@ -55,9 +56,20 @@ namespace AppBundle\FormBuilder;
 use AppBundle\Form\MyChannelType;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 
 class MyChannel implements ChannelInterface
 {
+    /**
+     * @var FormValuesOutputApplierInterface
+     */
+    protected $formValuesOutputApplier;
+
+    public function __construct(FormValuesOutputApplierInterface $formValuesOutputApplier)
+    {
+        $this->formValuesOutputApplier = $formValuesOutputApplier;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -88,7 +100,15 @@ class MyChannel implements ChannelInterface
      */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
     {
-        // do your work.
+        $formConfiguration = $submissionEvent->getFormConfiguration();
+        $locale = $submissionEvent->getRequest()->getLocale();
+        $form = $submissionEvent->getForm();
+        
+        // Output Transformer (See section "Output Transformer" above).
+        // This is optional, if you don't want to use any output transformer, you could use the raw form values directly.
+        $formData = $this->formValuesOutputApplier->applyForChannel($form, [], 'myChannel', $locale);
+
+        // now, do your work...
     }
 }
 ```

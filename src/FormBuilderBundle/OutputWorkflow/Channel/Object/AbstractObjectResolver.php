@@ -2,16 +2,17 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
-use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
-use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
-use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
-use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
-use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\ModelInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
+use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractObjectResolver
 {
@@ -180,6 +181,8 @@ abstract class AbstractObjectResolver
 
         $this->processObject($object);
 
+        // disable mandatory check!
+        $object->setOmitMandatoryCheck(true);
         $object->save();
     }
 
@@ -412,15 +415,20 @@ abstract class AbstractObjectResolver
 
     /**
      * @param ModelInterface $object
-     * @param string         $methodName
+     * @param string         $fieldName
      * @param mixed          $value
      */
-    protected function appendToMethod(ModelInterface $object, string $methodName, $value)
+    protected function appendToMethod(ModelInterface $object, string $fieldName, $value)
     {
-        $objectSetter = sprintf('set%s', ucfirst($methodName));
+        $objectSetter = sprintf('set%s', ucfirst($fieldName));
 
         if (!method_exists($object, $objectSetter)) {
             return;
+        }
+
+        if ($value instanceof TargetAwareOutputTransformer) {
+            $fieldDefinition = $this->getObjectFieldDefinition($object, $fieldName);
+            $value = $value->transform($fieldDefinition);
         }
 
         $object->$objectSetter($value);
@@ -472,5 +480,28 @@ abstract class AbstractObjectResolver
         }
 
         return $channelSubjectGuardEvent->getSubject();
+    }
+
+    /**
+     * @param ModelInterface $object
+     * @param string         $fieldName
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    protected function getObjectFieldDefinition(ModelInterface $object, $fieldName)
+    {
+        if ($object instanceof DataObject\Concrete) {
+            $classDefinition = $object->getClass();
+            if ($classDefinition instanceof DataObject\ClassDefinition) {
+                return $classDefinition->getFieldDefinition($fieldName);
+            }
+        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $classDefinition = $object->getDefinition();
+            if ($classDefinition instanceof DataObject\Fieldcollection\Definition) {
+                return $classDefinition->getFieldDefinition($fieldName);
+            }
+        }
+
+        return null;
     }
 }

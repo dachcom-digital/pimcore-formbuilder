@@ -41,14 +41,17 @@ This table shows all possible data mapping fields:
 | `Date Time`      | `Date/DateTime`                                                |
 | `Time`           | `Date/Time`                                                    |
 | `Birthday`       | `Date/Date`                                                    | 
-| `Choice`         | `Text/Input`                                                   |
-| `Dynamic Choice` | `Text/Input`                                                   |
-| `Country` | unsupported                 |
+| `Choice`         | `Text/Input`,`Select/Select`, `Select/MultiSelect`             |
+| `Dynamic Choice` | `Text/Input`,`Select/Select`, `Select/MultiSelect`             |
+| `Country`        | `Text/Input`,`Select/Country`, `Select/Country (MultiSelect)`  |
 | `Html Tag` | unsupported                |
 | `Snippet` | unsupported                 |
 | `reCAPTCHA v3` | unsupported            |
 | `File` | unsupported                    |
 | `Submit` | unsupported                  |
+
+### Dynamic Choices Mapping
+If you're using the dynamic choice type mapping, make sure your mapped pimcore field is connected to the same options provider source! 
 
 ## Container Mapping
 ![image](https://user-images.githubusercontent.com/700119/77777525-fdbd7280-704f-11ea-9480-e89ac1c66edd.png)

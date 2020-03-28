@@ -32,10 +32,10 @@ class FallbackTransformer implements OutputTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
-        if ($field instanceof FormFieldDynamicDefinitionInterface) {
-            return $this->parseDynamicField($field, $rawValue, $formField, $locale);
+        if ($fieldDefinition instanceof FormFieldDynamicDefinitionInterface) {
+            return $this->parseDynamicField($fieldDefinition, $rawValue, $formField, $locale);
         }
 
         return $this->parseDefaultField($rawValue, $formField, $locale);
@@ -44,13 +44,13 @@ class FallbackTransformer implements OutputTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
-        if ($field instanceof FormFieldDynamicDefinitionInterface) {
-            return $this->parseDynamicLabel($field, $formField, $locale);
+        if ($fieldDefinition instanceof FormFieldDynamicDefinitionInterface) {
+            return $this->parseDynamicLabel($fieldDefinition, $formField, $locale);
         }
 
-        return $this->parseDefaultLabel($field, $locale);
+        return $this->parseDefaultLabel($fieldDefinition, $locale);
     }
 
     /**

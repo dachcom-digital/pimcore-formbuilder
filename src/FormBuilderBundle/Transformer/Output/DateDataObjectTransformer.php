@@ -7,18 +7,18 @@ use FormBuilderBundle\Model\FieldDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 
-class DateObjectTransformer implements OutputTransformerInterface
+class DateDataObjectTransformer implements OutputTransformerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function getValue(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         if (!$rawValue instanceof \DateTime) {
             return null;
         }
 
-        $type = $field instanceof FieldDefinitionInterface ? $field->getType() : null;
+        $type = $fieldDefinition instanceof FieldDefinitionInterface ? $fieldDefinition->getType() : null;
         $carbon = Carbon::instance($rawValue);
 
         if ($type === 'time') {
@@ -31,7 +31,7 @@ class DateObjectTransformer implements OutputTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         return null;
     }

@@ -5,11 +5,14 @@ namespace FormBuilderBundle\Form;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\Type\Container\ContainerType;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
 use FormBuilderBundle\Registry\OutputTransformerRegistry;
 use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
+use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
+use FormBuilderBundle\Transformer\Target\TargetAwareValue;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -112,25 +115,24 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
                 return null;
             }
 
-            return $this->transformFormBuilderContainerField($formData, $fieldDefinition, $subFieldValues, $locale);
+            return $this->transformFormBuilderContainerField($fieldDefinition, $subFieldValues, $locale);
         } elseif ($fieldDefinition instanceof FormFieldDynamicDefinitionInterface) {
-            return $this->transformDynamicField($formData, $fieldDefinition, $formField, $fieldRawValue, $locale);
+            return $this->transformDynamicField($fieldDefinition, $formField, $fieldRawValue, $locale);
         } elseif ($fieldDefinition instanceof FormFieldDefinitionInterface) {
-            return $this->transformFormBuilderField($formData, $fieldDefinition, $formField, $fieldRawValue, $locale);
+            return $this->transformFormBuilderField($fieldDefinition, $formField, $fieldRawValue, $locale);
         }
 
         return null;
     }
 
     /**
-     * @param FormDataInterface                     $formData
      * @param FormFieldContainerDefinitionInterface $fieldDefinition
      * @param array                                 $subFormFields
      * @param string                                $locale
      *
      * @return array|null
      */
-    protected function transformFormBuilderContainerField(FormDataInterface $formData, FormFieldContainerDefinitionInterface $fieldDefinition, array $subFormFields, $locale)
+    protected function transformFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldDefinition, array $subFormFields, $locale)
     {
         $fieldConfig = $fieldDefinition->getConfiguration();
         $containerLabel = isset($fieldConfig['label']) && !empty($fieldConfig['label']) ? $fieldConfig['label'] : false;
@@ -149,7 +151,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     }
 
     /**
-     * @param FormDataInterface                   $formData
      * @param FormFieldDynamicDefinitionInterface $fieldDefinition
      * @param FormInterface                       $formField
      * @param mixed                               $rawValue
@@ -157,42 +158,15 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
      *
      * @return null|array
      */
-    protected function transformDynamicField(FormDataInterface $formData, FormFieldDynamicDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    protected function transformDynamicField(FormFieldDynamicDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         $optionals = $fieldDefinition->getOptional();
+        $outputTransformerIdentifier = isset($optionals['output_transformer']) && !empty($optionals['output_transformer']) ? $optionals['output_transformer'] : '';
 
-        $defaults = [
-            'field_type' => FormValuesOutputApplierInterface::FIELD_TYPE_SIMPLE,
-            'name'       => $fieldDefinition->getName(),
-            'type'       => $fieldDefinition->getType()
-        ];
-
-        if (isset($optionals['output_transformer']) && !empty($optionals['output_transformer'])) {
-            $outputTransformer = $this->getOutputTransformByIdentifier($optionals['output_transformer']);
-        } else {
-            $outputTransformer = $this->getDefaultOutputTransformer();
-        }
-
-        if ($outputTransformer === null) {
-            return null;
-        }
-
-        $value = $outputTransformer->getValue($fieldDefinition, $formField, $rawValue, $locale);
-
-        if ($this->isEmptyValue($value)) {
-            return null;
-        }
-
-        return array_merge([
-            'label'       => $outputTransformer->getLabel($fieldDefinition, $formField, $rawValue, $locale),
-            //email_label is deprecated
-            'email_label' => $outputTransformer->getLabel($fieldDefinition, $formField, $rawValue, $locale),
-            'value'       => $value,
-        ], $defaults);
+        return $this->parseFieldValueWithOutputTransformer($fieldDefinition, $formField, $outputTransformerIdentifier, $rawValue, $locale);
     }
 
     /**
-     * @param FormDataInterface            $formData
      * @param FormFieldDefinitionInterface $fieldDefinition
      * @param FormInterface                $formField
      * @param mixed                        $rawValue
@@ -200,20 +174,46 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
      *
      * @return null|array
      */
-    protected function transformFormBuilderField(FormDataInterface $formData, FormFieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    protected function transformFormBuilderField(FormFieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
+        $formType = $this->configuration->getFieldTypeConfig($fieldDefinition->getType());
+        $outputTransformerIdentifier = isset($formType['output_transformer']) && !empty($formType['output_transformer']) ? $formType['output_transformer'] : '';
+
+        return $this->parseFieldValueWithOutputTransformer($fieldDefinition, $formField, $outputTransformerIdentifier, $rawValue, $locale);
+    }
+
+    /**
+     * @param string                   $outputTransformerIdentifier
+     * @param FieldDefinitionInterface $fieldDefinition
+     * @param FormInterface            $formField
+     * @param mixed                    $rawValue
+     * @param string                   $locale
+     *
+     * @return array|null
+     */
+    protected function parseFieldValueWithOutputTransformer(
+        FieldDefinitionInterface $fieldDefinition,
+        FormInterface $formField,
+        $outputTransformerIdentifier,
+        $rawValue,
+        $locale
+    ) {
         $defaults = [
             'field_type' => FormValuesOutputApplierInterface::FIELD_TYPE_SIMPLE,
             'name'       => $fieldDefinition->getName(),
             'type'       => $fieldDefinition->getType()
         ];
 
-        $outputTransformer = $this->getOutputTransformForType($fieldDefinition->getType());
-        if ($outputTransformer === null) {
+        $outputTransformer = $this->getOutputTransformByIdentifier($outputTransformerIdentifier);
+        if (!$outputTransformer instanceof OutputTransformerInterface) {
             return null;
         }
 
         $value = $outputTransformer->getValue($fieldDefinition, $formField, $rawValue, $locale);
+
+        if ($value instanceof TargetAwareValue) {
+            $value = new TargetAwareOutputTransformer($value, [$fieldDefinition, $formField, $rawValue, $locale]);
+        }
 
         if ($this->isEmptyValue($value)) {
             return null;
@@ -248,19 +248,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     }
 
     /**
-     * @param string $type
-     *
-     * @return null|OutputTransformerInterface
-     */
-    protected function getOutputTransformForType(string $type)
-    {
-        $formType = $this->configuration->getFieldTypeConfig($type);
-        $outputTransformer = $formType['output_transformer'];
-
-        return $this->getOutputTransformByIdentifier($outputTransformer);
-    }
-
-    /**
      * @param string $identifier
      *
      * @return null|OutputTransformerInterface
@@ -270,6 +257,8 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         try {
             if ($this->outputTransformerRegistry->hasForChannel($identifier, $this->channel)) {
                 return $this->outputTransformerRegistry->getForChannel($identifier, $this->channel);
+            } elseif ($this->outputTransformerRegistry->hasForChannel(OutputTransformerRegistry::FALLBACK_TRANSFORMER_IDENTIFIER, $this->channel)) {
+                return $this->outputTransformerRegistry->getForChannel(OutputTransformerRegistry::FALLBACK_TRANSFORMER_IDENTIFIER, $this->channel);
             }
         } catch (\Exception $e) {
             // fail silently.
