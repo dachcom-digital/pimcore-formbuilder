@@ -1,9 +1,9 @@
 # Form & Field Attributes
 ![](http://g.recordit.co/mExDy4lMIe.gif)
-It's possible to add specific attributes to each form and and each underlying field.
+It's possible to add specific attributes to each form and each underlying field.
 
 ## Change Attribute Selection
-By default, attributes are shipped as symfony parameters so it's easy to override them:
+By default, attributes are available as symfony parameters, so it's easy to override them:
 
 ```yml
 parameters:

@@ -79,6 +79,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
     generateObjectResolverPanel: function (value) {
 
+        this.isLoading = true;
+
         if (this.objectResolverPanel !== null) {
             this.panel.remove(this.objectResolverPanel);
         }
@@ -163,6 +165,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                 listeners: {
                     load: function (tree, records, success, opt) {
                         comboBox.setValue(this.data !== null && this.data.hasOwnProperty('resolvingObjectClass') ? this.data['resolvingObjectClass'] : '');
+                        this.isLoading = false;
                         this.validateResolverStrategy();
                         firstTimeLoad = false;
                     }.bind(this)
@@ -192,7 +195,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
     generateExistingObjectResolverPanel: function () {
 
-        var resolvingObjectValue = this.data !== null && this.data.hasOwnProperty('resolvingObject') ? this.data['resolvingObject'] : null,
+        var firstTimeLoad = true,
+            resolvingObjectValue = this.data !== null && this.data.hasOwnProperty('resolvingObject') ? this.data['resolvingObject'] : null,
             dynamicObjectResolverValue = this.data !== null && this.data.hasOwnProperty('dynamicObjectResolver') ? this.data['dynamicObjectResolver'] : null,
             resolvingObjectFieldConfig = {
                 label: t('form_builder.output_workflow.output_workflow_channel.object.choose_resolving_object'),
@@ -235,6 +239,13 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             allowBlank: true,
             disabled: true,
             listeners: {
+                change: function (field, value) {
+                    if (firstTimeLoad === true) {
+                        firstTimeLoad = false;
+                        return;
+                    }
+                    this.validateResolverStrategy();
+                }.bind(this),
                 render: function (combo) {
                     combo.getStore().load();
                 }.bind(this),
@@ -256,12 +267,20 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             listeners: {
                 load: function (store, records) {
 
-                    store.insert(0, new Ext.data.Record({key: null, label: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_no_resolver')}));
+                    store.insert(0, new Ext.data.Record({
+                        key: null,
+                        label: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_no_resolver')
+                    }));
 
                     if (records.length > 0) {
                         dynamicObjectResolverCombo.setDisabled(false);
                     }
+
                     dynamicObjectResolverCombo.setValue(dynamicObjectResolverValue);
+                    this.isLoading = false;
+                    this.validateResolverStrategy();
+                    firstTimeLoad = false;
+
                 }.bind(this)
             }
         });
@@ -355,13 +374,19 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
     checkObjectMappingEditorSignals: function () {
 
+        if(this.isLoading === true) {
+            return;
+        }
+
         var hasData = this.objectMappingData !== null,
             hasInconsistentData = this.objectMappingDataIsConsistent === false,
             statusButtons = this.panel.query('panel[cls~="form_builder_channel_object_editor_control_panel"] button[cls="form_builder_cme_status_button"]');
 
         if (statusButtons.length > 0) {
-            statusButtons[0].setStyle('background', hasData ? (hasInconsistentData ? '#d64517' : '#3e943e') : '#7f8a7f');
-            statusButtons[0].updateText(t('form_builder.output_workflow.output_workflow_channel.object.object_mapping.' + (hasData ? (hasInconsistentData ? 'status_inconsistent' : 'status_in_sync') : 'status_disabled')));
+            setTimeout(function () {
+                statusButtons[0].setStyle('background', hasData ? (hasInconsistentData ? '#d64517' : '#3e943e') : '#7f8a7f');
+                statusButtons[0].setText(t('form_builder.output_workflow.output_workflow_channel.object.object_mapping.' + (hasData ? (hasInconsistentData ? 'status_inconsistent' : 'status_in_sync') : 'status_disabled')));
+            }, 150)
         }
     },
 

@@ -36,8 +36,10 @@ class OutputWorkflowChannelType extends AbstractType
         $builder->add('type', OutputWorkflowChannelChoiceType::class, []);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+
             $data = $event->getData();
             $form = $event->getForm();
+            $formData = $form->getData();
 
             if (!isset($data['type'])) {
                 return;
@@ -48,7 +50,10 @@ class OutputWorkflowChannelType extends AbstractType
             }
 
             // reset old form data to avoid merging old channel data.
-            $form->setData(null);
+            if ($formData instanceof OutputWorkflowChannel) {
+                $formData->setConfiguration([]);
+                $form->setData($formData);
+            }
 
             $formOptions = [];
             $channel = $this->channelRegistry->get($data['type']);
