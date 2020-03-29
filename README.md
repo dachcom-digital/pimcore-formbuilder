@@ -64,7 +64,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 ## Further Information
 - [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
-- [Output Workflows (🔥 New!)](docs/OutputWorkflow/0_Usage.md)
+- [Output Workflows (New!)](docs/OutputWorkflow/0_Usage.md) 🔥
   - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)
   - [Object Channel](docs/OutputWorkflow/11_ObjectChannel.md)
   - [Custom Channel](docs/OutputWorkflow/12_CustomChannel.md)

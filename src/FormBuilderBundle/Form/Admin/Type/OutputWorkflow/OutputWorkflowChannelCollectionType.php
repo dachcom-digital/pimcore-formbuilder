@@ -16,10 +16,10 @@ class OutputWorkflowChannelCollectionType extends AbstractType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'allow_add'       => true,
-            'allow_delete'    => true,
-            'by_reference'    => false,
-            'entry_type'      => OutputWorkflowChannelType::class
+            'allow_add'    => true,
+            'allow_delete' => true,
+            'by_reference' => false,
+            'entry_type'   => OutputWorkflowChannelType::class
         ]);
     }
 

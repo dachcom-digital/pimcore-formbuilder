@@ -10,7 +10,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\PimcoreHrefType;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\ObjectMappingElementCollectionType;
 
 class ObjectChannelType extends AbstractType
@@ -20,7 +19,6 @@ class ObjectChannelType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('storagePath', PimcoreHrefType::class);
         $builder->add('resolveStrategy', ChoiceType::class, ['choices' => ['existingObject' => 'existingObject', 'newObject' => 'newObject']]);
         $builder->add('objectMappingData', ObjectMappingElementCollectionType::class, []);
 
@@ -36,8 +34,10 @@ class ObjectChannelType extends AbstractType
             $form->setData(null);
 
             if ($data['resolveStrategy'] === 'existingObject') {
-                $form->add('resolvingObject', PimcoreHrefType::class, ['constraints' => [new NotBlank()]]);
+                $form->add('resolvingObject', PimcoreHrefType::class);
+                $form->add('dynamicObjectResolver', TextType::class);
             } elseif ($data['resolveStrategy'] === 'newObject') {
+                $form->add('storagePath', PimcoreHrefType::class);
                 $form->add('resolvingObjectClass', TextType::class);
             }
         });

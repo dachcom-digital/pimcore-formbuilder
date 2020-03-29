@@ -28,11 +28,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var array
-     */
-    protected $formOptions = [];
-
-    /**
      * @var Configuration
      */
     protected $configuration;
@@ -99,11 +94,27 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $formOptions
+     * @param FormEvent $event
+     *
+     * @return mixed
+     * @throws \Exception
      */
-    public function setFormOptions($formOptions)
+    public function getFormOptions(FormEvent $event)
     {
-        $this->formOptions = $formOptions;
+        $form = $event->getForm();
+
+        if (!$form->has('formRuntimeData')) {
+            throw new \Exception('No runtime options in form found.');
+        }
+
+        $data = $form->get('formRuntimeData')->getData();
+
+        // remove legacy email config node.
+        if (isset($data['email'])) {
+            unset($data['email']);
+        }
+
+        return $data;
     }
 
     /**
@@ -121,10 +132,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param FormEvent $event
+     *
+     * @throws \Exception
      */
     public function onPreSetData(FormEvent $event)
     {
-        $preSetDataEvent = new PreSetDataEvent($event, $this->formOptions);
+        $preSetDataEvent = new PreSetDataEvent($event, $this->getFormOptions($event));
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SET_DATA, $preSetDataEvent);
     }
 
@@ -135,7 +148,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     public function onPostSetData(FormEvent $event)
     {
-        $postSetDataEvent = new PostSetDataEvent($event, $this->formOptions);
+        $postSetDataEvent = new PostSetDataEvent($event, $this->getFormOptions($event));
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_POST_SET_DATA, $postSetDataEvent);
 
         $form = $event->getForm();
@@ -150,7 +163,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     public function onPreSubmit(FormEvent $event)
     {
-        $preSubmitEvent = new PreSubmitEvent($event, $this->formOptions);
+        $preSubmitEvent = new PreSubmitEvent($event, $this->getFormOptions($event));
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
 
         $form = $event->getForm();
@@ -346,10 +359,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                array_filter($constraints, function ($constraint) {
-                    return $constraint instanceof NotBlank;
-                })
-            ) === 1;
+                    array_filter($constraints, function ($constraint) {
+                        return $constraint instanceof NotBlank;
+                    })
+                ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout

@@ -113,8 +113,7 @@ class Form extends AbstractTemplateAreabrick
         $optionBuilder->setFormPreset($formPreset);
         $optionBuilder->setOutputWorkflow($formOutputWorkflow);
 
-        $this->formAssembler->setFormOptionsResolver($optionBuilder);
-        $assemblerViewVars = $this->formAssembler->assembleViewVars();
+        $assemblerViewVars = $this->formAssembler->assembleViewVars($optionBuilder);
 
         foreach (array_merge($editViewVars, $assemblerViewVars) as $var => $varValue) {
             $view->getParameters()->set($var, $varValue);

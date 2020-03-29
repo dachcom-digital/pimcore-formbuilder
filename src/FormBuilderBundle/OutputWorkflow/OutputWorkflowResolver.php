@@ -24,12 +24,11 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         $data = $form->getData();
         $formDefinition = $data->getFormDefinition();
 
-        $formConfiguration = $submissionEvent->getFormConfiguration();
-        $runtimeOptions = $formConfiguration['form_runtime_options'];
-        $userSelectedOutputWorkflow = isset($runtimeOptions['form_output_workflow']) ? $runtimeOptions['form_output_workflow'] : null;
+        $formRuntimeData = $submissionEvent->getFormRuntimeData();
+        $userSelectedOutputWorkflow = isset($formRuntimeData['form_output_workflow']) ? $formRuntimeData['form_output_workflow'] : null;
 
         if ($formDefinition->hasOutputWorkflows() === false) {
-            return $this->buildFallBackWorkflow($formDefinition, $formConfiguration);
+            return $this->buildFallBackWorkflow($formDefinition, $formRuntimeData);
         }
 
         $outputWorkflow = null;
@@ -39,7 +38,9 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
             return $outputWorkflows->first();
         } elseif ($userSelectedOutputWorkflow !== null) {
             $selectedOutputWorkflows = $outputWorkflows->filter(function (OutputWorkflowInterface $outputWorkflow) use ($userSelectedOutputWorkflow) {
-                return $outputWorkflow->getId() === $userSelectedOutputWorkflow;
+                return is_numeric($userSelectedOutputWorkflow)
+                    ? $outputWorkflow->getId() === $userSelectedOutputWorkflow
+                    : $outputWorkflow->getName() === $userSelectedOutputWorkflow;
             });
 
             return $selectedOutputWorkflows->count() === 1 ? $selectedOutputWorkflows->first() : null;
@@ -50,19 +51,19 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 
     /**
      * @param FormDefinitionInterface $formDefinition
-     * @param array                   $formConfiguration
+     * @param array                   $formRuntimeData
      *
      * @return OutputWorkflow|null
      */
-    protected function buildFallBackWorkflow(FormDefinitionInterface $formDefinition, array $formConfiguration)
+    protected function buildFallBackWorkflow(FormDefinitionInterface $formDefinition, array $formRuntimeData)
     {
-        if (!isset($formConfiguration['email'])) {
+        if (!isset($formRuntimeData['email'])) {
             return null;
         }
 
-        $sendCopy = $formConfiguration['email']['send_copy'];
-        $mailTemplateId = $formConfiguration['email']['mail_template_id'];
-        $copyMailTemplateId = $formConfiguration['email']['copy_mail_template_id'];
+        $sendCopy = $formRuntimeData['email']['send_copy'];
+        $mailTemplateId = $formRuntimeData['email']['mail_template_id'];
+        $copyMailTemplateId = $formRuntimeData['email']['copy_mail_template_id'];
 
         $mailTemplate = Email::getById($mailTemplateId);
         if (!$mailTemplate instanceof Email) {

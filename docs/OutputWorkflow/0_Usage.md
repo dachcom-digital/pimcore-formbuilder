@@ -37,6 +37,7 @@ Want to learn more? Let's start with the [Email Channel](./10_EmailChannel.md).
   - [Email Channel](./10_EmailChannel.md)
   - [Object Channel](./11_ObjectChannel.md)
   - [Custom Channel](./12_CustomChannel.md)
+  - [Output Transformer](./15_OutputTransformer.md)
   - [Success Management](./20_SuccessManagement.md)
   - [Events](./30_Events.md)
     

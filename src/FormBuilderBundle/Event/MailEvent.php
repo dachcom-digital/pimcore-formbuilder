@@ -41,8 +41,14 @@ class MailEvent extends Event
     {
         $this->form = $form;
         $this->email = $email;
-        $this->userOptions = $userOptions;
         $this->isCopy = $isCopy;
+
+        // dispatch legacy event
+        if (isset($userOptions['email'])) {
+            unset($userOptions['email']);
+        }
+
+        $this->userOptions = $userOptions;
     }
 
     /**

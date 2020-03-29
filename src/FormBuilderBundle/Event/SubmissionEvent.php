@@ -16,7 +16,7 @@ class SubmissionEvent extends Event
     /**
      * @var array
      */
-    private $formConfiguration;
+    private $formRuntimeData;
 
     /**
      * @var FormInterface
@@ -35,13 +35,13 @@ class SubmissionEvent extends Event
 
     /**
      * @param Request       $request
-     * @param array         $formConfiguration
+     * @param array         $formRuntimeData
      * @param FormInterface $form
      */
-    public function __construct(Request $request, $formConfiguration, FormInterface $form)
+    public function __construct(Request $request, $formRuntimeData, FormInterface $form)
     {
         $this->request = $request;
-        $this->formConfiguration = $formConfiguration;
+        $this->formRuntimeData = $formRuntimeData;
         $this->form = $form;
     }
 
@@ -93,9 +93,9 @@ class SubmissionEvent extends Event
     /**
      * @return array
      */
-    public function getFormConfiguration()
+    public function getFormRuntimeData()
     {
-        return $this->formConfiguration;
+        return $this->formRuntimeData;
     }
 
     /**

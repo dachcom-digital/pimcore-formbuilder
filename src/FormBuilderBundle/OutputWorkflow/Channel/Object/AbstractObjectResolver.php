@@ -29,11 +29,6 @@ abstract class AbstractObjectResolver
     /**
      * @var array
      */
-    protected $storagePath;
-
-    /**
-     * @var array
-     */
     protected $objectMappingData;
 
     /**
@@ -44,7 +39,7 @@ abstract class AbstractObjectResolver
     /**
      * @var array
      */
-    protected $formRuntimeOptions;
+    protected $formRuntimeData;
 
     /**
      * @var string
@@ -59,18 +54,15 @@ abstract class AbstractObjectResolver
     /**
      * @param FormValuesOutputApplierInterface $formValuesOutputApplier
      * @param EventDispatcherInterface         $eventDispatcher
-     * @param array                            $storagePath
      * @param array                            $objectMappingData
      */
     public function __construct(
         FormValuesOutputApplierInterface $formValuesOutputApplier,
         EventDispatcherInterface $eventDispatcher,
-        array $storagePath,
         array $objectMappingData
     ) {
         $this->formValuesOutputApplier = $formValuesOutputApplier;
         $this->eventDispatcher = $eventDispatcher;
-        $this->storagePath = $storagePath;
         $this->objectMappingData = $objectMappingData;
     }
 
@@ -105,19 +97,19 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param array $formRuntimeOptions
+     * @param array $formRuntimeData
      */
-    public function setFormRuntimeOptions(array $formRuntimeOptions)
+    public function setFormRuntimeData(array $formRuntimeData)
     {
-        $this->formRuntimeOptions = $formRuntimeOptions;
+        $this->formRuntimeData = $formRuntimeData;
     }
 
     /**
      * @return array
      */
-    public function getFormRuntimeOptions()
+    public function getFormRuntimeData()
     {
-        return $this->formRuntimeOptions;
+        return $this->formRuntimeData;
     }
 
     /**
@@ -155,14 +147,6 @@ abstract class AbstractObjectResolver
     /**
      * @return array
      */
-    public function getStoragePath()
-    {
-        return $this->storagePath;
-    }
-
-    /**
-     * @return array
-     */
     public function getObjectMappingData()
     {
         return $this->objectMappingData;
@@ -184,24 +168,6 @@ abstract class AbstractObjectResolver
         // disable mandatory check!
         $object->setOmitMandatoryCheck(true);
         $object->save();
-    }
-
-    /**
-     * @return DataObject\Folder
-     *
-     * @throws \Exception
-     */
-    public function getStorageFolder()
-    {
-        $storageFolderInfo = $this->getStoragePath();
-        $storageFolderId = $storageFolderInfo['id'];
-        $storageFolder = DataObject\Folder::getById($storageFolderId);
-
-        if (!$storageFolder instanceof DataObject\Folder) {
-            throw new \Exception(sprintf('Storage Folder with id "%s" not found.', $storageFolderId));
-        }
-
-        return $storageFolder;
     }
 
     /**
@@ -466,7 +432,7 @@ abstract class AbstractObjectResolver
      */
     protected function dispatchGuardEvent($subject)
     {
-        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($this->getForm()->getData(), $subject, $this->getWorkflowName(), 'object', $this->getFormRuntimeOptions());
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($this->getForm()->getData(), $subject, $this->getWorkflowName(), 'object', $this->getFormRuntimeData());
         $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
 
         if ($channelSubjectGuardEvent->isSuspended()) {

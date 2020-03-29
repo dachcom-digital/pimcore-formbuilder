@@ -71,13 +71,13 @@ class EmailOutputChannelWorker
     /**
      * @param FormInterface $form
      * @param array         $channelConfiguration
-     * @param array         $formRuntimeOptions
+     * @param array         $formRuntimeData
      * @param string        $workflowName
      * @param string        $locale
      *
      * @throws \Exception
      */
-    public function process(FormInterface $form, $channelConfiguration, array $formRuntimeOptions, string $workflowName, string $locale)
+    public function process(FormInterface $form, $channelConfiguration, array $formRuntimeData, string $workflowName, string $locale)
     {
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
@@ -124,15 +124,14 @@ class EmailOutputChannelWorker
         }
 
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
-        $mail->setParam('_form_builder_preset', $formRuntimeOptions['form_preset'] === 'custom' ? null : $formRuntimeOptions['form_preset']);
+        $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
 
-        // dispatch legacy event
-        $mailEvent = new MailEvent($form, $mail, $formRuntimeOptions, $isCopy);
+        $mailEvent = new MailEvent($form, $mail, $formRuntimeData, $isCopy);
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
         $mail = $mailEvent->getEmail();
 
         // dispatch subject guard event
-        if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeOptions)) {
+        if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeData)) {
             return;
         }
 
@@ -197,15 +196,15 @@ class EmailOutputChannelWorker
      * @param FormDataInterface $formData
      * @param Mail              $subject
      * @param string            $workflowName
-     * @param array             $formRuntimeOptions
+     * @param array             $formRuntimeData
      *
      * @return Mail|null
      *
      * @throws GuardException
      */
-    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeOptions)
+    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData)
     {
-        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeOptions);
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeData);
         $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
 
         if ($channelSubjectGuardEvent->isSuspended()) {

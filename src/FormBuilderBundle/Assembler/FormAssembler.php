@@ -3,24 +3,18 @@
 namespace FormBuilderBundle\Assembler;
 
 use FormBuilderBundle\Builder\FrontendFormBuilder;
+use FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FormAssembler
 {
     /**
-     * @var FormOptionsResolver
+     * @var FrontendFormBuilder
      */
-    protected $optionsResolver = null;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected $frontendFormBuilder;
 
     /**
      * @var FormDefinitionManager
@@ -28,9 +22,15 @@ class FormAssembler
     protected $formDefinitionManager;
 
     /**
-     * @var FrontendFormBuilder
+     * @var FormRuntimeDataAllocatorInterface
      */
-    protected $frontendFormBuilder;
+    protected $formRuntimeDataAllocator;
+
+    /**
+     * @var FormOptionsResolver
+     * @deprecated
+     */
+    protected $optionsResolver = null;
 
     /**
      * @var string
@@ -38,43 +38,56 @@ class FormAssembler
     protected $preset = '';
 
     /**
-     * @param SessionInterface      $session
-     * @param FrontendFormBuilder   $frontendFormBuilder
-     * @param FormDefinitionManager $formDefinitionManager
+     * @param FrontendFormBuilder               $frontendFormBuilder
+     * @param FormDefinitionManager             $formDefinitionManager
+     * @param FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
      */
     public function __construct(
-        SessionInterface $session,
         FrontendFormBuilder $frontendFormBuilder,
-        FormDefinitionManager $formDefinitionManager
+        FormDefinitionManager $formDefinitionManager,
+        FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
     ) {
-        $this->session = $session;
         $this->frontendFormBuilder = $frontendFormBuilder;
         $this->formDefinitionManager = $formDefinitionManager;
+        $this->formRuntimeDataAllocator = $formRuntimeDataAllocator;
     }
 
     /**
      * @param FormOptionsResolver $optionsResolver
+     * @deprecated since Version 3.3
      */
     public function setFormOptionsResolver(FormOptionsResolver $optionsResolver)
     {
+        @trigger_error(
+            'Calling setFormOptionsResolver has been deprecated with FormBuilder 3.3 and will be removed with 4.0, use FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionsResolver) instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->optionsResolver = $optionsResolver;
     }
 
     /**
+     * @param FormOptionsResolver|null $optionsResolver
+     *
      * @return mixed
      *
      * @throws \Exception
      */
-    public function assembleViewVars()
+    public function assembleViewVars(?FormOptionsResolver $optionsResolver = null)
     {
-        if (is_null($this->optionsResolver)) {
+        if ($this->optionsResolver instanceof FormOptionsResolver) {
+            $optionsResolver = $this->optionsResolver;
+        }
+
+        if (is_null($optionsResolver)) {
             throw new \Exception('no valid options resolver found.');
         }
 
         $builderError = false;
         $exceptionMessage = null;
+        $formDefinition = null;
 
-        $formId = $this->optionsResolver->getFormId();
+        $formId = $optionsResolver->getFormId();
         if (!empty($formId)) {
             try {
                 $formDefinition = $this->formDefinitionManager->getById($formId);
@@ -102,7 +115,7 @@ class FormAssembler
         }
 
         $viewVars = [];
-        $viewVars['form_layout'] = $this->optionsResolver->getFormLayout();
+        $viewVars['form_layout'] = $optionsResolver->getFormLayout();
 
         if ($builderError === true) {
             $viewVars['message'] = $exceptionMessage;
@@ -112,39 +125,32 @@ class FormAssembler
             return $viewVars;
         }
 
-        $userOptions = [
-            'form_preset'          => $this->optionsResolver->getFormPreset(),
-            'form_output_workflow' => $this->optionsResolver->getOutputWorkflow(),
-            'form_template'        => $this->optionsResolver->getFormTemplateName()
+        $systemRuntimeData = [
+            'form_preset'          => $optionsResolver->getFormPreset(),
+            'form_output_workflow' => $optionsResolver->getOutputWorkflow(),
+            'form_template'        => $optionsResolver->getFormTemplateName(),
+            'custom_options'       => $optionsResolver->getCustomOptions(),
+            'email'                => [
+                // deprecated but needed for fallback definitions in output workflows
+                '_deprecated_note'      => 'This node has been deprecated in Version 3.3. Please use the email output workflow channel.',
+                'send_copy'             => $optionsResolver->getSendCopy(),
+                'mail_template_id'      => $optionsResolver->getMailTemplateId(),
+                'copy_mail_template_id' => $optionsResolver->getCopyMailTemplateId()
+            ]
         ];
 
+        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
+        $formRuntimeData = $formRuntimeDataCollector->getData();
+
         /** @var FormInterface $form */
-        $form = $this->frontendFormBuilder->buildForm($this->optionsResolver->getFormId(), $userOptions);
+        $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
 
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->session->getBag('form_builder_session');
-
-        //store current configuration for further events.
-        $sessionBag->set('form_configuration_' . $this->optionsResolver->getFormId(), [
-            'form_runtime_options' => [
-                'form_preset'          => $this->optionsResolver->getFormPreset(),
-                'form_output_workflow' => $this->optionsResolver->getOutputWorkflow(),
-                'form_template'        => $this->optionsResolver->getFormTemplateName(),
-                'custom_options'       => $this->optionsResolver->getCustomOptions()
-            ],
-            'email'                => [
-                'send_copy'             => $this->optionsResolver->getSendCopy(),
-                'mail_template_id'      => $this->optionsResolver->getMailTemplateId(),
-                'copy_mail_template_id' => $this->optionsResolver->getCopyMailTemplateId()
-            ]
-        ]);
-
-        $viewVars['form_block_template'] = $this->optionsResolver->getFormBlockTemplate();
-        $viewVars['form_template'] = $this->optionsResolver->getFormTemplate();
-        $viewVars['form_id'] = $this->optionsResolver->getFormId();
-        $viewVars['form_preset'] = $this->optionsResolver->getFormPreset();
-        $viewVars['form_output_workflow'] = $this->optionsResolver->getOutputWorkflow();
-        $viewVars['main_layout'] = $this->optionsResolver->getMainLayout();
+        $viewVars['form_block_template'] = $optionsResolver->getFormBlockTemplate();
+        $viewVars['form_template'] = $optionsResolver->getFormTemplate();
+        $viewVars['form_id'] = $optionsResolver->getFormId();
+        $viewVars['form_preset'] = $optionsResolver->getFormPreset();
+        $viewVars['form_output_workflow'] = $optionsResolver->getOutputWorkflow();
+        $viewVars['main_layout'] = $optionsResolver->getMainLayout();
         $viewVars['form'] = $form->createView();
 
         return $viewVars;

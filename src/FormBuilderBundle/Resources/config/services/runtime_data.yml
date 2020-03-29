@@ -1,0 +1,11 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Registry\RuntimeDataProviderRegistry: ~
+
+    FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocator: ~
+    FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface: '@FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocator'

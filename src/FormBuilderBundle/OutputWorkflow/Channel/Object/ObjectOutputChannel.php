@@ -55,19 +55,20 @@ class ObjectOutputChannel implements ChannelInterface
      */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
     {
-        $formConfiguration = $submissionEvent->getFormConfiguration();
+        $formRuntimeData = $submissionEvent->getFormRuntimeData();
         $locale = $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
 
-        $storagePath = $channelConfiguration['storagePath'];
         $objectMappingData = $channelConfiguration['objectMappingData'];
 
         if ($channelConfiguration['resolveStrategy'] === 'newObject') {
-            $objectResolver = $this->objectResolverFactory->createForNewObject($storagePath, $objectMappingData);
+            $objectResolver = $this->objectResolverFactory->createForNewObject($objectMappingData);
             $objectResolver->setResolvingObjectClass($channelConfiguration['resolvingObjectClass']);
+            $objectResolver->setStoragePath($channelConfiguration['storagePath']);
         } elseif ($channelConfiguration['resolveStrategy'] === 'existingObject') {
-            $objectResolver = $this->objectResolverFactory->createForExistingObject($storagePath, $objectMappingData);
+            $objectResolver = $this->objectResolverFactory->createForExistingObject($objectMappingData);
             $objectResolver->setResolvingObject($channelConfiguration['resolvingObject']);
+            $objectResolver->setDynamicObjectResolver($channelConfiguration['dynamicObjectResolver']);
         } else {
             throw new \Exception(sprintf('no object resolver for strategy "%s" found.', $channelConfiguration['resolveStrategy']));
         }
@@ -75,7 +76,7 @@ class ObjectOutputChannel implements ChannelInterface
         $objectResolver->setForm($form);
         $objectResolver->setLocale($locale);
         $objectResolver->setWorkflowName($workflowName);
-        $objectResolver->setFormRuntimeOptions($formConfiguration['form_runtime_options']);
+        $objectResolver->setFormRuntimeData($formRuntimeData);
 
         $objectResolver->resolve();
     }

@@ -47,6 +47,9 @@ class OutputWorkflowChannelType extends AbstractType
                 return;
             }
 
+            // reset old form data to avoid merging old channel data.
+            $form->setData(null);
+
             $formOptions = [];
             $channel = $this->channelRegistry->get($data['type']);
 

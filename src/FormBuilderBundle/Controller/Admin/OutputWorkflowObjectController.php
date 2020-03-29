@@ -7,6 +7,7 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\OutputWorkflowManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -36,28 +37,36 @@ class OutputWorkflowObjectController extends AdminController
     protected $outputWorkflowManager;
 
     /**
+     * @var DynamicObjectResolverRegistry
+     */
+    protected $dynamicObjectResolverRegistry;
+
+    /**
      * @var ExtJsFormBuilder
      */
     protected $extJsFormBuilder;
 
     /**
-     * @param Configuration         $configuration
-     * @param FormFactoryInterface  $formFactory
-     * @param FormDefinitionManager $formDefinitionManager
-     * @param OutputWorkflowManager $outputWorkflowManager
-     * @param ExtJsFormBuilder      $extJsFormBuilder
+     * @param Configuration                 $configuration
+     * @param FormFactoryInterface          $formFactory
+     * @param FormDefinitionManager         $formDefinitionManager
+     * @param OutputWorkflowManager         $outputWorkflowManager
+     * @param DynamicObjectResolverRegistry $dynamicObjectResolverRegistry
+     * @param ExtJsFormBuilder              $extJsFormBuilder
      */
     public function __construct(
         Configuration $configuration,
         FormFactoryInterface $formFactory,
         FormDefinitionManager $formDefinitionManager,
         OutputWorkflowManager $outputWorkflowManager,
+        DynamicObjectResolverRegistry $dynamicObjectResolverRegistry,
         ExtJsFormBuilder $extJsFormBuilder
     ) {
         $this->configuration = $configuration;
         $this->formFactory = $formFactory;
         $this->formDefinitionManager = $formDefinitionManager;
         $this->outputWorkflowManager = $outputWorkflowManager;
+        $this->dynamicObjectResolverRegistry = $dynamicObjectResolverRegistry;
         $this->extJsFormBuilder = $extJsFormBuilder;
     }
 
@@ -170,6 +179,26 @@ class OutputWorkflowObjectController extends AdminController
         return $this->adminJson([
             'success'       => true,
             'configuration' => $configuration
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getDynamicObjectResolverAction(Request $request)
+    {
+        $services = $this->dynamicObjectResolverRegistry->getAll();
+
+        $data = [];
+        foreach ($services as $identifier => $service) {
+            $data[] = ['label' => $service['label'], 'key' => $identifier];
+        }
+
+        return $this->adminJson([
+            'success'  => true,
+            'resolver' => $data
         ]);
     }
 }

@@ -54,12 +54,13 @@ class StaticFormExtension extends AbstractExtension
         $defaultOptions = [
             'form_id'            => null,
             'form_template'      => null,
+            'preset'             => null,
+            'output_workflow'    => null,
+            'custom_options'     => [],
+            // deprecated options since v3.3 below
             'send_copy'          => false,
             'mail_template'      => null,
             'copy_mail_template' => null,
-            'preset'             => null,
-            'output_workflow'    => null,
-            'custom_options'     => []
         ];
 
         $options = array_merge($defaultOptions, $formOptions);
@@ -74,11 +75,9 @@ class StaticFormExtension extends AbstractExtension
         $optionBuilder->setCustomOptions($options['custom_options']);
         $optionBuilder->setOutputWorkflow($options['output_workflow']);
 
-        $this->formAssembler->setFormOptionsResolver($optionBuilder);
-
         $viewVars = array_merge(
             ['editmode' => $context['editmode']],
-            $this->formAssembler->assembleViewVars()
+            $this->formAssembler->assembleViewVars($optionBuilder)
         );
 
         return $environment->render('@FormBuilder/Form/form.html.twig', $viewVars);

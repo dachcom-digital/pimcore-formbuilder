@@ -56,11 +56,10 @@ class DefaultController extends FrontendController
 
         /** @var FormAssembler $assembler */
         $assembler = $this->container->get(FormAssembler::class);
-        $assembler->setFormOptionsResolver($optionBuilder);
 
         return $this->renderTemplate(
             '@FormBuilder/Form/form.html.twig',
-            $assembler->assembleViewVars()
+            $assembler->assembleViewVars($optionBuilder)
         );
     }
 }

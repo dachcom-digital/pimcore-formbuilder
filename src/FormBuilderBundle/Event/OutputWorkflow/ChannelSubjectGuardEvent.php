@@ -20,7 +20,7 @@ class ChannelSubjectGuardEvent extends Event
     /**
      * @var array
      */
-    protected $userOptions;
+    protected $formRuntimeData;
 
     /**
      * @var string
@@ -57,15 +57,15 @@ class ChannelSubjectGuardEvent extends Event
      * @param mixed             $subject
      * @param string            $workflowName
      * @param string            $channelType
-     * @param array             $userOptions
+     * @param array             $formRuntimeData
      */
-    public function __construct(FormDataInterface $formData, $subject, string $workflowName, string $channelType, array $userOptions)
+    public function __construct(FormDataInterface $formData, $subject, string $workflowName, string $channelType, array $formRuntimeData)
     {
         $this->formData = $formData;
         $this->subject = $subject;
         $this->workflowName = $workflowName;
         $this->channelType = $channelType;
-        $this->userOptions = $userOptions;
+        $this->formRuntimeData = $formRuntimeData;
 
         $this->suspended = false;
         $this->failed = false;
@@ -98,6 +98,14 @@ class ChannelSubjectGuardEvent extends Event
     }
 
     /**
+     * @return array
+     */
+    public function getFormRuntimeData()
+    {
+        return $this->formRuntimeData;
+    }
+
+    /**
      * @return string
      */
     public function getWorkflowName()
@@ -111,14 +119,6 @@ class ChannelSubjectGuardEvent extends Event
     public function getChannelType()
     {
         return $this->channelType;
-    }
-
-    /**
-     * @return array
-     */
-    public function getUserOptions()
-    {
-        return $this->userOptions;
     }
 
     /**

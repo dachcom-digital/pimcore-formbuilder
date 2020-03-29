@@ -91,17 +91,17 @@ class FormOptionsResolver
     }
 
     /**
-     * @param int $outputWorkflow
+     * @param int|string $outputWorkflow
      */
     public function setOutputWorkflow($outputWorkflow = null)
     {
-        if (is_numeric($outputWorkflow)) {
+        if (is_numeric($outputWorkflow) || is_string($outputWorkflow)) {
             $this->outputWorkflow = $outputWorkflow;
         }
     }
 
     /**
-     * @return int|null
+     * @return int|string|null
      */
     public function getOutputWorkflow()
     {

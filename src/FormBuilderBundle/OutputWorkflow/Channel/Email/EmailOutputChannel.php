@@ -62,11 +62,11 @@ class EmailOutputChannel implements ChannelInterface
     {
         $locale = $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
-        $formConfiguration = $submissionEvent->getFormConfiguration();
+        $formRuntimeData = $submissionEvent->getFormRuntimeData();
 
         $localizedConfig = $this->validateOutputConfig($channelConfiguration, $locale);
 
-        $this->channelWorker->process($form, $localizedConfig, $formConfiguration['form_runtime_options'], $workflowName, $locale);
+        $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $locale);
     }
 
     /**

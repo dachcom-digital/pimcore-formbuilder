@@ -5,12 +5,13 @@ namespace FormBuilderBundle\EventListener\Core;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\OutputWorkflow\FormSubmissionFinisherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -27,31 +28,31 @@ class RequestListener implements EventSubscriberInterface
     protected $eventDispatcher;
 
     /**
-     * @var SessionInterface
-     */
-    protected $session;
-
-    /**
      * @var FormSubmissionFinisherInterface
      */
     protected $formSubmissionFinisher;
 
     /**
+     * @var FormDefinitionManager
+     */
+    protected $formDefinitionManager;
+
+    /**
      * @param FrontendFormBuilder             $frontendFormBuilder
      * @param EventDispatcherInterface        $eventDispatcher
-     * @param SessionInterface                $session
      * @param FormSubmissionFinisherInterface $formSubmissionFinisher
+     * @param FormDefinitionManager           $formDefinitionManager
      */
     public function __construct(
         FrontendFormBuilder $frontendFormBuilder,
         EventDispatcherInterface $eventDispatcher,
-        SessionInterface $session,
-        FormSubmissionFinisherInterface $formSubmissionFinisher
+        FormSubmissionFinisherInterface $formSubmissionFinisher,
+        FormDefinitionManager $formDefinitionManager
     ) {
         $this->frontendFormBuilder = $frontendFormBuilder;
         $this->eventDispatcher = $eventDispatcher;
-        $this->session = $session;
         $this->formSubmissionFinisher = $formSubmissionFinisher;
+        $this->formDefinitionManager = $formDefinitionManager;
     }
 
     /**
@@ -69,14 +70,13 @@ class RequestListener implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->session->getBag('form_builder_session');
-
         if (!$event->isMasterRequest()) {
             return;
         }
 
         $request = $event->getRequest();
+
+        // @todo: this will fail if a form gets submitted via GET
         if (!$request->isMethod('POST')) {
             return;
         }
@@ -86,17 +86,15 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        if ($sessionBag->has('form_configuration_' . $formId)) {
-            $formConfiguration = $sessionBag->get('form_configuration_' . $formId);
-        } else {
-            $this->generateErroredJsonReturn($event, null, 'Session expired. Please reload the page.');
-
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return;
         }
 
+        $formRuntimeData = $this->detectFormRuntimeDataInRequest($event->getRequest(), $formDefinition);
+
         try {
-            $userOptions = isset($formConfiguration['form_runtime_options']) ? $formConfiguration['form_runtime_options'] : [];
-            $form = $this->frontendFormBuilder->buildForm($formId, $userOptions);
+            $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
         } catch (\Exception $e) {
             $this->generateErroredJsonReturn($event, $e);
 
@@ -113,7 +111,7 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
+        $submissionEvent = new SubmissionEvent($request, $formRuntimeData, $form);
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
 
         $this->formSubmissionFinisher->finishWithSuccess($event, $submissionEvent);
@@ -139,5 +137,40 @@ class RequestListener implements EventSubscriberInterface
         ]);
 
         $event->setResponse($response);
+    }
+
+    /**
+     * @param Request                 $request
+     * @param FormDefinitionInterface $formDefinition
+     *
+     * @return array|null
+     */
+    protected function detectFormRuntimeDataInRequest(Request $request, FormDefinitionInterface $formDefinition)
+    {
+        $formDefinitionConfig = $formDefinition->getConfig();
+
+        $data = null;
+        $name = 'formbuilder_' . $formDefinition->getId();
+        $method = isset($formDefinitionConfig['method']) ? $formDefinitionConfig['method'] : 'POST';
+
+        if ($request->getMethod() !== $method) {
+            return [];
+        }
+
+        if (($method === 'GET' || $method === 'HEAD' || $method === 'TRACE') && $request->query->has($name)) {
+            $data = $request->query->get($name);
+        } elseif ($request->request->has($name)) {
+            $data = $request->request->get($name, null);
+        }
+
+        if (!is_array($data)) {
+            return null;
+        }
+
+        if (isset($data['formRuntimeData']) && is_string($data['formRuntimeData'])) {
+            return json_decode($data['formRuntimeData'], true);
+        }
+
+        return null;
     }
 }

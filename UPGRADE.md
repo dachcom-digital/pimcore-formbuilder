@@ -8,6 +8,11 @@ Just click the "update" button or execute the migration command to finish the bu
 
 #### Update from Version 3.2.0 to Version 3.3.0
 - **[IMPROVEMENT]**: Use doctrine ORM instead of DAO for Form Data
+- **[IMPROVEMENT]**: Introduced FormDataInterface and FormDefinitionInterface to split submitted data from the definition itself. 
+- **[IMPROVEMENT]**: RuntimeData Resolver added (The session based form configuration has been removed)
+- **[IMPROVEMENT]**: Huge code base refactoring to improve symfony standards
+- **[IMPROVEMENT]**: Implement Output Workflows [#114](https://github.com/dachcom-digital/pimcore-formbuilder/issues/114)
+- **[DEPRECATION]**: Calling `\FormBuilderBundle\Assembler\FormAssembler::setFormOptionsResolver($optionBuilder);` has been marked as deprecated and will be removed with version 4.0. Pass the `$optionBuilder` directly via `\FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionBuilder)`.
 - **[DEPRECATION]**: `\Formbuilder\Storage\Form` and `\Formbuilder\Storage\FormInterface` has been marked as deprecated and will be removed with version 4.0. Use `\Formbuilder\Model\Form` and `\Formbuilder\Model\FormInterface` instead.
 
 #### Update from Version 3.2.0 to Version 3.2.1

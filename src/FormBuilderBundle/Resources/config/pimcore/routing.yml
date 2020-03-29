@@ -117,3 +117,8 @@ form_builder.controller.admin.output_workflow.object.get_form_data:
     path: /admin/formbuilder/output-workflow/object/get-form-data
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFormDataAction }
     methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_dynamic_object_resolver:
+    path: /admin/formbuilder/output-workflow/object/get-dynamic-object-resolver
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getDynamicObjectResolverAction }
+    methods: [GET]

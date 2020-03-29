@@ -13,17 +13,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 {
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
-
     /**
      * @var FlashBagManagerInterface
      */
@@ -50,7 +43,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
     protected $successManagementWorker;
 
     /**
-     * @param SessionInterface                  $session
      * @param FlashBagManagerInterface          $flashBagManager
      * @param FormErrorsSerializerInterface     $formErrorsSerializer
      * @param OutputWorkflowResolverInterface   $outputWorkflowResolver
@@ -58,14 +50,12 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
      * @param SuccessManagementWorkerInterface  $successManagementWorker
      */
     public function __construct(
-        SessionInterface $session,
         FlashBagManagerInterface $flashBagManager,
         FormErrorsSerializerInterface $formErrorsSerializer,
         OutputWorkflowResolverInterface $outputWorkflowResolver,
         OutputWorkflowDispatcherInterface $outputWorkflowDispatcher,
         SuccessManagementWorkerInterface $successManagementWorker
     ) {
-        $this->session = $session;
         $this->flashBagManager = $flashBagManager;
         $this->formErrorsSerializer = $formErrorsSerializer;
         $this->outputWorkflowResolver = $outputWorkflowResolver;
@@ -97,9 +87,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
      */
     public function finishWithSuccess(GetResponseEvent $event, SubmissionEvent $submissionEvent)
     {
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->session->getBag('form_builder_session');
-
         if ($submissionEvent->outputWorkflowFinisherIsDisabled() === true) {
             return;
         }
@@ -144,15 +131,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
                 : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
 
             return;
-        }
-
-        $form = $submissionEvent->getForm();
-        /** @var FormDataInterface $data */
-        $data = $form->getData();
-        $formId = $data->getFormDefinition()->getId();
-
-        if ($sessionBag->has('form_configuration_' . $formId)) {
-            $sessionBag->remove('form_configuration_' . $formId);
         }
 
         $event->setResponse($request->isXmlHttpRequest()
