@@ -99,7 +99,7 @@ form_builder.form.runtime_data.event_id_fetcher:
         - { name: form_builder.runtime_data_provider}
 ```
 
-### II. Add dynamic Object Resolver**
+### II. Add dynamic Object Resolver
 Second, create a dynamic object resolver and append the found ID from the runtime data pool.
 
 ```yaml

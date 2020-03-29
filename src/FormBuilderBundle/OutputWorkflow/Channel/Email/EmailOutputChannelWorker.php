@@ -110,7 +110,7 @@ class EmailOutputChannelWorker
         }
 
         $attachments = [];
-        if ($formData->hasAttachments() && $allowAttachments === false) {
+        if ($formData->hasAttachments() && $allowAttachments === true) {
             $attachments = $formData->getAttachments();
         }
 
