@@ -11,6 +11,7 @@ interface FormRuntimeDataAllocatorInterface
      * @param array                   $systemRuntimeData
      *
      * @return RuntimeDataCollector
+     *
      * @throws \Exception
      */
     public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData);

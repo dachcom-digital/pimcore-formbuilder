@@ -44,7 +44,7 @@ class RequestDataProvider implements RuntimeDataProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeDataId()
     {
@@ -52,7 +52,7 @@ class RequestDataProvider implements RuntimeDataProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasRuntimeData(FormDefinitionInterface $formDefinition)
     {
@@ -62,7 +62,7 @@ class RequestDataProvider implements RuntimeDataProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeData(FormDefinitionInterface $formDefinition)
     {

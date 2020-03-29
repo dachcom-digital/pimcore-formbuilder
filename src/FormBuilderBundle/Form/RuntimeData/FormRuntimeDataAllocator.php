@@ -21,7 +21,7 @@ class FormRuntimeDataAllocator implements FormRuntimeDataAllocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData)
     {
@@ -33,7 +33,6 @@ class FormRuntimeDataAllocator implements FormRuntimeDataAllocatorInterface
         }
 
         foreach ($this->runtimeDataProviderRegistry->getAll() as $dataProviderIdentifier => $dataProvider) {
-
             if (!$dataProvider->hasRuntimeData($formDefinition)) {
                 continue;
             }

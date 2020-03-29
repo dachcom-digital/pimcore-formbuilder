@@ -33,6 +33,7 @@ class RuntimeDataCollector
      * @param string $id
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function find($id)

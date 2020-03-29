@@ -35,7 +35,7 @@ class ObjectByRuntimeDataResolver implements DynamicObjectResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resolve(FormInterface $form, DataObject $referenceObject, array $formRuntimeData, string $locale)
     {

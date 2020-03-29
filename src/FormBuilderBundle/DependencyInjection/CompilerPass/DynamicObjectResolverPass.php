@@ -18,7 +18,6 @@ final class DynamicObjectResolverPass implements CompilerPassInterface
         $definition = $container->getDefinition(DynamicObjectResolverRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.output_workflow.object.dynamic_resolver') as $id => $tags) {
             foreach ($tags as $attributes) {
-
                 if (!isset($attributes['identifier'])) {
                     throw new InvalidConfigurationException(sprintf('You need to define a valid identifier for dynamic object resolver "%s"', $id));
                 } elseif (!isset($attributes['label'])) {

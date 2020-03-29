@@ -28,6 +28,7 @@ class FormAssembler
 
     /**
      * @var FormOptionsResolver
+     *
      * @deprecated
      */
     protected $optionsResolver = null;
@@ -54,6 +55,7 @@ class FormAssembler
 
     /**
      * @param FormOptionsResolver $optionsResolver
+     *
      * @deprecated since Version 3.3
      */
     public function setFormOptionsResolver(FormOptionsResolver $optionsResolver)

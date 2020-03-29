@@ -6,7 +6,6 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 interface RuntimeDataProviderInterface
 {
-
     /**
      * @return string
      */

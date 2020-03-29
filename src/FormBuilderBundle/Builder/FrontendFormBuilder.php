@@ -103,6 +103,7 @@ class FrontendFormBuilder
      * @param array                   $formRuntimeData
      *
      * @return FormInterface
+     *
      * @throws \Exception
      */
     public function buildForm(FormDefinitionInterface $formDefinition, $formRuntimeData = [])

@@ -47,7 +47,7 @@ class ExistingObjectResolver extends AbstractObjectResolver
     }
 
     /**
-     * @param string|null
+     * @param string|null $dynamicObjectResolver
      */
     public function setDynamicObjectResolver($dynamicObjectResolver)
     {
@@ -79,10 +79,11 @@ class ExistingObjectResolver extends AbstractObjectResolver
         }
 
         if (!$dataObject instanceof DataObject) {
-            throw new \Exception(sprintf('Resolving Object with id "%s" not found. %s',
+            throw new \Exception(sprintf(
+                'Resolving Object with id "%s" not found. %s',
                 $resolvingObjectId,
-                $this->getDynamicObjectResolver() === null ? '' : sprintf('Involved Resolver: "%s"', $this->getDynamicObjectResolver()))
-            );
+                $this->getDynamicObjectResolver() === null ? '' : sprintf('Involved Resolver: "%s"', $this->getDynamicObjectResolver())
+            ));
         }
 
         return $dataObject;
