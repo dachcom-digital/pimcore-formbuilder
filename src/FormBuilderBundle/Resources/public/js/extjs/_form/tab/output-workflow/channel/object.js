@@ -22,6 +22,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             formConfig = this.data;
             if (formConfig.hasOwnProperty('objectMappingData')) {
                 delete formConfig['objectMappingData'];
+                if (formConfig.hasOwnProperty('dynamicObjectResolver') && formConfig.dynamicObjectResolver === null) {
+                    formConfig.dynamicObjectResolver = '';
+                }
                 this.lastConsistentConfigHash = md5(Ext.encode(formConfig));
             }
         }
@@ -374,7 +377,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
     checkObjectMappingEditorSignals: function () {
 
-        if(this.isLoading === true) {
+        if (this.isLoading === true) {
             return;
         }
 

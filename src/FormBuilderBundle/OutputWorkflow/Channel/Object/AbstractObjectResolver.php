@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
+use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValidationHelper;
 use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\ModelInterface;
@@ -293,9 +294,9 @@ abstract class AbstractObjectResolver
      */
     protected function appendToFieldCollection(DataObject\Concrete $object, string $fieldCollectionMethodName, array $workerData, array $containerFieldData)
     {
-        $containerType = $containerFieldData['type'];
         $fieldCollectionType = $workerData['fieldCollectionClassKey'];
         $fieldMapping = $workerData['fieldMapping'];
+        $validationData = $workerData['validationData'];
 
         $fieldCollectionPath = sprintf('\Pimcore\Model\DataObject\Fieldcollection\Data\%s', ucfirst($fieldCollectionType));
 
@@ -350,6 +351,9 @@ abstract class AbstractObjectResolver
             if (null === $fieldCollection = $this->dispatchGuardEvent($fieldCollection)) {
                 continue;
             }
+
+            $validator = new FieldCollectionValidationHelper($validationData);
+            $validator->validate($object, $objectFieldCollections, $fieldCollection);
 
             $objectFieldCollections->add($fieldCollection);
         }

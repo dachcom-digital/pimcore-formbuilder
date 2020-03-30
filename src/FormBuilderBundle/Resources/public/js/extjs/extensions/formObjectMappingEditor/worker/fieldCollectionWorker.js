@@ -7,12 +7,13 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
     data: null,
 
     window: null,
+    editPanel: null,
     comboBox: null,
     node: null,
 
     hasValidData: false,
+    fieldCollectionValidator: null,
     formObjectTreeMapper: null,
-    formObjectTreeMapperPanel: null,
 
     initialize: function (formId, classId, fieldCollectionKey, data) {
 
@@ -111,12 +112,13 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
 
         this.window = new Ext.Window({
             width: 900,
-            height: 500,
+            height: 540,
             iconCls: 'form_builder_output_workflow_channel_object_mapper',
             layout: 'fit',
             closeAction: 'destroy',
             plain: true,
             autoScroll: true,
+            autoHeight: true,
             preventRefocus: true,
             cls: 'formbuilder-object-mapping-editor-fieldcollection',
             title: 'Field Collection Configurator',
@@ -134,7 +136,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
         this.window.addDocked({
             xtype: 'toolbar',
             dock: 'top',
-            items: [comboBox]
+            items: [this.comboBox]
         });
 
         this.window.show();
@@ -147,16 +149,18 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
         var pimcoreClassType = 'fieldcollection',
             parentNode = this.node.parentNode,
             containerFields = parentNode.data.omContainerFields,
-            values = this.data && this.data.hasOwnProperty('fieldMapping') ? this.data.fieldMapping : null;
+            values = this.data && this.data.hasOwnProperty('fieldMapping') ? this.data.fieldMapping : null,
+            formObjectTreeMapperPanel;
 
-        if (this.formObjectTreeMapperPanel !== null) {
-            this.window.remove(this.formObjectTreeMapperPanel);
+        if (this.editPanel !== null) {
+            this.window.remove(this.editPanel);
         }
 
         if (switchLayout === true) {
             values = null;
         }
 
+        this.fieldCollectionValidator = this.generateFieldCollectionValidator(fieldCollectionKey);
         this.formObjectTreeMapper = new Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeMapper(
             this.formId,
             values,
@@ -164,12 +168,203 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
             pimcoreClassType,
             fieldCollectionKey,
             parentNode.data.text,
-            parentNode.data.iconCls,
+            parentNode.data.iconCls
         );
 
-        this.formObjectTreeMapperPanel = this.formObjectTreeMapper.getLayout();
+        formObjectTreeMapperPanel = this.formObjectTreeMapper.getLayout();
+        formObjectTreeMapperPanel.region = 'center';
 
-        this.window.add(this.formObjectTreeMapperPanel);
+        this.editPanel = new Ext.form.Panel({
+            layout: 'border',
+            items: [
+                formObjectTreeMapperPanel,
+                this.fieldCollectionValidator
+            ]
+        });
+
+        this.window.add(this.editPanel);
+    },
+
+    generateFieldCollectionValidator: function (fieldCollectionKey) {
+
+        var _ = this;
+
+        return new Ext.form.FormPanel({
+            title: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_validation_configuration'),
+            collapsible: true,
+            collapsed: true,
+            titleCollapse: false,
+            border: false,
+            floatable: false,
+            hideCollapseTool: false,
+            region: 'south',
+            style: 'padding: 10px;',
+            items: [
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    style: 'margin: 5px 0 0 0;',
+                    items: [
+                        {
+                            xtype: 'hidden',
+                            name: 'validation.count.type',
+                            value: 'count'
+                        },
+                        {
+                            xtype: 'checkbox',
+                            name: 'validation.count.enabled',
+                            checked: this.findValueInValidationData('count', 'enabled', false),
+                            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_enable_count_validation'),
+                            labelAlign: 'left',
+                            inputValue: true,
+                            uncheckedValue: false,
+                            flex: 1,
+                            listeners: {
+                                change: function (cb, val) {
+                                    var fc = this.up('fieldcontainer');
+                                    fc.down('combo[name="validation.count.field"]').setDisabled(!val);
+                                    fc.down('textfield[name="validation.count.message"]').setDisabled(!val);
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'combo',
+                            name: 'validation.count.field',
+                            value: null,
+                            disabled: this.findValueInValidationData('count', 'enabled', false) === false,
+                            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_referencing_count_field'),
+                            displayField: 'label',
+                            valueField: 'key',
+                            labelAlign: 'left',
+                            queryMode: 'local',
+                            triggerAction: 'all',
+                            editable: false,
+                            allowBlank: true,
+                            style: 'margin: 0 10px 0 0',
+                            flex: 2,
+                            listeners: {
+                                afterrender: function (cb) {
+                                    cb.store.load({
+                                        callback: function (records) {
+                                            cb.setValue(_.findValueInValidationData('count', 'field', null));
+                                        }
+                                    });
+                                }
+                            },
+                            store: new Ext.data.Store({
+                                autoLoad: false,
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/admin/formbuilder/output-workflow/object/get-object-class-fields',
+                                    extraParams: {
+                                        type: 'dataClass',
+                                        id: this.classId
+                                    },
+                                    fields: ['label', 'key'],
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'fields'
+                                    }
+                                }
+                            })
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'validation.count.message',
+                            value: this.findValueInValidationData('count', 'message', null),
+                            disabled: this.findValueInValidationData('count', 'enabled', false) === false,
+                            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_validation_message'),
+                            emptyText: t('form_builder_success_message_text_empty'),
+                            labelAlign: 'left',
+                            summaryDisplay: true,
+                            allowBlank: true,
+                            flex: 3
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'hidden',
+                            name: 'validation.unique.type',
+                            value: 'unique'
+                        },
+                        {
+                            xtype: 'checkbox',
+                            name: 'validation.unique.enabled',
+                            checked: this.findValueInValidationData('unique', 'enabled', false),
+                            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_enable_uniquenes_validation'),
+                            labelAlign: 'left',
+                            inputValue: true,
+                            uncheckedValue: false,
+                            flex: 1,
+                            listeners: {
+                                change: function (cb, val) {
+                                    var fc = this.up('fieldcontainer');
+                                    fc.down('combo[name="validation.unique.field"]').setDisabled(!val);
+                                    fc.down('textfield[name="validation.unique.message"]').setDisabled(!val);
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'combo',
+                            name: 'validation.unique.field',
+                            value: null,
+                            disabled: this.findValueInValidationData('unique', 'enabled', false) === false,
+                            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_referencing_unique_field'),
+                            displayField: 'label',
+                            valueField: 'key',
+                            labelAlign: 'left',
+                            queryMode: 'local',
+                            triggerAction: 'all',
+                            editable: false,
+                            allowBlank: true,
+                            style: 'margin: 0 10px 0 0',
+                            flex: 2,
+                            listeners: {
+                                afterrender: function (cb) {
+                                    this.store.load({
+                                        callback: function (records) {
+                                            cb.setValue(_.findValueInValidationData('unique', 'field', null));
+                                        }
+                                    });
+                                }
+                            },
+                            store: new Ext.data.Store({
+                                autoLoad: false,
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/admin/formbuilder/output-workflow/object/get-object-class-fields',
+                                    extraParams: {
+                                        type: 'fieldCollection',
+                                        id: fieldCollectionKey
+                                    },
+                                    fields: ['label', 'key'],
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'fields'
+                                    },
+                                }
+                            })
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'validation.unique.message',
+                            value: this.findValueInValidationData('unique', 'message', null),
+                            disabled: this.findValueInValidationData('unique', 'enabled', false) === false,
+                            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.fc_worker_validation_message'),
+                            emptyText: t('form_builder_success_message_text_empty'),
+                            labelAlign: 'left',
+                            summaryDisplay: true,
+                            allowBlank: true,
+                            flex: 3
+                        }
+                    ]
+                }
+            ]
+        });
     },
 
     isReadyToConfigure: function (node) {
@@ -182,6 +377,24 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
         return this.node.parentNode.data.omFieldTypeIdentifier === 'form_field';
     },
 
+    findValueInValidationData: function (section, key, defaultValue) {
+
+        var value = defaultValue;
+
+        if (this.data === null || !this.data.hasOwnProperty('validationData')) {
+            return defaultValue;
+        }
+
+        Ext.Object.each(this.data.validationData, function (index, data) {
+            if (data.type === section) {
+                value = data.hasOwnProperty(key) ? data[key] : defaultValue;
+                return false;
+            }
+        });
+
+        return value;
+    },
+
     isValid: function (node) {
         return this.hasValidData === true;
     },
@@ -192,15 +405,29 @@ Formbuilder.extjs.extensions.formObjectMappingEditorWorker.fieldCollectionWorker
 
     commitData: function (cb) {
 
+        var validationData,
+            transposedValidationData,
+            validationDataArray = [];
+
         if (this.formObjectTreeMapper === null) {
             return;
         }
 
         this.hasValidData = this.formObjectTreeMapper.isValid();
 
+        transposedValidationData = DataObjectParser.transpose(this.fieldCollectionValidator.form.getValues());
+        validationData = transposedValidationData.data();
+
+        if (validationData.hasOwnProperty('validation')) {
+            Ext.Object.each(validationData['validation'], function (index, data) {
+                validationDataArray.push(data);
+            });
+        }
+
         this.data = {
             'fieldCollectionClassKey': this.comboBox.getValue(),
-            'fieldMapping': this.formObjectTreeMapper.getEditorData()
+            'fieldMapping': this.formObjectTreeMapper.getEditorData(),
+            'validationData': validationDataArray
         };
 
         this.window.close();

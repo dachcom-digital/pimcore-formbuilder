@@ -71,6 +71,16 @@ If you're using the dynamic choice type mapping, make sure your mapped pimcore f
 This Channel also allows you to store `1:N` container data (Repeater, Fieldset) by storing them as a field collection in your data object.
 You need to add the field collection relation to your form field. After that you're able to sub-map the field collection object.
 
+## Dynamic Object Validation Constraints
+![image](https://user-images.githubusercontent.com/700119/77961315-f3160e00-72d9-11ea-9d2d-5791e85e17b2.png)
+
+There are two default validation constrains available within the field collection mapping.
+
+| Type | Description  |
+|------|--------------|
+| `Uniqueness Validation` | If enabled, you need to define a referencing uniqueness field. This will raise an `GuardOutputWorkflowException` exception, if the validation fails. The message will be translated via pimcore translation engine. |
+| `Count Validation` | If enabled, you ned to define a referencing count field (mostly a number field). This will raise an `GuardOutputWorkflowException` exception, if the validation fails. The message will be translated via pimcore translation engine. |
+
 ## Events
 You're able to implement a guard and enrichment event. Read more about it [here](./30_Events.md).
 

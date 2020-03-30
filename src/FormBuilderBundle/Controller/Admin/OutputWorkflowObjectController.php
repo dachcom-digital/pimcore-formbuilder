@@ -97,6 +97,41 @@ class OutputWorkflowObjectController extends AdminController
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function getObjectClassesFieldsAction(Request $request)
+    {
+        $type = $request->get('type');
+        $id = $request->get('id');
+
+        $fields = [];
+        if ($type === 'fieldCollection') {
+            $fieldCollectionDefinition = DataObject\Fieldcollection\Definition::getByKey($id);
+            $fields = $fieldCollectionDefinition->getFieldDefinitions();
+        } elseif ($type === 'dataClass') {
+            $classDefinition = DataObject\ClassDefinition::getById($id);
+            $fields = $classDefinition->getFieldDefinitions();
+        }
+
+        $flattenFields = [];
+        foreach ($fields as $field) {
+            $flattenFields[] = [
+                'key'   => $field->getName(),
+                'label' => empty($field->getTitle()) ? $field->getName() : $field->getTitle(),
+            ];
+        }
+
+        return $this->adminJson([
+            'success' => true,
+            'fields'  => $flattenFields
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function getFieldCollectionTypesForDataTypeAction(Request $request)
     {

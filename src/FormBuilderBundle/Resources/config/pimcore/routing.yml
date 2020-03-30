@@ -108,6 +108,11 @@ form_builder.controller.admin.output_workflow.object.get_object_classes:
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getObjectClassesAction }
     methods: [GET]
 
+form_builder.controller.admin.output_workflow.object.get_object_class_fields:
+    path: /admin/formbuilder/output-workflow/object/get-object-class-fields
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getObjectClassesFieldsAction }
+    methods: [GET]
+
 form_builder.controller.admin.output_workflow.object.get_field_collection_types:
     path: /admin/formbuilder/output-workflow/object/get-field-collection-types
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFieldCollectionTypesForDataTypeAction }

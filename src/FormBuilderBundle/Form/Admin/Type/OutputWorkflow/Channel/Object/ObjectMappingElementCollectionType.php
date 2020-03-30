@@ -31,6 +31,7 @@ class ObjectMappingElementCollectionType extends AbstractType
             // remove all form fields that don't contain any child data
             // therefor we need to re-index the collection storage
             foreach ($data as $index => $collectionData) {
+
                 if ($collectionData['type'] !== 'form_field') {
                     continue;
                 }
@@ -60,14 +61,7 @@ class ObjectMappingElementCollectionType extends AbstractType
             'allow_add'       => true,
             'allow_delete'    => true,
             'by_reference'    => false,
-            'entry_type'      => ObjectMappingElementConfigType::class,
-            'delete_empty'    => function ($data) {
-                if ($data['type'] === 'form_field') {
-                    return !isset($data['childs']) || !is_array($data['childs']) || count($data['childs']) === 0;
-                }
-
-                return empty($data);
-            }
+            'entry_type'      => ObjectMappingElementConfigType::class
         ]);
     }
 
