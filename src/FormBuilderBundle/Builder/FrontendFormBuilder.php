@@ -79,26 +79,6 @@ class FrontendFormBuilder
     }
 
     /**
-     * @param Request $request
-     *
-     * @return null|int
-     */
-    public function findFormIdByRequest(Request $request)
-    {
-        foreach ($request->request->all() as $key => $parameters) {
-            if (strpos($key, 'formbuilder_') === false) {
-                continue;
-            }
-
-            if (isset($parameters['formId'])) {
-                return $parameters['formId'];
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param FormDefinitionInterface $formDefinition
      * @param array                   $formRuntimeData
      *

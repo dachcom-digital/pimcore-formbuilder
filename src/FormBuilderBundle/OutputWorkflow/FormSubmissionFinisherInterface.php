@@ -4,19 +4,24 @@ namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\SubmissionEvent;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 interface FormSubmissionFinisherInterface
 {
     /**
-     * @param GetResponseEvent $event
-     * @param FormInterface    $form
+     * @param Request       $request
+     * @param FormInterface $form
+     *
+     * @return Response|null
      */
-    public function finishWithError(GetResponseEvent $event, FormInterface $form);
+    public function finishWithError(Request $request, FormInterface $form);
 
     /**
-     * @param GetResponseEvent $event
-     * @param SubmissionEvent  $submissionEvent
+     * @param Request         $request
+     * @param SubmissionEvent $submissionEvent
+     *
+     * @return Response|null
      */
-    public function finishWithSuccess(GetResponseEvent $event, SubmissionEvent $submissionEvent);
+    public function finishWithSuccess(Request $request, SubmissionEvent $submissionEvent);
 }

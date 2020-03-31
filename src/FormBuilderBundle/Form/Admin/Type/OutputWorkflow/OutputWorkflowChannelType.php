@@ -36,7 +36,6 @@ class OutputWorkflowChannelType extends AbstractType
         $builder->add('type', OutputWorkflowChannelChoiceType::class, []);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $form = $event->getForm();
             $formData = $form->getData();

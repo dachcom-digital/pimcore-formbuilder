@@ -12,8 +12,8 @@ use FormBuilderBundle\Session\FlashBagManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 {
@@ -67,41 +67,34 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
     /**
      * {@inheritdoc}
      */
-    public function finishWithError(GetResponseEvent $event, FormInterface $form)
+    public function finishWithError(Request $request, FormInterface $form)
     {
         $response = null;
-        $request = $event->getRequest();
 
         if ($request->isXmlHttpRequest()) {
             $response = $this->generateAjaxFormErrorResponse($form);
         }
 
-        // no need to redirect finished error: we're in a getResponseEvent, let symfony do the rest.
-        if ($response instanceof Response) {
-            $event->setResponse($response);
-        }
+        return $response;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finishWithSuccess(GetResponseEvent $event, SubmissionEvent $submissionEvent)
+    public function finishWithSuccess(Request $request, SubmissionEvent $submissionEvent)
     {
         if ($submissionEvent->outputWorkflowFinisherIsDisabled() === true) {
-            return;
+            return null;
         }
-
-        $request = $event->getRequest();
 
         $outputWorkflow = $this->outputWorkflowResolver->resolve($submissionEvent);
 
         if (!$outputWorkflow instanceof OutputWorkflowInterface) {
             $errorMessage = 'No valid output workflow found.';
-            $event->setResponse($request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
 
-            return;
+            return $request->isXmlHttpRequest()
+                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
         }
 
         try {
@@ -115,27 +108,24 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
                 $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
             }
 
-            $event->setResponse($request->isXmlHttpRequest()
+            return $request->isXmlHttpRequest()
                 ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
-
-            return;
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
         }
 
         try {
             $this->successManagementWorker->process($submissionEvent, $outputWorkflow->getSuccessManagement());
         } catch (\Exception $e) {
             $errorMessage = sprintf('Error while processing success management of workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
-            $event->setResponse($request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage));
 
-            return;
+            return $request->isXmlHttpRequest()
+                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
         }
 
-        $event->setResponse($request->isXmlHttpRequest()
+        return $request->isXmlHttpRequest()
             ? $this->generateAjaxFormSuccessResponse($submissionEvent)
-            : $this->generateRedirectFormSuccessResponse($submissionEvent));
+            : $this->generateRedirectFormSuccessResponse($submissionEvent);
     }
 
     /**
@@ -229,6 +219,17 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         $form = $submissionEvent->getForm();
         /** @var FormDataInterface $data */
         $data = $form->getData();
+
+        $formDefinition = $data->getFormDefinition();
+        $formDefinitionConfig = $formDefinition->getConfig();
+        $method = isset($formDefinitionConfig['method']) ? strtoupper($formDefinitionConfig['method']) : 'POST';
+
+        if (in_array($method, ['GET', 'HEAD', 'TRACE'])) {
+            $qs = $submissionEvent->getRequest()->getQueryString();
+            if (!empty($qs)) {
+                $uri = strpos($uri, '?' === false) ? ($uri . '?' . $qs) : ($uri . '&' . $qs);
+            }
+        }
 
         $messageKey = sprintf('formbuilder_%s_error', $data->getFormDefinition()->getId());
 

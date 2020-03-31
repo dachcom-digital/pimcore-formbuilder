@@ -55,6 +55,7 @@ class DynamicFormType extends AbstractType
                 if (isset($runtimeData['email']) && isset($runtimeData['email']['_deprecated_note'])) {
                     unset($runtimeData['email']['_deprecated_note']);
                 }
+
                 return is_array($runtimeData) ? json_encode($runtimeData) : null;
             },
             function ($runtimeData) {

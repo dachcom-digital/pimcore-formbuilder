@@ -37,7 +37,6 @@ class FieldCollectionValidationHelper
     public function validate(DataObject\Concrete $referenceObject, DataObject\Fieldcollection $fieldCollection, DataObject\Fieldcollection\Data\AbstractData $data)
     {
         foreach ($this->validationConfiguration as $validationBlock) {
-
             if ($validationBlock['enabled'] === false) {
                 continue;
             }
@@ -66,7 +65,6 @@ class FieldCollectionValidationHelper
         DataObject\Fieldcollection $fieldCollection,
         DataObject\Fieldcollection\Data\AbstractData $currentFieldCollection
     ) {
-
         if ($fieldCollection->getCount() === 0) {
             return;
         }
@@ -75,7 +73,6 @@ class FieldCollectionValidationHelper
 
         /** @var DataObject\Fieldcollection\Data\AbstractData $fieldCollection */
         foreach ($fieldCollection->getItems() as $fieldCollection) {
-
             if (!method_exists($fieldCollection, $uniqueFieldGetter)) {
                 break;
             }
@@ -90,6 +87,7 @@ class FieldCollectionValidationHelper
 
             if ($fieldCollection->$uniqueFieldGetter() === $currentFieldCollection->$uniqueFieldGetter()) {
                 $message = str_replace(['%field_value%'], [$currentFieldCollection->$uniqueFieldGetter()], $this->translator->trans($validationMessage));
+
                 throw new GuardOutputWorkflowException($message);
             }
         }
@@ -109,7 +107,6 @@ class FieldCollectionValidationHelper
         DataObject\Concrete $referenceObject,
         DataObject\Fieldcollection $fieldCollection
     ) {
-
         $countFieldGetter = sprintf('get%s', ucfirst($countFieldName));
 
         if (!method_exists($referenceObject, $countFieldGetter)) {
@@ -125,6 +122,7 @@ class FieldCollectionValidationHelper
         // validation happens before the new field collection gets appended.
         if ($fieldCollection->getCount() === (int) $countData) {
             $message = str_replace(['%count%'], [$countData], $this->translator->trans($validationMessage));
+
             throw new GuardOutputWorkflowException($message);
         }
     }

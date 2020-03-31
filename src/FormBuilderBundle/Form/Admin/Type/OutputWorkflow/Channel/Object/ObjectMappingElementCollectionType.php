@@ -31,7 +31,6 @@ class ObjectMappingElementCollectionType extends AbstractType
             // remove all form fields that don't contain any child data
             // therefor we need to re-index the collection storage
             foreach ($data as $index => $collectionData) {
-
                 if ($collectionData['type'] !== 'form_field') {
                     continue;
                 }
