@@ -8,6 +8,7 @@ Just click the "update" button or execute the migration command to finish the bu
 
 #### Update from Version 3.2.0 to Version 3.3.0
 - **[IMPROVEMENT]**: Use doctrine ORM instead of DAO for Form Data
+- **[IMPROVEMENT]**: Improve request management: Allow true `GET`, `HEAD`, `TRACE` submissions 
 - **[IMPROVEMENT]**: Introduced FormDataInterface and FormDefinitionInterface to split submitted data from the definition itself. 
 - **[IMPROVEMENT]**: RuntimeData Resolver added (The session based form configuration has been removed)
 - **[IMPROVEMENT]**: Huge code base refactoring to improve symfony standards
