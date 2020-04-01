@@ -16,6 +16,7 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[IMPROVEMENT]**: Implement Output Workflows [#114](https://github.com/dachcom-digital/pimcore-formbuilder/issues/114)
 - **[DEPRECATION]**: Calling `\FormBuilderBundle\Assembler\FormAssembler::setFormOptionsResolver($optionBuilder);` has been marked as deprecated and will be removed with version 4.0. Pass the `$optionBuilder` directly via `\FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionBuilder)`.
 - **[DEPRECATION]**: `\Formbuilder\Storage\Form` and `\Formbuilder\Storage\FormInterface` has been marked as deprecated and will be removed with version 4.0. Use `\Formbuilder\Model\Form` and `\Formbuilder\Model\FormInterface` instead.
+- **[DEPRECATION]**: `\Formbuilder\Manager\FormManager` has been marked as deprecated and will be removed with version 4.0. Use `\Formbuilder\Manager\FormDefinitionManager` instead.
 
 #### Update from Version 3.2.0 to Version 3.2.1
 - **[NEW FEATURE]**: Pimcore 6.5 ready

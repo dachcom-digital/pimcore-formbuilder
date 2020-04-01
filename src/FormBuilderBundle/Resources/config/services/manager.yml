@@ -6,12 +6,10 @@ services:
         public: false
 
     # manager: form definition
-    FormBuilderBundle\Manager\FormDefinitionManager:
-        public: true
+    FormBuilderBundle\Manager\FormDefinitionManager: ~
 
     # manager: output workflow
-    FormBuilderBundle\Manager\OutputWorkflowManager:
-        public: true
+    FormBuilderBundle\Manager\OutputWorkflowManager: ~
 
     # manager: preset
     FormBuilderBundle\Manager\PresetManager: ~
