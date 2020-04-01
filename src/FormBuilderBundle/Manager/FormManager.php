@@ -108,16 +108,4 @@ class FormManager extends FormDefinitionManager
     {
         return parent::rename($id, $newName);
     }
-
-    /**
-     * @param array                   $data
-     * @param FormDefinitionInterface $form
-     * @param bool                    $isUpdate
-     *
-     * @deprecated
-     */
-    protected function updateFormAttributes(array $data, $form, $isUpdate = false)
-    {
-        parent::updateFormAttributes($data, $form, $isUpdate);
-    }
 }
