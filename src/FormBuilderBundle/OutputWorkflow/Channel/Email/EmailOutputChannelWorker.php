@@ -135,11 +135,14 @@ class EmailOutputChannelWorker
             return;
         }
 
-        if ($mail::getHtml2textInstalled()) {
+        // only available in pimcore < 7.0
+        if (method_exists($mail, 'getHtml2textInstalled') && $mail::getHtml2textInstalled()) {
             $mail->enableHtml2textBinary();
         }
 
-        if ($forceSubmissionAsPlainText === true && $mail::determineHtml2TextIsInstalled() === false) {
+        // only available in pimcore < 7.0.
+        // In pimcore >= 7.0 html to text is always available via Html2Text/Html2Text library.
+        if ($forceSubmissionAsPlainText === true && method_exists($mail, 'determineHtml2TextIsInstalled') && $mail::determineHtml2TextIsInstalled() === false) {
             throw new \Exception('trying to enable html2text binary, but html2text is not installed!');
         }
 
