@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Manager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 
 /**
- * @deprecated since version 3.3, to be removed in 4.0; use FormBuilderBundle\Model\FieldDefinitionInterface instead.
+ * @deprecated since version 3.3, to be removed in 4.0; use FormBuilderBundle\Manager\FormDefinitionManager instead.
  */
 class FormManager extends FormDefinitionManager
 {
