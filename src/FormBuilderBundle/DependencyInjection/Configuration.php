@@ -12,6 +12,8 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('form_builder');
 
+        $rootNode->append($this->createPersistenceNode());
+
         $rootNode
             ->children()
                 ->variableNode('form_attributes')->end()
@@ -171,6 +173,19 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('class')->end()
                             ->scalarNode('label')->end()
                             ->scalarNode('icon_class')->end()
+                            ->arrayNode('output_workflow')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->arrayNode('object')
+                                        ->addDefaultsIfNotSet()
+                                        ->children()
+                                            ->arrayNode('allowed_class_types')
+                                                ->prototype('scalar')->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
                             ->arrayNode('configuration')
                                 ->prototype('array')
                                     ->children()
@@ -248,6 +263,19 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('form_type_group')->isRequired()->end()
                                     ->scalarNode('label')->isRequired()->end()
                                     ->scalarNode('icon_class')->end()
+                                    ->arrayNode('output_workflow')
+                                        ->addDefaultsIfNotSet()
+                                        ->children()
+                                            ->arrayNode('object')
+                                                ->addDefaultsIfNotSet()
+                                                ->children()
+                                                    ->arrayNode('allowed_class_types')
+                                                        ->prototype('scalar')->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
                                     ->arrayNode('constraints')
                                         ->beforeNormalization()
                                             ->ifTrue(function ($value) {
@@ -445,5 +473,29 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
+    }
+
+    private function createPersistenceNode()
+    {
+        $treeBuilder = new TreeBuilder('persistence');
+        $node = $treeBuilder->root('persistence');
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->performNoDeepMerging()
+            ->children()
+                ->arrayNode('doctrine')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('entity_manager')
+                            ->info('Name of the entity manager that you wish to use for managing form builder entities.')
+                            ->cannotBeEmpty()
+                            ->defaultValue('default')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $node;
     }
 }

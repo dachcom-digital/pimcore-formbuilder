@@ -1,0 +1,50 @@
+form_builder:
+    types:
+        dynamic_multi_file:
+            class: FormBuilderBundle\Form\Type\DynamicMultiFileType
+            backend:
+                form_type_group: other_fields
+                label: 'form_builder_type.dynamic_multi_file'
+                icon_class: 'form_builder_icon_file'
+                constraints:
+                    enabled:
+                        - 'dynamic_multi_file_not_blank'
+                fields:
+                    options.data: ~
+                    options.value: ~
+                    options.allowed_extensions:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.allowed_extensions'
+                        config: ~
+                    options.allowed_extensions_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.allowed_extensions_desc'
+                    options.item_limit:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.item_limit'
+                        config: ~
+                    options.item_limit_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.item_limit_desc'
+                    options.max_file_size:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.max_file_size'
+                        config: ~
+                    options.max_file_size_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.max_file_size_desc'
+                    options.submit_as_attachment:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.submit_as_attachment'
+                        config: ~
+                    options.submit_as_attachment_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.submit_as_attachment_desc'

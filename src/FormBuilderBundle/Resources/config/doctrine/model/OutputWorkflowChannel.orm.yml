@@ -1,0 +1,25 @@
+FormBuilderBundle\Model\OutputWorkflowChannel:
+    type: entity
+    table: formbuilder_output_workflow_channel
+    fields:
+        id:
+            type: integer
+            column: id
+            id: true
+            generator:
+                strategy: AUTO
+        type:
+            column: type
+            type: string
+            length: 190
+        configuration:
+            column: configuration
+            nullable: true
+            type: object
+    manyToOne:
+        outputWorkflow:
+            targetEntity: FormBuilderBundle\Model\OutputWorkflow
+            inversedBy: channels
+            joinColumn:
+                name: output_workflow
+                referencedColumnName: id

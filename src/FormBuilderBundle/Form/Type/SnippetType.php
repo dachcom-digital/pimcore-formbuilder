@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Form\Type;
 
-use FormBuilderBundle\Tool\HrefLocaleMapper;
+use FormBuilderBundle\Tool\LocaleDataMapper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
@@ -18,18 +18,18 @@ class SnippetType extends AbstractType
     protected $requestStack;
 
     /**
-     * @var HrefLocaleMapper
+     * @var LocaleDataMapper
      */
-    protected $hrefLocaleMapper;
+    protected $localeDataMapper;
 
     /**
      * @param RequestStack     $requestStack
-     * @param HrefLocaleMapper $hrefLocaleMapper
+     * @param LocaleDataMapper $localeDataMapper
      */
-    public function __construct(RequestStack $requestStack, HrefLocaleMapper $hrefLocaleMapper)
+    public function __construct(RequestStack $requestStack, LocaleDataMapper $localeDataMapper)
     {
         $this->requestStack = $requestStack;
-        $this->hrefLocaleMapper = $hrefLocaleMapper;
+        $this->localeDataMapper = $localeDataMapper;
     }
 
     /**
@@ -78,7 +78,7 @@ class SnippetType extends AbstractType
 
         $locale = $this->requestStack->getMasterRequest()->getLocale();
 
-        return $this->hrefLocaleMapper->map($locale, $data);
+        return $this->localeDataMapper->mapHref($locale, $data);
     }
 
     /**

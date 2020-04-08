@@ -5,9 +5,11 @@ services:
         autoconfigure: true
         public: false
 
-    # manager: form
-    FormBuilderBundle\Manager\FormManager:
-        public: true
+    # manager: form definition
+    FormBuilderBundle\Manager\FormDefinitionManager: ~
+
+    # manager: output workflow
+    FormBuilderBundle\Manager\OutputWorkflowManager: ~
 
     # manager: preset
     FormBuilderBundle\Manager\PresetManager: ~

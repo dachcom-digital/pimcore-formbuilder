@@ -2,25 +2,9 @@
 
 namespace FormBuilderBundle\Storage;
 
+/**
+ * @deprecated since version 3.3, to be removed in 4.0; use FormBuilderBundle\Model\FieldDefinitionInterface instead.
+ */
 interface FormFieldSimpleInterface
 {
-    /**
-     * @return int
-     */
-    public function getOrder();
-
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getType();
-
-    /**
-     * @return bool
-     */
-    public function isUpdated();
 }

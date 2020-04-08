@@ -5,6 +5,14 @@ services:
         autoconfigure: true
         public: false
 
-    # factory: form
-    FormBuilderBundle\Factory\FormFactoryInterface: '@FormBuilderBundle\Factory\FormFactory'
-    FormBuilderBundle\Factory\FormFactory: ~
+    FormBuilderBundle\Factory\FormDataFactoryInterface: '@FormBuilderBundle\Factory\FormDataFactory'
+    FormBuilderBundle\Factory\FormDataFactory: ~
+
+    FormBuilderBundle\Factory\FormDefinitionFactoryInterface: '@FormBuilderBundle\Factory\FormDefinitionFactory'
+    FormBuilderBundle\Factory\FormDefinitionFactory: ~
+
+    FormBuilderBundle\Factory\OutputWorkflowFactoryInterface: '@FormBuilderBundle\Factory\OutputWorkflowFactory'
+    FormBuilderBundle\Factory\OutputWorkflowFactory: ~
+
+    FormBuilderBundle\Factory\ObjectResolverFactoryInterface: '@FormBuilderBundle\Factory\ObjectResolverFactory'
+    FormBuilderBundle\Factory\ObjectResolverFactory: ~

@@ -2,18 +2,19 @@
 
 namespace FormBuilderBundle\EventSubscriber;
 
+use FormBuilderBundle\Model\FieldDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
+use Pimcore\Model\Asset;
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Event\Form\PostSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
-use FormBuilderBundle\Storage\FormFieldDynamicInterface;
-use FormBuilderBundle\Storage\FormInterface as FormBuilderFormInterface;
-use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
-use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
@@ -26,11 +27,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    protected $formOptions = [];
-
     /**
      * @var Configuration
      */
@@ -98,11 +94,28 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param array $formOptions
+     * @param FormEvent $event
+     *
+     * @return mixed
+     *
+     * @throws \Exception
      */
-    public function setFormOptions($formOptions)
+    public function getFormOptions(FormEvent $event)
     {
-        $this->formOptions = $formOptions;
+        $form = $event->getForm();
+
+        if (!$form->has('formRuntimeData')) {
+            throw new \Exception('No runtime options in form found.');
+        }
+
+        $data = $form->get('formRuntimeData')->getData();
+
+        // remove legacy email config node.
+        if (isset($data['email'])) {
+            unset($data['email']);
+        }
+
+        return $data;
     }
 
     /**
@@ -120,10 +133,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param FormEvent $event
+     *
+     * @throws \Exception
      */
     public function onPreSetData(FormEvent $event)
     {
-        $preSetDataEvent = new PreSetDataEvent($event, $this->formOptions);
+        $preSetDataEvent = new PreSetDataEvent($event, $this->getFormOptions($event));
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SET_DATA, $preSetDataEvent);
     }
 
@@ -134,12 +149,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     public function onPostSetData(FormEvent $event)
     {
-        $postSetDataEvent = new PostSetDataEvent($event, $this->formOptions);
+        $postSetDataEvent = new PostSetDataEvent($event, $this->getFormOptions($event));
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_POST_SET_DATA, $postSetDataEvent);
 
         $form = $event->getForm();
-        $formEntity = $event->getData();
-        $this->populateForm($form, $formEntity, true);
+        $formData = $event->getData();
+        $this->populateForm($form, $formData);
     }
 
     /**
@@ -149,12 +164,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     public function onPreSubmit(FormEvent $event)
     {
-        $preSubmitEvent = new PreSubmitEvent($event, $this->formOptions);
+        $preSubmitEvent = new PreSubmitEvent($event, $this->getFormOptions($event));
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
 
         $form = $event->getForm();
-        $formEntity = $form->getData();
-        $this->populateForm($form, $formEntity, false, $event->getData());
+        $formData = $form->getData();
+        $this->populateForm($form, $formData, $event->getData());
     }
 
     /**
@@ -165,9 +180,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     public function onPostSubmit(FormEvent $event)
     {
         $form = $event->getForm();
-        /** @var FormBuilderFormInterface $data */
-        $data = $event->getData();
-        $formEntity = $form->getData();
+        /** @var FormDataInterface $formData */
+        $formData = $event->getData();
+        $formDefinition = $formData->getFormDefinition();
 
         if (!$form->isValid()) {
             return;
@@ -179,7 +194,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         //handle linked assets.
         $fileData = [];
         foreach ($sessionBag->getIterator() as $key => $sessionValue) {
-            $formKey = 'file_' . $formEntity->getId();
+            $formKey = 'file_' . $formDefinition->getId();
             if (substr($key, 0, strlen($formKey)) !== $formKey) {
                 continue;
             }
@@ -188,80 +203,71 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         foreach ($fileData as $fieldName => $files) {
-            $formField = $data->getField($fieldName);
-            $formFieldOptions = $formField instanceof FormFieldInterface ? $formField->getOptions() : [];
+            $formField = $formData->getFormDefinition()->getField($fieldName);
+            $formFieldOptions = $formField instanceof FormFieldDefinitionInterface ? $formField->getOptions() : [];
             if (isset($formFieldOptions['submit_as_attachment']) && $formFieldOptions['submit_as_attachment'] === true) {
-                $attachmentLinks = $this->attachmentStream->createAttachmentLinks($files, $formEntity->getName());
+                $attachmentLinks = $this->attachmentStream->createAttachmentLinks($files, $formDefinition->getName());
                 foreach ($attachmentLinks as $attachmentLink) {
-                    $data->addAttachment($attachmentLink);
+                    $formData->addAttachment($attachmentLink);
                     // set value to null to skip field in mail template
-                    $data->setFieldValue($fieldName, null);
+                    $formData->setFieldValue($fieldName, null);
                 }
             } else {
-                $asset = $this->attachmentStream->createAttachmentAsset($files, $formEntity->getName());
+                $asset = $this->attachmentStream->createAttachmentAsset($files, $formDefinition->getName());
                 if ($asset instanceof Asset) {
                     $hostUrl = \Pimcore\Tool::getHostUrl();
-                    $data->setFieldValue($fieldName, $hostUrl . $asset->getRealFullPath());
+                    $formData->setFieldValue($fieldName, $hostUrl . $asset->getRealFullPath());
                 }
             }
         }
 
-        $event->setData($data);
+        $event->setData($formData);
     }
 
     /**
-     * @param FormInterface            $form
-     * @param FormBuilderFormInterface $formEntity
-     * @param bool                     $initial
-     * @param array                    $data
+     * @param FormInterface     $form
+     * @param FormDataInterface $formData
+     * @param array             $data
      *
      * @throws \Exception
      */
-    private function populateForm(FormInterface $form, FormBuilderFormInterface $formEntity, $initial = false, array $data = [])
+    private function populateForm(FormInterface $form, FormDataInterface $formData, array $data = [])
     {
-        $orderedFields = $formEntity->getFields();
-        usort($orderedFields, function ($a, $b) {
+        $orderedFields = $formData->getFormDefinition()->getFields();
+        usort($orderedFields, function (FieldDefinitionInterface $a, FieldDefinitionInterface $b) {
             return ($a->getOrder() < $b->getOrder()) ? -1 : 1;
         });
 
         $data = $this->preFillData($orderedFields, $data);
 
-        /** @var FormFieldInterface $field */
+        /** @var FormFieldDefinitionInterface $field */
         foreach ($orderedFields as $field) {
-            if ($field instanceof FormFieldDynamicInterface) {
-                // do not initialize dynamic fields twice since there is also no conditional logic!
-                if ($initial === false && !$field->isUpdated()) {
-                    continue;
-                }
+            if ($field instanceof FormFieldDynamicDefinitionInterface) {
                 $formTypeData = $this->addDynamicField($field);
                 $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
+            } elseif ($field instanceof FormFieldContainerDefinitionInterface) {
+                $formConditionalLogic = $formData->getFormDefinition()->getConditionalLogic();
+                $subFieldData = isset($data[$field->getName()]) ? $data[$field->getName()] : [];
+                $formTypeData = $this->addFormBuilderContainerField($field, $subFieldData, $formConditionalLogic);
+                $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
             } else {
-                // since we apply conditional logic here
-                // we need to add fields multiple times (post-set-data and pre-submit). :(
-                if ($field instanceof FormFieldContainerInterface) {
-                    $formConditionalLogic = $form->getRoot()->getData()->getConditionalLogic();
-                    $subFieldData = isset($data[$field->getName()]) ? $data[$field->getName()] : [];
-                    $formTypeData = $this->addFormBuilderContainerField($field, $subFieldData, $formConditionalLogic);
-                    $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
-                } else {
-                    $formConditionalLogic = $form->getRoot()->getData()->getConditionalLogic();
-                    $formTypeData = $this->addFormBuilderField($field, $data, $formConditionalLogic);
-                    $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
-                }
+                $formConditionalLogic = $formData->getFormDefinition()->getConditionalLogic();
+                $formTypeData = $this->addFormBuilderField($field, $data, $formConditionalLogic);
+                $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
             }
         }
     }
 
     /**
-     * @param FormFieldContainerInterface $fieldContainer
-     * @param array                       $formData
-     * @param array                       $formConditionalLogic
+     * @param FormFieldContainerDefinitionInterface $fieldContainer
+     * @param array                                 $formData
+     * @param array                                 $formConditionalLogic
      *
      * @return array
      *
      * @throws \Exception
      */
-    private function addFormBuilderContainerField(FormFieldContainerInterface $fieldContainer, array $formData, array $formConditionalLogic)
+    private function addFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldContainer, array $formData, array $formConditionalLogic)
     {
         $fields = [];
         foreach ($fieldContainer->getFields() as $subField) {
@@ -298,15 +304,15 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param FormFieldInterface $field
-     * @param array              $formData
-     * @param array              $formConditionalLogic
+     * @param FormFieldDefinitionInterface $field
+     * @param array                        $formData
+     * @param array                        $formConditionalLogic
      *
      * @return array
      *
      * @throws \Exception
      */
-    private function addFormBuilderField(FormFieldInterface $field, array $formData, array $formConditionalLogic)
+    private function addFormBuilderField(FormFieldDefinitionInterface $field, array $formData, array $formConditionalLogic)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -317,7 +323,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $constraintNames = [];
         $templateClasses = [];
 
-        // options enrichment:  tweak preferred choice options
+        // options enrichment: tweak preferred choice options
         if (in_array($field->getType(), $this->getChoiceFieldTypes())) {
             if (isset($options['multiple']) && $options['multiple'] === false
                 && isset($options['data'])
@@ -403,11 +409,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param FormFieldDynamicInterface $field
+     * @param FormFieldDynamicDefinitionInterface $field
      *
      * @return array
      */
-    private function addDynamicField(FormFieldDynamicInterface $field)
+    private function addDynamicField(FormFieldDynamicDefinitionInterface $field)
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -444,13 +450,13 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      */
     private function preFillData(array $fields, array &$data)
     {
-        /** @var FormFieldInterface|FormFieldContainerInterface $field */
+        /** @var FormFieldDefinitionInterface $field */
         foreach ($fields as $field) {
             if (!empty($data[$field->getName()])) {
                 continue;
             }
 
-            if ($field instanceof FormFieldContainerInterface) {
+            if ($field instanceof FormFieldContainerDefinitionInterface) {
                 if (!isset($data[$field->getName()])) {
                     $data[$field->getName()] = [];
                 }

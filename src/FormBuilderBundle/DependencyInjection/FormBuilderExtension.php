@@ -62,5 +62,11 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
 
         $configManagerDefinition = $container->getDefinition(BundleConfiguration::class);
         $configManagerDefinition->addMethodCall('setConfig', [$config]);
+
+        $persistenceConfig = $config['persistence']['doctrine'];
+        $entityManagerName = $persistenceConfig['entity_manager'];
+
+        $container->setParameter('form_builder.persistence.doctrine.enabled', true);
+        $container->setParameter('form_builder.persistence.doctrine.manager', $entityManagerName);
     }
 }

@@ -19,6 +19,11 @@
         }
     },
     "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        },
         "pimcore": {
             "bundles": [
                 "FormBuilderBundle\\FormBuilderBundle"
@@ -29,7 +34,8 @@
         }
     },
     "require": {
-        "pimcore/pimcore": "^6.0.0"
+        "pimcore/pimcore": "^6.0.0",
+        "doctrine/orm": "^2.7"
     },
     "require-dev": {
         "codeception/codeception": "~2.4.0",

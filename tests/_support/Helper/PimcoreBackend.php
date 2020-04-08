@@ -7,9 +7,9 @@ use Codeception\TestInterface;
 use DachcomBundle\Test\Util\FileGeneratorHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
-use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Storage\Form;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinition;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
@@ -66,16 +66,16 @@ class PimcoreBackend extends Module
      *
      * @param TestFormBuilder $formBuilder
      *
-     * @return FormInterface
+     * @return FormDefinitionInterface
      *
      * @throws \Codeception\Exception\ModuleException
      */
     public function haveAForm(TestFormBuilder $formBuilder)
     {
-        $form = $this->createForm($formBuilder);
-        $this->assertInstanceOf(Form::class, $this->getFormManager()->getById($form->getId()));
+        $formDefinition = $this->createForm($formBuilder);
+        $this->assertInstanceOf(FormDefinition::class, $this->getFormManager()->getById($formDefinition->getId()));
 
-        return $form;
+        return $formDefinition;
     }
 
     /**
@@ -197,15 +197,15 @@ class PimcoreBackend extends Module
     /**
      * Actor Function to place a form area on a document
      *
-     * @param Page          $document
-     * @param FormInterface $form
-     * @param bool          $mailTemplate
-     * @param bool          $copyMailTemplate
-     * @param string        $formTemplate
+     * @param Page                    $document
+     * @param FormDefinitionInterface $form
+     * @param bool                    $mailTemplate
+     * @param bool                    $copyMailTemplate
+     * @param string                  $formTemplate
      */
     public function seeAFormAreaElementPlacedOnDocument(
         Page $document,
-        FormInterface $form,
+        FormDefinitionInterface $form,
         $mailTemplate = null,
         $copyMailTemplate = null,
         $formTemplate = 'form_div_layout.html.twig'
@@ -364,12 +364,12 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param FormInterface $form
-     * @param string        $fieldName
+     * @param FormDefinitionInterface $form
+     * @param string                  $fieldName
      *
      * @throws \Exception
      */
-    public function seeZipFileInPimcoreAssetsFromField(FormInterface $form, string $fieldName)
+    public function seeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName)
     {
         $assetList = Asset::getList([
             'condition' => sprintf(
@@ -386,12 +386,12 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @param FormInterface $form
-     * @param string        $fieldName
+     * @param FormDefinitionInterface $form
+     * @param string                  $fieldName
      *
      * @throws \Exception
      */
-    public function cantSeeZipFileInPimcoreAssetsFromField(FormInterface $form, string $fieldName)
+    public function cantSeeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName)
     {
         $assetList = Asset::getList([
             'condition' => sprintf(
@@ -458,7 +458,7 @@ class PimcoreBackend extends Module
     /**
      * @param TestFormBuilder $formBuilder
      *
-     * @return FormInterface
+     * @return FormDefinitionInterface
      * @throws \Exception
      */
     protected function createForm(TestFormBuilder $formBuilder)
@@ -470,12 +470,12 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * @return FormManager
+     * @return FormDefinitionManager
      */
     protected function getFormManager()
     {
         try {
-            $manager = $this->getContainer()->get(FormManager::class);
+            $manager = $this->getContainer()->get(FormDefinitionManager::class);
         } catch (\Exception $e) {
             \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating form. message was: ' . $e->getMessage()));
             return null;

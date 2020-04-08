@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 
-use FormBuilderBundle\Tool\HrefLocaleMapper;
+use FormBuilderBundle\Tool\LocaleDataMapper;
 
 class MailBehaviourData implements DataInterface
 {
@@ -11,9 +11,9 @@ class MailBehaviourData implements DataInterface
     const IDENTIFIER_RECIPIENT = 'recipient';
 
     /**
-     * @var HrefLocaleMapper
+     * @var LocaleDataMapper
      */
-    protected $hrefLocaleMapper;
+    protected $localeDataMapper;
 
     /**
      * @var array
@@ -21,11 +21,11 @@ class MailBehaviourData implements DataInterface
     private $data = [];
 
     /**
-     * @param HrefLocaleMapper $hrefLocaleMapper
+     * @param LocaleDataMapper $localeDataMapper
      */
-    public function __construct(HrefLocaleMapper $hrefLocaleMapper)
+    public function __construct(LocaleDataMapper $localeDataMapper)
     {
-        $this->hrefLocaleMapper = $hrefLocaleMapper;
+        $this->localeDataMapper = $localeDataMapper;
     }
 
     /**
@@ -87,6 +87,6 @@ class MailBehaviourData implements DataInterface
             return null;
         }
 
-        return (int) $this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
+        return (int) $this->localeDataMapper->mapHref($locale, $this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
     }
 }

@@ -51,7 +51,7 @@ abstract class AbstractExtJs
 
         // hide symfony toolbar
         if ($this->env === 'local') {
-            $I->click('a.hide-button');
+            //$I->click('a.hide-button');
         }
 
         // wait for pimcore settings => click

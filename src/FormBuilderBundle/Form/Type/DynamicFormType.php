@@ -3,8 +3,9 @@
 namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Storage\Form;
+use FormBuilderBundle\Form\Data\FormData;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -40,11 +41,27 @@ class DynamicFormType extends AbstractType
             ])
             ->add('formCl', HiddenType::class, [
                 'data' => !empty($options['conditional_logic']) ? json_encode($options['conditional_logic']) : null,
+            ])
+            ->add('formRuntimeData', HiddenType::class, [
+                'data' => !empty($options['runtime_data']) ? $options['runtime_data'] : null,
             ]);
 
         if ($addHoneypot === true) {
             $builder->add($honeyPotConfig['field_name'], HoneypotType::class);
         }
+
+        $builder->get('formRuntimeData')->addModelTransformer(new CallbackTransformer(
+            function ($runtimeData) {
+                if (isset($runtimeData['email']) && isset($runtimeData['email']['_deprecated_note'])) {
+                    unset($runtimeData['email']['_deprecated_note']);
+                }
+
+                return is_array($runtimeData) ? json_encode($runtimeData) : null;
+            },
+            function ($runtimeData) {
+                return empty($runtimeData) ? null : json_decode($runtimeData, true);
+            }
+        ));
     }
 
     /**
@@ -55,9 +72,10 @@ class DynamicFormType extends AbstractType
         $resolver->setDefaults([
             'current_form_id'    => 0,
             'conditional_logic'  => [],
+            'runtime_data'       => [],
             'allow_extra_fields' => true,
             'csrf_protection'    => true,
-            'data_class'         => Form::class
+            'data_class'         => FormData::class
         ]);
     }
 }

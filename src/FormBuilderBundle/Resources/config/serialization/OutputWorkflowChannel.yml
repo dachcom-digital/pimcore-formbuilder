@@ -1,0 +1,10 @@
+FormBuilderBundle\Model\OutputWorkflowChannel:
+    attributes:
+        id:
+            groups: [Default, ExtJs]
+        type:
+            groups: [Default, ExtJs]
+        configuration:
+            groups: [Default, ExtJs]
+        outputWorkflow:
+            groups: [Default]

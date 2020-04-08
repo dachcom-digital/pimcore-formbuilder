@@ -6,6 +6,9 @@ use Pimcore\Mail;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * @deprecated since version 3.3; use \FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent instead.
+ */
 class MailEvent extends Event
 {
     /**
@@ -38,8 +41,14 @@ class MailEvent extends Event
     {
         $this->form = $form;
         $this->email = $email;
-        $this->userOptions = $userOptions;
         $this->isCopy = $isCopy;
+
+        // dispatch legacy event
+        if (isset($userOptions['email'])) {
+            unset($userOptions['email']);
+        }
+
+        $this->userOptions = $userOptions;
     }
 
     /**

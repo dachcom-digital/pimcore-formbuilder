@@ -31,6 +31,12 @@ class ImportExportCest extends AbstractExtJs
         $formExportName = 'form_export_1.yml';
 
         $I->click('Export', $this->getFormPanelSelector($formId));
+
+        $I->wait(1);
+
+        $I->see('OK');
+        $I->click('OK');
+
         $I->wait(3);
         $I->seeDownload($formExportName);
 
@@ -80,6 +86,5 @@ class ImportExportCest extends AbstractExtJs
 
         // ACTION
         $actionId = $this->addActionToSection($I, $formId, $sectionId['selector'], ['second_text_field']);
-
     }
 }

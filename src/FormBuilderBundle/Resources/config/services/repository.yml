@@ -1,0 +1,12 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\Repository\FormDefinitionRepositoryInterface: '@FormBuilderBundle\Repository\FormDefinitionRepository'
+    FormBuilderBundle\Repository\FormDefinitionRepository: ~
+
+    FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface: '@FormBuilderBundle\Repository\OutputWorkflowRepository'
+    FormBuilderBundle\Repository\OutputWorkflowRepository: ~

@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher;
 
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Registry\DispatcherRegistry;
-use FormBuilderBundle\Storage\FormFieldInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Processor\ConditionalLogicProcessor;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -131,7 +131,7 @@ class Dispatcher
         if ($type === 'field') {
             $dispatcherOptions->setDefaults(['field' => null]);
             $dispatcherOptions->setRequired(['field']);
-            $dispatcherOptions->setAllowedTypes('field', FormFieldInterface::class);
+            $dispatcherOptions->setAllowedTypes('field', FormFieldDefinitionInterface::class);
         }
 
         return $dispatcherOptions;

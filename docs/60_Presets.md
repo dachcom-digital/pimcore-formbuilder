@@ -1,5 +1,5 @@
 # Using Presets
-Presets are here to set some additional data for your custom forms ([custom fields](71_CustomFields.md) for example).
+Presets are here to set some additional data for your custom forms ([custom fields](71_DynamicFields.md) for example).
 
 ### Example
 Your customer want's to add a special value (mostly dynamic data) to one or more but specific forms he has just made. 

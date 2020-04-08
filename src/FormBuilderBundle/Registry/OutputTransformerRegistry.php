@@ -6,6 +6,8 @@ use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
 
 class OutputTransformerRegistry
 {
+    const FALLBACK_TRANSFORMER_IDENTIFIER = 'fallback_transformer';
+
     /**
      * @var array
      */
@@ -77,7 +79,7 @@ class OutputTransformerRegistry
      */
     public function getFallbackTransformer()
     {
-        return $this->getForChannel('fallback_transformer', '_all');
+        return $this->getForChannel(self::FALLBACK_TRANSFORMER_IDENTIFIER, '_all');
     }
 
     /**

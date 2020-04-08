@@ -28,7 +28,11 @@ class FormHelper
 
         try {
             $db = Db::get();
-            $db->exec('TRUNCATE TABLE formbuilder_forms');
+            $db->exec('SET FOREIGN_KEY_CHECKS = 0;');
+            $db->exec('TRUNCATE TABLE formbuilder_output_workflow_channel;');
+            $db->exec('TRUNCATE TABLE formbuilder_output_workflow;');
+            $db->exec('TRUNCATE TABLE formbuilder_forms;');
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1;');
         } catch (\Exception $e) {
             Debug::debug(sprintf('[FORMBUILDER ERROR] error while removing forms. message was: ' . $e->getMessage()));
         }

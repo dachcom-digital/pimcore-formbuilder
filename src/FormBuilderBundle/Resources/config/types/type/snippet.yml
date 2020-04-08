@@ -1,0 +1,25 @@
+form_builder:
+    types:
+        snippet:
+            class: FormBuilderBundle\Form\Type\SnippetType
+            backend:
+                form_type_group: other_fields
+                label: 'form_builder_type.snippet_type'
+                icon_class: 'form_builder_icon_snippet_tag'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~
+                    options.path:
+                        display_group_id: attributes
+                        type: href
+                        label: 'form_builder_type_field.snippet_path'
+                        options_transformer: FormBuilderBundle\Transformer\HrefTransformer
+                        config:
+                            types:
+                                - 'document'
+                            subtypes:
+                                document:
+                                    - 'snippet'

@@ -2,9 +2,10 @@
 
 namespace FormBuilderBundle\Validator\Constraints;
 
-use FormBuilderBundle\Storage\Form;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormConfigBuilderInterface;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -30,8 +31,8 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        $formEntity = $this->context->getRoot()->getData();
-        if (!$formEntity instanceof Form) {
+        $formDefinition = $this->context->getRoot()->getData();
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return;
         }
 
@@ -44,12 +45,12 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
             return;
         }
 
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
+        /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
 
         $counter = 0;
         foreach ($sessionBag->getIterator() as $key => $sessionValue) {
-            $formKey = 'file_' . $formEntity->getId();
+            $formKey = 'file_' . $formDefinition->getId();
             if (substr($key, 0, strlen($formKey)) !== $formKey) {
                 continue;
             }

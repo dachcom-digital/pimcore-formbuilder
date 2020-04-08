@@ -3,11 +3,11 @@
 namespace FormBuilderBundle\Controller\Admin;
 
 use Carbon\Carbon;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use Pimcore\Model\Tool\Email;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Storage\FormField;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -18,16 +18,16 @@ class ExportController extends AdminController
     const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
 
     /**
-     * @var FormManager
+     * @var FormDefinitionManager
      */
-    protected $formManager;
+    protected $formDefinitionManager;
 
     /**
-     * @param FormManager $formManager
+     * @param FormDefinitionManager $formDefinitionManager
      */
-    public function __construct(FormManager $formManager)
+    public function __construct(FormDefinitionManager $formDefinitionManager)
     {
-        $this->formManager = $formManager;
+        $this->formDefinitionManager = $formDefinitionManager;
     }
 
     /**
@@ -82,6 +82,7 @@ class ExportController extends AdminController
             'email_id',
             'preset',
             'is_copy',
+            'output_workflow_name',
             'to',
             'cc',
             'bcc',
@@ -92,15 +93,15 @@ class ExportController extends AdminController
         $normalizedMailData = [];
         $rows = [];
 
-        $formEntity = $this->formManager->getById($formId);
-        if (!$formEntity instanceof FormInterface) {
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return self::NO_DATA_MESSAGE;
         }
 
         /** @var Email\Log $log */
         foreach ($mailData as $log) {
             $mailPath = null;
-            $mailParams = $this->extractMailParams($log, $formEntity, $mailHeader);
+            $mailParams = $this->extractMailParams($log, $formDefinition, $mailHeader);
 
             try {
                 $mailDocument = \Pimcore\Model\Document\Email::getById($log->getDocumentId());
@@ -152,13 +153,13 @@ class ExportController extends AdminController
     }
 
     /**
-     * @param Email\Log     $log
-     * @param FormInterface $formEntity
-     * @param array         $mailHeader
+     * @param Email\Log               $log
+     * @param FormDefinitionInterface $formDefinition
+     * @param array                   $mailHeader
      *
      * @return array
      */
-    private function extractMailParams(Email\Log $log, FormInterface $formEntity, &$mailHeader)
+    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, &$mailHeader)
     {
         $normalizedParams = [];
         $forbiddenKeys = ['body', '_form_builder_id'];
@@ -187,13 +188,15 @@ class ExportController extends AdminController
                 $key = 'preset';
             } elseif ($key === '_form_builder_is_copy') {
                 $key = 'is_copy';
+            } elseif ($key === '_form_builder_output_workflow_name') {
+                $key = 'output_workflow_name';
             }
 
-            $formField = $formEntity->getField($key);
+            $formField = $formDefinition->getField($key);
 
             $displayKeyName = $key;
             $fieldType = null;
-            if ($formField instanceof FormField) {
+            if ($formField instanceof FormFieldDefinitionInterface) {
                 $fieldType = $formField->getType();
                 if (!empty($formField->getDisplayName())) {
                     $displayKeyName = $formField->getDisplayName();

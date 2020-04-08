@@ -1,0 +1,19 @@
+form_builder:
+    types:
+        text:
+            class: Symfony\Component\Form\Extension\Core\Type\TextType
+            backend:
+                form_type_group: text_fields
+                label: 'form_builder_type.text_type'
+                icon_class: 'form_builder_icon_text'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - input
+                            - textarea
+                            - wysiwyg
+                fields:
+                    options.value: ~

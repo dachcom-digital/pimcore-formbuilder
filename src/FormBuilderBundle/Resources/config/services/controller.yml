@@ -25,3 +25,11 @@ services:
         calls:
             - [setContainer, ['@service_container']]
 
+    FormBuilderBundle\Controller\Admin\OutputWorkflowController:
+        calls:
+            - [setContainer, ['@service_container']]
+
+    FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController:
+        calls:
+            - [setContainer, ['@service_container']]
+

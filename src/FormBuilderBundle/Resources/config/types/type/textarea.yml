@@ -1,0 +1,18 @@
+form_builder:
+    types:
+        textarea:
+            class: Symfony\Component\Form\Extension\Core\Type\TextareaType
+            backend:
+                form_type_group: text_fields
+                label: 'form_builder_type.textarea_type'
+                icon_class: 'form_builder_icon_textarea'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - textarea
+                            - wysiwyg
+                fields:
+                    options.value: ~

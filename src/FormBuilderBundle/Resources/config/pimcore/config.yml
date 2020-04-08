@@ -1,3 +1,10 @@
+doctrine:
+    orm:
+        auto_generate_proxy_classes: '%kernel.debug%'
+        entity_managers:
+            default:
+                auto_mapping: true
+
 parameters:
     form_builder_html_tag_elements:
         - ['label','label']

@@ -8,22 +8,22 @@ use Symfony\Component\Form\FormInterface;
 interface OutputTransformerInterface
 {
     /**
-     * @param FormFieldSimpleInterface $field
+     * @param FormFieldSimpleInterface $fieldDefinition
      * @param FormInterface            $formField
      * @param mixed                    $rawValue
      * @param string|null              $locale
      *
      * @return mixed
      */
-    public function getValue(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale);
+    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale);
 
     /**
-     * @param FormFieldSimpleInterface $field
+     * @param FormFieldSimpleInterface $fieldDefinition
      * @param FormInterface            $formField
      * @param mixed                    $rawValue
      * @param string|null              $locale
      *
      * @return mixed
      */
-    public function getLabel(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale);
+    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale);
 }

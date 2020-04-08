@@ -2,22 +2,20 @@
 
 namespace DachcomBundle\Test\unit\SimpleForm;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
 use DachcomBundle\Test\Util\FormHelper;
-use FormBuilderBundle\Manager\FormManager;
-use FormBuilderBundle\Storage\FormField;
-use FormBuilderBundle\Storage\FormFieldContainer;
-use FormBuilderBundle\Storage\FormFieldContainerInterface;
+use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 
 class FormFieldContainerStorageTest extends DachcomBundleTestCase
 {
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testNewFormFieldContainerRepeaterField()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $testFormBuilder->addFormFieldContainer(
             'repeater',
@@ -38,27 +36,26 @@ class FormFieldContainerStorageTest extends DachcomBundleTestCase
         );
 
         $form = $manager->save($testFormBuilder->build());
-        /** @var FormFieldContainerInterface $field */
+        /** @var FormFieldContainerDefinitionInterface $field */
         $field = $form->getField('repeater_container');
 
-        $this->assertInstanceOf(FormFieldContainer::class, $field);
+        $this->assertInstanceOf(FormFieldContainerDefinitionInterface::class, $field);
         $this->assertEquals('repeater_container', $field->getName());
         $this->assertEquals('container', $field->getType());
         $this->assertEquals('repeater', $field->getSubType());
         $this->assertInternalType('array', $field->getConfiguration());
         $this->assertInternalType('array', $field->getFields());
         $this->assertCount(1, $field->getFields());
-        $this->assertInstanceOf(FormField::class, $field->getFields()[0]);
+        $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field->getFields()[0]);
 
     }
 
     /**
-     * @throws \Codeception\Exception\ModuleException
      * @throws \Exception
      */
     public function testNewFormFieldContainerFieldsetField()
     {
-        $manager = $this->getContainer()->get(FormManager::class);
+        $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm();
         $testFormBuilder->addFormFieldContainer(
             'fieldset',
@@ -79,16 +76,16 @@ class FormFieldContainerStorageTest extends DachcomBundleTestCase
         );
 
         $form = $manager->save($testFormBuilder->build());
-        /** @var FormFieldContainerInterface $field */
+        /** @var FormFieldContainerDefinitionInterface $field */
         $field = $form->getField('repeater_container');
 
-        $this->assertInstanceOf(FormFieldContainer::class, $field);
+        $this->assertInstanceOf(FormFieldContainerDefinitionInterface::class, $field);
         $this->assertEquals('repeater_container', $field->getName());
         $this->assertEquals('container', $field->getType());
         $this->assertEquals('fieldset', $field->getSubType());
         $this->assertInternalType('array', $field->getConfiguration());
         $this->assertInternalType('array', $field->getFields());
         $this->assertCount(1, $field->getFields());
-        $this->assertInstanceOf(FormField::class, $field->getFields()[0]);
+        $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field->getFields()[0]);
     }
 }

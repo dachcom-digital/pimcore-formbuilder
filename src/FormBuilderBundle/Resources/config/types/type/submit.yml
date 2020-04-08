@@ -1,0 +1,14 @@
+form_builder:
+    types:
+        submit:
+            class: Symfony\Component\Form\Extension\Core\Type\SubmitType
+            backend:
+                form_type_group: buttons
+                label: 'form_builder_type.submit_type'
+                icon_class: 'form_builder_icon_button'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~

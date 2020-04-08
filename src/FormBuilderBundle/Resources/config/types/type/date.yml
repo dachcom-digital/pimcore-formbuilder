@@ -1,0 +1,49 @@
+form_builder:
+    types:
+        date:
+            class: Symfony\Component\Form\Extension\Core\Type\DateType
+            output_transformer: date_transformer
+            backend:
+                form_type_group: date_time_fields
+                label: 'form_builder_type.date_type'
+                icon_class: 'form_builder_icon_date'
+                constraints:
+                    disabled:
+                        - 'dynamic_multi_file_not_blank'
+                output_workflow:
+                    object:
+                        allowed_class_types:
+                            - date
+                fields:
+                    options.data: ~
+                    options.value: ~
+                    options.widget:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.date_widget'
+                        config:
+                            options:
+                                - ['Choice', 'choice']
+                                - ['Text', 'text']
+                                - ['Single Text', 'single_text']
+                    options.days:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_days'
+                        config: ~
+                    options.months:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_months'
+                        config: ~
+                    options.years:
+                        display_group_id: attributes
+                        type: tagfield
+                        label: 'form_builder_type_field.date_years'
+                        config: ~
+                    options.html5:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.date_html5'
+                        config:
+                            checked: true

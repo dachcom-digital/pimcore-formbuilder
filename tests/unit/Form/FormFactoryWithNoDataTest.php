@@ -3,48 +3,37 @@
 namespace DachcomBundle\Test\unit\Form;
 
 use DachcomBundle\Test\Test\DachcomBundleTestCase;
-use FormBuilderBundle\Factory\FormFactoryInterface;
-use FormBuilderBundle\Storage\Form;
-use FormBuilderBundle\Storage\FormField;
+use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 
 class FormFactoryWithNoDataTest extends DachcomBundleTestCase
 {
-    public function testFormCreation()
+    public function testFormDefinitionCreation()
     {
-        $factory = $this->getContainer()->get(FormFactoryInterface::class);
+        /** @var FormDefinitionFactoryInterface $factory */
+        $factory = $this->getContainer()->get(FormDefinitionFactoryInterface::class);
 
-        $form = $factory->createForm();
-        $this->assertInstanceOf(Form::class, $form);
+        $form = $factory->createFormDefinition();
+        $this->assertInstanceOf(FormDefinitionInterface::class, $form);
     }
 
-    public function testFormGetterById()
+    public function testFormFieldContainerDefinitionCreation()
     {
-        $factory = $this->getContainer()->get(FormFactoryInterface::class);
-        $form = $factory->getFormById(99);
-        $this->assertNull($form);
+        /** @var FormDefinitionFactoryInterface $factory */
+        $factory = $this->getContainer()->get(FormDefinitionFactoryInterface::class);
+
+        $form = $factory->createFormFieldContainerDefinition();
+        $this->assertInstanceOf(FormFieldContainerDefinitionInterface::class, $form);
     }
 
-    public function testFormGetterIdByName()
+    public function testFormFieldDefinitionCreation()
     {
-        $factory = $this->getContainer()->get(FormFactoryInterface::class);
-        $form = $factory->getFormIdByName('form');
-        $this->assertNull($form);
+        /** @var FormDefinitionFactoryInterface $factory */
+        $factory = $this->getContainer()->get(FormDefinitionFactoryInterface::class);
+
+        $form = $factory->createFormFieldDefinition();
+        $this->assertInstanceOf(FormFieldDefinitionInterface::class, $form);
     }
-
-    public function testFormGetAll()
-    {
-        $factory = $this->getContainer()->get(FormFactoryInterface::class);
-
-        $forms = $factory->getAllForms();
-        $this->assertCount(0, $forms);
-    }
-
-    public function testFormFieldCreation()
-    {
-        $factory = $this->getContainer()->get(FormFactoryInterface::class);
-
-        $form = $factory->createFormField();
-        $this->assertInstanceOf(FormField::class, $form);
-    }
-
 }

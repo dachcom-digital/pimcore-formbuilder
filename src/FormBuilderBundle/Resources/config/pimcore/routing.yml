@@ -76,3 +76,54 @@ form_builder.controller.ajax.file_delete:
     path: /{_locale}/form-control/file-delete/{uuid}
     defaults: { _controller: FormBuilderBundle\Controller\AjaxController::fileDeleteAction, uuid: '' }
     methods: [POST, DELETE]
+
+# Output Workflows
+form_builder.controller.admin.output_workflow.get_output_workflow_tree:
+    path: /admin/formbuilder/output-workflow/get-output-workflow-tree/{formId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::getOutputWorkflowTreeAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.add_output_workflow:
+    path: /admin/formbuilder/output-workflow/add-output-workflow/{formId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::addOutputWorkflowAction }
+    methods: [POST]
+
+form_builder.controller.admin.output_workflow.delete_output_workflow:
+    path: /admin/formbuilder/output-workflow/delete-output-workflow/{outputWorkflowId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::deleteOutputWorkflowAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.save_output_workflow:
+    path: /admin/formbuilder/output-workflow/save-output-workflow/{outputWorkflowId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::saveOutputWorkflowAction }
+    methods: [POST]
+
+form_builder.controller.admin.output_workflow.get_output_workflow_data:
+    path: /admin/formbuilder/output-workflow/get-output-workflow-data/{outputWorkflowId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::getOutputWorkflowDataAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_object_classes:
+    path: /admin/formbuilder/output-workflow/object/get-object-classes
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getObjectClassesAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_object_class_fields:
+    path: /admin/formbuilder/output-workflow/object/get-object-class-fields
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getObjectClassesFieldsAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_field_collection_types:
+    path: /admin/formbuilder/output-workflow/object/get-field-collection-types
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFieldCollectionTypesForDataTypeAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_form_data:
+    path: /admin/formbuilder/output-workflow/object/get-form-data
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFormDataAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.object.get_dynamic_object_resolver:
+    path: /admin/formbuilder/output-workflow/object/get-dynamic-object-resolver
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getDynamicObjectResolverAction }
+    methods: [GET]

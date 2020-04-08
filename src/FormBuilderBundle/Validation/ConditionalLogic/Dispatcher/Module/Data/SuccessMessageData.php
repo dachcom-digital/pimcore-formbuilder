@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 
-use FormBuilderBundle\Tool\HrefLocaleMapper;
+use FormBuilderBundle\Tool\LocaleDataMapper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Snippet;
 use Pimcore\Translation\Translator;
@@ -18,9 +18,9 @@ class SuccessMessageData implements DataInterface
     const IDENTIFIER_REDIRECT_EXTERNAL = 'redirect_external';
 
     /**
-     * @var HrefLocaleMapper
+     * @var LocaleDataMapper
      */
-    protected $hrefLocaleMapper;
+    protected $localeDataMapper;
 
     /**
      * @var Translator
@@ -33,14 +33,14 @@ class SuccessMessageData implements DataInterface
     private $data = [];
 
     /**
-     * @param HrefLocaleMapper $hrefLocaleMapper
+     * @param LocaleDataMapper $localeDataMapper
      * @param Translator       $translator
      */
     public function __construct(
-        HrefLocaleMapper $hrefLocaleMapper,
+        LocaleDataMapper $localeDataMapper,
         Translator $translator
     ) {
-        $this->hrefLocaleMapper = $hrefLocaleMapper;
+        $this->localeDataMapper = $localeDataMapper;
         $this->translator = $translator;
     }
 
@@ -125,7 +125,7 @@ class SuccessMessageData implements DataInterface
             return null;
         }
 
-        $snippetId = $this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_SNIPPET]);
+        $snippetId = $this->localeDataMapper->mapHref($locale, $this->data[self::IDENTIFIER_SNIPPET]);
 
         if (is_numeric($snippetId)) {
             return Snippet::getById($snippetId);
@@ -153,7 +153,7 @@ class SuccessMessageData implements DataInterface
             return null;
         }
 
-        $documentId = $this->hrefLocaleMapper->map($locale, $this->data[self::IDENTIFIER_REDIRECT]);
+        $documentId = $this->localeDataMapper->mapHref($locale, $this->data[self::IDENTIFIER_REDIRECT]);
 
         if (is_numeric($documentId)) {
             return Document::getById($documentId);

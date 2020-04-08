@@ -2,13 +2,12 @@
 
 namespace FormBuilderBundle\Controller\Admin;
 
-use FormBuilderBundle\Backend\Form\Builder;
+use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Manager\FormManager;
+use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
-use FormBuilderBundle\Storage\FormInterface;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
-use FormBuilderBundle\Storage\Form as StorageForm;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,14 +25,14 @@ class SettingsController extends AdminController
     protected $configuration;
 
     /**
-     * @var FormManager
+     * @var FormDefinitionManager
      */
-    protected $formManager;
+    protected $formDefinitionManager;
 
     /**
-     * @var Builder
+     * @var ExtJsFormBuilder
      */
-    protected $builder;
+    protected $extJsFormBuilder;
 
     /**
      * @var ChoiceBuilderRegistry
@@ -47,21 +46,21 @@ class SettingsController extends AdminController
 
     /**
      * @param Configuration         $configuration
-     * @param FormManager           $formManager
-     * @param Builder               $builder
+     * @param FormDefinitionManager $formDefinitionManager
+     * @param ExtJsFormBuilder      $extJsFormBuilder
      * @param ChoiceBuilderRegistry $choiceBuilderRegistry
      * @param FormDependencyLocator $formDependencyLocator
      */
     public function __construct(
         Configuration $configuration,
-        FormManager $formManager,
-        Builder $builder,
+        FormDefinitionManager $formDefinitionManager,
+        ExtJsFormBuilder $extJsFormBuilder,
         ChoiceBuilderRegistry $choiceBuilderRegistry,
         FormDependencyLocator $formDependencyLocator
     ) {
         $this->configuration = $configuration;
-        $this->formManager = $formManager;
-        $this->builder = $builder;
+        $this->formDefinitionManager = $formDefinitionManager;
+        $this->extJsFormBuilder = $extJsFormBuilder;
         $this->choiceBuilderRegistry = $choiceBuilderRegistry;
         $this->formDependencyLocator = $formDependencyLocator;
     }
@@ -71,10 +70,10 @@ class SettingsController extends AdminController
      */
     public function getTreeAction()
     {
-        $forms = $this->formManager->getAll();
+        $forms = $this->formDefinitionManager->getAll();
 
         $mainItems = [];
-        /** @var StorageForm $form */
+        /** @var FormDefinitionInterface $form */
         foreach ($forms as $form) {
             if (!is_null($form->getGroup())) {
                 if (array_search($form->getGroup(), array_column($mainItems, 'id')) === false) {
@@ -155,9 +154,9 @@ class SettingsController extends AdminController
         ];
 
         try {
-            $form = $this->formManager->getById($id);
-            if ($form instanceof FormInterface) {
-                $data['data'] = $this->builder->generateExtJsForm($form);
+            $form = $this->formDefinitionManager->getById($id);
+            if ($form instanceof FormDefinitionInterface) {
+                $data['data'] = $this->extJsFormBuilder->generateExtJsForm($form);
             } else {
                 throw new \Exception(sprintf('No form for id %d found.', $id));
             }
@@ -185,18 +184,18 @@ class SettingsController extends AdminController
         $id = null;
 
         try {
-            $existingForm = $this->formManager->getIdByName($name);
+            $existingForm = $this->formDefinitionManager->getIdByName($name);
         } catch (\Exception $e) {
             $existingForm = null;
         }
 
-        if ($existingForm instanceof FormInterface) {
+        if ($existingForm instanceof FormDefinitionInterface) {
             $success = false;
             $message = sprintf('Form with name "%s" already exists!', $name);
         } else {
             try {
-                $formEntity = $this->formManager->save(['form_name' => $name]);
-                $id = $formEntity->getId();
+                $formDefinition = $this->formDefinitionManager->save(['form_name' => $name]);
+                $id = $formDefinition->getId();
             } catch (\Exception $e) {
                 $success = false;
                 $message = sprintf('Error while creating new form with name "%s". Error was: %s', $name, $e->getMessage());
@@ -222,7 +221,7 @@ class SettingsController extends AdminController
         $message = null;
 
         try {
-            $this->formManager->delete($id);
+            $this->formDefinitionManager->delete($id);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while deleting form with id %d. Error was: %s', $id, $e->getMessage());
@@ -248,8 +247,8 @@ class SettingsController extends AdminController
         $success = true;
         $message = null;
 
-        $formEntity = $this->formManager->getById($id);
-        $storedFormName = $formEntity->getName();
+        $formDefinition = $this->formDefinitionManager->getById($id);
+        $storedFormName = $formDefinition->getName();
 
         $formConfig = json_decode($request->get('form_config'), true);
         $formFields = json_decode($request->get('form_fields'), true);
@@ -264,12 +263,12 @@ class SettingsController extends AdminController
 
         if ($formName !== $storedFormName) {
             try {
-                $existingForm = $this->formManager->getIdByName($formName);
+                $existingForm = $this->formDefinitionManager->getIdByName($formName);
             } catch (\Exception $e) {
                 $existingForm = null;
             }
 
-            if ($existingForm instanceof FormInterface) {
+            if ($existingForm instanceof FormDefinitionInterface) {
                 return $this->json([
                     'success' => false,
                     'message' => sprintf('Form with name "%s" already exists!', $formName)
@@ -277,19 +276,19 @@ class SettingsController extends AdminController
             }
 
             $formName = $this->getSaveName($formName);
-            $this->formManager->rename($id, $formName);
+            $this->formDefinitionManager->rename($id, $formName);
         }
 
         $data = [
             'form_name'              => $formName,
             'form_group'             => $formGroup,
             'form_config'            => $formConfig,
-            'form_fields'            => $this->builder->generateStoreFields($formFields),
-            'form_conditional_logic' => $this->builder->generateConditionalLogicStoreFields($formConditionalLogic),
+            'form_fields'            => $this->extJsFormBuilder->generateStoreFields($formFields),
+            'form_conditional_logic' => $this->extJsFormBuilder->generateConditionalLogicStoreFields($formConditionalLogic),
         ];
 
         try {
-            $formEntity = $this->formManager->save($data, $id);
+            $formDefinition = $this->formDefinitionManager->save($data, $id);
         } catch (\Exception $e) {
             $success = false;
             $message = sprintf('Error while saving form with id %d. Error was: %s', $id, $e->getMessage());
@@ -297,7 +296,7 @@ class SettingsController extends AdminController
 
         return $this->json([
             'formId'   => (int) $id,
-            'formName' => $formEntity->getName(),
+            'formName' => $formDefinition->getName(),
             'success'  => $success,
             'message'  => $message
         ]);
@@ -329,7 +328,7 @@ class SettingsController extends AdminController
 
         try {
             $formContent = Yaml::parse($data);
-            $formContent['fields'] = $this->builder->generateExtJsFields($formContent['fields']);
+            $formContent['fields'] = $this->extJsFormBuilder->generateExtJsFields($formContent['fields']);
             $response['data'] = $formContent;
         } catch (\Exception $e) {
             $response['success'] = false;

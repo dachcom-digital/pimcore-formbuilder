@@ -16,7 +16,7 @@ class SubmissionEvent extends Event
     /**
      * @var array
      */
-    private $formConfiguration;
+    private $formRuntimeData;
 
     /**
      * @var FormInterface
@@ -29,15 +29,33 @@ class SubmissionEvent extends Event
     private $redirectUri = null;
 
     /**
+     * @var bool
+     */
+    private $outputWorkflowFinisherDisabled = false;
+
+    /**
      * @param Request       $request
-     * @param array         $formConfiguration
+     * @param array         $formRuntimeData
      * @param FormInterface $form
      */
-    public function __construct(Request $request, $formConfiguration, FormInterface $form)
+    public function __construct(Request $request, $formRuntimeData, FormInterface $form)
     {
         $this->request = $request;
-        $this->formConfiguration = $formConfiguration;
+        $this->formRuntimeData = $formRuntimeData;
         $this->form = $form;
+    }
+
+    public function disableOutputWorkflowFinisher()
+    {
+        $this->outputWorkflowFinisherDisabled = true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function outputWorkflowFinisherIsDisabled()
+    {
+        return $this->outputWorkflowFinisherDisabled === true;
     }
 
     /**
@@ -75,9 +93,9 @@ class SubmissionEvent extends Event
     /**
      * @return array
      */
-    public function getFormConfiguration()
+    public function getFormRuntimeData()
     {
-        return $this->formConfiguration;
+        return $this->formRuntimeData;
     }
 
     /**

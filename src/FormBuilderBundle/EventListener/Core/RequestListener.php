@@ -3,25 +3,26 @@
 namespace FormBuilderBundle\EventListener\Core;
 
 use FormBuilderBundle\Event\SubmissionEvent;
-use FormBuilderBundle\Form\Builder;
-use FormBuilderBundle\Form\FormErrorsSerializerInterface;
+use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Session\FlashBagManagerInterface;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\OutputWorkflow\FormSubmissionFinisherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequestListener implements EventSubscriberInterface
 {
     /**
-     * @var Builder
+     * @var FrontendFormBuilder
      */
-    protected $formBuilder;
+    protected $frontendFormBuilder;
 
     /**
      * @var EventDispatcherInterface
@@ -29,39 +30,31 @@ class RequestListener implements EventSubscriberInterface
     protected $eventDispatcher;
 
     /**
-     * @var SessionInterface
+     * @var FormSubmissionFinisherInterface
      */
-    protected $session;
+    protected $formSubmissionFinisher;
 
     /**
-     * @var FlashBagManagerInterface
+     * @var FormDefinitionManager
      */
-    protected $flashBagManager;
+    protected $formDefinitionManager;
 
     /**
-     * @var FormErrorsSerializerInterface
-     */
-    protected $formErrorsSerializer;
-
-    /**
-     * @param Builder                       $formBuilder
-     * @param EventDispatcherInterface      $eventDispatcher
-     * @param SessionInterface              $session
-     * @param FlashBagManagerInterface      $flashBagManager
-     * @param FormErrorsSerializerInterface $formErrorsSerializer
+     * @param FrontendFormBuilder             $frontendFormBuilder
+     * @param EventDispatcherInterface        $eventDispatcher
+     * @param FormSubmissionFinisherInterface $formSubmissionFinisher
+     * @param FormDefinitionManager           $formDefinitionManager
      */
     public function __construct(
-        Builder $formBuilder,
+        FrontendFormBuilder $frontendFormBuilder,
         EventDispatcherInterface $eventDispatcher,
-        SessionInterface $session,
-        FlashBagManagerInterface $flashBagManager,
-        FormErrorsSerializerInterface $formErrorsSerializer
+        FormSubmissionFinisherInterface $formSubmissionFinisher,
+        FormDefinitionManager $formDefinitionManager
     ) {
-        $this->formBuilder = $formBuilder;
+        $this->frontendFormBuilder = $frontendFormBuilder;
         $this->eventDispatcher = $eventDispatcher;
-        $this->session = $session;
-        $this->flashBagManager = $flashBagManager;
-        $this->formErrorsSerializer = $formErrorsSerializer;
+        $this->formSubmissionFinisher = $formSubmissionFinisher;
+        $this->formDefinitionManager = $formDefinitionManager;
     }
 
     /**
@@ -79,142 +72,166 @@ class RequestListener implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        /** @var \Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->session->getBag('form_builder_session');
-        $formConfiguration = [];
-
         if (!$event->isMasterRequest()) {
             return;
         }
 
         $request = $event->getRequest();
-        if (!$request->isMethod('POST')) {
+        $formId = $this->findFormIdByRequest($request);
+
+        if ($formId === null) {
             return;
         }
 
-        $formId = $this->formBuilder->detectedFormIdByRequest($request);
-        if (is_null($formId)) {
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+        if (!$formDefinition instanceof FormDefinitionInterface) {
             return;
-        }
-
-        if ($sessionBag->has('form_configuration_' . $formId)) {
-            $formConfiguration = $sessionBag->get('form_configuration_' . $formId);
         }
 
         try {
-            $userOptions = isset($formConfiguration['user_options']) ? $formConfiguration['user_options'] : [];
-            $form = $this->formBuilder->buildForm($formId, $userOptions);
+            $formRuntimeData = $this->detectFormRuntimeDataInRequest($event->getRequest(), $formDefinition);
+            $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
         } catch (\Exception $e) {
-            if ($request->isXmlHttpRequest()) {
-                $response = new JsonResponse([
-                    'success' => false,
-                    'error'   => $e->getMessage(),
-                    'trace'   => $e->getTrace()
-                ]);
-                $event->setResponse($response);
-            }
+            $this->generateErroredJsonReturn($event, $e);
 
             return;
         }
 
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                if ($sessionBag->has('form_configuration_' . $formId)) {
-                    $sessionBag->remove('form_configuration_' . $formId);
-                }
-
-                $submissionEvent = new SubmissionEvent($request, $formConfiguration, $form);
-                $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
-
-                if ($request->isXmlHttpRequest()) {
-                    $this->handleAjaxSuccessResponse($event, $submissionEvent, $formId);
-                } else {
-                    $this->handleDefaultSuccessResponse($event, $submissionEvent);
-                }
-            } else {
-                //only ajax forms want some feedback.
-                if ($request->isXmlHttpRequest()) {
-                    $this->handleAjaxErrorResponse($event, $form);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param GetResponseEvent $event
-     * @param SubmissionEvent  $submissionEvent
-     */
-    protected function handleDefaultSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent)
-    {
-        $uri = '?send=true';
-        if ($submissionEvent->hasRedirectUri()) {
-            $uri = $submissionEvent->getRedirectUri();
+        if (!$form->isSubmitted()) {
+            return;
         }
 
-        $response = new RedirectResponse($uri);
-        $event->setResponse($response);
-    }
-
-    /**
-     * @param GetResponseEvent $event
-     * @param SubmissionEvent  $submissionEvent
-     * @param string           $formId
-     */
-    protected function handleAjaxSuccessResponse(GetResponseEvent $event, SubmissionEvent $submissionEvent, $formId)
-    {
-        $redirectUri = null;
-        if ($submissionEvent->hasRedirectUri()) {
-            $redirectUri = $submissionEvent->getRedirectUri();
+        if ($form->isValid() === false) {
+            $this->doneWithError($event, $form);
+        } else {
+            $this->doneWithSuccess($event, $form, $formRuntimeData);
         }
-
-        $messages = [];
-        $error = false;
-
-        foreach (['success', 'error'] as $type) {
-            $messageKey = 'formbuilder_' . $formId . '_' . $type;
-
-            if (!$this->flashBagManager->has($messageKey)) {
-                continue;
-            }
-
-            foreach ($this->flashBagManager->get($messageKey) as $message) {
-                if ($type === 'error') {
-                    $error = true;
-                }
-                $messages[] = ['type' => $type, 'message' => $message];
-            }
-        }
-
-        $response = new JsonResponse([
-            'success'  => !$error,
-            'redirect' => $redirectUri,
-            'messages' => $messages
-        ]);
-
-        $event->setResponse($response);
     }
 
     /**
      * @param GetResponseEvent $event
      * @param FormInterface    $form
      */
-    protected function handleAjaxErrorResponse(GetResponseEvent $event, FormInterface $form)
+    protected function doneWithError(GetResponseEvent $event, FormInterface $form)
     {
+        $request = $event->getRequest();
+        $finishResponse = $this->formSubmissionFinisher->finishWithError($request, $form);
+
+        if ($finishResponse instanceof Response) {
+            $event->setResponse($finishResponse);
+        }
+    }
+
+    /**
+     * @param GetResponseEvent $event
+     * @param FormInterface    $form
+     * @param array|null       $formRuntimeData
+     */
+    protected function doneWithSuccess(GetResponseEvent $event, FormInterface $form, $formRuntimeData)
+    {
+        $request = $event->getRequest();
+        $submissionEvent = new SubmissionEvent($request, $formRuntimeData, $form);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
+
+        $finishResponse = $this->formSubmissionFinisher->finishWithSuccess($request, $submissionEvent);
+
+        if ($finishResponse instanceof Response) {
+            $event->setResponse($finishResponse);
+        }
+    }
+
+    /**
+     * @param GetResponseEvent $event
+     * @param \Exception|null  $e
+     * @param string|null      $message
+     */
+    protected function generateErroredJsonReturn(GetResponseEvent $event, ?\Exception $e, string $message = null)
+    {
+        $request = $event->getRequest();
+
+        if (!$request->isXmlHttpRequest()) {
+            return;
+        }
+
         $response = new JsonResponse([
-            'success'           => false,
-            'validation_errors' => $this->getErrors($form),
+            'success' => false,
+            'error'   => $e instanceof \Exception ? $e->getMessage() : $message,
+            'trace'   => $e instanceof \Exception ? $e->getTrace() : [],
         ]);
 
         $event->setResponse($response);
     }
 
     /**
-     * @param FormInterface $form
+     * @param Request $request
      *
-     * @return array
+     * @return null|int
      */
-    protected function getErrors(FormInterface $form)
+    public function findFormIdByRequest(Request $request)
     {
-        return $this->formErrorsSerializer->getErrors($form);
+        $isProcessed = false;
+        $data = null;
+
+        if ($request->isMethod('POST')) {
+            $data = $request->request->all();
+        } elseif (in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE'])) {
+            $isProcessed = $request->query->has('send');
+            $data = $request->query->all();
+        }
+
+        if ($isProcessed === true) {
+            return null;
+        }
+
+        if (empty($data)) {
+            return null;
+        }
+
+        foreach ($data as $key => $parameters) {
+            if (strpos($key, 'formbuilder_') === false) {
+                continue;
+            }
+
+            if (isset($parameters['formId'])) {
+                return $parameters['formId'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Request                 $request
+     * @param FormDefinitionInterface $formDefinition
+     *
+     * @return array|null
+     */
+    protected function detectFormRuntimeDataInRequest(Request $request, FormDefinitionInterface $formDefinition)
+    {
+        $formDefinitionConfig = $formDefinition->getConfig();
+
+        $data = null;
+        $name = 'formbuilder_' . $formDefinition->getId();
+        $method = isset($formDefinitionConfig['method']) ? strtoupper($formDefinitionConfig['method']) : 'POST';
+
+        if ($request->getMethod() !== $method) {
+            return [];
+        }
+
+        if (in_array($method, ['GET', 'HEAD', 'TRACE']) && $request->query->has($name)) {
+            $data = $request->query->get($name);
+        } elseif ($request->request->has($name)) {
+            $data = $request->request->get($name, null);
+        }
+
+        if (!is_array($data)) {
+            return null;
+        }
+
+        if (isset($data['formRuntimeData']) && is_string($data['formRuntimeData'])) {
+            return json_decode($data['formRuntimeData'], true);
+        }
+
+        return null;
     }
 }
