@@ -31,8 +31,6 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t('form_builder.tab.output_workflow') + ' "' + this.workflowData.name + '"',
-            bodyStyle: '',
-            autoScroll: true,
             border: false,
             tools: [
                 {

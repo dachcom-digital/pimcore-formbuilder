@@ -50,7 +50,6 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
             store: store,
             autoScroll: true,
             animate: true,
-            containerScroll: true,
             split: true,
             width: 200,
             cls: 'form-builder-output-workflow-elements-tree',
