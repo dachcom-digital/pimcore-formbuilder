@@ -131,7 +131,7 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
     releaseTree: function () {
 
         this.tree.getDockedItems('toolbar[dock="top"]')[0].items.each(function (btn) {
-            btn.enable();
+            btn.cls = '';
         });
 
         this.tree.getRootNode().cascade(function (record) {
@@ -142,7 +142,7 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
     lockTree: function (selectedRecord) {
 
         this.tree.getDockedItems('toolbar[dock="top"]')[0].items.each(function (btn) {
-            btn.disable();
+            btn.cls = 'formbuilder-object-editor-disabled';
         });
 
         this.tree.getRootNode().cascade(function (record) {
@@ -191,10 +191,15 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
-    addOutputWorkflow: function () {
+    addOutputWorkflow: function (btn) {
 
         if (this.formId === null) {
             Ext.Msg.alert(t('error'), 'You need to save your form first.');
+            return;
+        }
+
+        if (btn.cls === 'formbuilder-object-editor-disabled') {
+            Ext.Msg.alert(t('error'), t('form_builder.tab.output_workflow_locked'));
             return;
         }
 

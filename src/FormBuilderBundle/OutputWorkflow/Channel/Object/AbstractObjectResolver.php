@@ -2,16 +2,15 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
-use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValidationHelper;
-use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\ModelInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
+use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValidationHelper;
+use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -362,11 +361,11 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param ModelInterface $object
-     * @param array          $definition
-     * @param mixed          $value
+     * @param mixed $object
+     * @param array $definition
+     * @param mixed $value
      */
-    protected function assignChildDataToObject(ModelInterface $object, array $definition, $value)
+    protected function assignChildDataToObject($object, array $definition, $value)
     {
         if (!is_array($definition['childs'])) {
             return;
@@ -384,11 +383,11 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param ModelInterface $object
-     * @param string         $fieldName
-     * @param mixed          $value
+     * @param mixed  $object
+     * @param string $fieldName
+     * @param mixed  $value
      */
-    protected function appendToMethod(ModelInterface $object, string $fieldName, $value)
+    protected function appendToMethod($object, string $fieldName, $value)
     {
         $objectSetter = sprintf('set%s', ucfirst($fieldName));
 
@@ -453,12 +452,12 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param ModelInterface $object
-     * @param string         $fieldName
+     * @param mixed  $object
+     * @param string $fieldName
      *
      * @return DataObject\ClassDefinition\Data|null
      */
-    protected function getObjectFieldDefinition(ModelInterface $object, $fieldName)
+    protected function getObjectFieldDefinition($object, $fieldName)
     {
         if ($object instanceof DataObject\Concrete) {
             $classDefinition = $object->getClass();
