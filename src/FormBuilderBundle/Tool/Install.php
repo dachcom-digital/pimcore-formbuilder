@@ -250,40 +250,10 @@ class Install extends MigrationInstaller
      */
     protected function installProperties()
     {
-        $properties = [
-            'mail_disable_default_mail_body'       => [
-                'ctype'       => 'document',
-                'type'        => 'bool',
-                'name'        => 'Mail: Use custom template fields layout',
-                'description' => 'If the mail_disable_default_mail_body property is defined and checked, you need to add your own data to the mail template. You can use all the field names as placeholder.'
-            ],
-            'mail_successfully_sent'               => [
-                'ctype'       => 'document',
-                'type'        => 'document',
-                'name'        => 'Mail: Message after Submit',
-                'description' => 'Use the mail_successfully_sent property to define a message after the form has been successfully sent. There are three options: "String", "Snippet", "Document"'
-            ],
-            'mail_successfully_sent_flash_message' => [
-                'ctype'       => 'document',
-                'type'        => 'text',
-                'name'        => 'Mail: Flash Message after Success-Redirect',
-                'description' => 'Define a flash message which should show up after a form has been successfully submitted. Note: This only works if "mail_successfully_sent" property is a document.'
-            ],
-            'mail_ignore_fields'                   => [
-                'ctype'       => 'document',
-                'type'        => 'text',
-                'name'        => 'Mail: Ignored Fields in Email',
-                'description' => 'In some cases, you don\'t want to send specific fields via mail. Add one or multiple (comma separated) fields as string.'
-            ],
-            'mail_force_plain_text'                => [
-                'ctype'       => 'document',
-                'type'        => 'bool',
-                'name'        => 'Mail: Force plain text submission',
-                'description' => 'If checked, FormBuilder will submit this document in simple text/plain format.'
-            ],
-        ];
+        $properties = [];
 
         foreach ($properties as $key => $propertyConfig) {
+
             $defProperty = Property\Predefined::getByKey($key);
             if ($defProperty instanceof Property\Predefined) {
                 continue;
@@ -296,7 +266,7 @@ class Install extends MigrationInstaller
 
             $property->setDescription($propertyConfig['description']);
             $property->setCtype($propertyConfig['ctype']);
-            $property->setInheritable(/* @scrutinizer ignore-type */ false);
+            $property->setInheritable(false);
 
             try {
                 $property->getDao()->save();

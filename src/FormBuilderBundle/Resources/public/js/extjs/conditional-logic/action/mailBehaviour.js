@@ -105,7 +105,14 @@ Formbuilder.extjs.conditionalLogic.action.mailBehaviour = Class.create(Formbuild
             style: 'margin: 10px 0 0 0',
             bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
             tbar: this.getTopBar(fieldId),
-            items: compositeField
+            items: [
+                {
+                    xtype: 'label',
+                    style: 'display:block; padding:5px; background:#e4b1b1; border:1px solid #c74646; font-weight: 300;',
+                    text: t('form_builder.cl.action.mail_behaviour_deprecation_node')
+                },
+                compositeField
+            ]
         });
 
         // add initial value field

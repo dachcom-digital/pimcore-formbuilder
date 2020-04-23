@@ -9,8 +9,8 @@ It's possible to export submitted form mails as CSV.
 | Name | Description
 |------|------------|
 | `All` | Export all mails |
-| `Only Admin Mail` | Only export all main mails |
-| `Only User Mail` | Only export all user mails (defined in copy field) |
+| ~`Only Admin Mail`~ | **Deprecated!** Only export all main mails |
+| ~`Only User Mail`~ | **Deprecated!** Only export all user mails (defined in copy field) |
 
 ## Facts
 - The header gets defined from the field `display_name` property and does not get translated
