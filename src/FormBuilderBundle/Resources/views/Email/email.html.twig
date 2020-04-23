@@ -14,10 +14,12 @@
                 <strong>Admin:</strong> {{ 'form_builder.email.placeholder_list_available'|trans({},'admin')|format('<code>%Text(firstname);</code>')|raw }}
             </div>
 
+             {# If you're using output workflows, this property will be added on runtime and is not available in editmode! #}
             {% if document.getProperty('mail_force_plain_text') == true %}
                 <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.forced_plain_text_enabled'|trans({},'admin') }}</div>
             {% endif %}
 
+            {# If you're using output workflows, this property will be added on runtime and is not available in editmode! #}
             {% if document.getProperty('mail_disable_default_mail_body') != true %}
                 <div class="alert alert-info"><strong>Admin:</strong> {{ 'form_builder.email.form_renders_automatically'|trans({},'admin') }}</div>
             {% else %}
@@ -34,6 +36,7 @@
             </tr>
         </table>
 
+        {# If you're using output workflows, this property will be added on runtime and is not available in editmode! #}
         {% if document.getProperty('mail_disable_default_mail_body') != true %}
             <table class="row">
                 <tr>

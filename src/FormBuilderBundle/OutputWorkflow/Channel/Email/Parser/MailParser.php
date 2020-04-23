@@ -73,6 +73,8 @@ class MailParser
         $mail = new Mail();
 
         $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
+        $forcePlainText = (bool) $channelConfiguration['forcePlainText'];
+
         $ignoreFields = is_null($channelConfiguration['ignoreFields']) ? [] : $channelConfiguration['ignoreFields'];
 
         $hasIsCopyFlag = isset($channelConfiguration['legacyIsCopy']);
@@ -95,6 +97,9 @@ class MailParser
         }
 
         $this->parseMailAttachment($mail, $attachments);
+
+        $mailTemplate->setProperty('mail_disable_default_mail_body', 'text', $disableDefaultMailBody);
+        $mailTemplate->setProperty('mail_force_plain_text', 'checkbox', $forcePlainText);
 
         $mail->setDocument($mailTemplate);
 
