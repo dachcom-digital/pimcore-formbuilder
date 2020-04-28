@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Processor;
 
-use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
@@ -26,28 +26,32 @@ class ConditionalLogicProcessor
      * Cycle through each cl block.
      * If $filterField is not NULL, the action applier requests a FieldReturnStack with valid $fielderField field in return data.
      *
-     * @param array                             $formData
-     * @param array                             $conditionalLogic
-     * @param null|FormFieldDefinitionInterface $fieldFilter
+     * @param array $options
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function process($formData, $conditionalLogic, $fieldFilter = null)
+    public function process(array $options)
     {
-        $actionData = [];
+        $formData = $options['formData'] ?? null;
+        $conditionalLogic = $options['conditionalLogic'] ?? null;
+        $formRuntimeOptions = $options['formRuntimeOptions'] ?? null;
+        $field = $options['field'] ?? null;
+
         if (empty($conditionalLogic)) {
             return [];
         }
 
+        $actionData = [];
         foreach ($conditionalLogic as $ruleId => $ruleData) {
+
             if (!isset($ruleData['action']) || !isset($ruleData['condition'])) {
                 continue;
             }
 
-            $validationState = $this->checkValidity($ruleData['condition'], $formData, $ruleId);
-            $actionData = array_merge($actionData, $this->applyActions($validationState, $ruleData['action'], $formData, $ruleId, $fieldFilter));
+            $validationState = $this->checkValidity($ruleData['condition'], $formData, $formRuntimeOptions, $ruleId);
+            $actionData = array_merge($actionData, $this->applyActions($validationState, $ruleData['action'], $formData, $ruleId, $field));
         }
 
         return $actionData;
@@ -56,22 +60,27 @@ class ConditionalLogicProcessor
     /**
      * @param array $conditions
      * @param array $formData
+     * @param array $formRuntimeOptions
      * @param int   $ruleId
      *
      * @return bool
      *
      * @throws \Exception
      */
-    public function checkValidity($conditions, $formData, $ruleId)
+    protected function checkValidity($conditions, $formData, $formRuntimeOptions, $ruleId)
     {
         $valid = true;
+        $config = [
+            'formRuntimeOptions' => $formRuntimeOptions
+        ];
+
         foreach ($conditions as $condition) {
             //skip condition if there is no php service for it.
             if (!$this->conditionalLogicRegistry->hasCondition($condition['type'])) {
                 continue;
             }
 
-            if (!$this->conditionalLogicRegistry->getCondition($condition['type'])->setValues($condition)->isValid($formData, $ruleId)) {
+            if (!$this->conditionalLogicRegistry->getCondition($condition['type'])->setValues($condition)->isValid($formData, $ruleId, $config)) {
                 $valid = false;
 
                 break;
@@ -82,20 +91,22 @@ class ConditionalLogicProcessor
     }
 
     /**
-     * @param bool                              $validationState
-     * @param array                             $actions
-     * @param array                             $formData
-     * @param int                               $ruleId
-     * @param null|FormFieldDefinitionInterface $fieldFilter
+     * @param bool                          $validationState
+     * @param array                         $actions
+     * @param array                         $formData
+     * @param int                           $ruleId
+     * @param null|FieldDefinitionInterface $field
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function applyActions($validationState, $actions, $formData, $ruleId, $fieldFilter)
+    protected function applyActions($validationState, $actions, $formData, $ruleId, $field)
     {
         $returnContainer = [];
+
         foreach ($actions as $action) {
+
             //skip action if there is no php service for it.
             if (!$this->conditionalLogicRegistry->hasAction($action['type'])) {
                 continue;
@@ -103,26 +114,29 @@ class ConditionalLogicProcessor
 
             $appliedData = $this->conditionalLogicRegistry->getAction($action['type'])->setValues($action)->apply($validationState, $formData, $ruleId);
 
-            //Field Filter is active: only add affected field data to return container!
-            if ($fieldFilter instanceof FormFieldDefinitionInterface) {
-                if (!$appliedData instanceof FieldReturnStack) {
-                    continue;
-                }
+            if (!$appliedData instanceof ReturnStackInterface) {
+                continue;
+            }
 
-                $filterData = [];
-                foreach ($appliedData->getData() as $fieldName => $data) {
-                    if ($fieldName === $fieldFilter->getName()) {
-                        $filterData = $data;
-                    }
-                }
-
-                $appliedData->updateData($filterData);
+            //If field is available: only add affected field data to return container!
+            if (!$field instanceof FieldDefinitionInterface) {
                 $returnContainer[] = $appliedData;
-            } else {
-                if ($appliedData instanceof ReturnStackInterface) {
-                    $returnContainer[] = $appliedData;
+                continue;
+            }
+
+            if (!$appliedData instanceof FieldReturnStack) {
+                continue;
+            }
+
+            $filterData = [];
+            foreach ($appliedData->getData() as $fieldName => $data) {
+                if ($fieldName === $field->getName()) {
+                    $filterData = $data;
                 }
             }
+
+            $appliedData->updateData($filterData);
+            $returnContainer[] = $appliedData;
         }
 
         return $returnContainer;

@@ -219,5 +219,9 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
 
     getFormConstraints: function () {
         return this.formBuilder.availableConstraints;
-    }
+    },
+
+    getFormId: function () {
+        return this.formBuilder.formId;
+    },
 });

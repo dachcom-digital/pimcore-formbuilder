@@ -83,6 +83,11 @@ form_builder.controller.admin.output_workflow.get_output_workflow_tree:
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::getOutputWorkflowTreeAction }
     methods: [GET]
 
+form_builder.controller.admin.output_workflow.get_output_workflow_list:
+    path: /admin/formbuilder/output-workflow/get-output-workflow-list/{formId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::getOutputWorkflowListAction }
+    methods: [GET]
+
 form_builder.controller.admin.output_workflow.add_output_workflow:
     path: /admin/formbuilder/output-workflow/add-output-workflow/{formId}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowController::addOutputWorkflowAction }

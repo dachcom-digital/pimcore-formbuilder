@@ -12,6 +12,7 @@ interface ActionInterface
      * @param int   $ruleId
      *
      * @return ReturnStackInterface
+     * @throws \Exception
      */
     public function apply($validationState, $formData, $ruleId);
 

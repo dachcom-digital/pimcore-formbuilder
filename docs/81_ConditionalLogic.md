@@ -12,6 +12,7 @@ Use the conditional logic to hide/show fields, toggle classes, change validation
 | Name | Description | Options |
 |------|-------------|---------|
 | Element Value | Select fields which should have a conditional logic | Types: `selected`, `greater than`, `less than`, `equal`, `is not`, `checked` |
+| Output Workflow | Select output workflow to apply conditional logic | All available form output workflows |
 
 ## Actions
 

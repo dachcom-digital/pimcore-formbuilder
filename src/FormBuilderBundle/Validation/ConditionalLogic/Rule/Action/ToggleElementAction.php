@@ -3,7 +3,6 @@
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Action;
 
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
-use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ActionTrait;
 
 class ToggleElementAction implements ActionInterface
@@ -21,20 +20,15 @@ class ToggleElementAction implements ActionInterface
     protected $state = null;
 
     /**
-     * @param bool  $validationState
-     * @param array $formData
-     * @param int   $ruleId
-     *
-     * @return FieldReturnStack|ReturnStackInterface
-     *
-     * @throws \Exception
+     * {@inheritDoc}
      */
     public function apply($validationState, $formData, $ruleId)
     {
         $data = [];
         $state = $this->getState();
+        $toggleState = $validationState === true ? 'hide' : 'show';
+
         foreach ($this->getFields() as $conditionFieldName) {
-            $toggleState = $validationState === true ? 'hide' : 'show';
             $data[$conditionFieldName] = $state === $toggleState ? 'fb-cl-hide-element' : '';
         }
 
@@ -43,6 +37,7 @@ class ToggleElementAction implements ActionInterface
 
     /**
      * @return array
+     * @internal
      */
     public function getFields()
     {
@@ -51,6 +46,8 @@ class ToggleElementAction implements ActionInterface
 
     /**
      * @param array $fields
+     *
+     * @internal
      */
     public function setFields($fields)
     {
@@ -59,6 +56,7 @@ class ToggleElementAction implements ActionInterface
 
     /**
      * @return string
+     * @internal
      */
     public function getState()
     {
@@ -67,6 +65,8 @@ class ToggleElementAction implements ActionInterface
 
     /**
      * @param string $state
+     *
+     * @internal
      */
     public function setState($state)
     {
