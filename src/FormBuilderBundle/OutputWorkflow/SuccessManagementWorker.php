@@ -80,7 +80,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         $message = 'Success!';
 
         /** @var SuccessMessageData $successConditionData */
-        $successConditionData = $this->checkMailCondition($formData, 'success_message');
+        $successConditionData = $this->checkSuccessCondition('success_message', $formData, $submissionEvent->getFormRuntimeData());
 
         if ($successConditionData->hasData()) {
             $afterSuccess = $successConditionData->getIdentifiedData($locale);
@@ -201,19 +201,22 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
     }
 
     /**
-     * @param FormDataInterface $formData
+     *
      * @param string            $dispatchModule
+     * @param FormDataInterface $formData
+     * @param array             $formRuntimeOptions
      * @param array             $moduleOptions
      *
      * @return DataInterface
      *
      * @throws \Exception
      */
-    protected function checkMailCondition(FormDataInterface $formData, $dispatchModule, $moduleOptions = [])
+    protected function checkSuccessCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, $moduleOptions = [])
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
-            'formData'         => $formData->getData(),
-            'conditionalLogic' => $formData->getFormDefinition()->getConditionalLogic()
+            'formData'           => $formData->getData(),
+            'conditionalLogic'   => $formData->getFormDefinition()->getConditionalLogic(),
+            'formRuntimeOptions' => $formRuntimeOptions
         ], $moduleOptions);
     }
 }

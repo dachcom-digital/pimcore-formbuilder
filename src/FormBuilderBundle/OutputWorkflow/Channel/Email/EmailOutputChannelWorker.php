@@ -92,7 +92,7 @@ class EmailOutputChannelWorker
         $mailTemplateId = $mailTemplate['id'];
 
         /** @var MailBehaviourData $mailConditionData */
-        $mailConditionData = $this->checkMailCondition($formData, 'mail_behaviour', ['isCopy' => $isCopy]);
+        $mailConditionData = $this->checkMailCondition('mail_behaviour', $formData, $formRuntimeData, ['isCopy' => $isCopy]);
 
         if ($mailConditionData->hasMailTemplate()) {
             $conditionalMailTemplateId = $mailConditionData->getMailTemplateId($locale);
@@ -179,19 +179,21 @@ class EmailOutputChannelWorker
     }
 
     /**
-     * @param FormDataInterface $formData
      * @param string            $dispatchModule
+     * @param FormDataInterface $formData
+     * @param array             $formRuntimeOptions
      * @param array             $moduleOptions
      *
      * @return DataInterface
      *
      * @throws \Exception
      */
-    protected function checkMailCondition(FormDataInterface $formData, $dispatchModule, $moduleOptions = [])
+    protected function checkMailCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, $moduleOptions = [])
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
-            'formData'         => $formData->getData(),
-            'conditionalLogic' => $formData->getFormDefinition()->getConditionalLogic()
+            'formData'           => $formData->getData(),
+            'conditionalLogic'   => $formData->getFormDefinition()->getConditionalLogic(),
+            'formRuntimeOptions' => $formRuntimeOptions
         ], $moduleOptions);
     }
 
