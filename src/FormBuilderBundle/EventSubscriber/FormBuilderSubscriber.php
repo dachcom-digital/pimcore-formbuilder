@@ -293,7 +293,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $conditionalContainerClassData = $this->dispatchConditionalLogicModule('form_type_classes', array_merge($conditionalLogicOptions, ['field' => $fieldContainer]));
 
         if ($conditionalContainerClassData->hasData()) {
-            $attrDataTemplate = $containerAttributes['data-template'] ? [$containerAttributes['data-template']] : [];
+            $attrDataTemplate = isset($containerAttributes['data-template']) ? [$containerAttributes['data-template']] : [];
             $attrDataTemplate = array_merge($attrDataTemplate, $conditionalContainerClassData->getData());
             $containerAttributes['data-template'] = join(' ', $attrDataTemplate);
         }
