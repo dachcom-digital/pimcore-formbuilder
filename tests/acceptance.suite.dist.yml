@@ -6,7 +6,6 @@ modules:
             host: '%WEBDRIVER_HOST%'
             url: '%WEBDRIVER_URL%'
             browser: chrome
-            port: 4444
     enabled:
         - \DachcomBundle\Test\Helper\PimcoreCore:
             part: SERVICES
