@@ -10,7 +10,6 @@ use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
