@@ -87,6 +87,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/conditional-logic/form.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/condition/abstract.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/condition/elementValue.js',
+            '/bundles/formbuilder/js/extjs/conditional-logic/condition/outputWorkflow.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/abstract.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/constraintsAdd.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/constraintsRemove.js',

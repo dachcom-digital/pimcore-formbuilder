@@ -201,7 +201,7 @@
         trackCheckboxSelection: true,
         trackRadioSelection: true,
         trackHiddenInputs: true,
-        invalidFieldNames: ['_token', 'formCl']
+        invalidFieldNames: ['_token', 'formCl', 'formRuntimeData', 'formRuntimeDataToken']
     };
 
 })(jQuery, window, document);

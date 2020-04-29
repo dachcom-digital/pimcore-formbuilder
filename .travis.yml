@@ -103,6 +103,9 @@ after_failure:
     - cd $TRAVIS_BUILD_DIR
     - cat ./lib/FormBuilder/tests/_output/*
 
+before_script:
+    - phpenv config-rm xdebug.ini
+
 script:
     - '$HOME/chromedriver --url-base=/wd/hub &'
     - 'php ${TRAVIS_BUILD_DIR}/bin/console server:start 127.0.0.1:8080 -d web'

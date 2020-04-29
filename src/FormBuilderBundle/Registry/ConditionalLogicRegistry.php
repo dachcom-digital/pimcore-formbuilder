@@ -86,7 +86,7 @@ class ConditionalLogicRegistry
      * @param string $identifier
      * @param string $type
      *
-     * @return mixed
+     * @return ConditionInterface|ActionInterface
      *
      * @throws \Exception
      */
@@ -112,7 +112,7 @@ class ConditionalLogicRegistry
     /**
      * @param string $identifier
      *
-     * @return mixed
+     * @return ConditionInterface
      *
      * @throws \Exception
      */
@@ -134,7 +134,7 @@ class ConditionalLogicRegistry
     /**
      * @param string $identifier
      *
-     * @return mixed
+     * @return ActionInterface
      *
      * @throws \Exception
      */
@@ -146,7 +146,7 @@ class ConditionalLogicRegistry
     /**
      * @param string $type
      *
-     * @return mixed
+     * @return ConditionInterface[]|ActionInterface[]
      */
     public function getAllConfiguration($type)
     {

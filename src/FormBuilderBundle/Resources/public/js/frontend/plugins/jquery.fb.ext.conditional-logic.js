@@ -215,6 +215,7 @@
         this.$form = $(form);
         this.formTemplate = this.$form.data('template');
         this.options = $.extend({}, $.fn.formBuilderConditionalLogic.defaults, options);
+        this.formRuntimeOptions = {};
         this.logic = {};
         this.actions = {};
         this.conditions = {};
@@ -231,7 +232,11 @@
 
         setupConditionProcessor: function () {
 
-            var elementValue = new QualifiersApplier({
+            var _ = this,
+                elementValue,
+                outputWorkflow;
+
+            elementValue = new QualifiersApplier({
                 check: function (condition) {
                     var qualifiers = {};
                     switch (condition.comparator) {
@@ -272,8 +277,23 @@
                 }
             }, this.options.conditions.elementValue);
 
+            outputWorkflow = new QualifiersApplier({
+                check: function (condition) {
+                    if (!condition.hasOwnProperty('outputWorkflows') || !$.isArray(condition.outputWorkflows)) {
+                        return true;
+                    }
+
+                    if (!_.formRuntimeOptions.hasOwnProperty('form_output_workflow')) {
+                        return true;
+                    }
+
+                    return $.inArray(_.formRuntimeOptions.form_output_workflow, condition.outputWorkflows) !== -1;
+                }
+            }, this.options.conditions.outputWorkflow);
+
             this.conditions = {
-                'elementValue': elementValue
+                elementValue: elementValue,
+                outputWorkflow: outputWorkflow
             };
         },
 
@@ -416,22 +436,24 @@
         init: function () {
 
             var $clField = this.$form.find('input[name*="formCl"]'),
-                value = null, data = null;
+                $rtoField = this.$form.find('input[name*="formRuntimeData"]');
 
-            if ($clField.length === 0) {
-                return;
+            if ($clField.length > 0 && $clField.val()) {
+                try {
+                    this.logic = $.parseJSON($clField.val());
+                } catch (e) {
+                    console.warn('error while parsing conditional logic data. error was: ' + e);
+                    return;
+                }
             }
 
-            value = $clField.val();
-            if (!value) {
-                return;
-            }
-
-            try {
-                this.logic = $.parseJSON(value);
-            } catch (e) {
-                console.warn('error while parsing conditional logic data. error was: ' + e);
-                return;
+            if ($rtoField.length > 0 && $rtoField.val()) {
+                try {
+                    this.formRuntimeOptions = $.parseJSON($rtoField.val());
+                } catch (e) {
+                    console.warn('error while parsing form runtime options data. error was: ' + e);
+                    return;
+                }
             }
 
             this.setupInitialFields();
@@ -446,8 +468,7 @@
             _.$form.find('*[data-initial-constraints]').each(function () {
                 var constraintString = $(this).data('initial-constraints'),
                     constraints,
-                    $field,
-                    hasCoreRequireField = false;
+                    $field;
 
                 if (constraintString) {
                     constraints = constraintString.split(',');
@@ -538,17 +559,53 @@
          * @returns {{}}
          */
         generateQualifiersSelector: function (conditions, formSelector) {
+
             var _ = this,
+                filteredConditions = [],
+                cancelCondition = false,
                 conditionSelector = {'and': {}, 'or': {}};
+
+            // check conditions first!
             $.each(conditions, function (conditionId, condition) {
+
                 var conditionType = condition.type,
-                    qualifiers = {};
+                    conditionData = {};
 
                 switch (conditionType) {
                     case 'elementValue':
-                        qualifiers = _.conditions.elementValue.onCheck(condition);
+                        conditionData = _.conditions.elementValue.onCheck(condition);
+                        break;
+                    case 'outputWorkflow':
+                        conditionData = _.conditions.outputWorkflow.onCheck(condition);
                         break;
                 }
+
+                // condition is boolean and not allowed to proceed.
+                if (conditionData === false) {
+                    cancelCondition = true;
+                    return false;
+                }
+
+                // condition is boolean and allowed to proceed but has not qualifiers.
+                if (conditionData === true) {
+                    return;
+                }
+
+                filteredConditions.push({
+                    condition: condition,
+                    qualifiers: conditionData
+                });
+
+            });
+
+            if (cancelCondition === true) {
+                return conditionSelector;
+            }
+
+            $.each(filteredConditions, function (conditionId, filteredCondition) {
+
+                var condition = filteredCondition.condition,
+                    qualifiers = filteredCondition.qualifiers;
 
                 $.each(condition.fields, function (fieldIndex, field) {
                     var fieldSelector = formSelector + ' *[name*="' + field + '"]',
@@ -565,7 +622,7 @@
                         }
                     }
 
-                    //if strict value is in comparator and element is a (maybe multiple) checkbox, stet selector to field with given value!
+                    //if strict value is in comparator and element is a (maybe multiple) checkbox, set selector to field with given value!
                     if ($el.length > 1 && isCheckbox === true) {
                         if (condition.comparator === 'is_value' && condition.value !== '') {
                             fieldSelector += '[value="' + condition.value + '"]';

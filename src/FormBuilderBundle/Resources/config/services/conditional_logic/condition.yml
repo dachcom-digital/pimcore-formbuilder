@@ -6,3 +6,5 @@ services:
         public: true
 
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ElementValueCondition: ~
+
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\OutputWorkflowCondition: ~

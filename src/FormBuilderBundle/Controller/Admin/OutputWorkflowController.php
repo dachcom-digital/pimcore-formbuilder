@@ -99,9 +99,42 @@ class OutputWorkflowController extends AdminController
 
     /**
      * @param Request $request
+     * @param int     $formId
+     *
+     * @return JsonResponse
+     */
+    public function getOutputWorkflowListAction(Request $request, int $formId)
+    {
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+
+        if (!$formDefinition instanceof FormDefinitionInterface) {
+            return $this->json(['success' => true, 'outputWorkflows' => []]);
+        }
+
+        if (!$formDefinition->hasOutputWorkflows()) {
+            return $this->json(['success' => true, 'outputWorkflows' => []]);
+        }
+
+        $outputWorkflows = [];
+        foreach ($formDefinition->getOutputWorkflows() as $outputWorkflow) {
+            $outputWorkflows[] = [
+                'id'   => $outputWorkflow->getId(),
+                'name' => $outputWorkflow->getName()
+            ];
+        }
+
+        return $this->adminJson([
+            'success'         => true,
+            'outputWorkflows' => $outputWorkflows
+        ]);
+    }
+
+    /**
+     * @param Request $request
      * @param int     $outputWorkflowId
      *
      * @return JsonResponse
+     * @throws \Throwable
      */
     public function getOutputWorkflowDataAction(Request $request, int $outputWorkflowId)
     {
@@ -171,6 +204,7 @@ class OutputWorkflowController extends AdminController
      * @param int     $outputWorkflowId
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function saveOutputWorkflowAction(Request $request, int $outputWorkflowId)
     {

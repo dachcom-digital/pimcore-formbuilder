@@ -88,14 +88,24 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
     getActionContainer: function () {
 
         var _ = this;
-        var actionMenu = [];
+        var actionMenu = [],
+            deprecatedActionMenu = [];
 
         Ext.Array.each(this.conditionalStore.actions, function (action) {
-            actionMenu.push({
-                iconCls: action.icon,
-                text: t(action.name),
-                handler: _.addAction.bind(_, action.identifier)
-            });
+
+            if (action.identifier === 'mailBehaviour') {
+                deprecatedActionMenu.push({
+                    iconCls: action.icon,
+                    text: t(action.name),
+                    handler: _.addAction.bind(_, action.identifier)
+                });
+            } else {
+                actionMenu.push({
+                    iconCls: action.icon,
+                    text: t(action.name),
+                    handler: _.addAction.bind(_, action.identifier)
+                });
+            }
         });
 
         this.actionsContainer = new Ext.Panel({
@@ -104,7 +114,7 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
             forceLayout: true,
             tbar: [{
                 iconCls: 'pimcore_icon_add',
-                menu: actionMenu
+                menu: Ext.Array.merge(actionMenu, [{xtype: 'menuseparator'}], deprecatedActionMenu)
             }],
             border: false
         });
@@ -219,5 +229,9 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
 
     getFormConstraints: function () {
         return this.formBuilder.availableConstraints;
-    }
+    },
+
+    getFormId: function () {
+        return this.formBuilder.formId;
+    },
 });

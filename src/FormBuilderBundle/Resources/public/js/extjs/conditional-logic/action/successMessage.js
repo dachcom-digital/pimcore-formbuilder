@@ -20,6 +20,7 @@ Formbuilder.extjs.conditionalLogic.action.successMessage = Class.create(Formbuil
         var _ = this,
             fieldId = Ext.id(),
             successMessageToggleComponent,
+            successMessageTogglePanel,
             componentConfiguration = {
                 identifier: this.fieldConfiguration.identifier,
                 sectionId: this.sectionId,
@@ -67,6 +68,13 @@ Formbuilder.extjs.conditionalLogic.action.successMessage = Class.create(Formbuil
 
         successMessageToggleComponent = new Formbuilder.extjs.components.successMessageToggleComponent(fieldId, componentConfiguration, this.data);
 
-        return successMessageToggleComponent.getLayout();
+        successMessageTogglePanel = successMessageToggleComponent.getLayout();
+        successMessageTogglePanel.insert(0, {
+            xtype: 'label',
+            style: 'display:block; padding:5px; background:#d8d8d8; border:1px solid #b5b5b5; font-weight: 300;',
+            text: t('form_builder.cl.action.success_message_note')
+        });
+
+        return successMessageTogglePanel;
     }
 });

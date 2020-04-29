@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher;
 
-use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Registry\DispatcherRegistry;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Processor\ConditionalLogicProcessor;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,11 +14,6 @@ class Dispatcher
      * @var ConditionalLogicProcessor
      */
     protected $conditionalLogicProcessor;
-
-    /**
-     * @var OptionsResolver
-     */
-    protected $dispatcherOptions = null;
 
     /**
      * @var DispatcherRegistry
@@ -52,9 +47,8 @@ class Dispatcher
     public function runFieldDispatcher($dispatcherModule, $options, $moduleOptions = [])
     {
         $dispatcherOptions = $this->createOptionsResolver('field');
-        $dispatcherOptions->resolve($options);
 
-        $conditionActions = $this->conditionalLogicProcessor->process($options['formData'], $options['conditionalLogic'], $options['field']);
+        $conditionActions = $this->conditionalLogicProcessor->process($dispatcherOptions->resolve($options));
         $moduleOptions['appliedConditions'] = $conditionActions;
 
         return $this->run($dispatcherModule, $options, $moduleOptions);
@@ -72,9 +66,8 @@ class Dispatcher
     public function runFormDispatcher($dispatcherModule, $options, $moduleOptions = [])
     {
         $dispatcherOptions = $this->createOptionsResolver('form');
-        $dispatcherOptions->resolve($options);
 
-        $conditionActions = $this->conditionalLogicProcessor->process($options['formData'], $options['conditionalLogic']);
+        $conditionActions = $this->conditionalLogicProcessor->process($dispatcherOptions->resolve($options));
         $moduleOptions['appliedConditions'] = $conditionActions;
 
         return $this->run($dispatcherModule, $options, $moduleOptions);
@@ -122,16 +115,17 @@ class Dispatcher
     {
         $dispatcherOptions = new OptionsResolver();
         $dispatcherOptions->setDefaults([
-            'formData'         => [],
-            'conditionalLogic' => []
+            'formData'           => [],
+            'formRuntimeOptions' => [],
+            'conditionalLogic'   => []
         ]);
 
-        $dispatcherOptions->setRequired(['formData', 'conditionalLogic']);
+        $dispatcherOptions->setRequired(['formData', 'conditionalLogic', 'formRuntimeOptions']);
 
         if ($type === 'field') {
             $dispatcherOptions->setDefaults(['field' => null]);
             $dispatcherOptions->setRequired(['field']);
-            $dispatcherOptions->setAllowedTypes('field', FormFieldDefinitionInterface::class);
+            $dispatcherOptions->setAllowedTypes('field', FieldDefinitionInterface::class);
         }
 
         return $dispatcherOptions;

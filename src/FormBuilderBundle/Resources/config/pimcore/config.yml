@@ -235,6 +235,14 @@ form_builder:
                     value:
                         type: textfield
                         label: 'form_builder_element_value_value'
+            outputWorkflow:
+                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\OutputWorkflowCondition'
+                name: 'form_builder.cl.condition.output_workflow'
+                icon: 'form_builder_cl_output_workflow'
+                form:
+                    fields:
+                        type: workflow_select
+                        label: 'form_builder_output_workflow_select'
 imports:
     - { resource: '../backend/base_config.yml' }
     - { resource: '../types/field_types.yml' }

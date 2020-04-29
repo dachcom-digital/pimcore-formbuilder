@@ -29,7 +29,16 @@ class ContainerType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (isset($options['formbuilder_configuration']['template']) && !empty($options['formbuilder_configuration']['template'])) {
-            $view->vars['attr']['data-template'] = $options['formbuilder_configuration']['template'];
+
+            $dataTemplates = [
+                $options['formbuilder_configuration']['template']
+            ];
+
+            if (isset($view->vars['attr']['data-template'])) {
+                $dataTemplates[] = $view->vars['attr']['data-template'];
+            }
+
+            $view->vars['attr']['data-template'] = join(' ', $dataTemplates);
         }
 
         // prevent rendering required class on container root layer

@@ -7,10 +7,11 @@ interface ConditionInterface
     /**
      * @param array $formData
      * @param int   $ruleId
+     * @param array $configuration
      *
-     * @return mixed
+     * @return bool
      */
-    public function isValid($formData, $ruleId);
+    public function isValid($formData, $ruleId, $configuration = []);
 
     /**
      * @param array $values

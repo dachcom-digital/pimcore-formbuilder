@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
-use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\FormTypeClassesData;
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
@@ -23,7 +23,7 @@ class FormTypeClasses implements ModuleInterface
     protected $formData;
 
     /**
-     * @var FormFieldDefinitionInterface
+     * @var FieldDefinitionInterface
      */
     protected $field;
 
@@ -52,7 +52,7 @@ class FormTypeClasses implements ModuleInterface
         ]);
 
         $resolver->setRequired(['formData', 'field', 'appliedConditions']);
-        $resolver->setAllowedTypes('field', FormFieldDefinitionInterface::class);
+        $resolver->setAllowedTypes('field', FieldDefinitionInterface::class);
         $resolver->setAllowedTypes('formData', ['array', 'null']);
         $resolver->setAllowedTypes('appliedConditions', 'array');
     }
@@ -86,10 +86,12 @@ class FormTypeClasses implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-            if (!$returnStack instanceof FieldReturnStack || !in_array($returnStack->getActionType(), [
-                'toggleClass',
-                'toggleElement'
-            ])) {
+
+            if (!$returnStack instanceof FieldReturnStack) {
+                continue;
+            }
+
+            if (!in_array($returnStack->getActionType(), ['toggleClass', 'toggleElement'])) {
                 continue;
             }
 
