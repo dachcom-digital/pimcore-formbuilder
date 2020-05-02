@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow` (
   UNIQUE KEY `name_form` (`name`,`form_definition`),
   KEY `IDX_BCB7909761F7634C` (`form_definition`),
   CONSTRAINT `FK_BCB7909761F7634C` FOREIGN KEY (`form_definition`) REFERENCES `formbuilder_forms` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow_channel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -30,4 +30,4 @@ CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow_channel` (
   PRIMARY KEY (`id`),
   KEY `IDX_CEC462362C75DDDC` (`output_workflow`),
   CONSTRAINT `FK_CEC462362C75DDDC` FOREIGN KEY (`output_workflow`) REFERENCES `formbuilder_output_workflow` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
