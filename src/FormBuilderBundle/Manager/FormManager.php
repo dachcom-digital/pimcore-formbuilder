@@ -72,6 +72,7 @@ class FormManager extends FormDefinitionManager
      * @param null  $id
      *
      * @return FormDefinitionInterface|null
+     *
      * @throws \Exception
      *
      * @deprecated
@@ -100,6 +101,7 @@ class FormManager extends FormDefinitionManager
      * @param string $newName
      *
      * @return FormDefinitionInterface|null
+     *
      * @throws \Exception
      *
      * @deprecated

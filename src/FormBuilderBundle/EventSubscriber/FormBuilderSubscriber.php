@@ -346,7 +346,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         // options enrichment: add constraints
         if (in_array('constraints', $availableOptions)) {
-
             $conditionalConstraintData = $this->dispatchConditionalLogicModule('constraints', $conditionalLogicOptions);
 
             // add field constraints to data attribute since we need them for the frontend cl applier.
@@ -365,10 +364,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                    array_filter($constraints, function ($constraint) {
-                        return $constraint instanceof NotBlank;
-                    })
-                ) === 1;
+                array_filter($constraints, function ($constraint) {
+                    return $constraint instanceof NotBlank;
+                })
+            ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout
@@ -414,6 +413,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
      * @param array  $options
      *
      * @return DataInterface
+     *
      * @throws \Exception
      */
     private function dispatchConditionalLogicModule(string $dispatcherModule, array $options)

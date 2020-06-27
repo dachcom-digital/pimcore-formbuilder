@@ -39,8 +39,8 @@
     },
     "require-dev": {
         "codeception/codeception": "~2.4.0",
-        "phpstan/phpstan": "^0.11.1",
-        "phpstan/phpstan-symfony": "^0.11.0",
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-symfony": "^0.12",
         "symplify/easy-coding-standard": "^5.4"
     }
 }

@@ -134,6 +134,7 @@ class OutputWorkflowController extends AdminController
      * @param int     $outputWorkflowId
      *
      * @return JsonResponse
+     *
      * @throws \Throwable
      */
     public function getOutputWorkflowDataAction(Request $request, int $outputWorkflowId)
@@ -204,6 +205,7 @@ class OutputWorkflowController extends AdminController
      * @param int     $outputWorkflowId
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function saveOutputWorkflowAction(Request $request, int $outputWorkflowId)

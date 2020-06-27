@@ -86,7 +86,6 @@ class FormTypeClasses implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-
             if (!$returnStack instanceof FieldReturnStack) {
                 continue;
             }

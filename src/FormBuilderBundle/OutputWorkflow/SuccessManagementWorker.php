@@ -201,7 +201,6 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
     }
 
     /**
-     *
      * @param string            $dispatchModule
      * @param FormDataInterface $formData
      * @param array             $formRuntimeOptions

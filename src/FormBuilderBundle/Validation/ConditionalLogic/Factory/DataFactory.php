@@ -22,7 +22,7 @@ class DataFactory
     /**
      * @param string $serviceId
      *
-     * @return DataInterface
+     * @return null|DataInterface
      */
     public function generate($serviceId)
     {
@@ -31,5 +31,7 @@ class DataFactory
                 return $dataHandler;
             }
         }
+
+        return null;
     }
 }

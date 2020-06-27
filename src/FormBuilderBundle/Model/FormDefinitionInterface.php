@@ -63,8 +63,6 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
 
     /**
      * @param int $userId
-     *
-     * @return int
      */
     public function setModifiedBy(int $userId);
 
@@ -75,8 +73,6 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
 
     /**
      * @param int $userId
-     *
-     * @return int
      */
     public function setCreatedBy(int $userId);
 

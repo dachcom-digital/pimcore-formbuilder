@@ -20,7 +20,7 @@ class ToggleElementAction implements ActionInterface
     protected $state = null;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function apply($validationState, $formData, $ruleId)
     {
@@ -37,6 +37,7 @@ class ToggleElementAction implements ActionInterface
 
     /**
      * @return array
+     *
      * @internal
      */
     public function getFields()
@@ -56,6 +57,7 @@ class ToggleElementAction implements ActionInterface
 
     /**
      * @return string
+     *
      * @internal
      */
     public function getState()
