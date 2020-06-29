@@ -63,9 +63,7 @@ class Form extends AbstractTemplateAreabrick
     }
 
     /**
-     * @param Info $info
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function action(Info $info)
     {
@@ -118,6 +116,8 @@ class Form extends AbstractTemplateAreabrick
         foreach (array_merge($editViewVars, $assemblerViewVars) as $var => $varValue) {
             $view->getParameters()->set($var, $varValue);
         }
+
+        return null;
     }
 
     /**

@@ -45,7 +45,6 @@ class ConditionalLogicProcessor
 
         $actionData = [];
         foreach ($conditionalLogic as $ruleId => $ruleData) {
-
             if (!isset($ruleData['action']) || !isset($ruleData['condition'])) {
                 continue;
             }
@@ -106,7 +105,6 @@ class ConditionalLogicProcessor
         $returnContainer = [];
 
         foreach ($actions as $action) {
-
             //skip action if there is no php service for it.
             if (!$this->conditionalLogicRegistry->hasAction($action['type'])) {
                 continue;
@@ -121,6 +119,7 @@ class ConditionalLogicProcessor
             //If field is available: only add affected field data to return container!
             if (!$field instanceof FieldDefinitionInterface) {
                 $returnContainer[] = $appliedData;
+
                 continue;
             }
 

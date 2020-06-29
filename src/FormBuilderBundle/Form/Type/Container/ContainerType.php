@@ -29,7 +29,6 @@ class ContainerType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (isset($options['formbuilder_configuration']['template']) && !empty($options['formbuilder_configuration']['template'])) {
-
             $dataTemplates = [
                 $options['formbuilder_configuration']['template']
             ];

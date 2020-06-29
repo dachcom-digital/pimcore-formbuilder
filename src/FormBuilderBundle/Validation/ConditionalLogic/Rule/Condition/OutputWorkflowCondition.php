@@ -14,7 +14,7 @@ class OutputWorkflowCondition implements ConditionInterface
     protected $outputWorkflow = [];
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isValid($formData, $ruleId, $configuration = [])
     {
@@ -38,6 +38,7 @@ class OutputWorkflowCondition implements ConditionInterface
 
     /**
      * @return array
+     *
      * @internal
      */
     public function getOutputWorkflows()

@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits;
 trait ConditionTrait
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setValues(array $values)
     {

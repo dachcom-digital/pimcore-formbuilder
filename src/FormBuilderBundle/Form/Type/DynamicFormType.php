@@ -113,7 +113,6 @@ class DynamicFormType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $runtimeData = $data['formRuntimeData'] ?? null;
             $tokenValue = $data['formRuntimeDataToken'] ?? null;

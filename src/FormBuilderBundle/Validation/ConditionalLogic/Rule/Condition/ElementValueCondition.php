@@ -24,7 +24,7 @@ class ElementValueCondition implements ConditionInterface
     protected $value;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isValid($formData, $ruleId, $configuration = [])
     {
@@ -58,8 +58,8 @@ class ElementValueCondition implements ConditionInterface
 
     /**
      * @return string
-     * @internal
      *
+     * @internal
      */
     public function getComparator()
     {
@@ -78,6 +78,7 @@ class ElementValueCondition implements ConditionInterface
 
     /**
      * @return array
+     *
      * @internal
      */
     public function getFields()
@@ -97,6 +98,7 @@ class ElementValueCondition implements ConditionInterface
 
     /**
      * @return string|array
+     *
      * @internal
      */
     public function getValue()
