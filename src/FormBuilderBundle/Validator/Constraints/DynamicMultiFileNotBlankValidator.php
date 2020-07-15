@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Validator\Constraints;
 
+use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormConfigBuilderInterface;
@@ -31,7 +32,12 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        $formDefinition = $this->context->getRoot()->getData();
+        $formData = $this->context->getRoot()->getData();
+        if (!$formData instanceof FormDataInterface) {
+            return;
+        }
+
+        $formDefinition = $formData->getFormDefinition();
         if (!$formDefinition instanceof FormDefinitionInterface) {
             return;
         }
