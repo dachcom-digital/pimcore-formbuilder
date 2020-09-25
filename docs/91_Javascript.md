@@ -27,7 +27,7 @@ $(function () {
 ```
 ### Extended Usage
 ```javascript
-$('form.formbuilder.ajax-form').formBuilderConditionalLogic({
+$('form.formbuilder.ajax-form').formBuilderAjaxManager({
     setupFileUpload: true, // initialize upload fields
     resetFormMethod: null, // reset method after success
     validationTransformer: {
