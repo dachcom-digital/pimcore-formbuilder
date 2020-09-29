@@ -43,7 +43,12 @@
             this.siteKey = this.$reCaptchaField.data('site-key');
             this.action = this.$reCaptchaField.data('action-name');
 
+            // reset captcha on all events
             this.$form.on('formbuilder.success', this.onReset.bind(this));
+            this.$form.on('formbuilder.error', this.onReset.bind(this));
+            this.$form.on('formbuilder.error-field', this.onReset.bind(this));
+            this.$form.on('formbuilder.error-form', this.onReset.bind(this));
+            this.$form.on('formbuilder.fatal', this.onReset.bind(this));
 
             this.bindDependency();
 
