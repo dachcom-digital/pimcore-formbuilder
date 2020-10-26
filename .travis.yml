@@ -24,53 +24,53 @@ env:
         - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 matrix:
     include:
-        -   name: "PHPStan Static Analysis (Pimcore 6.6.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "PHPStan Static Analysis (Pimcore 6.8.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v2.6.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v2.8.0"
                 - DACHCOM_TEST_SECTION=phpstan
-        -   name: "PHP ECS (Pimcore 6.6.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "PHP ECS (Pimcore 6.8.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
-                - PIMCORE_SKELETON_BRANCH="tags/v2.6.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v2.8.0"
                 - DACHCOM_TEST_SECTION=ecs
-        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^4.3, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.0.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - SYMFONY_VERSION="~4.3.0"
                 - PIMCORE_SKELETON_BRANCH="tags/v2.0.0"
-        -   name: "Codeception Tests (Pimcore 6.1.x, Symfony ^4.3, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.1.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - SYMFONY_VERSION="~4.3.0"
                 - PIMCORE_SKELETON_BRANCH="tags/v2.1.0"
-        -   name: "Codeception Tests (Pimcore 6.2.x, Symfony ^4.3, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.2.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - SYMFONY_VERSION="~4.3.0"
                 - PIMCORE_SKELETON_BRANCH="tags/v2.2.0"
-        -   name: "Codeception Tests (Pimcore 6.3.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.3.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - PIMCORE_PHP_ERROR_REPORTING=30711 # E_ALL & ~E_NOTICE & ~E_STRICT
                 - PIMCORE_SKELETON_BRANCH="tags/v2.3.0"
-        -   name: "Codeception Tests (Pimcore 6.4.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.4.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.4.0"
-        -   name: "Codeception Tests (Pimcore 6.5.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.5.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.5.0"
-        -   name: "Codeception Tests (Pimcore 6.6.x, Symfony ^4.0, PHP 7.3)"
+        -   name: "Codeception Tests (Pimcore 6.6.x, Symfony ^4.4, PHP 7.3)"
             sudo: required
             php: 7.3
             env:
@@ -81,14 +81,24 @@ matrix:
             env:
                 - SYMFONY_VERSION=^3.4
                 - PIMCORE_SKELETON_BRANCH="tags/v2.6.0"
-        -   name: "Codeception Tests (Pimcore 6.6.x, Symfony ^4.0, PHP 7.4)"
+        -   name: "Codeception Tests (Pimcore 6.6.x, Symfony ^4.4, PHP 7.4)"
             sudo: required
             php: 7.4
             env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.6.0"
+        -   name: "Codeception Tests (Pimcore 6.7.x, Symfony ^4.4, PHP 7.4)"
+            sudo: required
+            php: 7.4
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v2.7.0"
+        -   name: "Codeception Tests (Pimcore 6.8.x, Symfony ^4.4, PHP 7.4)"
+            sudo: required
+            php: 7.4
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v2.8.0"
     allow_failures:
         -   env:
-                - PIMCORE_SKELETON_BRANCH="tags/v2.6.0"
+                - PIMCORE_SKELETON_BRANCH="tags/v2.8.0"
                 - DACHCOM_TEST_SECTION=ecs
         -   env:
                 - SYMFONY_VERSION=^3.4 # needs allow to fail - pimcore 6.6.7 with S3.4 is broken...

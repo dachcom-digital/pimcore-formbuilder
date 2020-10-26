@@ -42,5 +42,8 @@
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
         "symplify/easy-coding-standard": "^5.4"
+    },
+    "conflict": {
+        "symfony/monolog-bundle": "3.6.0"
     }
 }
