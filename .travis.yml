@@ -100,9 +100,6 @@ matrix:
         -   env:
                 - PIMCORE_SKELETON_BRANCH="tags/v2.8.0"
                 - DACHCOM_TEST_SECTION=ecs
-        -   env:
-                - SYMFONY_VERSION=^3.4 # needs allow to fail - pimcore 6.6.7 with S3.4 is broken...
-                - PIMCORE_SKELETON_BRANCH="tags/v2.6.0"
     fast_finish: true
 
 cache:

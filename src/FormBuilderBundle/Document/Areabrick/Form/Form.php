@@ -11,6 +11,7 @@ use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Assembler\FormAssembler;
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Model\Document\Tag\Relation;
 use Pimcore\Model\Document\Tag\Select;
 use Pimcore\Translation\Translator;
 
@@ -99,15 +100,17 @@ class Form extends AbstractTemplateAreabrick
         $formPreset = $formPresetSelection->getData();
         $formOutputWorkflow = $outputWorkflowSelection->isEmpty() || $outputWorkflowSelection->getData() === 'none' ? null : (int) $outputWorkflowSelection->getData();
 
-        $mailTemplate = $this->getDocumentTag($info->getDocument(), 'relation', 'sendMailTemplate')->getElement();
-        $copyMailTemplate = $this->getDocumentTag($info->getDocument(), 'relation', 'sendCopyMailTemplate')->getElement();
+        /** @var Relation $mailTemplateElement */
+        $mailTemplateElement = $this->getDocumentTag($info->getDocument(), 'relation', 'sendMailTemplate');
+        /** @var Relation $copyMailTemplateElement */
+        $copyMailTemplateElement = $this->getDocumentTag($info->getDocument(), 'relation', 'sendCopyMailTemplate');
 
         $optionBuilder = new FormOptionsResolver();
         $optionBuilder->setFormId($formId);
         $optionBuilder->setFormTemplate($formTemplate);
         $optionBuilder->setSendCopy($sendCopy);
-        $optionBuilder->setMailTemplate($mailTemplate);
-        $optionBuilder->setCopyMailTemplate($copyMailTemplate);
+        $optionBuilder->setMailTemplate($mailTemplateElement->getElement());
+        $optionBuilder->setCopyMailTemplate($copyMailTemplateElement->getElement());
         $optionBuilder->setFormPreset($formPreset);
         $optionBuilder->setOutputWorkflow($formOutputWorkflow);
 
