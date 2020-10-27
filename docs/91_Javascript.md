@@ -12,7 +12,7 @@ Of course it's up to you to copy those files into your project and modify them a
 - [reCAPTCHA V3 Extension](#recaptcha-v3-extension)
 
 ## Core Extension
-This Plugin will enable the ajax functionality and also the multi file handling:
+This Plugin will enable the ajax functionality but also the multi file handling:
 
 ### Enable Extension
 
@@ -27,7 +27,7 @@ $(function () {
 ```
 ### Extended Usage
 ```javascript
-$('form.formbuilder.ajax-form').formBuilderConditionalLogic({
+$('form.formbuilder.ajax-form').formBuilderAjaxManager({
     setupFileUpload: true, // initialize upload fields
     resetFormMethod: null, // reset method after success
     validationTransformer: {
