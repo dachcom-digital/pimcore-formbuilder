@@ -103,6 +103,8 @@ class PimcoreBackend extends Module
 
         $this->assertInstanceOf(Page::class, Page::getById($document->getId()));
 
+        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
+
         return $document;
     }
 
@@ -228,6 +230,10 @@ class PimcoreBackend extends Module
             $document->setElements($editables);
         }
 
+        if (method_exists($document, 'setMissingRequiredEditable')) {
+            $document->setMissingRequiredEditable(false);
+        }
+
         try {
             $document->save();
         } catch (\Exception $e) {
@@ -235,6 +241,10 @@ class PimcoreBackend extends Module
         }
 
         $this->assertCount(8, VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0') ? $document->getEditables() : $document->getElements());
+
+        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
+
+        //\Pimcore::collectGarbage();
     }
 
     /**
@@ -555,6 +565,7 @@ class PimcoreBackend extends Module
         $documentKey = uniqid(sprintf('%s-', $key));
 
         $document = new Email();
+        $document->setPublished(true);
         $document->setType('email');
         $document->setParentId(1);
         $document->setUserOwner(1);
@@ -601,12 +612,18 @@ class PimcoreBackend extends Module
             $document->setProperties($params['properties']);
         }
 
+        if (method_exists($document, 'setMissingRequiredEditable')) {
+            $document->setMissingRequiredEditable(false);
+        }
+
         try {
             $document->save();
         } catch (\Exception $e) {
             Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating email. message was: ' . $e->getMessage()));
             return null;
         }
+
+        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
 
         return $document;
     }
@@ -647,11 +664,11 @@ class PimcoreBackend extends Module
 
         $formPresetSelect = new $selectClass();
         $formPresetSelect->setName(sprintf('%s:1.formPreset', FormHelper::AREA_TEST_NAMESPACE));
-        $formPresetSelect->setDataFromEditmode(null);
+        $formPresetSelect->setDataFromEditmode('custom');
 
         $outputWorkflowSelect = new $selectClass();
         $outputWorkflowSelect->setName(sprintf('%s:1.outputWorkflow', FormHelper::AREA_TEST_NAMESPACE));
-        $outputWorkflowSelect->setDataFromEditmode(null);
+        $outputWorkflowSelect->setDataFromEditmode('none');
 
         $sendMailTemplateRelation = new $relationClass();
         $sendMailTemplateRelation->setName(sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
@@ -687,7 +704,6 @@ class PimcoreBackend extends Module
 
         $blockArea->setDataFromEditmode([
             [
-                'id'     => null,
                 'key'    => '1',
                 'type'   => 'formbuilder_form',
                 'hidden' => false
