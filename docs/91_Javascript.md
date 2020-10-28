@@ -47,6 +47,8 @@ $('form.formbuilder.ajax-form').formBuilderAjaxManager({
 $('form.ajax-form')
    .on('formbuilder.success', function(ev, message, redirect, $form) {
          console.log(message, redirect);
+ }).on('formbuilder.fail', function(ev, messages, $form) {
+         console.log(messages);
  }).on('formbuilder.error', function(ev, messages, $form) {
          console.log(messages);
  }).on('formbuilder.error-form', function (ev, messages, $form) {

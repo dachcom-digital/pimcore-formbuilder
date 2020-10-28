@@ -183,6 +183,10 @@
                         }
 
                         if (response.success === false) {
+
+                            // trigger global fail
+                            $form.trigger('formbuilder.fail', [response, $form]);
+
                             if (typeof response.validation_errors === 'object' && Object.keys(response.validation_errors).length > 0) {
                                 $.each(response.validation_errors, function (fieldId, messages) {
                                     if (fieldId === 'general') {
@@ -224,6 +228,7 @@
 
                         } else {
 
+                            // trigger global success
                             $form.trigger('formbuilder.success', [response.messages, response.redirect, $form]);
 
                             if (typeof _.options.resetFormMethod === 'function') {
