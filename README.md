@@ -13,7 +13,7 @@
 
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
 |---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **3.x** | `6.0` - `6.6`                     | `3.4`, `^4.0`              | 17.07.2019   | Feature Branch | dev-master |
+| **3.x** | `6.0` - `6.8`                     | `3.4`, `^4.0`              | 17.07.2019   | Feature Branch | dev-master |
 | **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Bugfix only    | 2.7        |
 | **1.5** | `4.0`                             | --                         | 18.03.2017   | Unsupported    | pimcore4   |
 
