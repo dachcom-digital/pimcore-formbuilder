@@ -6,6 +6,11 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.3.0 to Version 3.3.5
+- **[BUGFIX]**: reCaptcha V3 token reset issue [#240](https://github.com/dachcom-digital/pimcore-formbuilder/issues/240)
+- **[IMPROVEMENT]**: Implement Output Workflow Condition [#223](https://github.com/dachcom-digital/pimcore-formbuilder/pull/223)
+- **[BUGFIX]**: NotBlank constraint for multi file upload ignored [#228](https://github.com/dachcom-digital/pimcore-formbuilder/issues/228)
+
 #### Update from Version 3.2.0 to Version 3.3.0
 - **[IMPROVEMENT]**: Pimcore 6.6 ready
 - **[IMPROVEMENT]**: Use doctrine ORM instead of DAO for Form Data
