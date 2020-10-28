@@ -9,6 +9,8 @@ Just click the "update" button or execute the migration command to finish the bu
 #### Update from Version 3.3.0 to Version 3.3.5
 - **[BUGFIX]**: reCaptcha V3 token reset issue [#240](https://github.com/dachcom-digital/pimcore-formbuilder/issues/240)
 - **[IMPROVEMENT]**: Implement Output Workflow Condition [#223](https://github.com/dachcom-digital/pimcore-formbuilder/pull/223)
+- **[IMPROVEMENT]**: Do not use RENAME function in migration [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/issues/243)
+- **[IMPROVEMENT]**: Unify uft8mb4 tables and use VARCHAR(190) field length [#234](https://github.com/dachcom-digital/pimcore-formbuilder/issues/234)
 - **[BUGFIX]**: NotBlank constraint for multi file upload ignored [#228](https://github.com/dachcom-digital/pimcore-formbuilder/issues/228)
 
 #### Update from Version 3.2.0 to Version 3.3.0
