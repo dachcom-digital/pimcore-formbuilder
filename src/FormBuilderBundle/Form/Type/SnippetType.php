@@ -55,6 +55,7 @@ class SnippetType extends AbstractType
             'data' => '',
             'attr' => [
                 'data-field-name' => $view->vars['name'],
+                'data-field-id'   => $view->vars['id'],
                 'class'           => 'form-builder-snippet-element'
             ],
             'path' => $this->getSnippetId($options['path'])

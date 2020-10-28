@@ -77,7 +77,11 @@
                             $field.addClass('fb-multiple-input-validated');
                             $field.append($spanEl.addClass('d-block'));
                         } else {
-                            $fields.after($spanEl);
+                            if ($field.next().is('label') === true) {
+                                $field.next().after($spanEl);
+                            } else {
+                                $field.after($spanEl);
+                            }
                         }
                     });
                 },
@@ -201,7 +205,7 @@
 
                                         //fallback for custom fields (like ajax file, headline or snippet type)
                                         if ($fields.length === 0) {
-                                            $fields = $form.find('[data-field-name*="' + fieldId + '"]');
+                                            $fields = $form.find('[data-field-id*="' + fieldId + '"]');
                                         }
 
                                         if ($fields.length > 0) {
@@ -271,11 +275,11 @@
                     $submitButton = $form.find('*[type="submit"]'),
                     $template = $el.find('.qq-uploader-wrapper:first'),
                     $element = $el.find('.qq-upload-container'),
+                    fieldId = $el.data('field-id'),
                     fieldName = $el.data('field-name'),
                     $storeField = $el.find('input[type="hidden"]'),
                     formId = parseInt($form.find('input[name*="formId"]').val()),
-                    config = window[fieldName + '_dmf_config'];
-
+                    config = window[fieldId + '_dmf_config'];
 
                 $el.fineUploader({
                     debug: false,

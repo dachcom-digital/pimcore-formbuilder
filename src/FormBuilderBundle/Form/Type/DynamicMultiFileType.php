@@ -34,6 +34,7 @@ class DynamicMultiFileType extends AbstractType
             'data'           => '',
             'attr'           => [
                 'data-field-name' => $view->vars['name'],
+                'data-field-id'   => $view->vars['id'],
                 'class'           => [
                     'dynamic-multi-file',
                     'element-' . $view->vars['name']
