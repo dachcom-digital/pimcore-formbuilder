@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `formbuilder_forms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `group` varchar(255) DEFAULT NULL,
+  `name` varchar(190) DEFAULT NULL,
+  `group` varchar(190) DEFAULT NULL,
   `creationDate` datetime NOT NULL,
   `modificationDate` datetime NOT NULL,
   `createdBy` int(11) NOT NULL,
@@ -9,12 +9,12 @@ CREATE TABLE IF NOT EXISTS `formbuilder_forms` (
   `mailLayout` longtext COMMENT '(DC2Type:object)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_29DA5346999517A` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `form_definition` int(11) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(190) DEFAULT NULL,
   `success_management` longtext COMMENT '(DC2Type:object)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_form` (`name`,`form_definition`),
