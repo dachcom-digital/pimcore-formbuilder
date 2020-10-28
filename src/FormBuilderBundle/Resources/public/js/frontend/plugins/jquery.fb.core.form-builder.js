@@ -77,7 +77,11 @@
                             $field.addClass('fb-multiple-input-validated');
                             $field.append($spanEl.addClass('d-block'));
                         } else {
-                            $fields.after($spanEl);
+                            if ($field.next().is('label') === true) {
+                                $field.next().after($spanEl);
+                            } else {
+                                $field.after($spanEl);
+                            }
                         }
                     });
                 },
