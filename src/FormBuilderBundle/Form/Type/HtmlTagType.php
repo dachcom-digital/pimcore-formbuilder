@@ -32,6 +32,7 @@ class HtmlTagType extends AbstractType
             'data' => '',
             'attr' => [
                 'data-field-name' => $view->vars['name'],
+                'data-field-id'   => $view->vars['id'],
                 'class'           => 'form-builder-html-tag-element'
             ],
             'tag'  => empty($options['tag']) ? 'label' : $options['tag']

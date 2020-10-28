@@ -2,7 +2,7 @@
     {% apply spaceless %}
         <div {{ block('attributes') }}>
             <div class="qq-upload-container">
-                {% set translationVarName = name ~ '_dmf_config' %}
+                {% set translationVarName = id ~ '_dmf_config' %}
                 <script class="js-options">var {{ translationVarName }} = {{ engine_options|json_encode|raw }};</script>
             </div>
             <div class="qq-uploader-wrapper" style="display:none;">
