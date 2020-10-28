@@ -44,6 +44,7 @@
             this.action = this.$reCaptchaField.data('action-name');
 
             this.$form.on('formbuilder.success', this.onReset.bind(this));
+            this.$form.on('formbuilder.fail', this.onReset.bind(this));
 
             this.bindDependency();
 
