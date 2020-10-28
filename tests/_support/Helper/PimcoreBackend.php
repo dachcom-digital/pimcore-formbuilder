@@ -2,11 +2,14 @@
 
 namespace DachcomBundle\Test\Helper;
 
+use Codeception\Exception\ModuleException;
 use Codeception\Module;
 use Codeception\TestInterface;
+use Codeception\Util\Debug;
 use DachcomBundle\Test\Util\FileGeneratorHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Util\VersionHelper;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinition;
 use FormBuilderBundle\Model\FormDefinitionInterface;
@@ -15,11 +18,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
-use Pimcore\Model\Document\Tag\Relation;
 use Pimcore\Model\Tool\Email\Log;
-use Pimcore\Model\Document\Tag\Areablock;
-use Pimcore\Model\Document\Tag\Checkbox;
-use Pimcore\Model\Document\Tag\Select;
 use Pimcore\Tests\Util\TestHelper;
 use Pimcore\Translation\Translator;
 use Symfony\Component\DependencyInjection\Container;
@@ -50,7 +49,7 @@ class PimcoreBackend extends Module
             $folder->setFilename('formdata');
             $folder->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(
+            Debug::debug(
                 sprintf('[FORMBUILDER ERROR] error while re-creating formdata folder. message was: ' . $e->getMessage())
             );
         }
@@ -68,7 +67,7 @@ class PimcoreBackend extends Module
      *
      * @return FormDefinitionInterface
      *
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     public function haveAForm(TestFormBuilder $formBuilder)
     {
@@ -99,10 +98,12 @@ class PimcoreBackend extends Module
         try {
             $document->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document page. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document page. message was: ' . $e->getMessage()));
         }
 
         $this->assertInstanceOf(Page::class, Page::getById($document->getId()));
+
+        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
 
         return $document;
     }
@@ -123,7 +124,7 @@ class PimcoreBackend extends Module
         try {
             $snippet->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document snippet. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document snippet. message was: ' . $e->getMessage()));
         }
 
         $this->assertInstanceOf(Snippet::class, $snippet);
@@ -221,15 +222,29 @@ class PimcoreBackend extends Module
             $this->assertInstanceOf(Email::class, $copyMailTemplate);
         }
 
-        $document->setElements($this->createFormArea($form->getId(), $formTemplate, $mailTemplate, $sendUserCopy, $copyMailTemplate));
+        $editables = $this->createFormArea($form->getId(), $formTemplate, $mailTemplate, $sendUserCopy, $copyMailTemplate);
+
+        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
+            $document->setEditables($editables);
+        } else {
+            $document->setElements($editables);
+        }
+
+        if (method_exists($document, 'setMissingRequiredEditable')) {
+            $document->setMissingRequiredEditable(false);
+        }
 
         try {
             $document->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
         }
 
-        $this->assertCount(6, $document->getElements());
+        $this->assertCount(8, VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0') ? $document->getEditables() : $document->getElements());
+
+        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
+
+        //\Pimcore::collectGarbage();
     }
 
     /**
@@ -434,7 +449,7 @@ class PimcoreBackend extends Module
             $t->addTranslation($language, $translation);
             $t->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating translation. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating translation. message was: ' . $e->getMessage()));
         }
 
         $this->assertInstanceOf(\Pimcore\Model\Translation\Website::class, $t);
@@ -464,9 +479,8 @@ class PimcoreBackend extends Module
     protected function createForm(TestFormBuilder $formBuilder)
     {
         $manager = $this->getFormManager();
-        $form = $manager->save($formBuilder->build());
 
-        return $form;
+        return $manager->save($formBuilder->build());
     }
 
     /**
@@ -477,7 +491,7 @@ class PimcoreBackend extends Module
         try {
             $manager = $this->getContainer()->get(FormDefinitionManager::class);
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating form. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating form. message was: ' . $e->getMessage()));
             return null;
         }
 
@@ -499,7 +513,6 @@ class PimcoreBackend extends Module
         $document->setController('default');
         $document->setAction('snippet');
         $document->setType('snippet');
-        $document->setElements($elements);
         $document->setParentId(1);
         $document->setUserOwner(1);
         $document->setUserModification(1);
@@ -507,6 +520,12 @@ class PimcoreBackend extends Module
         $document->setKey($snippetKey);
         $document->setProperty('language', 'text', $locale, false, 1);
         $document->setPublished(true);
+
+        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
+            $document->setEditables($elements);
+        } else {
+            $document->setElements($elements);
+        }
 
         return $document;
 
@@ -546,6 +565,7 @@ class PimcoreBackend extends Module
         $documentKey = uniqid(sprintf('%s-', $key));
 
         $document = new Email();
+        $document->setPublished(true);
         $document->setType('email');
         $document->setParentId(1);
         $document->setUserOwner(1);
@@ -592,12 +612,18 @@ class PimcoreBackend extends Module
             $document->setProperties($params['properties']);
         }
 
+        if (method_exists($document, 'setMissingRequiredEditable')) {
+            $document->setMissingRequiredEditable(false);
+        }
+
         try {
             $document->save();
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating email. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating email. message was: ' . $e->getMessage()));
             return null;
         }
+
+        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
 
         return $document;
     }
@@ -613,18 +639,38 @@ class PimcoreBackend extends Module
      */
     protected function createFormArea($formId = 1, $formType = 'form_div_layout.html.twig', $mailTemplate = null, $sendUserCopy = false, $copyMailTemplate = null)
     {
-        $blockArea = new Areablock();
+        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
+            $blockAreaClass = 'Pimcore\Model\Document\Editable\Areablock';
+            $selectClass = 'Pimcore\Model\Document\Editable\Select';
+            $relationClass = 'Pimcore\Model\Document\Editable\Relation';
+            $checkboxClass = 'Pimcore\Model\Document\Editable\Checkbox';
+        } else {
+            $blockAreaClass = 'Pimcore\Model\Document\Tag\Areablock';
+            $selectClass = 'Pimcore\Model\Document\Tag\Select';
+            $relationClass = 'Pimcore\Model\Document\Tag\Relation';
+            $checkboxClass = 'Pimcore\Model\Document\Tag\Checkbox';
+        }
+
+        $blockArea = new $blockAreaClass();
         $blockArea->setName(FormHelper::AREA_TEST_NAMESPACE);
 
-        $formNameSelect = new Select();
+        $formNameSelect = new $selectClass();
         $formNameSelect->setName(sprintf('%s:1.formName', FormHelper::AREA_TEST_NAMESPACE));
         $formNameSelect->setDataFromEditmode($formId);
 
-        $formTypeSelect = new Select();
+        $formTypeSelect = new $selectClass();
         $formTypeSelect->setName(sprintf('%s:1.formType', FormHelper::AREA_TEST_NAMESPACE));
         $formTypeSelect->setDataFromEditmode($formType);
 
-        $sendMailTemplateRelation = new Relation();
+        $formPresetSelect = new $selectClass();
+        $formPresetSelect->setName(sprintf('%s:1.formPreset', FormHelper::AREA_TEST_NAMESPACE));
+        $formPresetSelect->setDataFromEditmode('custom');
+
+        $outputWorkflowSelect = new $selectClass();
+        $outputWorkflowSelect->setName(sprintf('%s:1.outputWorkflow', FormHelper::AREA_TEST_NAMESPACE));
+        $outputWorkflowSelect->setDataFromEditmode('none');
+
+        $sendMailTemplateRelation = new $relationClass();
         $sendMailTemplateRelation->setName(sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
 
         $data = [];
@@ -638,11 +684,11 @@ class PimcoreBackend extends Module
 
         $sendMailTemplateRelation->setDataFromEditmode($data);
 
-        $userCopyCheckbox = new Checkbox();
+        $userCopyCheckbox = new $checkboxClass();
         $userCopyCheckbox->setName(sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE));
         $userCopyCheckbox->setDataFromEditmode($sendUserCopy);
 
-        $sendCopyMailTemplateRelation = new Relation();
+        $sendCopyMailTemplateRelation = new $relationClass();
         $sendCopyMailTemplateRelation->setName(sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
 
         $data = [];
@@ -658,7 +704,6 @@ class PimcoreBackend extends Module
 
         $blockArea->setDataFromEditmode([
             [
-                'id'     => null,
                 'key'    => '1',
                 'type'   => 'formbuilder_form',
                 'hidden' => false
@@ -671,14 +716,15 @@ class PimcoreBackend extends Module
             sprintf('%s:1.formType', FormHelper::AREA_TEST_NAMESPACE)             => $formTypeSelect,
             sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE) => $sendCopyMailTemplateRelation,
             sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE)     => $sendMailTemplateRelation,
-            sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE)             => $userCopyCheckbox
+            sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE)             => $userCopyCheckbox,
+            sprintf('%s:1.formPreset', FormHelper::AREA_TEST_NAMESPACE)           => $formPresetSelect,
+            sprintf('%s:1.outputWorkflow', FormHelper::AREA_TEST_NAMESPACE)       => $outputWorkflowSelect
         ];
-
     }
 
     /**
      * @return Container
-     * @throws \Codeception\Exception\ModuleException
+     * @throws ModuleException
      */
     protected function getContainer()
     {
@@ -695,7 +741,7 @@ class PimcoreBackend extends Module
         try {
             $serializer = $this->getContainer()->get('pimcore_admin.serializer');
         } catch (\Exception $e) {
-            \Codeception\Util\Debug::debug(sprintf('[FORMBUILDER ERROR] error while getting pimcore admin serializer. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while getting pimcore admin serializer. message was: ' . $e->getMessage()));
         }
 
         $this->assertInstanceOf(Serializer::class, $serializer);
