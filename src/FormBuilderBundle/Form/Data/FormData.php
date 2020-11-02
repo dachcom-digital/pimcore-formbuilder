@@ -92,6 +92,29 @@ class FormData extends Form implements FormDataInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function replaceFieldValue(string $name, $value)
+    {
+        $found = false;
+
+        if (!is_array($this->data)) {
+            return;
+        }
+
+        array_walk_recursive($this->data, function (&$dataValue, $dataName) use ($name, $value, &$found) {
+            if ($dataName === $name) {
+                $dataValue = $value;
+                $found = true;
+            }
+        });
+
+        if ($found === false) {
+            $this->data[$name] = $value;
+        }
+    }
+
+    /**
      * @param string $name
      * @param mixed  $value
      */

@@ -30,6 +30,12 @@ interface FormDataInterface
     public function setFieldValue(string $name, $value);
 
     /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function replaceFieldValue(string $name, $value);
+
+    /**
      * @return bool
      */
     public function hasAttachments();

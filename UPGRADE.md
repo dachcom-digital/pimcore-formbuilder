@@ -7,11 +7,14 @@ After every update you should check the pimcore extension manager.
 Just click the "update" button or execute the migration command to finish the bundle update.
 
 #### Update from Version 3.3.0 to Version 3.3.5
-- **[BUGFIX]**: reCaptcha V3 token reset issue [#240](https://github.com/dachcom-digital/pimcore-formbuilder/issues/240)
 - **[IMPROVEMENT]**: Implement Output Workflow Condition [#223](https://github.com/dachcom-digital/pimcore-formbuilder/pull/223)
 - **[IMPROVEMENT]**: Do not use RENAME function in migration [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/issues/243)
 - **[IMPROVEMENT]**: Unify uft8mb4 tables and use VARCHAR(190) field length [#234](https://github.com/dachcom-digital/pimcore-formbuilder/issues/234)
+- **[BUGFIX]**: reCaptcha V3 token reset issue [#240](https://github.com/dachcom-digital/pimcore-formbuilder/issues/240)
 - **[BUGFIX]**: NotBlank constraint for multi file upload ignored [#228](https://github.com/dachcom-digital/pimcore-formbuilder/issues/228)
+- **[BUGFIX]**: Dynamic Multi File not working if placed in container [#179](https://github.com/dachcom-digital/pimcore-formbuilder/issues/179)
+- **[BUGFIX]**: Checkbox Validation Rendering Issue [#177](https://github.com/dachcom-digital/pimcore-formbuilder/issues/177)
+- **[BUGFIX]**: Dynamic Multi File Validation not working [#236](https://github.com/dachcom-digital/pimcore-formbuilder/issues/236)
 
 #### Update from Version 3.2.0 to Version 3.3.0
 - **[IMPROVEMENT]**: Pimcore 6.6 ready
