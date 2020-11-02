@@ -156,18 +156,20 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
     public function removeDynamicField(string $name);
 
     /**
-     * @param string $type
-     *
-     * @return FormFieldDefinitionInterface[]
-     */
-    public function getFieldsByType(string $type);
-
-    /**
      * @param string $name
+     * @param bool   $deep
      *
      * @return null|FormFieldDefinitionInterface
      */
-    public function getField(string $name);
+    public function getField(string $name, bool $deep = false);
+
+    /**
+     * @param string $name
+     * @param bool   $deep
+     *
+     * @return null|string
+     */
+    public function getFieldType(string $name, bool $deep = false);
 
     /**
      * @param string $name
@@ -175,13 +177,15 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      * @return null|FormFieldContainerDefinitionInterface
      *
      * @throws \Exception
+     * @internal
      */
     public function getFieldContainer(string $name);
 
     /**
-     * @param string $name
+     * @param string $type
      *
-     * @return null|string
+     * @return FormFieldDefinitionInterface[]
+     * @internal
      */
-    public function getFieldType(string $name);
+    public function getFieldsByType(string $type);
 }

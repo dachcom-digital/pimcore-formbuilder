@@ -27,7 +27,6 @@ class AttachmentStream implements AttachmentStreamInterface
      */
     public function createAttachmentLinks($data, $formName)
     {
-        $fieldName = $this->extractFieldName($data);
         $files = $this->extractFiles($data);
 
         if (empty($files)) {

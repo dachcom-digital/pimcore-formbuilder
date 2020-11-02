@@ -6,6 +6,7 @@ use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormConfigBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraint;
@@ -46,7 +47,14 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, DynamicMultiFileNotBlank::class);
         }
 
+        $object = $this->context->getObject();
+        if (!$object instanceof FormInterface) {
+            return;
+        }
+
+        $fieldId = $this->buildId($object);
         $field = $this->context->getObject()->getConfig();
+
         if (!$field instanceof FormConfigBuilderInterface) {
             return;
         }
@@ -61,8 +69,7 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
                 continue;
             }
 
-            if (isset($sessionValue['fieldName']) &&
-                $sessionValue['fieldName'] == $field->getName()) {
+            if (isset($sessionValue['fieldId']) && $sessionValue['fieldId'] === $fieldId) {
                 $counter++;
             }
         }
@@ -70,5 +77,21 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
         if ($counter === 0) {
             $this->context->buildViolation($constraint->message)->addViolation();
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     *
+     * @return string
+     */
+    private function buildId(FormInterface $form): string
+    {
+        $id = $form->getName();
+
+        if ($form->getParent() !== null) {
+            $id = sprintf('%s_%s', $this->buildId($form->getParent()), $id);
+        }
+
+        return $id;
     }
 }

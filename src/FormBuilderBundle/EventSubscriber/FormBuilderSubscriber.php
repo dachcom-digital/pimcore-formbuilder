@@ -188,34 +188,49 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->session->getBag('form_builder_session');
 
-        //handle linked assets.
         $fileData = [];
+        //handle linked assets.
         foreach ($sessionBag->getIterator() as $key => $sessionValue) {
+
             $formKey = 'file_' . $formDefinition->getId();
             if (substr($key, 0, strlen($formKey)) !== $formKey) {
                 continue;
             }
-            $fileData[$sessionValue['fieldName']][] = $sessionValue;
+
+            if (!isset($fileData[$sessionValue['fieldId']])) {
+                $fileData[$sessionValue['fieldId']] = [
+                    'id'    => $sessionValue['fieldId'],
+                    'name'  => $sessionValue['fieldName'],
+                    'files' => []
+                ];
+            }
+
+            $fileData[$sessionValue['fieldId']]['files'][] = $sessionValue;
             $sessionBag->remove($key);
         }
 
-        foreach ($fileData as $fieldName => $files) {
-            $formField = $formData->getFormDefinition()->getField($fieldName);
+        foreach ($fileData as $fileBlock) {
+
+            $fieldId = $fileBlock['id'];
+            $fieldName = $fileBlock['name'];
+            $files = $fileBlock['files'];
+
+            $formField = $formData->getFormDefinition()->getField($fieldName, true);
             $formFieldOptions = $formField instanceof FormFieldDefinitionInterface ? $formField->getOptions() : [];
             if (isset($formFieldOptions['submit_as_attachment']) && $formFieldOptions['submit_as_attachment'] === true) {
                 $attachmentLinks = $this->attachmentStream->createAttachmentLinks($files, $formDefinition->getName());
                 foreach ($attachmentLinks as $attachmentLink) {
                     $formData->addAttachment($attachmentLink);
                     // set value to null to skip field in mail template
-                    $formData->setFieldValue($fieldName, null);
+                    $formData->replaceValueByFieldId($fieldId, null);
                 }
             } else {
                 $asset = $this->attachmentStream->createAttachmentAsset($files, $formDefinition->getName());
                 if ($asset instanceof Asset) {
-                    $hostUrl = \Pimcore\Tool::getHostUrl();
-                    $formData->setFieldValue($fieldName, $hostUrl . $asset->getRealFullPath());
+                    $formData->replaceValueByFieldId($fieldId, sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath()));
                 }
             }
+
         }
 
         $event->setData($formData);
@@ -243,7 +258,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             'conditionalLogic'   => $formData->getFormDefinition()->getConditionalLogic()
         ];
 
-        /** @var FormFieldDefinitionInterface $field */
         foreach ($orderedFields as $field) {
             if ($field instanceof FormFieldDynamicDefinitionInterface) {
                 $formTypeData = $this->addDynamicField($field);
@@ -298,7 +312,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $containerAttributes['data-template'] = join(' ', $attrDataTemplate);
         }
 
-        $data = [
+        return [
             'name'    => $fieldContainer->getName(),
             'type'    => $typeClass,
             'options' => [
@@ -310,8 +324,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 ]
             ]
         ];
-
-        return $data;
     }
 
     /**
@@ -364,10 +376,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                array_filter($constraints, function ($constraint) {
-                    return $constraint instanceof NotBlank;
-                })
-            ) === 1;
+                    array_filter($constraints, function ($constraint) {
+                        return $constraint instanceof NotBlank;
+                    })
+                ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout
@@ -399,13 +411,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $options['attr']['data-template'] = join(' ', $templateClasses);
         }
 
-        $data = [
+        return [
             'name'    => $field->getName(),
             'type'    => $this->availableFormTypes[$field->getType()]['class'],
             'options' => $options
         ];
-
-        return $data;
     }
 
     /**
@@ -444,13 +454,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $options['attr']['data-template'] = $optional['template'];
         }
 
-        $data = [
+        return [
             'name'    => $field->getName(),
             'type'    => $field->getType(),
             'options' => $options
         ];
-
-        return $data;
     }
 
     /**
@@ -473,14 +481,17 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     {
         /** @var FormFieldDefinitionInterface $field */
         foreach ($fields as $field) {
+
             if (!empty($data[$field->getName()])) {
                 continue;
             }
 
             if ($field instanceof FormFieldContainerDefinitionInterface) {
+
                 if (!isset($data[$field->getName()])) {
                     $data[$field->getName()] = [];
                 }
+
                 $this->preFillData($field->getFields(), $data[$field->getName()]);
 
                 continue;

@@ -332,30 +332,23 @@ class FormDefinition implements FormDefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getFieldsByType(string $type)
+    public function getField(string $name, bool $deep = false)
     {
-        $fields = [];
-        foreach ($this->getFields() as $field) {
-            if ($field->getType() === $type) {
-                $fields[] = $field;
-            }
-        }
-
-        return $fields;
+        return $this->findField($this->getFields(), $name, $deep);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getField(string $name)
+    public function getFieldType(string $name, bool $deep = false)
     {
-        foreach ($this->getFields() as $field) {
-            if ($field->getName() === $name) {
-                return $field;
-            }
+        $field = $this->findField($this->getFields(), $name, $deep);
+
+        if ($field === null) {
+            return null;
         }
 
-        return null;
+        return $field->getType();
     }
 
     /**
@@ -374,14 +367,41 @@ class FormDefinition implements FormDefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getFieldType(string $name)
+    public function getFieldsByType(string $type)
     {
-        $field = $this->getField($name);
-
-        if (!$field) {
-            return null;
+        $fields = [];
+        foreach ($this->getFields() as $field) {
+            if ($field->getType() === $type) {
+                $fields[] = $field;
+            }
         }
 
-        return $field->getType();
+        return $fields;
+    }
+
+    /**
+     * @param FormFieldDefinitionInterface[] $fields
+     * @param mixed                          $value
+     * @param bool                           $deep
+     *
+     * @return FormFieldDefinitionInterface|null
+     */
+    protected function findField(array $fields, $value, bool $deep = false)
+    {
+        foreach ($fields as $field) {
+
+            if ($field->getName() === $value) {
+                return $field;
+            }
+
+            if ($deep === true && $field instanceof FormFieldContainerDefinitionInterface) {
+                $subField = $this->findField($field->getFields(), $value, $deep);
+                if ($subField !== null) {
+                    return $subField;
+                }
+            }
+        }
+
+        return null;
     }
 }
