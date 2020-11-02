@@ -102,7 +102,9 @@ class FormData extends Form implements FormDataInterface
 
         $found = false;
         $formId = sprintf('formbuilder_%s', $this->formDefinition->getId());
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($this->data), \RecursiveIteratorIterator::SELF_FIRST);
+
+        $arrayIterator = new \RecursiveArrayIterator($this->data);
+        $iterator = new \RecursiveIteratorIterator($arrayIterator, \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $key => $leafValue) {
 
@@ -123,8 +125,18 @@ class FormData extends Form implements FormDataInterface
             $found = true;
             $currentDepth = $iterator->getDepth();
             for ($subDepth = $currentDepth; $subDepth >= 0; $subDepth--) {
+
+                /** @var \ArrayIterator $subIterator */
                 $subIterator = $iterator->getSubIterator($subDepth);
-                $storeValue = $subDepth === $currentDepth ? $value : $iterator->getSubIterator(($subDepth + 1))->getArrayCopy();
+
+                if ($subDepth === $currentDepth) {
+                    $storeValue = $value;
+                } else {
+                    /** @var \ArrayIterator $nextSubIterator */
+                    $nextSubIterator = $iterator->getSubIterator(($subDepth + 1));
+                    $storeValue = $nextSubIterator->getArrayCopy();
+                }
+
                 $subIterator->offsetSet($subIterator->key(), $storeValue);
             }
         }

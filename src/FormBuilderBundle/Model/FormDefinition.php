@@ -380,9 +380,9 @@ class FormDefinition implements FormDefinitionInterface
     }
 
     /**
-     * @param FormFieldDefinitionInterface[]       $fields
-     * @param                                      $value
-     * @param bool                                 $deep
+     * @param FormFieldDefinitionInterface[] $fields
+     * @param mixed                          $value
+     * @param bool                           $deep
      *
      * @return FormFieldDefinitionInterface|null
      */
