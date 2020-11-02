@@ -11,15 +11,15 @@
 {%- endblock form_builder_dynamicmultifile_widget -%}
 
 {%- block form_widget_compound -%}
-    {% if form.parent is not empty %}
+    {%- if form is not rootform -%}
         <div {{ block('widget_container_attributes') }}>
     {% endif %}
-    {%- if form.parent is empty -%}
+    {%- if form is rootform -%}
         {{ form_errors(form) }}
     {%- endif -%}
     {{- block('form_rows') -}}
     {{- form_rest(form) -}}
-    {% if form.parent is not empty %}
+    {%- if form is not rootform -%}
         </div>
     {% endif %}
 {%- endblock form_widget_compound -%}

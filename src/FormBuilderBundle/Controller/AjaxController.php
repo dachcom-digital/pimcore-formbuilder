@@ -94,7 +94,7 @@ class AjaxController extends FrontendController
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
 
         //remove tmp element from session!
-        $sessionKey = 'file_' . $formId . '_' . $uuid;
+        $sessionKey = sprintf('file_%s_%s', $formId, $uuid);
         $sessionBag->remove($sessionKey);
 
         $result = $this->fileStream->handleDelete($uuid);

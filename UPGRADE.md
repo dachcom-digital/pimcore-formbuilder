@@ -15,6 +15,7 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[BUGFIX]**: Dynamic Multi File not working if placed in container [#179](https://github.com/dachcom-digital/pimcore-formbuilder/issues/179)
 - **[BUGFIX]**: Checkbox Validation Rendering Issue [#177](https://github.com/dachcom-digital/pimcore-formbuilder/issues/177)
 - **[BUGFIX]**: Dynamic Multi File Validation not working [#236](https://github.com/dachcom-digital/pimcore-formbuilder/issues/236)
+- **[BUGFIX]**: Missing row class in repeater container [#206](https://github.com/dachcom-digital/pimcore-formbuilder/issues/206)
 
 #### Update from Version 3.2.0 to Version 3.3.0
 - **[IMPROVEMENT]**: Pimcore 6.6 ready
