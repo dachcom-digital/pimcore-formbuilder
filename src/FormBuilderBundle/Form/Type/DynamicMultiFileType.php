@@ -88,6 +88,10 @@ class DynamicMultiFileType extends AbstractType
      */
     private function getInterfaceTranslations()
     {
+        $globalMessages = [
+            'cannotDestroyActiveInstanceError' => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance')
+        ];
+
         $coreMessages = [
             'typeError'                    => $this->translator->trans('form_builder.dynamic_multi_file.file_invalid_extension'),
             'sizeError'                    => $this->translator->trans('form_builder.dynamic_multi_file.file_is_too_large'),
@@ -117,12 +121,11 @@ class DynamicMultiFileType extends AbstractType
             'paused'             => $this->translator->trans('form_builder.dynamic_multi_file.paused')
         ];
 
-        $messages = [
+        return [
             'core'   => $coreMessages,
             'delete' => $deleteMessages,
-            'text'   => $interfacesText
+            'text'   => $interfacesText,
+            'global' => $globalMessages
         ];
-
-        return $messages;
     }
 }

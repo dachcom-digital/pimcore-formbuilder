@@ -384,7 +384,7 @@ class FormDefinition implements FormDefinitionInterface
      * @param                                      $value
      * @param bool                                 $deep
      *
-     * @return mixed|null
+     * @return FormFieldDefinitionInterface|null
      */
     protected function findField(array $fields, $value, bool $deep = false)
     {
@@ -395,7 +395,10 @@ class FormDefinition implements FormDefinitionInterface
             }
 
             if ($deep === true && $field instanceof FormFieldContainerDefinitionInterface) {
-                return $this->findField($field->getFields(), $value, $deep);
+                $subField = $this->findField($field->getFields(), $value, $deep);
+                if ($subField !== null) {
+                    return $subField;
+                }
             }
         }
 

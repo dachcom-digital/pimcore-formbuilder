@@ -191,15 +191,30 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $fileData = [];
         //handle linked assets.
         foreach ($sessionBag->getIterator() as $key => $sessionValue) {
+
             $formKey = 'file_' . $formDefinition->getId();
             if (substr($key, 0, strlen($formKey)) !== $formKey) {
                 continue;
             }
-            $fileData[$sessionValue['fieldName']][] = $sessionValue;
+
+            if (!isset($fileData[$sessionValue['fieldId']])) {
+                $fileData[$sessionValue['fieldId']] = [
+                    'id'    => $sessionValue['fieldId'],
+                    'name'  => $sessionValue['fieldName'],
+                    'files' => []
+                ];
+            }
+
+            $fileData[$sessionValue['fieldId']]['files'][] = $sessionValue;
             $sessionBag->remove($key);
         }
 
-        foreach ($fileData as $fieldName => $files) {
+        foreach ($fileData as $fileBlock) {
+
+            $fieldId = $fileBlock['id'];
+            $fieldName = $fileBlock['name'];
+            $files = $fileBlock['files'];
+
             $formField = $formData->getFormDefinition()->getField($fieldName, true);
             $formFieldOptions = $formField instanceof FormFieldDefinitionInterface ? $formField->getOptions() : [];
             if (isset($formFieldOptions['submit_as_attachment']) && $formFieldOptions['submit_as_attachment'] === true) {
@@ -207,14 +222,15 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 foreach ($attachmentLinks as $attachmentLink) {
                     $formData->addAttachment($attachmentLink);
                     // set value to null to skip field in mail template
-                    $formData->replaceFieldValue($fieldName, null);
+                    $formData->replaceValueByFieldId($fieldId, null);
                 }
             } else {
                 $asset = $this->attachmentStream->createAttachmentAsset($files, $formDefinition->getName());
                 if ($asset instanceof Asset) {
-                    $formData->replaceFieldValue($fieldName, sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath()));
+                    $formData->replaceValueByFieldId($fieldId, sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath()));
                 }
             }
+
         }
 
         $event->setData($formData);

@@ -30,5 +30,6 @@
 "form_builder.dynamic_multi_file.upload_failed","Upload failed","Upload fehlgeschlagen."
 "form_builder.dynamic_multi_file.processing","Processing...","Verarbeite..."
 "form_builder.dynamic_multi_file.paused","Paused","Pausiert"
+"form_builder.dynamic_multi_file.global.cannot_destroy_active_instance","This uploader is currently active or has some unprocessed files. in case there are some uploaded files, please remove them first.","Ein Uploader ist derzeit in dieser Sektion aktiv oder es wurden bereits Daten verarbeitet. Falls es bereits hochgeladene Dateien gibt, entfernen Sie diese bitte zuerst."
 "form_builder.form.container.repeater.min","%label%: You need to add at least %items% items.","%label%: Es werden mindestens %items% Einträge benötigt."
 "form_builder.form.container.repeater.max","%label%: Only %items% item(s) allowed.","%label%: Maximal %items% Einträge erlaubt."

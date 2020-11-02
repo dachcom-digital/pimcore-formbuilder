@@ -159,7 +159,15 @@
                 this.reRenderBlockLabels(container);
                 this.addRemoveBlockButton(container, index, $newForm);
                 this.verifyButtonStates(container);
+                this.$form.trigger('formbuilder.layout.post.add', [$newForm]);
             }.bind(this);
+
+            try {
+                this.$form.trigger('formbuilder.layout.pre.add', [newForm]);
+            } catch (error) {
+                alert(error);
+                return;
+            }
 
             if (typeof this.options.onAdd === 'function') {
                 this.options.onAdd.call(container, newForm, cb.bind(this));
@@ -182,7 +190,15 @@
             cb = function () {
                 this.reRenderBlockLabels($container[0]);
                 this.verifyButtonStates($container[0]);
+                this.$form.trigger('formbuilder.layout.post.remove', [$containerBlock]);
             }.bind(this);
+
+            try {
+                this.$form.trigger('formbuilder.layout.pre.remove', [$containerBlock]);
+            } catch (error) {
+                alert(error);
+                return;
+            }
 
             if (typeof this.options.onRemove === 'function') {
                 this.options.onRemove.call($containerBlock[0], cb.bind(this));

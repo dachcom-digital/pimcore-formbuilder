@@ -121,7 +121,7 @@ class FrontendFormBuilder
         }
 
         $builder = $this->formFactory->createNamedBuilder(
-            'formbuilder_' . $formDefinition->getId(),
+            sprintf('formbuilder_%s', $formDefinition->getId()),
             DynamicFormType::class,
             $this->formDataFactory->createFormData($formDefinition),
             [

@@ -30,10 +30,10 @@ interface FormDataInterface
     public function setFieldValue(string $name, $value);
 
     /**
-     * @param string $name
+     * @param string $fieldId
      * @param mixed  $value
      */
-    public function replaceFieldValue(string $name, $value);
+    public function replaceValueByFieldId(string $fieldId, $value);
 
     /**
      * @return bool

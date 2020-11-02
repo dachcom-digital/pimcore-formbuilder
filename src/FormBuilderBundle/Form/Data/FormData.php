@@ -94,23 +94,45 @@ class FormData extends Form implements FormDataInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceFieldValue(string $name, $value)
+    public function replaceValueByFieldId(string $fieldId, $value)
     {
-        $found = false;
-
         if (!is_array($this->data)) {
             return;
         }
 
-        array_walk_recursive($this->data, function (&$dataValue, $dataName) use ($name, $value, &$found) {
-            if ($dataName === $name) {
-                $dataValue = $value;
-                $found = true;
+        $found = false;
+        $formId = sprintf('formbuilder_%s', $this->formDefinition->getId());
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($this->data), \RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $key => $leafValue) {
+
+            $change = false;
+            $keys = [$formId];
+
+            foreach (range(0, $iterator->getDepth()) as $depth) {
+                $keys[] = $iterator->getSubIterator($depth)->key();
+                if (join('_', $keys) === $fieldId) {
+                    $change = true;
+                }
             }
-        });
+
+            if ($change === false) {
+                continue;
+            }
+
+            $found = true;
+            $currentDepth = $iterator->getDepth();
+            for ($subDepth = $currentDepth; $subDepth >= 0; $subDepth--) {
+                $subIterator = $iterator->getSubIterator($subDepth);
+                $storeValue = $subDepth === $currentDepth ? $value : $iterator->getSubIterator(($subDepth + 1))->getArrayCopy();
+                $subIterator->offsetSet($subIterator->key(), $storeValue);
+            }
+        }
+
+        $this->data = $iterator->getArrayCopy();
 
         if ($found === false) {
-            $this->data[$name] = $value;
+            $this->data[str_replace(sprintf('%s_', $formId), '', $fieldId)] = $value;
         }
     }
 

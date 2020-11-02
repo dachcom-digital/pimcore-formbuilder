@@ -42,6 +42,7 @@ class AjaxController extends FrontendController
         $method = $request->getMethod();
 
         $formId = $request->request->get('formId');
+        $fieldId = $request->request->get('fieldId');
         $fieldName = $request->request->get('fieldName');
 
         /** @var NamespacedAttributeBag $sessionBag */
@@ -52,22 +53,31 @@ class AjaxController extends FrontendController
             $result['uploadName'] = $this->fileStream->getRealFileName();
 
             if ($result['success'] === true) {
-                $sessionKey = 'file_' . $formId . '_' . $result['uuid'];
-                $sessionValue = ['fileName' => $result['uploadName'], 'fieldName' => $fieldName, 'uuid' => $result['uuid']];
-                $sessionBag->set($sessionKey, $sessionValue);
+                $sessionBag->set(
+                    sprintf('file_%s_%s', $formId, $result['uuid']),
+                    [
+                        'uuid'      => $result['uuid'],
+                        'fileName'  => $result['uploadName'],
+                        'fieldId'   => $fieldId,
+                        'fieldName' => $fieldName
+                    ]
+                );
             }
 
             return $this->json($result);
-        } elseif ($method === 'DELETE') {
-            return $this->fileDeleteAction($request, $request->request->get('uuid'));
-        } else {
-            $response = new Response();
-            $response->headers->set('Content-Type', 'text/plain');
-            $response->headers->set('Cache-Control', 'no-cache');
-            $response->setStatusCode(405);
-
-            return $response;
         }
+
+        if ($method === 'DELETE') {
+            return $this->fileDeleteAction($request, $request->request->get('uuid'));
+        }
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->headers->set('Cache-Control', 'no-cache');
+        $response->setStatusCode(405);
+
+        return $response;
+
     }
 
     /**
@@ -78,7 +88,7 @@ class AjaxController extends FrontendController
      */
     public function fileDeleteAction(Request $request, $uuid = '')
     {
-        $formId = $request->request->get('formId');
+        $formId = $request->query->get('formId');
 
         /** @var NamespacedAttributeBag $sessionBag */
         $sessionBag = $this->container->get('session')->getBag('form_builder_session');
@@ -100,6 +110,7 @@ class AjaxController extends FrontendController
     public function fileChunkDoneAction(Request $request)
     {
         $formId = $request->request->get('formId');
+        $fieldId = $request->request->get('fieldId');
         $fieldName = $request->request->get('fieldName');
 
         /** @var NamespacedAttributeBag $sessionBag */
@@ -112,9 +123,15 @@ class AjaxController extends FrontendController
 
         if ($result['success'] === true) {
             //add uuid to session to find it again later!
-            $sessionKey = 'file_' . $formId . '_' . $result['uuid'];
-            $sessionValue = ['fileName' => $result['uploadName'], 'fieldName' => $fieldName, 'uuid' => $result['uuid']];
-            $sessionBag->set($sessionKey, $sessionValue);
+            $sessionBag->set(
+                sprintf('file_%s_%s', $formId, $result['uuid']),
+                [
+                    'uuid'      => $result['uuid'],
+                    'fileName'  => $result['uploadName'],
+                    'fieldId'   => $fieldId,
+                    'fieldName' => $fieldName
+                ]
+            );
         }
 
         return $this->json($result, $result['statusCode']);

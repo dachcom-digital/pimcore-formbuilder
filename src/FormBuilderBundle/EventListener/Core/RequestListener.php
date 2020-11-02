@@ -211,7 +211,7 @@ class RequestListener implements EventSubscriberInterface
         $formDefinitionConfig = $formDefinition->getConfig();
 
         $data = null;
-        $name = 'formbuilder_' . $formDefinition->getId();
+        $name = sprintf('formbuilder_%s', $formDefinition->getId());
         $method = isset($formDefinitionConfig['method']) ? strtoupper($formDefinitionConfig['method']) : 'POST';
 
         if ($request->getMethod() !== $method) {
