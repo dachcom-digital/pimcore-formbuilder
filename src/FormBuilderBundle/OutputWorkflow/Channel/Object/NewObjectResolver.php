@@ -61,7 +61,7 @@ class NewObjectResolver extends AbstractObjectResolver
         $pathName = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($this->getResolvingObjectClass()));
 
         /** @var DataObject\Concrete $object */
-        $object = new $pathName();
+        $object = $this->modelFactory->build($pathName);
 
         $object->setParent($storageFolder);
         $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId())));
