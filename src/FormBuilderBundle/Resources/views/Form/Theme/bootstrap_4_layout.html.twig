@@ -6,7 +6,7 @@
 {% use '@FormBuilder/Form/Theme/Type/container.html.twig' %}
 
 {%- block form_builder_dynamicmultifile_widget -%}
-    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) -%}
+    {%- set attr = attr|merge({class: (attr.class|default(''))|trim}) -%}
     {{ parent() }}
 {%- endblock form_builder_dynamicmultifile_widget -%}
 
