@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 2.7.x to Version 2.7.7
+- **[BUGFIX]**: Fix HoneypotType class name [@RuudvdvNB](https://github.com/dachcom-digital/pimcore-formbuilder/issues/259)
+
 #### Update from Version 2.7.4 to Version 2.7.5
 - **[BUGFIX]**: Check if checkbox configuration is available
 
