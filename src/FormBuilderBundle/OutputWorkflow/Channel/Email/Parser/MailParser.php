@@ -284,9 +284,11 @@ class MailParser
     {
         $data = '';
         if (is_array($field)) {
+            $i = 0;
             foreach ($field as $k => $f) {
+                $i++;
                 $data .= $this->parseStringForOutput($f);
-                if ($k + 1 !== count($field)) {
+                if ($i !== count($field)) {
                     $data .= $separator;
                 }
             }
