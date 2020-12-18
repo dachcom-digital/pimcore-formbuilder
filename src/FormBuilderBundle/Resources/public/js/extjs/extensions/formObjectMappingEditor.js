@@ -134,6 +134,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditor = Class.create({
 
         Ext.Ajax.request({
             url: '/admin/formbuilder/output-workflow/object/get-form-data',
+            method: 'POST',
             params: {
                 id: this.formId,
                 baseConfiguration: Ext.encode(this.baseConfiguration),
