@@ -126,7 +126,7 @@ form_builder.controller.admin.output_workflow.object.get_field_collection_types:
 form_builder.controller.admin.output_workflow.object.get_form_data:
     path: /admin/formbuilder/output-workflow/object/get-form-data
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getFormDataAction }
-    methods: [GET]
+    methods: [POST]
 
 form_builder.controller.admin.output_workflow.object.get_dynamic_object_resolver:
     path: /admin/formbuilder/output-workflow/object/get-dynamic-object-resolver
