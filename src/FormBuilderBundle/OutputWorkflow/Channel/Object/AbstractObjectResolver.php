@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\FactoryInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
@@ -52,17 +53,25 @@ abstract class AbstractObjectResolver
     protected $workflowName;
 
     /**
+     * @var FactoryInterface
+     */
+    protected $modelFactory;
+
+    /**
      * @param FormValuesOutputApplierInterface $formValuesOutputApplier
      * @param EventDispatcherInterface         $eventDispatcher
+     * @param FactoryInterface                 $modelFactory
      * @param array                            $objectMappingData
      */
     public function __construct(
         FormValuesOutputApplierInterface $formValuesOutputApplier,
         EventDispatcherInterface $eventDispatcher,
+        FactoryInterface $modelFactory,
         array $objectMappingData
     ) {
         $this->formValuesOutputApplier = $formValuesOutputApplier;
         $this->eventDispatcher = $eventDispatcher;
+        $this->modelFactory = $modelFactory;
         $this->objectMappingData = $objectMappingData;
     }
 
