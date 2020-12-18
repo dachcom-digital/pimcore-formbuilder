@@ -35,9 +35,10 @@ Add the CDN Link or implement your own styling.
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.15.0/all.fine-uploader/fine-uploader-new.min.css" />
 ```
 
-To enable fineuploader, add the javascript library.
+To enable fineuploader, add the javascript library and formbuilder core script.
 
 ### Scripts
 ```twig
+    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
 ```
