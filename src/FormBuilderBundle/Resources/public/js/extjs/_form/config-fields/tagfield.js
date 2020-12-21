@@ -22,6 +22,7 @@ Formbuilder.extjs.form.fields.tagfield = Class.create(Formbuilder.extjs.form.fie
             valueField: 'index',
             hideTrigger: true,
             editable: !hasStore,
+            selectOnFocus: !hasStore,
             anchor: '100%'
         });
     }
