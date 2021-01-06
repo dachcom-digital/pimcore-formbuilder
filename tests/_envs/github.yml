@@ -6,6 +6,7 @@ modules:
             restart: true
             wait: 1
             capabilities:
+                unexpectedAlertBehaviour: 'accept'
                 chromeOptions:
                     args: ['--no-sandbox', '--disable-extensions', '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--window-size=1280,1024']
                     prefs:
