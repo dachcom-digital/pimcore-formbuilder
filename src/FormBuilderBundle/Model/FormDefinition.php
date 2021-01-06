@@ -389,7 +389,6 @@ class FormDefinition implements FormDefinitionInterface
     protected function findField(array $fields, $value, bool $deep = false)
     {
         foreach ($fields as $field) {
-
             if ($field->getName() === $value) {
                 return $field;
             }

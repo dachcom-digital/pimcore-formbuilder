@@ -77,7 +77,6 @@ class AjaxController extends FrontendController
         $response->setStatusCode(405);
 
         return $response;
-
     }
 
     /**

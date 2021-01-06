@@ -107,7 +107,6 @@ class FormData extends Form implements FormDataInterface
         $iterator = new \RecursiveIteratorIterator($arrayIterator, \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $key => $leafValue) {
-
             $change = false;
             $keys = [$formId];
 
@@ -125,7 +124,6 @@ class FormData extends Form implements FormDataInterface
             $found = true;
             $currentDepth = $iterator->getDepth();
             for ($subDepth = $currentDepth; $subDepth >= 0; $subDepth--) {
-
                 /** @var \ArrayIterator $subIterator */
                 $subIterator = $iterator->getSubIterator($subDepth);
 
