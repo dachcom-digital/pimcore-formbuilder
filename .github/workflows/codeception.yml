@@ -78,13 +78,6 @@ jobs:
                     chmod +x ./pimcore-codeception-framework/src/_etc/scripts/setup.sh
                     ./pimcore-codeception-framework/src/_etc/scripts/setup.sh
 
-            -   name: Load GeoLite2
-                run: |
-                    sudo apt-get update
-                    sudo apt-get install -y wget
-                    wget -c https://raw.githubusercontent.com/wp-statistics/GeoLite2-City/master/GeoLite2-City.mmdb.gz -O GeoLite2-City.mmdb.gz
-                    gunzip GeoLite2-City.mmdb.gz -c > var/config/GeoLite2-City.mmdb
-
             -   name: Install PHP
                 uses: shivammathur/setup-php@v2
                 with:
@@ -148,13 +141,6 @@ jobs:
 
             -   name: Tests
                 run: |
-                    echo "127.0.0.1 test-domain1.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain2.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain3.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain4.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain5.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain6.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain7.test" | sudo tee -a /etc/hosts
                     bin/console cache:warmup --env=test
                     vendor/bin/codecept run --env github -c ${{ env.GITHUB_WORKSPACE }}
 

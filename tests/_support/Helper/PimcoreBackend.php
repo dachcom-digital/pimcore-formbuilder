@@ -144,55 +144,41 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         }
 
         $editables = [
-            [
-                'formName' => [
-                    'type'             => 'select',
-                    'dataFromEditmode' => $form->getId(),
-                ],
+            'formName'             => [
+                'type'             => 'select',
+                'dataFromEditmode' => $form->getId(),
             ],
-            [
-                'formType' => [
-                    'type'             => 'select',
-                    'dataFromEditmode' => $formTemplate,
-                ],
+            'formType'             => [
+                'type'             => 'select',
+                'dataFromEditmode' => $formTemplate,
             ],
-            [
-                'formPreset' => [
-                    'type'             => 'select',
-                    'dataFromEditmode' => 'custom',
-                ],
+            'formPreset'           => [
+                'type'             => 'select',
+                'dataFromEditmode' => 'custom',
             ],
-            [
-                'outputWorkflow' => [
-                    'type'             => 'select',
-                    'dataFromEditmode' => 'none',
-                ],
+            'outputWorkflow'       => [
+                'type'             => 'select',
+                'dataFromEditmode' => 'none',
             ],
-            [
-                'userCopy' => [
-                    'type'             => 'checkbox',
-                    'dataFromEditmode' => $sendUserCopy,
-                ],
+            'userCopy'             => [
+                'type'             => 'checkbox',
+                'dataFromEditmode' => $sendUserCopy,
             ],
-            [
-                'sendMailTemplate' => [
-                    'type'             => 'relation',
-                    'dataFromEditmode' => $mailTemplate instanceof Email ? [
-                        'id'      => $mailTemplate->getId(),
-                        'type'    => 'document',
-                        'subtype' => $mailTemplate->getType()
-                    ] : [],
-                ],
+            'sendMailTemplate'     => [
+                'type'             => 'relation',
+                'dataFromEditmode' => $mailTemplate instanceof Email ? [
+                    'id'      => $mailTemplate->getId(),
+                    'type'    => 'document',
+                    'subtype' => $mailTemplate->getType()
+                ] : [],
             ],
-            [
-                'sendCopyMailTemplate' => [
-                    'type'             => 'relation',
-                    'dataFromEditmode' => $copyMailTemplate instanceof Email ? [
-                        'id'      => $copyMailTemplate->getId(),
-                        'type'    => 'document',
-                        'subtype' => $copyMailTemplate->getType()
-                    ] : [],
-                ],
+            'sendCopyMailTemplate' => [
+                'type'             => 'relation',
+                'dataFromEditmode' => $copyMailTemplate instanceof Email ? [
+                    'id'      => $copyMailTemplate->getId(),
+                    'type'    => 'document',
+                    'subtype' => $copyMailTemplate->getType()
+                ] : [],
             ],
         ];
 
@@ -220,8 +206,8 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
 
         $this->assertCount(8, VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0') ? $document->getEditables() : $document->getElements());
 
-        //\Pimcore::collectGarbage();
-        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
+        \Pimcore::collectGarbage();
+        //\Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
 
     }
 

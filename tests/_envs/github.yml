@@ -1,0 +1,10 @@
+modules:
+    config:
+        \Dachcom\Codeception\Helper\Browser\WebDriver:
+            browser: chrome
+            port: 9515
+            capabilities:
+                chromeOptions:
+                    args: ['--headless', '--disable-gpu', '--no-sandbox',  '--window-size=1280,1024']
+                    prefs:
+                        download.default_directory: tests/_data/downloads
