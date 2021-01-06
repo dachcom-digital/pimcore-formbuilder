@@ -24,6 +24,8 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
      */
     public function _after(TestInterface $test)
     {
+        parent::_after($test);
+
         //re-create form data folder.
         try {
             $folder = new Asset\Folder();
@@ -37,8 +39,6 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         }
 
         FormHelper::removeAllForms();
-
-        parent::_after($test);
     }
 
     /**
