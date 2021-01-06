@@ -9,9 +9,9 @@ jobs:
     codeception:
         runs-on: ubuntu-latest
         env:
-            TEST_BUNDLE_NAME: "I18nBundle"
-            TEST_BUNDLE_NAMESPACE: "I18nBundle\\I18nBundle"
-            TEST_BUNDLE_INSTALLER_CLASS: "I18nBundle\\Tool\\Install"
+            TEST_BUNDLE_NAME: "FormBuilderBundle"
+            TEST_BUNDLE_NAMESPACE: "FormBuilderBundle\\FormBuilderBundle"
+            TEST_BUNDLE_INSTALLER_CLASS: "FormBuilderBundle\\Tool\\Install"
             TEST_BUNDLE_TEST_DIR: "${{ github.workspace }}/tests"
             TEST_PROJECT_ROOT_DIR: "${{ github.workspace }}"
 
