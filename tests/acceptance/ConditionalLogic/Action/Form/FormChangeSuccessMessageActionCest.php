@@ -44,7 +44,7 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
      */
     public function testElementChangeSuccessMessageToSnippet(AcceptanceTester $I)
     {
-        $snippet = $I->haveASnippet('mail-success-snippet');
+        $snippet = $I->haveASnippet('mail-success-snippet', ['controller' => 'default', 'action' => 'snippet']);
 
         $actions = [
             [
@@ -81,8 +81,8 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
      */
     public function testElementChangeSuccessMessageToSnippetWithAnotherLocale(AcceptanceTester $I)
     {
-        $snippetEn = $I->haveASnippet('mail-success-snippet-en');
-        $snippetDe = $I->haveASnippet('mail-success-snippet-de', [], 'de');
+        $snippetEn = $I->haveASnippet('mail-success-snippet-en', ['controller' => 'default', 'action' => 'snippet']);
+        $snippetDe = $I->haveASnippet('mail-success-snippet-de', ['controller' => 'default', 'action' => 'snippet'], 'de');
 
         $actions = [
             [
