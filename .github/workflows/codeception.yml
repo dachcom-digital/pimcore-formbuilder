@@ -1,0 +1,167 @@
+name: Codeception
+on:
+    push:
+        branches: [ 'master' ]
+    pull_request:
+        branches: [ 'master' ]
+
+jobs:
+    codeception:
+        runs-on: ubuntu-latest
+        env:
+            TEST_BUNDLE_NAME: "I18nBundle"
+            TEST_BUNDLE_NAMESPACE: "I18nBundle\\I18nBundle"
+            TEST_BUNDLE_INSTALLER_CLASS: "I18nBundle\\Tool\\Install"
+            TEST_BUNDLE_TEST_DIR: "${{ github.workspace }}/tests"
+            TEST_PROJECT_ROOT_DIR: "${{ github.workspace }}"
+
+            PIMCORE_CODECEPTION_FRAMEWORK: "${{ github.workspace }}/pimcore-codeception-framework"
+            PIMCORE_CODECEPTION_VERSION: master # ^1.0
+
+            PIMCORE_ENVIRONMENT: test
+            PIMCORE_TEST_DB_DSN: "mysql://root:root@localhost/dachcom_bundle_test"
+            PIMCORE_TEST_URL: "http://localhost"
+            PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/tests/_output/var/classes/DataObject"
+
+            SYMFONY_DEPRECATIONS_HELPER: "weak"
+            PIMCORE_PHP_ERROR_REPORTING: 32767
+
+            WEBDRIVER_HOST: localhost
+            WEBDRIVER_URL: "http://localhost:8080/"
+
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: dachcom_bundle_test
+        services:
+            mysql:
+                image: mysql:5.7
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: dachcom_bundle_test
+                ports:
+                    - 3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        strategy:
+            matrix:
+                php: [7.4]
+                symfony: [^4.4]
+                pimcore: [~6.6.0, ~6.7.0, ~6.8.0]
+                include:
+                    -   pimcore: ~6.6.0
+                        template_tag: v2.6.0
+                    -   pimcore: ~6.7.0
+                        template_tag: v2.7.0
+                    -   pimcore: ~6.8.0
+                        template_tag: v2.8.0
+                    -   pimcore: ~6.8.0
+                        symfony: ^3.4
+                        php: 7.4
+                        template_tag: v2.8.0
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Generate Application Structure
+                run: |
+                    git clone -b ${{ matrix.template_tag }} --single-branch --depth 1 https://github.com/pimcore/skeleton.git
+                    mv skeleton/app .
+                    mv skeleton/bin .
+                    mv skeleton/var .
+                    mv skeleton/web .
+                    mv skeleton/src/AppBundle src
+
+            -   name: Setup Pimcore Codeception Framework
+                env:
+                    MATRIX_PIMCORE_VERSION: ${{ matrix.pimcore }}
+                    MATRIX_PIMCORE_TEMPLATE_TAG: ${{ matrix.template_tag }}
+                run: |
+                    git clone -b ${{ env.PIMCORE_CODECEPTION_VERSION }} --single-branch --depth 1 https://github.com/dachcom-digital/pimcore-codeception-framework.git
+                    ls -al pimcore-codeception-framework
+                    chmod +x ./pimcore-codeception-framework/src/_etc/scripts/setup.sh
+                    ./pimcore-codeception-framework/src/_etc/scripts/setup.sh
+
+            -   name: Load GeoLite2
+                run: |
+                    sudo apt-get update
+                    sudo apt-get install -y wget
+                    wget -c https://raw.githubusercontent.com/wp-statistics/GeoLite2-City/master/GeoLite2-City.mmdb.gz -O GeoLite2-City.mmdb.gz
+                    gunzip GeoLite2-City.mmdb.gz -c > var/config/GeoLite2-City.mmdb
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: intl
+                    coverage: none
+
+            -   name: Check PHP Version
+                run: php -v
+
+            -   name: Start MySql Service
+                run: |
+                    sudo /etc/init.d/mysql start
+
+            -   name: Verify MySql Connection
+                run: |
+                    sudo apt-get update
+                    sudo apt-get install -y mysql-client-5.7
+                    mysql -uroot -h127.0.0.1 -proot -e "SHOW DATABASES"
+
+            -   name: Setup MySql
+                run: |
+                    mysql -uroot -h127.0.0.1 -proot -e "SET GLOBAL innodb_file_format=Barracuda;"
+                    mysql -uroot -h127.0.0.1 -proot -e "SET GLOBAL innodb_large_prefix=1;"
+                    mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
+
+            -   name: Setup Chromium
+                run: |
+                    nohup $CHROMEWEBDRIVER/chromedriver --url-base=/wd/hub /dev/null 2>&1 &
+
+            -   name: Start Webserver and Chrome
+                run: |
+                    wget https://get.symfony.com/cli/installer -O - | bash
+                    ~/.symfony/bin/symfony server:start --port=8080 --dir=web --force-php-discovery --allow-http --no-tls --daemon
+
+            -   name: Get Composer Cache Directory
+                id: composer-cache
+                run: |
+                    echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            -   name: Cache Composer Downloads
+                uses: actions/cache@v1
+                with:
+                    path: ${{ steps.composer-cache.outputs.dir }}
+                    key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-composer-
+
+            -   name: Composer install
+                run: |
+                    composer req pimcore/pimcore:${{ matrix.pimcore }} symfony/symfony:${{ matrix.symfony }} --no-interaction --ignore-platform-reqs --no-scripts
+                    composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
+
+            -   name: Assets Install
+                run: |
+                    bin/console assets:install web --relative --symlink
+
+            -   name: Enable Bundle
+                run: |
+                    bin/console pimcore:bundle:enable ${{ env.TEST_BUNDLE_NAME }} --no-cache-clear
+
+            -   name: Tests
+                run: |
+                    echo "127.0.0.1 test-domain1.test" | sudo tee -a /etc/hosts
+                    echo "127.0.0.1 test-domain2.test" | sudo tee -a /etc/hosts
+                    echo "127.0.0.1 test-domain3.test" | sudo tee -a /etc/hosts
+                    echo "127.0.0.1 test-domain4.test" | sudo tee -a /etc/hosts
+                    echo "127.0.0.1 test-domain5.test" | sudo tee -a /etc/hosts
+                    echo "127.0.0.1 test-domain6.test" | sudo tee -a /etc/hosts
+                    echo "127.0.0.1 test-domain7.test" | sudo tee -a /etc/hosts
+                    bin/console cache:warmup --env=test
+                    vendor/bin/codecept run --env github -c ${{ env.GITHUB_WORKSPACE }}
+
+            -   name: Log Output
+                uses: actions/upload-artifact@v2
+                if: failure()
+                with:
+                    name: "Logs (PHP ${{ matrix.php }}, Pimcore ${{ matrix.pimcore }}, Symfony ${{ matrix.symfony }})"
+                    path: tests/_output/
+                    if-no-files-found: ignore

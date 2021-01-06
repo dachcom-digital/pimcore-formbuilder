@@ -1,0 +1,8 @@
+setup_files:
+    - { path: app/config.yml, dest: ./app/config/config.yml }
+    - { path: app/system.yml, dest: ./var/config/system.yml }
+    - { path: app/controller/DefaultController.php, dest: ./src/AppBundle/Controller/DefaultController.php }
+    - { path: app/views/default.html.twig, dest: ./app/Resources/views/Default/default.html.twig }
+    - { path: app/views/javascript.html.twig, dest: ./app/Resources/views/Default/javascript.html.twig }
+    - { path: app/views/snippet.html.twig, dest: ./app/Resources/views/Default/snippet.html.twig }
+    - { path: app/views/twigRender.html.twig, dest: ./app/Resources/views/Default/twigRender.html.twig }

@@ -1,10 +1,10 @@
 includes:
-	- ../../vendor/phpstan/phpstan-symfony/extension.neon
+	- %currentWorkingDirectory%/vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
     level: 2
     reportUnmatchedIgnoredErrors: false
     symfony:
-        container_xml_path: %rootDir%/../../../var/cache/test/appAppKernelTestDebugContainer.xml
+        container_xml_path: %currentWorkingDirectory%/var/cache/test/appAppKernelTestDebugContainer.xml
     ignoreErrors:
         - '#.*NodeDefinition::append.*#'
         - '#.*NodeDefinition::addDefaultsIfNotSet.*#'

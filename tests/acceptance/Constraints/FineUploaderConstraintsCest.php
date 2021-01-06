@@ -26,7 +26,7 @@ class FineUploaderConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -54,7 +54,7 @@ class FineUploaderConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -65,7 +65,7 @@ class FineUploaderConstraintsCest
         $I->waitForElement('input[type="file"]', 5);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 15);
 

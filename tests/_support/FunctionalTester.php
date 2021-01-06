@@ -2,12 +2,7 @@
 
 namespace DachcomBundle\Test;
 
-/**
- * Class FunctionalTester
- *
- * @package DachcomBundle\Test
- */
-class FunctionalTester extends \Codeception\Actor
+class FunctionalTester extends \Dachcom\Codeception\FunctionalTester
 {
     use _generated\FunctionalTesterActions;
 }

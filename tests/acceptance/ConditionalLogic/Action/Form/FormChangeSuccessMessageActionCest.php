@@ -44,7 +44,7 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
      */
     public function testElementChangeSuccessMessageToSnippet(AcceptanceTester $I)
     {
-        $snippet = $I->haveASnippetDocument('mail-success-snippet');
+        $snippet = $I->haveASnippet('mail-success-snippet');
 
         $actions = [
             [
@@ -81,8 +81,8 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
      */
     public function testElementChangeSuccessMessageToSnippetWithAnotherLocale(AcceptanceTester $I)
     {
-        $snippetEn = $I->haveASnippetDocument('mail-success-snippet-en');
-        $snippetDe = $I->haveASnippetDocument('mail-success-snippet-de', null, 'de');
+        $snippetEn = $I->haveASnippet('mail-success-snippet-en');
+        $snippetDe = $I->haveASnippet('mail-success-snippet-de', [], 'de');
 
         $actions = [
             [
@@ -159,7 +159,7 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
     public function testElementChangeSuccessMessageToDocumentRedirectToAnotherLocale(AcceptanceTester $I)
     {
         $redirectDocumentEn = $I->haveAPageDocument('form-test-redirect-en');
-        $redirectDocumentDe = $I->haveAPageDocument('form-test-redirect-de', null, null, 'de');
+        $redirectDocumentDe = $I->haveAPageDocument('form-test-redirect-de', [], 'de');
 
         $actions = [
             [

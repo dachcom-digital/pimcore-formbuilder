@@ -24,7 +24,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -50,7 +50,7 @@ class MailSuccessFullySentPropertyCest
      */
     public function testSuccessFullySentPropertyWithSnippet(AcceptanceTester $I)
     {
-        $snippet = $I->haveASnippetDocument('mail-success-snippet');
+        $snippet = $I->haveASnippet('mail-success-snippet');
 
         $property = new Property();
         $property->setName('mail_successfully_sent');
@@ -61,7 +61,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -97,7 +97,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -130,7 +130,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)

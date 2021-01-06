@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-
-echo "START ECS FOR $DACHCOM_BUNDLE_NAME"
-
-vendor/bin/ecs check lib/$DACHCOM_BUNDLE_NAME/src --config lib/$DACHCOM_BUNDLE_NAME/easy-coding-standard.yml

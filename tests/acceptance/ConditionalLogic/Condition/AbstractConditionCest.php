@@ -18,7 +18,7 @@ abstract class AbstractConditionCest
      */
     protected function runTestWithConditionAndCustomFormBuilder(AcceptanceTester $I, array $conditions, TestFormBuilder $testFormBuilder)
     {
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
 
         $testFormBuilder->addFormConditionBlock($conditions, $this->actions);
 
@@ -40,7 +40,7 @@ abstract class AbstractConditionCest
      */
     protected function runTestWithCondition(AcceptanceTester $I, array $conditions, $closure = null)
     {
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
