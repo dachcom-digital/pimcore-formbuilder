@@ -148,7 +148,5 @@ jobs:
                 if: failure()
                 with:
                     name: "Logs (PHP ${{ matrix.php }}, Pimcore ${{ matrix.pimcore }}, Symfony ${{ matrix.symfony }})"
-                    path: |
-                        tests/_output/
-                        var/logs/
+                    path: tests/_output/
                     if-no-files-found: ignore
