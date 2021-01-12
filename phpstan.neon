@@ -4,7 +4,7 @@ parameters:
     level: 2
     reportUnmatchedIgnoredErrors: false
     symfony:
-        container_xml_path: %currentWorkingDirectory%/var/cache/test/appAppKernelTestDebugContainer.xml
+        container_xml_path: %currentWorkingDirectory%/var/cache/test/appTestKernelTestDebugContainer.xml
     ignoreErrors:
         - '#.*NodeDefinition::append.*#'
         - '#.*NodeDefinition::addDefaultsIfNotSet.*#'

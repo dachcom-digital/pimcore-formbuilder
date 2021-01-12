@@ -23,7 +23,7 @@
             "": "src/"
         },
         "classmap": [
-            "app/AppKernel.php"
+            "app/TestKernel.php"
         ]
     },
     "extra": {
