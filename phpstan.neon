@@ -1,7 +1,6 @@
 includes:
 	- %currentWorkingDirectory%/vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
-    level: 2
     reportUnmatchedIgnoredErrors: false
     symfony:
         container_xml_path: %currentWorkingDirectory%/var/cache/test/appTestKernelTestDebugContainer.xml

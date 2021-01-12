@@ -27,18 +27,13 @@
         ]
     },
     "extra": {
-        "phpstan": {
-            "includes": [
-                "extension.neon"
-            ]
-        },
         "pimcore": {
             "bundles": [
                 "FormBuilderBundle\\FormBuilderBundle"
             ]
         },
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "4.x-dev"
         }
     },
     "require": {
@@ -49,7 +44,7 @@
         "codeception/codeception": "~2.4.0",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
-        "symplify/easy-coding-standard": "^5.4"
+        "symplify/easy-coding-standard": "^8.0"
     },
     "conflict": {
         "symfony/monolog-bundle": "3.6.0"
