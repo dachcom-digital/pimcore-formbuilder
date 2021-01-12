@@ -1,5 +1,5 @@
 imports:
-    - { resource: 'vendor/symplify/easy-coding-standard/config/set/psr12.yaml' }
+    - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/psr2.yml' }
 
 services:
     PhpCsFixer\Fixer\Basic\BracesFixer:
