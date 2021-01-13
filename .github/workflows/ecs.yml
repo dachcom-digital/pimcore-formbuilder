@@ -109,9 +109,12 @@ jobs:
                         ${{ runner.os }}-composer-
 
             -   name: Composer install
+                env:
+                    TEST_PIMCORE_VERSION: ${{ matrix.pimcore }}
+                    TEST_SYMFONY_VERSION: ${{ matrix.symfony }}
                 run: |
-                    composer req pimcore/pimcore:${{ matrix.pimcore }} symfony/symfony:${{ matrix.symfony }} --no-interaction --ignore-platform-reqs --no-scripts
-                    composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
+                    chmod +x ./pimcore-codeception-framework/src/_etc/scripts/composer.sh
+                    ./pimcore-codeception-framework/src/_etc/scripts/composer.sh
 
             -   name: Assets Install
                 run: |
