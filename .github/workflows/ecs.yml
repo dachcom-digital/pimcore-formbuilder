@@ -117,10 +117,6 @@ jobs:
                 run: |
                     bin/console assets:install web --relative --symlink
 
-            -   name: Enable Bundle
-                run: |
-                    bin/console pimcore:bundle:enable ${{ env.TEST_BUNDLE_NAME }} --no-cache-clear
-
             -   name: Easy Coding Standard Check
                 continue-on-error: true
                 run: |

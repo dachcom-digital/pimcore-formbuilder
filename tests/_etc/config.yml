@@ -1,3 +1,5 @@
+bundles:
+    - { namespace: \FormBuilderBundle\FormBuilderBundle }
 setup_files:
     - { path: app/config.yml, dest: ./app/config/config.yml }
     - { path: app/system.yml, dest: ./var/config/system.yml }
