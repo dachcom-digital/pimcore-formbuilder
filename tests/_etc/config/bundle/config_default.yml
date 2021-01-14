@@ -1,11 +1,11 @@
 services:
-    DachcomBundle\Test\App\Services\TestSimpleDynamicChoices:
+    DachcomBundle\Test\Services\TestSimpleDynamicChoices:
         autowire: true
         public: false
         tags:
             - { name: form_builder.dynamic_choice_builder, label: 'Simple Test Selector' }
 
-    DachcomBundle\Test\App\Services\TestAdvancedDynamicChoices:
+    DachcomBundle\Test\Services\TestAdvancedDynamicChoices:
         autowire: true
         public: false
         tags:

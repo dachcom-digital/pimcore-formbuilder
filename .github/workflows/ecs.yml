@@ -1,0 +1,127 @@
+name: Easy Coding Standards
+on:
+    push:
+        branches: [ 'master' ]
+    pull_request:
+        branches: [ 'master' ]
+
+jobs:
+    ecs:
+        runs-on: ubuntu-latest
+        env:
+            TEST_BUNDLE_NAME: "FormBuilderBundle"
+            TEST_BUNDLE_INSTALLER_CLASS: "FormBuilderBundle\\Tool\\Install"
+            TEST_BUNDLE_TEST_DIR: "${{ github.workspace }}/tests"
+            TEST_PROJECT_ROOT_DIR: "${{ github.workspace }}"
+
+            PIMCORE_CODECEPTION_FRAMEWORK: "${{ github.workspace }}/pimcore-codeception-framework"
+            PIMCORE_CODECEPTION_VERSION: "1.0"
+
+            PIMCORE_ENVIRONMENT: test
+            PIMCORE_TEST_DB_DSN: "mysql://root:root@localhost/dachcom_bundle_test"
+            PIMCORE_TEST_URL: "http://localhost"
+
+            SYMFONY_DEPRECATIONS_HELPER: "weak"
+            PIMCORE_PHP_ERROR_REPORTING: 32767
+
+            WEBDRIVER_HOST: localhost
+            WEBDRIVER_URL: "http://localhost:8080/"
+
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: dachcom_bundle_test
+        services:
+            mysql:
+                image: mysql:5.7
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: dachcom_bundle_test
+                ports:
+                    - 3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        strategy:
+            matrix:
+                php: [7.4]
+                symfony: [^4.4]
+                pimcore: [^6.8]
+                include:
+                    -   pimcore: ^6.8
+                        template_tag: v2.8.0
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Generate Application Structure
+                run: |
+                    git clone -b ${{ matrix.template_tag }} --single-branch --depth 1 https://github.com/pimcore/skeleton.git
+                    mv skeleton/app .
+                    mv skeleton/bin .
+                    mv skeleton/var .
+                    mv skeleton/web .
+                    mv skeleton/src/AppBundle src
+
+            -   name: Setup Pimcore Codeception Framework
+                env:
+                    MATRIX_PIMCORE_VERSION: ${{ matrix.pimcore }}
+                    MATRIX_PIMCORE_TEMPLATE_TAG: ${{ matrix.template_tag }}
+                run: |
+                    git clone -b ${{ env.PIMCORE_CODECEPTION_VERSION }} --single-branch --depth 1 https://github.com/dachcom-digital/pimcore-codeception-framework.git
+                    ls -al pimcore-codeception-framework
+                    chmod +x ./pimcore-codeception-framework/src/_etc/scripts/setup.sh
+                    ./pimcore-codeception-framework/src/_etc/scripts/setup.sh
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: intl
+                    coverage: none
+
+            -   name: Check PHP Version
+                run: php -v
+
+            -   name: Start MySql Service
+                run: |
+                    sudo /etc/init.d/mysql start
+
+            -   name: Verify MySql Connection
+                run: |
+                    sudo apt-get update
+                    sudo apt-get install -y mysql-client-5.7
+                    mysql -uroot -h127.0.0.1 -proot -e "SHOW DATABASES"
+
+            -   name: Setup MySql
+                run: |
+                    mysql -uroot -h127.0.0.1 -proot -e "SET GLOBAL innodb_file_format=Barracuda;"
+                    mysql -uroot -h127.0.0.1 -proot -e "SET GLOBAL innodb_large_prefix=1;"
+                    mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
+
+            -   name: Get Composer Cache Directory
+                id: composer-cache
+                run: |
+                    echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            -   name: Cache Composer Downloads
+                uses: actions/cache@v1
+                with:
+                    path: ${{ steps.composer-cache.outputs.dir }}
+                    key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+                    restore-keys: |
+                        ${{ runner.os }}-composer-
+
+            -   name: Composer install
+                env:
+                    TEST_PIMCORE_VERSION: ${{ matrix.pimcore }}
+                    TEST_SYMFONY_VERSION: ${{ matrix.symfony }}
+                run: |
+                    chmod +x ./pimcore-codeception-framework/src/_etc/scripts/composer.sh
+                    ./pimcore-codeception-framework/src/_etc/scripts/composer.sh
+
+            -   name: Assets Install
+                run: |
+                    bin/console assets:install web --relative --symlink
+
+            -   name: Easy Coding Standard Check
+                continue-on-error: true
+                run: |
+                    bin/console cache:warmup --env=test
+                    vendor/bin/ecs check src/FormBuilderBundle --config easy-coding-standard.yml

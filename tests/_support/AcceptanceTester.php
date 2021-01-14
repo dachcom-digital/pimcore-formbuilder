@@ -2,12 +2,7 @@
 
 namespace DachcomBundle\Test;
 
-/**
- * Class AcceptanceTester
- *
- * @package DachcomBundle\Test
- */
-class AcceptanceTester extends \Codeception\Actor
+class AcceptanceTester extends \Dachcom\Codeception\AcceptanceTester
 {
     use _generated\AcceptanceTesterActions;
 }

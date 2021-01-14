@@ -2,12 +2,7 @@
 
 namespace DachcomBundle\Test;
 
-/**
- * Class UnitTester
- *
- * @package DachcomBundle\Test\Actor
- */
-class UnitTester extends \Codeception\Actor
+class UnitTester extends  \Dachcom\Codeception\UnitTester
 {
     use _generated\UnitTesterActions;
 }

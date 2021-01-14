@@ -3,9 +3,8 @@
 [![Join the chat at https://gitter.im/pimcore/pimcore](https://img.shields.io/gitter/room/pimcore/pimcore.svg?style=flat-square)](https://gitter.im/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/formbuilder.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/formbuilder)
-[![Scrutinizer](https://img.shields.io/scrutinizer/g/dachcom-digital/pimcore-formbuilder.svg?style=flat-square)](https://www.scrutinizer-ci.com/g/dachcom-digital/pimcore-formbuilder)
-[![Travis](https://img.shields.io/travis/com/dachcom-digital/pimcore-formbuilder/master.svg?style=flat-square)](https://travis-ci.com/dachcom-digital/pimcore-formbuilder)
-[![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
+[![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/Codeception?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22Codeception%22)
+[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/PHP%20Stan?style=flat-square&logo=github&label=phpstan%20level%202)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22PHP%20Stan%22)
 
 ![FormBuilder](https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png)
 
@@ -13,7 +12,7 @@
 
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
 |---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **3.x** | `6.0` - `6.8`                     | `3.4`, `^4.0`              | 17.07.2019   | Feature Branch | dev-master |
+| **3.x** | `6.0` - `6.8`                     | `3.4`, `^4.4`              | 17.07.2019   | Feature Branch | dev-master |
 | **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Bugfix only    | 2.7        |
 | **1.5** | `4.0`                             | --                         | 18.03.2017   | Unsupported    | pimcore4   |
 

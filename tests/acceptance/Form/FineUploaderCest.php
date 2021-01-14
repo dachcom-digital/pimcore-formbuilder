@@ -22,7 +22,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -34,7 +34,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
@@ -60,7 +60,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -72,7 +72,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.pdf';
-        $I->haveFile($fileName, 25);
+        $I->haveADummyFile($fileName, 25);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 80);
@@ -98,7 +98,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -110,13 +110,13 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
 
         $fileName = 'test.pdf';
-        $I->haveFile($fileName, 2);
+        $I->haveADummyFile($fileName, 2);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-1.qq-upload-success', 5);
@@ -151,7 +151,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -163,7 +163,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
@@ -198,7 +198,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -210,7 +210,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.png';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForText(
@@ -241,7 +241,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -253,7 +253,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
@@ -287,7 +287,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -299,12 +299,12 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
 
-        $I->haveFile('test.pdf', 2);
+        $I->haveADummyFile('test.pdf', 2);
         $I->attachFile('input[type="file"]', 'generated/test.pdf');
 
         $I->waitForText(
@@ -335,7 +335,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -347,7 +347,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.pdf';
-        $I->haveFile($fileName, 3);
+        $I->haveADummyFile($fileName, 3);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);
@@ -381,7 +381,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -393,7 +393,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.pdf';
-        $I->haveFile($fileName, 7);
+        $I->haveADummyFile($fileName, 7);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForText(
@@ -424,7 +424,7 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -436,7 +436,7 @@ class FineUploaderCest
         $this->fillSimpleForm($testFormBuilder, $I);
 
         $fileName = 'test.txt';
-        $I->haveFile($fileName, 1);
+        $I->haveADummyFile($fileName, 1);
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForElement('.qq-file-id-0.qq-upload-success', 5);

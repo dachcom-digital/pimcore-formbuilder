@@ -17,7 +17,7 @@ class SnippetFieldCest extends AbstractFieldCest
      */
     public function testSnippetField(FunctionalTester $I)
     {
-        $snippet = $I->haveASnippetDocument('form-element-snippet');
+        $snippet = $I->haveASnippet('form-element-snippet', ['controller' => 'default', 'action' => 'snippet']);
 
         $options = [
             'path' => [
@@ -42,7 +42,7 @@ class SnippetFieldCest extends AbstractFieldCest
      */
     public function testSnippetFieldSubmission(FunctionalTester $I)
     {
-        $snippet = $I->haveASnippetDocument('form-element-snippet');
+        $snippet = $I->haveASnippet('form-element-snippet', ['controller' => 'default', 'action' => 'snippet']);
 
         $options = [
             'path' => [

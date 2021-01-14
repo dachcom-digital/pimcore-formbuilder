@@ -4,7 +4,6 @@ namespace DachcomBundle\Test\functional\SimpleForm;
 
 use DachcomBundle\Test\Helper\Traits;
 use DachcomBundle\Test\FunctionalTester;
-use DachcomBundle\Test\Util\VersionHelper;
 
 class SimpleFormEditWindowCest
 {

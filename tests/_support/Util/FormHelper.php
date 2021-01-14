@@ -39,47 +39,6 @@ class FormHelper
     }
 
     /**
-     * @param string $name
-     * @param string $type
-     * @param array  $options
-     * @param null   $data
-     *
-     * @return string
-     */
-    public static function generateEditableConfiguration(string $name, string $type, array $options, $data = null)
-    {
-        $editableConfig = [
-            'id'       => sprintf('pimcore_editable_%s%s1%s%s', FormHelper::AREA_TEST_NAMESPACE, '_', '_', $name),
-            'name'     => sprintf('%s:1.%s', FormHelper::AREA_TEST_NAMESPACE, $name),
-            'realName' => $name
-        ];
-
-        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
-            $configName = 'editableDefinitions';
-            $editableConfig = array_merge($editableConfig, [
-                'config'      => $options,
-                'data'        => is_int($data) ? (string) $data : $data,
-                'type'        => $type,
-                'inherited'   => false,
-                'inDialogBox' => null
-            ]);
-
-        } else {
-            $configName = 'editableConfigurations';
-            $editableConfig = array_merge($editableConfig, [
-                'options'   => $options,
-                'data'      => is_int($data) ? (string) $data : $data,
-                'type'      => $type,
-                'inherited' => false
-            ]);
-        }
-
-        $data = sprintf('%s.push(%s);', $configName, json_encode($editableConfig, JSON_PRETTY_PRINT));
-
-        return $data;
-    }
-
-    /**
      * @param string $formName
      * @param bool   $useAjax
      *
@@ -87,7 +46,7 @@ class FormHelper
      */
     public static function generateSimpleForm(string $formName = 'dachcom_test', $useAjax = false)
     {
-        $testFormBuilder = (new TestFormBuilder($formName))
+        return (new TestFormBuilder($formName))
             ->setUseAjax($useAjax)
             ->addFormFieldChoice('simple_dropdown', ['Simple DropDown Value 0' => 'simple_drop_down_value_0', 'Simple DropDown Value 1' => 'simple_drop_down_value_1'])
             ->addFormFieldInput('simple_text_input_1', [], [], ['not_blank'])
@@ -109,7 +68,5 @@ class FormHelper
             ->addFormFieldTextArea('simple_text_area', [], [], ['not_blank'])
             ->addFormFieldSingleCheckbox('single_checkbox', [], [], ['not_blank'])
             ->addFormFieldSubmitButton('submit');
-
-        return $testFormBuilder;
     }
 }

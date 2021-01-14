@@ -2,17 +2,17 @@ actor: AcceptanceTester
 error_level: 'getenv("PIMCORE_PHP_ERROR_REPORTING")'
 modules:
     config:
-        \DachcomBundle\Test\Helper\Browser\WebDriver:
+        \Dachcom\Codeception\Helper\Browser\WebDriver:
             host: '%WEBDRIVER_HOST%'
             url: '%WEBDRIVER_URL%'
             browser: chrome
     enabled:
-        - \DachcomBundle\Test\Helper\PimcoreCore:
+        - \Dachcom\Codeception\Helper\PimcoreCore:
             part: SERVICES
             connect_db: true
             rebootable_client: true
-        - \DachcomBundle\Test\Helper\PimcoreBundleCore:
+        - \Dachcom\Codeception\Helper\PimcoreBundleCore:
             run_installer: true
-        - \DachcomBundle\Test\Helper\Browser\WebDriver
+        - \Dachcom\Codeception\Helper\Browser\WebDriver
+        - \Dachcom\Codeception\Helper\PimcoreUser
         - \DachcomBundle\Test\Helper\PimcoreBackend
-        - \DachcomBundle\Test\Helper\PimcoreUser

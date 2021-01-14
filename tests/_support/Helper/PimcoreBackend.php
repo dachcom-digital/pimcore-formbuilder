@@ -3,13 +3,12 @@
 namespace DachcomBundle\Test\Helper;
 
 use Codeception\Exception\ModuleException;
-use Codeception\Module;
 use Codeception\TestInterface;
 use Codeception\Util\Debug;
-use DachcomBundle\Test\Util\FileGeneratorHelper;
+use Dachcom\Codeception\Util\EditableHelper;
+use Dachcom\Codeception\Util\VersionHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
-use DachcomBundle\Test\Util\VersionHelper;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinition;
 use FormBuilderBundle\Model\FormDefinitionInterface;
@@ -17,30 +16,15 @@ use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Document\Snippet;
-use Pimcore\Model\Tool\Email\Log;
-use Pimcore\Tests\Util\TestHelper;
-use Pimcore\Translation\Translator;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\Serializer\Serializer;
 
-class PimcoreBackend extends Module
+class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
 {
-    /**
-     * @param TestInterface $test
-     */
-    public function _before(TestInterface $test)
-    {
-        FileGeneratorHelper::preparePaths();
-        parent::_before($test);
-    }
-
     /**
      * @param TestInterface $test
      */
     public function _after(TestInterface $test)
     {
-        TestHelper::cleanUp();
+        parent::_after($test);
 
         //re-create form data folder.
         try {
@@ -55,9 +39,6 @@ class PimcoreBackend extends Module
         }
 
         FormHelper::removeAllForms();
-        FileGeneratorHelper::cleanUp();
-
-        parent::_after($test);
     }
 
     /**
@@ -75,61 +56,6 @@ class PimcoreBackend extends Module
         $this->assertInstanceOf(FormDefinition::class, $this->getFormManager()->getById($formDefinition->getId()));
 
         return $formDefinition;
-    }
-
-    /**
-     * Actor Function to create a Page Document
-     *
-     * @param string      $documentKey
-     * @param null|string $action
-     * @param null|string $controller
-     * @param null|string $locale
-     *
-     * @return Page
-     */
-    public function haveAPageDocument(
-        $documentKey = 'form-test',
-        $action = null,
-        $controller = null,
-        $locale = 'en'
-    ) {
-        $document = $this->generatePageDocument($documentKey, $action, $controller, $locale);
-
-        try {
-            $document->save();
-        } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document page. message was: ' . $e->getMessage()));
-        }
-
-        $this->assertInstanceOf(Page::class, Page::getById($document->getId()));
-
-        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
-
-        return $document;
-    }
-
-    /**
-     * Actor Function to create a Snippet
-     *
-     * @param string $snippetKey
-     * @param array  $elements
-     * @param string $locale
-     *
-     * @return null|Snippet
-     */
-    public function haveASnippetDocument($snippetKey, $elements = [], $locale = 'en')
-    {
-        $snippet = $this->generateSnippetDocument($snippetKey, $elements, $locale);
-
-        try {
-            $snippet->save();
-        } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document snippet. message was: ' . $e->getMessage()));
-        }
-
-        $this->assertInstanceOf(Snippet::class, $snippet);
-
-        return $snippet;
     }
 
     /**
@@ -167,32 +93,27 @@ class PimcoreBackend extends Module
      *
      * @return Email
      */
-    public function haveAEmailDocumentForType($type, array $mailParams = [], $locale = 'en')
+    public function haveAEmailDocumentForType($type, array $mailParams = [], $locale = null)
     {
-        $emailDocument = $mailTemplate = $this->generateEmailDocument(sprintf('email-%s', $type), $mailParams, $locale);
-        $this->assertInstanceOf(Email::class, $emailDocument);
+        $params = array_merge([
+            'module'     => 'FormBuilderBundle',
+            'controller' => 'Email',
+            'action'     => 'email',
+            'template'   => 'FormBuilderBundle:Email:email.html.twig'
+        ], $mailParams);
 
-        return $emailDocument;
-    }
+        $document = $mailTemplate = $this->generateEmailDocument(sprintf('email-%s', $type), $params, $locale);
 
-    /**
-     * @param     $fileName
-     * @param int $fileSizeInMb Mb
-     */
-    public function haveFile($fileName, $fileSizeInMb = 1)
-    {
-        FileGeneratorHelper::generateDummyFile($fileName, $fileSizeInMb);
-    }
+        try {
+            $document->save();
+        } catch (\Exception $e) {
+            Debug::debug(sprintf('[TEST BUNDLE ERROR] error while creating email. message was: ' . $e->getMessage()));
+            return null;
+        }
 
-    /**
-     * @param $fileName
-     */
-    public function seeDownload($fileName)
-    {
-        $supportDir = FileGeneratorHelper::getDownloadPath();
-        $filePath = $supportDir . $fileName;
+        $this->assertInstanceOf(Email::class, Email::getById($document->getId()));
 
-        $this->assertTrue(is_file($filePath));
+        return $document;
     }
 
     /**
@@ -222,7 +143,50 @@ class PimcoreBackend extends Module
             $this->assertInstanceOf(Email::class, $copyMailTemplate);
         }
 
-        $editables = $this->createFormArea($form->getId(), $formTemplate, $mailTemplate, $sendUserCopy, $copyMailTemplate);
+        $editables = [
+            'formName'             => [
+                'type'             => 'select',
+                'dataFromEditmode' => $form->getId(),
+            ],
+            'formType'             => [
+                'type'             => 'select',
+                'dataFromEditmode' => $formTemplate,
+            ],
+            'formPreset'           => [
+                'type'             => 'select',
+                'dataFromEditmode' => 'custom',
+            ],
+            'outputWorkflow'       => [
+                'type'             => 'select',
+                'dataFromEditmode' => 'none',
+            ],
+            'userCopy'             => [
+                'type'             => 'checkbox',
+                'dataFromEditmode' => $sendUserCopy,
+            ],
+            'sendMailTemplate'     => [
+                'type'             => 'relation',
+                'dataFromEditmode' => $mailTemplate instanceof Email ? [
+                    'id'      => $mailTemplate->getId(),
+                    'type'    => 'document',
+                    'subtype' => $mailTemplate->getType()
+                ] : [],
+            ],
+            'sendCopyMailTemplate' => [
+                'type'             => 'relation',
+                'dataFromEditmode' => $copyMailTemplate instanceof Email ? [
+                    'id'      => $copyMailTemplate->getId(),
+                    'type'    => 'document',
+                    'subtype' => $copyMailTemplate->getType()
+                ] : [],
+            ],
+        ];
+
+        try {
+            $editables = EditableHelper::generateEditablesForArea('formbuilder_form', $editables);
+        } catch (\Throwable $e) {
+            throw new ModuleException($this, sprintf('area generator error: %s', $e->getMessage()));
+        }
 
         if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
             $document->setEditables($editables);
@@ -242,140 +206,9 @@ class PimcoreBackend extends Module
 
         $this->assertCount(8, VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0') ? $document->getEditables() : $document->getElements());
 
-        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
+        \Pimcore::collectGarbage();
+        //\Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
 
-        //\Pimcore::collectGarbage();
-    }
-
-    /**
-     * Actor Function to see if given email has been sent
-     *
-     * @param Email $email
-     */
-    public function seeEmailIsSent(Email $email)
-    {
-        $this->assertInstanceOf(Email::class, $email);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$email->getId()]);
-        $this->assertEquals(1, count($foundEmails));
-    }
-
-    /**
-     * Actor Function to see if an email has been sent to admin
-     *
-     * @param Email $email
-     */
-    public function seeEmailIsNotSent(Email $email)
-    {
-        $this->assertInstanceOf(Email::class, $email);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$email->getId()]);
-        $this->assertEquals(0, count($foundEmails));
-    }
-
-    /**
-     * Actor Function to see if admin email contains given properties
-     *
-     * @param Email $mail
-     * @param array $properties
-     */
-    public function seePropertiesInEmail(Email $mail, array $properties)
-    {
-        $this->assertInstanceOf(Email::class, $mail);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
-        $this->assertGreaterThan(0, count($foundEmails));
-
-        $serializer = $this->getSerializer();
-
-        foreach ($foundEmails as $email) {
-            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
-            foreach ($properties as $propertyKey => $propertyValue) {
-                $key = array_search($propertyKey, array_column($params, 'key'));
-                if ($key === false) {
-                    $this->fail(sprintf('Failed asserting that mail params array has the key "%s".', $propertyKey));
-                }
-
-                $data = $params[$key];
-                $this->assertEquals($propertyValue, $data['data']['value']);
-            }
-        }
-    }
-
-    /**
-     * Actor Function to see if admin email contains given properties
-     *
-     * @param Email $mail
-     * @param array $properties
-     */
-    public function seePropertyKeysInEmail(Email $mail, array $properties)
-    {
-        $this->assertInstanceOf(Email::class, $mail);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
-        $this->assertGreaterThan(0, count($foundEmails));
-
-        $serializer = $this->getSerializer();
-
-        foreach ($foundEmails as $email) {
-            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
-            foreach ($properties as $propertyKey) {
-                $key = array_search($propertyKey, array_column($params, 'key'));
-                $this->assertNotSame(false, $key);
-            }
-        }
-    }
-
-    /**
-     * Actor Function to see if admin email not contains given properties
-     *
-     * @param Email $mail
-     * @param array $properties
-     */
-    public function cantSeePropertyKeysInEmail(Email $mail, array $properties)
-    {
-        $this->assertInstanceOf(Email::class, $mail);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
-        $this->assertGreaterThan(0, count($foundEmails));
-
-        $serializer = $this->getSerializer();
-
-        foreach ($foundEmails as $email) {
-            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
-            foreach ($properties as $propertyKey) {
-                $this->assertFalse(
-                    array_search(
-                        $propertyKey,
-                        array_column($params, 'key')),
-                    sprintf('Failed asserting that search for "%s" is false.', $propertyKey)
-                );
-            }
-        }
-    }
-
-    /**
-     * @param Email  $mail
-     * @param string $string
-     */
-    public function seeInRenderedEmailBody(Email $mail, string $string)
-    {
-        $this->assertInstanceOf(Email::class, $mail);
-
-        $foundEmails = $this->getEmailsFromDocumentIds([$mail->getId()]);
-        $this->assertGreaterThan(0, count($foundEmails));
-
-        $serializer = $this->getSerializer();
-
-        foreach ($foundEmails as $email) {
-            $params = $serializer->decode($email->getParams(), 'json', ['json_decode_associative' => true]);
-
-            $bodyKey = array_search('body', array_column($params, 'key'));
-            $this->assertNotSame(false, $bodyKey);
-
-            $data = $params[$bodyKey];
-            $this->assertContains($string, $data['data']['value']);
-        }
     }
 
     /**
@@ -420,57 +253,6 @@ class PimcoreBackend extends Module
     }
 
     /**
-     * Actor Function to see if a key has been stored in admin translations
-     *
-     * @param string $key
-     *
-     */
-    public function seeKeyInFrontendTranslations(string $key)
-    {
-        /** @var Translator $translator */
-        $translator = \Pimcore::getContainer()->get('pimcore.translator');
-        $this->assertTrue($translator->getCatalogue()->has($key));
-    }
-
-    /**
-     * @param string $key
-     * @param string $translation
-     * @param string $language
-     *
-     * @return \Pimcore\Model\Translation\Website|null
-     */
-    public function haveAFrontendTranslatedKey(string $key, string $translation, string $language)
-    {
-        $t = null;
-
-        try {
-            /** @var Translator $translator */
-            $t = \Pimcore\Model\Translation\Website::getByKey($key, true);
-            $t->addTranslation($language, $translation);
-            $t->save();
-        } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating translation. message was: ' . $e->getMessage()));
-        }
-
-        $this->assertInstanceOf(\Pimcore\Model\Translation\Website::class, $t);
-
-        return $t;
-    }
-
-    /**
-     * @param array $documentIds
-     *
-     * @return Log[]
-     */
-    protected function getEmailsFromDocumentIds(array $documentIds)
-    {
-        $emailLogs = new Log\Listing();
-        $emailLogs->addConditionParam(sprintf('documentId IN (%s)', implode(',', $documentIds)));
-
-        return $emailLogs->load();
-    }
-
-    /**
      * @param TestFormBuilder $formBuilder
      *
      * @return FormDefinitionInterface
@@ -496,256 +278,5 @@ class PimcoreBackend extends Module
         }
 
         return $manager;
-    }
-
-    /**
-     * API Function to create a Snippet
-     *
-     * @param        $snippetKey
-     * @param array  $elements
-     * @param string $locale
-     *
-     * @return null|Snippet
-     */
-    protected function generateSnippetDocument($snippetKey, $elements = [], $locale = 'en')
-    {
-        $document = new Snippet();
-        $document->setController('default');
-        $document->setAction('snippet');
-        $document->setType('snippet');
-        $document->setParentId(1);
-        $document->setUserOwner(1);
-        $document->setUserModification(1);
-        $document->setCreationDate(time());
-        $document->setKey($snippetKey);
-        $document->setProperty('language', 'text', $locale, false, 1);
-        $document->setPublished(true);
-
-        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
-            $document->setEditables($elements);
-        } else {
-            $document->setElements($elements);
-        }
-
-        return $document;
-
-    }
-
-    /**
-     * @param string      $key
-     * @param null|string $action
-     * @param null|string $controller
-     * @param string      $locale
-     *
-     * @return Page
-     */
-    protected function generatePageDocument($key = 'form-test', $action = null, $controller = null, $locale = 'en')
-    {
-        $action = is_null($action) ? 'default' : $action;
-        $controller = is_null($controller) ? '@AppBundle\Controller\DefaultController' : $controller;
-
-        $document = TestHelper::createEmptyDocumentPage('', false);
-        $document->setController($controller);
-        $document->setAction($action);
-        $document->setKey($key);
-        $document->setProperty('language', 'text', $locale, false, 1);
-
-        return $document;
-    }
-
-    /**
-     * @param string $key
-     * @param array  $params
-     * @param string $locale
-     *
-     * @return null|Email
-     */
-    protected function generateEmailDocument($key = 'form-test-email', array $params = [], $locale = 'en')
-    {
-        $documentKey = uniqid(sprintf('%s-', $key));
-
-        $document = new Email();
-        $document->setPublished(true);
-        $document->setType('email');
-        $document->setParentId(1);
-        $document->setUserOwner(1);
-        $document->setUserModification(1);
-        $document->setCreationDate(time());
-        $document->setModule('FormBuilderBundle');
-        $document->setController('Email');
-        $document->setAction('email');
-        $document->setTemplate('FormBuilderBundle:Email:email.html.twig');
-        $document->setKey($documentKey);
-        $document->setProperty('language', 'text', $locale, false, true);
-        $document->setProperty('test_identifier', 'text', $documentKey, false, false);
-
-        $to = 'recpient@test.org';
-        if (isset($params['to'])) {
-            $to = $params['to'];
-        }
-
-        $subject = sprintf('FORM EMAIL %s', $documentKey);
-        if (isset($params['subject'])) {
-            $subject = $params['subject'];
-        }
-
-        $document->setTo($to);
-        $document->setSubject($subject);
-
-        if (isset($params['replyTo'])) {
-            $document->setReplyTo($params['replyTo']);
-        }
-
-        if (isset($params['cc'])) {
-            $document->setCc($params['cc']);
-        }
-
-        if (isset($params['bcc'])) {
-            $document->setBcc($params['bcc']);
-        }
-
-        if (isset($params['from'])) {
-            $document->setFrom($params['from']);
-        }
-
-        if (isset($params['properties'])) {
-            $document->setProperties($params['properties']);
-        }
-
-        if (method_exists($document, 'setMissingRequiredEditable')) {
-            $document->setMissingRequiredEditable(false);
-        }
-
-        try {
-            $document->save();
-        } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating email. message was: ' . $e->getMessage()));
-            return null;
-        }
-
-        \Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
-
-        return $document;
-    }
-
-    /**
-     * @param int    $formId
-     * @param string $formType
-     * @param null   $mailTemplate
-     * @param bool   $sendUserCopy
-     * @param null   $copyMailTemplate
-     *
-     * @return array
-     */
-    protected function createFormArea($formId = 1, $formType = 'form_div_layout.html.twig', $mailTemplate = null, $sendUserCopy = false, $copyMailTemplate = null)
-    {
-        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
-            $blockAreaClass = 'Pimcore\Model\Document\Editable\Areablock';
-            $selectClass = 'Pimcore\Model\Document\Editable\Select';
-            $relationClass = 'Pimcore\Model\Document\Editable\Relation';
-            $checkboxClass = 'Pimcore\Model\Document\Editable\Checkbox';
-        } else {
-            $blockAreaClass = 'Pimcore\Model\Document\Tag\Areablock';
-            $selectClass = 'Pimcore\Model\Document\Tag\Select';
-            $relationClass = 'Pimcore\Model\Document\Tag\Relation';
-            $checkboxClass = 'Pimcore\Model\Document\Tag\Checkbox';
-        }
-
-        $blockArea = new $blockAreaClass();
-        $blockArea->setName(FormHelper::AREA_TEST_NAMESPACE);
-
-        $formNameSelect = new $selectClass();
-        $formNameSelect->setName(sprintf('%s:1.formName', FormHelper::AREA_TEST_NAMESPACE));
-        $formNameSelect->setDataFromEditmode($formId);
-
-        $formTypeSelect = new $selectClass();
-        $formTypeSelect->setName(sprintf('%s:1.formType', FormHelper::AREA_TEST_NAMESPACE));
-        $formTypeSelect->setDataFromEditmode($formType);
-
-        $formPresetSelect = new $selectClass();
-        $formPresetSelect->setName(sprintf('%s:1.formPreset', FormHelper::AREA_TEST_NAMESPACE));
-        $formPresetSelect->setDataFromEditmode('custom');
-
-        $outputWorkflowSelect = new $selectClass();
-        $outputWorkflowSelect->setName(sprintf('%s:1.outputWorkflow', FormHelper::AREA_TEST_NAMESPACE));
-        $outputWorkflowSelect->setDataFromEditmode('none');
-
-        $sendMailTemplateRelation = new $relationClass();
-        $sendMailTemplateRelation->setName(sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
-
-        $data = [];
-        if ($mailTemplate instanceof Email) {
-            $data = [
-                'id'      => $mailTemplate->getId(),
-                'type'    => 'document',
-                'subtype' => $mailTemplate->getType()
-            ];
-        }
-
-        $sendMailTemplateRelation->setDataFromEditmode($data);
-
-        $userCopyCheckbox = new $checkboxClass();
-        $userCopyCheckbox->setName(sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE));
-        $userCopyCheckbox->setDataFromEditmode($sendUserCopy);
-
-        $sendCopyMailTemplateRelation = new $relationClass();
-        $sendCopyMailTemplateRelation->setName(sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE));
-
-        $data = [];
-        if ($copyMailTemplate instanceof Email && $sendUserCopy === true) {
-            $data = [
-                'id'      => $copyMailTemplate->getId(),
-                'type'    => 'document',
-                'subtype' => $copyMailTemplate->getType()
-            ];
-        }
-
-        $sendCopyMailTemplateRelation->setDataFromEditmode($data);
-
-        $blockArea->setDataFromEditmode([
-            [
-                'key'    => '1',
-                'type'   => 'formbuilder_form',
-                'hidden' => false
-            ]
-        ]);
-
-        return [
-            sprintf('%s', FormHelper::AREA_TEST_NAMESPACE)                        => $blockArea,
-            sprintf('%s:1.formName', FormHelper::AREA_TEST_NAMESPACE)             => $formNameSelect,
-            sprintf('%s:1.formType', FormHelper::AREA_TEST_NAMESPACE)             => $formTypeSelect,
-            sprintf('%s:1.sendCopyMailTemplate', FormHelper::AREA_TEST_NAMESPACE) => $sendCopyMailTemplateRelation,
-            sprintf('%s:1.sendMailTemplate', FormHelper::AREA_TEST_NAMESPACE)     => $sendMailTemplateRelation,
-            sprintf('%s:1.userCopy', FormHelper::AREA_TEST_NAMESPACE)             => $userCopyCheckbox,
-            sprintf('%s:1.formPreset', FormHelper::AREA_TEST_NAMESPACE)           => $formPresetSelect,
-            sprintf('%s:1.outputWorkflow', FormHelper::AREA_TEST_NAMESPACE)       => $outputWorkflowSelect
-        ];
-    }
-
-    /**
-     * @return Container
-     * @throws ModuleException
-     */
-    protected function getContainer()
-    {
-        return $this->getModule('\\' . PimcoreCore::class)->getContainer();
-    }
-
-    /**
-     * @return Serializer
-     */
-    protected function getSerializer()
-    {
-        $serializer = null;
-
-        try {
-            $serializer = $this->getContainer()->get('pimcore_admin.serializer');
-        } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while getting pimcore admin serializer. message was: ' . $e->getMessage()));
-        }
-
-        $this->assertInstanceOf(Serializer::class, $serializer);
-
-        return $serializer;
     }
 }

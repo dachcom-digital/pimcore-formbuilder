@@ -191,7 +191,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $fileData = [];
         //handle linked assets.
         foreach ($sessionBag->getIterator() as $key => $sessionValue) {
-
             $formKey = 'file_' . $formDefinition->getId();
             if (substr($key, 0, strlen($formKey)) !== $formKey) {
                 continue;
@@ -210,7 +209,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         foreach ($fileData as $fileBlock) {
-
             $fieldId = $fileBlock['id'];
             $fieldName = $fileBlock['name'];
             $files = $fileBlock['files'];
@@ -230,7 +228,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                     $formData->replaceValueByFieldId($fieldId, sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath()));
                 }
             }
-
         }
 
         $event->setData($formData);
@@ -376,10 +373,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                    array_filter($constraints, function ($constraint) {
-                        return $constraint instanceof NotBlank;
-                    })
-                ) === 1;
+                array_filter($constraints, function ($constraint) {
+                    return $constraint instanceof NotBlank;
+                })
+            ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout
@@ -481,13 +478,11 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     {
         /** @var FormFieldDefinitionInterface $field */
         foreach ($fields as $field) {
-
             if (!empty($data[$field->getName()])) {
                 continue;
             }
 
             if ($field instanceof FormFieldContainerDefinitionInterface) {
-
                 if (!isset($data[$field->getName()])) {
                     $data[$field->getName()] = [];
                 }

@@ -1,9 +1,10 @@
 modules:
     config:
-        \DachcomBundle\Test\Helper\Browser\WebDriver:
+        \Dachcom\Codeception\Helper\Browser\WebDriver:
+            browser: chrome
             port: 4444
             restart: true
-            wait: 3
+            wait: 1
             capabilities:
                 chromeOptions:
                     args: ['--no-sandbox', '--disable-extensions', '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--window-size=1280,1024']

@@ -20,7 +20,7 @@ class SimpleFormWithDivLayoutCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('form-test', 'javascript');
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);

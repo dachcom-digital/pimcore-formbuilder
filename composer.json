@@ -18,23 +18,26 @@
             "FormBuilderBundle\\": "src/FormBuilderBundle"
         }
     },
-    "extra": {
-        "phpstan": {
-            "includes": [
-                "extension.neon"
-            ]
+    "autoload-dev": {
+        "psr-4": {
+            "": "src/"
         },
+        "classmap": [
+            "app/TestKernel.php"
+        ]
+    },
+    "extra": {
         "pimcore": {
             "bundles": [
                 "FormBuilderBundle\\FormBuilderBundle"
             ]
         },
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "4.x-dev"
         }
     },
     "require": {
-        "pimcore/pimcore": "^6.0.0",
+        "pimcore/pimcore": "^6.0",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {

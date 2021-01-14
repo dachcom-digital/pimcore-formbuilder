@@ -177,6 +177,7 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      * @return null|FormFieldContainerDefinitionInterface
      *
      * @throws \Exception
+     *
      * @internal
      */
     public function getFieldContainer(string $name);
@@ -185,6 +186,7 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      * @param string $type
      *
      * @return FormFieldDefinitionInterface[]
+     *
      * @internal
      */
     public function getFieldsByType(string $type);

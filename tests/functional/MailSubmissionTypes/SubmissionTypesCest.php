@@ -2,9 +2,9 @@
 
 namespace DachcomBundle\Test\functional\MailSubmissionTypes;
 
+use Dachcom\Codeception\Util\VersionHelper;
 use DachcomBundle\Test\Helper\Traits;
 use DachcomBundle\Test\FunctionalTester;
-use DachcomBundle\Test\Util\VersionHelper;
 use Pimcore\Model\Property;
 
 class SubmissionTypesCest

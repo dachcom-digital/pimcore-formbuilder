@@ -20,7 +20,7 @@ class RenderingTypesCest
 
         $adminEmail = $I->haveAEmailDocumentForAdmin();
         $userEmail = $I->haveAEmailDocumentForUser();
-        $document = $I->haveAPageDocument('form-test-with-twig-generated-form', 'twigRender');
+        $document = $I->haveAPageDocument('form-test-with-twig-generated-form', ['action' => 'twigRender']);
 
         $form = $I->haveAForm($testFormBuilder);
 
@@ -55,7 +55,7 @@ class RenderingTypesCest
 
         $adminEmail = $I->haveAEmailDocumentForAdmin();
         $userEmail = $I->haveAEmailDocumentForUser();
-        $document = $I->haveAPageDocument('form-test-with-controller-generated-form', 'controllerRender');
+        $document = $I->haveAPageDocument('form-test-with-controller-generated-form', ['action' => 'controllerRender']);
 
         $form = $I->haveAForm($testFormBuilder);
 
