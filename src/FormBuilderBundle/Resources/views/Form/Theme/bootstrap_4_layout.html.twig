@@ -25,8 +25,9 @@
 {%- endblock form_widget_compound -%}
 
 {% block checkbox_radio_label %}
+    {% set label_translation_parameters = label_translation_parameters is defined ? label_translation_parameters : {} %}
     {% if label is not same as(false) %}
-        {% set temp_label = translation_domain is same as(false) ? label : label|trans({}, translation_domain) %}
+        {% set temp_label = translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) %}
         {% if temp_label matches '/<\s*\\w[^>]*>/' %}
             {% set translation_domain = false %}
             {% set label = 'HTML_LABEL' %}
