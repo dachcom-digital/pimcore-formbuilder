@@ -44,12 +44,16 @@ form_builder:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.label'
-                config: ~
+                config:
+                    maxLength: 190
+                    translatable: true
             optional.email_label:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.email_label'
-                config: ~
+                config:
+                    maxLength: 190
+                    translatable: true
             options.value:
                 display_group_id: base
                 type: textfield
@@ -64,7 +68,9 @@ form_builder:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.help_text'
-                config: ~
+                config:
+                    maxLength: 190
+                    translatable: true
             options.attr:
                 display_group_id: attributes
                 type: options_repeater
