@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.3.5 to Version 3.3.6
+- **[IMPROVEMENT]**: Allow `label_translation_parameters` [#252](https://github.com/dachcom-digital/pimcore-formbuilder/issues/252) and restrict translated labels to 190 characters [#226 (comment)](https://github.com/dachcom-digital/pimcore-formbuilder/issues/226#issuecomment-769022296)
+
 #### Update from Version 3.3.0 to Version 3.3.5
 - **[IMPROVEMENT]**: Implement Output Workflow Condition [#223](https://github.com/dachcom-digital/pimcore-formbuilder/pull/223)
 - **[IMPROVEMENT]**: Do not use RENAME function in migration [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/issues/243)
