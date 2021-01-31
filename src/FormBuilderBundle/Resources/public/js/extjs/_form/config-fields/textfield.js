@@ -25,17 +25,26 @@ Formbuilder.extjs.form.fields.textfield = Class.create(Formbuilder.extjs.form.fi
                     cls: 'pimcore_icon_language',
                     handler: function () {
 
-                        var user = pimcore.globalmanager.get('user');
+                        var translationWebsiteManager,
+                            user = pimcore.globalmanager.get('user');
 
                         if (user && !user.isAllowed('translations')) {
                             alert(t('access_denied'));
                             return;
                         }
 
-                        try {
-                            pimcore.globalmanager.get('translationwebsitemanager').activate(this.getValue());
-                        } catch (e) {
+                        if (pimcore.globalmanager.get('translationwebsitemanager') === false) {
                             pimcore.globalmanager.add('translationwebsitemanager', new pimcore.settings.translation.website(this.getValue()));
+                        } else {
+                            // @todo: remove these 4 lines and add value to activate() method
+                            // after #8026 has been fixed (https://github.com/pimcore/pimcore/pull/8026)
+                            translationWebsiteManager = pimcore.globalmanager.get('translationwebsitemanager');
+
+                            translationWebsiteManager.store.getProxy().setExtraParam('searchString', this.getValue());
+                            translationWebsiteManager.store.load();
+                            translationWebsiteManager.filterField.setValue(this.getValue());
+
+                            translationWebsiteManager.activate();
                         }
                     }
                 }
