@@ -64,7 +64,9 @@
 
         injectTokenToForm: function () {
             try {
-                grecaptcha.execute(this.siteKey, { action: this.action }).then(this.onTokenGenerated.bind(this));
+                grecaptcha.execute(this.siteKey, { action: this.action }).then(this.onTokenGenerated.bind(this), function() => {
+                    this.$form.trigger('formbuilder.fatal-captcha', [null, this.$form]);
+                });
             } catch (error) {
                 this.$form.trigger('formbuilder.fatal-captcha', [error, this.$form]);
             }
