@@ -21,7 +21,7 @@ form_builder:
                     options.data:
                         display_group_id: base
                         type: tagfield
-                        label: 'form_builder_type_field_base.data'
+                        label: 'form_builder_type_field_base.preselected'
                         config: ~
                     options.preferred_choices:
                         display_group_id: base
