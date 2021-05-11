@@ -27,7 +27,8 @@ class OptionsTransformerRegistry
     private $dynamicOptionsInterface;
 
     /**
-     * @param string $interface
+     * @param string $optionsInterface
+     * @param string $dynamicOptionsInterface
      */
     public function __construct($optionsInterface, $dynamicOptionsInterface)
     {
@@ -74,6 +75,7 @@ class OptionsTransformerRegistry
     {
         return isset($this->transformer[$identifier]);
     }
+
     /**
      * @param string $identifier
      *
