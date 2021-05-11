@@ -238,7 +238,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
             elementType = node.data.fbType;
 
         if (node.get('fbSensitiveLocked') === true) {
-            return false;
+            return oldParent === newParent;
         }
 
         return Ext.Array.contains(this.allowedMoveElements[targetType], elementType);
