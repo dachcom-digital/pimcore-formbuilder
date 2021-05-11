@@ -19,15 +19,13 @@ class DefaultValueTransformTest extends DachcomBundleTestCase
         /** @var DefaultValueTransformer $defaultValueTransformer */
         $defaultValueTransformer = $optionsTransformerRegistry->get(DefaultValueTransformer::class);
 
-        $data = [
-            'config' => [
-                'default_value' => 'DEFAULT_VALUE',
-            ]
+        $config = [
+            'default_value' => 'DEFAULT_VALUE',
         ];
 
         $expectedTransformedValues = 'DEFAULT_VALUE';
 
-        $transformedValues = $defaultValueTransformer->transform('', $data);
+        $transformedValues = $defaultValueTransformer->transform('', $config);
         $this->assertEquals($expectedTransformedValues, $transformedValues);
     }
 
@@ -41,15 +39,13 @@ class DefaultValueTransformTest extends DachcomBundleTestCase
         /** @var DefaultValueTransformer $defaultValueTransformer */
         $defaultValueTransformer = $optionsTransformerRegistry->get(DefaultValueTransformer::class);
 
-        $data = [
-            'config' => [
-                'default_value' => 'DEFAULT_VALUE',
-            ]
+        $config = [
+            'default_value' => 'DEFAULT_VALUE',
         ];
 
         $expectedTransformedValues = 'TEST_VALUE';
 
-        $transformedValues = $defaultValueTransformer->transform('TEST_VALUE', $data);
+        $transformedValues = $defaultValueTransformer->transform('TEST_VALUE', $config);
         $this->assertEquals($expectedTransformedValues, $transformedValues);
     }
 
@@ -63,15 +59,13 @@ class DefaultValueTransformTest extends DachcomBundleTestCase
         /** @var HrefTransformer $defaultValueTransformer */
         $defaultValueTransformer = $optionsTransformerRegistry->get(DefaultValueTransformer::class);
 
-        $data = [
-            'config' => [
-                'default_value' => 'DEFAULT_VALUE',
-            ]
+        $config = [
+            'default_value' => 'DEFAULT_VALUE',
         ];
 
         $expectedTransformedValues = '';
 
-        $transformedValues = $defaultValueTransformer->reverseTransform('DEFAULT_VALUE', $data);
+        $transformedValues = $defaultValueTransformer->reverseTransform('DEFAULT_VALUE', $config);
         $this->assertEquals($expectedTransformedValues, $transformedValues);
     }
 
@@ -85,15 +79,13 @@ class DefaultValueTransformTest extends DachcomBundleTestCase
         /** @var HrefTransformer $defaultValueTransformer */
         $defaultValueTransformer = $optionsTransformerRegistry->get(DefaultValueTransformer::class);
 
-        $data = [
-            'config' => [
-                'default_value' => 'DEFAULT_VALUE',
-            ]
+        $config = [
+            'default_value' => 'DEFAULT_VALUE',
         ];
 
         $expectedTransformedValues = 'TEST_VALUE';
 
-        $transformedValues = $defaultValueTransformer->reverseTransform('TEST_VALUE', $data);
+        $transformedValues = $defaultValueTransformer->reverseTransform('TEST_VALUE', $config);
         $this->assertEquals($expectedTransformedValues, $transformedValues);
     }
 }

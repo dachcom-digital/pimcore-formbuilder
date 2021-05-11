@@ -12,16 +12,28 @@ class OptionsTransformerRegistry
     protected $transformer;
 
     /**
-     * @var string
+     * @var array
      */
-    private $interface;
+    protected $dynamicTransformer;
 
     /**
-     * @param string $interface
+     * @var string
      */
-    public function __construct($interface)
+    private $optionsInterface;
+
+    /**
+     * @var string
+     */
+    private $dynamicOptionsInterface;
+
+    /**
+     * @param string $optionsInterface
+     * @param string $dynamicOptionsInterface
+     */
+    public function __construct($optionsInterface, $dynamicOptionsInterface)
     {
-        $this->interface = $interface;
+        $this->optionsInterface = $optionsInterface;
+        $this->dynamicOptionsInterface = $dynamicOptionsInterface;
     }
 
     /**
@@ -30,13 +42,28 @@ class OptionsTransformerRegistry
      */
     public function register($identifier, $service)
     {
-        if (!in_array($this->interface, class_implements($service), true)) {
+        if (!in_array($this->optionsInterface, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->interface, implode(', ', class_implements($service)))
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->optionsInterface, implode(', ', class_implements($service)))
             );
         }
 
         $this->transformer[$identifier] = $service;
+    }
+
+    /**
+     * @param string                      $identifier
+     * @param OptionsTransformerInterface $service
+     */
+    public function registerDynamic($identifier, $service)
+    {
+        if (!in_array($this->dynamicOptionsInterface, class_implements($service), true)) {
+            throw new \InvalidArgumentException(
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->dynamicOptionsInterface, implode(', ', class_implements($service)))
+            );
+        }
+
+        $this->dynamicTransformer[$identifier] = $service;
     }
 
     /**
@@ -52,6 +79,16 @@ class OptionsTransformerRegistry
     /**
      * @param string $identifier
      *
+     * @return bool
+     */
+    public function hasDynamic($identifier)
+    {
+        return isset($this->dynamicTransformer[$identifier]);
+    }
+
+    /**
+     * @param string $identifier
+     *
      * @return mixed
      *
      * @throws \Exception
@@ -59,17 +96,25 @@ class OptionsTransformerRegistry
     public function get($identifier)
     {
         if (!$this->has($identifier)) {
-            throw new \Exception('"' . $identifier . '" Options Transformer does not exist');
+            throw new \Exception(sprintf('options transformer "%s" does not exist', $identifier));
         }
 
         return $this->transformer[$identifier];
     }
 
     /**
-     * @return array
+     * @param string $identifier
+     *
+     * @return mixed
+     *
+     * @throws \Exception
      */
-    public function getAll()
+    public function getDynamic($identifier)
     {
-        return $this->transformer;
+        if (!$this->hasDynamic($identifier)) {
+            throw new \Exception(sprintf('dynamic options transformer "%s" does not exist', $identifier));
+        }
+
+        return $this->dynamicTransformer[$identifier];
     }
 }

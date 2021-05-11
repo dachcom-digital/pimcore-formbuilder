@@ -10,6 +10,7 @@ use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
+use FormBuilderBundle\Transformer\DynamicOptionsTransformerInterface;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Pimcore\Translation\Translator;
@@ -343,6 +344,7 @@ class ExtJsFormBuilder
         $fieldStructure = $flat === true ? [] : $this->getFieldTypeGroups();
 
         foreach ($formTypes as $formType => $formTypeConfiguration) {
+
             if (!$this->isAllowedFormType($formType)) {
                 continue;
             }
@@ -737,21 +739,92 @@ class ExtJsFormBuilder
         }
 
         foreach ($fieldData['options'] as $optionName => $optionValue) {
-            if (!isset($backendConfig['fields']['options.' . $optionName])) {
+
+            $optionKey = sprintf('options.%s', $optionName);
+
+            if (!isset($backendConfig['fields'][$optionKey])) {
                 continue;
             }
 
-            $optionConfig = $backendConfig['fields']['options.' . $optionName];
+            $optionConfig = $backendConfig['fields'][$optionKey];
+
+            $rawData = $fieldData['options'][$optionName];
+            $transformedData = $rawData;
+
             if (!empty($optionConfig['options_transformer'])) {
                 /** @var OptionsTransformerInterface $transformer */
                 $transformer = $this->optionsTransformerRegistry->get($optionConfig['options_transformer']);
+                $fieldConfig = $optionConfig['config'] ?? null;
 
-                if ($reverse === false) {
-                    $fieldData['options'][$optionName] = $transformer->transform($optionValue, $optionConfig);
-                } else {
-                    $fieldData['options'][$optionName] = $transformer->reverseTransform($optionValue, $optionConfig);
-                }
+                $transformedData = $reverse === false
+                    ? $transformer->transform($optionValue, $fieldConfig)
+                    : $transformer->reverseTransform($optionValue, $fieldConfig);
+
+                $fieldData['options'][$optionName] = $transformedData;
             }
+
+            $this->checkDynamicFieldOptions(
+                $fieldData,
+                $formTypeConfig['backend'],
+                $optionKey,
+                $rawData,
+                $transformedData,
+                $reverse
+            );
+        }
+    }
+
+    /**
+     * @param array  $fieldData
+     * @param array  $formTypeConfig
+     * @param string $optionKey
+     * @param array  $rawData
+     * @param array  $transformedData
+     * @param bool   $reverse
+     *
+     * @throws \Exception
+     */
+    private function checkDynamicFieldOptions(&$fieldData, array $formTypeConfig, $optionKey, $rawData, $transformedData, $reverse = false)
+    {
+        $dynamicFields = $formTypeConfig['dynamic_fields'];
+
+        if (empty($dynamicFields)) {
+            return;
+        }
+
+        foreach ($dynamicFields as $dynamicFieldName => $dynamicFieldOption) {
+
+            $dynamicFieldKey = str_replace('options.', '', $dynamicFieldName);
+            $optionFieldKey = str_replace('options.', '', $optionKey);
+
+            $sourceField = $dynamicFieldOption['source'];
+            if (!isset($formTypeConfig['fields'][$sourceField])) {
+                throw new \Exception(sprintf('Source field "%s" for dynamic field "%s" not found', $sourceField, $dynamicFieldName));
+            }
+
+            if ($sourceField !== $optionKey) {
+                return;
+            }
+
+            $dynamicFieldData = $transformedData;
+            if (!empty($dynamicFieldOption['options_transformer'])) {
+
+                /** @var DynamicOptionsTransformerInterface $transformer */
+                $transformer = $this->optionsTransformerRegistry->getDynamic($dynamicFieldOption['options_transformer']);
+                $dynamicFieldConfig = $dynamicFieldOption['config'] ?? null;
+
+                $dynamicFieldData = $reverse === false
+                    ? $transformer->transform($rawData, $transformedData, $dynamicFieldConfig)
+                    : $transformer->reverseTransform($fieldData['options'][$dynamicFieldKey], $transformedData, $dynamicFieldConfig);
+
+            }
+
+            if ($reverse === true) {
+                // remove dynamic fields in backend layout
+                unset($fieldData['options'][$dynamicFieldKey]);
+            }
+
+            $fieldData['options'][$reverse ? $optionFieldKey : $dynamicFieldKey] = $dynamicFieldData;
         }
     }
 

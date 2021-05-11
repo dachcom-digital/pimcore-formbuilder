@@ -18,5 +18,9 @@ final class OptionsTransformerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('form_builder.transformer.options') as $id => $tags) {
             $definition->addMethodCall('register', [$id, new Reference($id)]);
         }
+
+        foreach ($container->findTaggedServiceIds('form_builder.transformer.dynamic_options') as $id => $tags) {
+            $definition->addMethodCall('registerDynamic', [$id, new Reference($id)]);
+        }
     }
 }

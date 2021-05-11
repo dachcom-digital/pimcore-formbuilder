@@ -7,12 +7,7 @@ use Pimcore\Model\Element\Service;
 class HrefTransformer implements OptionsTransformerInterface
 {
     /**
-     * Transform href data.
-     *
-     * @param array $optionValue
-     * @param array $optionConfig
-     *
-     * @return mixed
+     * {@inheritDoc}
      */
     public function transform($optionValue, $optionConfig = null)
     {
@@ -28,12 +23,7 @@ class HrefTransformer implements OptionsTransformerInterface
     }
 
     /**
-     * Transform href path/id to detailed info array.
-     *
-     * @param array $optionValue
-     * @param array $optionConfig
-     *
-     * @return mixed
+     * {@inheritDoc}
      */
     public function reverseTransform($optionValue, $optionConfig = null)
     {

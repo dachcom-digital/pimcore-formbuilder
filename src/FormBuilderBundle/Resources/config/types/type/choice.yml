@@ -55,3 +55,8 @@ form_builder:
                         label: 'form_builder_type_field.choices'
                         options_transformer: FormBuilderBundle\Transformer\ChoicesTransformer
                         config: ~
+                dynamic_fields:
+                    options.choice_attr:
+                        source: options.choices
+                        options_transformer: FormBuilderBundle\Transformer\ChoicesMetaTransformer
+                        config: ~

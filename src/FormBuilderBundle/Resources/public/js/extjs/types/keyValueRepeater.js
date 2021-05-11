@@ -2,6 +2,7 @@ pimcore.registerNS('Formbuilder.extjs.types.keyValueRepeater');
 Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
     allowGroupSelector: true,
+    allowChoiceMeta: true,
 
     fieldIdentifier: null,
 
@@ -17,7 +18,7 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
     optionStore: null,
 
-    initialize: function (identifier, label, storeData, optionStore, allowGroup) {
+    initialize: function (identifier, label, storeData, optionStore, allowGroup, allowChoiceMeta) {
 
         this.fieldIdentifier = identifier;
         this.fieldLabel = label;
@@ -30,6 +31,10 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
         if (allowGroup === false) {
             this.allowGroupSelector = false;
+        }
+
+        if (allowChoiceMeta === false) {
+            this.allowChoiceMeta = false;
         }
 
         this.generateRepeaterWithKeyValue();
@@ -201,21 +206,19 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
     },
 
-    addMetaField: function (button, option, value) {
+    addMetaField: function (button, option, value, choiceMetaData) {
 
         var _ = this,
             fieldSet = button.up().up(),
-            fieldSetName = fieldSet.name,
             fieldSetIndex = null,
-            fieldContainerIndex = 0;
+            fieldContainerIndex,
+            optionField;
 
         fieldContainerIndex = fieldSet.query('[name="delete_button"]').length;
 
         if (this.type === 'grouped') {
             fieldSetIndex = fieldSet.groupIndex;
         }
-
-        var optionField = null;
 
         if (this.optionType === 'user') {
 
@@ -229,18 +232,12 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
                 margin: '0 10px 0 0',
                 listeners: {
                     updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
-                        var name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option');
-                        this.name = name;
+                        this.name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option');
                     }
                 }
             });
 
         } else {
-
-            var optionsStore = new Ext.data.ArrayStore({
-                fields: ['label', 'value'],
-                data: this.optionStore
-            });
 
             optionField = new Ext.form.ComboBox({
                 name: _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option'),
@@ -249,7 +246,10 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
                 displayField: 'label',
                 valueField: 'value',
                 mode: 'local',
-                store: optionsStore,
+                store: new Ext.data.ArrayStore({
+                    fields: ['label', 'value'],
+                    data: this.optionStore
+                }),
                 editable: false,
                 triggerAction: 'all',
                 anchor: "100%",
@@ -258,8 +258,7 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
                 value: typeof option !== 'object' ? option : null,
                 listeners: {
                     updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
-                        var name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option');
-                        this.name = name;
+                        this.name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'option');
                     }
                 }
             });
@@ -284,35 +283,142 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
                     margin: '0 10px 0 0',
                     listeners: {
                         updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
-                            var name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'value');
-                            this.name = name;
+                            this.name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'value');
+                        }
+                    }
+                },
+                {
+                    xtype: 'hidden',
+                    name: _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'choice_meta'),
+                    value: choiceMetaData,
+                    cls: 'choice_meta_data',
+                    listeners: {
+                        updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
+                            this.name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'value');
                         }
                     }
                 }
             ]
         });
 
-        compositeField.add([{
+        if (this.allowChoiceMeta === true) {
+            this.addChoiceMeta(compositeField, choiceMetaData);
+        }
+
+        compositeField.add({
             xtype: 'button',
             iconCls: 'pimcore_icon_delete',
             style: 'float:left;',
             name: 'delete_button',
-            handler: function (compositeField, el) {
+            handler: function (compositeField) {
                 fieldSet.remove(compositeField);
                 fieldSet.updateLayout();
                 this.updateIndex();
                 this.checkTypeSelector();
             }.bind(this, compositeField)
-        }, {
+        });
+
+        compositeField.add({
             xtype: 'box',
             style: 'clear:both;'
-        }]);
+        });
 
         fieldSet.add(compositeField);
         fieldSet.updateLayout();
 
         this.checkTypeSelector();
 
+    },
+
+    addChoiceMeta: function (compositeField, choiceMetaData) {
+
+        var metaValues = choiceMetaData ? Ext.decode(choiceMetaData) : null;
+
+        compositeField.add({
+            xtype: 'button',
+            iconCls: 'pimcore_icon_settings',
+            name: 'choice_meta_button',
+            style: 'float:left;',
+            handler: function () {
+
+                var transposedHrefFieldValues = null,
+                    hrefFieldValues = null,
+                    hrefFieldConfig = {
+                        label: t('form_builder_type_field.choices.relation'),
+                        id: 'relation',
+                        config: {
+                            types: ['document', 'asset', 'object'],
+                            subtypes: {}
+                        }
+                    }, hrefField = new Formbuilder.extjs.form.fields.href();
+
+                if (Ext.isObject(metaValues)) {
+                    transposedHrefFieldValues = DataObjectParser.transpose(metaValues).data();
+                    if (Ext.isObject(transposedHrefFieldValues) && transposedHrefFieldValues.hasOwnProperty('relation')) {
+                        hrefFieldValues = transposedHrefFieldValues.relation;
+                    }
+                }
+
+                var metaWindow = new Ext.Window({
+                    width: 600,
+                    height: 400,
+                    iconCls: 'pimcore_icon_settings',
+                    title: t('form_builder_type_field.choices.meta'),
+                    layout: 'form',
+                    closeAction: 'close',
+                    plain: true,
+                    autoScroll: true,
+                    modal: false,
+                    items: [
+                        {
+                            xtype: 'form',
+                            flex: 1,
+                            items: [
+                                {
+                                    xtype: 'textfield',
+                                    fieldLabel: t('form_builder_type_field.choices.tooltip'),
+                                    name: 'tooltip',
+                                    width: 300,
+                                    value: metaValues !== null ? metaValues.tooltip : null,
+                                    allowBlank: true,
+                                    required: false
+                                },
+                                hrefField.getField(hrefFieldConfig, hrefFieldValues),
+                            ]
+                        }
+                    ],
+                    buttons: [
+                        {
+                            text: t('save'),
+                            iconCls: 'pimcore_icon_save',
+                            handler: function (button) {
+                                var choiceMetaData = Ext.ComponentQuery.query('hidden[cls~="choice_meta_data"]', compositeField),
+                                    formValues = button.up('window').down('form').getForm().getValues();
+
+                                if (choiceMetaData.length > 0) {
+                                    choiceMetaData[0].setValue(Ext.encode(formValues));
+                                    metaValues = formValues;
+                                }
+
+                                metaWindow.hide();
+                                metaWindow.destroy();
+                            }
+                        },
+                        {
+                            text: t('cancel'),
+                            iconCls: 'pimcore_icon_cancel',
+                            handler: function () {
+                                metaWindow.hide();
+                                metaWindow.destroy();
+                            }.bind(this)
+                        }
+                    ]
+                });
+
+                metaWindow.show();
+
+            }.bind(this, compositeField)
+        });
     },
 
     populateRepeater: function () {
@@ -340,18 +446,22 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
         });
 
         Ext.Object.each(this.storeData, function (index, value) {
-            var groupMetaField = undefined;
+            var groupMetaField = undefined,
+                choiceMeta = null;
             if (type === 'grouped') {
                 Ext.Array.each(value, function (group, index) {
+                    var choiceMeta = null;
                     if (group.name && index === 0) {
                         groupMetaField = _.addGroupedMetaField(_.repeater.query('[name="button_type_grouped"]')[0], group.name);
                     }
                     if (groupMetaField) {
-                        _.addMetaField(groupMetaField.query('[name="add_field_button"]')[0], group.option, group.value);
+                        choiceMeta = group.hasOwnProperty('choice_meta') ? group.choice_meta : null;
+                        _.addMetaField(groupMetaField.query('[name="add_field_button"]')[0], group.option, group.value, choiceMeta);
                     }
                 });
             } else {
-                groupMetaField = _.addMetaField(_.repeater.query('[name="button_type_default"]')[0], value.option, value.value);
+                choiceMeta = value.hasOwnProperty('choice_meta') ? value.choice_meta : null;
+                groupMetaField = _.addMetaField(_.repeater.query('[name="button_type_default"]')[0], value.option, value.value, choiceMeta);
             }
         });
     },

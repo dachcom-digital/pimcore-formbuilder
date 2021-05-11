@@ -5,12 +5,7 @@ namespace FormBuilderBundle\Transformer;
 class ChoicesTransformer implements OptionsTransformerInterface
 {
     /**
-     * Transform ExtJs Array to valid symfony choices array.
-     *
-     * @param array $choices
-     * @param array $optionConfig
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function transform($choices, $optionConfig = null)
     {
@@ -31,12 +26,7 @@ class ChoicesTransformer implements OptionsTransformerInterface
     }
 
     /**
-     * Transform symfony choices array into valid ExtJs Array.
-     *
-     * @param array $choices
-     * @param array $optionConfig
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function reverseTransform($choices, $optionConfig = null)
     {
@@ -57,7 +47,10 @@ class ChoicesTransformer implements OptionsTransformerInterface
 
                 $groupCounter++;
             } else {
-                $parsedChoices[] = ['option' => $choiceKey, 'value' => $choiceValue];
+                $parsedChoices[] = [
+                    'option' => $choiceKey,
+                    'value' => $choiceValue
+                ];
             }
         }
 

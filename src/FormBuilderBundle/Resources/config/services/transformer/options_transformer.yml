@@ -5,10 +5,10 @@ services:
         autoconfigure: true
         public: false
 
-    # registry: options transformer
     FormBuilderBundle\Registry\OptionsTransformerRegistry:
         arguments:
-            $interface: 'FormBuilderBundle\Transformer\OptionsTransformerInterface'
+            $optionsInterface: 'FormBuilderBundle\Transformer\OptionsTransformerInterface'
+            $dynamicOptionsInterface: 'FormBuilderBundle\Transformer\DynamicOptionsTransformerInterface'
 
     FormBuilderBundle\Transformer\ChoicesTransformer:
         tags:
@@ -21,3 +21,7 @@ services:
     FormBuilderBundle\Transformer\HrefTransformer:
         tags:
             - {name: form_builder.transformer.options}
+
+    FormBuilderBundle\Transformer\ChoicesMetaTransformer:
+        tags:
+            - {name: form_builder.transformer.dynamic_options}
