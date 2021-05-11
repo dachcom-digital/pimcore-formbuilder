@@ -11,7 +11,7 @@ There are several form types available (updated continuously).
 | Checkbox | Other Fields | Default (single) checkbox field. |
 | Submit | Buttons | Submit Button. |
 | Country | Choice Fields| Create a drop down with a default country selection. |
-| Choice | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios |
+| Choice | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios, checkout [choice meta](90_FrontendTips.md#choice-meta-attributes) for enhanced choice customization |
 | [Dynamic Choice](82_DynamicChoice.md) | Choice Fields | Create a drop down, multi drop down, multi-checkboxes, multi-radios. Populate Data from a custom Service.|
 | Html Tag | Other Fields | Create a label, or headline element (tags can be defined via parameter) |
 | Snippet | Other Fields | Place a custom (localized) snippet in your form. |

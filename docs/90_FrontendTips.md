@@ -50,3 +50,37 @@ Formbuilder allows you to use HTML tags in checkbox and radio labels.
 Just use the translation html editor to define some html label:
 
 ![labels with html](https://user-images.githubusercontent.com/700119/54492883-97453680-48ca-11e9-9abe-d43d1d89a505.png)
+
+## Choice Meta Attributes
+![image](https://user-images.githubusercontent.com/700119/117805038-cb250800-b258-11eb-8d18-e7433381e75f.png)
+
+If you're using some choice meta attributes, you need to adjust your theme:
+
+```twig
+{# app/Resources/FormBuilderBundle/views/Form/Theme/bootstrap_4_layout.html.twig #}
+{% extends "@!FormBuilder/Form/Theme/bootstrap_4_layout.html.twig" %}
+
+{% block widget_attributes -%}
+
+    {# example: tooltip meta #}
+    
+    {% if attr['data-meta-tooltip'] is defined %}
+        {% set attr = attr|merge({'data-meta-tooltip': attr['data-meta-tooltip']|trans }) %}
+    {% endif %}
+
+    {{ parent() }}
+
+{%- endblock widget_attributes %}
+
+{% block checkbox_radio_label -%}
+
+    {# example: relation meta #}
+    
+    {{ parent() }}
+    
+    {% if attr['data-meta-relation-' ~ app.request.locale ~ '-id'] is defined %}
+        {{ pimcore_asset(attr['data-meta-relation-' ~ app.request.locale ~ '-id']).thumbnail('content').html|raw }}
+    {% endif %}
+
+{%- endblock checkbox_radio_label %}
+```
