@@ -153,12 +153,34 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
                 bodyStyle: 'padding: 10px;',
                 labelWidth: 150,
                 defaultType: 'textfield',
-            });
+            }),
+            templateDefaultValue = undefined,
+            parentContainerTrail = [],
+            node = this.getTreeNode(),
+            nodeData;
+
+        while (node !== null) {
+            nodeData = node.getData();
+            if (nodeData.hasOwnProperty('fbType') && nodeData.fbType === 'container') {
+                if (nodeData.hasOwnProperty('object') && nodeData.object.hasOwnProperty('storeData')) {
+                    parentContainerTrail.push(nodeData.object.storeData.name)
+                }
+            }
+            node = node && node.hasOwnProperty('parentNode') ? node.parentNode : null;
+        }
 
         if (isMainTab === true) {
 
+            Ext.iterate(this.formTypeTemplates, function (data, value) {
+                if (data.default === true) {
+                    templateDefaultValue = data.value;
+                    return false;
+                }
+            });
+
             //create "display name" field.
-            form.add(new Ext.form.TextField({
+            form.add({
+                xtype: 'textfield',
                 fieldLabel: t('form_builder_field_display_name'),
                 name: 'display_name',
                 value: this.getDisplayName(),
@@ -169,58 +191,85 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
                     keyup: this.checkFieldDisplayName.bind(this),
                     blur: this.checkFieldLabelName.bind(this)
                 }
-            }));
-
-            //create "name" field.
-            form.add(new Ext.form.TextField({
-                fieldLabel: t('form_builder_field_name'),
-                name: 'name',
-                value: (this.getName() ? this.getName() : this.generateId()),
-                allowBlank: false,
-                anchor: '100%',
-                enableKeyEvents: true,
-                validator: function (v) {
-                    if (in_array(v.toLowerCase(), _.formHandler.parentPanel.getConfig().forbidden_form_field_names)) {
-                        this.setValue('');
-                        Ext.MessageBox.alert(t('error'), t('form_builder_forbidden_file_name'));
-                        return false;
-                    }
-                    return new RegExp('^[A-Za-z0-9?_]+$').test(v);
-                }
-            }));
-
-            var templateSelectStore = new Ext.data.Store({
-                data: this.formTypeTemplates
             });
 
-            var templateDefaultValue = undefined;
-            Ext.iterate(this.formTypeTemplates, function (data, value) {
-                if (data.default === true) {
-                    templateDefaultValue = data.value;
-                    return false;
-                }
+            form.add({
+                xtype: 'panel',
+                style: {
+                    margin: '0 0 15px 0',
+                },
+                layout: {
+                    type: 'hbox',
+                    align: 'left'
+                },
+                items: [
+                    {
+                        xtype: 'textfield',
+                        width: 300,
+                        fieldLabel: t('form_builder_field_name'),
+                        name: 'name',
+                        value: (this.getName() ? this.getName() : this.generateId()),
+                        allowBlank: false,
+                        enableKeyEvents: true,
+                        validator: function (v) {
+                            if (in_array(v.toLowerCase(), _.formHandler.parentPanel.getConfig().forbidden_form_field_names)) {
+                                this.setValue('');
+                                Ext.MessageBox.alert(t('error'), t('form_builder_forbidden_file_name'));
+                                return false;
+                            }
+                            return new RegExp('^[A-Za-z0-9?_]+$').test(v);
+                        },
+                        listeners: {
+                            keyup: function (field) {
+                                var label = field.up('panel').down('label');
+                                label.up('panel').down('label').setText((parentContainerTrail.length > 0 ? parentContainerTrail.join('_') + '_' : '') + field.getValue());
+                            }.bind(this),
+                        }
+                    },
+                    {
+                        xtype: 'label',
+                        style: {
+                            margin: '5px 0 0 10px',
+                            display: 'block',
+                            fontStyle: 'italic',
+                        },
+                        listeners: {
+                            render: function (label) {
+                                Ext.create('Ext.tip.ToolTip', {
+                                    target: label.getEl(),
+                                    html: t('form_builder_field_name_preview')
+                                });
+                            },
+                            afterrender: function (field) {
+                                var fieldValue = field.up('panel').down('textfield').getValue();
+                                field.setText((parentContainerTrail.length > 0 ? parentContainerTrail.join('_') + '_' : '') + fieldValue);
+                            }.bind(this),
+                        }
+                    }
+                ],
             });
 
             //create "template" field
-            var templateValue = this.getFieldValue('optional.template');
-            form.add(new Ext.form.ComboBox({
+            form.add({
+                xtype: 'combo',
                 fieldLabel: t('form_builder_field_template'),
                 name: 'optional.template',
-                value: templateValue ? templateValue : templateDefaultValue,
+                value: this.getFieldValue('optional.template') ? this.getFieldValue('optional.template') : templateDefaultValue,
                 queryDelay: 0,
                 displayField: 'label',
                 valueField: 'value',
                 mode: 'local',
-                store: templateSelectStore,
+                store: new Ext.data.Store({
+                    data: this.formTypeTemplates
+                }),
                 editable: false,
                 triggerAction: 'all',
                 anchor: '100%',
                 allowBlank: true
-            }));
+            });
         }
 
         return form;
-
     },
 
     generateField: function (fieldConfig) {

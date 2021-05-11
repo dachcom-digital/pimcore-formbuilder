@@ -149,7 +149,15 @@ Formbuilder.extjs.components.formFieldContainer = Class.create({
                 defaultType: 'textfield'
             });
 
-        form.add(new Ext.form.TextField({
+        Ext.iterate(this.containerTemplates, function (data) {
+            if (data.default === true) {
+                defaultTemplate = data.value;
+                return false;
+            }
+        });
+
+        form.add({
+            xtype: 'textfield',
             fieldLabel: 'Name',
             name: 'name',
             value: (this.getName() ? this.getName() : this.generateId()),
@@ -174,16 +182,10 @@ Formbuilder.extjs.components.formFieldContainer = Class.create({
                 }
                 return new RegExp('^[A-Za-z0-9?_]+$').test(v);
             }
-        }));
-
-        Ext.iterate(this.containerTemplates, function (data, value) {
-            if (data.default === true) {
-                defaultTemplate = data.value;
-                return false;
-            }
         });
 
-        form.add(new Ext.form.ComboBox({
+        form.add({
+            xtype: 'combo',
             fieldLabel: t('form_builder_field_template'),
             name: 'configuration.template',
             value: this.getFieldValue('template') ? this.getFieldValue('template') : defaultTemplate,
@@ -196,7 +198,7 @@ Formbuilder.extjs.components.formFieldContainer = Class.create({
             triggerAction: 'all',
             anchor: '100%',
             allowBlank: true
-        }));
+        });
 
         Ext.Array.each(this.config, function (configElement) {
             var field;
@@ -251,7 +253,8 @@ Formbuilder.extjs.components.formFieldContainer = Class.create({
         }.bind(this));
 
         if (configFieldCounter === 0) {
-            form.add(new Ext.form.Label({
+            form.add({
+                xtype: 'label',
                 name: 'label',
                 text: 'Nothing to do so far. Just enjoy this fancy container.',
                 style: {
@@ -259,11 +262,10 @@ Formbuilder.extjs.components.formFieldContainer = Class.create({
                     width: '100%'
                 },
                 anchor: '100%'
-            }));
+            });
         }
 
         return form;
-
     },
 
     getFieldValue: function (id) {
