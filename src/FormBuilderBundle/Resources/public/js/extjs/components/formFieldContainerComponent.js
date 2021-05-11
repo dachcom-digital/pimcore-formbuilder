@@ -236,6 +236,7 @@ Formbuilder.extjs.components.formFieldContainer = Class.create({
                         configElement.label,
                         this.getFieldValue(configElement.name),
                         configElement.config.options,
+                        false,
                         false
                     );
                     field = keyValueRepeater.getRepeater();

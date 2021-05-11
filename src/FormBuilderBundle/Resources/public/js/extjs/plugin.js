@@ -51,8 +51,7 @@ pimcore.plugin.Formbuilder = Class.create(pimcore.plugin.admin, {
 
         try {
             pimcore.globalmanager.get('form_builder_settings').activate();
-        }
-        catch (e) {
+        } catch (e) {
             pimcore.globalmanager.add('form_builder_settings', new Formbuilder.settings(_.config));
         }
     }

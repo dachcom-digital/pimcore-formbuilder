@@ -685,6 +685,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
                 t('form_builder_form_attribute_name') + ' & ' + t('form_builder_form_attribute_value'),
                 this.formConfig['attributes'] ? this.formConfig['attributes'] : [],
                 this.formConfigStore.attributes,
+                false,
                 false
             ),
             clBuilder = new Formbuilder.extjs.conditionalLogic.builder(this.formConditionalsStructured, this.formConditionalsStore, this);
