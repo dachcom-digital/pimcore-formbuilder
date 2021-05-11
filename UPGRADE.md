@@ -11,6 +11,7 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[NEW FEATURE]**: Pimcore 6.9.0 ready
 - **[IMPROVEMENT]**: D&D-Support/Sortable Container Fields [#231](https://github.com/dachcom-digital/pimcore-formbuilder/issues/231)
 - **[IMPROVEMENT]**: Adjust field attribute label "Preselected" [#270](https://github.com/dachcom-digital/pimcore-formbuilder/issues/270)
+- **[IMPROVEMENT]**: Field name preview added #279 [#237](https://github.com/dachcom-digital/pimcore-formbuilder/issues/237)
 
 #### Update from Version 3.3.5 to Version 3.3.6
 - **[IMPROVEMENT]**: Allow `label_translation_parameters` [#252](https://github.com/dachcom-digital/pimcore-formbuilder/issues/252) and restrict translated labels to 190 characters [#226 (comment)](https://github.com/dachcom-digital/pimcore-formbuilder/issues/226#issuecomment-769022296)
