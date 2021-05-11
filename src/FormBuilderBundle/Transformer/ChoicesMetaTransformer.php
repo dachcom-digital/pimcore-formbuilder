@@ -59,7 +59,7 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return array|null
      */
@@ -105,8 +105,8 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
     }
 
     /**
-     * @param $key
-     * @param $rawData
+     * @param string $key
+     * @param array  $rawData
      *
      * @return string|null
      */
