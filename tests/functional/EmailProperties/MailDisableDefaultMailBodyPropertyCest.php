@@ -40,7 +40,6 @@ class MailDisableDefaultMailBodyPropertyCest
         $I->cantSeePropertyKeysInEmail($adminEmail, ['body']);
     }
 
-
     /**
      * @param FunctionalTester $I
      *
@@ -68,6 +67,6 @@ class MailDisableDefaultMailBodyPropertyCest
 
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seePropertyKeysInEmail($adminEmail, ['body']);
+        $I->cantSeePropertyKeysInEmail($adminEmail, ['body']);
     }
 }
