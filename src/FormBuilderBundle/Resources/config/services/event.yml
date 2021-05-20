@@ -15,6 +15,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    # core event: mail param listener
+    FormBuilderBundle\EventListener\Core\MailParamListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
     # core event: clean up unused tmp files
     FormBuilderBundle\EventListener\Core\CleanUpListener:
         tags:
