@@ -163,7 +163,7 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
             nodeData = node.getData();
             if (nodeData.hasOwnProperty('fbType') && nodeData.fbType === 'container') {
                 if (nodeData.hasOwnProperty('object') && nodeData.object.hasOwnProperty('storeData')) {
-                    parentContainerTrail.push(nodeData.object.storeData.name)
+                    parentContainerTrail.push(nodeData.object.storeData.name + (nodeData.object.storeData.sub_type === 'repeater' ? '_[?]' : ''));
                 }
             }
             node = node && node.hasOwnProperty('parentNode') ? node.parentNode : null;
@@ -229,7 +229,7 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
                     {
                         xtype: 'label',
                         style: {
-                            margin: '5px 0 0 10px',
+                            margin: '7px 0 0 10px',
                             display: 'block',
                             fontStyle: 'italic',
                         },
