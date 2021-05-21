@@ -11,6 +11,10 @@ services:
         tags:
             - {name: form_builder.transformer.output, type: fallback_transformer, channel: _all }
 
+    FormBuilderBundle\Transformer\Output\DynamicMultiFileTransformer:
+        tags:
+            - {name: form_builder.transformer.output, type: dynamic_multi_file_transformer, channel: mail }
+
     FormBuilderBundle\Transformer\Output\DateDataObjectTransformer:
         tags:
             - {name: form_builder.transformer.output, type: date_transformer, channel: object }

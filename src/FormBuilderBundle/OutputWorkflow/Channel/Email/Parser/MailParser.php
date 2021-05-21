@@ -60,7 +60,6 @@ class MailParser
     /**
      * @param Email         $mailTemplate
      * @param FormInterface $form
-     * @param array         $attachments
      * @param array         $channelConfiguration
      * @param string        $locale
      *
@@ -68,10 +67,11 @@ class MailParser
      *
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, array $attachments, array $channelConfiguration, $locale)
+    public function create(Email $mailTemplate, FormInterface $form, array $channelConfiguration, $locale)
     {
         $mail = new Mail();
 
+        $allowAttachments = $channelConfiguration['allowAttachments'];
         $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
         $forcePlainText = (bool) $channelConfiguration['forcePlainText'];
 
@@ -89,11 +89,17 @@ class MailParser
         $this->parseSubject($mailTemplate, $fieldValues);
         $this->setMailPlaceholders($mail, $fieldValues);
 
+        /** @var FormDataInterface $formData */
+        $formData = $form->getData();
+
         if ($disableDefaultMailBody === false) {
-            /** @var FormDataInterface $formData */
-            $formData = $form->getData();
             $mailLayout = $this->getMailLayout($formData->getFormDefinition(), $channelConfiguration, $isCopy, $locale);
             $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
+        }
+
+        $attachments = [];
+        if ($formData->hasAttachments() && $allowAttachments === true) {
+            $attachments = $formData->getAttachments();
         }
 
         $this->parseMailAttachment($mail, $attachments);

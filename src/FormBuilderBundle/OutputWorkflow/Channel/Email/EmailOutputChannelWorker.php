@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Session\FlashBagManagerInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
@@ -22,11 +21,6 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBeh
 
 class EmailOutputChannelWorker
 {
-    /**
-     * @var FlashBagManagerInterface
-     */
-    protected $flashBagManager;
-
     /**
      * @var MailParser
      */
@@ -48,20 +42,17 @@ class EmailOutputChannelWorker
     protected $eventDispatcher;
 
     /**
-     * @param FlashBagManagerInterface $flashBagManager
      * @param MailParser               $mailParser
      * @param IncludeRenderer          $includeRenderer
      * @param Dispatcher               $dispatcher
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        FlashBagManagerInterface $flashBagManager,
         MailParser $mailParser,
         IncludeRenderer $includeRenderer,
         Dispatcher $dispatcher,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->flashBagManager = $flashBagManager;
         $this->mailParser = $mailParser;
         $this->includeRenderer = $includeRenderer;
         $this->dispatcher = $dispatcher;
@@ -84,7 +75,6 @@ class EmailOutputChannelWorker
 
         $mailTemplate = $channelConfiguration['mailTemplate'];
         $forcePlainText = $channelConfiguration['forcePlainText'];
-        $allowAttachments = $channelConfiguration['allowAttachments'];
 
         $hasIsCopyFlag = isset($channelConfiguration['legacyIsCopy']);
         $isCopy = $hasIsCopyFlag && $channelConfiguration['legacyIsCopy'] === true;
@@ -109,12 +99,7 @@ class EmailOutputChannelWorker
             $mailTemplate->setTo($mailConditionData->getRecipient());
         }
 
-        $attachments = [];
-        if ($formData->hasAttachments() && $allowAttachments === true) {
-            $attachments = $formData->getAttachments();
-        }
-
-        $mail = $this->mailParser->create($mailTemplate, $form, $attachments, $channelConfiguration, $locale);
+        $mail = $this->mailParser->create($mailTemplate, $form, $channelConfiguration, $locale);
         $forceSubmissionAsPlainText = (bool) $forcePlainText;
 
         if ($hasIsCopyFlag === true) {

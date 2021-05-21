@@ -1,16 +1,30 @@
 {% block form_builder_dynamicmultifile_widget %}
+    {%- for child in form %}
+        {% if child.vars.name == 'adapter' %}
+            {# pass row attributes to compount adapter form #}
+            {% set widget_attr = attr|merge({class: (child.vars.attr.class|default('') ~ ' ' ~ attr.class|default(''))|trim}) %}
+            {{- form_row(child, {compound: false, attr: widget_attr}) -}}
+        {% else %}
+            {{- form_row(child) -}}
+        {% endif %}
+    {% endfor -%}
+{% endblock %}
+
+{% block form_builder_dynamicmultifile_fine_uploader_widget %}
     {% apply spaceless %}
         <div {{ block('attributes') }}>
-            <div class="qq-upload-container">
-                {% set translationVarName = id ~ '_dmf_config' %}
-                <script class="js-options">var {{ translationVarName }} = {{ engine_options|json_encode|raw }};</script>
-            </div>
+            <div class="qq-upload-container"></div>
             <div class="qq-uploader-wrapper" style="display:none;">
                 <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="{{ 'form_builder.dynamic_multi_file.drop_files_here'|trans }}">
                     {% include '@FormBuilder/Form/Elements/DynamicMultiFile/form.html.twig' %}
                 </div>
             </div>
-            <input type="{{ type }}" value="{{ value }}" rel="theme" />
         </div>
+    {% endapply %}
+{% endblock %}
+
+{% block form_builder_dynamicmultifile_dropzone_widget %}
+    {% apply spaceless %}
+        !!!!!
     {% endapply %}
 {% endblock %}

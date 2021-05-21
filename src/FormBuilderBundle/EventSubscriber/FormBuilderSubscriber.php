@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\EventSubscriber;
 
-use Pimcore\Model\Asset;
+use FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlank;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
@@ -13,7 +13,6 @@ use FormBuilderBundle\Event\Form\PostSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,8 +21,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
@@ -34,19 +31,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     protected $configuration;
 
     /**
-     * @var AttachmentStreamInterface
-     */
-    protected $attachmentStream;
-
-    /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
 
     /**
      * @var Dispatcher
@@ -70,24 +57,17 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param Configuration             $configuration
-     * @param AttachmentStreamInterface $attachmentStream
-     * @param EventDispatcherInterface  $eventDispatcher
-     * @param SessionInterface          $session
      * @param Dispatcher                $dispatcher
      * @param FormRegistryInterface     $formRegistry
      */
     public function __construct(
         Configuration $configuration,
-        AttachmentStreamInterface $attachmentStream,
         EventDispatcherInterface $eventDispatcher,
-        SessionInterface $session,
         Dispatcher $dispatcher,
         FormRegistryInterface $formRegistry
     ) {
         $this->configuration = $configuration;
-        $this->attachmentStream = $attachmentStream;
         $this->eventDispatcher = $eventDispatcher;
-        $this->session = $session;
         $this->dispatcher = $dispatcher;
         $this->formRegistry = $formRegistry;
         $this->availableConstraints = $this->configuration->getAvailableConstraints();
@@ -127,8 +107,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         return [
             FormEvents::PRE_SET_DATA  => ['onPreSetData'],
             FormEvents::POST_SET_DATA => ['onPostSetData'],
-            FormEvents::PRE_SUBMIT    => ['onPreSubmit'],
-            FormEvents::POST_SUBMIT   => ['onPostSubmit']
+            FormEvents::PRE_SUBMIT    => ['onPreSubmit']
         ];
     }
 
@@ -167,70 +146,6 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
 
         $this->populateForm($event->getForm(), $event->getForm()->getData(), $event->getData());
-    }
-
-    /**
-     * @param FormEvent $event
-     *
-     * @throws \Exception
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        $form = $event->getForm();
-        /** @var FormDataInterface $formData */
-        $formData = $event->getData();
-        $formDefinition = $formData->getFormDefinition();
-
-        if (!$form->isValid()) {
-            return;
-        }
-
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->session->getBag('form_builder_session');
-
-        $fileData = [];
-        //handle linked assets.
-        foreach ($sessionBag->getIterator() as $key => $sessionValue) {
-            $formKey = 'file_' . $formDefinition->getId();
-            if (substr($key, 0, strlen($formKey)) !== $formKey) {
-                continue;
-            }
-
-            if (!isset($fileData[$sessionValue['fieldId']])) {
-                $fileData[$sessionValue['fieldId']] = [
-                    'id'    => $sessionValue['fieldId'],
-                    'name'  => $sessionValue['fieldName'],
-                    'files' => []
-                ];
-            }
-
-            $fileData[$sessionValue['fieldId']]['files'][] = $sessionValue;
-            $sessionBag->remove($key);
-        }
-
-        foreach ($fileData as $fileBlock) {
-            $fieldId = $fileBlock['id'];
-            $fieldName = $fileBlock['name'];
-            $files = $fileBlock['files'];
-
-            $formField = $formData->getFormDefinition()->getField($fieldName, true);
-            $formFieldOptions = $formField instanceof FormFieldDefinitionInterface ? $formField->getOptions() : [];
-            if (isset($formFieldOptions['submit_as_attachment']) && $formFieldOptions['submit_as_attachment'] === true) {
-                $attachmentLinks = $this->attachmentStream->createAttachmentLinks($files, $formDefinition->getName());
-                foreach ($attachmentLinks as $attachmentLink) {
-                    $formData->addAttachment($attachmentLink);
-                    // set value to null to skip field in mail template
-                    $formData->replaceValueByFieldId($fieldId, null);
-                }
-            } else {
-                $asset = $this->attachmentStream->createAttachmentAsset($files, $formDefinition->getName());
-                if ($asset instanceof Asset) {
-                    $formData->replaceValueByFieldId($fieldId, sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath()));
-                }
-            }
-        }
-
-        $event->setData($formData);
     }
 
     /**
@@ -373,10 +288,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                array_filter($constraints, function ($constraint) {
-                    return $constraint instanceof NotBlank;
-                })
-            ) === 1;
+                    array_filter($constraints, function ($constraint) {
+                        return $constraint instanceof NotBlank || $constraint instanceof DynamicMultiFileNotBlank;
+                    })
+                ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout

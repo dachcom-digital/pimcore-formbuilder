@@ -5,6 +5,7 @@ namespace FormBuilderBundle;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicMultiFileAdapterPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicObjectResolverPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
@@ -39,6 +40,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new OutputWorkflowChannelPass());
         $container->addCompilerPass(new DynamicObjectResolverPass());
         $container->addCompilerPass(new RuntimeDataProviderPass());
+        $container->addCompilerPass(new DynamicMultiFileAdapterPass());
     }
 
     /**

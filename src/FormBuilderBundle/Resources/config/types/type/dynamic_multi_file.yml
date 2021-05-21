@@ -2,6 +2,7 @@ form_builder:
     types:
         dynamic_multi_file:
             class: FormBuilderBundle\Form\Type\DynamicMultiFileType
+            output_transformer: dynamic_multi_file_transformer
             backend:
                 form_type_group: other_fields
                 label: 'form_builder_type.dynamic_multi_file'

@@ -157,11 +157,16 @@
                 }
 
                 var $form = $(this),
-                    $btns = $form.find('.btn');
+                    $btns = $form.find('.btn'),
+                    $fbHtmlFile = $form.find('.dynamic-multi-file');
 
                 ev.preventDefault();
 
                 $btns.attr('disabled', 'disabled');
+
+                if ($fbHtmlFile.length > 0) {
+                    $form.find('.qq-upload-delete').hide();
+                }
 
                 $.ajax({
                     type: $form.attr('method'),
@@ -177,7 +182,9 @@
 
                         _.validationTransformer.transform('removeFormValidations', $form);
 
-                        $form.trigger('formbuilder.request-done', [response, $form]);
+                        if ($fbHtmlFile.length > 0) {
+                            $form.find('.qq-upload-delete').show();
+                        }
 
                         if (response.success === false) {
 
@@ -235,6 +242,11 @@
                                 // in case conditional logic is active.
                                 $form.find('input, textarea').trigger('change');
                             }
+
+                            if ($fbHtmlFile.length > 0) {
+                                $fbHtmlFile.fineUploader('reset');
+                                $fbHtmlFile.find('input[type="hidden"]').val('');
+                            }
                         }
                     }
                 });
@@ -242,31 +254,149 @@
         },
 
         /**
-         * Setup Dynamic Multi File
+         * Setup File Upload Field (fineUploader is required!)
          */
         setupDynamicMultiFiles: function () {
-
-            var $fields, $refField, jsHandler;
 
             if (!this.options.setupFileUpload) {
                 return;
             }
 
-            $fields = this.$form.find('[data-dynamic-multi-file-instance]');
+            this.$form.find('.dynamic-multi-file').each(this.setupDynamicMultiFile.bind(this));
 
-            if ($fields.length === 0) {
+            this.$form.on('formbuilder.layout.post.add', function (ev, layout) {
+
+                var $el = $(layout), $uploadFields;
+
+                $uploadFields = $el.find('.dynamic-multi-file');
+                if ($uploadFields.length === 0) {
+                    return;
+                }
+
+                $uploadFields.each(this.setupDynamicMultiFile.bind(this));
+
+            }.bind(this));
+
+            this.$form.on('formbuilder.layout.pre.remove', function (ev, layout) {
+
+                var $el = $(layout), $uploadFields;
+
+                $uploadFields = $el.find('.dynamic-multi-file');
+                if ($uploadFields.length === 0) {
+                    return;
+                }
+
+                $uploadFields.each(function (index, el) {
+
+                    var $el = $(el),
+                        fuInstance = $el.data('fineuploader'),
+                        lockedStates = [qq.status.QUEUED, qq.status.UPLOADING, qq.status.DELETING, qq.status.UPLOAD_SUCCESSFUL],
+                        fieldId, config;
+
+                    if (fuInstance && fuInstance.uploader.getUploads({status: lockedStates}).length > 0) {
+
+                        fieldId = $el.data('field-id');
+                        config = window[fieldId + '_dmf_config'];
+
+                        throw new Error(config.messages.global.cannotDestroyActiveInstanceError);
+                    }
+                });
+            }.bind(this));
+        },
+
+        setupDynamicMultiFile: function (index, el) {
+
+            this.setupFineUploader(el);
+
+        },
+
+        /**
+         * @deprecated since version 3.3, to be removed in 4.0
+         */
+        setupFineUploader: function (el) {
+
+            if (jQuery().fineUploader === undefined) {
+                console.warn('fine uploader not found. please include the js library!');
                 return;
             }
 
-            $refField = $($fields[0]);
-            jsHandler = $refField.data('js-handler');
+            var _ = this,
+                $el = $(el),
+                $form = $el.closest('form'),
+                $submitButton = $form.find('*[type="submit"]'),
+                $template = $el.find('.qq-uploader-wrapper:first'),
+                $element = $el.find('.qq-upload-container'),
+                fieldId = $el.data('field-id'),
+                fieldName = $el.data('field-name'),
+                $storeField = $el.find('input[type="hidden"]'),
+                formId = parseInt($form.find('input[name*="formId"]').val()),
+                config = window[fieldId + '_dmf_config'];
 
-            $.getScript(this.options.dynamicMultiFileOptions.handlerPath + '/jquery.fb.dmf.' + jsHandler + '.js', function (data, textStatus, jqxhr) {
-                if (jqxhr.status === 200) {
-                    window.formBuilderDynamicMultiFileHandler.init(this.$form, $fields, this.ajaxUrls, this.options.dynamicMultiFileOptions);
+            $el.fineUploader({
+                debug: false,
+                template: $template,
+                element: $element,
+                messages: config.messages.core,
+                text: {
+                    formatProgress: config.messages.text.formatProgress,
+                    failUpload: config.messages.text.failUpload,
+                    waitingForResponse: config.messages.text.waitingForResponse,
+                    paused: config.messages.text.paused
+                },
+                chunking: {
+                    enabled: true,
+                    concurrent: {
+                        enabled: true
+                    },
+                    success: {
+                        endpoint: _.getAjaxFileUrl('file_chunk_done'),
+                    }
+                },
+                request: {
+                    endpoint: _.getAjaxFileUrl('file_add'),
+                    params: {
+                        formId: formId,
+                        fieldName: fieldName,
+                        fieldId: fieldId
+                    }
+                },
+                deleteFile: {
+                    confirmMessage: config.messages.delete.confirmMessage,
+                    deletingStatusText: config.messages.delete.deletingStatusText,
+                    deletingFailedText: config.messages.delete.deletingFailedText,
+                    enabled: true,
+                    endpoint: _.getAjaxFileUrl('file_delete'),
+                    params: {
+                        formId: formId,
+                        fieldName: fieldName,
+                        fieldId: fieldId
+                    }
+                },
+                validation: {
+                    sizeLimit: config.max_file_size,
+                    allowedExtensions: config.allowed_extensions,
+                    itemLimit: config.item_limit
+                },
+                callbacks: {
+                    onUpload: function () {
+                        $submitButton.attr('disabled', 'disabled');
+                    },
+                    onComplete: function (id, name, data) {
+                        $storeField.val($storeField.val() + ',' + data.uuid);
+                        $submitButton.attr('disabled', false);
+                    },
+                    onDeleteComplete: function (id, xhr, isError) {
+                        var data = jQuery.parseJSON(xhr.responseText);
+                        if (data.success === true) {
+                            $storeField.val($storeField.val().replace(',' + data.uuid, ''));
+                        } else {
+                            $storeField.val($storeField.val().replace(',' + data.path, ''));
+                        }
+                    }
                 }
-            }.bind(this));
+            });
 
+            $template.remove();
         },
 
         setAjaxFileStructureUrls: function () {
@@ -303,11 +433,6 @@
 
     $.fn.formBuilderAjaxManager.defaults = {
         setupFileUpload: true,
-        dynamicMultiFileOptions: {
-             /* @deprecated fineUploaderLibPath is a deprecated since 3.4 and will be removed in 4.0 */
-            fineUploaderLibPath: '/bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js',
-            handlerPath: '/bundles/formbuilder/js/frontend/plugins/dynamic-multi-file',
-        },
         validationTransformer: {},
         resetFormMethod: null
     };
