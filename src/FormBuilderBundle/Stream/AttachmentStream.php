@@ -39,13 +39,12 @@ class AttachmentStream implements AttachmentStreamInterface
     /**
      * {@inheritdoc}
      */
-    public function createAttachmentAsset($data, $formName)
+    public function createAttachmentAsset($data, $fieldName, $formName)
     {
         if (!is_array($data)) {
             return null;
         }
 
-        $fieldName = $this->extractFieldName($data);
         $files = $this->extractFiles($data);
 
         if (empty($files)) {
@@ -177,19 +176,5 @@ class AttachmentStream implements AttachmentStreamInterface
         }
 
         return $files;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string|null
-     */
-    protected function extractFieldName(array $data)
-    {
-        if (count($data) > 0) {
-            return $data[0]['fieldName'];
-        }
-
-        return null;
     }
 }
