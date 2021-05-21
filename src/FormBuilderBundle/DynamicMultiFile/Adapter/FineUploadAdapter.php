@@ -63,7 +63,7 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
     /**
      * {@inheritDoc}
      */
-    public function onDone(Request $request)
+    public function onDone(Request $request): Response
     {
         $result = $this->fileStream->combineChunks();
 
@@ -76,7 +76,7 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
     /**
      * {@inheritDoc}
      */
-    public function onDelete(Request $request)
+    public function onDelete(Request $request): Response
     {
         $identifier = $request->attributes->has('identifier')
             ? $request->attributes->get('identifier')

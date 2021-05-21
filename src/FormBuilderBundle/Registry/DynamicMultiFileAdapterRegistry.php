@@ -17,7 +17,7 @@ class DynamicMultiFileAdapterRegistry
      */
     public function register($identifier, $service)
     {
-        if (isset($this->channels[$identifier])) {
+        if (isset($this->adapter[$identifier])) {
             throw new \InvalidArgumentException(sprintf('Dynamic multi file adapter with identifier "%s" already exists', $identifier));
         }
 

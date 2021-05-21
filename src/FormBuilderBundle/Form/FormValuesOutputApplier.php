@@ -79,8 +79,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
             }
         }
 
-        dump($fieldValues);
-
         return $fieldValues;
     }
 
