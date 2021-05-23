@@ -59,6 +59,7 @@ class DynamicMultiFileType extends AbstractType
         $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
 
         $options['mapped'] = false;
+        $options['label'] = empty($options['label']) ? false : $options['label'];
         $options['attr']['data-dynamic-multi-file-instance'] = 'true';
         $options['attr']['data-js-handler'] = $dmfAdapter->getJsHandler();
 
