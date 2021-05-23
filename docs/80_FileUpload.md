@@ -34,6 +34,7 @@ form_builder:
 By default, you don't need to implement more than the standard initialization, described in [FormBuilder Javascript Core Extension](./91_Javascript.md#core-extension).
 The core extension will try to fetch the handler path, defined by `dynamicMultiFileDefaultHandlerPath`.
 
+### Disable Default Initialization
 All handler will be initialized by lazy loading, so they will be requested only if upload files are available. 
 However, if you **don't** want to initialize any handler because of your own frontend logic for example, you may want to disable the initialization:
 
@@ -44,6 +45,6 @@ $('form.formbuilder.ajax-form').formBuilderAjaxManager({
 ```
 
 ## Available Adapter
-- [DropZone.Js](./DynamicMultiFile/01_DropZoneJs.md)
+- [DropZoneJs](./DynamicMultiFile/01_DropZoneJs.md)
 - [FineUploader](./DynamicMultiFile/02_FineUploader.md)
 - [Custom Adapter](./DynamicMultiFile/99_CustomAdapter.md)
