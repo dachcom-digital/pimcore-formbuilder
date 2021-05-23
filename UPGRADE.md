@@ -7,6 +7,9 @@ After every update you should check the pimcore extension manager.
 Just click the "update" button or execute the migration command to finish the bundle update.
 
 #### Update from Version 3.3.5 to Version 3.4.0
+- **[NEW FEATURE]**: Introduce Dynamic Multi File Adapter (DropZoneJs added) [#261](https://github.com/dachcom-digital/pimcore-formbuilder/issues/261)
+    - **[DEPRECATION]**: FineUploader Adapter has been marked as deprecated and will be removed with version 4.0.
+
 - **[NEW FEATURE]**: Choice Meta Data [#275](https://github.com/dachcom-digital/pimcore-formbuilder/issues/275)
 - **[NEW FEATURE]**: Pimcore 6.9.0 ready
 - **[IMPROVEMENT]**: D&D-Support/Sortable Container Fields [#231](https://github.com/dachcom-digital/pimcore-formbuilder/issues/231)

@@ -23,8 +23,13 @@
     {% endapply %}
 {% endblock %}
 
-{% block form_builder_dynamicmultifile_dropzone_widget %}
+{% block form_builder_dynamicmultifile_drop_zone_widget %}
     {% apply spaceless %}
-        !!!!!
+        <div {{ block('attributes') }}>
+            <div class="dropzone-container"></div>
+            <div class="dropzone-template" style="display: none;">
+                {% include '@FormBuilder/Form/Elements/DynamicMultiFile/form_drop_zone.html.twig' %}
+            </div>
+        </div>
     {% endapply %}
 {% endblock %}

@@ -48,8 +48,13 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
 
         if ($method === 'POST') {
 
-            $result = $this->fileStream->handleUpload();
-            $result['uploadName'] = $this->fileStream->getRealFileName();
+            $result = $this->fileStream->handleUpload([
+                'binary'          => 'qqfile',
+                'uuid'            => 'qquuid',
+                'chunkIndex'      => 'qqpartindex',
+                'totalChunkCount' => 'qqtotalparts',
+                'totalFileSize'   => 'qqtotalfilesize',
+            ], false);
 
             return new JsonResponse($result);
 
@@ -65,10 +70,13 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
      */
     public function onDone(Request $request): Response
     {
-        $result = $this->fileStream->combineChunks();
-
-        // To return a name used for uploaded file you can use the following line.
-        $result['uploadName'] = $this->fileStream->getRealFileName();
+        $result = $this->fileStream->combineChunks([
+            'fileName'        => $request->request->get('qqfilename'),
+            'uuid'            => 'qquuid',
+            'chunkIndex'      => 'qqpartindex',
+            'totalChunkCount' => 'qqtotalparts',
+            'totalFileSize'   => 'qqtotalfilesize',
+        ]);
 
         return new JsonResponse($result, $result['statusCode']);
     }
@@ -80,7 +88,7 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
     {
         $identifier = $request->attributes->has('identifier')
             ? $request->attributes->get('identifier')
-            : $request->request->get('identifier');
+            : $request->request->get('uuid');
 
         $result = $this->fileStream->handleDelete($identifier);
 

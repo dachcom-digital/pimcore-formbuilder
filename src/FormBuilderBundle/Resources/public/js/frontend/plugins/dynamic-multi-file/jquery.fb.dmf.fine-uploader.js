@@ -1,6 +1,6 @@
 /*
  *  Project: PIMCORE FormBuilder
- *  Extension: Dynamic Multi File
+ *  Extension: Dynamic Multi File | Fine Uploader
  *  Since: 3.4.0
  *  Author: DACHCOM.DIGITAL
  *  License: GPLv3
@@ -37,7 +37,11 @@
                 return;
             }
 
-            $.getScript(this.options.fineUploaderLibPath, function (data, textStatus, jqxhr) {
+            if (typeof this.options.libPath === 'undefined') {
+                return;
+            }
+
+            $.getScript(this.options.libPath, function (data, textStatus, jqxhr) {
                 if (jqxhr.status === 200) {
                     this.prepareForm();
                 }
@@ -60,9 +64,10 @@
                 fieldId = $el.data('field-id'),
                 storageFieldId = fieldId + '_data',
                 $storageField = this.$form.find('input[type="hidden"][id="' + storageFieldId + '"]'),
-                config = $el.data('engine-options');
+                config = $el.data('engine-options'),
+                fineUploadConfiguration;
 
-            $el.fineUploader({
+            fineUploadConfiguration = {
                 debug: false,
                 template: $template,
                 element: $element,
@@ -79,7 +84,7 @@
                         enabled: true
                     },
                     success: {
-                        endpoint: _.getDataUrl('file_chunk_done'),
+                        endpoint: _.getDataUrl('file_chunk_done')
                     }
                 },
                 request: {
@@ -111,7 +116,7 @@
 
                         this.addToStorageField($storageField, {
                             id: data.uuid,
-                            fileName: data.uploadName
+                            fileName: data.fileName
                         });
 
                     }.bind(this),
@@ -122,7 +127,11 @@
                         });
                     }.bind(this)
                 }
-            });
+            };
+
+            this.$form.trigger('formbuilder.dynamic_multi_file.init', [$el, this.options, fineUploadConfiguration]);
+
+            $el.fineUploader(fineUploadConfiguration);
 
             $template.remove();
         },

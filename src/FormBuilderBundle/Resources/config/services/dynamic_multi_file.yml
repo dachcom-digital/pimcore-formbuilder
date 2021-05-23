@@ -13,6 +13,10 @@ services:
         tags:
             - { name: form_builder.dynamic_multi_file.adapter }
 
+    FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter:
+        tags:
+            - { name: form_builder.dynamic_multi_file.adapter }
+
     # forms
     FormBuilderBundle\Form\Type\DynamicMultiFile\FineUploaderType:
         public: false

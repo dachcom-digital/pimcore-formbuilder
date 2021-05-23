@@ -261,9 +261,13 @@
             $refField = $($fields[0]);
             jsHandler = $refField.data('js-handler');
 
-            $.getScript(this.options.dynamicMultiFileOptions.handlerPath + '/jquery.fb.dmf.' + jsHandler + '.js', function (data, textStatus, jqxhr) {
+            if (this.options.dynamicMultiFileDefaultHandlerPath === null) {
+                return;
+            }
+
+            $.getScript(this.options.dynamicMultiFileDefaultHandlerPath + '/jquery.fb.dmf.' + jsHandler + '.js', function (data, textStatus, jqxhr) {
                 if (jqxhr.status === 200) {
-                    window.formBuilderDynamicMultiFileHandler.init(this.$form, $fields, this.ajaxUrls, this.options.dynamicMultiFileOptions);
+                    window.formBuilderDynamicMultiFileHandler.init(this.$form, $fields, this.ajaxUrls, this.options.dynamicMultiFileHandlerOptions);
                 }
             }.bind(this));
 
@@ -303,10 +307,10 @@
 
     $.fn.formBuilderAjaxManager.defaults = {
         setupFileUpload: true,
-        dynamicMultiFileOptions: {
-             /* @deprecated fineUploaderLibPath is a deprecated since 3.4 and will be removed in 4.0 */
-            fineUploaderLibPath: '/bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js',
-            handlerPath: '/bundles/formbuilder/js/frontend/plugins/dynamic-multi-file',
+        dynamicMultiFileDefaultHandlerPath: '/bundles/formbuilder/js/frontend/plugins/dynamic-multi-file',
+        dynamicMultiFileHandlerOptions: {
+            /* @deprecated libPath is a deprecated since 3.4 and will be removed in 4.0 */
+            libPath: '/bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js',
         },
         validationTransformer: {},
         resetFormMethod: null
