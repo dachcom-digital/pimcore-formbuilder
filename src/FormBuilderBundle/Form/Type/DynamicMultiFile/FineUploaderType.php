@@ -29,7 +29,7 @@ class FineUploaderType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $vars = array_merge_recursive($view->vars, [
+        $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
                 'data-field-id'       => $view->parent->vars['id'],
                 'data-engine-options' => json_encode([
@@ -39,16 +39,12 @@ class FineUploaderType extends AbstractType
                     'allowed_extensions' => is_array($options['allowed_extensions']) ? $options['allowed_extensions'] : [],
                     'item_limit'         => is_numeric($options['item_limit']) ? (int) $options['item_limit'] : 0
                 ]),
-                'class'               => [
+                'class'               => join(' ', [
                     'dynamic-multi-file',
                     sprintf('element-%s', $view->vars['name'])
-                ]
+                ])
             ]
         ]);
-
-        $vars['attr']['class'] = join(' ', (array) $vars['attr']['class']);
-
-        $view->vars = $vars;
     }
 
     /**

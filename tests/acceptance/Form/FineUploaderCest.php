@@ -214,7 +214,7 @@ class FineUploaderCest
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForText(
-            sprintf('%s has an invalid extension. Valid extension(s): %s.', $fileName, implode(', ', $allowedExtensions)),
+            'Invalid file extension.',
             5,
             '.qq-dialog-message-selector'
         );
@@ -308,7 +308,7 @@ class FineUploaderCest
         $I->attachFile('input[type="file"]', 'generated/test.pdf');
 
         $I->waitForText(
-            'Too many items (2) would be uploaded. Item limit is 1.',
+            'Too many items would be uploaded.',
             5,
             '.qq-dialog-message-selector'
         );
@@ -397,7 +397,7 @@ class FineUploaderCest
         $I->attachFile('input[type="file"]', sprintf('generated/%s', $fileName));
 
         $I->waitForText(
-            sprintf('%s is too large', $fileName),
+            'File is too large',
             5,
             '.qq-dialog-message-selector'
         );

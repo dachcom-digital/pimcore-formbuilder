@@ -29,27 +29,23 @@ class DropZoneType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $vars = array_merge_recursive($view->vars, [
+        $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
                 'data-field-id'       => $view->parent->vars['id'],
                 'data-engine-options' => json_encode([
                     'translations'       => $this->getInterfaceTranslations(),
-                    'instance_error'      => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance'),
+                    'instance_error'     => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance'),
                     'multiple'           => isset($options['multiple']) && is_bool($options['multiple']) ? $options['multiple'] : false,
                     'max_file_size'      => is_numeric($options['max_file_size']) && $options['max_file_size'] > 0 ? (int) $options['max_file_size'] : null,
                     'allowed_extensions' => is_array($options['allowed_extensions']) ? join(',', $options['allowed_extensions']) : null,
                     'item_limit'         => is_numeric($options['item_limit']) && $options['item_limit'] > 0 ? (int) $options['item_limit'] : null
                 ]),
-                'class'               => [
+                'class'               => join(' ', [
                     'dynamic-multi-file',
                     sprintf('element-%s', $view->vars['name'])
-                ]
+                ])
             ]
         ]);
-
-        $vars['attr']['class'] = join(' ', (array) $vars['attr']['class']);
-
-        $view->vars = $vars;
     }
 
     /**

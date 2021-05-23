@@ -1,44 +1,49 @@
-# File Upload Type
+# Dynamic Multi File
 
-<img width="566" src="https://user-images.githubusercontent.com/700119/30774631-1eaf7d22-a086-11e7-81d8-382e30a60eef.png">
+FormBuilder comes with a smart multi file upload type.
+It allows you to use different adapters/libraries like FineUploader or DropZoneJs.
 
-FormBuilder comes with a smart multi file upload type. 
-For a superb user experience, it's using the [fineUploader](https://github.com/FineUploader/fine-uploader) library.
-
-## Workflow:
+## Highlights
 - File Upload per file type (yes, it's possible to place multiple upload fields per form)
-- Chunked upload for large files
-- Store uploaded file reference in session, since the upload works decoupled from form submission
-- After a form submission, the data will be compressed and get stored in pimcore (`/formdata` asset folder)
-- Append download link in mail
-- Clean Up: unsubmitted data / chunk data will be swiped via maintenance
+- Large File Support: Process chunked files to allow large file uploads
+- Different adapters: Choose between different upload handler or create a custom one!  
+- Stateless: no session is required to handle file uploads
+- Different storage principals: Store data as pimcore assets (`/formdata` asset folder) and add download-link to mail **or** add them as native mail attachments
+- Stay clean: unsubmitted data / chunk data will be swiped via maintenance
+- Prebuild Extensions: Use included jQuery extensions to set up your form in front end in no time!
 
-## Configuration
-There are some options in the field configuration.
+## Field Configuration
+There are some options in the (backend) field configuration:
 
-### Max File Size
-Max file size will be calculated in MB. Empty or Zero means no Limit
+| Name | Description
+|------|------------|
+| `Max File Size` | Max file size will be calculated in MB. Empty or zero means no limit |
+| `Allowed Extensions` | Define allowed extensions, for example: `pdf, zip` (Format depends on active adapter) |
+| `Item limit` | The maximum number of files that can be uploaded. Empty or zero means no limit |
+| `Send Files as Attachment` | All Files will be stored in your pimcore asset structure (/formdata) by default. If you check this option, the files will be attached to the mail instead of adding a download link |
 
-### Allowed Extensions
-Define allowed extensions, for example: `pdf, zip`.
+## Setup
+Per default, FineUploader will be used. If you want to change the dmf adapter, you need to define it:
 
-### Item limit
-The maximum number of files that can be uploaded. Empty or Zero means no Limit
-
-## Implementation
-
-### Styling
-
-Add the CDN Link or implement your own styling.
-
-```twig
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.15.0/all.fine-uploader/fine-uploader-new.min.css" />
+```yaml
+form_builder:
+    dynamic_multi_file_adapter: FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter
 ```
 
-To enable fineuploader, add the javascript library and formbuilder core script.
+## Front-End Setup
+By default, you don't need to implement more than the standard initialization, described in [FormBuilder Javascript Core Extension](./91_Javascript.md#core-extension).
+The core extension will try to fetch the handler path, defined by `dynamicMultiFileDefaultHandlerPath`.
 
-### Scripts
-```twig
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
+All handler will be initialized by lazy loading, so they will be requested only if upload files are available. 
+However, if you **don't** want to initialize any handler because of your own frontend logic for example, you may want to disable the initialization:
+
+```javascript
+$('form.formbuilder.ajax-form').formBuilderAjaxManager({
+    setupFileUpload: false, // disable default dynamic multi file handler
+});
 ```
+
+## Available Adapter
+- [DropZone.Js](./DynamicMultiFile/01_DropZoneJs.md)
+- [FineUploader](./DynamicMultiFile/02_FineUploader.md)
+- [Custom Adapter](./DynamicMultiFile/99_CustomAdapter.md)

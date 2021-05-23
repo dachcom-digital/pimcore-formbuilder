@@ -19,7 +19,7 @@ If you're adding a text type, the form is just returning the text value you coul
 "Thank you for your message" for example.
 
 *Snippet*  
-A Snippet could be useful if you need more output structure. FormBuild will render the snippet and return its html data.
+A Snippet could be useful if you need more output structure. FormBuilder will render the snippet and return its html data.
 
 *Document*  
 Use a document to get its path to perform a redirect for example.

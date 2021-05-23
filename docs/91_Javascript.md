@@ -12,7 +12,9 @@ Of course it's up to you to copy those files into your project and modify them a
 - [reCAPTCHA V3 Extension](#recaptcha-v3-extension)
 
 ## Core Extension
-This Plugin will enable the ajax functionality but also the multi file handling:
+This Plugin will enable the ajax functionality but also the multi file handling.
+
+> Read more about the dynamic multi file setup [here](./80_FileUpload.md)
 
 ### Enable Extension
 
@@ -25,6 +27,7 @@ $(function () {
     $('form.formbuilder.ajax-form').formBuilderAjaxManager();
 });
 ```
+
 ### Extended Usage
 ```javascript
 $('form.formbuilder.ajax-form').formBuilderAjaxManager({
@@ -37,7 +40,13 @@ $('form.formbuilder.ajax-form').formBuilderAjaxManager({
         removeFormValidations: function($form) {
             console.log($form);
         }
-    }
+    },
+    dynamicMultiFileDefaultHandlerPath: '/bundles/formbuilder/js/frontend/plugins/dynamic-multi-file',
+    dynamicMultiFileHandlerOptions: {
+        // these options will be passed to the active dmf handler
+        /* @deprecated libPath is a deprecated since 3.4 and will be removed in 4.0 */
+        libPath: '/bundles/formbuilder/js/frontend/vendor/fineuploader/jquery.fine-uploader.min.js',
+    },
 });
 ```
 

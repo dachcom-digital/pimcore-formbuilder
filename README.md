@@ -20,7 +20,7 @@
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~3.3.0"
+    "dachcom-digital/formbuilder" : "~3.4.0"
 }
 ```
 
@@ -83,6 +83,9 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [Form Presets](docs/60_Presets.md)
 - [Events](docs/70_Events.md)
 - [Mastering File Uploads](docs/80_FileUpload.md)
+  - [DropZoneJs](docs/DynamicMultiFile/01_DropZoneJs.md)
+  - [FineUploader](docs/DynamicMultiFile/02_FineUploader.md)
+  - [Custom Adapter](docs/DynamicMultiFile/99_CustomAdapter.md)
 - [Conditional Logic](docs/81_ConditionalLogic.md)
 - [Form & Field Attributes](docs/83_Attributes.md)
 - [Frontend Tips](docs/90_FrontendTips.md)
