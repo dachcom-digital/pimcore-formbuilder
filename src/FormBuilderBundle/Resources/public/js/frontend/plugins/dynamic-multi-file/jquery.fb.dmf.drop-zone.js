@@ -43,6 +43,7 @@
 
             $.getScript(this.options.libPath, function (data, textStatus, jqxhr) {
                 if (jqxhr.status === 200) {
+                    Dropzone.autoDiscover = false;
                     this.prepareForm();
                 }
             }.bind(this));
