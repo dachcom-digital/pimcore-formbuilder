@@ -124,6 +124,8 @@
                     this.on('canceled', function (file) {
                         $submitButton.attr('disabled', false);
                     });
+
+                    _.$form.trigger('formbuilder.dynamic_multi_file.drop_zone.init', [this]);
                 }
             };
 
