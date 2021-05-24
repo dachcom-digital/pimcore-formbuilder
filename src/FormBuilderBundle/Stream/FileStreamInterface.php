@@ -5,43 +5,25 @@ namespace FormBuilderBundle\Stream;
 interface FileStreamInterface
 {
     /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return array
-     */
-    public function getInitialFiles();
-
-    /**
-     * Get the name of the uploaded file.
-     *
-     * @return string
-     */
-    public function getUploadName();
-
-    /**
-     * Get the real name of the uploaded file.
-     *
-     * @return bool|mixed|string
-     */
-    public function getRealFileName();
-
-    /**
-     * @return array
-     */
-    public function combineChunks();
-
-    /**
-     * @return array
-     */
-    public function handleUpload();
-
-    /**
-     * @param string $uuid
+     * @param array $options
+     * @param bool  $instantChunkCombining
      *
      * @return array
      */
-    public function handleDelete($uuid);
+    public function handleUpload(array $options = [], bool $instantChunkCombining = true);
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function combineChunks(array $options = []);
+
+    /**
+     * @param string $identifier
+     * @param bool   $checkChunkFolder
+     *
+     * @return array
+     */
+    public function handleDelete($identifier, bool $checkChunkFolder = false);
 }

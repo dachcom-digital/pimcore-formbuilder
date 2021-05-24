@@ -7,12 +7,16 @@ After every update you should check the pimcore extension manager.
 Just click the "update" button or execute the migration command to finish the bundle update.
 
 #### Update from Version 3.3.5 to Version 3.4.0
+- **[NEW FEATURE]**: Introduce Dynamic Multi File Adapter (DropZoneJs added) [#261](https://github.com/dachcom-digital/pimcore-formbuilder/issues/261)
+    - **[DEPRECATION]**: FineUploader Adapter has been marked as deprecated and will be removed with version 4.0.
+
 - **[NEW FEATURE]**: Choice Meta Data [#275](https://github.com/dachcom-digital/pimcore-formbuilder/issues/275)
 - **[NEW FEATURE]**: Pimcore 6.9.0 ready
 - **[IMPROVEMENT]**: D&D-Support/Sortable Container Fields [#231](https://github.com/dachcom-digital/pimcore-formbuilder/issues/231)
 - **[IMPROVEMENT]**: Adjust field attribute label "Preselected" [#270](https://github.com/dachcom-digital/pimcore-formbuilder/issues/270)
 - **[IMPROVEMENT]**: Field name preview added [#237](https://github.com/dachcom-digital/pimcore-formbuilder/issues/237)
 - **[BUGFIX]**: Remove `body` param from mail object after rendering [#268](https://github.com/dachcom-digital/pimcore-formbuilder/issues/268)
+- **[BUGFIX]**: Fix container toggle in conditional logic
 
 #### Update from Version 3.3.5 to Version 3.3.6
 - **[IMPROVEMENT]**: Allow `label_translation_parameters` [#252](https://github.com/dachcom-digital/pimcore-formbuilder/issues/252) and restrict translated labels to 190 characters [#226 (comment)](https://github.com/dachcom-digital/pimcore-formbuilder/issues/226#issuecomment-769022296)

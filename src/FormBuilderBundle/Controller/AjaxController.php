@@ -2,26 +2,35 @@
 
 namespace FormBuilderBundle\Controller;
 
-use FormBuilderBundle\Stream\FileStreamInterface;
+use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class AjaxController extends FrontendController
 {
     /**
-     * @var FileStreamInterface
+     * @var Configuration
      */
-    protected $fileStream;
+    protected $configuration;
 
     /**
-     * @param FileStreamInterface $fileStream
+     * @var DynamicMultiFileAdapterRegistry
      */
-    public function __construct(FileStreamInterface $fileStream)
-    {
-        $this->fileStream = $fileStream;
+    protected $dynamicMultiFileAdapterRegistry;
+
+    /**
+     * @param Configuration                   $configuration
+     * @param DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
+     */
+    public function __construct(
+        Configuration $configuration,
+        DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
+    ) {
+        $this->configuration = $configuration;
+        $this->dynamicMultiFileAdapterRegistry = $dynamicMultiFileAdapterRegistry;
     }
 
     /**
@@ -35,105 +44,56 @@ class AjaxController extends FrontendController
     /**
      * @param Request $request
      *
-     * @return JsonResponse|Response
+     * @return Response
      */
-    public function fileAddAction(Request $request)
+    public function fileUploadAction(Request $request)
     {
-        $method = $request->getMethod();
+        $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
 
-        $formId = $request->request->get('formId');
-        $fieldId = $request->request->get('fieldId');
-        $fieldName = $request->request->get('fieldName');
-
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-
-        if ($method === 'POST') {
-            $result = $this->fileStream->handleUpload();
-            $result['uploadName'] = $this->fileStream->getRealFileName();
-
-            if ($result['success'] === true) {
-                $sessionBag->set(
-                    sprintf('file_%s_%s', $formId, $result['uuid']),
-                    [
-                        'uuid'      => $result['uuid'],
-                        'fileName'  => $result['uploadName'],
-                        'fieldId'   => $fieldId,
-                        'fieldName' => $fieldName
-                    ]
-                );
-            }
-
-            return $this->json($result);
+        try {
+            $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
+        } catch (\Throwable $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
 
-        if ($method === 'DELETE') {
-            return $this->fileDeleteAction($request, $request->request->get('uuid'));
-        }
-
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/plain');
-        $response->headers->set('Cache-Control', 'no-cache');
-        $response->setStatusCode(405);
-
-        return $response;
-    }
-
-    /**
-     * @param Request $request
-     * @param string  $uuid
-     *
-     * @return JsonResponse
-     */
-    public function fileDeleteAction(Request $request, $uuid = '')
-    {
-        $formId = $request->query->get('formId');
-
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-
-        //remove tmp element from session!
-        $sessionKey = sprintf('file_%s_%s', $formId, $uuid);
-        $sessionBag->remove($sessionKey);
-
-        $result = $this->fileStream->handleDelete($uuid);
-
-        return $this->json($result);
+        return $dmfAdapter->onUpload($request);
     }
 
     /**
      * @param Request $request
      *
-     * @return JsonResponse
+     * @return Response
      */
-    public function fileChunkDoneAction(Request $request)
+    public function fileDoneAction(Request $request)
     {
-        $formId = $request->request->get('formId');
-        $fieldId = $request->request->get('fieldId');
-        $fieldName = $request->request->get('fieldName');
+        $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
 
-        /** @var NamespacedAttributeBag $sessionBag */
-        $sessionBag = $this->container->get('session')->getBag('form_builder_session');
-
-        $result = $this->fileStream->combineChunks();
-
-        // To return a name used for uploaded file you can use the following line.
-        $result['uploadName'] = $this->fileStream->getRealFileName();
-
-        if ($result['success'] === true) {
-            //add uuid to session to find it again later!
-            $sessionBag->set(
-                sprintf('file_%s_%s', $formId, $result['uuid']),
-                [
-                    'uuid'      => $result['uuid'],
-                    'fileName'  => $result['uploadName'],
-                    'fieldId'   => $fieldId,
-                    'fieldName' => $fieldName
-                ]
-            );
+        try {
+            $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
+        } catch (\Throwable $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
 
-        return $this->json($result, $result['statusCode']);
+        return $dmfAdapter->onDone($request);
+    }
+
+    /**
+     * @param Request $request
+     * @param string  $identifier
+     *
+     * @return Response
+     */
+    public function fileDeleteAction(Request $request, $identifier = null)
+    {
+        $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
+
+        try {
+            $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
+        } catch (\Throwable $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+
+        return $dmfAdapter->onDelete($request);
     }
 
     /**

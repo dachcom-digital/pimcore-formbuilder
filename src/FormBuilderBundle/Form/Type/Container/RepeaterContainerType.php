@@ -98,6 +98,8 @@ class RepeaterContainerType extends AbstractType
         $formBuilderConfig = $options['formbuilder_configuration'];
 
         $view->vars['label'] = $this->getContainerLabel($options);
+
+        $view->vars['attr']['data-field-name'] = $view->vars['name'];
         $view->vars['attr']['data-label-add-block'] = $formBuilderConfig['label_add_block'] ?? '';
         $view->vars['attr']['data-label-remove-block'] = $formBuilderConfig['label_remove_block'] ?? '';
         $view->vars['attr']['data-repeater-min'] = $formBuilderConfig['min'] ?? '';

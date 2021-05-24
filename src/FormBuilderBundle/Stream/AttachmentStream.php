@@ -39,13 +39,12 @@ class AttachmentStream implements AttachmentStreamInterface
     /**
      * {@inheritdoc}
      */
-    public function createAttachmentAsset($data, $formName)
+    public function createAttachmentAsset($data, $fieldName, $formName)
     {
         if (!is_array($data)) {
             return null;
         }
 
-        $fieldName = $this->extractFieldName($data);
         $files = $this->extractFiles($data);
 
         if (empty($files)) {
@@ -145,7 +144,7 @@ class AttachmentStream implements AttachmentStreamInterface
     public function removeAttachmentByFileInfo(array $fileInfo)
     {
         $targetFolder = $this->fileLocator->getFilesFolder();
-        $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['uuid']]);
+        $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['id']]);
 
         if (!is_dir($target)) {
             return;
@@ -163,13 +162,13 @@ class AttachmentStream implements AttachmentStreamInterface
     {
         $files = [];
         foreach ($data as $fileData) {
-            $fileDir = $this->fileLocator->getFilesFolder() . '/' . $fileData['uuid'];
+            $fileDir = $this->fileLocator->getFilesFolder() . '/' . $fileData['id'];
             if (is_dir($fileDir)) {
                 $dirFiles = glob($fileDir . '/*');
                 if (count($dirFiles) === 1) {
                     $files[] = [
                         'name' => $fileData['fileName'],
-                        'uuid' => $fileData['uuid'],
+                        'id'   => $fileData['id'],
                         'path' => $dirFiles[0]
                     ];
                 }
@@ -177,21 +176,5 @@ class AttachmentStream implements AttachmentStreamInterface
         }
 
         return $files;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string|null
-     */
-    protected function extractFieldName(array $data)
-    {
-        $fieldName = null;
-
-        if (count($data) > 0) {
-            return $data[0]['fieldName'];
-        }
-
-        return $fieldName;
     }
 }

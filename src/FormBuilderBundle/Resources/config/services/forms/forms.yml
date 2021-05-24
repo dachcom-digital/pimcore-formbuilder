@@ -17,7 +17,8 @@ services:
     FormBuilderBundle\Form\Type\DynamicMultiFileType:
         public: false
         arguments:
-            - '@translator'
+            - '@FormBuilderBundle\Configuration\Configuration'
+            - '@FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry'
         tags:
             - { name: form.type }
 

@@ -1,0 +1,33 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # registry
+    FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry: ~
+
+    # adapter
+    FormBuilderBundle\DynamicMultiFile\Adapter\FineUploadAdapter:
+        tags:
+            - { name: form_builder.dynamic_multi_file.adapter }
+
+    FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter:
+        tags:
+            - { name: form_builder.dynamic_multi_file.adapter }
+
+    # forms
+    FormBuilderBundle\Form\Type\DynamicMultiFile\FineUploaderType:
+        public: false
+        arguments:
+            - '@translator'
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Type\DynamicMultiFile\DropZoneType:
+        public: false
+        arguments:
+            - '@translator'
+        tags:
+            - { name: form.type }
