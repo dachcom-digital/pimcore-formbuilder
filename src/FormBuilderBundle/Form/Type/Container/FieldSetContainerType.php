@@ -33,6 +33,7 @@ class FieldSetContainerType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $view->vars['attr']['data-field-name'] = $view->vars['name'];
         $view->vars['label'] = $this->getContainerLabel($options);
     }
 

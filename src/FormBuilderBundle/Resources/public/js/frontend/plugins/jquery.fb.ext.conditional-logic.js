@@ -21,22 +21,6 @@
 
     function ElementTransformer($form, options, formTemplate) {
 
-        var getContainerAwareFields = function ($els, $form) {
-            var $fields,
-                isContainerAware = false,
-                $containerField = $els.first().closest('.formbuilder-container', $form[0]),
-                isContainerField = $containerField.length > 0;
-
-            if (isContainerField === true) {
-                isContainerAware = true;
-                $fields = $containerField;
-            } else {
-                $fields = $els;
-            }
-
-            return {'isContainerAware': isContainerAware, 'fields': $fields};
-        };
-
         this.$form = $form;
         this.formTemplate = formTemplate;
         this.userMethods = options;
@@ -44,37 +28,26 @@
             'bootstrap3': {
                 show: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                     }.bind(this));
                 }.bind(this),
                 hide: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        if (data.isContainerAware === false) {
-                            data.fields.val('').prop('selectedIndex', 0);
+                        var $el = $(el);
+                        if ($el.prop('selectedIndex')) {
+                            $el.prop('selectedIndex', 0);
                         }
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).addClass(className);
                     }.bind(this));
                 }.bind(this),
                 addClass: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).addClass(className);
                     }.bind(this));
                 }.bind(this),
                 removeClass: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                     }.bind(this));
                 }.bind(this),
                 enable: function ($els) {
@@ -116,37 +89,26 @@
             'bootstrap4': {
                 show: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                     }.bind(this));
                 }.bind(this),
                 hide: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        if (data.isContainerAware === false) {
-                            data.fields.val('').prop('selectedIndex', 0);
+                        var $el = $(el);
+                        if ($el.prop('selectedIndex')) {
+                            $el.prop('selectedIndex', 0);
                         }
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
-                        }.bind(this));
+                        $el.closest('.formbuilder-row', this.$form[0]).addClass(className);
                     }.bind(this));
                 }.bind(this),
                 addClass: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).addClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).addClass(className);
                     }.bind(this));
                 }.bind(this),
                 removeClass: function ($els, className) {
                     $els.each(function (i, el) {
-                        var data = getContainerAwareFields($(el), this.$form);
-                        data.fields.each(function (i, dataElement) {
-                            $(dataElement).closest('.formbuilder-row', this.$form[0]).removeClass(className);
-                        }.bind(this));
+                        $(el).closest('.formbuilder-row', this.$form[0]).removeClass(className);
                     }.bind(this));
                 }.bind(this),
                 enable: function ($els) {
@@ -484,8 +446,8 @@
 
                 $(this).removeAttr('data-initial-constraints');
                 $field
-                .data('fb.cl.initial-constraints', constraints)
-                .data('fb.cl.has-initial-required-constraint', $.inArray('not_blank', constraints) !== -1);
+                    .data('fb.cl.initial-constraints', constraints)
+                    .data('fb.cl.has-initial-required-constraint', $.inArray('not_blank', constraints) !== -1);
             })
         },
 
@@ -518,8 +480,8 @@
                     var formDependingSelector = [],
                         actionId = 'action_' + blockId + '_' + i;
                     $.each(dependency.fields, function (fieldIndex, fieldName) {
-                        formDependingSelector.push('*[name*="' + fieldName + '"]');
-                        formDependingSelector.push('*[data-field-name*="' + fieldName + '"]');
+                        formDependingSelector.push('*[name*="[' + fieldName + ']"]');
+                        formDependingSelector.push('*[data-field-name="' + fieldName + '"]');
                     });
 
                     var conditionSelector = {};

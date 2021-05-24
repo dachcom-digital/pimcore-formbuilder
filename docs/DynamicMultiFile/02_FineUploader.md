@@ -11,7 +11,7 @@ Resource:
 
 - Resource: https://fineuploader.com
 - Handler: `jquery.fb.dmf.fine-uploader.js`
-- Library: [fine-uploader.min.js](https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/fine-uploader.min.js)
+- Library: [fine-uploader.min.js](https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/jquery.fine-uploader/jquery.fine-uploader.min.js)
 
 ***
 
@@ -21,7 +21,7 @@ Resource:
 The simplest way to implement this adapter is by using the precompiled library loading by CDN and the corresponding handler.
 
 ```twig
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/dropzone.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/jquery.fine-uploader/fine-uploader.min.css" />
 <script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
 ```
 
@@ -29,7 +29,7 @@ The simplest way to implement this adapter is by using the precompiled library l
 $(function () {
     $('form.formbuilder.ajax-form').formBuilderAjaxManager({
         dynamicMultiFileHandlerOptions: {
-            libPath: 'https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/fine-uploader.min.js'
+            libPath: 'https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/jquery.fine-uploader/jquery.fine-uploader.min.js'
         }
     });
 });

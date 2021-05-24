@@ -3,7 +3,7 @@
         {% if child.vars.name == 'adapter' %}
             {# pass row attributes to compount adapter form #}
             {% set widget_attr = attr|merge({class: (child.vars.attr.class|default('') ~ ' ' ~ attr.class|default(''))|trim}) %}
-            {{- form_row(child, {compound: false, attr: widget_attr}) -}}
+            {{- form_row(child, {compound: false, attr: widget_attr, id: id}) -}}
         {% else %}
             {{- form_row(child) -}}
         {% endif %}

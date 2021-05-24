@@ -259,6 +259,7 @@ class ElementValueIsGreaterConditionCest extends AbstractConditionCest
 
         $I->selectOption($testFormBuilder->getFormFieldSelector(1, 'drop_down_with_numeric_values'), '40');
 
-        $I->waitForElementVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 }
