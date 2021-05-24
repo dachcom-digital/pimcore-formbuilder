@@ -41,7 +41,7 @@ $('form.formbuilder.ajax-form').formBuilderAjaxManager({
     dynamicMultiFileHandlerOptions: {
         // these options will be passed to your new handler
         // you can define any options here.
-        // libPath is just an recommendation so you'r handler will load the lib only if any upload field is available to render.
+        // libPath is just an recommendation so your handler will load the lib only if any upload field is available to render.
         libPath: 'https://cdnjs.cloudflare.com/ajax/libs/my-3rd-party-lib.min.js',
     },
 });
@@ -166,13 +166,15 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
      */
     public function onUpload(Request $request): Response
     {
+        // second argument needs to be false, if you also invoke the onDone action!
+        
         $result = $this->fileStream->handleUpload([
             'binary'          => 'REQUEST_PARAM', // replace REQUEST_PARAM with the mapped request parameter, provided in your JS library
             'uuid'            => 'REQUEST_PARAM',
             'chunkIndex'      => 'REQUEST_PARAM',
             'totalChunkCount' => 'REQUEST_PARAM',
             'totalFileSize'   => 'REQUEST_PARAM',
-        ]);
+        ], true);
 
         return new JsonResponse($result);
     }
@@ -182,7 +184,8 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
      */
     public function onDone(Request $request): Response
     {
-        // if you need a dedicated endpoint if a chunked upload, use this (which is mostly not required)
+        // if you need a dedicated endpoint for a chunked upload completion event,
+        // use this action (which is mostly not required)
         
         return new JsonResponse([
             'success' => false,
