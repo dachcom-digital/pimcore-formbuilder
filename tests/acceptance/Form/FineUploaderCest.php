@@ -16,6 +16,8 @@ class FineUploaderCest
      */
     public function testUploadFormWithOneFile(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_default.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'File Upload');
