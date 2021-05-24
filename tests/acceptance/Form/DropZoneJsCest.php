@@ -14,6 +14,11 @@ class DropZoneJsCest
         $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
     }
 
+    public function _after(AcceptanceTester $I, \Codeception\Scenario $scenario)
+    {
+        $I->haveABootedSymfonyConfiguration('config_default.yml');
+    }
+
     /**
      * @param AcceptanceTester $I
      *
