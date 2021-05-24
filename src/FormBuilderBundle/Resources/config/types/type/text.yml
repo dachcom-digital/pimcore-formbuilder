@@ -15,5 +15,8 @@ form_builder:
                             - input
                             - textarea
                             - wysiwyg
+                            - firstname
+                            - lastname
+                            - email
                 fields:
                     options.value: ~
