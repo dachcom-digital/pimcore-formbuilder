@@ -14,6 +14,8 @@ class FineUploaderConstraintsCest
      */
     public function testEmptyFileUploadFormWithNotBlankConstraint(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_default.yml');
+
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
             ->addFormField('dynamic_multi_file', 'file_upload', 'File Upload', ['dynamic_multi_file_not_blank'])
