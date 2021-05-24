@@ -35,7 +35,7 @@ $(function () {
 });
 ```
 
-#### Declarative Way
+#### Imperative Way
 This requires more work from your side since we only provide a simple jQuery Handler.
-Read more about the implementation [here](https://dropzone.gitbook.io/dropzone/getting-started/setup/declarative). 
+Read more about the implementation [here](https://docs.fineuploader.com/features/modules.html). 
 You also need to build your own handler and requires to **[disable the default behaviour](../80_FileUpload.md#disable-default-initialization)**.
