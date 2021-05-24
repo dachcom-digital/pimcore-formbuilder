@@ -23,6 +23,10 @@ class DefaultController extends FrontendController
     {
     }
 
+    public function twigRenderAction(Request $request)
+    {
+    }
+
     public function javascriptAction(Request $request)
     {
     }
