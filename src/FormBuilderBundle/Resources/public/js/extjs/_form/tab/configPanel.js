@@ -1369,31 +1369,46 @@ Formbuilder.extjs.formPanel.config = Class.create({
     },
 
     /**
-     * @param fbType
+     * @param fbTypes
      * @returns {Array}
      */
-    getFields: function (fbType) {
+    getFields: function (fbTypes) {
+
         var treeStore = this.tree.getSelectionModel().getStore(),
             fields = [];
 
-        Ext.Array.each(treeStore.queryBy(function (record, id) {
-            if (Ext.isArray(fbType)) {
-                return in_array(record.get('fbType'), fbType);
+        Ext.Array.each(treeStore.queryBy(function (record) {
+
+            var parentData;
+
+            if (Ext.isArray(fbTypes) === true && in_array(record.get('fbType'), fbTypes) === false) {
+                return false;
+            } else if (Ext.isArray(fbTypes) === false && record.get('fbType') !== fbTypes) {
+                return false;
             }
-            return record.get('fbType') === fbType;
+
+            if (record.getData().hasOwnProperty('object') === false) {
+                return false;
+            }
+
+            if (record.hasOwnProperty('parentNode') === false) {
+                return false;
+            }
+
+            parentData = record.parentNode.getData();
+
+            if (parentData.hasOwnProperty('object') && parentData.object.getData().sub_type === 'fieldset') {
+                return true;
+            } else if (parentData.hasOwnProperty('fbType') && parentData.fbType === 'root') {
+                return true;
+            }
+
+            return false;
+
         }).getRange(), function (field) {
-            var isValidRootField = true, parentData;
-            if (field.hasOwnProperty('parentNode')) {
-                parentData = field.parentNode.getData();
-                // currently we can't handle container sub fields
-                if (parentData.hasOwnProperty('fbType') && parentData.fbType !== 'root') {
-                    isValidRootField = false;
-                }
-            }
-            if (isValidRootField === true && field.getData().hasOwnProperty('object')) {
-                fields.push(field.getData().object.getData());
-            }
+            fields.push(field.getData().object.getData());
         });
+
         return fields;
     }
 });
