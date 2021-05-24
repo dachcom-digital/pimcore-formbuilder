@@ -35,6 +35,9 @@ If you're using the default handler, you're able to hook into the most important
 $forms.on('formbuilder.dynamic_multi_file.init', function(ev, $dmfField, configuration) {
     // overwrite configuraiton
     configuration.addRemoveLinks = false;
+    
+    // NEVER! override configuration.init! this would break all the internal server side communication!
+    // use event below to add your custom events!
 });
 
 $forms.on('formbuilder.dynamic_multi_file.drop_zone.init', function(ev, dropZoneInstance) {
@@ -45,7 +48,7 @@ $forms.on('formbuilder.dynamic_multi_file.drop_zone.init', function(ev, dropZone
 });
 ```
 
-### Declarative Way
+### Imperative Way
 This requires more work from your side since we only provide a simple jQuery Handler.
-Read more about the implementation [here](https://dropzone.gitbook.io/dropzone/getting-started/setup/declarative). 
+Read more about the implementation [here](https://dropzone.gitbook.io/dropzone/getting-started/setup/imperative). 
 You also need to build your own handler and requires to **[disable the default behaviour](../80_FileUpload.md#disable-default-initialization)**.
