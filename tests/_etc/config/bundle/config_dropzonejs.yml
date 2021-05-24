@@ -1,0 +1,2 @@
+form_builder:
+    dynamic_multi_file_adapter: FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter

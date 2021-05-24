@@ -404,30 +404,8 @@ class TestFormBuilder
             'optional'     => $optional,
         ];
 
-        switch ($type) {
-            case 'choice':
-                if (isset($options['expanded']) && $options['expanded'] === false) {
-                    $selector = 'select';
-                } else {
-                    $selector = 'input';
-                }
-                break;
-            case 'checkbox':
-            case 'email':
-            case 'text':
-                $selector = 'input';
-                break;
-            case 'submit':
-                $selector = 'button';
-                break;
-            case 'textarea':
-                $selector = 'textarea';
-                break;
-            default:
-                $selector = 'input';
-        }
+        $this->fieldTypeMapper[$name] = $this->getSelectorFortype($type, $options);
 
-        $this->fieldTypeMapper[$name] = $selector;
         $this->formConfig['form_fields']['fields'][] = $field;
 
         return $this;
@@ -457,6 +435,13 @@ class TestFormBuilder
         ];
 
         $this->fieldTypeMapper[$name] = 'div';
+
+        if ($subType === 'fieldset' && count($subFields) > 0) {
+            foreach ($subFields as $i => $subField) {
+                $this->fieldTypeMapper[sprintf('%s_%d_%s', $name, $i, $subField['name'])] = $this->getSelectorFortype($subField['type'], $subField['options'] ?? []);
+            }
+        }
+
         $this->formConfig['form_fields']['fields'][] = $field;
 
         return $this;
@@ -558,4 +543,39 @@ class TestFormBuilder
 
         return $config;
     }
+
+    /**
+     * @param string $type
+     * @param array  $options
+     *
+     * @return string
+     */
+    protected function getSelectorFortype($type, array $options = [])
+    {
+        switch ($type) {
+            case 'choice':
+                if (isset($options['expanded']) && $options['expanded'] === false) {
+                    $selector = 'select';
+                } else {
+                    $selector = 'input';
+                }
+                break;
+            case 'checkbox':
+            case 'email':
+            case 'text':
+                $selector = 'input';
+                break;
+            case 'submit':
+                $selector = 'button';
+                break;
+            case 'textarea':
+                $selector = 'textarea';
+                break;
+            default:
+                $selector = 'input';
+        }
+
+        return $selector;
+    }
+
 }

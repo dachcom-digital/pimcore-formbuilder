@@ -50,16 +50,18 @@ class ElementValueIsNotValueConditionCest extends AbstractConditionCest
     {
         $condition = [
             'type'       => 'elementValue',
-            'fields'     => ['simple_text_input_1'],
+            'fields'     => ['simple_text_input_3'],
             'comparator' => 'is_not_value',
             'value'      => 'TEXT'
         ];
 
         $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 'TEXT');
-        // just to trigger javascript blur we need to fill another field (text2)
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_3'), 'TEXT');
+        // just to trigger javascript blur we need to fill another field
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_4'), 'text2');
+
+        $I->waitForElementVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 5);
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
@@ -72,17 +74,19 @@ class ElementValueIsNotValueConditionCest extends AbstractConditionCest
     {
         $condition = [
             'type'       => 'elementValue',
-            'fields'     => ['simple_text_input_1'],
+            'fields'     => ['simple_text_input_3'],
             'comparator' => 'is_not_value',
             'value'      => 'TEXT'
         ];
 
         $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 'OTHER TEXT');
-        // just to trigger javascript blur we need to fill another field (text2)
-        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_3'), 'OTHER TEXT');
+        // just to trigger javascript blur we need to fill another field
+        $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_4'), 'text2');
+
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
+        $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
     /**
@@ -121,7 +125,7 @@ class ElementValueIsNotValueConditionCest extends AbstractConditionCest
         $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_area'), 'TEXT');
-        // just to trigger javascript blur we need to fill another field (text2)
+        // just to trigger javascript blur we need to fill another field
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
 
         $I->waitForElementNotVisible($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
@@ -144,7 +148,7 @@ class ElementValueIsNotValueConditionCest extends AbstractConditionCest
         $testFormBuilder = $this->runTestWithCondition($I, [$condition]);
 
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_area'), 'OTHER TEXT');
-        // just to trigger javascript blur we need to fill another field (text2)
+        // just to trigger javascript blur we need to fill another field
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_2'), 'text2');
 
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
