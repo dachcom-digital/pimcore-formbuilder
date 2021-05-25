@@ -63,7 +63,13 @@
         },
 
         injectTokenToForm: function () {
-            grecaptcha.execute(this.siteKey, {action: this.action}).then(this.onTokenGenerated.bind(this));
+            try {
+                grecaptcha.execute(this.siteKey, {action: this.action}).then(this.onTokenGenerated.bind(this), function () {
+                    this.$form.trigger('formbuilder.fatal-captcha', [null]);
+                }.bind(this));
+            } catch (error) {
+                this.$form.trigger('formbuilder.fatal-captcha', [error]);
+            }
         },
 
         /**
