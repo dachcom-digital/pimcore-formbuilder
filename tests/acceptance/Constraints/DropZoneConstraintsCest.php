@@ -14,7 +14,7 @@ class DropZoneConstraintsCest
      */
     public function testEmptyFileUploadFormWithNotBlankConstraint(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -44,7 +44,7 @@ class DropZoneConstraintsCest
      */
     public function testPopulatedFileUploadFormWithNotBlankConstraint(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
