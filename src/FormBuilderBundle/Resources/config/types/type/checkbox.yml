@@ -2,6 +2,7 @@ form_builder:
     types:
         checkbox:
             class: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+            output_transformer: checkbox_transformer
             backend:
                 form_type_group: other_fields
                 label: 'form_builder_type.checkbox_type'
@@ -13,6 +14,9 @@ form_builder:
                     object:
                         allowed_class_types:
                             - checkbox
+                            - consent
+                            - newsletterActive
+                            - newsletterConfirmed
                 fields:
                     options.value:
                         display_group_id: base

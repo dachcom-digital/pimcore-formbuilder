@@ -26,3 +26,7 @@ services:
     FormBuilderBundle\Transformer\Output\CountryDataObjectTransformer:
         tags:
             - {name: form_builder.transformer.output, type: country_transformer, channel: object }
+
+    FormBuilderBundle\Transformer\Output\CheckboxObjectTransformer:
+        tags:
+            - {name: form_builder.transformer.output, type: checkbox_transformer, channel: object }

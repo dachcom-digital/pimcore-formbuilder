@@ -16,6 +16,7 @@ form_builder:
                             - input
                             - select
                             - multiselect
+                            - gender
                 fields:
                     options.value: ~
                     options.data:

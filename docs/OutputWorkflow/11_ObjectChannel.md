@@ -44,22 +44,22 @@ This table shows all possible data mapping fields:
 
 | FormBuilder Type | Allowed Pimcore Type                                           |
 |------------------|----------------------------------------------------------------|
-| `Text`           | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`                  |
+| `Text`           | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `CRM/Firstname`, `CRM/Lastname`, `CRM/Email` |
 | `Hidden`         | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`                  |
 | `Text Area`      | `Text/Textarea`, `Text/Wysiwyg`                                |
-| `Integer`        | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `Number/Number` |
-| `Checkbox`       | `Other/Checkbox`                                               |
+| `Integer`        | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `Number/Number`, `Number/Slider` |
+| `Checkbox`       | `Other/Checkbox`, `CRM/NewsletterActive`, `CRM/NewsletterConfirmed`, `CRM/Consent` |
 | `Date`           | `Date/Date`                                                    |
 | `Date Time`      | `Date/DateTime`                                                |
 | `Time`           | `Date/Time`                                                    |
 | `Birthday`       | `Date/Date`                                                    | 
-| `Choice`         | `Text/Input`,`Select/Select`, `Select/MultiSelect`             |
-| `Dynamic Choice` | `Text/Input`,`Select/Select`, `Select/MultiSelect`             |
+| `Choice`         | `Text/Input`,`Select/Select`, `Select/MultiSelect`, `CRM/Gender` |
+| `Dynamic Choice` | `Text/Input`,`Select/Select`, `Select/MultiSelect`, `CRM/Gender` |
 | `Country`        | `Text/Input`,`Select/Country`, `Select/Country (MultiSelect)`  |
 | `Html Tag` | unsupported                |
 | `Snippet` | unsupported                 |
 | `reCAPTCHA v3` | unsupported            |
-| `File` | unsupported                    |
+| `Dynamic Multi File` | unsupported      |
 | `Submit` | unsupported                  |
 
 ### Dynamic Choices Mapping

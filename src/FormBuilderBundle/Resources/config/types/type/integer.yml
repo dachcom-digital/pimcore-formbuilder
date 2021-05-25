@@ -16,5 +16,6 @@ form_builder:
                             - textarea
                             - wysiwyg
                             - numeric
+                            - slider
                 fields:
                     options.value: ~

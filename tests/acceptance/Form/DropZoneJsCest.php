@@ -9,16 +9,6 @@ class DropZoneJsCest
 {
     use Traits\FunctionalFormTrait;
 
-    public function _before(AcceptanceTester $I, \Codeception\Scenario $scenario)
-    {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
-    }
-
-    public function _after(AcceptanceTester $I, \Codeception\Scenario $scenario)
-    {
-        $I->haveABootedSymfonyConfiguration('config_default.yml');
-    }
-
     /**
      * @param AcceptanceTester $I
      *
@@ -26,6 +16,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithOneFile(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'Drop Zone Upload');
@@ -65,6 +57,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithOneLargeFile(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'File Upload');
@@ -103,6 +97,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithMultipleFile(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'File Upload');
@@ -145,6 +141,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedAllowedExtensionsMustPass(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $allowedExtensions = ['application/pdf', 'text/plain'];
@@ -192,6 +190,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedAllowedExtensionsMustFail(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $allowedExtensions = ['application/pdf', 'text/plain'];
@@ -236,6 +236,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedItemsLimitMustPass(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -282,6 +284,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedItemsLimitMustFail(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -330,6 +334,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedFileSizeMustPass(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -376,6 +382,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedFileSizeMustFail(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -419,6 +427,8 @@ class DropZoneJsCest
      */
     public function testUploadFormWithFilesAsAttachment(AcceptanceTester $I)
     {
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
