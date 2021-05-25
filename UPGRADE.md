@@ -16,6 +16,7 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[IMPROVEMENT]**: Adjust field attribute label "Preselected" [#270](https://github.com/dachcom-digital/pimcore-formbuilder/issues/270)
 - **[IMPROVEMENT]**: Field name preview added [#237](https://github.com/dachcom-digital/pimcore-formbuilder/issues/237)
 - **[IMPROVEMENT]**: Added `CRM/Firstname`, `CRM/Lastname`, `CRM/Email`, `CRM/NewsletterActive`, `CRM/NewsletterConfirmed`, `CRM/Consent`, `Number/Slider`, `CRM/Gender` fields to allowed object mapping types [#238](https://github.com/dachcom-digital/pimcore-formbuilder/issues/238)
+- **[IMPROVEMENT]**: Adds fatal error event for captcha [@patric-eberle](https://github.com/dachcom-digital/pimcore-formbuilder/pull/267)
 - **[BUGFIX]**: Remove `body` param from mail object after rendering [#268](https://github.com/dachcom-digital/pimcore-formbuilder/issues/268)
 - **[BUGFIX]**: Fix container toggle in conditional logic
 
