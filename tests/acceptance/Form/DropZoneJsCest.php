@@ -16,7 +16,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithOneFile(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -57,7 +57,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithOneLargeFile(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -97,7 +97,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithMultipleFile(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -141,7 +141,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedAllowedExtensionsMustPass(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -190,7 +190,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedAllowedExtensionsMustFail(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -236,7 +236,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedItemsLimitMustPass(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -284,7 +284,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedItemsLimitMustFail(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -334,7 +334,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedFileSizeMustPass(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -382,7 +382,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithLimitedFileSizeMustFail(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -427,7 +427,7 @@ class DropZoneJsCest
      */
     public function testUploadFormWithFilesAsAttachment(AcceptanceTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
+        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml', true);
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
