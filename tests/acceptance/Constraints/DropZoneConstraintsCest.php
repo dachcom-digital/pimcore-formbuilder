@@ -8,6 +8,15 @@ use DachcomBundle\Test\Util\TestFormBuilder;
 class DropZoneConstraintsCest
 {
     /**
+     * @param AcceptanceTester      $I
+     * @param \Codeception\Scenario $scenario
+     */
+    public function _after(AcceptanceTester $I, \Codeception\Scenario $scenario)
+    {
+       $I->clearWebDriverCache();
+    }
+
+    /**
      * @param AcceptanceTester $I
      *
      * @throws \Exception
