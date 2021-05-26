@@ -12,39 +12,32 @@
 
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
 |---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Feature Branch | dev-master |
-| **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Bugfix only    | 2.7        |
+| **4.x** | `10.0`                            | `5.2`                      | UNRELEASED   | Feature Branch | dev-master |
+| **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Bugfix only    | [3.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/3.x)        |
+| **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Unsupported    | 2.7        |
 | **1.5** | `4.0`                             | --                         | 18.03.2017   | Unsupported    | pimcore4   |
+
+## Pimcore X
+This Branch is under heavy development and should not be used in production!
 
 ## Installation
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~3.4.0"
+    "dachcom-digital/formbuilder" : "dev-master"
 }
 ```
 
-### Installation via Extension Manager
-After you have installed the FormBuilder Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
-- Click the green `+` Button in `Enable / Disable` row
-- Click the green `+` Button in `Install/Uninstall` row
-
-### Installation via CommandLine
 After you have installed the FormBuilder Bundle via composer:
 - Execute: `$ bin/console pimcore:bundle:enable FormBuilderBundle`
 - Execute: `$ bin/console pimcore:bundle:install FormBuilderBundle`
 
 ## Upgrading
 
-### Upgrading via Extension Manager
-After you have updated the FormBuilder Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
-- Click the green `+` Button in `Update` row
-
 ### Upgrading via CommandLine
 After you have updated the FormBuilder Bundle via composer:
 - Execute: `$ bin/console pimcore:bundle:update FormBuilderBundle`
 
-### Migrate via CommandLine
 Does actually the same as the update command and preferred in CI-Workflow:
 - Execute: `$ bin/console pimcore:migrations:migrate -b FormBuilderBundle`
 
