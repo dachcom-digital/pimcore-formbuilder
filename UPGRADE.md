@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.4.0 to Version 3.4.1
+- **[BUGFIX]**: Ensure jquery is available in global node context before loading dynamic multi file adapter asynchronously
+
 #### Update from Version 3.3.5 to Version 3.4.0
 - **[NEW FEATURE]**: Conditional Logic for Fieldset Container Fields [#232](https://github.com/dachcom-digital/pimcore-formbuilder/issues/232)
 - **[NEW FEATURE]**: Introduce Dynamic Multi File Adapter (DropZoneJs added) [#261](https://github.com/dachcom-digital/pimcore-formbuilder/issues/261)

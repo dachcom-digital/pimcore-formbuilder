@@ -265,6 +265,11 @@
                 return;
             }
 
+            // check if jquery is available in global node context
+            if (typeof global !== 'undefined' && typeof global.jQuery === 'undefined') {
+                global.jQuery = $;
+            }
+
             $.getScript(this.options.dynamicMultiFileDefaultHandlerPath + '/jquery.fb.dmf.' + jsHandler + '.js', function (data, textStatus, jqxhr) {
                 if (jqxhr.status === 200) {
                     window.formBuilderDynamicMultiFileHandler.init(this.$form, $fields, this.ajaxUrls, this.options.dynamicMultiFileHandlerOptions);
