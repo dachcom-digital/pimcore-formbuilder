@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.4.1 to Version 3.4.2
+- **[BUGFIX]**: Fix behaviour of conditional logic plugin when toggling required state of custom controls [#287](https://github.com/dachcom-digital/pimcore-formbuilder/issues/287)
+
 #### Update from Version 3.4.0 to Version 3.4.1
 - **[BUGFIX]**: Ensure jquery is available in global node context before loading dynamic multi file adapter asynchronously
 
