@@ -127,7 +127,7 @@
                             $el.prev('label').addClass('required');
                             // custom control type
                         } else if ($el.next('label').length > 0) {
-                            $el.closest('.form-group').find('.col-form-legend').addClass('required');
+                            $el.closest('.form-group').find('.col-form-label').addClass('required');
                         }
                     });
                 },
@@ -142,7 +142,7 @@
                             $el.prev('label').removeClass('required');
                             // custom control type
                         } else if ($el.next('label').length > 0) {
-                            $el.closest('.form-group').find('.col-form-legend').addClass('required');
+                            $el.closest('.form-group').find('.col-form-label').removeClass('required');
                             $el.parentsUntil('.form-group').parent().find('.invalid-feedback').remove();
                         }
                     });
