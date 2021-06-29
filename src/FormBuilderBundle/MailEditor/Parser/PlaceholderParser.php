@@ -7,50 +7,24 @@ use Symfony\Component\Form\FormInterface;
 
 class PlaceholderParser implements PlaceholderParserInterface
 {
-    /**
-     * @var array
-     */
-    protected $outputData;
+    protected array $outputData;
+    protected FormInterface $form;
+    protected MailEditorWidgetRegistry $mailEditorWidgetRegistry;
 
-    /**
-     * @var FormInterface
-     */
-    protected $form;
-
-    /**
-     * @var MailEditorWidgetRegistry
-     */
-    protected $mailEditorWidgetRegistry;
-
-    /**
-     * @param MailEditorWidgetRegistry $mailEditorWidgetRegistry
-     */
     public function __construct(MailEditorWidgetRegistry $mailEditorWidgetRegistry)
     {
         $this->mailEditorWidgetRegistry = $mailEditorWidgetRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function replacePlaceholderWithOutputData(string $layout, FormInterface $form, array $outputData)
+    public function replacePlaceholderWithOutputData(string $layout, FormInterface $form, array $outputData): string
     {
         $this->outputData = $outputData;
         $this->form = $form;
 
-        $data = preg_replace_callback($this->getPlaceholderRegex(), [$this, 'parseSquareBracketsTag'], $layout);
-
-        return $data;
+        return preg_replace_callback($this->getPlaceholderRegex(), [$this, 'parseSquareBracketsTag'], $layout);
     }
 
-    /**
-     * @param array $tag
-     *
-     * @return null|string
-     *
-     * @throws \Exception
-     */
-    protected function parseSquareBracketsTag($tag)
+    protected function parseSquareBracketsTag(array $tag): ?string
     {
         $type = $tag[1];
         $config = $this->parseSquareBracketsAttributes($tag[2]);
@@ -67,7 +41,7 @@ class PlaceholderParser implements PlaceholderParserInterface
         }
 
         $cleanConfig = [
-            'form' => $this->form
+            'form' => $this->form,
         ];
 
         foreach ($config as $key => $value) {
@@ -81,12 +55,7 @@ class PlaceholderParser implements PlaceholderParserInterface
         return $widget->getValueForOutput($cleanConfig);
     }
 
-    /**
-     * @param string $text
-     *
-     * @return array
-     */
-    protected function parseSquareBracketsAttributes($text)
+    protected function parseSquareBracketsAttributes(string $text): array
     {
         $attributes = [];
         $pattern = $this->getSquareBracketsAttributeRegex();
@@ -106,10 +75,8 @@ class PlaceholderParser implements PlaceholderParserInterface
                 }
             }
             foreach ($attributes as &$value) {
-                if (strpos($value, '<') !== false) {
-                    if (preg_match('/^[^<]*+(?:<[^>]*+>[^<]*+)*+$/', $value) !== 1) {
-                        $value = '';
-                    }
+                if (str_contains($value, '<') && preg_match('/^[^<]*+(?:<[^>]*+>[^<]*+)*+$/', $value) !== 1) {
+                    $value = '';
                 }
             }
         } else {
@@ -119,21 +86,15 @@ class PlaceholderParser implements PlaceholderParserInterface
         return $attributes;
     }
 
-    /**
-     * @return string
-     */
-    protected function getSquareBracketsAttributeRegex()
+    protected function getSquareBracketsAttributeRegex(): string
     {
         return '/([\w-]+)\s*=\s*"([^"]*)"(?:\s|$)|([\w-]+)\s*=\s*\'([^\']*)\'(?:\s|$)|([\w-]+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
     }
 
-    /**
-     * @return string
-     */
-    protected function getPlaceholderRegex()
+    protected function getPlaceholderRegex(): string
     {
         $allowedRex = join('|', $this->mailEditorWidgetRegistry->getAllIdentifier());
 
-        return '/\\[\\[(' . $allowedRex . ')(.*?)\\]\\]/';
+        return '/\\[\\[('.$allowedRex.')(.*?)\\]\\]/';
     }
 }

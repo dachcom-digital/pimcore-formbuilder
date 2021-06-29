@@ -7,10 +7,7 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 
 class FormErrorsSerializer implements FormErrorsSerializerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getErrors(FormInterface $form)
+    public function getErrors(FormInterface $form): array
     {
         $errors = [];
         $formName = $form->getName();

@@ -9,9 +9,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ValidationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('type', TextType::class);

@@ -4,10 +4,7 @@ namespace FormBuilderBundle\Transformer;
 
 class ChoicesTransformer implements OptionsTransformerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function transform($choices, $optionConfig = null)
+    public function transform(array $choices, ?array $optionConfig = null): array
     {
         $parsedChoices = [];
         foreach ($choices as $choice) {
@@ -25,10 +22,7 @@ class ChoicesTransformer implements OptionsTransformerInterface
         return $parsedChoices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function reverseTransform($choices, $optionConfig = null)
+    public function reverseTransform(array $choices, ?array $optionConfig = null): array
     {
         $parsedChoices = [];
 

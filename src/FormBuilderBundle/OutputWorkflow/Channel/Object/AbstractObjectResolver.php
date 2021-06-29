@@ -12,57 +12,21 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValidationHelper;
 use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractObjectResolver
 {
-    /**
-     * @var FormValuesOutputApplierInterface
-     */
-    protected $formValuesOutputApplier;
+    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected FactoryInterface $modelFactory;
+    protected array $objectMappingData;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected ?FormInterface $form = null;
+    protected array $formRuntimeData = [];
+    protected ?string $locale;
+    protected ?string $workflowName;
 
-    /**
-     * @var array
-     */
-    protected $objectMappingData;
-
-    /**
-     * @var FormInterface
-     */
-    protected $form;
-
-    /**
-     * @var array
-     */
-    protected $formRuntimeData;
-
-    /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
-     * @var string
-     */
-    protected $workflowName;
-
-    /**
-     * @var FactoryInterface
-     */
-    protected $modelFactory;
-
-    /**
-     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
-     * @param EventDispatcherInterface         $eventDispatcher
-     * @param FactoryInterface                 $modelFactory
-     * @param array                            $objectMappingData
-     */
     public function __construct(
         FormValuesOutputApplierInterface $formValuesOutputApplier,
         EventDispatcherInterface $eventDispatcher,
@@ -75,96 +39,56 @@ abstract class AbstractObjectResolver
         $this->objectMappingData = $objectMappingData;
     }
 
-    /**
-     * @return DataObject\Concrete
-     *
-     * @throws \Exception
-     */
-    abstract public function getStorageObject();
+    abstract public function getStorageObject(): DataObject\Concrete;
 
-    /**
-     * @param string $fieldType
-     *
-     * @return bool
-     */
-    abstract public function fieldTypeAllowedToProcess($fieldType);
+    abstract public function fieldTypeAllowedToProcess(string $fieldType): bool;
 
-    /**
-     * @param FormInterface $form
-     */
-    public function setForm(FormInterface $form)
+    public function setForm(FormInterface $form): void
     {
         $this->form = $form;
     }
 
-    /**
-     * @return FormInterface
-     */
-    public function getForm()
+    public function getForm(): ?FormInterface
     {
         return $this->form;
     }
 
-    /**
-     * @param array $formRuntimeData
-     */
-    public function setFormRuntimeData(array $formRuntimeData)
+    public function setFormRuntimeData(array $formRuntimeData): void
     {
         $this->formRuntimeData = $formRuntimeData;
     }
 
-    /**
-     * @return array
-     */
-    public function getFormRuntimeData()
+    public function getFormRuntimeData(): array
     {
         return $this->formRuntimeData;
     }
 
-    /**
-     * @param string $locale
-     */
-    public function setLocale(string $locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
 
-    /**
-     * @return string
-     */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
 
-    /**
-     * @param string $workflowName
-     */
-    public function setWorkflowName(string $workflowName)
+    public function setWorkflowName(string $workflowName): void
     {
         $this->workflowName = $workflowName;
     }
 
-    /**
-     * @return string
-     */
-    public function getWorkflowName()
+    public function getWorkflowName(): ?string
     {
         return $this->workflowName;
     }
 
-    /**
-     * @return array
-     */
-    public function getObjectMappingData()
+    public function getObjectMappingData(): array
     {
         return $this->objectMappingData;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function resolve()
+    public function resolve(): void
     {
         $object = $this->getStorageObject();
 
@@ -179,12 +103,7 @@ abstract class AbstractObjectResolver
         $object->save();
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     *
-     * @throws GuardException
-     */
-    protected function processObject(DataObject\Concrete $object)
+    protected function processObject(DataObject\Concrete $object): void
     {
         $definition = $this->getObjectMappingData();
         if (empty($definition)) {
@@ -200,13 +119,7 @@ abstract class AbstractObjectResolver
         $this->processObjectData($object, $formData);
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param array               $formData
-     *
-     * @throws GuardException
-     */
-    protected function processObjectData(DataObject\Concrete $object, array $formData)
+    protected function processObjectData(DataObject\Concrete $object, array $formData): void
     {
         foreach ($formData as $fieldData) {
             if ($this->fieldTypeAllowedToProcess($fieldData['field_type']) === false) {
@@ -221,11 +134,7 @@ abstract class AbstractObjectResolver
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param array               $fieldData
-     */
-    protected function mapField(DataObject\Concrete $object, array $fieldData)
+    protected function mapField(DataObject\Concrete $object, array $fieldData): void
     {
         $fieldName = $fieldData['name'];
         $fieldValue = $fieldData['value'];
@@ -239,13 +148,7 @@ abstract class AbstractObjectResolver
         $this->assignChildDataToObject($object, $fieldDefinition, $fieldValue);
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param array               $containerFieldData
-     *
-     * @throws GuardException
-     */
-    protected function mapContainerField(DataObject\Concrete $object, array $containerFieldData)
+    protected function mapContainerField(DataObject\Concrete $object, array $containerFieldData): void
     {
         $fieldName = $containerFieldData['name'];
 
@@ -292,15 +195,7 @@ abstract class AbstractObjectResolver
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string              $fieldCollectionMethodName
-     * @param array               $workerData
-     * @param array               $containerFieldData
-     *
-     * @throws GuardException
-     */
-    protected function appendToFieldCollection(DataObject\Concrete $object, string $fieldCollectionMethodName, array $workerData, array $containerFieldData)
+    protected function appendToFieldCollection(DataObject\Concrete $object, string $fieldCollectionMethodName, array $workerData, array $containerFieldData): void
     {
         $fieldCollectionType = $workerData['fieldCollectionClassKey'];
         $fieldMapping = $workerData['fieldMapping'];
@@ -369,12 +264,7 @@ abstract class AbstractObjectResolver
         $object->$fieldCollectionSetter($objectFieldCollections);
     }
 
-    /**
-     * @param mixed $object
-     * @param array $definition
-     * @param mixed $value
-     */
-    protected function assignChildDataToObject($object, array $definition, $value)
+    protected function assignChildDataToObject($object, array $definition, $value): void
     {
         if (!is_array($definition['childs'])) {
             return;
@@ -391,12 +281,7 @@ abstract class AbstractObjectResolver
         }
     }
 
-    /**
-     * @param mixed  $object
-     * @param string $fieldName
-     * @param mixed  $value
-     */
-    protected function appendToMethod($object, string $fieldName, $value)
+    protected function appendToMethod($object, string $fieldName, $value): void
     {
         $objectSetter = sprintf('set%s', ucfirst($fieldName));
 
@@ -412,13 +297,7 @@ abstract class AbstractObjectResolver
         $object->$objectSetter($value);
     }
 
-    /**
-     * @param array  $definitionFields
-     * @param string $formFieldName
-     *
-     * @return bool|array
-     */
-    protected function findMapDefinition(array $definitionFields, $formFieldName)
+    protected function findMapDefinition(array $definitionFields, string $formFieldName): ?array
     {
         foreach ($definitionFields as $definitionField) {
             if ($definitionField['type'] === 'form_field' && $definitionField['config']['name'] === $formFieldName) {
@@ -432,12 +311,10 @@ abstract class AbstractObjectResolver
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
-     * @param mixed $subject
-     *
      * @return DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|null
      *
      * @throws GuardException
@@ -445,7 +322,7 @@ abstract class AbstractObjectResolver
     protected function dispatchGuardEvent($subject)
     {
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($this->getForm()->getData(), $subject, $this->getWorkflowName(), 'object', $this->getFormRuntimeData());
-        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
+        $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {
             return null;
@@ -453,7 +330,9 @@ abstract class AbstractObjectResolver
 
         if ($channelSubjectGuardEvent->shouldStopChannel()) {
             throw new GuardChannelException($channelSubjectGuardEvent->getFailMessage());
-        } elseif ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
+        }
+
+        if ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
             throw new GuardOutputWorkflowException($channelSubjectGuardEvent->getFailMessage());
         }
 
@@ -461,12 +340,9 @@ abstract class AbstractObjectResolver
     }
 
     /**
-     * @param mixed  $object
-     * @param string $fieldName
-     *
      * @return DataObject\ClassDefinition\Data|null
      */
-    protected function getObjectFieldDefinition($object, $fieldName)
+    protected function getObjectFieldDefinition($object, string $fieldName)
     {
         if ($object instanceof DataObject\Concrete) {
             $classDefinition = $object->getClass();

@@ -14,9 +14,6 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\Worker\Field
 
 class FieldConfigType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class);
@@ -32,21 +29,14 @@ class FieldConfigType extends AbstractType
         });
     }
 
-    /**
-     * @param string        $workerType
-     * @param FormInterface $form
-     */
-    protected function addWorker($workerType, FormInterface $form)
+    protected function addWorker(string $workerType, FormInterface $form): void
     {
         if ($workerType === 'fieldCollectionWorker') {
             $form->add('workerData', FieldCollectionWorkerType::class);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'config_type'       => null,

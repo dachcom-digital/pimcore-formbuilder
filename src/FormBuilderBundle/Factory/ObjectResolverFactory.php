@@ -7,36 +7,15 @@ use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Object\ExistingObjectResolver;
 use FormBuilderBundle\OutputWorkflow\Channel\Object\NewObjectResolver;
 use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ObjectResolverFactory implements ObjectResolverFactoryInterface
 {
-    /**
-     * @var DynamicObjectResolverRegistry
-     */
-    protected $dynamicObjectResolverRegistry;
+    protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry;
+    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected FactoryInterface $modelFactory;
 
-    /**
-     * @var FormValuesOutputApplierInterface
-     */
-    protected $formValuesOutputApplier;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var FactoryInterface
-     */
-    protected $modelFactory;
-
-    /**
-     * @param DynamicObjectResolverRegistry    $dynamicObjectResolverRegistry
-     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
-     * @param EventDispatcherInterface         $eventDispatcher
-     * @param FactoryInterface                 $modelFactory
-     */
     public function __construct(
         DynamicObjectResolverRegistry $dynamicObjectResolverRegistry,
         FormValuesOutputApplierInterface $formValuesOutputApplier,
@@ -49,18 +28,12 @@ class ObjectResolverFactory implements ObjectResolverFactoryInterface
         $this->modelFactory = $modelFactory;
     }
 
-    /**
-     *{@inheritdoc}
-     */
-    public function createForNewObject(array $objectMappingData)
+    public function createForNewObject(array $objectMappingData): NewObjectResolver
     {
         return new NewObjectResolver($this->formValuesOutputApplier, $this->eventDispatcher, $this->modelFactory, $objectMappingData);
     }
 
-    /**
-     *{@inheritdoc}
-     */
-    public function createForExistingObject(array $objectMappingData)
+    public function createForExistingObject(array $objectMappingData): ExistingObjectResolver
     {
         $object = new ExistingObjectResolver($this->formValuesOutputApplier, $this->eventDispatcher, $this->modelFactory, $objectMappingData);
         $object->setDynamicObjectResolverRegistry($this->dynamicObjectResolverRegistry);

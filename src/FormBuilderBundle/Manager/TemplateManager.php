@@ -6,23 +6,14 @@ use FormBuilderBundle\Configuration\Configuration;
 
 class TemplateManager
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @return array
-     */
-    public function getFieldTemplates()
+    public function getFieldTemplates(): array
     {
         $areaConfig = $this->configuration->getConfig('form');
         $templates = $areaConfig['field']['templates'];
@@ -36,10 +27,7 @@ class TemplateManager
         return $templateData;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDefaultFieldTemplate()
+    public function getDefaultFieldTemplate(): ?string
     {
         $defaultValue = null;
 
@@ -54,12 +42,8 @@ class TemplateManager
         return $defaultValue;
     }
 
-    /**
-     * @param bool $parseForExtJsStore
-     *
-     * @return array
-     */
-    public function getFormTemplates($parseForExtJsStore = false)
+
+    public function getFormTemplates(bool $parseForExtJsStore = false): array
     {
         $areaConfig = $this->configuration->getConfig('form');
         $templates = $areaConfig['templates'];
@@ -82,10 +66,8 @@ class TemplateManager
         return $templateData;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDefaultFormTemplate()
+
+    public function getDefaultFormTemplate(): ?string
     {
         $defaultValue = null;
 

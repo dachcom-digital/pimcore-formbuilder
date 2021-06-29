@@ -11,23 +11,14 @@ use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 
 class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
 {
-    /**
-     * @var OutputWorkflowChannelRegistry
-     */
-    protected $channelRegistry;
+    protected OutputWorkflowChannelRegistry $channelRegistry;
 
-    /**
-     * @param OutputWorkflowChannelRegistry $channelRegistry
-     */
     public function __construct(OutputWorkflowChannelRegistry $channelRegistry)
     {
         $this->channelRegistry = $channelRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent)
+    public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
     {
         $exceptionStack = [];
         foreach ($outputWorkflow->getChannels() as $index => $channel) {

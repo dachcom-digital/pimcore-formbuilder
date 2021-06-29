@@ -14,10 +14,7 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\ObjectMappin
 
 class ObjectChannelType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('resolveStrategy', ChoiceType::class, ['choices' => ['existingObject' => 'existingObject', 'newObject' => 'newObject']]);
         $builder->add('objectMappingData', ObjectMappingElementCollectionType::class, []);
@@ -43,10 +40,7 @@ class ObjectChannelType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([]);
     }

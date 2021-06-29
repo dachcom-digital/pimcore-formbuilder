@@ -15,27 +15,16 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExportController extends AdminController
 {
-    const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
+    public const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
 
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
+    protected FormDefinitionManager $formDefinitionManager;
 
-    /**
-     * @param FormDefinitionManager $formDefinitionManager
-     */
     public function __construct(FormDefinitionManager $formDefinitionManager)
     {
         $this->formDefinitionManager = $formDefinitionManager;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportFormEmailsAction(Request $request)
+    public function exportFormEmailsAction(Request $request): Response
     {
         $formId = $request->get('id', 0);
         $mailType = $request->get('mailType', 'all');
@@ -67,13 +56,7 @@ class ExportController extends AdminController
         return $response;
     }
 
-    /**
-     * @param array $mailData
-     * @param int   $formId
-     *
-     * @return string
-     */
-    private function buildCsv(array $mailData, $formId)
+    private function buildCsv(array $mailData, int $formId): string
     {
         $mailHeader = [
             'form_id',
@@ -152,14 +135,7 @@ class ExportController extends AdminController
         return $this->generateCsvStructure($header, $rows);
     }
 
-    /**
-     * @param Email\Log               $log
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $mailHeader
-     *
-     * @return array
-     */
-    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, &$mailHeader)
+    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, array &$mailHeader): array
     {
         $normalizedParams = [];
         $forbiddenKeys = ['body', '_form_builder_id'];
@@ -218,12 +194,7 @@ class ExportController extends AdminController
         return $normalizedParams;
     }
 
-    /**
-     * @param int $formId
-     *
-     * @return string
-     */
-    private function generateFormIdQuery($formId)
+    private function generateFormIdQuery(int $formId): string
     {
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
@@ -235,30 +206,19 @@ class ExportController extends AdminController
         ]);
     }
 
-    /**
-     * @param string $mailType
-     *
-     * @return string
-     */
-    private function generateFormTypeQuery($mailType)
+    private function generateFormTypeQuery(string $mailType): string
     {
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
         $stdClass->value = $mailType === 'only_main' ? 0 : 1;
 
         return json_encode([
-            'key'  => '_form_builder_is_copy',
+            'key' => '_form_builder_is_copy',
             'data' => $stdClass
-        ]);
+        ], JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * @param array $header
-     * @param array $data
-     *
-     * @return string
-     */
-    private function generateCsvStructure($header, $data)
+    private function generateCsvStructure(array $header, array $data): string
     {
         $handle = fopen('php://temp', 'r+');
         if (!is_resource($handle)) {
@@ -283,20 +243,14 @@ class ExportController extends AdminController
         return $contents;
     }
 
-    /**
-     * @param string $value
-     * @param string $fieldType
-     *
-     * @return mixed
-     */
-    private function cleanValue($value, $fieldType = null)
+    private function cleanValue(string $value, string $fieldType = null): string
     {
         if (in_array($fieldType, ['choice', 'dynamic_choice', 'country'])) {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = is_array($value) ? join(', ', array_filter($value)) : $value;
+            $value = is_array($value) ? implode(', ', array_filter($value)) : $value;
         } elseif ($fieldType === 'textarea') {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = is_array($value) ? join("\n", array_filter($value)) : $value;
+            $value = is_array($value) ? implode("\n", array_filter($value)) : $value;
             $value = preg_replace("/[\r\n]+/", "\n", $value);
         }
 

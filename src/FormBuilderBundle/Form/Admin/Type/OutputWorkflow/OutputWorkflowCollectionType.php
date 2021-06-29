@@ -9,10 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputWorkflowCollectionType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -25,10 +22,7 @@ class OutputWorkflowCollectionType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return CollectionType::class;
     }

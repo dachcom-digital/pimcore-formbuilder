@@ -4,26 +4,9 @@ namespace FormBuilderBundle\Stream;
 
 interface FileStreamInterface
 {
-    /**
-     * @param array $options
-     * @param bool  $instantChunkCombining
-     *
-     * @return array
-     */
-    public function handleUpload(array $options = [], bool $instantChunkCombining = true);
+    public function handleUpload(array $options = [], bool $instantChunkCombining = true): array;
 
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
-    public function combineChunks(array $options = []);
+    public function combineChunks(array $options = []): array;
 
-    /**
-     * @param string $identifier
-     * @param bool   $checkChunkFolder
-     *
-     * @return array
-     */
-    public function handleDelete($identifier, bool $checkChunkFolder = false);
+    public function handleDelete(string $identifier, bool $checkChunkFolder = false): array;
 }

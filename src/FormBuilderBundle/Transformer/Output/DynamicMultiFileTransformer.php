@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Transformer\Output;
 
 use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Translation\Translator;
@@ -12,35 +13,17 @@ use Symfony\Component\Form\FormInterface;
 
 class DynamicMultiFileTransformer implements OutputTransformerInterface
 {
-    /**
-     * @var Translator
-     */
-    protected $translator;
+    protected Translator $translator;
+    protected AttachmentStreamInterface $attachmentStream;
 
-    /**
-     * @var AttachmentStreamInterface
-     */
-    protected $attachmentStream;
-
-    /**
-     * @param Translator                $translator
-     * @param AttachmentStreamInterface $attachmentStream
-     */
     public function __construct(Translator $translator, AttachmentStreamInterface $attachmentStream)
     {
         $this->translator = $translator;
         $this->attachmentStream = $attachmentStream;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
-        if (!$fieldDefinition instanceof FormFieldDefinitionInterface) {
-            return null;
-        }
-
         $options = $fieldDefinition->getOptions();
         /** @var FormDataInterface $rootFormData */
         $rootFormData = $formField->getRoot()->getData();
@@ -65,15 +48,8 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
-        if (!$fieldDefinition instanceof FormFieldDefinitionInterface) {
-            return null;
-        }
-
         $fieldOptions = $fieldDefinition->getOptions();
         $optionalOptions = $fieldDefinition->getOptional();
 

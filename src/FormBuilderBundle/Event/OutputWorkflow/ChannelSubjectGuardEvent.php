@@ -3,62 +3,20 @@
 namespace FormBuilderBundle\Event\OutputWorkflow;
 
 use FormBuilderBundle\Form\Data\FormDataInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ChannelSubjectGuardEvent extends Event
 {
-    /**
-     * @var FormDataInterface
-     */
-    protected $formData;
-
-    /**
-     * @var mixed
-     */
+    protected FormDataInterface $formData;
     protected $subject;
+    protected array $formRuntimeData;
+    protected string $workflowName;
+    protected string $channelType;
+    protected bool $suspended = false;
+    protected bool $failed = false;
+    protected bool $currentChannelOnly = true;
+    protected ?string $failMessage = null;
 
-    /**
-     * @var array
-     */
-    protected $formRuntimeData;
-
-    /**
-     * @var string
-     */
-    protected $workflowName;
-
-    /**
-     * @var string
-     */
-    protected $channelType;
-
-    /**
-     * @var bool
-     */
-    protected $suspended;
-
-    /**
-     * @var bool
-     */
-    protected $failed;
-
-    /**
-     * @var bool
-     */
-    protected $currentChannelOnly;
-
-    /**
-     * @var string
-     */
-    protected $failMessage;
-
-    /**
-     * @param FormDataInterface $formData
-     * @param mixed             $subject
-     * @param string            $workflowName
-     * @param string            $channelType
-     * @param array             $formRuntimeData
-     */
     public function __construct(FormDataInterface $formData, $subject, string $workflowName, string $channelType, array $formRuntimeData)
     {
         $this->formData = $formData;
@@ -66,57 +24,34 @@ class ChannelSubjectGuardEvent extends Event
         $this->workflowName = $workflowName;
         $this->channelType = $channelType;
         $this->formRuntimeData = $formRuntimeData;
-
-        $this->suspended = false;
-        $this->failed = false;
-        $this->currentChannelOnly = true;
-        $this->failMessage = null;
     }
 
-    /**
-     * @param mixed $subject
-     */
-    public function setSubject($subject)
+    public function setSubject($subject): void
     {
         $this->subject = $subject;
     }
 
-    /**
-     * @return mixed
-     */
     public function getSubject()
     {
         return $this->subject;
     }
 
-    /**
-     * @return FormDataInterface
-     */
-    public function getFormData()
+    public function getFormData(): FormDataInterface
     {
         return $this->formData;
     }
 
-    /**
-     * @return array
-     */
-    public function getFormRuntimeData()
+    public function getFormRuntimeData(): array
     {
         return $this->formRuntimeData;
     }
 
-    /**
-     * @return string
-     */
-    public function getWorkflowName()
+    public function getWorkflowName(): string
     {
         return $this->workflowName;
     }
 
-    /**
-     * @return string
-     */
-    public function getChannelType()
+    public function getChannelType(): string
     {
         return $this->channelType;
     }
@@ -124,7 +59,7 @@ class ChannelSubjectGuardEvent extends Event
     /**
      * Silently suspend current process without any notices.
      */
-    public function shouldSuspend()
+    public function shouldSuspend(): void
     {
         $this->suspended = true;
         $this->failed = false;
@@ -134,11 +69,8 @@ class ChannelSubjectGuardEvent extends Event
 
     /**
      * Suspend current channel only or complete output workflow with a message.
-     *
-     * @param string $failMessage
-     * @param bool   $onlyCurrentChannel
      */
-    public function shouldFail(string $failMessage, $onlyCurrentChannel = true)
+    public function shouldFail(string $failMessage, bool $onlyCurrentChannel = true): void
     {
         $this->failed = true;
         $this->suspended = false;
@@ -147,41 +79,33 @@ class ChannelSubjectGuardEvent extends Event
     }
 
     /**
-     * @return bool
-     *
      * @internal
      */
-    public function isSuspended()
+    public function isSuspended(): bool
     {
         return $this->suspended === true;
     }
 
     /**
-     * @return bool
-     *
      * @internal
      */
-    public function shouldStopChannel()
+    public function shouldStopChannel(): bool
     {
         return $this->failed === true && $this->currentChannelOnly === true;
     }
 
     /**
-     * @return bool
-     *
      * @internal
      */
-    public function shouldStopOutputWorkflow()
+    public function shouldStopOutputWorkflow(): bool
     {
         return $this->failed === true && $this->currentChannelOnly === false;
     }
 
     /**
-     * @return string|null
-     *
      * @internal
      */
-    public function getFailMessage()
+    public function getFailMessage(): ?string
     {
         return $this->failMessage;
     }

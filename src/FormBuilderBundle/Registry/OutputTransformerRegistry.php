@@ -6,31 +6,12 @@ use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
 
 class OutputTransformerRegistry
 {
-    const FALLBACK_TRANSFORMER_IDENTIFIER = 'fallback_transformer';
+    public const FALLBACK_TRANSFORMER_IDENTIFIER = 'fallback_transformer';
 
-    /**
-     * @var array
-     */
-    protected $transformer = [];
+    protected array $transformer = [];
 
-    /**
-     * @param string                     $identifier
-     * @param string                     $channel
-     * @param OutputTransformerInterface $service
-     */
-    public function register($identifier, string $channel, $service)
+    public function register(string $identifier, string $channel, OutputTransformerInterface $service): void
     {
-        if (!in_array(OutputTransformerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    OutputTransformerInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
         if (!isset($this->transformer[$channel])) {
             $this->transformer[$channel] = [];
         }
@@ -38,54 +19,28 @@ class OutputTransformerRegistry
         $this->transformer[$channel][$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     * @param string $channel
-     *
-     * @return bool
-     */
-    public function hasForChannel($identifier, $channel)
+    public function hasForChannel(string $identifier, string $channel): bool
     {
         return
-            (isset($this->transformer[$channel]) && isset($this->transformer[$channel][$identifier]))
-            || (isset($this->transformer['_all']) && isset($this->transformer['_all'][$identifier]));
+            (isset($this->transformer[$channel][$identifier]))
+            || (isset($this->transformer['_all'][$identifier]));
     }
 
-    /**
-     * @param string $identifier
-     * @param string $channel
-     *
-     * @return OutputTransformerInterface
-     *
-     * @throws \Exception
-     */
-    public function getForChannel($identifier, $channel)
+    public function getForChannel(string $identifier, string $channel): OutputTransformerInterface
     {
         if (!$this->hasForChannel($identifier, $channel)) {
             throw new \Exception('"' . $identifier . '" output transformer service does not exist.');
         }
 
-        if (isset($this->transformer[$channel]) && isset($this->transformer[$channel][$identifier])) {
-            return $this->transformer[$channel][$identifier];
-        }
-
-        return $this->transformer['_all'][$identifier];
+        return $this->transformer[$channel][$identifier] ?? $this->transformer['_all'][$identifier];
     }
 
-    /**
-     * @return OutputTransformerInterface
-     *
-     * @throws \Exception
-     */
-    public function getFallbackTransformer()
+    public function getFallbackTransformer(): OutputTransformerInterface
     {
         return $this->getForChannel(self::FALLBACK_TRANSFORMER_IDENTIFIER, '_all');
     }
 
-    /**
-     * @return array|OutputTransformerInterface[]
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->transformer;
     }

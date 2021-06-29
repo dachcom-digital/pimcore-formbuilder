@@ -8,18 +8,9 @@ use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 
 interface FormDefinitionFactoryInterface
 {
-    /**
-     * @return FormDefinitionInterface
-     */
-    public function createFormDefinition();
+    public function createFormDefinition(): FormDefinitionInterface;
 
-    /**
-     * @return FormFieldDefinitionInterface
-     */
-    public function createFormFieldDefinition();
+    public function createFormFieldDefinition(): FormFieldDefinitionInterface;
 
-    /**
-     * @return FormFieldContainerDefinitionInterface
-     */
-    public function createFormFieldContainerDefinition();
+    public function createFormFieldContainerDefinition(): FormFieldContainerDefinitionInterface;
 }

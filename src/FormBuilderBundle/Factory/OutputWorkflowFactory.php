@@ -3,13 +3,11 @@
 namespace FormBuilderBundle\Factory;
 
 use FormBuilderBundle\Model\OutputWorkflow;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
 
 class OutputWorkflowFactory implements OutputWorkflowFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createOutputWorkflow()
+    public function createOutputWorkflow(): OutputWorkflowInterface
     {
         return new OutputWorkflow();
     }

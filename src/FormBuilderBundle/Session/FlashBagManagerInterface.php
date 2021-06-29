@@ -8,38 +8,26 @@ interface FlashBagManagerInterface
 {
     /**
      * Has flash messages for a given type?
-     *
-     * @param string $type
-     *
-     * @return bool
      */
-    public function has($type);
+    public function has(string $type): bool;
 
     /**
      * Adds a flash message for type.
-     *
-     * @param string $type
-     * @param mixed  $message
      */
-    public function add($type, $message);
+    public function add(string $type, $message): void;
 
     /**
      * Gets and clears flash from the stack.
-     *
-     * @param string $type
-     * @param array  $default Default value if $type does not exist
-     *
-     * @return array
      */
-    public function get($type, array $default = []);
+    public function get(string $type, array $default = []): array;
 
     /**
      * @return bool
      */
-    public function flashBagIsAvailable();
+    public function flashBagIsAvailable(): bool;
 
     /**
      * @return FlashBagInterface|null
      */
-    public function getFlashBag();
+    public function getFlashBag(): ?FlashBagInterface;
 }

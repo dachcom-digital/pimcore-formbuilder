@@ -15,11 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SuccessManagementType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('type', TextType::class);
         $builder->add('identifier', TextType::class);
@@ -39,11 +35,7 @@ class SuccessManagementType extends AbstractType
         });
     }
 
-    /**
-     * @param FormInterface $form
-     * @param string        $identifier
-     */
-    protected function buildConditionalForm(FormInterface $form, string $identifier)
+    protected function buildConditionalForm(FormInterface $form, string $identifier): void
     {
         switch ($identifier) {
             case 'snippet':
@@ -64,10 +56,7 @@ class SuccessManagementType extends AbstractType
         }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([]);
     }

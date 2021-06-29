@@ -3,41 +3,17 @@
 namespace FormBuilderBundle\Event;
 
 use Pimcore\Mail;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
-/**
- * @deprecated since version 3.3; use \FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent instead.
- */
 class MailEvent extends Event
 {
-    /**
-     * @var FormInterface
-     */
-    private $form;
+    private FormInterface $form;
+    private Mail $email;
+    private array $userOptions;
+    private bool $isCopy;
 
-    /**
-     * @var Mail
-     */
-    private $email;
-
-    /**
-     * @var array
-     */
-    private $userOptions;
-
-    /**
-     * @var bool
-     */
-    private $isCopy;
-
-    /**
-     * @param FormInterface $form
-     * @param Mail          $email
-     * @param array         $userOptions
-     * @param bool          $isCopy
-     */
-    public function __construct(FormInterface $form, Mail $email, array $userOptions, $isCopy)
+    public function __construct(FormInterface $form, Mail $email, array $userOptions, bool $isCopy)
     {
         $this->form = $form;
         $this->email = $email;
@@ -51,42 +27,27 @@ class MailEvent extends Event
         $this->userOptions = $userOptions;
     }
 
-    /**
-     * @return FormInterface
-     */
-    public function getForm()
+    public function getForm(): FormInterface
     {
         return $this->form;
     }
 
-    /**
-     * @param Mail $email
-     */
-    public function setEmail(Mail $email)
+    public function setEmail(Mail $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return Mail
-     */
-    public function getEmail()
+    public function getEmail(): Mail
     {
         return $this->email;
     }
 
-    /**
-     * @return array
-     */
-    public function getUserOptions()
+    public function getUserOptions(): array
     {
         return $this->userOptions;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCopy()
+    public function isCopy(): bool
     {
         return $this->isCopy;
     }

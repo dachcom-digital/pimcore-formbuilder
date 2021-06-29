@@ -19,50 +19,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ExtJsFormBuilder
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected SerializerInterface $serializer;
+    protected TemplateManager $templateManager;
+    protected Translator $translator;
+    protected OptionsTransformerRegistry $optionsTransformerRegistry;
+    protected ConditionalLogicRegistry $conditionalLogicRegistry;
+    protected OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry;
 
-    /**
-     * @var SerializerInterface
-     */
-    protected $serializer;
-
-    /**
-     * @var TemplateManager
-     */
-    protected $templateManager;
-
-    /**
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @var OptionsTransformerRegistry
-     */
-    protected $optionsTransformerRegistry;
-
-    /**
-     * @var ConditionalLogicRegistry
-     */
-    protected $conditionalLogicRegistry;
-
-    /**
-     * @var OutputWorkflowChannelRegistry
-     */
-    protected $outputWorkflowChannelRegistry;
-
-    /**
-     * @param Configuration                 $configuration
-     * @param SerializerInterface           $serializer
-     * @param TemplateManager               $templateManager
-     * @param Translator                    $translator
-     * @param OptionsTransformerRegistry    $optionsTransformerRegistry
-     * @param ConditionalLogicRegistry      $conditionalLogicRegistry
-     * @param OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry
-     */
     public function __construct(
         Configuration $configuration,
         SerializerInterface $serializer,
@@ -84,13 +48,9 @@ class ExtJsFormBuilder
     /**
      * Generate array form with form attributes and available form types structure.
      *
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return array
-     *
      * @throws \Exception
      */
-    public function generateExtJsForm(FormDefinitionInterface $formDefinition)
+    public function generateExtJsForm(FormDefinitionInterface $formDefinition): array
     {
         $data = [
             'id'                   => $formDefinition->getId(),
@@ -126,14 +86,7 @@ class ExtJsFormBuilder
         return $data;
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function generateExtJsFormFields(FormDefinitionInterface $formDefinition)
+    public function generateExtJsFormFields(FormDefinitionInterface $formDefinition): array
     {
         $data = [];
         $fieldData = [];
@@ -182,14 +135,7 @@ class ExtJsFormBuilder
         return $data;
     }
 
-    /**
-     * @param OutputWorkflowInterface $outputWorkflow
-     *
-     * @return array
-     *
-     * @throws \Throwable
-     */
-    public function generateExtJsOutputWorkflowForm(OutputWorkflowInterface $outputWorkflow)
+    public function generateExtJsOutputWorkflowForm(OutputWorkflowInterface $outputWorkflow): array
     {
         $data = [
             'id'   => $outputWorkflow->getId(),
@@ -208,14 +154,7 @@ class ExtJsFormBuilder
         return $data;
     }
 
-    /**
-     * @param array $fields
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function generateExtJsFields(array $fields)
+    public function generateExtJsFields(array $fields): array
     {
         foreach ($fields as &$fieldData) {
             if ($fieldData['type'] === 'container' && is_array($fieldData['fields'])) {
@@ -231,14 +170,7 @@ class ExtJsFormBuilder
         return $fields;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function generateStoreFields(array $data)
+    public function generateStoreFields(array $data): array
     {
         if (!isset($data['fields'])) {
             return $data;
@@ -258,14 +190,7 @@ class ExtJsFormBuilder
         return $data;
     }
 
-    /**
-     * @param array $conditionalData
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function generateConditionalLogicStoreFields(array $conditionalData)
+    public function generateConditionalLogicStoreFields(array $conditionalData): array
     {
         if (!empty($conditionalData)) {
             foreach ($conditionalData as &$conditionalDataBlock) {
@@ -282,14 +207,7 @@ class ExtJsFormBuilder
         return $conditionalData;
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    protected function getSensitiveFormFieldNames(FormDefinitionInterface $formDefinition)
+    protected function getSensitiveFormFieldNames(FormDefinitionInterface $formDefinition): array
     {
         if (!$formDefinition->hasOutputWorkflows()) {
             return [];
@@ -316,10 +234,7 @@ class ExtJsFormBuilder
         return $fieldNames;
     }
 
-    /**
-     * @return array
-     */
-    private function generateAvailableWorkflowChannelsList()
+    private function generateAvailableWorkflowChannelsList(): array
     {
         $data = [];
         foreach ($this->outputWorkflowChannelRegistry->getAllIdentifier() as $availableChannel) {
@@ -333,12 +248,7 @@ class ExtJsFormBuilder
         return $data;
     }
 
-    /**
-     * @param bool $flat
-     *
-     * @return array
-     */
-    private function generateExtJsFormTypesStructure(bool $flat = false)
+    private function generateExtJsFormTypesStructure(bool $flat = false): array
     {
         $formTypes = $this->configuration->getConfig('types');
         $fieldStructure = $flat === true ? [] : $this->getFieldTypeGroups();
@@ -378,14 +288,7 @@ class ExtJsFormBuilder
         return $fieldStructure;
     }
 
-    /**
-     * @param array $conditionalData
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    private function generateConditionalLogicExtJsFields($conditionalData)
+    private function generateConditionalLogicExtJsFields($conditionalData): array
     {
         if (!empty($conditionalData)) {
             foreach ($conditionalData as &$conditionalDataBlock) {
@@ -402,10 +305,7 @@ class ExtJsFormBuilder
         return $conditionalData;
     }
 
-    /**
-     * @return array
-     */
-    private function generateConditionalLogicStore()
+    private function generateConditionalLogicStore(): array
     {
         $actions = [];
         foreach ($this->conditionalLogicRegistry->getAllConfiguration('action') as $actionName => $action) {
@@ -433,10 +333,7 @@ class ExtJsFormBuilder
         return $formConditionalLogicData;
     }
 
-    /**
-     * @return array
-     */
-    private function getFieldTypeGroups()
+    private function getFieldTypeGroups(): array
     {
         $groups = $this->configuration->getBackendConfig('backend_base_field_type_groups');
 
@@ -451,10 +348,7 @@ class ExtJsFormBuilder
         return $groupData;
     }
 
-    /**
-     * @return array
-     */
-    private function getTranslatedContainerTypes()
+    private function getTranslatedContainerTypes(): array
     {
         $containerTypes = $this->configuration->getAvailableContainer();
 
@@ -474,10 +368,7 @@ class ExtJsFormBuilder
         return $containerData;
     }
 
-    /**
-     * @return array
-     */
-    private function getTranslatedValidationConstraints()
+    private function getTranslatedValidationConstraints(): array
     {
         $constraints = $this->configuration->getAvailableConstraints();
 
@@ -490,13 +381,7 @@ class ExtJsFormBuilder
         return $constraintData;
     }
 
-    /**
-     * @param array  $formTypeBackendConfig
-     * @param string $formType
-     *
-     * @return array
-     */
-    private function getFormTypeBackendConfiguration($formTypeBackendConfig, $formType)
+    private function getFormTypeBackendConfiguration(array $formTypeBackendConfig, string $formType): array
     {
         $fieldConfigFields = $this->getMergedFormTypeConfig($formType, $formTypeBackendConfig);
 
@@ -550,13 +435,7 @@ class ExtJsFormBuilder
         return $data;
     }
 
-    /**
-     * @param string $formType
-     * @param array  $formTypeBackendConfig
-     *
-     * @return array
-     */
-    private function getMergedFormTypeConfig($formType, $formTypeBackendConfig = null)
+    private function getMergedFormTypeConfig(string $formType, array $formTypeBackendConfig = null): array
     {
         if (is_null($formTypeBackendConfig)) {
             throw new InvalidConfigurationException(sprintf('No valid form field configuration for "%s" found.', $formType));
@@ -571,8 +450,6 @@ class ExtJsFormBuilder
     }
 
     /**
-     * @param array $formTypeBackendConfig
-     *
      * @return mixed
      */
     private function getFormTypeGroup(array $formTypeBackendConfig)
@@ -581,8 +458,6 @@ class ExtJsFormBuilder
     }
 
     /**
-     * @param array $formTypeBackendConfig
-     *
      * @return mixed
      */
     private function getFormTypeIcon(array $formTypeBackendConfig)
@@ -591,8 +466,6 @@ class ExtJsFormBuilder
     }
 
     /**
-     * @param array $formTypeBackendConfig
-     *
      * @return string
      */
     private function getFormTypeLabel(array $formTypeBackendConfig)
@@ -600,12 +473,7 @@ class ExtJsFormBuilder
         return $this->translate($formTypeBackendConfig['label']);
     }
 
-    /**
-     * @param array $formTypeBackendConfig
-     *
-     * @return mixed
-     */
-    private function getFormTypeAllowedConstraints($formTypeBackendConfig)
+    private function getFormTypeAllowedConstraints($formTypeBackendConfig): array
     {
         $constraints = [];
         foreach ($this->configuration->getAvailableConstraints() as $constraintId => $constraintData) {
@@ -638,22 +506,12 @@ class ExtJsFormBuilder
         return [];
     }
 
-    /**
-     * @param array $formTypeBackendConfig
-     *
-     * @return array
-     */
-    private function getFormTypeOutputWorkflowConfiguration($formTypeBackendConfig)
+    private function getFormTypeOutputWorkflowConfiguration(array $formTypeBackendConfig): array
     {
         return $formTypeBackendConfig['output_workflow'];
     }
 
-    /**
-     * Get translated Form Type Templates.
-     *
-     * @return array
-     */
-    private function getFormTypeTemplates()
+    private function getFormTypeTemplates(): array
     {
         $templates = $this->templateManager->getFieldTemplates();
         $typeTemplates = [];
@@ -665,10 +523,7 @@ class ExtJsFormBuilder
         return $typeTemplates;
     }
 
-    /**
-     * @return array
-     */
-    private function getFormStoreData()
+    private function getFormStoreData(): array
     {
         $formAttributes = $this->configuration->getConfig('form_attributes');
 
@@ -677,12 +532,7 @@ class ExtJsFormBuilder
         ];
     }
 
-    /**
-     * @param string $formType
-     *
-     * @return bool
-     */
-    private function isAllowedFormType($formType = null)
+    private function isAllowedFormType(string $formType = null): bool
     {
         $adminSettings = $this->configuration->getConfig('admin');
         $activeFields = $adminSettings['active_elements']['fields'];
@@ -703,12 +553,7 @@ class ExtJsFormBuilder
         return true;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
-    private function translate($value)
+    private function translate(string $value): string
     {
         if (empty($value)) {
             return $value;
@@ -717,13 +562,7 @@ class ExtJsFormBuilder
         return $this->translator->trans($value, [], 'admin');
     }
 
-    /**
-     * @param array $fieldData
-     * @param bool  $reverse
-     *
-     * @throws \Exception
-     */
-    private function transformFieldOptions(&$fieldData, $reverse = false)
+    private function transformFieldOptions(array &$fieldData, bool $reverse = false): void
     {
         $formTypes = $this->configuration->getConfig('types');
 
@@ -774,17 +613,7 @@ class ExtJsFormBuilder
         }
     }
 
-    /**
-     * @param array  $fieldData
-     * @param array  $formTypeConfig
-     * @param string $optionKey
-     * @param array  $rawData
-     * @param array  $transformedData
-     * @param bool   $reverse
-     *
-     * @throws \Exception
-     */
-    private function checkDynamicFieldOptions(&$fieldData, array $formTypeConfig, $optionKey, $rawData, $transformedData, $reverse = false)
+    private function checkDynamicFieldOptions(array &$fieldData, array $formTypeConfig, string $optionKey, array $rawData, array $transformedData, bool $reverse = false): void
     {
         $dynamicFields = $formTypeConfig['dynamic_fields'];
 
@@ -828,13 +657,7 @@ class ExtJsFormBuilder
         }
     }
 
-    /**
-     * @param array $fieldData
-     * @param bool  $reverse
-     *
-     * @throws \Exception
-     */
-    private function transformContainerOptions(&$fieldData, $reverse = false)
+    private function transformContainerOptions(array &$fieldData, bool $reverse = false): void
     {
         if (!isset($fieldData['configuration']) || !is_array($fieldData['configuration'])) {
             return;
@@ -871,14 +694,7 @@ class ExtJsFormBuilder
         }
     }
 
-    /**
-     * @param array  $fieldData
-     * @param string $type
-     * @param bool   $reverse
-     *
-     * @throws \Exception
-     */
-    private function transformConditionalOptions(&$fieldData, $type, $reverse = false)
+    private function transformConditionalOptions(array &$fieldData, string $type, bool $reverse = false): void
     {
         $baseConfig = $this->configuration->getBackendConditionalLogicConfig();
         $typeConfig = $baseConfig[$type];

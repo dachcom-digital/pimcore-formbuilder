@@ -9,20 +9,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MailParamListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             MailEvents::PRE_SEND => ['watchEmailParams'],
         ];
     }
 
-    /**
-     * @param MailEvent $event
-     */
-    public function watchEmailParams(MailEvent $event)
+    public function watchEmailParams(MailEvent $event): void
     {
         $mail = $event->getMail();
 

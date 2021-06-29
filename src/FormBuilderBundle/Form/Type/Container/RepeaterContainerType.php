@@ -11,29 +11,20 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RepeaterContainerType extends AbstractType
 {
     use Traits\ContainerTrait;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
@@ -90,10 +81,7 @@ class RepeaterContainerType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $formBuilderConfig = $options['formbuilder_configuration'];
 
@@ -106,10 +94,7 @@ class RepeaterContainerType extends AbstractType
         $view->vars['attr']['data-repeater-max'] = $formBuilderConfig['max'] ?? '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'allow_add'          => true,
@@ -125,20 +110,12 @@ class RepeaterContainerType extends AbstractType
         $resolver->setNormalizer('entry_options', $entryOptionsNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_container_repeater';
     }
 
-    /**
-     * @param array $config
-     *
-     * @return array
-     */
-    private function getFormEntryOptions($config)
+    private function getFormEntryOptions(array $config): array
     {
         $options = [];
 
@@ -154,7 +131,7 @@ class RepeaterContainerType extends AbstractType
         return $options;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return ContainerType::class;
     }

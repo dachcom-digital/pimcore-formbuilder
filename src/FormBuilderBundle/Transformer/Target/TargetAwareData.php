@@ -7,39 +7,13 @@ use Symfony\Component\Form\FormInterface;
 
 class TargetAwareData
 {
-    /**
-     * @var mixed
-     */
     protected $target;
-
-    /**
-     * @var FieldDefinitionInterface
-     */
-    protected $fieldDefinition;
-
-    /**
-     * @var FormInterface
-     */
-    protected $formField;
-
-    /**
-     * @var mixed
-     */
+    protected FieldDefinitionInterface $fieldDefinition;
+    protected FormInterface $formField;
     protected $rawValue;
+    protected ?string $locale;
 
-    /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
-     * @param mixed                    $target
-     * @param FieldDefinitionInterface $fieldDefinition
-     * @param FormInterface            $formField
-     * @param mixed                    $rawValue
-     * @param string                   $locale
-     */
-    public function __construct($target, FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function __construct($target, FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, ?string $locale)
     {
         $this->target = $target;
         $this->fieldDefinition = $fieldDefinition;
@@ -48,42 +22,27 @@ class TargetAwareData
         $this->locale = $locale;
     }
 
-    /**
-     * @return mixed
-     */
     public function getTarget()
     {
         return $this->target;
     }
 
-    /**
-     * @return FieldDefinitionInterface
-     */
-    public function getFieldDefinition()
+    public function getFieldDefinition(): FieldDefinitionInterface
     {
         return $this->fieldDefinition;
     }
 
-    /**
-     * @return FormInterface
-     */
-    public function getFormField()
+    public function getFormField(): FormInterface
     {
         return $this->formField;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRawValue()
     {
         return $this->rawValue;
     }
 
-    /**
-     * @return string
-     */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }

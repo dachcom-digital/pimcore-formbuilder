@@ -14,36 +14,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DynamicChoiceType extends AbstractType
 {
-    /**
-     * @var ChoiceBuilderRegistry
-     */
-    protected $builderRegistry;
+    protected ChoiceBuilderRegistry $builderRegistry;
 
     /**
      * @var ChoiceBuilderInterface[]
      */
-    protected $services;
+    protected array $services = [];
 
-    /**
-     * @param ChoiceBuilderRegistry $builderRegistry
-     */
     public function __construct(ChoiceBuilderRegistry $builderRegistry)
     {
         $this->builderRegistry = $builderRegistry;
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'service'                   => null,
@@ -111,42 +99,24 @@ class DynamicChoiceType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->getServiceClassByArray($options)->setFormBuilder($builder);
     }
 
-    /**
-     * @param Options $options
-     *
-     * @return ChoiceBuilderInterface
-     */
-    protected function getServiceClassByOptions(Options $options)
+    protected function getServiceClassByOptions(Options $options): ChoiceBuilderInterface
     {
         return $this->getServiceClassByArray(['service' => $options->offsetGet('service')]);
     }
 
-    /**
-     * @param array $options
-     *
-     * @return ChoiceBuilderInterface
-     */
-    protected function getServiceClassByArray(array $options)
+    protected function getServiceClassByArray(array $options): ChoiceBuilderInterface
     {
         $serviceKey = $this->getServiceClassKey($options['service']);
 
         return $this->services[$serviceKey];
     }
 
-    /**
-     * @param string $serviceName
-     *
-     * @return string
-     */
-    protected function getServiceClassKey(string $serviceName)
+    protected function getServiceClassKey(string $serviceName): string
     {
         return md5($serviceName);
     }

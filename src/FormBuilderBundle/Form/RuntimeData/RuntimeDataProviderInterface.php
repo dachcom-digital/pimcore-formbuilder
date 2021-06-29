@@ -6,22 +6,9 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 interface RuntimeDataProviderInterface
 {
-    /**
-     * @return string
-     */
-    public function getRuntimeDataId();
+    public function getRuntimeDataId(): string;
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return bool
-     */
-    public function hasRuntimeData(FormDefinitionInterface $formDefinition);
+    public function hasRuntimeData(FormDefinitionInterface $formDefinition): bool;
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return mixed
-     */
-    public function getRuntimeData(FormDefinitionInterface $formDefinition);
+    public function getRuntimeData(FormDefinitionInterface $formDefinition): ?string;
 }

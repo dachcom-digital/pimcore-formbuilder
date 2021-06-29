@@ -7,17 +7,7 @@ use FormBuilderBundle\OutputWorkflow\Channel\Object\NewObjectResolver;
 
 interface ObjectResolverFactoryInterface
 {
-    /**
-     * @param array $objectMappingData
-     *
-     * @return NewObjectResolver
-     */
-    public function createForNewObject(array $objectMappingData);
+    public function createForNewObject(array $objectMappingData): NewObjectResolver;
 
-    /**
-     * @param array $objectMappingData
-     *
-     * @return ExistingObjectResolver
-     */
-    public function createForExistingObject(array $objectMappingData);
+    public function createForExistingObject(array $objectMappingData): ExistingObjectResolver;
 }

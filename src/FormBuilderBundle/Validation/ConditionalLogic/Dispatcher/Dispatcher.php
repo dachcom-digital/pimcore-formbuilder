@@ -10,41 +10,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Dispatcher
 {
-    /**
-     * @var ConditionalLogicProcessor
-     */
-    protected $conditionalLogicProcessor;
+    protected ConditionalLogicProcessor $conditionalLogicProcessor;
+    protected DispatcherRegistry $dispatcherRegistry;
+    protected array $optionsResolver = [];
 
-    /**
-     * @var DispatcherRegistry
-     */
-    protected $dispatcherRegistry;
-
-    /**
-     * @var array
-     */
-    protected $optionsResolver = [];
-
-    /**
-     * @param ConditionalLogicProcessor $conditionalLogicProcessor
-     * @param DispatcherRegistry        $dispatcherRegistry
-     */
     public function __construct(DispatcherRegistry $dispatcherRegistry, ConditionalLogicProcessor $conditionalLogicProcessor)
     {
         $this->dispatcherRegistry = $dispatcherRegistry;
         $this->conditionalLogicProcessor = $conditionalLogicProcessor;
     }
 
-    /**
-     * @param string $dispatcherModule
-     * @param array  $options
-     * @param array  $moduleOptions
-     *
-     * @return DataInterface
-     *
-     * @throws \Exception
-     */
-    public function runFieldDispatcher($dispatcherModule, $options, $moduleOptions = [])
+    public function runFieldDispatcher(string $dispatcherModule, array $options, array $moduleOptions = []): DataInterface
     {
         $dispatcherOptions = $this->createOptionsResolver('field');
 
@@ -54,16 +30,7 @@ class Dispatcher
         return $this->run($dispatcherModule, $options, $moduleOptions);
     }
 
-    /**
-     * @param string $dispatcherModule
-     * @param array  $options
-     * @param array  $moduleOptions
-     *
-     * @return DataInterface
-     *
-     * @throws \Exception
-     */
-    public function runFormDispatcher($dispatcherModule, $options, $moduleOptions = [])
+    public function runFormDispatcher(string $dispatcherModule, array $options, array $moduleOptions = []): DataInterface
     {
         $dispatcherOptions = $this->createOptionsResolver('form');
 
@@ -73,16 +40,7 @@ class Dispatcher
         return $this->run($dispatcherModule, $options, $moduleOptions);
     }
 
-    /**
-     * @param string $dispatcherModule
-     * @param array  $options
-     * @param array  $moduleOptions
-     *
-     * @return DataInterface
-     *
-     * @throws \Exception
-     */
-    private function run($dispatcherModule, $options, $moduleOptions)
+    private function run(string $dispatcherModule, array $options, array $moduleOptions): DataInterface
     {
         if (isset($this->optionsResolver[$dispatcherModule])) {
             $optionsResolver = $this->optionsResolver[$dispatcherModule];
@@ -106,12 +64,7 @@ class Dispatcher
         return $dispatcherModuleClass->apply($moduleOptions);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return OptionsResolver
-     */
-    private function createOptionsResolver($type = 'field')
+    private function createOptionsResolver(string $type = 'field'): OptionsResolver
     {
         $dispatcherOptions = new OptionsResolver();
         $dispatcherOptions->setDefaults([

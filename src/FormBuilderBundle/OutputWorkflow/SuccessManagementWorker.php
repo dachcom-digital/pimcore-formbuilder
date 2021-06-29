@@ -16,38 +16,12 @@ use Pimcore\Translation\Translator;
 
 class SuccessManagementWorker implements SuccessManagementWorkerInterface
 {
-    /**
-     * @var LocaleDataMapper
-     */
-    protected $localeDataMapper;
+    protected LocaleDataMapper $localeDataMapper;
+    protected FlashBagManagerInterface $flashBagManager;
+    protected IncludeRenderer $includeRenderer;
+    protected Dispatcher $dispatcher;
+    protected Translator $translator;
 
-    /**
-     * @var FlashBagManagerInterface
-     */
-    protected $flashBagManager;
-
-    /**
-     * @var IncludeRenderer
-     */
-    protected $includeRenderer;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @param LocaleDataMapper         $localeDataMapper
-     * @param FlashBagManagerInterface $flashBagManager
-     * @param IncludeRenderer          $includeRenderer
-     * @param Dispatcher               $dispatcher
-     * @param Translator               $translator
-     */
     public function __construct(
         LocaleDataMapper $localeDataMapper,
         FlashBagManagerInterface $flashBagManager,
@@ -62,10 +36,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(SubmissionEvent $submissionEvent, array $successManagementConfiguration)
+    public function process(SubmissionEvent $submissionEvent, array $successManagementConfiguration): void
     {
         $afterSuccess = null;
         $request = $submissionEvent->getRequest();
@@ -122,7 +93,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
             }
         } elseif (is_string($afterSuccess)) {
             // maybe it's an external redirect
-            if (substr($afterSuccess, 0, 4) === 'http') {
+            if (str_starts_with($afterSuccess, 'http')) {
                 $submissionEvent->setRedirectUri($afterSuccess);
             } else {
                 $message = $afterSuccess;
@@ -134,13 +105,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         $this->flashBagManager->add($key, $message);
     }
 
-    /**
-     * @param array  $value
-     * @param string $locale
-     *
-     * @return Snippet|null
-     */
-    public function getSnippet($value, $locale)
+    public function getSnippet(array $value, string $locale): ?Snippet
     {
         $snippetId = $this->localeDataMapper->mapHref($locale, $value);
 
@@ -151,24 +116,12 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         return null;
     }
 
-    /**
-     * @param string $value
-     * @param string $locale
-     *
-     * @return null|string
-     */
-    public function getString($value, $locale)
+    public function getString(string $value, string $locale): string
     {
-        return $this->translator->trans((string) $value, [], null, $locale);
+        return $this->translator->trans($value, [], null, $locale);
     }
 
-    /**
-     * @param array  $value
-     * @param string $locale
-     *
-     * @return Document|null
-     */
-    public function getDocument($value, $locale)
+    public function getDocument(array $value, string $locale): ?Document
     {
         $documentId = $this->localeDataMapper->mapHref($locale, $value);
 
@@ -179,38 +132,17 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         return null;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string|null
-     */
-    public function getExternalRedirect($value)
+    public function getExternalRedirect(string $value): string
     {
         return $value;
     }
 
-    /**
-     * @param string $value
-     * @param string $locale
-     *
-     * @return null|string
-     */
-    public function getFlashMessage($value, $locale)
+    public function getFlashMessage(string $value, string $locale): string
     {
         return $this->translator->trans((string) $value, [], null, $locale);
     }
 
-    /**
-     * @param string            $dispatchModule
-     * @param FormDataInterface $formData
-     * @param array             $formRuntimeOptions
-     * @param array             $moduleOptions
-     *
-     * @return DataInterface
-     *
-     * @throws \Exception
-     */
-    protected function checkSuccessCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, $moduleOptions = [])
+    protected function checkSuccessCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, array $moduleOptions = []): DataInterface
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
             'formData'           => $formData->getData(),

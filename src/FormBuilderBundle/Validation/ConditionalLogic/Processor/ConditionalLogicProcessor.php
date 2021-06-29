@@ -9,14 +9,8 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterfa
 
 class ConditionalLogicProcessor
 {
-    /**
-     * @var ConditionalLogicRegistry
-     */
-    protected $conditionalLogicRegistry;
+    protected ConditionalLogicRegistry $conditionalLogicRegistry;
 
-    /**
-     * @param ConditionalLogicRegistry $conditionalLogicRegistry
-     */
     public function __construct(ConditionalLogicRegistry $conditionalLogicRegistry)
     {
         $this->conditionalLogicRegistry = $conditionalLogicRegistry;
@@ -25,14 +19,8 @@ class ConditionalLogicProcessor
     /**
      * Cycle through each cl block.
      * If $filterField is not NULL, the action applier requests a FieldReturnStack with valid $fielderField field in return data.
-     *
-     * @param array $options
-     *
-     * @return array
-     *
-     * @throws \Exception
      */
-    public function process(array $options)
+    public function process(array $options): array
     {
         $formData = $options['formData'] ?? null;
         $conditionalLogic = $options['conditionalLogic'] ?? null;
@@ -56,17 +44,7 @@ class ConditionalLogicProcessor
         return $actionData;
     }
 
-    /**
-     * @param array $conditions
-     * @param array $formData
-     * @param array $formRuntimeOptions
-     * @param int   $ruleId
-     *
-     * @return bool
-     *
-     * @throws \Exception
-     */
-    protected function checkValidity($conditions, $formData, $formRuntimeOptions, $ruleId)
+    protected function checkValidity(array $conditions, array $formData, array $formRuntimeOptions, int $ruleId): bool
     {
         $valid = true;
         $config = [
@@ -89,18 +67,7 @@ class ConditionalLogicProcessor
         return $valid;
     }
 
-    /**
-     * @param bool                          $validationState
-     * @param array                         $actions
-     * @param array                         $formData
-     * @param int                           $ruleId
-     * @param null|FieldDefinitionInterface $field
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    protected function applyActions($validationState, $actions, $formData, $ruleId, $field)
+    protected function applyActions(bool $validationState, array $actions, array $formData, int $ruleId, ?FieldDefinitionInterface $field): array
     {
         $returnContainer = [];
 

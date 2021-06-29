@@ -12,7 +12,6 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowChannelPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\RuntimeDataProviderPass;
-use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,10 +22,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
 
     const PACKAGE_NAME = 'dachcom-digital/formbuilder';
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -43,18 +39,12 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new DynamicMultiFileAdapterPass());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getInstaller()
     {
-        return $this->container->get(Install::class);
+        return null;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [
             '/bundles/formbuilder/js/extjs/plugin.js',
@@ -110,47 +100,32 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/formbuilder/css/admin.css'
         ];
     }
 
-    /**
-     * @return string[]
-     */
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         return [
             '/bundles/formbuilder/js/admin/area.js'
         ];
     }
 
-    /**
-     * @return string[]
-     */
-    public function getEditmodeCssPaths()
+    public function getEditmodeCssPaths(): array
     {
         return [
             '/bundles/formbuilder/css/admin-editmode.css',
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getComposerPackageName(): string
     {
         return self::PACKAGE_NAME;
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     protected function configureDoctrineExtension(ContainerBuilder $container): void
     {
         $container->addCompilerPass(
@@ -162,18 +137,12 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         );
     }
 
-    /**
-     * @return string|null
-     */
-    protected function getNamespaceName()
+    protected function getNamespaceName(): ?string
     {
         return 'FormBuilderBundle\Model';
     }
 
-    /**
-     * @return string
-     */
-    protected function getNameSpacePath()
+    protected function getNameSpacePath(): ?string
     {
         return sprintf(
             '%s/Resources/config/doctrine/%s',

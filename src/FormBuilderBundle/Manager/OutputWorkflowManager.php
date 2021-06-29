@@ -9,26 +9,10 @@ use FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface;
 
 class OutputWorkflowManager
 {
-    /**
-     * @var OutputWorkflowFactoryInterface
-     */
-    protected $outputWorkflowFactory;
+    protected OutputWorkflowFactoryInterface $outputWorkflowFactory;
+    protected OutputWorkflowRepositoryInterface $outputWorkflowRepository;
+    protected EntityManagerInterface $entityManager;
 
-    /**
-     * @var OutputWorkflowRepositoryInterface
-     */
-    protected $outputWorkflowRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * @param OutputWorkflowFactoryInterface    $outputWorkflowFactory
-     * @param OutputWorkflowRepositoryInterface $outputWorkflowRepository
-     * @param EntityManagerInterface            $entityManager
-     */
     public function __construct(
         OutputWorkflowFactoryInterface $outputWorkflowFactory,
         OutputWorkflowRepositoryInterface $outputWorkflowRepository,
@@ -39,25 +23,12 @@ class OutputWorkflowManager
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return OutputWorkflowInterface|null
-     */
-    public function getById(int $id)
+    public function getById(int $id): ?OutputWorkflowInterface
     {
         return $this->outputWorkflowRepository->findById($id);
     }
 
-    /**
-     * @param array    $data
-     * @param null|int $id
-     *
-     * @return OutputWorkflowInterface|null
-     *
-     * @throws \Exception
-     */
-    public function save(array $data, $id = null)
+    public function save(array $data, ?int $id = null): ?OutputWorkflowInterface
     {
         if (!is_null($id)) {
             $outputWorkflow = $this->outputWorkflowRepository->findById($id);
@@ -83,21 +54,13 @@ class OutputWorkflowManager
         return $outputWorkflow;
     }
 
-    /**
-     * @param OutputWorkflowInterface $outputWorkflow
-     *
-     * @throws \Exception
-     */
-    public function saveRawEntity(OutputWorkflowInterface $outputWorkflow)
+    public function saveRawEntity(OutputWorkflowInterface $outputWorkflow): void
     {
         $this->entityManager->persist($outputWorkflow);
         $this->entityManager->flush();
     }
 
-    /**
-     * @param int $id
-     */
-    public function delete(int $id)
+    public function delete(int $id): void
     {
         $outputWorkflow = $this->outputWorkflowRepository->findById($id);
 
@@ -109,13 +72,7 @@ class OutputWorkflowManager
         $this->entityManager->flush();
     }
 
-    /**
-     * @param string $name
-     * @param int    $formId
-     *
-     * @return OutputWorkflowInterface|null
-     */
-    public function getFormOutputWorkflowByName(string $name, int $formId)
+    public function getFormOutputWorkflowByName(string $name, int $formId): ?OutputWorkflowInterface
     {
         return $this->outputWorkflowRepository->findByNameAndFormId($name, $formId);
     }

@@ -12,24 +12,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class Recaptcha3Type extends AbstractType
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param FormView      $view
-     * @param FormInterface $form
-     * @param array         $options
-     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $config = $this->configuration->getConfig('spam_protection');
@@ -40,25 +29,16 @@ final class Recaptcha3Type extends AbstractType
         $view->vars['attr']['data-action-name'] = $options['action_name'];
     }
 
-    /**
-     * @return string
-     */
     public function getParent(): string
     {
         return HiddenType::class;
     }
 
-    /**
-     * @return string
-     */
     public function getBlockPrefix(): string
     {
         return 'form_builder_recaptcha3_type';
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

@@ -12,38 +12,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormTypeClasses implements ModuleInterface
 {
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
+    protected DataFactory $dataFactory;
+    protected array $formData = [];
+    protected ?FieldDefinitionInterface $field = null;
+   protected array $appliedConditions = [];
 
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var FieldDefinitionInterface
-     */
-    protected $field;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @param DataFactory $dataFactory
-     */
     public function __construct(DataFactory $dataFactory)
     {
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'          => [],
@@ -57,12 +36,7 @@ class FormTypeClasses implements ModuleInterface
         $resolver->setAllowedTypes('appliedConditions', 'array');
     }
 
-    /**
-     * @param array $options
-     *
-     * @return DataInterface
-     */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->field = $options['field'];
@@ -71,10 +45,7 @@ class FormTypeClasses implements ModuleInterface
         return $this->checkConditionData();
     }
 
-    /**
-     * @return DataInterface
-     */
-    private function checkConditionData()
+    private function checkConditionData(): DataInterface
     {
         $returnContainer = $this->dataFactory->generate(FormTypeClassesData::class);
 

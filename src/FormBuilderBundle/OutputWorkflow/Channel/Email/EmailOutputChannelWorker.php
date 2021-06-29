@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email;
 
+use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
@@ -9,9 +10,8 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
@@ -21,32 +21,11 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBeh
 
 class EmailOutputChannelWorker
 {
-    /**
-     * @var MailParser
-     */
-    protected $mailParser;
+    protected MailParser $mailParser;
+    protected IncludeRenderer $includeRenderer;
+    protected Dispatcher $dispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var IncludeRenderer
-     */
-    protected $includeRenderer;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @param MailParser               $mailParser
-     * @param IncludeRenderer          $includeRenderer
-     * @param Dispatcher               $dispatcher
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         MailParser $mailParser,
         IncludeRenderer $includeRenderer,
@@ -59,16 +38,7 @@ class EmailOutputChannelWorker
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param array         $channelConfiguration
-     * @param array         $formRuntimeData
-     * @param string        $workflowName
-     * @param string        $locale
-     *
-     * @throws \Exception
-     */
-    public function process(FormInterface $form, $channelConfiguration, array $formRuntimeData, string $workflowName, string $locale)
+    public function process(FormInterface $form, array $channelConfiguration, array $formRuntimeData, string $workflowName, string $locale)
     {
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
@@ -112,23 +82,12 @@ class EmailOutputChannelWorker
         $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
 
         $mailEvent = new MailEvent($form, $mail, $formRuntimeData, $isCopy);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
+        $this->eventDispatcher->dispatch($mailEvent, FormBuilderEvents::FORM_MAIL_PRE_SUBMIT);
         $mail = $mailEvent->getEmail();
 
         // dispatch subject guard event
         if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeData)) {
             return;
-        }
-
-        // only available in pimcore < 7.0
-        if (method_exists($mail, 'getHtml2textInstalled') && $mail::getHtml2textInstalled()) {
-            $mail->enableHtml2textBinary();
-        }
-
-        // only available in pimcore < 7.0.
-        // In pimcore >= 7.0 html to text is always available via Html2Text/Html2Text library.
-        if ($forceSubmissionAsPlainText === true && method_exists($mail, 'determineHtml2TextIsInstalled') && $mail::determineHtml2TextIsInstalled() === false) {
-            throw new \Exception('trying to enable html2text binary, but html2text is not installed!');
         }
 
         if ($forceSubmissionAsPlainText === true) {
@@ -138,12 +97,7 @@ class EmailOutputChannelWorker
         }
     }
 
-    /**
-     * @param Mail $mail
-     *
-     * @throws \Exception
-     */
-    protected function sendPlainTextOnly(Mail $mail)
+    protected function sendPlainTextOnly(Mail $mail): void
     {
         $mail->setSubject($mail->getSubjectRendered());
         $bodyTextRendered = $mail->getBodyTextRendered();
@@ -155,25 +109,12 @@ class EmailOutputChannelWorker
         $mail->sendWithoutRendering();
     }
 
-    /**
-     * @param Mail $mail
-     */
-    protected function sendDefault(Mail $mail)
+    protected function sendDefault(Mail $mail): void
     {
         $mail->send();
     }
 
-    /**
-     * @param string            $dispatchModule
-     * @param FormDataInterface $formData
-     * @param array             $formRuntimeOptions
-     * @param array             $moduleOptions
-     *
-     * @return DataInterface
-     *
-     * @throws \Exception
-     */
-    protected function checkMailCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, $moduleOptions = [])
+    protected function checkMailCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, array $moduleOptions = []): DataInterface
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
             'formData'           => $formData->getData(),
@@ -182,20 +123,10 @@ class EmailOutputChannelWorker
         ], $moduleOptions);
     }
 
-    /**
-     * @param FormDataInterface $formData
-     * @param Mail              $subject
-     * @param string            $workflowName
-     * @param array             $formRuntimeData
-     *
-     * @return Mail|null
-     *
-     * @throws GuardException
-     */
-    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData)
+    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData): ?Mail
     {
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeData);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
+        $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {
             return null;

@@ -9,23 +9,14 @@ use Pimcore\Model\Asset;
 
 class AttachmentStream implements AttachmentStreamInterface
 {
-    /**
-     * @var FileLocator
-     */
-    protected $fileLocator;
+    protected FileLocator $fileLocator;
 
-    /**
-     * @param FileLocator $fileLocator
-     */
     public function __construct(FileLocator $fileLocator)
     {
         $this->fileLocator = $fileLocator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createAttachmentLinks($data, $formName)
+    public function createAttachmentLinks(array $data, string $formName): array
     {
         $files = $this->extractFiles($data);
 
@@ -36,15 +27,8 @@ class AttachmentStream implements AttachmentStreamInterface
         return $files;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createAttachmentAsset($data, $fieldName, $formName)
+    public function createAttachmentAsset(array $data, string $fieldName, string $formName): ?Asset
     {
-        if (!is_array($data)) {
-            return null;
-        }
-
         $files = $this->extractFiles($data);
 
         if (empty($files)) {
@@ -70,7 +54,6 @@ class AttachmentStream implements AttachmentStreamInterface
                 $this->removeAttachmentByFileInfo($fileInfo);
             }
         } catch (\Exception $e) {
-            echo $e->getMessage();
             Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
 
             return null;
@@ -138,10 +121,7 @@ class AttachmentStream implements AttachmentStreamInterface
         return $asset;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeAttachmentByFileInfo(array $fileInfo)
+    public function removeAttachmentByFileInfo(array $fileInfo): void
     {
         $targetFolder = $this->fileLocator->getFilesFolder();
         $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['id']]);
@@ -153,12 +133,7 @@ class AttachmentStream implements AttachmentStreamInterface
         $this->fileLocator->removeDir($target);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function extractFiles(array $data)
+    protected function extractFiles(array $data): array
     {
         $files = [];
         foreach ($data as $fileData) {

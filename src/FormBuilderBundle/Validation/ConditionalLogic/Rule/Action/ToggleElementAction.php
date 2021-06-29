@@ -3,26 +3,17 @@
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Action;
 
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
+use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ActionTrait;
 
 class ToggleElementAction implements ActionInterface
 {
     use ActionTrait;
 
-    /**
-     * @var array
-     */
-    protected $fields = [];
+    protected array $fields = [];
+    protected ?string $state = null;
 
-    /**
-     * @var string
-     */
-    protected $state = null;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function apply($validationState, $formData, $ruleId)
+    public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         $state = $this->getState();
@@ -35,42 +26,22 @@ class ToggleElementAction implements ActionInterface
         return new FieldReturnStack('toggleElement', $data);
     }
 
-    /**
-     * @return array
-     *
-     * @internal
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * @param array $fields
-     *
-     * @internal
-     */
-    public function setFields($fields)
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return string
-     *
-     * @internal
-     */
-    public function getState()
+    public function getState(): ?string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     *
-     * @internal
-     */
-    public function setState($state)
+    public function setState(string $state): void
     {
         $this->state = $state;
     }

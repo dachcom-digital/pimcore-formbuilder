@@ -10,8 +10,8 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('form_builder');
+        $treeBuilder = new TreeBuilder('form_builder');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->createPersistenceNode());
 
@@ -490,7 +490,7 @@ class Configuration implements ConfigurationInterface
     private function createPersistenceNode()
     {
         $treeBuilder = new TreeBuilder('persistence');
-        $node = $treeBuilder->root('persistence');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()

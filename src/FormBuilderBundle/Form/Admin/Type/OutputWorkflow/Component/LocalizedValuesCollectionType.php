@@ -9,15 +9,9 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 class LocalizedValuesCollectionType extends AbstractType
 {
-    /**
-     * @var string
-     */
-    protected $defaultLocaleCode = 'default';
+    protected string $defaultLocaleCode = 'default';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entryOptions = $options['entry_options']($this->defaultLocaleCode);
 
@@ -29,10 +23,7 @@ class LocalizedValuesCollectionType extends AbstractType
         $entryOptions['label'] = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $websiteLocales = \Pimcore\Tool::getValidLanguages();
 
@@ -60,9 +51,6 @@ class LocalizedValuesCollectionType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): string
     {
         return FixedCollectionType::class;

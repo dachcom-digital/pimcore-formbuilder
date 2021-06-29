@@ -4,52 +4,30 @@ namespace FormBuilderBundle\Registry;
 
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ActionInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition\ConditionInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Rule\RuleInterface;
 
 class ConditionalLogicRegistry
 {
-    /**
-     * @var array
-     */
-    protected $services = [
+    protected array $services = [
         'action'    => [],
         'condition' => []
     ];
 
-    /**
-     * @var array
-     */
-    protected $serviceConfiguration = [
+    protected array $serviceConfiguration = [
         'action'    => [],
         'condition' => []
     ];
 
-    /**
-     * @var string
-     */
-    private $actionInterface;
+    private string $actionInterface;
+    private string $conditionInterface;
 
-    /**
-     * @var string
-     */
-    private $conditionInterface;
-
-    /**
-     * @param string $actionInterface
-     * @param string $conditionInterface
-     */
     public function __construct($actionInterface, $conditionInterface)
     {
         $this->actionInterface = $actionInterface;
         $this->conditionInterface = $conditionInterface;
     }
 
-    /**
-     * @param string                             $identifier
-     * @param ActionInterface|ConditionInterface $service
-     * @param string                             $type
-     * @param array                              $configuration
-     */
-    public function register($identifier, $service, $type = null, $configuration = [])
+    public function register(string $identifier, ?RuleInterface $service, ?string $type = null, array $configuration = []): void
     {
         $allowedTypes = ['action', 'condition'];
         if (!is_null($type) && !in_array($type, $allowedTypes)) {
@@ -71,26 +49,15 @@ class ConditionalLogicRegistry
         $this->serviceConfiguration[$type][$identifier] = $configuration;
     }
 
-    /**
-     * @param string $identifier
-     * @param string $type
-     *
-     * @return bool
-     */
-    public function has($identifier, $type)
+    public function has(string $identifier, string $type): bool
     {
         return isset($this->services[$type]) && isset($this->services[$type][$identifier]);
     }
 
     /**
-     * @param string $identifier
-     * @param string $type
-     *
      * @return ConditionInterface|ActionInterface
-     *
-     * @throws \Exception
      */
-    public function get($identifier, $type)
+    public function get(string $identifier, string $type): RuleInterface
     {
         if (!$this->has($identifier, $type)) {
             throw new \Exception('"' . $identifier . '" validation service of type "' . $type . '" does not exist.');
@@ -99,56 +66,27 @@ class ConditionalLogicRegistry
         return $this->services[$type][$identifier];
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasCondition($identifier)
+    public function hasCondition(string $identifier): bool
     {
         return $this->has($identifier, 'condition');
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return ConditionInterface
-     *
-     * @throws \Exception
-     */
-    public function getCondition($identifier)
+    public function getCondition(string $identifier): ConditionInterface
     {
         return $this->get($identifier, 'condition');
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasAction($identifier)
+    public function hasAction(string $identifier): bool
     {
         return $this->has($identifier, 'action');
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return ActionInterface
-     *
-     * @throws \Exception
-     */
-    public function getAction($identifier)
+    public function getAction(string $identifier): ActionInterface
     {
         return $this->get($identifier, 'action');
     }
 
-    /**
-     * @param string $type
-     *
-     * @return ConditionInterface[]|ActionInterface[]
-     */
-    public function getAllConfiguration($type)
+    public function getAllConfiguration(string $type): array
     {
         return $this->serviceConfiguration[$type];
     }

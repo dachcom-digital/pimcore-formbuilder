@@ -19,38 +19,12 @@ use Symfony\Component\Yaml\Yaml;
 
 class SettingsController extends AdminController
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected FormDefinitionManager $formDefinitionManager;
+    protected ExtJsFormBuilder $extJsFormBuilder;
+    protected ChoiceBuilderRegistry $choiceBuilderRegistry;
+    protected FormDependencyLocator $formDependencyLocator;
 
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
-
-    /**
-     * @var ExtJsFormBuilder
-     */
-    protected $extJsFormBuilder;
-
-    /**
-     * @var ChoiceBuilderRegistry
-     */
-    protected $choiceBuilderRegistry;
-
-    /**
-     * @var FormDependencyLocator
-     */
-    protected $formDependencyLocator;
-
-    /**
-     * @param Configuration         $configuration
-     * @param FormDefinitionManager $formDefinitionManager
-     * @param ExtJsFormBuilder      $extJsFormBuilder
-     * @param ChoiceBuilderRegistry $choiceBuilderRegistry
-     * @param FormDependencyLocator $formDependencyLocator
-     */
     public function __construct(
         Configuration $configuration,
         FormDefinitionManager $formDefinitionManager,
@@ -65,10 +39,7 @@ class SettingsController extends AdminController
         $this->formDependencyLocator = $formDependencyLocator;
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getTreeAction()
+    public function getTreeAction(): JsonResponse
     {
         $forms = $this->formDefinitionManager->getAll();
 
@@ -112,11 +83,7 @@ class SettingsController extends AdminController
 
         return $this->json($mainItems);
     }
-
-    /**
-     * @return JsonResponse
-     */
-    public function getSettingsAction()
+    public function getSettingsAction(): JsonResponse
     {
         $settings = $this->configuration->getConfigArray();
         $honeypotFieldName = $settings['spam_protection']['honeypot']['field_name'];
@@ -125,10 +92,7 @@ class SettingsController extends AdminController
         return $this->json(['settings' => $settings]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getDynamicChoiceBuilderAction()
+    public function getDynamicChoiceBuilderAction(): JsonResponse
     {
         $services = $this->choiceBuilderRegistry->getAll();
         $data = [];
@@ -139,12 +103,7 @@ class SettingsController extends AdminController
         return $this->json($data);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getFormAction(Request $request)
+    public function getFormAction(Request $request): JsonResponse
     {
         $id = $request->query->get('id');
 
@@ -170,12 +129,7 @@ class SettingsController extends AdminController
         return $this->json($data);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function addFormAction(Request $request)
+    public function addFormAction(Request $request): JsonResponse
     {
         $name = $this->getSaveName($request->query->get('form_name'));
 
@@ -209,12 +163,7 @@ class SettingsController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteFormAction(Request $request)
+    public function deleteFormAction(Request $request): JsonResponse
     {
         $id = $request->get('id');
         $success = true;
@@ -234,14 +183,7 @@ class SettingsController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function saveFormAction(Request $request)
+    public function saveFormAction(Request $request): JsonResponse
     {
         $id = (int) $request->get('form_id');
         $success = true;
@@ -302,14 +244,7 @@ class SettingsController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function importFormAction(Request $request)
+    public function importFormAction(Request $request): JsonResponse
     {
         /** @var UploadedFile $file */
         $file = $request->files->get('formData');
@@ -348,12 +283,7 @@ class SettingsController extends AdminController
         return $response;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportFormAction(Request $request)
+    public function exportFormAction(Request $request): Response
     {
         $formId = $request->get('id');
 
@@ -378,12 +308,7 @@ class SettingsController extends AdminController
         return $response;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function checkPathAction(Request $request)
+    public function checkPathAction(Request $request): JsonResponse
     {
         $path = $request->get('path');
         $pathIsValid = is_dir(PIMCORE_PUBLIC_VAR . '/' . ltrim($path, '/'));
@@ -391,10 +316,7 @@ class SettingsController extends AdminController
         return $this->json(['success' => $pathIsValid]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getGroupTemplatesAction()
+    public function getGroupTemplatesAction(): JsonResponse
     {
         $areaConfig = $this->configuration->getConfig('area');
 
@@ -407,12 +329,7 @@ class SettingsController extends AdminController
         return $this->json($templates);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function findFormDependenciesAction(Request $request)
+    public function findFormDependenciesAction(Request $request): JsonResponse
     {
         $formId = (int) $request->get('formId');
         $offset = (int) $request->get('start', 0);
@@ -431,12 +348,7 @@ class SettingsController extends AdminController
         ]);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    private function getSaveName($name)
+    private function getSaveName(string $name): string
     {
         return (string) preg_replace('/[^A-Za-z0-9aäüöÜÄÖß \-]/', '', $name);
     }

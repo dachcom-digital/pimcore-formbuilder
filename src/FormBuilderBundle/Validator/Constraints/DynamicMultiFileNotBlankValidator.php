@@ -8,10 +8,6 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class DynamicMultiFileNotBlankValidator extends ConstraintValidator
 {
-    /**
-     * @param mixed      $value
-     * @param Constraint $constraint
-     */
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof DynamicMultiFileNotBlank) {

@@ -13,10 +13,7 @@ class ChoiceDataObjectTransformer implements OutputTransformerInterface
 {
     use ChoiceTargetTransformerTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         $type = $fieldDefinition instanceof FieldDefinitionInterface ? $fieldDefinition->getType() : null;
 
@@ -27,11 +24,6 @@ class ChoiceDataObjectTransformer implements OutputTransformerInterface
         return new TargetAwareValue([$this, 'getTargetAwareValue']);
     }
 
-    /**
-     * @param TargetAwareData $targetAwareData
-     *
-     * @return mixed|null
-     */
     public function getTargetAwareValue(TargetAwareData $targetAwareData)
     {
         $rawValue = $targetAwareData->getRawValue();
@@ -46,10 +38,7 @@ class ChoiceDataObjectTransformer implements OutputTransformerInterface
         return $this->parseChoiceValue($target, $rawValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         return null;
     }

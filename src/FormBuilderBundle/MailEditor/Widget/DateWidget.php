@@ -4,26 +4,17 @@ namespace FormBuilderBundle\MailEditor\Widget;
 
 class DateWidget implements MailEditorWidgetInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetGroupName()
+    public function getWidgetGroupName(): string
     {
         return 'form_builder.mail_editor.widget_provider.others';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetLabel()
+    public function getWidgetLabel(): string
     {
         return 'form_builder.mail_editor.widget_provider.date.date';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetConfig()
+    public function getWidgetConfig(): array
     {
         return [
             'format' => [
@@ -34,12 +25,9 @@ class DateWidget implements MailEditorWidgetInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValueForOutput(array $config)
+    public function getValueForOutput(array $config): string
     {
-        $format = isset($config['format']) ? $config['format'] : 'm/d/y H:i:s';
+        $format = $config['format'] ?? 'm/d/y H:i:s';
 
         return date($format);
     }

@@ -7,10 +7,7 @@ use Pimcore\Model\Element\Service;
 
 class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function transform($rawData, $transformedData, $optionConfig = null)
+    public function transform($rawData, $transformedData, ?array $optionConfig = null): array
     {
         $parsedChoices = [];
         foreach ($rawData as $choice) {
@@ -31,10 +28,7 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
         return $parsedChoices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function reverseTransform($rawData, $transformedData, $optionConfig = null)
+    public function reverseTransform($rawData, $transformedData, ?array $optionConfig = null): array
     {
         $parsedChoices = [];
 
@@ -58,12 +52,7 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
         return $parsedChoices;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array|null
-     */
-    protected function parseMetaToChoiceAttr($data)
+    protected function parseMetaToChoiceAttr(array $data): ?array
     {
         if (!isset($data['choice_meta'])) {
             return null;
@@ -104,13 +93,7 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
         return $attr;
     }
 
-    /**
-     * @param string $key
-     * @param array  $rawData
-     *
-     * @return string|null
-     */
-    protected function parseChoiceAttrToMeta($key, $rawData)
+    protected function parseChoiceAttrToMeta(string $key, array $rawData): ?string
     {
         if (!isset($rawData[$key])) {
             return null;
@@ -145,13 +128,7 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
         return json_encode($attr);
     }
 
-    /**
-     * @param string $locale
-     * @param array  $data
-     *
-     * @return array|null
-     */
-    protected function extractRelation(string $locale, array $data)
+    protected function extractRelation(string $locale, array $data): ?array
     {
         $idKey = sprintf('data-meta-relation-%s-id', $locale);
         $typeKey = sprintf('data-meta-relation-%s-type', $locale);
@@ -176,12 +153,7 @@ class ChoicesMetaTransformer implements DynamicOptionsTransformerInterface
         ];
     }
 
-    /**
-     * @param array $arr
-     *
-     * @return bool
-     */
-    function isAssocArray(array $arr)
+    function isAssocArray(array $arr): bool
     {
         return array_keys($arr) !== range(0, count($arr) - 1);
     }

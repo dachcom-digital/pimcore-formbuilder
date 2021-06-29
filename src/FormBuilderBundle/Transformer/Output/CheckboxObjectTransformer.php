@@ -8,14 +8,10 @@ use FormBuilderBundle\Transformer\Target\TargetAwareValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Consent;
 use Pimcore\Model\Element\Note;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 
 class CheckboxObjectTransformer implements OutputTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         $type = $fieldDefinition instanceof FieldDefinitionInterface ? $fieldDefinition->getType() : null;
 
@@ -26,11 +22,6 @@ class CheckboxObjectTransformer implements OutputTransformerInterface
         return new TargetAwareValue([$this, 'getTargetAwareValue']);
     }
 
-    /**
-     * @param TargetAwareData $targetAwareData
-     *
-     * @return mixed|null
-     */
     public function getTargetAwareValue(TargetAwareData $targetAwareData)
     {
         $rawValue = $targetAwareData->getRawValue();
@@ -63,10 +54,7 @@ class CheckboxObjectTransformer implements OutputTransformerInterface
         return new \Pimcore\Model\DataObject\Data\Consent($rawValue, $note->getId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         return null;
     }

@@ -6,53 +6,23 @@ use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 
 class OutputWorkflowChannelRegistry
 {
-    /**
-     * @var array
-     */
-    protected $channels = [];
+    protected array $channels = [];
 
-    /**
-     * @param string           $identifier
-     * @param ChannelInterface $service
-     */
-    public function register($identifier, $service)
+    public function register(string $identifier, ChannelInterface $service): void
     {
         if (isset($this->channels[$identifier])) {
             throw new \InvalidArgumentException(sprintf('Output Channel with identifier "%s" already exists', $identifier));
         }
 
-        if (!in_array(ChannelInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    ChannelInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
         $this->channels[$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->channels[$identifier]);
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return ChannelInterface
-     *
-     * @throws \Exception
-     */
-    public function get($identifier)
+    public function get(string $identifier): ChannelInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" output workflow channel does not exist.');
@@ -61,18 +31,12 @@ class OutputWorkflowChannelRegistry
         return $this->channels[$identifier];
     }
 
-    /**
-     * @return array|ChannelInterface[]
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->channels;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllIdentifier()
+    public function getAllIdentifier(): array
     {
         return array_keys($this->channels);
     }
