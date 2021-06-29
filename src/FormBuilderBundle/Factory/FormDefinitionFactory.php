@@ -3,54 +3,33 @@
 namespace FormBuilderBundle\Factory;
 
 use FormBuilderBundle\Model\FormDefinition;
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinition;
+use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinition;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDynamicDefinition;
+use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
 
 class FormDefinitionFactory implements FormDefinitionFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createFormDefinition()
+    public function createFormDefinition(): FormDefinitionInterface
     {
-        $form = new FormDefinition();
-
-        return $form;
+        return new FormDefinition();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createFormFieldDefinition()
+    public function createFormFieldDefinition(): FormFieldDefinitionInterface
     {
-        $formFieldEntity = new FormFieldDefinition();
-
-        return $formFieldEntity;
+        return new FormFieldDefinition();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createFormFieldContainerDefinition()
+    public function createFormFieldContainerDefinition(): FormFieldContainerDefinitionInterface
     {
-        $formFieldContainerEntity = new FormFieldContainerDefinition();
-
-        return $formFieldContainerEntity;
+        return new FormFieldContainerDefinition();
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param array  $options
-     * @param array  $optional
-     *
-     * @return FormFieldDynamicDefinition
-     */
-    public function createFormFieldDynamicDefinition(string $name, string $type, array $options, array $optional = [])
+    public function createFormFieldDynamicDefinition(string $name, string $type, array $options, array $optional = []): FormFieldDynamicDefinitionInterface
     {
-        $formFieldDynamicEntity = new FormFieldDynamicDefinition($name, $type, $options, $optional);
-
-        return $formFieldDynamicEntity;
+        return new FormFieldDynamicDefinition($name, $type, $options, $optional);
     }
 }

@@ -7,70 +7,40 @@ use Pimcore\Model\DataObject;
 
 class ExistingObjectResolver extends AbstractObjectResolver
 {
-    /**
-     * @var DynamicObjectResolverRegistry
-     */
-    protected $dynamicObjectResolverRegistry;
+    protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry;
+    protected array $resolvingObject = [];
+    protected ?string $dynamicObjectResolver;
 
-    /**
-     * @var array
-     */
-    protected $resolvingObject;
-
-    /**
-     * @var string|null
-     */
-    protected $dynamicObjectResolver;
-
-    /**
-     * @param DynamicObjectResolverRegistry $dynamicObjectResolverRegistry
-     */
     public function setDynamicObjectResolverRegistry(DynamicObjectResolverRegistry $dynamicObjectResolverRegistry)
     {
         $this->dynamicObjectResolverRegistry = $dynamicObjectResolverRegistry;
     }
 
-    /**
-     * @param array $resolvingObject
-     */
-    public function setResolvingObject(array $resolvingObject)
+    public function setResolvingObject(array $resolvingObject): void
     {
         $this->resolvingObject = $resolvingObject;
     }
 
-    /**
-     * @return array
-     */
-    public function getResolvingObject()
+    public function getResolvingObject(): array
     {
         return $this->resolvingObject;
     }
 
-    /**
-     * @param string|null $dynamicObjectResolver
-     */
-    public function setDynamicObjectResolver($dynamicObjectResolver)
+    public function setDynamicObjectResolver(?string $dynamicObjectResolver): void
     {
         $this->dynamicObjectResolver = $dynamicObjectResolver;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDynamicObjectResolver()
+    public function getDynamicObjectResolver(): ?string
     {
         return $this->dynamicObjectResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getStorageObject()
+    public function getStorageObject(): DataObject\Concrete
     {
         $resolvingObjectInfo = $this->getResolvingObject();
         $resolvingObjectId = $resolvingObjectInfo['id'];
 
-        $resolver = null;
         $dataObject = DataObject::getById($resolvingObjectId);
 
         if ($this->getDynamicObjectResolver() !== null) {
@@ -89,10 +59,7 @@ class ExistingObjectResolver extends AbstractObjectResolver
         return $dataObject;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fieldTypeAllowedToProcess($fieldType)
+    public function fieldTypeAllowedToProcess($fieldType): bool
     {
         return $fieldType === 'container';
     }

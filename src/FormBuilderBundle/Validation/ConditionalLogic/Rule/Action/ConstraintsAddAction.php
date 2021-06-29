@@ -10,26 +10,10 @@ class ConstraintsAddAction implements ActionInterface
 {
     use ActionTrait;
 
-    /**
-     * @var array
-     */
-    protected $fields = [];
+    protected array $fields = [];
+    protected array $validation = [];
 
-    /**
-     * @var array
-     */
-    protected $validation = [];
-
-    /**
-     * @param bool  $validationState
-     * @param array $formData
-     * @param int   $ruleId
-     *
-     * @return FieldReturnStack|ReturnStackInterface
-     *
-     * @throws \Exception
-     */
-    public function apply($validationState, $formData, $ruleId)
+    public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         if ($validationState === true) {
@@ -44,34 +28,22 @@ class ConstraintsAddAction implements ActionInterface
         return new FieldReturnStack('addConstraints', $data);
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * @param array $fields
-     */
-    public function setFields($fields)
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return array
-     */
-    public function getValidation()
+    public function getValidation(): array
     {
         return $this->validation;
     }
 
-    /**
-     * @param array $validation
-     */
-    public function setValidation($validation)
+    public function setValidation(array $validation): void
     {
         $this->validation = $validation;
     }

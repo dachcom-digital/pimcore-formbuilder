@@ -14,20 +14,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DynamicMultiFileType extends AbstractType
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry;
 
-    /**
-     * @var DynamicMultiFileAdapterRegistry
-     */
-    protected $dynamicMultiFileAdapterRegistry;
-
-    /**
-     * @param Configuration                   $configuration
-     * @param DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
-     */
     public function __construct(
         Configuration $configuration,
         DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
@@ -36,10 +25,7 @@ class DynamicMultiFileType extends AbstractType
         $this->dynamicMultiFileAdapterRegistry = $dynamicMultiFileAdapterRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'compound'             => true,
@@ -50,10 +36,7 @@ class DynamicMultiFileType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
         $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
@@ -76,26 +59,17 @@ class DynamicMultiFileType extends AbstractType
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['attr']['id'] = $view->vars['id'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_dynamicmultifile';
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return HiddenType::class;
     }

@@ -2,21 +2,9 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition;
 
-interface ConditionInterface
-{
-    /**
-     * @param array $formData
-     * @param int   $ruleId
-     * @param array $configuration
-     *
-     * @return bool
-     */
-    public function isValid($formData, $ruleId, $configuration = []);
+use FormBuilderBundle\Validation\ConditionalLogic\Rule\RuleInterface;
 
-    /**
-     * @param array $values
-     *
-     * @return ConditionInterface
-     */
-    public function setValues(array $values);
+interface ConditionInterface extends RuleInterface
+{
+    public function isValid(array $formData, bool $ruleId, array $configuration = []): bool;
 }

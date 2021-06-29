@@ -11,43 +11,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MailBehaviour implements ModuleInterface
 {
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
+    protected DataFactory $dataFactory;
+    protected array $formData = [];
+    protected array $appliedConditions = [];
+    protected array $availableConstraints = [];
+    protected bool $isCopyMail;
 
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @var array
-     */
-    protected $availableConstraints;
-
-    /**
-     * @var bool
-     */
-    protected $isCopyMail;
-
-    /**
-     * @param DataFactory $dataFactory
-     */
     public function __construct(DataFactory $dataFactory)
     {
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'             => [],
@@ -62,12 +37,7 @@ class MailBehaviour implements ModuleInterface
         $resolver->setAllowedTypes('isCopy', 'boolean');
     }
 
-    /**
-     * @param array $options
-     *
-     * @return DataInterface
-     */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->availableConstraints = $options['availableConstraints'];

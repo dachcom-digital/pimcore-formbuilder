@@ -19,21 +19,20 @@ trait ChoiceTargetTransformerTrait
     {
         if ($target instanceof Select || $target instanceof Gender) {
             return $this->parseArrayChoiceToSingle($rawValue);
-        } elseif ($target instanceof Multiselect) {
+        }
+
+        if ($target instanceof Multiselect) {
             return $this->parseSingleChoiceToArray($rawValue);
-        } elseif ($target instanceof Input) {
+        }
+
+        if ($target instanceof Input) {
             return $this->parseArrayChoiceToString($rawValue);
         }
 
         return $rawValue;
     }
 
-    /**
-     * @param mixed $rawValue
-     *
-     * @return array
-     */
-    private function parseSingleChoiceToArray($rawValue)
+    private function parseSingleChoiceToArray($rawValue): array
     {
         return !is_array($rawValue) ? [$rawValue] : $rawValue;
     }
@@ -43,7 +42,7 @@ trait ChoiceTargetTransformerTrait
      *
      * @return string|null
      */
-    private function parseArrayChoiceToSingle($rawValue)
+    private function parseArrayChoiceToSingle($rawValue): ?string
     {
         if (!is_array($rawValue)) {
             return $rawValue;
@@ -61,8 +60,8 @@ trait ChoiceTargetTransformerTrait
      *
      * @return string|null
      */
-    private function parseArrayChoiceToString($rawValue)
+    private function parseArrayChoiceToString($rawValue): ?string
     {
-        return is_array($rawValue) ? join(', ', $rawValue) : $rawValue;
+        return is_array($rawValue) ? implode(', ', $rawValue) : $rawValue;
     }
 }

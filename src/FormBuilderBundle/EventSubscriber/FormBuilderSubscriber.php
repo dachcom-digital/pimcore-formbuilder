@@ -15,7 +15,7 @@ use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -25,41 +25,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected Dispatcher $dispatcher;
+    protected FormRegistryInterface $formRegistry;
+    private array $availableConstraints;
+    private array $availableFormTypes;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var FormRegistryInterface
-     */
-    protected $formRegistry;
-
-    /**
-     * @var array
-     */
-    private $availableConstraints;
-
-    /**
-     * @var array
-     */
-    private $availableFormTypes;
-
-    /**
-     * @param Configuration             $configuration
-     * @param Dispatcher                $dispatcher
-     * @param FormRegistryInterface     $formRegistry
-     */
     public function __construct(
         Configuration $configuration,
         EventDispatcherInterface $eventDispatcher,
@@ -74,13 +46,15 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $this->availableFormTypes = $this->configuration->getConfig('types');
     }
 
-    /**
-     * @param FormEvent $event
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            FormEvents::PRE_SET_DATA  => ['onPreSetData'],
+            FormEvents::POST_SET_DATA => ['onPostSetData'],
+            FormEvents::PRE_SUBMIT    => ['onPreSubmit']
+        ];
+    }
+
     public function getFormOptions(FormEvent $event)
     {
         $form = $event->getForm();
@@ -99,63 +73,29 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         return $data;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            FormEvents::PRE_SET_DATA  => ['onPreSetData'],
-            FormEvents::POST_SET_DATA => ['onPostSetData'],
-            FormEvents::PRE_SUBMIT    => ['onPreSubmit']
-        ];
-    }
-
-    /**
-     * @param FormEvent $event
-     *
-     * @throws \Exception
-     */
-    public function onPreSetData(FormEvent $event)
+    public function onPreSetData(FormEvent $event): void
     {
         $preSetDataEvent = new PreSetDataEvent($event, $this->getFormOptions($event));
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SET_DATA, $preSetDataEvent);
+        $this->eventDispatcher->dispatch($preSetDataEvent, FormBuilderEvents::FORM_PRE_SET_DATA);
     }
 
-    /**
-     * @param FormEvent $event
-     *
-     * @throws \Exception
-     */
-    public function onPostSetData(FormEvent $event)
+    public function onPostSetData(FormEvent $event): void
     {
         $postSetDataEvent = new PostSetDataEvent($event, $this->getFormOptions($event));
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_POST_SET_DATA, $postSetDataEvent);
+        $this->eventDispatcher->dispatch($postSetDataEvent, FormBuilderEvents::FORM_POST_SET_DATA);
 
         $this->populateForm($event->getForm(), $event->getData());
     }
 
-    /**
-     * @param FormEvent $event
-     *
-     * @throws \Exception
-     */
-    public function onPreSubmit(FormEvent $event)
+    public function onPreSubmit(FormEvent $event): void
     {
         $preSubmitEvent = new PreSubmitEvent($event, $this->getFormOptions($event));
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
+        $this->eventDispatcher->dispatch($preSubmitEvent, FormBuilderEvents::FORM_PRE_SUBMIT);
 
         $this->populateForm($event->getForm(), $event->getForm()->getData(), $event->getData());
     }
 
-    /**
-     * @param FormInterface     $form
-     * @param FormDataInterface $formData
-     * @param array             $data
-     *
-     * @throws \Exception
-     */
-    private function populateForm(FormInterface $form, FormDataInterface $formData, array $data = [])
+    private function populateForm(FormInterface $form, FormDataInterface $formData, array $data = []): void
     {
         $orderedFields = $formData->getFormDefinition()->getFields();
         usort($orderedFields, function (FieldDefinitionInterface $a, FieldDefinitionInterface $b) {
@@ -187,15 +127,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormFieldContainerDefinitionInterface $fieldContainer
-     * @param array                                 $conditionalLogicOptions
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    private function addFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldContainer, array $conditionalLogicOptions)
+    private function addFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldContainer, array $conditionalLogicOptions): array
     {
         $fields = [];
         foreach ($fieldContainer->getFields() as $subField) {
@@ -238,15 +170,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormFieldDefinitionInterface $field
-     * @param array                        $conditionalLogicOptions
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    private function addFormBuilderField(FormFieldDefinitionInterface $field, array $conditionalLogicOptions)
+    private function addFormBuilderField(FormFieldDefinitionInterface $field, array $conditionalLogicOptions): array
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -330,15 +254,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param string $dispatcherModule
-     * @param array  $options
-     *
-     * @return DataInterface
-     *
-     * @throws \Exception
-     */
-    private function dispatchConditionalLogicModule(string $dispatcherModule, array $options)
+    private function dispatchConditionalLogicModule(string $dispatcherModule, array $options): DataInterface
     {
         $moduleOptions = [];
 
@@ -351,12 +267,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         return $this->dispatcher->runFieldDispatcher($dispatcherModule, $options, $moduleOptions);
     }
 
-    /**
-     * @param FormFieldDynamicDefinitionInterface $field
-     *
-     * @return array
-     */
-    private function addDynamicField(FormFieldDynamicDefinitionInterface $field)
+    private function addDynamicField(FormFieldDynamicDefinitionInterface $field): array
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -373,23 +284,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    private function getChoiceFieldTypes()
+    private function getChoiceFieldTypes(): array
     {
         return ['choice', 'dynamic_choice', 'country'];
     }
-
-    /**
-     * Add pre-filled data to value store.
-     *
-     * @param array $fields
-     * @param array $data
-     *
-     * @return array
-     */
-    private function preFillData(array $fields, array &$data)
+    
+    private function preFillData(array $fields, array &$data): array
     {
         /** @var FormFieldDefinitionInterface $field */
         foreach ($fields as $field) {

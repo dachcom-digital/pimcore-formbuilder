@@ -10,44 +10,22 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class FileStream implements FileStreamInterface
 {
-    /**
-     * @var FileLocator
-     */
-    protected $fileLocator;
+    protected FileLocator $fileLocator;
+    protected RequestStack $requestStack;
+    public array $allowedExtensions = [];
+    public ?int $sizeLimit = null;
 
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var array
-     */
-    public $allowedExtensions = [];
-
-    /**
-     * @var null
-     */
-    public $sizeLimit = null;
-
-    /**
-     * @param FileLocator  $fileLocator
-     * @param RequestStack $requestStack
-     */
     public function __construct(FileLocator $fileLocator, RequestStack $requestStack)
     {
         $this->fileLocator = $fileLocator;
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handleUpload(array $options = [], bool $instantChunkCombining = true)
+    public function handleUpload(array $options = [], bool $instantChunkCombining = true): array
     {
         $binaryIdentifier = $options['binary'];
 
-        $masterRequest = $this->requestStack->getMasterRequest();
+        $masterRequest = $this->requestStack->getMainRequest();
 
         if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit || $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
             $neededRequestSize = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
@@ -132,7 +110,7 @@ class FileStream implements FileStreamInterface
         }
 
         if (is_array($this->allowedExtensions) && count($this->allowedExtensions) > 0 && !in_array(strtolower($fileExtension),
-                array_map('strtolower', $this->allowedExtensions))) {
+                array_map('strtolower', $this->allowedExtensions), true)) {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -211,10 +189,7 @@ class FileStream implements FileStreamInterface
 
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function combineChunks(array $options = [])
+    public function combineChunks(array $options = []): array
     {
         $tmpDirs = [];
         $chunkSuccess = true;
@@ -301,17 +276,17 @@ class FileStream implements FileStreamInterface
     /**
      * {@inheritdoc}
      */
-    public function handleDelete($uuid, bool $checkChunkFolder = false)
+    public function handleDelete(string $uuid, bool $checkChunkFolder = false): array
     {
         if ($this->isInaccessible($this->fileLocator->getFilesFolder())) {
             return ['error' => 'Server error. Upload directory isn\'t writable' . ((!$this->isWindows()) ? ' or executable.' : '.')];
         }
 
         $targetPath = $this->fileLocator->getFilesFolder();
-        $target = join(DIRECTORY_SEPARATOR, [$targetPath, $uuid]);
+        $target = implode(DIRECTORY_SEPARATOR, [$targetPath, $uuid]);
 
         if ($checkChunkFolder === true) {
-            $chunkPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
+            $chunkPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
 
             if (is_dir($chunkPath)) {
                 $this->deleteFolders([$chunkPath]);
@@ -329,12 +304,7 @@ class FileStream implements FileStreamInterface
 
     }
 
-    /**
-     * @param string $sizeStr
-     *
-     * @return int|string
-     */
-    protected function toBytes($sizeStr)
+    protected function toBytes(string $sizeStr)
     {
         $val = trim($sizeStr);
         if (is_numeric($val)) {
@@ -356,29 +326,17 @@ class FileStream implements FileStreamInterface
         return $val;
     }
 
-    /**
-     * @return bool
-     */
-    protected function isInaccessible($directory)
+    protected function isInaccessible($directory): bool
     {
         return $this->isWindows() ? !is_writable($directory) : (!is_writable($directory) && !is_executable($directory));
     }
 
-    /**
-     * @return bool
-     */
-    protected function isWindows()
+    protected function isWindows(): bool
     {
         return (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
     }
 
-    /**
-     * @param string $fileName
-     * @param bool   $strong
-     *
-     * @return string
-     */
-    protected function getSafeFileName(string $fileName, bool $strong = false)
+    protected function getSafeFileName(string $fileName, bool $strong = false): string
     {
         if ($strong === false) {
             return File::getValidFilename($fileName);
@@ -387,10 +345,7 @@ class FileStream implements FileStreamInterface
         return preg_replace('/[^a-zA-Z0-9]_+/', '', str_replace('.', '_', $fileName));
     }
 
-    /**
-     * @param array $foldersToDelete
-     */
-    protected function deleteFolders(array $foldersToDelete)
+    protected function deleteFolders(array $foldersToDelete): void
     {
         foreach ($foldersToDelete as $folder) {
             $this->fileLocator->removeDir($folder);

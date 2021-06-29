@@ -15,50 +15,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FrontendFormBuilder
 {
-    /**
-     * @var FormBuilderSubscriber
-     */
-    protected $formBuilderSubscriber;
+    protected FormBuilderSubscriber $formBuilderSubscriber;
+    protected Configuration $configuration;
+    protected RequestStack $requestStack;
+    protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator;
+    protected FormFactoryInterface $formFactory;
+    protected FormDataFactoryInterface $formDataFactory;
+    protected UrlGeneratorInterface $router;
 
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var FormRuntimeDataAllocatorInterface
-     */
-    protected $formRuntimeDataAllocator;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * @var FormDataFactoryInterface
-     */
-    protected $formDataFactory;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $router;
-
-    /**
-     * @param FormBuilderSubscriber             $formBuilderSubscriber
-     * @param Configuration                     $configuration
-     * @param RequestStack                      $requestStack
-     * @param FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
-     * @param FormFactoryInterface              $formFactory
-     * @param FormDataFactoryInterface          $formDataFactory
-     * @param UrlGeneratorInterface             $router
-     */
     public function __construct(
         FormBuilderSubscriber $formBuilderSubscriber,
         Configuration $configuration,
@@ -77,15 +41,7 @@ class FrontendFormBuilder
         $this->router = $router;
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $formRuntimeData
-     *
-     * @return FormInterface
-     *
-     * @throws \Exception
-     */
-    public function buildForm(FormDefinitionInterface $formDefinition, $formRuntimeData = [])
+    public function buildForm(FormDefinitionInterface $formDefinition, array $formRuntimeData = []): FormInterface
     {
         $defaults = [
             'form_preset'   => null,
@@ -145,13 +101,7 @@ class FrontendFormBuilder
         return $form;
     }
 
-    /**
-     * @param array $currentAttributes
-     * @param array $attributes
-     *
-     * @return array
-     */
-    private function addFormAttributes(array $currentAttributes, array $attributes)
+    private function addFormAttributes(array $currentAttributes, array $attributes): array
     {
         foreach ($attributes as $key => $attribute) {
             // legacy

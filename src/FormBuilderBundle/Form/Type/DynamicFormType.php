@@ -17,22 +17,11 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class DynamicFormType extends AbstractType
 {
-    const EMPTY_RUNTIME_DATA_KEY = 'no-runtime-data';
+    public const EMPTY_RUNTIME_DATA_KEY = 'no-runtime-data';
 
-    /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $defaultTokenManager;
+    protected CsrfTokenManagerInterface $defaultTokenManager;
+    protected Configuration $configuration;
 
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
-
-    /**
-     * @param CsrfTokenManagerInterface $defaultTokenManager
-     * @param Configuration             $configuration
-     */
     public function __construct(
         CsrfTokenManagerInterface $defaultTokenManager,
         Configuration $configuration
@@ -41,11 +30,7 @@ class DynamicFormType extends AbstractType
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $addHoneypot = $this->configuration->getConfigFlag('use_honeypot_field');
         $spamProtectionConfig = $this->configuration->getConfig('spam_protection');
@@ -86,11 +71,7 @@ class DynamicFormType extends AbstractType
         ));
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
-    protected function addRuntimeData(FormBuilderInterface $builder, array $options)
+    protected function addRuntimeData(FormBuilderInterface $builder, array $options): void
     {
         $runtimeData = $options['runtime_data'] ?? null;
 
@@ -128,10 +109,7 @@ class DynamicFormType extends AbstractType
         });
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'current_form_id'    => 0,

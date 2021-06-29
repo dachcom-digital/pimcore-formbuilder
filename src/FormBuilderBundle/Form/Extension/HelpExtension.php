@@ -10,35 +10,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HelpExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtendedType()
+    public function getExtendedType(): string
     {
         return FormType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): array
     {
         return [FormType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined(['help_text']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['help_text'] = isset($options['help_text']) ? $options['help_text'] : null;
+        $view->vars['help_text'] = $options['help_text'] ?? null;
     }
 }

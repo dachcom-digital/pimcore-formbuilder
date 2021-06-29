@@ -5,11 +5,6 @@ services:
         autoconfigure: true
         public: true
 
-    # tool installer
-    FormBuilderBundle\Tool\Install:
-        arguments:
-            $bundle: "@=service('kernel').getBundle('FormBuilderBundle')"
-
     # tool: file locator
     FormBuilderBundle\Tool\FileLocator: ~
 

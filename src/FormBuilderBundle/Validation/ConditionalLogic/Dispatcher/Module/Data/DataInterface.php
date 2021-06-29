@@ -4,18 +4,9 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 
 interface DataInterface
 {
-    /**
-     * @param array $data
-     */
-    public function setData(array $data);
+    public function setData(array $data): void;
 
-    /**
-     * @return bool
-     */
-    public function hasData();
+    public function hasData(): bool;
 
-    /**
-     * @return mixed
-     */
-    public function getData();
+    public function getData(): array;
 }

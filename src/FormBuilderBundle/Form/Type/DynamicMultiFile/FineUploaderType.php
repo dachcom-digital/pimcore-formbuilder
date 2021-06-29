@@ -7,27 +7,18 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FineUploaderType extends AbstractType
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
@@ -39,7 +30,7 @@ class FineUploaderType extends AbstractType
                     'allowed_extensions' => is_array($options['allowed_extensions']) ? $options['allowed_extensions'] : [],
                     'item_limit'         => is_numeric($options['item_limit']) ? (int) $options['item_limit'] : 0
                 ]),
-                'class'               => join(' ', [
+                'class'               => implode(' ', [
                     'dynamic-multi-file',
                     sprintf('element-%s', $view->vars['name'])
                 ])
@@ -47,10 +38,8 @@ class FineUploaderType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'max_file_size'        => 0,
@@ -60,26 +49,17 @@ class FineUploaderType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_dynamicmultifile_fine_uploader';
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextType::class;
     }
 
-    /**
-     * @return array
-     */
-    private function getInterfaceTranslations()
+    private function getInterfaceTranslations(): array
     {
         $globalMessages = [
             'cannotDestroyActiveInstanceError' => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance')

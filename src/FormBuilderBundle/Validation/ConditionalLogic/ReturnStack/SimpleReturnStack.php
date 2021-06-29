@@ -4,38 +4,21 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\ReturnStack;
 
 class SimpleReturnStack implements ReturnStackInterface
 {
-    /**
-     * @var null|string
-     */
-    public $actionType;
+    public ?string $actionType;
+    public array $data = [];
 
-    /**
-     * @var array
-     */
-    public $data = [];
-
-    /**
-     * @param null|string $actionType
-     * @param array       $data
-     */
-    public function __construct($actionType = null, $data = [])
+    public function __construct(?string $actionType = null, array $data = [])
     {
         $this->actionType = $actionType;
         $this->data = $data;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getActionType()
+    public function getActionType(): ?string
     {
         return $this->actionType;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }

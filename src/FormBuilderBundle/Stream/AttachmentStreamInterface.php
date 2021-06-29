@@ -6,25 +6,9 @@ use Pimcore\Model\Asset;
 
 interface AttachmentStreamInterface
 {
-    /**
-     * @param array  $data
-     * @param string $fieldName
-     * @param string $formName
-     *
-     * @return null|Asset
-     */
-    public function createAttachmentAsset($data, $fieldName, $formName);
+    public function createAttachmentAsset(array $data, string $fieldName, string $formName): ?Asset;
 
-    /**
-     * @param array  $data
-     * @param string $formName
-     *
-     * @return array
-     */
-    public function createAttachmentLinks($data, $formName);
+    public function createAttachmentLinks(array $data, string $formName): array;
 
-    /**
-     * @param array $fileInfo
-     */
-    public function removeAttachmentByFileInfo(array $fileInfo);
+    public function removeAttachmentByFileInfo(array $fileInfo): void;
 }

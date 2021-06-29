@@ -7,16 +7,14 @@ use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflow;
 use FormBuilderBundle\Model\OutputWorkflowChannel;
+use FormBuilderBundle\Model\OutputWorkflowChannelInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Email;
 
 class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(SubmissionEvent $submissionEvent)
+    public function resolve(SubmissionEvent $submissionEvent): ?OutputWorkflowInterface
     {
         $form = $submissionEvent->getForm();
 
@@ -31,12 +29,13 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
             return $this->buildFallBackWorkflow($formDefinition, $formRuntimeData);
         }
 
-        $outputWorkflow = null;
         $outputWorkflows = $formDefinition->getOutputWorkflows();
 
         if ($userSelectedOutputWorkflow === null && $outputWorkflows->count() === 1) {
             return $outputWorkflows->first();
-        } elseif ($userSelectedOutputWorkflow !== null) {
+        }
+
+        if ($userSelectedOutputWorkflow !== null) {
             $selectedOutputWorkflows = $outputWorkflows->filter(function (OutputWorkflowInterface $outputWorkflow) use ($userSelectedOutputWorkflow) {
                 return is_numeric($userSelectedOutputWorkflow)
                     ? $outputWorkflow->getId() === $userSelectedOutputWorkflow
@@ -49,13 +48,7 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         return null;
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $formRuntimeData
-     *
-     * @return OutputWorkflow|null
-     */
-    protected function buildFallBackWorkflow(FormDefinitionInterface $formDefinition, array $formRuntimeData)
+    protected function buildFallBackWorkflow(FormDefinitionInterface $formDefinition, array $formRuntimeData): ?OutputWorkflowInterface
     {
         if (!isset($formRuntimeData['email'])) {
             return null;
@@ -96,13 +89,7 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         return $fallbackWorkflow;
     }
 
-    /**
-     * @param Email $email
-     * @param bool  $isCopy
-     *
-     * @return OutputWorkflowChannel
-     */
-    protected function buildFallbackWorkflowChannel(Email $email, bool $isCopy)
+    protected function buildFallbackWorkflowChannel(Email $email, bool $isCopy): OutputWorkflowChannelInterface
     {
         $ignoreFields = (string) $email->getProperty('mail_ignore_fields');
         $ignoreFields = array_map('trim', explode(',', $ignoreFields));
@@ -129,15 +116,8 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         return $defaultChannel;
     }
 
-    /**
-     * @param Email $email
-     *
-     * @return null|array
-     */
-    protected function buildFallbackSuccessManagement(Email $email)
+    protected function buildFallbackSuccessManagement(Email $email): ?array
     {
-        $type = null;
-        $value = null;
         $extraField = [];
 
         $afterSuccessData = $email->getProperty('mail_successfully_sent');
@@ -168,7 +148,7 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
                 $extraField = ['flashMessage' => $flashMessage];
             }
         } elseif (is_string($afterSuccessData)) {
-            $type = substr($afterSuccessData, 0, 4) === 'http' ? 'redirect_external' : 'string';
+            $type = str_starts_with($afterSuccessData, 'http') ? 'redirect_external' : 'string';
             $value = $afterSuccessData;
         } else {
             $type = 'string';

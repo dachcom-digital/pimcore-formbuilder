@@ -4,32 +4,11 @@ namespace FormBuilderBundle\MailEditor\Widget;
 
 interface MailEditorFieldDataWidgetInterface
 {
-    /**
-     * @param array $field
-     *
-     * @return string
-     */
-    public function getSubTypeByField(array $field);
+    public function getSubTypeByField(array $field): string;
 
-    /**
-     * @param string $widgetType
-     * @param array  $field
-     *
-     * @return string
-     */
-    public function getWidgetIdentifierByField(string $widgetType, array $field);
+    public function getWidgetIdentifierByField(string $widgetType, array $field): string;
 
-    /**
-     * @param array $field
-     *
-     * @return string
-     */
-    public function getWidgetLabelByField(array $field);
+    public function getWidgetLabelByField(array $field): string;
 
-    /**
-     * @param array $field
-     *
-     * @return array
-     */
-    public function getWidgetConfigByField(array $field);
+    public function getWidgetConfigByField(array $field): array;
 }

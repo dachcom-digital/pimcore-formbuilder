@@ -5,10 +5,7 @@ services:
         autoconfigure: true
         public: false
 
-    FormBuilderBundle\Registry\OptionsTransformerRegistry:
-        arguments:
-            $optionsInterface: 'FormBuilderBundle\Transformer\OptionsTransformerInterface'
-            $dynamicOptionsInterface: 'FormBuilderBundle\Transformer\DynamicOptionsTransformerInterface'
+    FormBuilderBundle\Registry\OptionsTransformerRegistry: ~
 
     FormBuilderBundle\Transformer\ChoicesTransformer:
         tags:

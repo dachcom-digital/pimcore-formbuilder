@@ -2,28 +2,20 @@
 
 namespace FormBuilderBundle\Session;
 
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FlashBagManager implements FlashBagManagerInterface
 {
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected SessionInterface $session;
 
-    /**
-     * @param SessionInterface $session
-     */
     public function __construct(SessionInterface $session)
     {
         $this->session = $session;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($type)
+    public function has(string $type): bool
     {
         if (!$this->flashBagIsAvailable()) {
             return false;
@@ -32,10 +24,7 @@ class FlashBagManager implements FlashBagManagerInterface
         return $this->getFlashBag()->has($type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function add($type, $message)
+    public function add(string $type, $message): void
     {
         if (!$this->flashBagIsAvailable()) {
             return;
@@ -44,10 +33,7 @@ class FlashBagManager implements FlashBagManagerInterface
         $this->getFlashBag()->add($type, $message);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($type, array $default = [])
+    public function get(string $type, array $default = []): array
     {
         if (!$this->flashBagIsAvailable()) {
             return [];
@@ -56,18 +42,12 @@ class FlashBagManager implements FlashBagManagerInterface
         return $this->getFlashBag()->get($type, $default);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function flashBagIsAvailable()
+    public function flashBagIsAvailable(): bool
     {
         return $this->session instanceof Session;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFlashBag()
+    public function getFlashBag(): ?FlashBagInterface
     {
         if (!$this->session instanceof Session) {
             return null;

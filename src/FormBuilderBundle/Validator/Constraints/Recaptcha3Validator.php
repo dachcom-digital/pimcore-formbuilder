@@ -9,23 +9,13 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 final class Recaptcha3Validator extends ConstraintValidator
 {
-    /**
-     * @var ReCaptchaProcessorInterface
-     */
-    protected $reCaptchaProcessor;
+    protected ReCaptchaProcessorInterface $reCaptchaProcessor;
 
-    /**
-     * @param ReCaptchaProcessorInterface $reCaptchaProcessor
-     */
     public function __construct(ReCaptchaProcessorInterface $reCaptchaProcessor)
     {
         $this->reCaptchaProcessor = $reCaptchaProcessor;
     }
 
-    /**
-     * @param mixed      $value
-     * @param Constraint $constraint
-     */
     public function validate($value, Constraint $constraint): void
     {
         if ($value !== null && !is_scalar($value) && !(\is_object($value) && method_exists($value, '__toString'))) {
@@ -45,11 +35,6 @@ final class Recaptcha3Validator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
     private function validateCaptcha(string $value): bool
     {
         if ($value === '') {

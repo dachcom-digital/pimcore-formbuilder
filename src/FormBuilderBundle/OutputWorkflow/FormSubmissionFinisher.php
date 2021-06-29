@@ -17,38 +17,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 {
-    /**
-     * @var FlashBagManagerInterface
-     */
-    protected $flashBagManager;
+    protected FlashBagManagerInterface $flashBagManager;
+    protected FormErrorsSerializerInterface $formErrorsSerializer;
+    protected OutputWorkflowResolverInterface $outputWorkflowResolver;
+    protected OutputWorkflowDispatcherInterface $outputWorkflowDispatcher;
+    protected SuccessManagementWorkerInterface $successManagementWorker;
 
-    /**
-     * @var FormErrorsSerializerInterface
-     */
-    protected $formErrorsSerializer;
-
-    /**
-     * @var OutputWorkflowResolverInterface
-     */
-    protected $outputWorkflowResolver;
-
-    /**
-     * @var OutputWorkflowDispatcherInterface
-     */
-    protected $outputWorkflowDispatcher;
-
-    /**
-     * @var SuccessManagementWorkerInterface
-     */
-    protected $successManagementWorker;
-
-    /**
-     * @param FlashBagManagerInterface          $flashBagManager
-     * @param FormErrorsSerializerInterface     $formErrorsSerializer
-     * @param OutputWorkflowResolverInterface   $outputWorkflowResolver
-     * @param OutputWorkflowDispatcherInterface $outputWorkflowDispatcher
-     * @param SuccessManagementWorkerInterface  $successManagementWorker
-     */
     public function __construct(
         FlashBagManagerInterface $flashBagManager,
         FormErrorsSerializerInterface $formErrorsSerializer,
@@ -60,14 +34,10 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         $this->formErrorsSerializer = $formErrorsSerializer;
         $this->outputWorkflowResolver = $outputWorkflowResolver;
         $this->outputWorkflowDispatcher = $outputWorkflowDispatcher;
-        $this->outputWorkflowDispatcher = $outputWorkflowDispatcher;
         $this->successManagementWorker = $successManagementWorker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function finishWithError(Request $request, FormInterface $form)
+    public function finishWithError(Request $request, FormInterface $form): ?Response
     {
         $response = null;
 
@@ -78,10 +48,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         return $response;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function finishWithSuccess(Request $request, SubmissionEvent $submissionEvent)
+    public function finishWithSuccess(Request $request, SubmissionEvent $submissionEvent): ?Response
     {
         if ($submissionEvent->outputWorkflowFinisherIsDisabled() === true) {
             return null;
@@ -93,19 +60,19 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             $errorMessage = 'No valid output workflow found.';
 
             return $request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
+                ? $this->generateAjaxFinisherErrorResponse([$errorMessage])
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, [$errorMessage]);
         }
 
         try {
             $this->outputWorkflowDispatcher->dispatch($outputWorkflow, $submissionEvent);
         } catch (\Exception $e) {
             if ($e instanceof GuardOutputWorkflowException) {
-                $errorMessage = $e->getMessage();
+                $errorMessage = [$e->getMessage()];
             } elseif ($e instanceof GuardStackedException) {
                 $errorMessage = $e->getGuardExceptionMessages();
             } else {
-                $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
+                $errorMessage = [sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage())];
             }
 
             return $request->isXmlHttpRequest()
@@ -119,8 +86,8 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             $errorMessage = sprintf('Error while processing success management of workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
 
             return $request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
+                ? $this->generateAjaxFinisherErrorResponse([$errorMessage])
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, [$errorMessage]);
         }
 
         return $request->isXmlHttpRequest()
@@ -128,12 +95,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             : $this->generateRedirectFormSuccessResponse($submissionEvent);
     }
 
-    /**
-     * @param SubmissionEvent $submissionEvent
-     *
-     * @return Response
-     */
-    protected function generateRedirectFormSuccessResponse(SubmissionEvent $submissionEvent)
+    protected function generateRedirectFormSuccessResponse(SubmissionEvent $submissionEvent): Response
     {
         $uri = '?send=true';
         if ($submissionEvent->hasRedirectUri()) {
@@ -143,12 +105,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         return new RedirectResponse($uri);
     }
 
-    /**
-     * @param SubmissionEvent $submissionEvent
-     *
-     * @return Response
-     */
-    protected function generateAjaxFormSuccessResponse(SubmissionEvent $submissionEvent)
+    protected function generateAjaxFormSuccessResponse(SubmissionEvent $submissionEvent): Response
     {
         $redirectUri = null;
         if ($submissionEvent->hasRedirectUri()) {
@@ -184,12 +141,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         ]);
     }
 
-    /**
-     * @param FormInterface $form
-     *
-     * @return Response
-     */
-    protected function generateAjaxFormErrorResponse(FormInterface $form)
+    protected function generateAjaxFormErrorResponse(FormInterface $form): Response
     {
         $formattedValidationErrors = $this->formErrorsSerializer->getErrors($form);
 
@@ -199,21 +151,11 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         ]);
     }
 
-    /**
-     * @param SubmissionEvent $submissionEvent
-     * @param array|string    $errors
-     *
-     * @return RedirectResponse
-     */
-    protected function generateRedirectFinisherErrorResponse(SubmissionEvent $submissionEvent, $errors)
+    protected function generateRedirectFinisherErrorResponse(SubmissionEvent $submissionEvent, array $errors): RedirectResponse
     {
         $uri = '?send=false';
         if ($submissionEvent->hasRedirectUri()) {
             $uri = $submissionEvent->getRedirectUri();
-        }
-
-        if (!is_array($errors)) {
-            $errors = [$errors];
         }
 
         $form = $submissionEvent->getForm();
@@ -227,7 +169,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         if (in_array($method, ['GET', 'HEAD', 'TRACE'])) {
             $qs = $submissionEvent->getRequest()->getQueryString();
             if (!empty($qs)) {
-                $uri = strpos($uri, '?' === false) ? ($uri . '?' . $qs) : ($uri . '&' . $qs);
+                $uri = !str_contains($uri, '?') ? ($uri . '?' . $qs) : ($uri . '&' . $qs);
             }
         }
 
@@ -240,17 +182,8 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         return new RedirectResponse($uri);
     }
 
-    /**
-     * @param array|string $errors
-     *
-     * @return Response
-     */
-    protected function generateAjaxFinisherErrorResponse($errors)
+    protected function generateAjaxFinisherErrorResponse(array $errors): Response
     {
-        if (!is_array($errors)) {
-            $errors = [$errors];
-        }
-
         return new JsonResponse([
             'success'           => false,
             'validation_errors' => ['general' => $errors],

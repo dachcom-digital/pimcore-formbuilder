@@ -2,19 +2,12 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module;
 
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ModuleInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver);
+    public function configureOptions(OptionsResolver $resolver): void;
 
-    /**
-     * @param array $options
-     *
-     * @return mixed
-     */
-    public function apply($options);
+    public function apply(array $options): DataInterface;
 }

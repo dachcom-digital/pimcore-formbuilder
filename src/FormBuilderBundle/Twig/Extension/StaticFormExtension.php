@@ -10,23 +10,14 @@ use Twig\TwigFunction;
 
 class StaticFormExtension extends AbstractExtension
 {
-    /**
-     * @var FormAssembler
-     */
-    protected $formAssembler;
+    protected FormAssembler $formAssembler;
 
-    /**
-     * @param FormAssembler $formAssembler
-     */
     public function __construct(FormAssembler $formAssembler)
     {
         $this->formAssembler = $formAssembler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -37,19 +28,7 @@ class StaticFormExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param Environment $environment
-     * @param array       $context
-     * @param array       $formOptions
-     *
-     * @return string
-     *
-     * @throws \Exception
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
-     */
-    public function generateForm(Environment $environment, $context, $formOptions = [])
+    public function generateForm(Environment $environment, array $context, array $formOptions = []): string
     {
         $defaultOptions = [
             'form_id'            => null,

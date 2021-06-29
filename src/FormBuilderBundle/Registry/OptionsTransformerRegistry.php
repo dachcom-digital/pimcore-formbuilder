@@ -6,94 +6,30 @@ use FormBuilderBundle\Transformer\OptionsTransformerInterface;
 
 class OptionsTransformerRegistry
 {
-    /**
-     * @var array
-     */
-    protected $transformer;
+    protected array $transformer;
+    protected array $dynamicTransformer;
 
-    /**
-     * @var array
-     */
-    protected $dynamicTransformer;
-
-    /**
-     * @var string
-     */
-    private $optionsInterface;
-
-    /**
-     * @var string
-     */
-    private $dynamicOptionsInterface;
-
-    /**
-     * @param string $optionsInterface
-     * @param string $dynamicOptionsInterface
-     */
-    public function __construct($optionsInterface, $dynamicOptionsInterface)
+    public function register(string $identifier, OptionsTransformerInterface $service): void
     {
-        $this->optionsInterface = $optionsInterface;
-        $this->dynamicOptionsInterface = $dynamicOptionsInterface;
-    }
-
-    /**
-     * @param string                      $identifier
-     * @param OptionsTransformerInterface $service
-     */
-    public function register($identifier, $service)
-    {
-        if (!in_array($this->optionsInterface, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->optionsInterface, implode(', ', class_implements($service)))
-            );
-        }
-
         $this->transformer[$identifier] = $service;
     }
 
-    /**
-     * @param string                      $identifier
-     * @param OptionsTransformerInterface $service
-     */
-    public function registerDynamic($identifier, $service)
+    public function registerDynamic(string $identifier, OptionsTransformerInterface $service): void
     {
-        if (!in_array($this->dynamicOptionsInterface, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->dynamicOptionsInterface, implode(', ', class_implements($service)))
-            );
-        }
-
         $this->dynamicTransformer[$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->transformer[$identifier]);
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasDynamic($identifier)
+    public function hasDynamic(string $identifier): bool
     {
         return isset($this->dynamicTransformer[$identifier]);
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function get($identifier)
+    public function get(string $identifier): OptionsTransformerInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception(sprintf('options transformer "%s" does not exist', $identifier));
@@ -102,14 +38,7 @@ class OptionsTransformerRegistry
         return $this->transformer[$identifier];
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function getDynamic($identifier)
+    public function getDynamic(string $identifier): OptionsTransformerInterface
     {
         if (!$this->hasDynamic($identifier)) {
             throw new \Exception(sprintf('dynamic options transformer "%s" does not exist', $identifier));

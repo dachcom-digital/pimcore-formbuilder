@@ -9,44 +9,18 @@ use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Constraints implements ModuleInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
+    protected DataFactory $dataFactory;
 
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
+    protected array $formData = [];
+    protected ?FormFieldDefinitionInterface $field = null;
+    protected array $availableConstraints = [];
+    protected array $appliedConditions = [];
 
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var FormFieldDefinitionInterface
-     */
-    protected $field;
-
-    /**
-     * @var array
-     */
-    protected $availableConstraints;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param DataFactory         $dataFactory
-     */
     public function __construct(
         TranslatorInterface $translator,
         DataFactory $dataFactory
@@ -55,10 +29,7 @@ class Constraints implements ModuleInterface
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'             => [],
@@ -74,12 +45,7 @@ class Constraints implements ModuleInterface
         $resolver->setAllowedTypes('appliedConditions', 'array');
     }
 
-    /**
-     * @param array $options
-     *
-     * @return DataInterface
-     */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->field = $options['field'];
@@ -98,14 +64,7 @@ class Constraints implements ModuleInterface
         return $returnContainer;
     }
 
-    /**
-     * Constraints from current conditional logic.
-     *
-     * @param array $defaultFieldConstraints
-     *
-     * @return array
-     */
-    private function checkConditionalLogicConstraints($defaultFieldConstraints)
+    private function checkConditionalLogicConstraints(array $defaultFieldConstraints): array
     {
         if (empty($this->appliedConditions)) {
             return $defaultFieldConstraints;
@@ -143,12 +102,7 @@ class Constraints implements ModuleInterface
         return $defaultFieldConstraints;
     }
 
-    /**
-     * @param array $constraints
-     *
-     * @return array
-     */
-    private function appendConstraintsData($constraints)
+    private function appendConstraintsData(array $constraints): array
     {
         $constraintData = [];
         foreach ($constraints as $constraint) {

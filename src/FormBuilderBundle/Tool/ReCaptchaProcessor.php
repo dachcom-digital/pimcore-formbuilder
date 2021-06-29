@@ -9,35 +9,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ReCaptchaProcessor implements ReCaptchaProcessorInterface
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected string $url = 'https://www.google.com/recaptcha/api/siteverify';
+    protected RequestStack $requestStack;
 
-    /**
-     * @var string
-     */
-    protected $url = 'https://www.google.com/recaptcha/api/siteverify';
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @param Configuration $configuration
-     * @param RequestStack  $requestStack
-     */
     public function __construct(Configuration $configuration, RequestStack $requestStack)
     {
         $this->configuration = $configuration;
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function verify($value)
+    public function verify(string $value): Response
     {
         $client = new Client();
         $config = $this->configuration->getConfig('spam_protection');
@@ -57,10 +39,7 @@ class ReCaptchaProcessor implements ReCaptchaProcessorInterface
         return Response::fromJson($response->getBody());
     }
 
-    /**
-     * @return string|null
-     */
-    protected function getClientIp()
+    protected function getClientIp(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
         if ($request === null) {

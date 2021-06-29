@@ -9,10 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class RuntimeDataProviderPass implements CompilerPassInterface
 {
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(RuntimeDataProviderRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.runtime_data_provider') as $id => $tags) {

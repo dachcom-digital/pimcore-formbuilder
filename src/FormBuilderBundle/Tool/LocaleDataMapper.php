@@ -4,12 +4,6 @@ namespace FormBuilderBundle\Tool;
 
 class LocaleDataMapper
 {
-    /**
-     * @param string $locale
-     * @param array  $data
-     *
-     * @return mixed
-     */
     public function mapHref(string $locale, array $data)
     {
         // current locale found
@@ -37,15 +31,7 @@ class LocaleDataMapper
         return $firstElement['id'];
     }
 
-    /**
-     * @param string $requestedLocale
-     * @param string $identifier
-     * @param bool   $isHref
-     * @param array  $data
-     *
-     * @return array
-     */
-    public function mapMultiDimensional(string $requestedLocale, string $identifier, bool $isHref, array $data)
+    public function mapMultiDimensional(string $requestedLocale, string $identifier, bool $isHref, array $data): array
     {
         $blockGenerator = function ($locale) use ($isHref, $data, $identifier) {
             if ($isHref === true) {
@@ -74,8 +60,6 @@ class LocaleDataMapper
         }
 
         //no locale found. use the first one.
-        $firstElement = reset($data);
-
-        return $firstElement;
+        return reset($data);
     }
 }

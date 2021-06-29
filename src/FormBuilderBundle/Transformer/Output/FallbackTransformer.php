@@ -2,37 +2,27 @@
 
 namespace FormBuilderBundle\Transformer\Output;
 
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use Pimcore\Translation\Translator;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Intl\Intl;
 
 class FallbackTransformer implements OutputTransformerInterface
 {
-    /**
-     * @var Translator
-     */
-    protected $translator;
+    protected Translator $translator;
 
-    /**
-     * @param Translator $translator
-     */
     public function __construct(Translator $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         if ($fieldDefinition instanceof FormFieldDynamicDefinitionInterface) {
             return $this->parseDynamicField($fieldDefinition, $rawValue, $formField, $locale);
@@ -41,10 +31,7 @@ class FallbackTransformer implements OutputTransformerInterface
         return $this->parseDefaultField($rawValue, $formField, $locale);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         if ($fieldDefinition instanceof FormFieldDynamicDefinitionInterface) {
             return $this->parseDynamicLabel($fieldDefinition, $formField, $locale);
@@ -53,15 +40,7 @@ class FallbackTransformer implements OutputTransformerInterface
         return $this->parseDefaultLabel($fieldDefinition, $locale);
     }
 
-    /**
-     * @param FormFieldDynamicDefinitionInterface $field
-     * @param mixed                               $rawValue
-     * @param FormInterface                       $formField
-     * @param null|string                         $locale
-     *
-     * @return mixed
-     */
-    protected function parseDynamicField(FormFieldDynamicDefinitionInterface $field, $rawValue, FormInterface $formField, $locale)
+    protected function parseDynamicField(FormFieldDynamicDefinitionInterface $field, $rawValue, FormInterface $formField, ?string $locale)
     {
         $optionalOptions = $field->getOptional();
 
@@ -81,14 +60,7 @@ class FallbackTransformer implements OutputTransformerInterface
         return $value;
     }
 
-    /**
-     * @param mixed         $value
-     * @param FormInterface $formField
-     * @param null|string   $locale
-     *
-     * @return mixed
-     */
-    protected function parseDefaultField($value, FormInterface $formField, $locale)
+    protected function parseDefaultField($value, FormInterface $formField, ?string $locale)
     {
         if (empty($value)) {
             return $value;
@@ -111,14 +83,7 @@ class FallbackTransformer implements OutputTransformerInterface
         return $value;
     }
 
-    /**
-     * @param \DateTime         $value
-     * @param FormTypeInterface $fieldType
-     * @param string            $locale
-     *
-     * @return bool|string
-     */
-    protected function parseDefaultDateField(\DateTime $value, $fieldType, $locale)
+    protected function parseDefaultDateField(\DateTime $value, $fieldType, ?string $locale)
     {
         $dateFormat = 'medium';
         $timeFormat = 'none';
@@ -158,15 +123,10 @@ class FallbackTransformer implements OutputTransformerInterface
         return $formatter->format($value->getTimestamp());
     }
 
-    /**
-     * @param mixed       $value
-     * @param CountryType $fieldType
-     * @param string      $locale
-     *
-     * @return array|string
-     */
-    protected function parseDefaultCountryField($value, CountryType $fieldType, $locale)
+    protected function parseDefaultCountryField($value, CountryType $fieldType, ?string $locale)
     {
+        //TODO: Region Bundle has changed
+
         if (is_array($value)) {
             $choices = [];
             foreach ($value as $val) {
@@ -179,15 +139,7 @@ class FallbackTransformer implements OutputTransformerInterface
         return $choices;
     }
 
-    /**
-     * @param mixed         $value
-     * @param FormInterface $formField
-     * @param ChoiceType    $fieldType
-     * @param string        $locale
-     *
-     * @return array
-     */
-    protected function parseDefaultChoiceField($value, FormInterface $formField, ChoiceType $fieldType, $locale)
+    protected function parseDefaultChoiceField($value, FormInterface $formField, ChoiceType $fieldType, ?string $locale)
     {
         $choices = $formField->getConfig()->getOption('choices');
         $arrayIterator = new \RecursiveArrayIterator($choices);
@@ -202,14 +154,7 @@ class FallbackTransformer implements OutputTransformerInterface
         return $choices;
     }
 
-    /**
-     * @param FormFieldDynamicDefinitionInterface $field
-     * @param FormInterface                       $formField
-     * @param null|string                         $locale
-     *
-     * @return string|null
-     */
-    protected function parseDynamicLabel(FormFieldDynamicDefinitionInterface $field, FormInterface $formField, $locale)
+    protected function parseDynamicLabel(FormFieldDynamicDefinitionInterface $field, FormInterface $formField, ?string $locale)
     {
         $label = $formField->getConfig()->hasOption('label') ? $formField->getConfig()->getOption('label') : $field->getName();
         $optionalOptions = $field->getOptional();
@@ -227,13 +172,7 @@ class FallbackTransformer implements OutputTransformerInterface
             : $label;
     }
 
-    /**
-     * @param FormFieldSimpleInterface $field
-     * @param null|string              $locale
-     *
-     * @return string|null
-     */
-    protected function parseDefaultLabel(FormFieldSimpleInterface $field, $locale)
+    protected function parseDefaultLabel(FieldDefinitionInterface $field, ?string $locale)
     {
         if (!$field instanceof FormFieldDefinitionInterface) {
             return null;

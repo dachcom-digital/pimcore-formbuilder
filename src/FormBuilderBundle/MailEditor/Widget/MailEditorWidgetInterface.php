@@ -4,25 +4,11 @@ namespace FormBuilderBundle\MailEditor\Widget;
 
 interface MailEditorWidgetInterface
 {
-    /**
-     * @return string
-     */
-    public function getWidgetGroupName();
+    public function getWidgetGroupName(): string;
 
-    /**
-     * @return string
-     */
-    public function getWidgetLabel();
+    public function getWidgetLabel(): string;
 
-    /**
-     * @return array
-     */
-    public function getWidgetConfig();
+    public function getWidgetConfig(): array;
 
-    /**
-     * @param array $config
-     *
-     * @return string
-     */
-    public function getValueForOutput(array $config);
+    public function getValueForOutput(array $config): string;
 }

@@ -6,36 +6,16 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 interface FormDefinitionRepositoryInterface
 {
-    /**
-     * @param int $id
-     *
-     * @return null|FormDefinitionInterface
-     */
-    public function findById($id);
+    public function findById(int $id): ?FormDefinitionInterface;
 
-    /**
-     * @param string $name
-     *
-     * @return null|FormDefinitionInterface
-     */
-    public function findByName(string $name);
+    public function findByName(string $name): ?FormDefinitionInterface;
 
-    /**
-     * @param int $id
-     *
-     * @return null|FormDefinitionInterface
-     */
-    public function findNameById($id);
+    public function findNameById(int $id): ?string;
 
-    /**
-     * @param string $name
-     *
-     * @return null|FormDefinitionInterface
-     */
-    public function findIdByName(string $name);
+    public function findIdByName(string $name): ?int;
 
     /**
      * @return FormDefinitionInterface[]
      */
-    public function findAll();
+    public function findAll(): array;
 }

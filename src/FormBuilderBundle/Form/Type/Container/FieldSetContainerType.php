@@ -15,10 +15,7 @@ class FieldSetContainerType extends AbstractType
 {
     use Traits\ContainerTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $globalEntryOptions = $event->getForm()->getConfig()->getOption('entry_options');
@@ -28,19 +25,13 @@ class FieldSetContainerType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['attr']['data-field-name'] = $view->vars['name'];
         $view->vars['label'] = $this->getContainerLabel($options);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'allow_add'          => false,
@@ -56,10 +47,7 @@ class FieldSetContainerType extends AbstractType
         $resolver->setNormalizer('entry_options', $entryOptionsNormalizer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_container_fieldset';
     }
@@ -67,7 +55,7 @@ class FieldSetContainerType extends AbstractType
     /**
      * @return array
      */
-    private function getFormEntryOptions()
+    private function getFormEntryOptions(): array
     {
         $options = [];
         $options['label'] = false;
@@ -75,7 +63,7 @@ class FieldSetContainerType extends AbstractType
         return $options;
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return ContainerType::class;
     }

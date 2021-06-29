@@ -18,7 +18,7 @@ interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
      *
      * @return string|callable|bool
      */
-    public function getChoiceLabel($choiceValue, $key, $value);
+    public function getChoiceLabel($choiceValue, string $key, $value);
 
     /**
      * @param mixed  $element
@@ -27,7 +27,7 @@ interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
      *
      * @return array|callable|string
      */
-    public function getChoiceAttributes($element, $key, $value);
+    public function getChoiceAttributes($element, string $key, $value);
 
     /**
      * @param mixed  $element
@@ -36,7 +36,7 @@ interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
      *
      * @return array|callable|string
      */
-    public function getGroupBy($element, $key, $value);
+    public function getGroupBy($element, string $key, $value);
 
     /**
      * @param mixed  $element
@@ -45,5 +45,5 @@ interface AdvancedChoiceBuilderInterface extends ChoiceBuilderInterface
      *
      * @return array|callable|string
      */
-    public function getPreferredChoices($element, $key, $value);
+    public function getPreferredChoices($element, string $key, $value);
 }

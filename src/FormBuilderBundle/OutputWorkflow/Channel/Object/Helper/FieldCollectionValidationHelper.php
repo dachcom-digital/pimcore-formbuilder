@@ -3,38 +3,21 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object\Helper;
 
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Pimcore\Model\DataObject;
 
 class FieldCollectionValidationHelper
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
+    protected array $validationConfiguration;
 
-    /**
-     * @var array
-     */
-    protected $validationConfiguration;
-
-    /**
-     * @param array $validationConfiguration
-     */
     public function __construct(array $validationConfiguration)
     {
         $this->translator = \Pimcore::getContainer()->get('translator');
         $this->validationConfiguration = $validationConfiguration;
     }
 
-    /**
-     * @param DataObject\Concrete                          $referenceObject
-     * @param DataObject\Fieldcollection                   $fieldCollection
-     * @param DataObject\Fieldcollection\Data\AbstractData $data
-     *
-     * @throws GuardOutputWorkflowException
-     */
-    public function validate(DataObject\Concrete $referenceObject, DataObject\Fieldcollection $fieldCollection, DataObject\Fieldcollection\Data\AbstractData $data)
+    public function validate(DataObject\Concrete $referenceObject, DataObject\Fieldcollection $fieldCollection, DataObject\Fieldcollection\Data\AbstractData $data): void
     {
         foreach ($this->validationConfiguration as $validationBlock) {
             if ($validationBlock['enabled'] === false) {
@@ -51,20 +34,12 @@ class FieldCollectionValidationHelper
         }
     }
 
-    /**
-     * @param string                                       $uniqueFieldName
-     * @param string                                       $validationMessage
-     * @param DataObject\Fieldcollection                   $fieldCollection
-     * @param DataObject\Fieldcollection\Data\AbstractData $currentFieldCollection
-     *
-     * @throws GuardOutputWorkflowException
-     */
     protected function validateUniqueness(
         string $uniqueFieldName,
         string $validationMessage,
         DataObject\Fieldcollection $fieldCollection,
         DataObject\Fieldcollection\Data\AbstractData $currentFieldCollection
-    ) {
+    ): void {
         if ($fieldCollection->getCount() === 0) {
             return;
         }
@@ -93,20 +68,12 @@ class FieldCollectionValidationHelper
         }
     }
 
-    /**
-     * @param string                     $countFieldName
-     * @param string                     $validationMessage
-     * @param DataObject\Concrete        $referenceObject
-     * @param DataObject\Fieldcollection $fieldCollection
-     *
-     * @throws GuardOutputWorkflowException
-     */
     protected function validateCount(
         string $countFieldName,
         string $validationMessage,
         DataObject\Concrete $referenceObject,
         DataObject\Fieldcollection $fieldCollection
-    ) {
+    ): void {
         $countFieldGetter = sprintf('get%s', ucfirst($countFieldName));
 
         if (!method_exists($referenceObject, $countFieldGetter)) {

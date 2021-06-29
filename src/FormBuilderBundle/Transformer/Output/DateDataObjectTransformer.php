@@ -9,10 +9,7 @@ use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 
 class DateDataObjectTransformer implements OutputTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         if (!$rawValue instanceof \DateTime) {
             return null;
@@ -28,10 +25,7 @@ class DateDataObjectTransformer implements OutputTransformerInterface
         return $carbon;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         return null;
     }

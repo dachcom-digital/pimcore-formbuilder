@@ -10,20 +10,9 @@ use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 
 class FormDefinitionRepository implements FormDefinitionRepositoryInterface
 {
-    /**
-     * @var FormDataConnectorInterface
-     */
-    protected $formDataConnector;
+    protected FormDataConnectorInterface $formDataConnector;
+    protected EntityRepository $repository;
 
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
-    /**
-     * @param FormDataConnectorInterface $formDataConnector
-     * @param EntityManagerInterface     $entityManager
-     */
     public function __construct(
         FormDataConnectorInterface $formDataConnector,
         EntityManagerInterface $entityManager
@@ -32,10 +21,7 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
         $this->repository = $entityManager->getRepository(FormDefinition::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findById($id)
+    public function findById(int $id): ?FormDefinitionInterface
     {
         if ($id < 1) {
             return null;
@@ -47,10 +33,7 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
         return $this->assembleSingle($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findByName(string $name)
+    public function findByName(string $name): ?FormDefinitionInterface
     {
         if (empty($name)) {
             return null;
@@ -62,29 +45,28 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
         return $this->assembleSingle($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findNameById($id)
+    public function findNameById($id): ?string
     {
         $form = $this->findById($id);
+
+        if (null === $form) {
+            return null;
+        }
 
         return $form->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findIdByName(string $name)
+    public function findIdByName(string $name): ?int
     {
         $form = $this->findByName($name);
+
+        if (null === $form) {
+            return null;
+        }
 
         return $form->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll(): array
     {
         $objects = $this->repository->findAll();
@@ -92,12 +74,7 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
         return $this->assembleMultiple($objects);
     }
 
-    /**
-     * @param FormDefinitionInterface|null $formDefinition
-     *
-     * @return FormDefinitionInterface|null
-     */
-    protected function assembleSingle(?FormDefinitionInterface $formDefinition)
+    protected function assembleSingle(?FormDefinitionInterface $formDefinition): ?FormDefinitionInterface
     {
         if (!$formDefinition instanceof FormDefinitionInterface) {
             return null;
@@ -108,12 +85,7 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
         return $formDefinition;
     }
 
-    /**
-     * @param FormDefinitionInterface[] $formDefinitions
-     *
-     * @return FormDefinitionInterface[]
-     */
-    protected function assembleMultiple(array $formDefinitions)
+    protected function assembleMultiple(array $formDefinitions): array
     {
         $assembledFormDefinitions = [];
         foreach ($formDefinitions as $formDefinition) {

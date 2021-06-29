@@ -9,39 +9,24 @@ use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 
 class ObjectOutputChannel implements ChannelInterface
 {
-    /**
-     * @var ObjectResolverFactoryInterface
-     */
-    protected $objectResolverFactory;
+    protected ObjectResolverFactoryInterface $objectResolverFactory;
 
-    /**
-     * @param ObjectResolverFactoryInterface $objectResolverFactory
-     */
     public function __construct(ObjectResolverFactoryInterface $objectResolverFactory)
     {
         $this->objectResolverFactory = $objectResolverFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFormType(): string
     {
         return ObjectChannelType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocalizedConfiguration(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsedFormFieldNames(array $channelConfiguration)
+    public function getUsedFormFieldNames(array $channelConfiguration): array
     {
         if (count($channelConfiguration['objectMappingData']) === 0) {
             return [];
@@ -53,7 +38,7 @@ class ObjectOutputChannel implements ChannelInterface
     /**
      * {@inheritdoc}
      */
-    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
+    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
         $locale = $submissionEvent->getRequest()->getLocale();
@@ -81,13 +66,7 @@ class ObjectOutputChannel implements ChannelInterface
         $objectResolver->resolve();
     }
 
-    /**
-     * @param array $definitionFields
-     * @param array $fieldNames
-     *
-     * @return array
-     */
-    protected function findUsedFormFieldsInConfiguration(array $definitionFields, $fieldNames = [])
+    protected function findUsedFormFieldsInConfiguration(array $definitionFields, array $fieldNames = []): array
     {
         foreach ($definitionFields as $definitionField) {
             $hasChildren = isset($definitionField['childs']) && is_array($definitionField['childs']) && count($definitionField['childs']) > 0;

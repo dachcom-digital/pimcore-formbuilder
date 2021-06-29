@@ -4,31 +4,19 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 
 class FormTypeClassesData implements DataInterface
 {
-    /**
-     * @var array
-     */
-    private $data = [];
+    private array $data = [];
 
-    /**
-     * @param array $data
-     */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasData()
+    public function hasData(): bool
     {
         return !empty($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }

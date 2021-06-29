@@ -9,56 +9,31 @@ use FormBuilderBundle\Tool\LocaleDataMapper;
 
 class EmailOutputChannel implements ChannelInterface
 {
-    /**
-     * @var EmailOutputChannelWorker
-     */
-    protected $channelWorker;
+    protected EmailOutputChannelWorker $channelWorker;
+    protected LocaleDataMapper $localeDataMapper;
 
-    /**
-     * @var LocaleDataMapper
-     */
-    protected $localeDataMapper;
-
-    /**
-     * @param EmailOutputChannelWorker $channelWorker
-     * @param LocaleDataMapper         $localeDataMapper
-     */
     public function __construct(EmailOutputChannelWorker $channelWorker, LocaleDataMapper $localeDataMapper)
     {
         $this->channelWorker = $channelWorker;
         $this->localeDataMapper = $localeDataMapper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFormType(): string
     {
         return EmailChannelType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocalizedConfiguration(): bool
     {
         return true;
     }
 
-    /**
-     * Currently unsupported for EmailOutputChanel.
-     *
-     * {@inheritdoc}
-     */
-    public function getUsedFormFieldNames(array $channelConfiguration)
+    public function getUsedFormFieldNames(array $channelConfiguration): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
+    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
         $locale = $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
@@ -69,15 +44,7 @@ class EmailOutputChannel implements ChannelInterface
         $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $locale);
     }
 
-    /**
-     * @param array  $channelConfiguration
-     * @param string $locale
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    protected function validateOutputConfig(array $channelConfiguration, string $locale)
+    protected function validateOutputConfig(array $channelConfiguration, string $locale): array
     {
         $localizedConfig = $this->localeDataMapper->mapMultiDimensional($locale, 'mailTemplate', true, $channelConfiguration);
 
