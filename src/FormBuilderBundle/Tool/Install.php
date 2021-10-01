@@ -2,14 +2,10 @@
 
 namespace FormBuilderBundle\Tool;
 
-use Doctrine\DBAL\Migrations\AbortMigrationException;
-use Doctrine\DBAL\Migrations\MigrationException;
-use Doctrine\DBAL\Migrations\Version;
-use Doctrine\DBAL\Schema\Schema;
 use FormBuilderBundle\Configuration\Configuration;
 use Pimcore\Db\Connection;
-use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
-use Pimcore\Migrations\Migration\InstallMigration;
+use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
+use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Property;
@@ -18,72 +14,13 @@ use Pimcore\Tool\Admin;
 use Symfony\Component\Filesystem\Filesystem;
 use Pimcore\Model\User\Permission;
 
-class Install extends MigrationInstaller
+class Install extends SettingsStoreAwareInstaller
 {
-    /**
-     * @var array
-     */
-    protected $permissionsToInstall = [
+    protected array $permissionsToInstall = [
         'formbuilder_permission_settings'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion(): string
-    {
-        return '00000001';
-    }
-
-    /**
-     * @throws AbortMigrationException
-     * @throws MigrationException
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function beforeInstallMigration()
-    {
-        $markVersionsAsMigrated = true;
-
-        // legacy:
-        //   we switched from config to migration
-        //   if config.yml exists, this instance needs to migrate
-        //   so every migration needs to run.
-        // fresh:
-        //   skip all versions since they are not required anymore
-        //   (fresh installation does not require any version migrations)
-        $fileSystem = new Filesystem();
-        if ($fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH . '/config.yml')) {
-            $markVersionsAsMigrated = false;
-        }
-
-        if ($markVersionsAsMigrated === true) {
-            $migrationConfiguration = $this->migrationManager->getBundleConfiguration($this->bundle);
-            $this->migrationManager->markVersionAsMigrated($migrationConfiguration->getVersion($migrationConfiguration->getLatestVersion()));
-        }
-
-        $this->initializeFreshSetup();
-    }
-
-    /**
-     * @param Schema  $schema
-     * @param Version $version
-     */
-    public function migrateInstall(Schema $schema, Version $version)
-    {
-        /** @var InstallMigration $migration */
-        $migration = $version->getMigration();
-        if ($migration->isDryRun()) {
-            $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping installation');
-
-            return;
-        }
-    }
-
-    /**
-     * @throws AbortMigrationException
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function initializeFreshSetup()
+    public function install(): void
     {
         $this->setupPaths();
         $this->installDbStructure();
@@ -94,43 +31,7 @@ class Install extends MigrationInstaller
         $this->installDocumentTypes();
     }
 
-    /**
-     * @param Schema  $schema
-     * @param Version $version
-     */
-    public function migrateUninstall(Schema $schema, Version $version)
-    {
-        /** @var InstallMigration $migration */
-        $migration = $version->getMigration();
-        if ($migration->isDryRun()) {
-            $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping uninstallation');
-
-            return;
-        }
-
-        // currently nothing to do.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function needsReloadAfterInstall()
-    {
-        return true;
-    }
-
-    /**
-     * @param string|null $version
-     */
-    protected function beforeUpdateMigration(string $version = null)
-    {
-        $this->setupPaths();
-    }
-
-    /**
-     * install or update config file.
-     */
-    protected function setupPaths()
+    protected function setupPaths(): void
     {
         $fileSystem = new Filesystem();
         if (!$fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
@@ -143,40 +44,27 @@ class Install extends MigrationInstaller
     }
 
     /**
-     * Only an alias to allow migrations to execute.
-     *
-     * @throws AbortMigrationException
+     * @throws InstallationException
      */
-    public function updateTranslations()
-    {
-        $this->installTranslations();
-    }
-
-    /**
-     * @throws AbortMigrationException
-     */
-    protected function installTranslations()
+    protected function installTranslations(): void
     {
         $csv = $this->getInstallSourcesPath() . '/translations/frontend.csv';
         $csvAdmin = $this->getInstallSourcesPath() . '/translations/admin.csv';
 
         try {
-            Translation\Website::importTranslationsFromFile($csv, true, Admin::getLanguages());
+            Translation::importTranslationsFromFile($csv, Translation::DOMAIN_DEFAULT, true, Admin::getLanguages());
         } catch (\Exception $e) {
-            throw new AbortMigrationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
+            throw new InstallationException(sprintf('Failed to install website translations. error was: "%s"', $e->getMessage()));
         }
 
         try {
-            Translation\Admin::importTranslationsFromFile($csvAdmin, true, Admin::getLanguages());
+            Translation::importTranslationsFromFile($csvAdmin, Translation::DOMAIN_DEFAULT, true, Admin::getLanguages());
         } catch (\Exception $e) {
-            throw new AbortMigrationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
+            throw new InstallationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
         }
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function installDbStructure()
+    protected function installDbStructure(): void
     {
         /** @var Connection $db */
         $db = \Pimcore\Db::get();
@@ -184,34 +72,29 @@ class Install extends MigrationInstaller
     }
 
     /**
-     * @throws AbortMigrationException
+     * @throws InstallationException|\Exception
      */
-    protected function installPermissions()
+    protected function installPermissions(): void
     {
         foreach ($this->permissionsToInstall as $permission) {
             $definition = Permission\Definition::getByKey($permission);
 
             if ($definition) {
-                $this->outputWriter->write(sprintf(
-                    '     <comment>WARNING:</comment> Skipping permission "%s" as it already exists',
-                    $permission
-                ));
-
                 continue;
             }
 
             try {
                 Permission\Definition::create($permission);
             } catch (\Throwable $e) {
-                throw new AbortMigrationException(sprintf('Failed to create permission "%s"', $permission));
+                throw new InstallationException(sprintf('Failed to create permission "%s"', $permission));
             }
         }
     }
 
     /**
-     * @throws AbortMigrationException
+     * @throws InstallationException
      */
-    protected function installFormDataFolder()
+    protected function installFormDataFolder(): void
     {
         //create folder for upload storage!
         $folderName = 'formdata';
@@ -231,24 +114,19 @@ class Install extends MigrationInstaller
         try {
             $folder->save();
         } catch (\Exception $e) {
-            throw new AbortMigrationException(sprintf('Failed to create form data folder. Error was: "%s"', $e->getMessage()));
+            throw new InstallationException(sprintf('Failed to create form data folder. Error was: "%s"', $e->getMessage()));
         }
     }
 
-    /**
-     * Only an alias to allow migrations to execute.
-     *
-     * @throws AbortMigrationException
-     */
-    public function updateProperties()
+    public function updateProperties(): void
     {
         $this->installProperties();
     }
 
     /**
-     * @throws AbortMigrationException
+     * @throws InstallationException
      */
-    protected function installProperties()
+    protected function installProperties(): void
     {
         $properties = [];
 
@@ -270,15 +148,15 @@ class Install extends MigrationInstaller
             try {
                 $property->getDao()->save();
             } catch (\Exception $e) {
-                throw new AbortMigrationException(sprintf('Failed to save property "%s". Error was: "%s"', $key, $e->getMessage()));
+                throw new InstallationException(sprintf('Failed to save property "%s". Error was: "%s"', $key, $e->getMessage()));
             }
         }
     }
 
     /**
-     * @throws AbortMigrationException
+     * @throws InstallationException
      */
-    protected function installDocumentTypes()
+    protected function installDocumentTypes(): void
     {
         // get list of types
         $list = new DocType\Listing();
@@ -303,16 +181,14 @@ class Install extends MigrationInstaller
             $type = DocType::create();
             $type->setValues([
                 'name'       => $elementName,
-                'module'     => 'FormBuilderBundle',
-                'controller' => '@FormBuilderBundle\Controller\EmailController',
-                'action'     => 'email',
+                'controller' => 'FormBuilderBundle\Controller\EmailController::emailAction',
                 'template'   => 'FormBuilderBundle:Email:email.html.twig',
                 'type'       => 'email',
                 'priority'   => 0
             ]);
             $type->getDao()->save();
         } catch (\Exception $e) {
-            throw new AbortMigrationException(sprintf('Failed to create document type "%s". Error was: "%s"', $elementName, $e->getMessage()));
+            throw new InstallationException(sprintf('Failed to create document type "%s". Error was: "%s"', $elementName, $e->getMessage()));
         }
     }
 

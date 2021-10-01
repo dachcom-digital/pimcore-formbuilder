@@ -43,8 +43,8 @@ class FormFieldContainerStorageTest extends DachcomBundleTestCase
         $this->assertEquals('repeater_container', $field->getName());
         $this->assertEquals('container', $field->getType());
         $this->assertEquals('repeater', $field->getSubType());
-        $this->assertInternalType('array', $field->getConfiguration());
-        $this->assertInternalType('array', $field->getFields());
+        $this->assertIsArray($field->getConfiguration());
+        $this->assertIsArray($field->getFields());
         $this->assertCount(1, $field->getFields());
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field->getFields()[0]);
 
@@ -83,8 +83,8 @@ class FormFieldContainerStorageTest extends DachcomBundleTestCase
         $this->assertEquals('repeater_container', $field->getName());
         $this->assertEquals('container', $field->getType());
         $this->assertEquals('fieldset', $field->getSubType());
-        $this->assertInternalType('array', $field->getConfiguration());
-        $this->assertInternalType('array', $field->getFields());
+        $this->assertIsArray($field->getConfiguration());
+        $this->assertIsArray($field->getFields());
         $this->assertCount(1, $field->getFields());
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field->getFields()[0]);
     }

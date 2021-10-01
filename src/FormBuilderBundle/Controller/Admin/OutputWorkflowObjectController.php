@@ -16,44 +16,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class OutputWorkflowObjectController extends AdminController
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected FormFactoryInterface $formFactory;
+    protected FormDefinitionManager $formDefinitionManager;
+    protected OutputWorkflowManager $outputWorkflowManager;
+    protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry;
+    protected ExtJsFormBuilder $extJsFormBuilder;
 
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
-
-    /**
-     * @var OutputWorkflowManager
-     */
-    protected $outputWorkflowManager;
-
-    /**
-     * @var DynamicObjectResolverRegistry
-     */
-    protected $dynamicObjectResolverRegistry;
-
-    /**
-     * @var ExtJsFormBuilder
-     */
-    protected $extJsFormBuilder;
-
-    /**
-     * @param Configuration                 $configuration
-     * @param FormFactoryInterface          $formFactory
-     * @param FormDefinitionManager         $formDefinitionManager
-     * @param OutputWorkflowManager         $outputWorkflowManager
-     * @param DynamicObjectResolverRegistry $dynamicObjectResolverRegistry
-     * @param ExtJsFormBuilder              $extJsFormBuilder
-     */
     public function __construct(
         Configuration $configuration,
         FormFactoryInterface $formFactory,
@@ -70,12 +39,7 @@ class OutputWorkflowObjectController extends AdminController
         $this->extJsFormBuilder = $extJsFormBuilder;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getObjectClassesAction(Request $request)
+    public function getObjectClassesAction(Request $request): JsonResponse
     {
         $list = new DataObject\ClassDefinition\Listing();
 
@@ -94,13 +58,9 @@ class OutputWorkflowObjectController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
-    public function getObjectClassesFieldsAction(Request $request)
+    public function getObjectClassesFieldsAction(Request $request): JsonResponse
     {
         $type = $request->get('type');
         $id = $request->get('id');
@@ -128,12 +88,7 @@ class OutputWorkflowObjectController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getFieldCollectionTypesForDataTypeAction(Request $request)
+    public function getFieldCollectionTypesForDataTypeAction(Request $request): JsonResponse
     {
         $classId = $request->get('classId');
         $fieldCollectionKey = $request->get('fieldCollectionKey');
@@ -167,12 +122,7 @@ class OutputWorkflowObjectController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getFormDataAction(Request $request)
+    public function getFormDataAction(Request $request): JsonResponse
     {
         $formId = $request->get('id');
         $baseConfiguration = json_decode($request->get('baseConfiguration', ''), true);
@@ -217,12 +167,7 @@ class OutputWorkflowObjectController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getDynamicObjectResolverAction(Request $request)
+    public function getDynamicObjectResolverAction(Request $request): JsonResponse
     {
         $services = $this->dynamicObjectResolverRegistry->getAll();
 

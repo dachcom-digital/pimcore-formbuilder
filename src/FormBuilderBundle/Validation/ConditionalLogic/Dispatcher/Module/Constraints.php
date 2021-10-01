@@ -8,57 +8,27 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInt
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
+use Pimcore\Translation\Translator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class Constraints implements ModuleInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected Translator $translator;
+    protected DataFactory $dataFactory;
+    protected FormFieldDefinitionInterface $field;
+    protected array $formData;
+    protected array $availableConstraints;
+    protected array $appliedConditions;
 
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
-
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var FormFieldDefinitionInterface
-     */
-    protected $field;
-
-    /**
-     * @var array
-     */
-    protected $availableConstraints;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param DataFactory         $dataFactory
-     */
     public function __construct(
-        TranslatorInterface $translator,
+        Translator $translator,
         DataFactory $dataFactory
     ) {
         $this->translator = $translator;
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'             => [],
@@ -74,11 +44,6 @@ class Constraints implements ModuleInterface
         $resolver->setAllowedTypes('appliedConditions', 'array');
     }
 
-    /**
-     * @param array $options
-     *
-     * @return DataInterface
-     */
     public function apply($options)
     {
         $this->formData = $options['formData'];

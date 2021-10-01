@@ -4,7 +4,7 @@
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/formbuilder.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/formbuilder)
 [![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/Codeception?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22Codeception%22)
-[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/PHP%20Stan?style=flat-square&logo=github&label=phpstan%20level%202)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22PHP%20Stan%22)
+[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/PHP%20Stan?style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22PHP%20Stan%22)
 
 ![FormBuilder](https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png)
 
@@ -12,34 +12,26 @@
 
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
 |---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **4.x** | `10.0`                            | `5.2`                      | UNRELEASED   | Feature Branch | dev-master |
+| **4.x** | `10.1`                            | `5.3`                      | UNRELEASED   | Feature Branch | dev-master |
 | **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Bugfix only    | [3.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/3.x)        |
 | **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Unsupported    | 2.7        |
 | **1.5** | `4.0`                             | --                         | 18.03.2017   | Unsupported    | pimcore4   |
-
-## Pimcore X
-This Branch is under heavy development and should not be used in production!
 
 ## Installation
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "dev-master"
+    "dachcom-digital/formbuilder" : "~4.0.0"
 }
 ```
 
-After you have installed the FormBuilder Bundle via composer:
 - Execute: `$ bin/console pimcore:bundle:enable FormBuilderBundle`
 - Execute: `$ bin/console pimcore:bundle:install FormBuilderBundle`
 
 ## Upgrading
 
-### Upgrading via CommandLine
-After you have updated the FormBuilder Bundle via composer:
-- Execute: `$ bin/console pimcore:bundle:update FormBuilderBundle`
-
-Does actually the same as the update command and preferred in CI-Workflow:
-- Execute: `$ bin/console pimcore:migrations:migrate -b FormBuilderBundle`
+### Upgrading
+- Execute: `$ bin/console doctrine:migrations:version --add --all --prefix 'FormBuilderBundle\Migrations'`
 
 ## Usage
 ![](http://g.recordit.co/39nEX5OhQK.gif)

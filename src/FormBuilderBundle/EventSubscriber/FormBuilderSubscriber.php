@@ -25,41 +25,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected Dispatcher $dispatcher;
+    protected FormRegistryInterface $formRegistry;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    private array $availableConstraints;
+    private array $availableFormTypes;
 
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var FormRegistryInterface
-     */
-    protected $formRegistry;
-
-    /**
-     * @var array
-     */
-    private $availableConstraints;
-
-    /**
-     * @var array
-     */
-    private $availableFormTypes;
-
-    /**
-     * @param Configuration             $configuration
-     * @param Dispatcher                $dispatcher
-     * @param FormRegistryInterface     $formRegistry
-     */
     public function __construct(
         Configuration $configuration,
         EventDispatcherInterface $eventDispatcher,
@@ -320,7 +293,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         if (!empty($templateClasses)) {
-            $options['attr']['data-template'] = join(' ', $templateClasses);
+            $options['attr']['data-template'] = implode(' ', $templateClasses);
         }
 
         return [

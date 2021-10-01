@@ -50,7 +50,7 @@ This value is important to render your form within a given main layout.
 ```php
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use FormBuilderBundle\Assembler\FormAssembler;

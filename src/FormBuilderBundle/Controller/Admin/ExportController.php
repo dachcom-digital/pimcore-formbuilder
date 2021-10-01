@@ -15,16 +15,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExportController extends AdminController
 {
-    const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
+    public const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
 
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
+    protected FormDefinitionManager $formDefinitionManager;
 
-    /**
-     * @param FormDefinitionManager $formDefinitionManager
-     */
     public function __construct(FormDefinitionManager $formDefinitionManager)
     {
         $this->formDefinitionManager = $formDefinitionManager;
@@ -67,13 +61,7 @@ class ExportController extends AdminController
         return $response;
     }
 
-    /**
-     * @param array $mailData
-     * @param int   $formId
-     *
-     * @return string
-     */
-    private function buildCsv(array $mailData, $formId)
+    private function buildCsv(array $mailData, int $formId): string
     {
         $mailHeader = [
             'form_id',
@@ -159,7 +147,7 @@ class ExportController extends AdminController
      *
      * @return array
      */
-    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, &$mailHeader)
+    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, &$mailHeader): array
     {
         $normalizedParams = [];
         $forbiddenKeys = ['body', '_form_builder_id'];
@@ -218,12 +206,7 @@ class ExportController extends AdminController
         return $normalizedParams;
     }
 
-    /**
-     * @param int $formId
-     *
-     * @return string
-     */
-    private function generateFormIdQuery($formId)
+    private function generateFormIdQuery(int $formId): string
     {
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
@@ -235,12 +218,7 @@ class ExportController extends AdminController
         ]);
     }
 
-    /**
-     * @param string $mailType
-     *
-     * @return string
-     */
-    private function generateFormTypeQuery($mailType)
+    private function generateFormTypeQuery(string $mailType): string
     {
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
@@ -252,13 +230,7 @@ class ExportController extends AdminController
         ]);
     }
 
-    /**
-     * @param array $header
-     * @param array $data
-     *
-     * @return string
-     */
-    private function generateCsvStructure($header, $data)
+    private function generateCsvStructure(array $header, array $data): string
     {
         $handle = fopen('php://temp', 'r+');
         if (!is_resource($handle)) {

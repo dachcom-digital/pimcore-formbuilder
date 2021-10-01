@@ -11,20 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AjaxController extends FrontendController
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry;
 
-    /**
-     * @var DynamicMultiFileAdapterRegistry
-     */
-    protected $dynamicMultiFileAdapterRegistry;
-
-    /**
-     * @param Configuration                   $configuration
-     * @param DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
-     */
     public function __construct(
         Configuration $configuration,
         DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
@@ -36,17 +25,12 @@ class AjaxController extends FrontendController
     /**
      * @throws \RuntimeException
      */
-    public function parseAction()
+    public function parseAction(): void
     {
         throw new \RuntimeException('form parse action gets handled by kernel events.');
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function fileUploadAction(Request $request)
+    public function fileUploadAction(Request $request): Response
     {
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
 
@@ -59,12 +43,7 @@ class AjaxController extends FrontendController
         return $dmfAdapter->onUpload($request);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function fileDoneAction(Request $request)
+    public function fileDoneAction(Request $request): Response
     {
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
 
@@ -77,13 +56,7 @@ class AjaxController extends FrontendController
         return $dmfAdapter->onDone($request);
     }
 
-    /**
-     * @param Request $request
-     * @param string  $identifier
-     *
-     * @return Response
-     */
-    public function fileDeleteAction(Request $request, $identifier = null)
+    public function fileDeleteAction(Request $request, ?string $identifier = null): Response
     {
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
 
@@ -96,10 +69,7 @@ class AjaxController extends FrontendController
         return $dmfAdapter->onDelete($request);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getAjaxUrlStructureAction()
+    public function getAjaxUrlStructureAction(): JsonResponse
     {
         $router = $this->container->get('router');
 
