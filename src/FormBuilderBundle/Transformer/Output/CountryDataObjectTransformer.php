@@ -7,32 +7,21 @@ use FormBuilderBundle\Transformer\Target\TargetAwareData;
 use FormBuilderBundle\Transformer\Target\TargetAwareValue;
 use FormBuilderBundle\Transformer\Output\Traits\ChoiceTargetTransformerTrait;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
 
 class CountryDataObjectTransformer implements OutputTransformerInterface
 {
     use ChoiceTargetTransformerTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): mixed
     {
-        $type = $fieldDefinition instanceof FieldDefinitionInterface ? $fieldDefinition->getType() : null;
-
-        if ($type !== 'country') {
+        if ($fieldDefinition->getType() !== 'country') {
             return null;
         }
 
         return new TargetAwareValue([$this, 'getTargetAwareValue']);
     }
 
-    /**
-     * @param TargetAwareData $targetAwareData
-     *
-     * @return mixed|null
-     */
-    public function getTargetAwareValue(TargetAwareData $targetAwareData)
+    public function getTargetAwareValue(TargetAwareData $targetAwareData): mixed
     {
         $rawValue = $targetAwareData->getRawValue();
         $validType = is_array($rawValue) || is_scalar($rawValue);
@@ -46,10 +35,7 @@ class CountryDataObjectTransformer implements OutputTransformerInterface
         return $this->parseChoiceValue($target, $rawValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): ?string
     {
         return null;
     }

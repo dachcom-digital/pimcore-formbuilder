@@ -9,41 +9,29 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 
 trait ChoiceTargetTransformerTrait
 {
-    /**
-     * @param mixed $target
-     * @param mixed $rawValue
-     *
-     * @return mixed|null
-     */
-    public function parseChoiceValue($target, $rawValue)
+    public function parseChoiceValue(mixed $target, mixed $rawValue): mixed
     {
         if ($target instanceof Select || $target instanceof Gender) {
             return $this->parseArrayChoiceToSingle($rawValue);
-        } elseif ($target instanceof Multiselect) {
+        }
+
+        if ($target instanceof Multiselect) {
             return $this->parseSingleChoiceToArray($rawValue);
-        } elseif ($target instanceof Input) {
+        }
+
+        if ($target instanceof Input) {
             return $this->parseArrayChoiceToString($rawValue);
         }
 
         return $rawValue;
     }
 
-    /**
-     * @param mixed $rawValue
-     *
-     * @return array
-     */
-    private function parseSingleChoiceToArray($rawValue)
+    private function parseSingleChoiceToArray(mixed $rawValue): array
     {
         return !is_array($rawValue) ? [$rawValue] : $rawValue;
     }
 
-    /**
-     * @param mixed $rawValue
-     *
-     * @return string|null
-     */
-    private function parseArrayChoiceToSingle($rawValue)
+    private function parseArrayChoiceToSingle(mixed $rawValue): mixed
     {
         if (!is_array($rawValue)) {
             return $rawValue;
@@ -56,13 +44,8 @@ trait ChoiceTargetTransformerTrait
         return null;
     }
 
-    /**
-     * @param mixed $rawValue
-     *
-     * @return string|null
-     */
-    private function parseArrayChoiceToString($rawValue)
+    private function parseArrayChoiceToString(mixed $rawValue): mixed
     {
-        return is_array($rawValue) ? join(', ', $rawValue) : $rawValue;
+        return is_array($rawValue) ? implode(', ', $rawValue) : $rawValue;
     }
 }

@@ -6,26 +6,31 @@ use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Assembler\FormAssembler;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends FrontendController
 {
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request): Response
     {
+        return $this->renderTemplate('default/default.html.twig');
     }
 
-    public function snippetAction(Request $request)
+    public function snippetAction(Request $request): Response
     {
+        return $this->renderTemplate('default/snippet.html.twig');
     }
 
-    public function twigRenderAction(Request $request)
+    public function twigRenderAction(Request $request): Response
     {
+        return $this->renderTemplate('default/twigRender.html.twig');
     }
 
-    public function javascriptAction(Request $request)
+    public function javascriptAction(Request $request): Response
     {
+        return $this->renderTemplate('default/javascript.html.twig');
     }
 
-    public function dynamicMultiFileAction(Request $request)
+    public function dynamicMultiFileAction(Request $request): Response
     {
         $options = [];
 
@@ -38,7 +43,7 @@ class DefaultController extends FrontendController
         return $this->renderTemplate('Default/dynamic-multi-file.html.twig', ['options' => $options]);
     }
 
-    public function controllerRenderAction(Request $request)
+    public function controllerRenderAction(Request $request): Response
     {
         $options = [
             'form_id'            => $this->document->getProperty('form_id'),

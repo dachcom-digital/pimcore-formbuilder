@@ -55,7 +55,7 @@ namespace AppBundle\OutputTransformer;
 
 use Pimcore\Translation\Translator;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
 
 class TextInputTransformer implements OutputTransformerInterface
@@ -76,7 +76,7 @@ class TextInputTransformer implements OutputTransformerInterface
     /**
      * {@inheritDoc}
      */
-    public function getValue(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         // manipulate or change the value
         return $rawValue;
@@ -85,7 +85,7 @@ class TextInputTransformer implements OutputTransformerInterface
     /**
      * {@inheritDoc}
      */
-    public function getLabel(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         // manipulate or change the label
         return $rawValue;
@@ -127,7 +127,7 @@ namespace AppBundle\OutputTransformer;
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Transformer\Target\TargetAwareData;
 use FormBuilderBundle\Transformer\Target\TargetAwareValue;
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
@@ -138,7 +138,7 @@ class MyTargetAwareOutputTransformer implements OutputTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale)
     {
         return new TargetAwareValue([$this, 'getTargetAwareValue']);
     }
@@ -167,7 +167,7 @@ class MyTargetAwareOutputTransformer implements OutputTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel(FormFieldSimpleInterface $field, FormInterface $formField, $rawValue, $locale)
+    public function getLabel(FieldDefinitionInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         return null;
     }

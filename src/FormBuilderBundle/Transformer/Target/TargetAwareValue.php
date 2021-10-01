@@ -4,23 +4,14 @@ namespace FormBuilderBundle\Transformer\Target;
 
 class TargetAwareValue
 {
-    /**
-     * @var array|\Closure
-     */
-    protected $callback;
+    protected \Closure|array $callback;
 
-    /**
-     * @param \Closure|array $callback
-     */
-    public function __construct($callback)
+    public function __construct(\Closure|array $callback)
     {
         $this->callback = $callback;
     }
 
-    /**
-     * @return \Closure|array
-     */
-    public function getCallback()
+    public function getCallback(): \Closure|array
     {
         return $this->callback;
     }

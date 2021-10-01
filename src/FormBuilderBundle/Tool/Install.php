@@ -29,6 +29,8 @@ class Install extends SettingsStoreAwareInstaller
         $this->installFormDataFolder();
         $this->installProperties();
         $this->installDocumentTypes();
+
+        parent::install();
     }
 
     protected function setupPaths(): void
@@ -192,10 +194,7 @@ class Install extends SettingsStoreAwareInstaller
         }
     }
 
-    /**
-     * @return string
-     */
-    protected function getInstallSourcesPath()
+    protected function getInstallSourcesPath(): string
     {
         return __DIR__ . '/../Resources/install';
     }

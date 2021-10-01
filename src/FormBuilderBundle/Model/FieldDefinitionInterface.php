@@ -2,9 +2,7 @@
 
 namespace FormBuilderBundle\Model;
 
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
-
-interface FieldDefinitionInterface extends FormFieldSimpleInterface
+interface FieldDefinitionInterface
 {
     /**
      * @return int

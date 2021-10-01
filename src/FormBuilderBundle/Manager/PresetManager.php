@@ -9,33 +9,22 @@ use Pimcore\Tool;
 
 class PresetManager
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return array
-     */
-    public function getAll(Document $document)
+    public function getAll(Document $document): array
     {
         $areaConfig = $this->configuration->getConfig('area');
         $formPresets = $areaConfig['presets'];
 
-        $dat = [];
+        $data = [];
 
         if (empty($formPresets)) {
-            return $dat;
+            return $data;
         }
 
         foreach ($formPresets as $presetName => $presetConfig) {
@@ -52,19 +41,13 @@ class PresetManager
                 }
             }
 
-            $dat[$presetName] = $presetConfig;
+            $data[$presetName] = $presetConfig;
         }
 
-        return $dat;
+        return $data;
     }
 
-    /**
-     * @param string $presetName
-     * @param array  $presetConfig
-     *
-     * @return array
-     */
-    public function getDataForPreview($presetName, $presetConfig)
+    public function getDataForPreview(string $presetName, array $presetConfig): array
     {
         $previewData = [
             'presetName'  => $presetName,
@@ -79,14 +62,7 @@ class PresetManager
         return $previewData;
     }
 
-    /**
-     * Get Site in EditMode if SiteRequest is available.
-     *
-     * @param Document $originDocument
-     *
-     * @return null|Site
-     */
-    private function getCurrentSiteInAdminMode($originDocument)
+    private function getCurrentSiteInAdminMode(Document $originDocument): ?Site
     {
         $currentSite = null;
 
