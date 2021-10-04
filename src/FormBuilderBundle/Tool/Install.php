@@ -8,7 +8,6 @@ use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\DocType;
-use Pimcore\Model\Property;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Filesystem\Filesystem;
@@ -27,7 +26,6 @@ class Install extends SettingsStoreAwareInstaller
         $this->installPermissions();
         $this->installTranslations();
         $this->installFormDataFolder();
-        $this->installProperties();
         $this->installDocumentTypes();
 
         parent::install();
@@ -50,17 +48,17 @@ class Install extends SettingsStoreAwareInstaller
      */
     protected function installTranslations(): void
     {
-        $csv = $this->getInstallSourcesPath() . '/translations/frontend.csv';
+        $csvWebsite = $this->getInstallSourcesPath() . '/translations/frontend.csv';
         $csvAdmin = $this->getInstallSourcesPath() . '/translations/admin.csv';
 
         try {
-            Translation::importTranslationsFromFile($csv, Translation::DOMAIN_DEFAULT, true, Admin::getLanguages());
+            Translation::importTranslationsFromFile($csvWebsite, Translation::DOMAIN_DEFAULT, false, Admin::getLanguages());
         } catch (\Exception $e) {
             throw new InstallationException(sprintf('Failed to install website translations. error was: "%s"', $e->getMessage()));
         }
 
         try {
-            Translation::importTranslationsFromFile($csvAdmin, Translation::DOMAIN_DEFAULT, true, Admin::getLanguages());
+            Translation::importTranslationsFromFile($csvAdmin, Translation::DOMAIN_DEFAULT, false, Admin::getLanguages());
         } catch (\Exception $e) {
             throw new InstallationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
         }
@@ -117,41 +115,6 @@ class Install extends SettingsStoreAwareInstaller
             $folder->save();
         } catch (\Exception $e) {
             throw new InstallationException(sprintf('Failed to create form data folder. Error was: "%s"', $e->getMessage()));
-        }
-    }
-
-    public function updateProperties(): void
-    {
-        $this->installProperties();
-    }
-
-    /**
-     * @throws InstallationException
-     */
-    protected function installProperties(): void
-    {
-        $properties = [];
-
-        foreach ($properties as $key => $propertyConfig) {
-            $defProperty = Property\Predefined::getByKey($key);
-            if ($defProperty instanceof Property\Predefined) {
-                continue;
-            }
-
-            $property = new Property\Predefined();
-            $property->setKey($key);
-            $property->setType($propertyConfig['type']);
-            $property->setName($propertyConfig['name']);
-
-            $property->setDescription($propertyConfig['description']);
-            $property->setCtype($propertyConfig['ctype']);
-            $property->setInheritable(false);
-
-            try {
-                $property->getDao()->save();
-            } catch (\Exception $e) {
-                throw new InstallationException(sprintf('Failed to save property "%s". Error was: "%s"', $key, $e->getMessage()));
-            }
         }
     }
 

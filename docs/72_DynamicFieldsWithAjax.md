@@ -10,7 +10,7 @@ To fix this, you need to add some more form events:
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;

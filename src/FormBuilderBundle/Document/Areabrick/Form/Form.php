@@ -2,21 +2,20 @@
 
 namespace FormBuilderBundle\Document\Areabrick\Form;
 
-use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Assembler\FormAssembler;
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-use Pimcore\Model\Document\Editable\Area\Info;
-use Pimcore\Model\Document\Editable\Relation;
-use Pimcore\Model\Document\Editable\Select;
+use Pimcore\Extension\Document\Areabrick\AbstractAreabrick;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
+use Pimcore\Model\Document;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
-class Form extends AbstractTemplateAreabrick
+class Form extends AbstractAreabrick implements EditableDialogBoxInterface
 {
     protected FormDefinitionManager $formDefinitionManager;
     protected PresetManager $presetManager;
@@ -38,20 +37,20 @@ class Form extends AbstractTemplateAreabrick
         $this->translator = $translator;
     }
 
-    public function action(Info $info): ?Response
+    public function action(Document\Editable\Area\Info $info): ?Response
     {
         $formId = null;
         $isEditMode = $info->getParam('editmode');
 
         $info->setParams(array_merge($info->getParams(), ['forceEditInView' => true]));
 
-        /** @var Select $formPresetSelection */
+        /** @var Document\Editable\Select $formPresetSelection */
         $formPresetSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'formPreset');
-        /** @var Select $formTemplateSelection */
+        /** @var Document\Editable\Select $formTemplateSelection */
         $formTemplateSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'formType');
-        /** @var Select $outputWorkflowSelection */
+        /** @var Document\Editable\Select $outputWorkflowSelection */
         $outputWorkflowSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'outputWorkflow');
-        /** @var Select $formNameElement */
+        /** @var Document\Editable\Select $formNameElement */
         $formNameElement = $this->getDocumentEditable($info->getDocument(), 'select', 'formName');
 
         if (!$formNameElement->isEmpty()) {
@@ -61,19 +60,14 @@ class Form extends AbstractTemplateAreabrick
         // editmode variable is not available if there is an edit window
         $info->setParam('form_builder_is_admin_mode', $isEditMode === true);
 
-        $editViewVars = [];
-        if ($isEditMode === true) {
-            $editViewVars = $this->prepareEditModeData($info, $formId);
-        }
-
         $formTemplate = $formTemplateSelection->getValue();
         $sendCopy = $this->getDocumentEditable($info->getDocument(), 'checkbox', 'userCopy')->getData() === true;
         $formPreset = $formPresetSelection->getData();
         $formOutputWorkflow = $outputWorkflowSelection->isEmpty() || $outputWorkflowSelection->getData() === 'none' ? null : (int) $outputWorkflowSelection->getData();
 
-        /** @var Relation $mailTemplateElement */
+        /** @var Document\Editable\Relation $mailTemplateElement */
         $mailTemplateElement = $this->getDocumentEditable($info->getDocument(), 'relation', 'sendMailTemplate');
-        /** @var Relation $copyMailTemplateElement */
+        /** @var Document\Editable\Relation $copyMailTemplateElement */
         $copyMailTemplateElement = $this->getDocumentEditable($info->getDocument(), 'relation', 'sendCopyMailTemplate');
 
         $optionBuilder = new FormOptionsResolver();
@@ -87,103 +81,55 @@ class Form extends AbstractTemplateAreabrick
 
         $assemblerViewVars = $this->formAssembler->assembleViewVars($optionBuilder);
 
-        foreach (array_merge($editViewVars, $assemblerViewVars) as $var => $varValue) {
+        foreach ($assemblerViewVars as $var => $varValue) {
             $info->setParam($var, $varValue);
         }
 
         return null;
     }
 
-    protected function prepareEditModeData(Info $info, ?int $selectedFormId): array
+    public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Document\Editable\Area\Info $info): EditableDialogBoxConfiguration
     {
-        $editViewVars = [];
+        $baseDocument = $area->getDocument();
+
+        $editableDialog = new EditableDialogBoxConfiguration();
+
+        $formId = null;
+        $outputWorkflowSelection = null;
+
         $availableForms = [];
         $formOutputWorkflows = [];
+        $validWorkflowIdsForCurrentSelection = [];
 
         $allFormDefinitions = $this->formDefinitionManager->getAll();
 
         if (!empty($allFormDefinitions)) {
-            /** @var FormDefinitionInterface $form */
             foreach ($allFormDefinitions as $form) {
                 $availableForms[] = [$form->getId(), $form->getName()];
-                $formOutputWorkflows[$form->getId()] = array_map(function (OutputWorkflowInterface $outputWorkflow) {
+                $formOutputWorkflows[$form->getId()] = array_map(static function (OutputWorkflowInterface $outputWorkflow) {
                     return [$outputWorkflow->getId(), $outputWorkflow->getName()];
                 }, $form->getOutputWorkflows()->toArray());
             }
         }
 
-        $editViewVars['formStore'] = $availableForms;
+        if ($info instanceof Document\Editable\Area\Info) {
 
-        $editViewVars = $this->prepareFormTemplateEditModeStore($info, $editViewVars);
-        $editViewVars = $this->prepareFormPresetsEditModeStore($info, $editViewVars);
-        $editViewVars = $this->prepareOutputWorkflowEditModeStore($info, $editViewVars, $formOutputWorkflows, $selectedFormId);
-
-        return $editViewVars;
-    }
-
-    protected function prepareFormTemplateEditModeStore(Info $info, array $editViewVars): array
-    {
-        /** @var Select $formTemplateSelection */
-        $formTemplateSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'formType');
-
-        $formTemplateStore = [];
-        foreach ($this->templateManager->getFormTemplates(true) as $template) {
-            $template[1] = $this->translator->trans($template[1], [], 'admin');
-            $formTemplateStore[] = $template;
-        }
-
-        $editViewVars['formTemplateStore'] = $formTemplateStore;
-
-        if ($formTemplateSelection->isEmpty()) {
-            $formTemplateSelection->setDataFromResource($this->templateManager->getDefaultFormTemplate());
-        }
-
-        return $editViewVars;
-    }
-
-    protected function prepareFormPresetsEditModeStore(Info $info, array $editViewVars): array
-    {
-        $formPresetsStore = [];
-        $formPresetsInfo = [];
-
-        /** @var Select $formPresetSelection */
-        $formPresetSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'formPreset');
-
-        $formPresets = $this->presetManager->getAll($info->getDocument());
-
-        if (!empty($formPresets)) {
-            $formPresetsStore[] = ['custom', $this->translator->trans('form_builder.area.no_form_preset', [], 'admin')];
-
-            foreach ($formPresets as $presetName => $preset) {
-                $formPresetsStore[] = [$presetName, $preset['nice_name']];
-                $formPresetsInfo[] = $this->presetManager->getDataForPreview($presetName, $preset);
+            /** @var Document\Editable\Select $formNameElement */
+            $formNameElement = $this->getDocumentEditable($info->getDocument(), 'select', 'formName');
+            if (!$formNameElement->isEmpty()) {
+                $formId = (int) $formNameElement->getData();
             }
 
-            if ($formPresetSelection->isEmpty()) {
-                $formPresetSelection->setDataFromResource('custom');
-            }
-
-            $editViewVars['formPresetStore'] = $formPresetsStore;
-            $editViewVars['formPresetsInfo'] = $formPresetsInfo;
+            /** @var Document\Editable\Select $outputWorkflowSelection */
+            $outputWorkflowSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'outputWorkflow');
         }
 
-        return $editViewVars;
-    }
-
-    protected function prepareOutputWorkflowEditModeStore(Info $info, array $editViewVars, array $formOutputWorkflows, ?int $selectedFormId): array
-    {
-        /** @var Select $outputWorkflowSelection */
-        $outputWorkflowSelection = $this->getDocumentTag($info->getDocument(), 'select', 'outputWorkflow');
-
-        $validWorkflowIdsForCurrentSelection = [];
-        $formOutputWorkflowStore = [['none', $this->translator->trans('form_builder.area.no_output_workflow', [], 'admin')]];
         $preSelectedOutputWorkflow = 'none';
-        $hasValidOutputWorkflows = false;
+        $formOutputWorkflowStore = [['none', $this->translator->trans('form_builder.area.no_output_workflow', [], 'admin')]];
 
-        if ($selectedFormId !== null && isset($formOutputWorkflows[$selectedFormId]) && count($formOutputWorkflows[$selectedFormId]) > 0) {
-            $hasValidOutputWorkflows = true;
+        if ($formId !== null && isset($formOutputWorkflows[$formId]) && count($formOutputWorkflows[$formId]) > 0) {
             $formOutputWorkflowStore = [];
-            foreach ($formOutputWorkflows[$selectedFormId] as $index => $outputWorkflow) {
+            foreach ($formOutputWorkflows[$formId] as $index => $outputWorkflow) {
                 if ($index === 0) {
                     $preSelectedOutputWorkflow = $outputWorkflow[0];
                 }
@@ -193,43 +139,124 @@ class Form extends AbstractTemplateAreabrick
             }
         }
 
-        $currentSelectionIsInvalid = false;
-        if ($outputWorkflowSelection->isEmpty() === false) {
+        if (($outputWorkflowSelection instanceof Document\Editable\Select) && $outputWorkflowSelection->isEmpty() === false) {
             $currentSelection = $outputWorkflowSelection->getData();
-            if (is_numeric($currentSelection) && !in_array((int) $currentSelection, $validWorkflowIdsForCurrentSelection)) {
-                $currentSelectionIsInvalid = true;
+            if (is_numeric($currentSelection) && !in_array((int) $currentSelection, $validWorkflowIdsForCurrentSelection, true)) {
+                $outputWorkflowSelection->setDataFromResource($preSelectedOutputWorkflow);
             }
         }
 
-        if ($outputWorkflowSelection->isEmpty() || $currentSelectionIsInvalid === true) {
-            $outputWorkflowSelection->setDataFromResource($preSelectedOutputWorkflow);
+        $tabbedItems = [];
+
+        $tabbedItems[] = [
+            'type'     => 'panel',
+            'title'    => $this->translator->trans('form_builder.area.tab.form', [], 'admin'),
+            'defaults' => [
+                'cls' => 'form-builder-panel'
+            ],
+            'items'    => [
+                [
+                    'type'   => 'select',
+                    'name'   => 'formName',
+                    'label'  => $this->translator->trans('form_builder.area.form', [], 'admin'),
+                    'config' => [
+                        'store'    => $availableForms,
+                        'width'    => 250,
+                        'onchange' => 'formBuilderAreaWatcher.watchOutputWorkflow.bind(this)'
+                    ]
+                ],
+                [
+                    'type'   => 'select',
+                    'name'   => 'outputWorkflow',
+                    'label'  => $this->translator->trans('form_builder.area.output_workflow', [], 'admin'),
+                    'config' => [
+                        'defaultValue' => $preSelectedOutputWorkflow,
+                        'width'        => 250,
+                        'store'        => $formOutputWorkflowStore,
+                        'class'        => 'fb-output-workflow-selector',
+                    ]
+                ]
+            ]
+        ];
+
+        $tabbedItems = $this->addTemplateTab($tabbedItems);
+        $tabbedItems = $this->addPresetTab($tabbedItems, $baseDocument);
+
+        $editableDialog->setReloadOnClose(true);
+        $editableDialog->setWidth(600);
+        $editableDialog->setHeight(450);
+
+        $editableDialog->setItems([
+            'type'  => 'tabpanel',
+            'items' => $tabbedItems
+        ]);
+
+        return $editableDialog;
+    }
+
+    protected function addTemplateTab(array $tabbedItems): array
+    {
+        $formTemplateStore = [];
+        foreach ($this->templateManager->getFormTemplates(true) as $template) {
+            $template[1] = $this->translator->trans($template[1], [], 'admin');
+            $formTemplateStore[] = $template;
         }
 
-        $editViewVars['hasValidOutputWorkflows'] = $hasValidOutputWorkflows;
-        $editViewVars['outputWorkflowStore'] = $formOutputWorkflowStore;
-        $editViewVars['allOutputWorkflowStore'] = $formOutputWorkflows;
+        $tabbedItems[] = [
+            'type'  => 'panel',
+            'title' => $this->translator->trans('form_builder.area.tab.template', [], 'admin'),
+            'items' => [
+                [
+                    'type'   => 'select',
+                    'name'   => 'formType',
+                    'label'  => $this->translator->trans('form_builder.area.form_template', [], 'admin'),
+                    'config' => [
+                        'defaultValue' => $this->templateManager->getDefaultFormTemplate(),
+                        'width'        => 250,
+                        'store'        => $formTemplateStore
+                    ]
+                ]
+            ]
+        ];
 
-        return $editViewVars;
+        return $tabbedItems;
     }
 
-    public function hasEditTemplate(): bool
+    protected function addPresetTab(array $tabbedItems, Document\PageSnippet $baseDocument): array
     {
-        return true;
-    }
+        $formPresetsStore = [];
 
-    public function getViewTemplate(): string
-    {
-        return 'FormBuilderBundle:Form:form.' . $this->getTemplateSuffix();
-    }
+        $formPresets = $this->presetManager->getAll($baseDocument);
 
-    public function getEditTemplate(): string
-    {
-        return 'FormBuilderBundle:Areas/form:edit.' . $this->getTemplateSuffix();
-    }
+        if (empty($formPresets)) {
+            return $tabbedItems;
+        }
 
-    public function getTemplateSuffix(): string
-    {
-        return static::TEMPLATE_SUFFIX_TWIG;
+        $formPresetsStore[] = ['custom', $this->translator->trans('form_builder.area.no_form_preset', [], 'admin')];
+
+        foreach ($formPresets as $presetName => $preset) {
+            $formPresetsStore[] = [$presetName, $preset['nice_name']];
+        }
+
+        $tabbedItems[] = [
+            'type'  => 'panel',
+            'title' => $this->translator->trans('form_builder.area.tab.preset', [], 'admin'),
+            'items' => [
+                [
+                    'type'   => 'select',
+                    'name'   => 'formPreset',
+                    'label'  => $this->translator->trans('form_builder.area.form_preset', [], 'admin'),
+                    'config' => [
+                        'defaultValue' => 'custom',
+                        'width'        => 250,
+                        'store'        => $formPresetsStore,
+                        'onchange'     => 'formBuilderAreaWatcher.watchPresets.bind(this)'
+                    ]
+                ]
+            ]
+        ];
+
+        return $tabbedItems;
     }
 
     public function getName(): string
@@ -237,17 +264,12 @@ class Form extends AbstractTemplateAreabrick
         return 'Form';
     }
 
-    public function getDescription(): string
+    public function getHtmlTagOpen(Document\Editable\Area\Info $info): string
     {
         return '';
     }
 
-    public function getHtmlTagOpen(Info $info): string
-    {
-        return '';
-    }
-
-    public function getHtmlTagClose(Info $info): string
+    public function getHtmlTagClose(Document\Editable\Area\Info $info): string
     {
         return '';
     }
@@ -255,5 +277,20 @@ class Form extends AbstractTemplateAreabrick
     public function getIcon(): string
     {
         return '/bundles/formbuilder/img/application_form.svg';
+    }
+
+    public function getTemplate(): string
+    {
+        return sprintf('@FormBuilder/form/form.%s', $this->getTemplateSuffix());
+    }
+
+    public function getTemplateLocation(): string
+    {
+        return static::TEMPLATE_LOCATION_BUNDLE;
+    }
+
+    public function getTemplateSuffix(): string
+    {
+        return static::TEMPLATE_SUFFIX_TWIG;
     }
 }

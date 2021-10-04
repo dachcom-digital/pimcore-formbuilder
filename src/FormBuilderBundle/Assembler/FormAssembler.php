@@ -7,42 +7,14 @@ use FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
-use Symfony\Component\Form\FormInterface;
 
 class FormAssembler
 {
-    /**
-     * @var FrontendFormBuilder
-     */
-    protected $frontendFormBuilder;
+    protected FrontendFormBuilder $frontendFormBuilder;
+    protected FormDefinitionManager $formDefinitionManager;
+    protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator;
+    protected string $preset = '';
 
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
-
-    /**
-     * @var FormRuntimeDataAllocatorInterface
-     */
-    protected $formRuntimeDataAllocator;
-
-    /**
-     * @var FormOptionsResolver
-     *
-     * @deprecated
-     */
-    protected $optionsResolver = null;
-
-    /**
-     * @var string
-     */
-    protected $preset = '';
-
-    /**
-     * @param FrontendFormBuilder               $frontendFormBuilder
-     * @param FormDefinitionManager             $formDefinitionManager
-     * @param FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
-     */
     public function __construct(
         FrontendFormBuilder $frontendFormBuilder,
         FormDefinitionManager $formDefinitionManager,
@@ -53,38 +25,8 @@ class FormAssembler
         $this->formRuntimeDataAllocator = $formRuntimeDataAllocator;
     }
 
-    /**
-     * @param FormOptionsResolver $optionsResolver
-     *
-     * @deprecated since Version 3.3
-     */
-    public function setFormOptionsResolver(FormOptionsResolver $optionsResolver)
+    public function assembleViewVars(FormOptionsResolver $optionsResolver): array
     {
-        @trigger_error(
-            'Calling setFormOptionsResolver has been deprecated with FormBuilder 3.3 and will be removed with 4.0, use FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionsResolver) instead.',
-            E_USER_DEPRECATED
-        );
-
-        $this->optionsResolver = $optionsResolver;
-    }
-
-    /**
-     * @param FormOptionsResolver|null $optionsResolver
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function assembleViewVars(?FormOptionsResolver $optionsResolver = null)
-    {
-        if ($this->optionsResolver instanceof FormOptionsResolver) {
-            $optionsResolver = $this->optionsResolver;
-        }
-
-        if (is_null($optionsResolver)) {
-            throw new \Exception('no valid options resolver found.');
-        }
-
         $builderError = false;
         $exceptionMessage = null;
         $formDefinition = null;
@@ -144,7 +86,6 @@ class FormAssembler
         $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
         $formRuntimeData = $formRuntimeDataCollector->getData();
 
-        /** @var FormInterface $form */
         $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
 
         $viewVars['form_block_template'] = $optionsResolver->getFormBlockTemplate();

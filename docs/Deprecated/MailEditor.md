@@ -21,7 +21,7 @@ It's very easy to add some custom template widgets (Eg. date field).
 
 ### Register Service:
 ```yml
-AppBundle\MailEditor\Widget\SpecialWidget:
+App\MailEditor\Widget\SpecialWidget:
     tags:
         - { name: form_builder.mail_editor.widget, type: special }
 ```
@@ -30,7 +30,7 @@ AppBundle\MailEditor\Widget\SpecialWidget:
 ```php
 <?php
 
-namespace AppBundle\MailEditor\Widget;
+namespace App\MailEditor\Widget;
 
 use FormBuilderBundle\MailEditor\Widget\MailEditorWidgetInterface;
 

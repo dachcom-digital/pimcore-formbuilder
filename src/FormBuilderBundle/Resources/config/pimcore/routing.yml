@@ -56,6 +56,10 @@ form_builder.controller.admin.get_form_dependencies:
     path: /admin/formbuilder/settings/get-form-dependencies
     defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::findFormDependenciesAction }
 
+form_builder.controller.admin.get_preset_description:
+    path: /admin/formbuilder/settings/get-preset-description/{name}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::getPresetDescriptionAction }
+
 # Output Workflows
 form_builder.controller.admin.output_workflow.get_output_workflow_tree:
     path: /admin/formbuilder/output-workflow/get-output-workflow-tree/{formId}

@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Event\OutputWorkflow;
 
 use FormBuilderBundle\Form\Data\FormDataInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ChannelSubjectGuardEvent extends Event
 {

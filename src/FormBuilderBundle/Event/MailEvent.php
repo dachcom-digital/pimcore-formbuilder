@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Event;
 
 use Pimcore\Mail;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
 /**

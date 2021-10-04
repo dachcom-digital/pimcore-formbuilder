@@ -16,7 +16,7 @@ class PresetManager
         $this->configuration = $configuration;
     }
 
-    public function getAll(Document $document): array
+    public function getAll(Document\PageSnippet $document): array
     {
         $areaConfig = $this->configuration->getConfig('area');
         $formPresets = $areaConfig['presets'];
@@ -35,7 +35,7 @@ class PresetManager
                 if ($currentSite !== null) {
                     $allowedSites = (array) $presetConfig['sites'];
 
-                    if (!in_array($currentSite->getMainDomain(), $allowedSites)) {
+                    if (!in_array($currentSite->getMainDomain(), $allowedSites, true)) {
                         continue;
                     }
                 }
@@ -47,13 +47,22 @@ class PresetManager
         return $data;
     }
 
-    public function getDataForPreview(string $presetName, array $presetConfig): array
+    public function getDataForPreview(string $presetName): array
     {
+        $areaConfig = $this->configuration->getConfig('area');
+        $formPresets = $areaConfig['presets'];
+
         $previewData = [
             'presetName'  => $presetName,
             'description' => '',
             'fields'      => []
         ];
+
+        if (!is_array($formPresets) || !array_key_exists($presetName, $formPresets)) {
+            return $previewData;
+        }
+
+        $presetConfig = $formPresets[$presetName];
 
         if (isset($presetConfig['admin_description'])) {
             $previewData['description'] = strip_tags($presetConfig['admin_description'], '<br><strong><em><p><span>');

@@ -7,120 +7,69 @@ use Doctrine\Common\Collections\Collection;
 
 class OutputWorkflow implements OutputWorkflowInterface
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
+    protected string $name;
+    protected array $successManagement;
 
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var array
-     */
-    protected $successManagement;
-
-    /**
-     * @var FormDefinitionInterface
-     */
-    protected $formDefinition;
-
-    /**
-     * @var Collection|OutputWorkflowChannelInterface[]
-     */
-    protected $channels;
+    protected FormDefinitionInterface $formDefinition;
+    protected Collection $channels;
 
     public function __construct()
     {
         $this->channels = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setSuccessManagement(array $successManagement)
+    public function setSuccessManagement(array $successManagement): void
     {
         $this->successManagement = $successManagement;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSuccessManagement()
+    public function getSuccessManagement(): array
     {
         return $this->successManagement;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFormDefinition(FormDefinitionInterface $formDefinition)
+    public function setFormDefinition(FormDefinitionInterface $formDefinition): void
     {
         $this->formDefinition = $formDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormDefinition()
+    public function getFormDefinition(): FormDefinitionInterface
     {
         return $this->formDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChannels()
+    public function hasChannels(): bool
     {
         return !$this->channels->isEmpty();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChannel(OutputWorkflowChannelInterface $channel)
+    public function hasChannel(OutputWorkflowChannelInterface $channel): bool
     {
         return $this->channels->contains($channel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addChannel(OutputWorkflowChannelInterface $channel)
+    public function addChannel(OutputWorkflowChannelInterface $channel): void
     {
         if (!$this->hasChannel($channel)) {
             $this->channels->add($channel);
@@ -128,20 +77,14 @@ class OutputWorkflow implements OutputWorkflowInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeChannel(OutputWorkflowChannelInterface $channel)
+    public function removeChannel(OutputWorkflowChannelInterface $channel): void
     {
         if ($this->hasChannel($channel)) {
             $this->channels->removeElement($channel);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChannels()
+    public function getChannels(): Collection
     {
         return $this->channels;
     }

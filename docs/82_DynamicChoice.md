@@ -13,7 +13,7 @@ by extending the default options via [form extensions](http://symfony.com/doc/cu
 
 ## Add Service
 ```yaml
-AppBundle\Services\FormBuilderBundle\ProductChoices:
+App\Services\FormBuilderBundle\ProductChoices:
     autowire: true
     public: false
     tags:
@@ -24,12 +24,12 @@ AppBundle\Services\FormBuilderBundle\ProductChoices:
 ```php
 <?php
 
-namespace AppBundle\Services\FormBuilderBundle;
+namespace App\Services\FormBuilderBundle;
 
 use FormBuilderBundle\Form\ChoiceBuilderInterface;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
-use AppBundle\Model\Product;
+use App\Model\Product;
 
 class ProductChoices implements ChoiceBuilderInterface
 {
@@ -83,11 +83,11 @@ You could implement the `AdvancedChoiceBuilderInterface` to get more control abo
 ```php
 <?php
 
-namespace AppBundle\Services\FormBuilderBundle;
+namespace App\Services\FormBuilderBundle;
 
 use FormBuilderBundle\Form\AdvancedChoiceBuilderInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use AppBundle\Model\Product;
+use App\Model\Product;
 
 class ProductChoices implements AdvancedChoiceBuilderInterface
 {

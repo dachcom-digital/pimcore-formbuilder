@@ -7,52 +7,30 @@ use Pimcore\Model\DataObject;
 
 class NewObjectResolver extends AbstractObjectResolver
 {
-    /**
-     * @var string
-     */
-    protected $resolvingObjectClass;
+    protected string $resolvingObjectClass;
+    protected array $storagePath;
 
-    /**
-     * @var array
-     */
-    protected $storagePath;
-
-    /**
-     * @param string $resolvingObjectClass
-     */
-    public function setResolvingObjectClass(string $resolvingObjectClass)
+    public function setResolvingObjectClass(string $resolvingObjectClass): void
     {
         $this->resolvingObjectClass = $resolvingObjectClass;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getResolvingObjectClass()
+    public function getResolvingObjectClass(): string
     {
         return $this->resolvingObjectClass;
     }
 
-    /**
-     * @param array $storagePath
-     */
-    public function setStoragePath(array $storagePath)
+    public function setStoragePath(array $storagePath): void
     {
         $this->storagePath = $storagePath;
     }
 
-    /**
-     * @return array
-     */
-    public function getStoragePath()
+    public function getStoragePath(): array
     {
         return $this->storagePath;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getStorageObject()
+    public function getStorageObject(): DataObject\Concrete
     {
         /** @var FormDataInterface $formData */
         $formData = $this->getForm()->getData();
@@ -64,18 +42,16 @@ class NewObjectResolver extends AbstractObjectResolver
         $object = $this->modelFactory->build($pathName);
 
         $object->setParent($storageFolder);
-        $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId())));
+        $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId()), true));
         $object->setPublished(true);
 
         return $object;
     }
 
     /**
-     * @return DataObject\Folder
-     *
      * @throws \Exception
      */
-    public function getStorageFolder()
+    public function getStorageFolder(): DataObject\Folder
     {
         $storageFolderInfo = $this->getStoragePath();
         $storageFolderId = $storageFolderInfo['id'];
@@ -88,10 +64,7 @@ class NewObjectResolver extends AbstractObjectResolver
         return $storageFolder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fieldTypeAllowedToProcess($fieldType)
+    public function fieldTypeAllowedToProcess($fieldType): bool
     {
         return true;
     }

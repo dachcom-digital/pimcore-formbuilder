@@ -1,5 +1,8 @@
 "key","en","de"
 "form_builder.area.form","Form","Formular"
+"form_builder.area.tab.form","Form","Formular"
+"form_builder.area.tab.template","Template","Template"
+"form_builder.area.tab.preset","Preset","Vorlage"
 "form_builder.area.form_type","Form Type","Formular Typ"
 "form_builder.area.form_template","Form Template","Formular Template"
 "form_builder.area.send_copy_to_user","Send Copy to User","Kopie an User versenden"

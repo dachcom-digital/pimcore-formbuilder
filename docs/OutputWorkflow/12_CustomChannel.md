@@ -6,7 +6,7 @@ To create a custom output workflow channel, you need to create some configuratio
 ```yaml
 
 services:
-    AppBundle\FormBuilder\MyChannel:
+    App\FormBuilder\MyChannel:
         tags:
             - { name: form_builder.output_workflow.channel, type: myChannel }
 
@@ -19,7 +19,7 @@ Read [here](./15_OutputTransformer.md#custom-output-transformer) how to add a si
 ```php
 <?php
 
-namespace AppBundle\Form;
+namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -51,9 +51,9 @@ class MyChannelType extends AbstractType
 ```php
 <?php
 
-namespace AppBundle\FormBuilder;
+namespace App\FormBuilder;
 
-use AppBundle\Form\MyChannelType;
+use App\Form\MyChannelType;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
@@ -114,7 +114,7 @@ class MyChannel implements ChannelInterface
 ```
 
 ## ExtJS Class
-You need to register this class in your `AppBundle` via `getJsPaths()`.
+You need to register this class via `\Pimcore\Event\BundleManagerEvents::JS_PATHS` Event.
 
 ```js
 pimcore.registerNS('Formbuilder.extjs.formPanel.outputWorkflow.channel.myChannel');

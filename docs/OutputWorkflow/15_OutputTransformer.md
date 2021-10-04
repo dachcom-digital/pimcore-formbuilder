@@ -29,7 +29,7 @@ Now you need to register your new and shiny transformer. Since there is no defau
 you could apply this transformer to all channels.
 
 ```yaml
-    AppBundle\OutputTransformer\TextInputTransformer:
+    App\OutputTransformer\TextInputTransformer:
         autowire: true
         tags:
             - { name: form_builder.transformer.output, type: text_input_transformer, channel: _all }
@@ -38,7 +38,7 @@ you could apply this transformer to all channels.
 If you want to apply this transformer to the [object output channel](./15_OutputTransformer.md) only, change the channel:
 
 ```yaml
-    AppBundle\OutputTransformer\TextInputTransformer:
+    App\OutputTransformer\TextInputTransformer:
         autowire: true
         tags:
             - { name: form_builder.transformer.output, type: text_input_transformer, channel: object }
@@ -51,7 +51,7 @@ After that, you have to set up a PHP-Service:
 ```php
 <?php
 
-namespace AppBundle\OutputTransformer;
+namespace App\OutputTransformer;
 
 use Pimcore\Translation\Translator;
 use Symfony\Component\Form\FormInterface;
@@ -104,7 +104,7 @@ If you want to add a fallback to all the other fields in your channel, you need 
 > **Note:** If you don't add any transformer, the `fallback_transformer` will be used again.
 >
 ```yaml
-AppBundle\OutputTransformer\MyChannelOutputTransformer:
+App\OutputTransformer\MyChannelOutputTransformer:
     autowire: true
     tags:
         - { name: form_builder.transformer.output, type: date_transformer, channel: myChannel }
@@ -122,7 +122,7 @@ In our object output channel for example, it's allowed to map choice values to d
 ```php
 <?php
 
-namespace AppBundle\OutputTransformer;
+namespace App\OutputTransformer;
 
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Transformer\Target\TargetAwareData;

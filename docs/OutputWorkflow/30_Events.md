@@ -3,7 +3,7 @@
 ```yaml
 
 services:
-    AppBundle\FormBuilder\OutputWorkflowEventListener:
+    App\FormBuilder\OutputWorkflowEventListener:
         tags:
             - { name: kernel.event_subscriber }
 ```
@@ -11,7 +11,7 @@ services:
 ```php
 <?php
 
-namespace AppBundle\FormBuilder;
+namespace App\FormBuilder;
 
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;

@@ -15,7 +15,7 @@ use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;

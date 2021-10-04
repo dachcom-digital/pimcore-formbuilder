@@ -2,43 +2,26 @@
 
 namespace FormBuilderBundle\Event\Form;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormEvent;
 
 class PreSetDataEvent extends Event
 {
-    /**
-     * @var FormEvent
-     */
-    private $formEvent;
+    private FormEvent $formEvent;
+    private array $formOptions;
 
-    /**
-     * @var array
-     */
-    private $formOptions;
-
-    /**
-     * @param FormEvent $formEvent
-     * @param array     $formOptions
-     */
     public function __construct(FormEvent $formEvent, $formOptions)
     {
         $this->formEvent = $formEvent;
         $this->formOptions = $formOptions;
     }
 
-    /**
-     * @return FormEvent
-     */
-    public function getFormEvent()
+    public function getFormEvent(): FormEvent
     {
         return $this->formEvent;
     }
 
-    /**
-     * @return array
-     */
-    public function getFormOptions()
+    public function getFormOptions(): array
     {
         return $this->formOptions;
     }

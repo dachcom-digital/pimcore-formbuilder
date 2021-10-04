@@ -6,146 +6,75 @@ use Pimcore\Model\Document;
 
 class FormOptionsResolver
 {
-    /**
-     * @var null|int
-     */
-    protected $formId = null;
+    protected ?int $formId = null;
+    protected ?string $mainLayout = null;
+    protected ?string $formTemplate = null;
+    protected ?string $formBlockTemplate = null;
+    protected ?int $outputWorkflow = null;
+    protected string $preset = 'custom';
+    protected array $customOptions = [];
+    protected bool $sendCopy = false;
+    protected ?Document\Email $mailTemplate = null;
+    protected ?Document\Email $mailCopyTemplate = null;
 
-    /**
-     * @var null|string
-     */
-    protected $mainLayout = null;
-
-    /**
-     * @var null|string
-     */
-    protected $formTemplate = null;
-
-    /**
-     * @var null|string
-     */
-    protected $formBlockTemplate = null;
-
-    /**
-     * @var null|int
-     */
-    protected $outputWorkflow = null;
-
-    /**
-     * @var string
-     */
-    protected $preset = 'custom';
-
-    /**
-     * @var array
-     */
-    protected $customOptions = [];
-
-    /**
-     * @var bool
-     */
-    protected $sendCopy = false;
-
-    /**
-     * @var null|Document\Email
-     */
-    protected $mailTemplate = null;
-
-    /**
-     * @var null|Document\Email
-     */
-    protected $mailCopyTemplate = null;
-
-    /**
-     * @param null|int $formId
-     */
-    public function setFormId($formId)
+    public function setFormId(?int $formId): void
     {
         if (is_numeric($formId)) {
             $this->formId = (int) $formId;
         }
     }
 
-    /**
-     * @return null|int
-     */
-    public function getFormId()
+    public function getFormId(): ?int
     {
         return $this->formId;
     }
 
-    /**
-     * @param string $mainLayout
-     */
-    public function setMainLayout($mainLayout)
+    public function setMainLayout(?string $mainLayout): void
     {
         $this->mainLayout = $mainLayout;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getMainLayout()
+    public function getMainLayout(): ?string
     {
         return $this->mainLayout;
     }
 
-    /**
-     * @param int|string $outputWorkflow
-     */
-    public function setOutputWorkflow($outputWorkflow = null)
+    public function setOutputWorkflow(int|string|null $outputWorkflow = null): void
     {
         if (is_numeric($outputWorkflow) || is_string($outputWorkflow)) {
             $this->outputWorkflow = $outputWorkflow;
         }
     }
 
-    /**
-     * @return int|string|null
-     */
-    public function getOutputWorkflow()
+
+    public function getOutputWorkflow(): int|string|null
     {
         return $this->outputWorkflow;
     }
 
-    /**
-     * @param string $preset
-     */
-    public function setFormPreset($preset = null)
+    public function setFormPreset(?string $preset = null): void
     {
-        if (!empty($preset) && !is_null($preset)) {
+        if (!empty($preset)) {
             $this->preset = $preset;
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getFormPreset()
+    public function getFormPreset(): string
     {
         return $this->preset;
     }
 
-    /**
-     * @param array $customOptions
-     */
-    public function setCustomOptions(array $customOptions = [])
+    public function setCustomOptions(array $customOptions = []): void
     {
         $this->customOptions = $customOptions;
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomOptions()
+    public function getCustomOptions(): array
     {
         return $this->customOptions;
     }
 
-    /**
-     * @param string $formTemplate
-     */
-    public function setFormTemplate($formTemplate)
+    public function setFormTemplate(string $formTemplate): void
     {
         if (empty($formTemplate)) {
             $formTemplate = 'form_div_layout.html.twig';
@@ -155,18 +84,12 @@ class FormOptionsResolver
         $this->formBlockTemplate = $formTemplate;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormTemplate()
+    public function getFormTemplate(): string
     {
-        return '@FormBuilder/Form/Theme/' . $this->formTemplate;
+        return '@FormBuilder/form/theme/' . $this->formTemplate;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getFormTemplateName()
+    public function getFormTemplateName(): ?string
     {
         if (empty($this->formTemplate)) {
             return 'form_div_layout';
@@ -175,37 +98,25 @@ class FormOptionsResolver
         return substr($this->formTemplate, 0, strpos($this->formTemplate, '.'));
     }
 
-    /**
-     * @return string
-     */
-    public function getFormBlockTemplate()
+    public function getFormBlockTemplate(): string
     {
-        return '@FormBuilder/Form/Theme/Macro/' . $this->formBlockTemplate;
+        return '@FormBuilder/form/theme/macro/' . $this->formBlockTemplate;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormLayout()
+    public function getFormLayout(): string
     {
-        $path = '@FormBuilder/Form/%s.html.twig';
-        $template = $this->getFormPreset() === 'custom' ? 'default' : 'Presets/' . $this->getFormPreset();
+        $path = '@FormBuilder/form/%s.html.twig';
+        $template = $this->getFormPreset() === 'custom' ? 'default' : 'presets/' . $this->getFormPreset();
 
         return sprintf($path, $template);
     }
 
-    /**
-     * @param bool $sendCopy
-     */
-    public function setSendCopy($sendCopy)
+    public function setSendCopy(bool $sendCopy): void
     {
         $this->sendCopy = $sendCopy;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSendCopy()
+    public function getSendCopy(): bool
     {
         if ($this->sendCopy === true && is_null($this->getCopyMailTemplateId())) {
             $this->sendCopy = false;
@@ -214,10 +125,7 @@ class FormOptionsResolver
         return $this->sendCopy;
     }
 
-    /**
-     * @param int|Document\Email $mailTemplate
-     */
-    public function setMailTemplate($mailTemplate)
+    public function setMailTemplate(null|int|Document\Email $mailTemplate): void
     {
         if (is_numeric($mailTemplate)) {
             $mailTemplate = Document\Email::getById($mailTemplate);
@@ -229,18 +137,12 @@ class FormOptionsResolver
         }
     }
 
-    /**
-     * @return null|Document\Email
-     */
-    public function getMailTemplate()
+    public function getMailTemplate(): ?Document\Email
     {
         return $this->mailTemplate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMailTemplateId()
+    public function getMailTemplateId(): ?int
     {
         if ($this->mailTemplate instanceof Document\Email) {
             return (int) $this->mailTemplate->getId();
@@ -249,10 +151,7 @@ class FormOptionsResolver
         return null;
     }
 
-    /**
-     * @param int|Document\Email $mailTemplate
-     */
-    public function setCopyMailTemplate($mailTemplate)
+    public function setCopyMailTemplate(null|int|Document\Email $mailTemplate)
     {
         if (is_numeric($mailTemplate)) {
             $mailTemplate = Document\Email::getById($mailTemplate);
@@ -264,18 +163,12 @@ class FormOptionsResolver
         }
     }
 
-    /**
-     * @return null|Document\Email
-     */
-    public function getCopyMailTemplate()
+    public function getCopyMailTemplate(): ?Document\Email
     {
         return $this->mailCopyTemplate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCopyMailTemplateId()
+    public function getCopyMailTemplateId(): ?int
     {
         if ($this->mailCopyTemplate instanceof Document\Email) {
             return (int) $this->mailCopyTemplate->getId();
@@ -289,12 +182,8 @@ class FormOptionsResolver
      * This method only works if you have enabled the i18n bundle.
      *
      * @see https://github.com/dachcom-digital/pimcore-i18n/blob/master/docs/90_InternalLinkRewriter.md#internal-link-rewriter
-     *
-     * @param Document\Email $mailTemplate
-     *
-     * @return Document\Email
      */
-    private function checkI18nPath(Document\Email $mailTemplate)
+    private function checkI18nPath(Document\Email $mailTemplate): Document\Email
     {
         $i18nFullPath = $mailTemplate->getFullPath();
         $fullPath = $mailTemplate->getPath() . $mailTemplate->getKey();

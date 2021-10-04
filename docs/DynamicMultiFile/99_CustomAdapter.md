@@ -21,11 +21,11 @@ services:
         autoconfigure: true
         public: true
 
-    AppBundle\DynamicMultiFile\Adapter\MyUploaderAdapter:
+    App\DynamicMultiFile\Adapter\MyUploaderAdapter:
         tags:
             - { name: form_builder.dynamic_multi_file.adapter }
 
-    AppBundle\Form\Type\DynamicMultiFile\MyUploaderType:
+    App\Form\Type\DynamicMultiFile\MyUploaderType:
         public: false
         tags:
             - { name: form.type }
@@ -54,7 +54,7 @@ $('form.formbuilder.ajax-form').formBuilderAjaxManager({
 ```php
 <?php
 
-namespace AppBundle\Form\Type\DynamicMultiFile;
+namespace App\Form\Type\DynamicMultiFile;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -124,9 +124,9 @@ class MyUploaderType extends AbstractType
 ```php
 <?php
 
-namespace AppBundle\DynamicMultiFile\Adapter;
+namespace App\DynamicMultiFile\Adapter;
 
-use AppBundle\Form\Type\DynamicMultiFile\MyUploaderType;
+use App\Form\Type\DynamicMultiFile\MyUploaderType;
 use FormBuilderBundle\DynamicMultiFile\Adapter\DynamicMultiFileAdapterInterface;
 use FormBuilderBundle\Stream\FileStreamInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -226,7 +226,7 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
 ## V. JavaScript Handler
 
 ```javascript
-// AppBundle/Resources/public/js/dynamic-multi-file-adapter/lib/jquery.fb.dmf.my-uploader.js
+// App/Resources/public/js/dynamic-multi-file-adapter/lib/jquery.fb.dmf.my-uploader.js
 
 ;(function ($, window) {
 

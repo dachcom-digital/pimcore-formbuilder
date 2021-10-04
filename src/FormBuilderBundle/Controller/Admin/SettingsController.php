@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Controller\Admin;
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
@@ -352,6 +353,18 @@ class SettingsController extends AdminController
             'limit'     => $limit,
             'total'     => isset($data['total']) ? $data['total'] : 0
         ]);
+    }
+
+    public function getPresetDescriptionAction(Request $request, PresetManager $presetManager, string $name): JsonResponse
+    {
+        $preset = $presetManager->getDataForPreview($name);
+
+        return $this->json(
+            [
+                'success'     => true,
+                'previewData' => $preset
+            ]
+        );
     }
 
     private function getSaveName(string $name): string
