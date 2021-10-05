@@ -486,11 +486,8 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
         });
     },
 
-    /**
-     * @todo: remove "clipboard" in version 4.0
-     */
     initCkEditorPlugins: function () {
-        Ext.Array.each(['widget', 'widgetselection', 'lineutils', 'formmaileditor', 'clipboard', 'notification'], function (pluginName) {
+        Ext.Array.each(['widget', 'widgetselection', 'lineutils', 'formmaileditor', 'notification'], function (pluginName) {
             if (CKEDITOR.plugins.get(pluginName) === null) {
                 CKEDITOR.plugins.addExternal(pluginName, '/bundles/formbuilder/js/extjs/ckeditor/' + pluginName + '/', 'plugin.js');
             }
