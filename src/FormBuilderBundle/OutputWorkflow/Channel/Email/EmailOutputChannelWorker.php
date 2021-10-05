@@ -11,7 +11,6 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
-use FormBuilderBundle\Event\MailEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
@@ -84,24 +83,9 @@ class EmailOutputChannelWorker
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
 
-        $mailEvent = new MailEvent($form, $mail, $formRuntimeData, $isCopy);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_MAIL_PRE_SUBMIT, $mailEvent);
-        $mail = $mailEvent->getEmail();
-
         // dispatch subject guard event
         if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeData)) {
             return;
-        }
-
-        // only available in pimcore < 7.0
-        if (method_exists($mail, 'getHtml2textInstalled') && $mail::getHtml2textInstalled()) {
-            $mail->enableHtml2textBinary();
-        }
-
-        // only available in pimcore < 7.0.
-        // In pimcore >= 7.0 html to text is always available via Html2Text/Html2Text library.
-        if ($forceSubmissionAsPlainText === true && method_exists($mail, 'determineHtml2TextIsInstalled') && $mail::determineHtml2TextIsInstalled() === false) {
-            throw new \Exception('trying to enable html2text binary, but html2text is not installed!');
         }
 
         if ($forceSubmissionAsPlainText === true) {
@@ -168,7 +152,7 @@ class EmailOutputChannelWorker
     protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData)
     {
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeData);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
+        $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {
             return null;
