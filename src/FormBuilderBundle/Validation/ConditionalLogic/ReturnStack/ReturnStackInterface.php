@@ -4,7 +4,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\ReturnStack;
 
 interface ReturnStackInterface
 {
-    public function getData();
+    public function getData(): array;
 
-    public function getActionType();
+    public function getActionType(): string;
 }

@@ -6,82 +6,48 @@ use FormBuilderBundle\Tool\LocaleDataMapper;
 
 class MailBehaviourData implements DataInterface
 {
-    const IDENTIFIER_MAIL_TEMPLATE = 'mailTemplate';
+    public const IDENTIFIER_MAIL_TEMPLATE = 'mailTemplate';
+    public const IDENTIFIER_RECIPIENT = 'recipient';
 
-    const IDENTIFIER_RECIPIENT = 'recipient';
+    protected LocaleDataMapper $localeDataMapper;
+    private array $data = [];
 
-    /**
-     * @var LocaleDataMapper
-     */
-    protected $localeDataMapper;
-
-    /**
-     * @var array
-     */
-    private $data = [];
-
-    /**
-     * @param LocaleDataMapper $localeDataMapper
-     */
     public function __construct(LocaleDataMapper $localeDataMapper)
     {
         $this->localeDataMapper = $localeDataMapper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasData()
+    public function hasData(): bool
     {
         return !empty($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasRecipient()
+    public function hasRecipient(): bool
     {
         return isset($this->data[self::IDENTIFIER_RECIPIENT]) && !empty($this->data[self::IDENTIFIER_RECIPIENT]);
     }
 
-    /**
-     * @return null|string
-     */
-    public function getRecipient()
+    public function getRecipient(): ?string
     {
         return $this->hasRecipient() ? $this->data[self::IDENTIFIER_RECIPIENT] : null;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasMailTemplate()
+    public function hasMailTemplate(): bool
     {
         return isset($this->data[self::IDENTIFIER_MAIL_TEMPLATE]) && !empty($this->data[self::IDENTIFIER_MAIL_TEMPLATE]);
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return null|int
-     */
-    public function getMailTemplateId($locale)
+    public function getMailTemplateId(string $locale): ?int
     {
         if (!$this->hasMailTemplate()) {
             return null;

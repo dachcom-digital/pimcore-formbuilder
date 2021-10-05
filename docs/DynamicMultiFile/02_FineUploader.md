@@ -5,7 +5,7 @@
 
 ![image](https://user-images.githubusercontent.com/700119/119269468-23b0b980-bbf8-11eb-8778-a43ad9a56088.png)
 
-> This is the default adapter. If you want do use this adapter, you only need to enable the [core extension (Section "Enable Extension")](../91_Javascript.md#core-extension) and include the styling resources.
+> This is the default adapter. If you want do use this adapter, you only need to enable the [core extension (Section "Enable Extension")](../91_Javascript.md) and include the styling resources.
  
 Resource: 
 

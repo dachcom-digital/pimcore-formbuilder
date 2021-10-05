@@ -19,7 +19,7 @@
     display: block;
 }
 
-.x-window .preview-field{
+.x-window .preview-field {
     background: #eaeaea;
     border: 1px solid #d8d8d8;
     padding: 10px;
@@ -32,4 +32,28 @@
 
 .pimcore_area_form .pimcore_area_edit_button {
     top: -32px !important;
+}
+
+.formbuilder-alert-info {
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    background-color: #dcd1ea;
+    color: #6428b4;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border: 1px solid #6428b4;
+    border-radius: 0;
+    font-size: 90%;
+    width: 100%;
+}
+
+.formbuilder-alert-danger {
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    background-color: #f2dede;
+    color: #a94442;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border: 1px solid #a94442;
+    border-radius: 0;
+    font-size: 90%;
+    width: 100%;
 }

@@ -10,14 +10,8 @@ use Twig\TwigFunction;
 
 class StaticFormExtension extends AbstractExtension
 {
-    /**
-     * @var FormAssembler
-     */
-    protected $formAssembler;
+    protected FormAssembler $formAssembler;
 
-    /**
-     * @param FormAssembler $formAssembler
-     */
     public function __construct(FormAssembler $formAssembler)
     {
         $this->formAssembler = $formAssembler;
@@ -26,7 +20,7 @@ class StaticFormExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -38,18 +32,9 @@ class StaticFormExtension extends AbstractExtension
     }
 
     /**
-     * @param Environment $environment
-     * @param array       $context
-     * @param array       $formOptions
-     *
-     * @return string
-     *
      * @throws \Exception
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
      */
-    public function generateForm(Environment $environment, $context, $formOptions = [])
+    public function generateForm(Environment $environment, array $context, array $formOptions = []): string
     {
         $defaultOptions = [
             'form_id'            => null,
@@ -57,10 +42,6 @@ class StaticFormExtension extends AbstractExtension
             'preset'             => null,
             'output_workflow'    => null,
             'custom_options'     => [],
-            // deprecated options since v3.3 below
-            'send_copy'          => false,
-            'mail_template'      => null,
-            'copy_mail_template' => null,
         ];
 
         $options = array_merge($defaultOptions, $formOptions);
@@ -68,9 +49,6 @@ class StaticFormExtension extends AbstractExtension
         $optionBuilder = new FormOptionsResolver();
         $optionBuilder->setFormId($options['form_id']);
         $optionBuilder->setFormTemplate($options['form_template']);
-        $optionBuilder->setSendCopy($options['send_copy']);
-        $optionBuilder->setMailTemplate($options['mail_template']);
-        $optionBuilder->setCopyMailTemplate($options['copy_mail_template']);
         $optionBuilder->setFormPreset($options['preset']);
         $optionBuilder->setCustomOptions($options['custom_options']);
         $optionBuilder->setOutputWorkflow($options['output_workflow']);

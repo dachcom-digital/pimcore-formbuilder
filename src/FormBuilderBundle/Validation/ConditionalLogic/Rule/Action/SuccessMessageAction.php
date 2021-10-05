@@ -10,29 +10,14 @@ class SuccessMessageAction implements ActionInterface
 {
     use ActionTrait;
 
-    /**
-     * @var string
-     */
-    protected $identifier = null;
+    protected ?string $identifier = null;
+    protected ?string $value = null;
+    protected ?string $flashMessage = null;
 
     /**
-     * @var string
+     * {@inheritDoc}
      */
-    protected $value = null;
-
-    /**
-     * @var string
-     */
-    protected $flashMessage = null;
-
-    /**
-     * @param bool  $validationState
-     * @param array $formData
-     * @param int   $ruleId
-     *
-     * @return ReturnStackInterface
-     */
-    public function apply($validationState, $formData, $ruleId)
+    public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         if ($validationState === true) {
@@ -44,50 +29,32 @@ class SuccessMessageAction implements ActionInterface
         return new SimpleReturnStack('successMessage', $data);
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): ?string
     {
         return $this->identifier;
     }
 
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->value;
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getFlashMessage()
+    public function getFlashMessage(): ?string
     {
         return $this->flashMessage;
     }
 
-    /**
-     * @param string $flashMessage
-     */
-    public function setFlashMessage($flashMessage)
+    public function setFlashMessage(string $flashMessage): void
     {
         $this->flashMessage = $flashMessage;
     }

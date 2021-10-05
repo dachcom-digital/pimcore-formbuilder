@@ -8,15 +8,9 @@ class OutputWorkflowCondition implements ConditionInterface
 {
     use ConditionTrait;
 
-    /**
-     * @var array
-     */
-    protected $outputWorkflow = [];
+    protected array $outputWorkflow = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isValid($formData, $ruleId, $configuration = [])
+    public function isValid(array $formData, int $ruleId, array $configuration = []): bool
     {
         // ignore
         if (!isset($configuration['formRuntimeOptions'])) {
@@ -33,25 +27,15 @@ class OutputWorkflowCondition implements ConditionInterface
             return true;
         }
 
-        return in_array($configuration['formRuntimeOptions']['form_output_workflow'], $this->getOutputWorkflows());
+        return in_array($configuration['formRuntimeOptions']['form_output_workflow'], $this->getOutputWorkflows(), true);
     }
 
-    /**
-     * @return array
-     *
-     * @internal
-     */
-    public function getOutputWorkflows()
+    public function getOutputWorkflows(): array
     {
         return $this->outputWorkflow;
     }
 
-    /**
-     * @param array $outputWorkflow
-     *
-     * @internal
-     */
-    public function setOutputWorkflows($outputWorkflow)
+    public function setOutputWorkflows(array $outputWorkflow): void
     {
         $this->outputWorkflow = $outputWorkflow;
     }

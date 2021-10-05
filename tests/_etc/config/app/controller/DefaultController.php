@@ -49,9 +49,6 @@ class DefaultController extends FrontendController
             'form_id'            => $this->document->getProperty('form_id'),
             'form_template'      => 'bootstrap_4_layout.html.twig',
             'main_layout'        => false,
-            'send_copy'          => true,
-            'mail_template'      => $this->document->getProperty('mail_id'),
-            'copy_mail_template' => $this->document->getProperty('mail_copy_id'),
             'preset'             => null
         ];
 
@@ -59,9 +56,6 @@ class DefaultController extends FrontendController
         $optionBuilder->setFormId($options['form_id']);
         $optionBuilder->setMainLayout($options['main_layout']);
         $optionBuilder->setFormTemplate($options['form_template']);
-        $optionBuilder->setSendCopy($options['send_copy']);
-        $optionBuilder->setMailTemplate($options['mail_template']);
-        $optionBuilder->setCopyMailTemplate($options['copy_mail_template']);
         $optionBuilder->setFormPreset($options['preset']);
 
         /** @var FormAssembler $assembler */

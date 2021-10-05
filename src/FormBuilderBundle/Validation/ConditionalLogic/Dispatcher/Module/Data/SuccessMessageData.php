@@ -9,33 +9,15 @@ use Pimcore\Translation\Translator;
 
 class SuccessMessageData implements DataInterface
 {
-    const IDENTIFIER_STRING = 'string';
+    public const IDENTIFIER_STRING = 'string';
+    public const IDENTIFIER_SNIPPET = 'snippet';
+    public const IDENTIFIER_REDIRECT = 'redirect';
+    public const IDENTIFIER_REDIRECT_EXTERNAL = 'redirect_external';
 
-    const IDENTIFIER_SNIPPET = 'snippet';
+    protected LocaleDataMapper $localeDataMapper;
+    protected Translator $translator;
+    protected array $data = [];
 
-    const IDENTIFIER_REDIRECT = 'redirect';
-
-    const IDENTIFIER_REDIRECT_EXTERNAL = 'redirect_external';
-
-    /**
-     * @var LocaleDataMapper
-     */
-    protected $localeDataMapper;
-
-    /**
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @var array
-     */
-    private $data = [];
-
-    /**
-     * @param LocaleDataMapper $localeDataMapper
-     * @param Translator       $translator
-     */
     public function __construct(
         LocaleDataMapper $localeDataMapper,
         Translator $translator
@@ -44,82 +26,58 @@ class SuccessMessageData implements DataInterface
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasData()
+    public function hasData(): bool
     {
         return !empty($this->data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return null|Document|Snippet|string
-     */
-    public function getIdentifiedData($locale)
+    public function getIdentifiedData(?string $locale): Document|Snippet|string|null
     {
         if ($this->isStringSuccess()) {
             return $this->getString($locale);
-        } elseif ($this->isSnippet()) {
+        }
+
+        if ($this->isSnippet()) {
             return $this->getSnippet($locale);
-        } elseif ($this->isDocumentRedirect()) {
+        }
+
+        if ($this->isDocumentRedirect()) {
             return $this->getDocument($locale);
-        } elseif ($this->isExternalRedirect()) {
+        }
+
+        if ($this->isExternalRedirect()) {
             return $this->getExternalRedirect();
         }
 
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function isStringSuccess()
+    public function isStringSuccess(): bool
     {
         return isset($this->data[self::IDENTIFIER_STRING]) && !empty($this->data[self::IDENTIFIER_STRING]);
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return null|string
-     */
-    public function getString($locale)
+    public function getString(?string $locale): ?string
     {
         return $this->isStringSuccess() ? $this->translator->trans((string) $this->data[self::IDENTIFIER_STRING], [], null, $locale) : null;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSnippet()
+    public function isSnippet(): bool
     {
         return isset($this->data[self::IDENTIFIER_SNIPPET]) && !empty($this->data[self::IDENTIFIER_SNIPPET]);
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return Snippet|null
-     */
-    public function getSnippet($locale)
+    public function getSnippet(?string $locale): ?Snippet
     {
         if (!$this->isSnippet()) {
             return null;
@@ -134,20 +92,12 @@ class SuccessMessageData implements DataInterface
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDocumentRedirect()
+    public function isDocumentRedirect(): bool
     {
         return isset($this->data[self::IDENTIFIER_REDIRECT]) && !empty($this->data[self::IDENTIFIER_REDIRECT]);
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return Document|null
-     */
-    public function getDocument($locale)
+    public function getDocument(?string $locale): ?Document
     {
         if (!$this->isDocumentRedirect()) {
             return null;
@@ -162,20 +112,14 @@ class SuccessMessageData implements DataInterface
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function isExternalRedirect()
+    public function isExternalRedirect(): bool
     {
         return isset($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL])
             && !empty($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL])
-            && substr($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL], 0, 4) === 'http';
+            && str_starts_with($this->data[self::IDENTIFIER_REDIRECT_EXTERNAL], 'http');
     }
 
-    /**
-     * @return string|null
-     */
-    public function getExternalRedirect()
+    public function getExternalRedirect(): ?string
     {
         if (!$this->isExternalRedirect()) {
             return null;
@@ -184,20 +128,12 @@ class SuccessMessageData implements DataInterface
         return $this->data[self::IDENTIFIER_REDIRECT_EXTERNAL];
     }
 
-    /**
-     * @return bool
-     */
-    public function hasFlashMessage()
+    public function hasFlashMessage(): bool
     {
         return $this->isDocumentRedirect() && isset($this->data['flashMessage']) && !empty($this->data['flashMessage']);
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return null|string
-     */
-    public function getFlashMessage($locale)
+    public function getFlashMessage(?string $locale): ?string
     {
         if (!$this->hasFlashMessage()) {
             return null;

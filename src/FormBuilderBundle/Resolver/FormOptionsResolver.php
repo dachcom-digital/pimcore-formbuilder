@@ -13,9 +13,6 @@ class FormOptionsResolver
     protected ?int $outputWorkflow = null;
     protected string $preset = 'custom';
     protected array $customOptions = [];
-    protected bool $sendCopy = false;
-    protected ?Document\Email $mailTemplate = null;
-    protected ?Document\Email $mailCopyTemplate = null;
 
     public function setFormId(?int $formId): void
     {
@@ -45,7 +42,6 @@ class FormOptionsResolver
             $this->outputWorkflow = $outputWorkflow;
         }
     }
-
 
     public function getOutputWorkflow(): int|string|null
     {
@@ -111,77 +107,12 @@ class FormOptionsResolver
         return sprintf($path, $template);
     }
 
-    public function setSendCopy(bool $sendCopy): void
-    {
-        $this->sendCopy = $sendCopy;
-    }
-
-    public function getSendCopy(): bool
-    {
-        if ($this->sendCopy === true && is_null($this->getCopyMailTemplateId())) {
-            $this->sendCopy = false;
-        }
-
-        return $this->sendCopy;
-    }
-
-    public function setMailTemplate(null|int|Document\Email $mailTemplate): void
-    {
-        if (is_numeric($mailTemplate)) {
-            $mailTemplate = Document\Email::getById($mailTemplate);
-        }
-
-        if ($mailTemplate instanceof Document\Email) {
-            $mailTemplate = $this->checkI18nPath($mailTemplate);
-            $this->mailTemplate = $mailTemplate;
-        }
-    }
-
-    public function getMailTemplate(): ?Document\Email
-    {
-        return $this->mailTemplate;
-    }
-
-    public function getMailTemplateId(): ?int
-    {
-        if ($this->mailTemplate instanceof Document\Email) {
-            return (int) $this->mailTemplate->getId();
-        }
-
-        return null;
-    }
-
-    public function setCopyMailTemplate(null|int|Document\Email $mailTemplate)
-    {
-        if (is_numeric($mailTemplate)) {
-            $mailTemplate = Document\Email::getById($mailTemplate);
-        }
-
-        if ($mailTemplate instanceof Document\Email) {
-            $mailTemplate = $this->checkI18nPath($mailTemplate);
-            $this->mailCopyTemplate = $mailTemplate;
-        }
-    }
-
-    public function getCopyMailTemplate(): ?Document\Email
-    {
-        return $this->mailCopyTemplate;
-    }
-
-    public function getCopyMailTemplateId(): ?int
-    {
-        if ($this->mailCopyTemplate instanceof Document\Email) {
-            return (int) $this->mailCopyTemplate->getId();
-        }
-
-        return null;
-    }
-
     /**
      * Detect if email is in right i18n context.
      * This method only works if you have enabled the i18n bundle.
      *
      * @see https://github.com/dachcom-digital/pimcore-i18n/blob/master/docs/90_InternalLinkRewriter.md#internal-link-rewriter
+     * @todo: move to output workflow | mail channel?
      */
     private function checkI18nPath(Document\Email $mailTemplate): Document\Email
     {

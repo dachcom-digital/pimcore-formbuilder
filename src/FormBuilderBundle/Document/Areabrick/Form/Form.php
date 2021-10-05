@@ -61,21 +61,12 @@ class Form extends AbstractAreabrick implements EditableDialogBoxInterface
         $info->setParam('form_builder_is_admin_mode', $isEditMode === true);
 
         $formTemplate = $formTemplateSelection->getValue();
-        $sendCopy = $this->getDocumentEditable($info->getDocument(), 'checkbox', 'userCopy')->getData() === true;
         $formPreset = $formPresetSelection->getData();
         $formOutputWorkflow = $outputWorkflowSelection->isEmpty() || $outputWorkflowSelection->getData() === 'none' ? null : (int) $outputWorkflowSelection->getData();
-
-        /** @var Document\Editable\Relation $mailTemplateElement */
-        $mailTemplateElement = $this->getDocumentEditable($info->getDocument(), 'relation', 'sendMailTemplate');
-        /** @var Document\Editable\Relation $copyMailTemplateElement */
-        $copyMailTemplateElement = $this->getDocumentEditable($info->getDocument(), 'relation', 'sendCopyMailTemplate');
 
         $optionBuilder = new FormOptionsResolver();
         $optionBuilder->setFormId($formId);
         $optionBuilder->setFormTemplate($formTemplate);
-        $optionBuilder->setSendCopy($sendCopy);
-        $optionBuilder->setMailTemplate($mailTemplateElement->getElement());
-        $optionBuilder->setCopyMailTemplate($copyMailTemplateElement->getElement());
         $optionBuilder->setFormPreset($formPreset);
         $optionBuilder->setOutputWorkflow($formOutputWorkflow);
 

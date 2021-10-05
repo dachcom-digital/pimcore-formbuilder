@@ -11,34 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MailBehaviour implements ModuleInterface
 {
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
+    protected DataFactory $dataFactory;
+    protected array $formData;
+    protected array $appliedConditions;
+    protected array $availableConstraints;
+    protected bool $isCopyMail;
 
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @var array
-     */
-    protected $availableConstraints;
-
-    /**
-     * @var bool
-     */
-    protected $isCopyMail;
-
-    /**
-     * @param DataFactory $dataFactory
-     */
     public function __construct(DataFactory $dataFactory)
     {
         $this->dataFactory = $dataFactory;
@@ -47,7 +25,7 @@ class MailBehaviour implements ModuleInterface
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'             => [],
@@ -63,11 +41,9 @@ class MailBehaviour implements ModuleInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return DataInterface
+     * {@inheritDoc}
      */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->availableConstraints = $options['availableConstraints'];
@@ -75,6 +51,10 @@ class MailBehaviour implements ModuleInterface
         $this->isCopyMail = $options['isCopy'];
 
         $returnContainer = $this->dataFactory->generate(MailBehaviourData::class);
+
+        if (!$returnContainer instanceof DataInterface) {
+            throw new \Exception('Could not create MailBehaviour container');
+        }
 
         if (empty($this->appliedConditions)) {
             return $returnContainer;
@@ -84,7 +64,7 @@ class MailBehaviour implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-            if (!$returnStack instanceof SimpleReturnStack || !in_array($returnStack->getActionType(), ['mailBehaviour'])) {
+            if (!$returnStack instanceof SimpleReturnStack || $returnStack->getActionType() !== 'mailBehaviour') {
                 continue;
             }
 
@@ -95,7 +75,9 @@ class MailBehaviour implements ModuleInterface
 
             if ($this->isCopyMail === true && $returnStackData['mailType'] !== 'copy') {
                 continue;
-            } elseif ($this->isCopyMail === false && $returnStackData['mailType'] !== 'main') {
+            }
+
+            if ($this->isCopyMail === false && $returnStackData['mailType'] !== 'main') {
                 continue;
             }
 

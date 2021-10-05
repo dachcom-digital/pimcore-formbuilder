@@ -6,7 +6,7 @@ services:
         public: true
 
     FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory:
-        arguments: [!tagged form_builder.module.data]
+        arguments: [!tagged { tag: 'form_builder.module.data' }]
 
     # Module
     FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Constraints:

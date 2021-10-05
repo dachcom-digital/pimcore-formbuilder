@@ -8,7 +8,6 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use Pimcore\Mail;
 use Pimcore\Model\Document;
-use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Form\Data\FormDataInterface;
@@ -21,18 +20,15 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBeh
 class EmailOutputChannelWorker
 {
     protected MailParser $mailParser;
-    protected IncludeRenderer $includeRenderer;
     protected Dispatcher $dispatcher;
     protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         MailParser $mailParser,
-        IncludeRenderer $includeRenderer,
         Dispatcher $dispatcher,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->mailParser = $mailParser;
-        $this->includeRenderer = $includeRenderer;
         $this->dispatcher = $dispatcher;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -96,41 +92,29 @@ class EmailOutputChannelWorker
     }
 
     /**
-     * @param Mail $mail
-     *
      * @throws \Exception
      */
-    protected function sendPlainTextOnly(Mail $mail)
+    protected function sendPlainTextOnly(Mail $mail): void
     {
         $mail->setSubject($mail->getSubjectRendered());
         $bodyTextRendered = $mail->getBodyTextRendered();
 
         if ($bodyTextRendered) {
-            $mail->setBody($bodyTextRendered, 'text/plain');
+            $mail->text($bodyTextRendered, 'text/plain');
         }
 
         $mail->sendWithoutRendering();
     }
 
-    /**
-     * @param Mail $mail
-     */
-    protected function sendDefault(Mail $mail)
+    protected function sendDefault(Mail $mail): void
     {
         $mail->send();
     }
 
     /**
-     * @param string            $dispatchModule
-     * @param FormDataInterface $formData
-     * @param array             $formRuntimeOptions
-     * @param array             $moduleOptions
-     *
-     * @return DataInterface
-     *
      * @throws \Exception
      */
-    protected function checkMailCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, $moduleOptions = [])
+    protected function checkMailCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, array $moduleOptions = []): DataInterface
     {
         return $this->dispatcher->runFormDispatcher($dispatchModule, [
             'formData'           => $formData->getData(),
@@ -140,16 +124,9 @@ class EmailOutputChannelWorker
     }
 
     /**
-     * @param FormDataInterface $formData
-     * @param Mail              $subject
-     * @param string            $workflowName
-     * @param array             $formRuntimeData
-     *
-     * @return Mail|null
-     *
      * @throws GuardException
      */
-    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData)
+    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData): ?Mail
     {
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeData);
         $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);

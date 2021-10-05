@@ -12,38 +12,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormTypeClasses implements ModuleInterface
 {
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
+    protected DataFactory $dataFactory;
+    protected array $formData;
+    protected FieldDefinitionInterface $field;
+    protected array $appliedConditions;
 
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var FieldDefinitionInterface
-     */
-    protected $field;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @param DataFactory $dataFactory
-     */
     public function __construct(DataFactory $dataFactory)
     {
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'          => [],
@@ -58,11 +37,9 @@ class FormTypeClasses implements ModuleInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return DataInterface
+     * {@inheritDoc}
      */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->field = $options['field'];
@@ -72,11 +49,15 @@ class FormTypeClasses implements ModuleInterface
     }
 
     /**
-     * @return DataInterface
+     * @throws \Exception
      */
-    private function checkConditionData()
+    private function checkConditionData(): DataInterface
     {
         $returnContainer = $this->dataFactory->generate(FormTypeClassesData::class);
+
+        if (!$returnContainer instanceof DataInterface) {
+            throw new \Exception('Could not create FormTypeClasses container');
+        }
 
         if (empty($this->appliedConditions)) {
             return $returnContainer;

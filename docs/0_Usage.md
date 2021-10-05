@@ -18,10 +18,6 @@ Those are (only) needed for the twig and controller rendering type.
 | `preset` | Optional: set a custom preset |
 | `custom_options` | Optional (array): Add some custom options as array here to pass them through the whole submission process (available in SubmissionEvent for example |
 | `output_workflow` | Define, which output workflow should get dispatched after a form has been successfully submitted. You could use the ID or Name of a output workflow |
-| **Deprecated since V3.3** | |
-| ~`send_copy`~ | If you want to submit a copy, set this to `true` |
-| ~`mail_template`~ | The Mail Template or Mail Template Id |
-| ~`copy_mail_template`~ | The Copy Mail Template or Copy Mail Template Id |
 
 ## Usage II. Twig
 Create a Form using the Twig Extension.

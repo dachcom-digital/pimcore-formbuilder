@@ -31,7 +31,7 @@ form_builder:
 ```
 
 ## Front-End Setup
-By default, you don't need to implement more than the standard initialization, described in [FormBuilder Javascript Core Extension](./91_Javascript.md#core-extension).
+By default, you don't need to implement more than the standard initialization, described in [FormBuilder Javascript Core Extension](./91_Javascript.md).
 The core extension will try to fetch the handler path, defined by `dynamicMultiFileDefaultHandlerPath`.
 
 ### Disable Default Initialization

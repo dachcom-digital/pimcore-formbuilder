@@ -33,5 +33,5 @@ form_builder:
 ```
 
 3. Add the reCAPTCHA field to your form
-4. Enable the reCAPTCHA [javascript module](./91_Javascript.md#recaptcha-v3-extension)
+4. Enable the reCAPTCHA [javascript module](./91_Javascript.md)
 4. Done

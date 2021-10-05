@@ -11,38 +11,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SuccessMessage implements ModuleInterface
 {
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
+    protected DataFactory $dataFactory;
+    protected array $formData;
+    protected array $appliedConditions;
+    protected array $availableConstraints;
 
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @var array
-     */
-    protected $availableConstraints;
-
-    /**
-     * @param DataFactory $dataFactory
-     */
     public function __construct(DataFactory $dataFactory)
     {
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'             => [],
@@ -56,17 +35,19 @@ class SuccessMessage implements ModuleInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return DataInterface
+     * {@inheritDoc}
      */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->availableConstraints = $options['availableConstraints'];
         $this->appliedConditions = $options['appliedConditions'];
 
         $returnContainer = $this->dataFactory->generate(SuccessMessageData::class);
+
+        if (!$returnContainer instanceof DataInterface) {
+            throw new \Exception('Could not create SuccessMessage container');
+        }
 
         if (empty($this->appliedConditions)) {
             return $returnContainer;
@@ -76,7 +57,7 @@ class SuccessMessage implements ModuleInterface
 
         /** @var ReturnStackInterface $returnStack */
         foreach ($this->appliedConditions as $ruleId => $returnStack) {
-            if (!$returnStack instanceof SimpleReturnStack || !in_array($returnStack->getActionType(), ['successMessage'])) {
+            if (!$returnStack instanceof SimpleReturnStack || $returnStack->getActionType() !== 'successMessage') {
                 continue;
             }
 

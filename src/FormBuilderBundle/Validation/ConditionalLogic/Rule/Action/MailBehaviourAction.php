@@ -10,20 +10,9 @@ class MailBehaviourAction implements ActionInterface
 {
     use ActionTrait;
 
-    /**
-     * @var string
-     */
-    protected $identifier = null;
-
-    /**
-     * @var string
-     */
-    protected $value = null;
-
-    /**
-     * @var string
-     */
-    protected $mailType = null;
+    protected ?string $identifier = null;
+    protected ?string $value = null;
+    protected ?string $mailType = null;
 
     /**
      * @param bool  $validationState
@@ -32,7 +21,7 @@ class MailBehaviourAction implements ActionInterface
      *
      * @return ReturnStackInterface
      */
-    public function apply($validationState, $formData, $ruleId)
+    public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         if ($validationState === true) {
@@ -44,50 +33,32 @@ class MailBehaviourAction implements ActionInterface
         return new SimpleReturnStack('mailBehaviour', $data);
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): ?string
     {
         return $this->identifier;
     }
 
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->value;
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getMailType()
+    public function getMailType(): ?string
     {
         return $this->mailType;
     }
 
-    /**
-     * @param string $mailType
-     */
-    public function setMailType($mailType)
+    public function setMailType(string $mailType): void
     {
         $this->mailType = $mailType;
     }

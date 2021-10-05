@@ -4,23 +4,13 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\ReturnStack;
 
 class FieldReturnStack implements ReturnStackInterface
 {
-    /**
-     * @var string
-     */
-    public $actionType;
+    public string $actionType;
+    public array $data = [];
 
     /**
-     * @var array
-     */
-    public $data = [];
-
-    /**
-     * @param string $actionType
-     * @param array  $data
-     *
      * @throws \Exception
      */
-    public function __construct($actionType = null, $data = [])
+    public function __construct(string $actionType = null, array $data = [])
     {
         if ($this->isAssoc($this->data)) {
             throw new \Exception('FieldReturnStack: Wrong data structure: data keys must contain form field names!');
@@ -30,36 +20,22 @@ class FieldReturnStack implements ReturnStackInterface
         $this->data = $data;
     }
 
-    /**
-     * @return string
-     */
-    public function getActionType()
+    public function getActionType(): string
     {
         return $this->actionType;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
-    public function updateData($data)
+    public function updateData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @param array $arr
-     *
-     * @return bool
-     */
-    private function isAssoc(array $arr)
+    private function isAssoc(array $arr): bool
     {
         if ([] === $arr) {
             return false;

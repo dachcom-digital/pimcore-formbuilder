@@ -73,14 +73,7 @@ class FormAssembler
             'form_preset'          => $optionsResolver->getFormPreset(),
             'form_output_workflow' => $optionsResolver->getOutputWorkflow(),
             'form_template'        => $optionsResolver->getFormTemplateName(),
-            'custom_options'       => $optionsResolver->getCustomOptions(),
-            'email'                => [
-                // deprecated but needed for fallback definitions in output workflows
-                '_deprecated_note'      => 'This node has been deprecated in Version 3.3. Please use the email output workflow channel.',
-                'send_copy'             => $optionsResolver->getSendCopy(),
-                'mail_template_id'      => $optionsResolver->getMailTemplateId(),
-                'copy_mail_template_id' => $optionsResolver->getCopyMailTemplateId()
-            ]
+            'custom_options'       => $optionsResolver->getCustomOptions()
         ];
 
         $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
