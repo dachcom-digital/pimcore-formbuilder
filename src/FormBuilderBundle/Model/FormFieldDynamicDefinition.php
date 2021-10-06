@@ -4,32 +4,11 @@ namespace FormBuilderBundle\Model;
 
 class FormFieldDynamicDefinition implements FormFieldDynamicDefinitionInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
+    protected string $type;
+    protected array $options;
+    protected array $optional;
 
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    /**
-     * @var array
-     */
-    protected $optional;
-
-    /**
-     * @param string $name
-     * @param string $type
-     * @param array  $options
-     * @param array  $optional
-     */
     public function __construct(string $name, string $type, array $options, array $optional = [])
     {
         $this->name = $name;
@@ -38,42 +17,27 @@ class FormFieldDynamicDefinition implements FormFieldDynamicDefinitionInterface
         $this->optional = $optional;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptional()
+    public function getOptional(): array
     {
         return $this->optional;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         $optional = $this->getOptional();
         if (isset($optional['order']) && is_numeric($optional['order'])) {

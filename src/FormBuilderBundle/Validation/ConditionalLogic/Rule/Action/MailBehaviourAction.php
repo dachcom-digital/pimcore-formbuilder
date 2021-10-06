@@ -14,13 +14,6 @@ class MailBehaviourAction implements ActionInterface
     protected ?string $value = null;
     protected ?string $mailType = null;
 
-    /**
-     * @param bool  $validationState
-     * @param array $formData
-     * @param int   $ruleId
-     *
-     * @return ReturnStackInterface
-     */
     public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];

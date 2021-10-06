@@ -64,10 +64,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MyUploaderType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
          $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
@@ -86,10 +83,7 @@ class MyUploaderType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // these options are required to support!
         
@@ -101,18 +95,12 @@ class MyUploaderType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_dynamicmultifile_my_uploader';
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextType::class;
     }
@@ -137,33 +125,21 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
 {
     protected FileStreamInterface $fileStream;
 
-    /**
-     * @param FileStreamInterface $fileStream
-     */
     public function __construct(FileStreamInterface $fileStream)
     {
         $this->fileStream = $fileStream;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getForm(): string
     {
         return MyUploaderType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getJsHandler(): string
     {
         return 'my-uploader';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onUpload(Request $request): Response
     {
         // second argument needs to be false, if you also invoke the onDone action!
@@ -179,9 +155,6 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
         return new JsonResponse($result);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDone(Request $request): Response
     {
         // if you need a dedicated endpoint for a chunked upload completion event,
@@ -193,9 +166,6 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
         ], 403);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDelete(Request $request): Response
     {
         // $identifier = mostly the upload uuid

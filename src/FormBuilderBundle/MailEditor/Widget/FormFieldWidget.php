@@ -6,42 +6,27 @@ use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 
 class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataWidgetInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetGroupName()
+    public function getWidgetGroupName(): string
     {
         return 'form_builder.mail_editor.widget_provider.form_fields';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubTypeByField(array $field)
+    public function getSubTypeByField(array $field): string
     {
         return $field['name'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetIdentifierByField(string $widgetType, array $field)
+    public function getWidgetIdentifierByField(string $widgetType, array $field): string
     {
         return sprintf('%s_%s', $widgetType, $field['type']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetLabelByField(array $field)
+    public function getWidgetLabelByField(array $field): string
     {
         return $field['display_name'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetConfigByField(array $field)
+    public function getWidgetConfigByField(array $field): array
     {
         return [
             'show_label' => [
@@ -52,15 +37,12 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValueForOutput(array $config)
+    public function getValueForOutput(array $config): string
     {
         $renderLabels = !isset($config['show_label']) || $config['show_label'] === true;
 
         $outputData = $config['outputData'];
-        $fieldType = isset($outputData['field_type']) ? $outputData['field_type'] : null;
+        $fieldType = $outputData['field_type'] ?? null;
 
         if (!is_array($outputData)) {
             return '';
@@ -76,13 +58,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
         return $fieldValue;
     }
 
-    /**
-     * @param array $outputData
-     * @param bool  $renderLabels
-     *
-     * @return string
-     */
-    protected function parseContainerField(array $outputData, bool $renderLabels)
+    protected function parseContainerField(array $outputData, bool $renderLabels): string
     {
         $fieldValue = '';
 
@@ -119,13 +95,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
         return $fieldValue;
     }
 
-    /**
-     * @param array $outputData
-     * @param bool  $renderLabels
-     *
-     * @return string
-     */
-    protected function parseSimpleField(array $outputData, bool $renderLabels)
+    protected function parseSimpleField(array $outputData, bool $renderLabels): string
     {
         $fieldValue = '';
 
@@ -139,32 +109,21 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
         return $fieldValue;
     }
 
-    /**
-     * @param array|string $fieldValue
-     *
-     * @return string
-     */
-    protected function parseFieldValue($fieldValue)
+    protected function parseFieldValue(array|string $fieldValue): string
     {
         if (is_array($fieldValue)) {
-            return join(', ', $fieldValue);
+            return implode(', ', $fieldValue);
         }
 
         return $fieldValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetLabel()
+    public function getWidgetLabel(): string
     {
         throw new \RuntimeException('"getWidgetLabel" is not allowed within implemented MailEditorFieldDataWidgetInterface');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidgetConfig()
+    public function getWidgetConfig(): array
     {
         throw new \RuntimeException('"getWidgetConfig" is not allowed within implemented MailEditorFieldDataWidgetInterface');
     }

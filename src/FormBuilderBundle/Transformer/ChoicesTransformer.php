@@ -4,13 +4,10 @@ namespace FormBuilderBundle\Transformer;
 
 class ChoicesTransformer implements OptionsTransformerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function transform($choices, $optionConfig = null)
+    public function transform(array $values, ?array $optionConfig = null): array
     {
         $parsedChoices = [];
-        foreach ($choices as $choice) {
+        foreach ($values as $choice) {
             //groups
             if (isset($choice[0])) {
                 $groupName = $choice[0]['name'];
@@ -25,15 +22,12 @@ class ChoicesTransformer implements OptionsTransformerInterface
         return $parsedChoices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function reverseTransform($choices, $optionConfig = null)
+    public function reverseTransform(array $values, ?array $optionConfig = null): array
     {
         $parsedChoices = [];
 
         $groupCounter = 0;
-        foreach ($choices as $choiceKey => $choiceValue) {
+        foreach ($values as $choiceKey => $choiceValue) {
             //groups
             if (is_array($choiceValue)) {
                 $groupName = $choiceKey;

@@ -13,10 +13,7 @@ use FormBuilderBundle\Configuration\Configuration as BundleConfiguration;
 
 class FormBuilderExtension extends Extension implements PrependExtensionInterface
 {
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $configs = $container->getExtensionConfig($this->getAlias());
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
@@ -33,12 +30,9 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
     }
 
     /**
-     * @param array            $configs
-     * @param ContainerBuilder $container
-     *
      * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);

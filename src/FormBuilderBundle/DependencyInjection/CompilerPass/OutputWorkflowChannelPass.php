@@ -9,10 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class OutputWorkflowChannelPass implements CompilerPassInterface
 {
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(OutputWorkflowChannelRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.output_workflow.channel') as $id => $tags) {

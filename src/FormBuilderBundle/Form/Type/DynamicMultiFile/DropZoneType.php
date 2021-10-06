@@ -11,23 +11,14 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class DropZoneType extends AbstractType
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
@@ -35,12 +26,12 @@ class DropZoneType extends AbstractType
                 'data-engine-options' => json_encode([
                     'translations'       => $this->getInterfaceTranslations(),
                     'instance_error'     => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance'),
-                    'multiple'           => isset($options['multiple']) && is_bool($options['multiple']) ? $options['multiple'] : false,
+                    'multiple'           => isset($options['multiple']) && is_bool($options['multiple']) && $options['multiple'],
                     'max_file_size'      => is_numeric($options['max_file_size']) && $options['max_file_size'] > 0 ? (int) $options['max_file_size'] : null,
                     'allowed_extensions' => is_array($options['allowed_extensions']) ? join(',', $options['allowed_extensions']) : null,
                     'item_limit'         => is_numeric($options['item_limit']) && $options['item_limit'] > 0 ? (int) $options['item_limit'] : null
-                ]),
-                'class'               => join(' ', [
+                ], JSON_THROW_ON_ERROR),
+                'class'               => implode(' ', [
                     'dynamic-multi-file',
                     sprintf('element-%s', $view->vars['name'])
                 ])
@@ -48,10 +39,7 @@ class DropZoneType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'max_file_size'        => null,
@@ -61,26 +49,17 @@ class DropZoneType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_dynamicmultifile_drop_zone';
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextType::class;
     }
 
-    /**
-     * @return array
-     */
-    private function getInterfaceTranslations()
+    private function getInterfaceTranslations(): array
     {
         return [
             'dictDefaultMessage'           => $this->translator->trans('form_builder.dynamic_multi_file.drop_files_here'),

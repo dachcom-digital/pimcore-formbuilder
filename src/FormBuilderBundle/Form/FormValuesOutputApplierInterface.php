@@ -10,17 +10,8 @@ use Symfony\Component\Form\FormInterface;
  */
 interface FormValuesOutputApplierInterface
 {
-    const FIELD_TYPE_SIMPLE = 'simple';
+    public const FIELD_TYPE_SIMPLE = 'simple';
+    public const FIELD_TYPE_CONTAINER = 'container';
 
-    const FIELD_TYPE_CONTAINER = 'container';
-
-    /**
-     * @param FormInterface $form
-     * @param array         $ignoreFields
-     * @param string        $channel
-     * @param string        $locale
-     *
-     * @return array
-     */
-    public function applyForChannel(FormInterface $form, array $ignoreFields, string $channel, $locale);
+    public function applyForChannel(FormInterface $form, array $ignoreFields, string $channel, ?string $locale): array;
 }

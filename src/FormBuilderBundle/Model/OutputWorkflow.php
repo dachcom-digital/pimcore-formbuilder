@@ -10,7 +10,6 @@ class OutputWorkflow implements OutputWorkflowInterface
     protected int $id;
     protected string $name;
     protected array $successManagement;
-
     protected FormDefinitionInterface $formDefinition;
     protected Collection $channels;
 

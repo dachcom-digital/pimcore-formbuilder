@@ -9,11 +9,8 @@ use FormBuilderBundle\Model\OutputWorkflowInterface;
 interface OutputWorkflowDispatcherInterface
 {
     /**
-     * @param OutputWorkflowInterface $outputWorkflow
-     * @param SubmissionEvent         $submissionEvent
-     *
      * @throws \Exception
      * @throws GuardException
      */
-    public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent);
+    public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void;
 }

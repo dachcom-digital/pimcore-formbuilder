@@ -10,38 +10,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DropZoneAdapter implements DynamicMultiFileAdapterInterface
 {
-    /**
-     * @var FileStreamInterface
-     */
-    protected $fileStream;
+    protected FileStreamInterface $fileStream;
 
-    /**
-     * @param FileStreamInterface $fileStream
-     */
     public function __construct(FileStreamInterface $fileStream)
     {
         $this->fileStream = $fileStream;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getForm(): string
     {
         return DropZoneType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getJsHandler(): string
     {
         return 'drop-zone';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onUpload(Request $request): Response
     {
         $result = $this->fileStream->handleUpload([
@@ -56,9 +41,6 @@ class DropZoneAdapter implements DynamicMultiFileAdapterInterface
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDone(Request $request): Response
     {
         return new JsonResponse([
@@ -67,9 +49,6 @@ class DropZoneAdapter implements DynamicMultiFileAdapterInterface
         ], 403);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDelete(Request $request): Response
     {
         $identifier = $request->attributes->get('identifier');

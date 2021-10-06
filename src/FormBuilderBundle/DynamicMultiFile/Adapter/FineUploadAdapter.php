@@ -10,38 +10,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FineUploadAdapter implements DynamicMultiFileAdapterInterface
 {
-    /**
-     * @var FileStreamInterface
-     */
-    protected $fileStream;
+    protected FileStreamInterface $fileStream;
 
-    /**
-     * @param FileStreamInterface $fileStream
-     */
     public function __construct(FileStreamInterface $fileStream)
     {
         $this->fileStream = $fileStream;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getForm(): string
     {
         return FineUploaderType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getJsHandler(): string
     {
         return 'fine-uploader';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onUpload(Request $request): Response
     {
         $method = $request->getMethod();
@@ -58,16 +43,15 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
 
             return new JsonResponse($result);
 
-        } elseif ($method === 'DELETE') {
+        }
+
+        if ($method === 'DELETE') {
             return $this->onDelete($request);
         }
 
         return new JsonResponse([], 405);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDone(Request $request): Response
     {
         $result = $this->fileStream->combineChunks([
@@ -81,9 +65,6 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
         return new JsonResponse($result, $result['statusCode']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDelete(Request $request): Response
     {
         $identifier = $request->attributes->has('identifier')

@@ -10,21 +10,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputWorkflowType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class);
         $builder->add('successManagement', SuccessManagementType::class);
         $builder->add('channels', OutputWorkflowChannelCollectionType::class);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'csrf_protection' => false,

@@ -12,30 +12,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SnippetType extends AbstractType
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
+    protected LocaleDataMapper $localeDataMapper;
 
-    /**
-     * @var LocaleDataMapper
-     */
-    protected $localeDataMapper;
-
-    /**
-     * @param RequestStack     $requestStack
-     * @param LocaleDataMapper $localeDataMapper
-     */
     public function __construct(RequestStack $requestStack, LocaleDataMapper $localeDataMapper)
     {
         $this->requestStack = $requestStack;
         $this->localeDataMapper = $localeDataMapper;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'path'      => null,
@@ -46,10 +32,7 @@ class SnippetType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $vars = array_merge_recursive($view->vars, [
             'data' => '',
@@ -65,35 +48,19 @@ class SnippetType extends AbstractType
         $view->vars = $vars;
     }
 
-    /**
-     * @param string|array $data
-     *
-     * @return string|null
-     */
-    private function getSnippetId($data)
+    private function getSnippetId(array $data): ?string
     {
-        // legacy
-        if (is_string($data)) {
-            return $data;
-        }
-
-        $locale = $this->requestStack->getMasterRequest()->getLocale();
+        $locale = $this->requestStack->getMainRequest()->getLocale();
 
         return $this->localeDataMapper->mapHref($locale, $data);
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextType::class;
     }
 
-    /**
-     * @return string
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_snippet_type';
     }

@@ -9,19 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface FormSubmissionFinisherInterface
 {
-    /**
-     * @param Request       $request
-     * @param FormInterface $form
-     *
-     * @return Response|null
-     */
-    public function finishWithError(Request $request, FormInterface $form);
+    public function finishWithError(Request $request, FormInterface $form): ?Response;
 
-    /**
-     * @param Request         $request
-     * @param SubmissionEvent $submissionEvent
-     *
-     * @return Response|null
-     */
-    public function finishWithSuccess(Request $request, SubmissionEvent $submissionEvent);
+    public function finishWithSuccess(Request $request, SubmissionEvent $submissionEvent): ?Response;
 }

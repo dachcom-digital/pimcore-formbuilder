@@ -4,40 +4,17 @@ namespace FormBuilderBundle\Model;
 
 interface OutputWorkflowChannelInterface
 {
-    /**
-     * @return int
-     */
-    public function getId();
+    public function getId(): int;
 
-    /**
-     * @param string $type
-     */
-    public function setType(string $type);
+    public function setType(string $type): void;
 
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 
-    /**
-     * @param array $configuration
-     *
-     * @return mixed
-     */
-    public function setConfiguration(array $configuration);
+    public function setConfiguration(array $configuration): void;
 
-    /**
-     * @return array
-     */
-    public function getConfiguration();
+    public function getConfiguration(): array;
 
-    /**
-     * @param OutputWorkflowInterface $outputWorkflow
-     */
-    public function setOutputWorkflow(OutputWorkflowInterface $outputWorkflow);
+    public function setOutputWorkflow(OutputWorkflowInterface $outputWorkflow): void;
 
-    /**
-     * @return OutputWorkflowInterface
-     */
-    public function getOutputWorkflow();
+    public function getOutputWorkflow(): OutputWorkflowInterface;
 }

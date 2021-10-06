@@ -11,23 +11,14 @@ use Symfony\Component\Validator\Constraints\Blank;
 
 class HoneypotType extends AbstractType
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $config = $this->configuration->getConfig('spam_protection');
         $honeyPotConfig = $config['honeypot'];
@@ -57,18 +48,12 @@ class HoneypotType extends AbstractType
         ]);
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextType::class;
     }
 
-    /**
-     * @return string
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_honeypot';
     }

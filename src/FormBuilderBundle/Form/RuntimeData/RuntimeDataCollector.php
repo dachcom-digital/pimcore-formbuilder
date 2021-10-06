@@ -4,10 +4,7 @@ namespace FormBuilderBundle\Form\RuntimeData;
 
 class RuntimeDataCollector
 {
-    /**
-     * @var array
-     */
-    protected $data;
+    protected array $data;
 
     public function __construct()
     {
@@ -15,12 +12,9 @@ class RuntimeDataCollector
     }
 
     /**
-     * @param string $id
-     * @param mixed  $data
-     *
      * @throws \Exception
      */
-    public function add($id, $data)
+    public function add($id, $data): void
     {
         if (array_key_exists($id, $this->data)) {
             throw new \Exception(sprintf('Runtime Data Block with "%s" already added.', $id));
@@ -30,13 +24,9 @@ class RuntimeDataCollector
     }
 
     /**
-     * @param string $id
-     *
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public function find($id)
+    public function find(string $id): mixed
     {
         if (!array_key_exists($id, $this->data)) {
             throw new \Exception(sprintf('Runtime Data Block with "%s" not found.', $id));
@@ -45,20 +35,20 @@ class RuntimeDataCollector
         return $this->data[$id];
     }
 
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
-     * @return string
+     * @throws \Exception
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (count($this->data) === 0) {
             return '';
         }
 
-        return json_encode($this->data);
+        return json_encode($this->data, JSON_THROW_ON_ERROR);
     }
 }

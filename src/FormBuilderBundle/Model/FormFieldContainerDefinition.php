@@ -6,159 +6,87 @@ use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 
 class FormFieldContainerDefinition implements FormFieldContainerDefinitionInterface, EntityToArrayAwareInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
+    private string $display_name;
+    private string $type;
+    private string $sub_type;
+    private int $order;
+    private array $configuration = [];
+    private array $fields = [];
 
-    /**
-     * @var string
-     */
-    private $display_name;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $sub_type;
-
-    /**
-     * @var int
-     */
-    private $order;
-
-    /**
-     * @var array
-     */
-    private $configuration = [];
-
-    /**
-     * @var array
-     */
-    private $fields = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrder(int $order)
+    public function setOrder(int $order): void
     {
         $this->order = $order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDisplayName(string $name)
+    public function setDisplayName(string $name): void
     {
         $this->display_name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->display_name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setSubType(string $subType)
+    public function setSubType(string $subType): void
     {
         $this->sub_type = $subType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubType()
+    public function getSubType(): string
     {
         return $this->sub_type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration = [])
+    public function setConfiguration(array $configuration = []): void
     {
-        $this->configuration = array_filter($configuration, function ($configElement) {
+        $this->configuration = array_filter($configuration, static function ($configElement) {
             return $configElement !== '';
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return $this->configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFields(array $fields = [])
+    public function setFields(array $fields = []): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $vars = get_object_vars($this);
         $array = [];

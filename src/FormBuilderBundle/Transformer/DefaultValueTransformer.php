@@ -4,35 +4,29 @@ namespace FormBuilderBundle\Transformer;
 
 class DefaultValueTransformer implements OptionsTransformerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function transform($optionValue, $optionConfig = null)
+    public function transform(array $values, ?array $optionConfig = null): array
     {
         if (!isset($optionConfig['default_value'])) {
-            return $optionValue;
+            return $values;
         }
 
-        if (empty($optionValue)) {
+        if (empty($values)) {
             return $optionConfig['default_value'];
         }
 
-        return $optionValue;
+        return $values;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function reverseTransform($optionValue, $optionConfig = null)
+    public function reverseTransform(array $values, ?array $optionConfig = null): array
     {
         if (!isset($optionConfig['default_value'])) {
-            return $optionValue;
+            return $values;
         }
 
-        if ($optionValue === $optionConfig['default_value']) {
-            return '';
+        if ($values === $optionConfig['default_value']) {
+            return [];
         }
 
-        return $optionValue;
+        return $values;
     }
 }

@@ -8,219 +8,115 @@ use FormBuilderBundle\Configuration\Configuration;
 
 class FormDefinition implements FormDefinitionInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $id;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var null|string
-     */
-    protected $group;
-
-    /**
-     * @var \DateTime
-     */
-    protected $creationDate;
-
-    /**
-     * @var \DateTime
-     */
-    protected $modificationDate;
-
-    /**
-     * @var int
-     */
-    protected $modifiedBy;
-
-    /**
-     * @var int
-     */
-    protected $createdBy;
-
-    /**
-     * @var array
-     */
-    protected $mailLayout;
-
-    /**
-     * @var Collection|OutputWorkflowInterface[]
-     */
-    protected $outputWorkflows;
-
-    /**
-     * @var array
-     */
-    public $config = [];
-
-    /**
-     * @var array
-     */
-    public $conditionalLogic = [];
-
-    /**
-     * @var array
-     */
-    public $fields = [];
+    protected ?int $id = null;
+    protected string $name;
+    protected ?string $group = null;
+    protected \DateTime $creationDate;
+    protected \DateTime $modificationDate;
+    protected int $modifiedBy;
+    protected int $createdBy;
+    protected ?array $mailLayout;
+    protected Collection $outputWorkflows;
+    public array $config = [];
+    public array $conditionalLogic = [];
+    public array $fields = [];
 
     public function __construct()
     {
         $this->outputWorkflows = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return is_numeric($this->id) ? (int) $this->id : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setGroup(string $groupName = null)
+    public function setGroup(?string $groupName = null): void
     {
         $this->group = !empty($groupName) && is_string($groupName) ? $groupName : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate(\DateTime $date)
+    public function setCreationDate(\DateTime $date): void
     {
         $this->creationDate = $date;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreationDate()
+    public function getCreationDate(): \DateTime
     {
         return $this->creationDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setModificationDate(\DateTime $date)
+    public function setModificationDate(\DateTime $date): void
     {
         $this->modificationDate = $date;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getModificationDate()
+    public function getModificationDate(): \DateTime
     {
         return $this->modificationDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setModifiedBy(int $userId)
+    public function setModifiedBy(int $userId): void
     {
         $this->modifiedBy = $userId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getModifiedBy()
+    public function getModifiedBy(): int
     {
         return (int) $this->modifiedBy;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreatedBy(int $userId)
+    public function setCreatedBy(int $userId): void
     {
         $this->createdBy = $userId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreatedBy()
+    public function getCreatedBy(): int
     {
         return (int) $this->createdBy;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMailLayout($mailLayout = null)
+    public function setMailLayout(?array $mailLayout = null): void
     {
         $this->mailLayout = $mailLayout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMailLayout()
+    public function getMailLayout(): ?array
     {
         return $this->mailLayout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOutputWorkflows()
+    public function hasOutputWorkflows(): bool
     {
         return !$this->outputWorkflows->isEmpty();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    public function hasOutputWorkflow(OutputWorkflowInterface $outputWorkflow): bool
     {
         return $this->outputWorkflows->contains($outputWorkflow);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    public function addOutputWorkflow(OutputWorkflowInterface $outputWorkflow): void
     {
         if (!$this->hasOutputWorkflow($outputWorkflow)) {
             $this->outputWorkflows->add($outputWorkflow);
@@ -228,10 +124,7 @@ class FormDefinition implements FormDefinitionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    public function removeOutputWorkflow(OutputWorkflowInterface $outputWorkflow): void
     {
         if ($this->hasOutputWorkflow($outputWorkflow)) {
             $this->outputWorkflows->removeElement($outputWorkflow);
@@ -239,51 +132,33 @@ class FormDefinition implements FormDefinitionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputWorkflows()
+    public function getOutputWorkflows(): Collection
     {
         return $this->outputWorkflows;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $validConfig = array_intersect_key($config, array_flip(self::ALLOWED_FORM_KEYS));
         $this->config = $validConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConditionalLogic()
+    public function getConditionalLogic(): array
     {
         return $this->conditionalLogic;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConditionalLogic(array $config)
+    public function setConditionalLogic(array $conditionalLogic): void
     {
-        $this->conditionalLogic = $config;
+        $this->conditionalLogic = $conditionalLogic;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addDynamicField(string $name, string $type, array $options = [], array $optional = [])
+    public function addDynamicField(string $name, string $type, array $options = [], array $optional = []): void
     {
         if (in_array($name, Configuration::INVALID_FIELD_NAMES)) {
             throw new \Exception(sprintf('\'%s\' is a reserved form field name used by the form builder bundle and cannot be used.', $name));
@@ -299,10 +174,7 @@ class FormDefinition implements FormDefinitionInterface
         $this->fields[$name] = $dynamicField;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeDynamicField(string $name)
+    public function removeDynamicField(string $name): void
     {
         if (!isset($this->fields[$name])) {
             throw new \Exception(sprintf('cannot remove dynamic field, "%s" does not exists', $name));
@@ -313,34 +185,22 @@ class FormDefinition implements FormDefinitionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFields(array $fields)
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getField(string $name, bool $deep = false)
+    public function getField(string $name, bool $deep = false): ?FormFieldDefinitionInterface
     {
         return $this->findField($this->getFields(), $name, $deep);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFieldType(string $name, bool $deep = false)
+    public function getFieldType(string $name, bool $deep = false): ?string
     {
         $field = $this->findField($this->getFields(), $name, $deep);
 
@@ -351,10 +211,7 @@ class FormDefinition implements FormDefinitionInterface
         return $field->getType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFieldContainer(string $name)
+    public function getFieldContainer(string $name): ?FormFieldContainerDefinitionInterface
     {
         $fieldContainerDefinition = $this->getField($name);
         if ($fieldContainerDefinition !== null && !$fieldContainerDefinition instanceof FormFieldContainerDefinitionInterface) {
@@ -364,10 +221,7 @@ class FormDefinition implements FormDefinitionInterface
         return $fieldContainerDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFieldsByType(string $type)
+    public function getFieldsByType(string $type): array
     {
         $fields = [];
         foreach ($this->getFields() as $field) {
@@ -379,14 +233,7 @@ class FormDefinition implements FormDefinitionInterface
         return $fields;
     }
 
-    /**
-     * @param FormFieldDefinitionInterface[] $fields
-     * @param mixed                          $value
-     * @param bool                           $deep
-     *
-     * @return FormFieldDefinitionInterface|null
-     */
-    protected function findField(array $fields, $value, bool $deep = false)
+    protected function findField(array $fields, mixed $value, bool $deep = false): ?FormFieldDefinitionInterface
     {
         foreach ($fields as $field) {
             if ($field->getName() === $value) {

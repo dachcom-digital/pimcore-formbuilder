@@ -2,33 +2,23 @@
 
 namespace FormBuilderBundle\Tool;
 
+use Doctrine\DBAL\Driver\Exception;
+use Pimcore\Db\Connection;
 use Pimcore\Model\Document;
 
 class FormDependencyLocator
 {
-    /**
-     * @var \Pimcore\Db\Connection
-     */
-    protected $db;
+    protected Connection $db;
 
-    /**
-     * @param \Pimcore\Db\Connection $db
-     */
-    public function __construct(\Pimcore\Db\Connection $db)
+    public function __construct(Connection $db)
     {
         $this->db = $db;
     }
 
     /**
-     * @param int $formId
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws Exception|\Doctrine\DBAL\Exception
      */
-    public function findDocumentDependencies(int $formId, int $offset, int $limit)
+    public function findDocumentDependencies(int $formId, int $offset, int $limit): array
     {
         $stmt = $this->db->prepare(
             sprintf(

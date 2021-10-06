@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Form\Data\Connector;
 
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
-use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -12,23 +12,14 @@ use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
 
 class FormDataConnector implements FormDataConnectorInterface
 {
-    /**
-     * @var FormDefinitionFactoryInterface
-     */
-    protected $formDefinitionFactory;
+    protected FormDefinitionFactoryInterface $formDefinitionFactory;
 
-    /**
-     * @param FormDefinitionFactoryInterface $formDefinitionFactory
-     */
     public function __construct(FormDefinitionFactoryInterface $formDefinitionFactory)
     {
         $this->formDefinitionFactory = $formDefinitionFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function assignRelationDataToFormObject(FormDefinitionInterface $formDefinition)
+    public function assignRelationDataToFormObject(FormDefinitionInterface $formDefinition): void
     {
         $formPath = Configuration::STORE_PATH . '/main_' . $formDefinition->getId() . '.yml';
 
@@ -72,10 +63,7 @@ class FormDataConnector implements FormDataConnectorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function populateFormField($formField, array $field)
+    public function populateFormField($formField, array $field): FieldDefinitionInterface
     {
         foreach ($field as $fieldName => $fieldValue) {
             $setter = 'set' . $this->camelize($fieldName);
@@ -88,26 +76,17 @@ class FormDataConnector implements FormDataConnectorInterface
         return $formField;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function formHasAvailableConfigurationFile(int $formId)
+    public function formHasAvailableConfigurationFile(int $formId): bool
     {
         return file_exists($this->getConfigurationPathOfForm($formId));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigurationPathOfForm(int $formId)
+    public function getConfigurationPathOfForm(int $formDefinitionId): string
     {
-        return Configuration::STORE_PATH . '/main_' . $formId . '.yml';
+        return Configuration::STORE_PATH . '/main_' . $formDefinitionId . '.yml';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function storeFormData(FormDefinitionInterface $formDefinition)
+    public function storeFormData(FormDefinitionInterface $formDefinition): void
     {
         $data = [
             'config'            => $formDefinition->getConfig(),
@@ -118,37 +97,22 @@ class FormDataConnector implements FormDataConnectorInterface
         $this->storeYmlData($formDefinition, $data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteFormData(FormDefinitionInterface $formDefinition)
+    public function deleteFormData(FormDefinitionInterface $formDefinition): void
     {
         if (file_exists(Configuration::STORE_PATH . '/main_' . $formDefinition->getId() . '.yml')) {
             unlink(Configuration::STORE_PATH . '/main_' . $formDefinition->getId() . '.yml');
         }
     }
 
-    /**
-     * @param string $input
-     * @param string $separator
-     *
-     * @return string
-     */
-    protected function camelize($input, $separator = '_')
+    protected function camelize(string $input, string $separator = '_'): string
     {
         return ucfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return array
-     */
-    protected function getFormFieldData(FormDefinitionInterface $formDefinition)
+    protected function getFormFieldData(FormDefinitionInterface $formDefinition): array
     {
         $formFields = [];
 
-        /** @var FormFieldDefinitionInterface $field */
         foreach ($formDefinition->getFields() as $field) {
             if ($field instanceof EntityToArrayAwareInterface) {
                 $formFields[] = $field->toArray();
@@ -158,11 +122,7 @@ class FormDataConnector implements FormDataConnectorInterface
         return $formFields;
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     * @param mixed                   $data
-     */
-    protected function storeYmlData(FormDefinitionInterface $formDefinition, $data)
+    protected function storeYmlData(FormDefinitionInterface $formDefinition, mixed $data): void
     {
         if (file_exists(Configuration::STORE_PATH . '/main_' . $formDefinition->getId() . '.yml')) {
             unlink(Configuration::STORE_PATH . '/main_' . $formDefinition->getId() . '.yml');

@@ -50,7 +50,7 @@ class FormDefinitionManager
     }
 
     /**
-     * @return FormDefinitionInterface[]
+     * @return array<int, FormDefinitionInterface>
      */
     public function getAll(): array
     {

@@ -8,41 +8,17 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 interface FormDataConnectorInterface
 {
     /**
-     * @param FormDefinitionInterface $formDefinition
-     *
      * @throws \Exception
      */
-    public function assignRelationDataToFormObject(FormDefinitionInterface $formDefinition);
+    public function assignRelationDataToFormObject(FormDefinitionInterface $formDefinition): void;
 
-    /**
-     * @param FieldDefinitionInterface $formField
-     * @param array                    $field
-     *
-     * @return FieldDefinitionInterface
-     */
-    public function populateFormField($formField, array $field);
+    public function populateFormField(FieldDefinitionInterface $formField, array $field): FieldDefinitionInterface;
 
-    /**
-     * @param int $formDefinitionId
-     *
-     * @return bool
-     */
-    public function formHasAvailableConfigurationFile(int $formDefinitionId);
+    public function formHasAvailableConfigurationFile(int $formDefinitionId): bool;
 
-    /**
-     * @param int $formDefinitionId
-     *
-     * @return string
-     */
-    public function getConfigurationPathOfForm(int $formDefinitionId);
+    public function getConfigurationPathOfForm(int $formDefinitionId): string;
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     */
-    public function storeFormData(FormDefinitionInterface $formDefinition);
+    public function storeFormData(FormDefinitionInterface $formDefinition): void;
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     */
-    public function deleteFormData(FormDefinitionInterface $formDefinition);
+    public function deleteFormData(FormDefinitionInterface $formDefinition): void;
 }

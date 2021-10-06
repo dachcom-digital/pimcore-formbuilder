@@ -26,7 +26,7 @@ class FlashMessageExtension extends AbstractExtension
         ];
     }
 
-    public function getFlashMessagesForForm(int $formId, array $types = ['success', 'error']): array
+    public function getFlashMessagesForForm(string|int $formId, array $types = ['success', 'error']): array
     {
         $messages = [];
         foreach ($types as $type) {

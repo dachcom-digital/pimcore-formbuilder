@@ -6,17 +6,9 @@ use FormBuilderBundle\OutputWorkflow\DynamicObjectResolver\DynamicObjectResolver
 
 class DynamicObjectResolverRegistry
 {
-    /**
-     * @var array
-     */
-    protected $services = [];
+    protected array $services = [];
 
-    /**
-     * @param string                         $identifier
-     * @param string                         $label
-     * @param DynamicObjectResolverInterface $service
-     */
-    public function register($identifier, $label, $service)
+    public function register(string $identifier, string $label, mixed $service): void
     {
         if (!in_array(DynamicObjectResolverInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -27,24 +19,15 @@ class DynamicObjectResolverRegistry
         $this->services[$identifier] = ['service' => $service, 'label' => $label];
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return DynamicObjectResolverInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier)
+    public function get(string $identifier): DynamicObjectResolverInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" dynamic object resolver service does not exist.');
@@ -53,10 +36,7 @@ class DynamicObjectResolverRegistry
         return $this->services[$identifier]['service'];
     }
 
-    /**
-     * @return array
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->services;
     }

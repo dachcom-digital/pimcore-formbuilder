@@ -24,12 +24,7 @@ class ExportController extends AdminController
         $this->formDefinitionManager = $formDefinitionManager;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportFormEmailsAction(Request $request)
+    public function exportFormEmailsAction(Request $request): Response
     {
         $formId = $request->get('id', 0);
         $mailType = $request->get('mailType', 'all');
@@ -140,20 +135,13 @@ class ExportController extends AdminController
         return $this->generateCsvStructure($header, $rows);
     }
 
-    /**
-     * @param Email\Log               $log
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $mailHeader
-     *
-     * @return array
-     */
-    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, &$mailHeader): array
+    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, array &$mailHeader): array
     {
         $normalizedParams = [];
         $forbiddenKeys = ['body', '_form_builder_id'];
 
         try {
-            $mailParams = json_decode($log->getParams());
+            $mailParams = json_decode($log->getParams(), true);
         } catch (\Exception $e) {
             return $normalizedParams;
         }
@@ -167,8 +155,8 @@ class ExportController extends AdminController
                 continue;
             }
 
-            $key = $mailParam->key;
-            if (empty($key) || in_array($key, $forbiddenKeys)) {
+            $key = $mailParam['key'];
+            if (empty($key) || in_array($key, $forbiddenKeys, true)) {
                 continue;
             }
 
@@ -191,13 +179,13 @@ class ExportController extends AdminController
                 }
             }
 
-            if (!in_array($displayKeyName, $mailHeader)) {
+            if (!in_array($displayKeyName, $mailHeader, true)) {
                 $mailHeader[] = $displayKeyName;
             }
 
             $value = null;
-            if ($mailParam->data instanceof \stdClass && $mailParam->data->type === 'simple') {
-                $value = $this->cleanValue($mailParam->data->value, $fieldType);
+            if ($mailParam['data'] instanceof \stdClass && $mailParam['data']['type'] === 'simple') {
+                $value = $this->cleanValue($mailParam['data']['value'], $fieldType);
             }
 
             $normalizedParams[$displayKeyName] = $value;
@@ -215,7 +203,7 @@ class ExportController extends AdminController
         return json_encode([
             'key'  => '_form_builder_id',
             'data' => $stdClass
-        ]);
+        ], JSON_THROW_ON_ERROR);
     }
 
     private function generateFormTypeQuery(string $mailType): string
@@ -227,7 +215,7 @@ class ExportController extends AdminController
         return json_encode([
             'key'  => '_form_builder_is_copy',
             'data' => $stdClass
-        ]);
+        ], JSON_THROW_ON_ERROR);
     }
 
     private function generateCsvStructure(array $header, array $data): string
@@ -255,20 +243,14 @@ class ExportController extends AdminController
         return $contents;
     }
 
-    /**
-     * @param string $value
-     * @param string $fieldType
-     *
-     * @return mixed
-     */
-    private function cleanValue($value, $fieldType = null)
+    private function cleanValue(string $value, ?string $fieldType = null): mixed
     {
         if (in_array($fieldType, ['choice', 'dynamic_choice', 'country'])) {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = is_array($value) ? join(', ', array_filter($value)) : $value;
+            $value = is_array($value) ? implode(', ', array_filter($value)) : $value;
         } elseif ($fieldType === 'textarea') {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = is_array($value) ? join("\n", array_filter($value)) : $value;
+            $value = is_array($value) ? implode("\n", array_filter($value)) : $value;
             $value = preg_replace("/[\r\n]+/", "\n", $value);
         }
 

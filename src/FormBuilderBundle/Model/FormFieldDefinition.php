@@ -6,161 +6,89 @@ use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 
 class FormFieldDefinition implements FormFieldDefinitionInterface, EntityToArrayAwareInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
+    private string $display_name;
+    private string $type;
+    private int $order;
+    private array $constraints = [];
+    private array $options = [];
+    private array $optional = [];
 
-    /**
-     * @var string
-     */
-    private $display_name;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var int
-     */
-    private $order;
-
-    /**
-     * @var array
-     */
-    private $constraints = [];
-
-    /**
-     * @var array
-     */
-    private $options = [];
-
-    /**
-     * @var array
-     */
-    private $optional = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrder(int $order)
+    public function setOrder(int $order): void
     {
         $this->order = $order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDisplayName(string $name)
+    public function setDisplayName(string $name): void
     {
         $this->display_name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
         return $this->display_name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): void
     {
-        $this->options = array_filter($options, function ($option) {
+        $this->options = array_filter($options, static function ($option) {
             return $option !== '';
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOptional(array $options = [])
+    public function setOptional(array $options = []): void
     {
-        $this->optional = array_filter($options, function ($option) {
+        $this->optional = array_filter($options, static function ($option) {
             return $option !== '';
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptional()
+    public function getOptional(): array
     {
         return $this->optional;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConstraints(array $constraints = [])
+    public function setConstraints(array $constraints = []): void
     {
         $this->constraints = $constraints;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConstraints()
+    public function getConstraints(): array
     {
         return $this->constraints;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $vars = get_object_vars($this);
         $array = [];

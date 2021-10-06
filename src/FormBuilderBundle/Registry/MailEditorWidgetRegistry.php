@@ -8,21 +8,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MailEditorWidgetRegistry
 {
-    /**
-     * @var array
-     */
-    protected $provider = [];
+    protected array $provider = [];
+    protected ?OptionsResolver $widgetOptionsResolver = null;
 
-    /**
-     * @var OptionsResolver
-     */
-    protected $widgetOptionsResolver;
-
-    /**
-     * @param string                    $identifier
-     * @param MailEditorWidgetInterface $service
-     */
-    public function register($identifier, $service)
+    public function register(string $identifier, mixed $service): void
     {
         if (!in_array(MailEditorWidgetInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -47,24 +36,15 @@ class MailEditorWidgetRegistry
         $this->provider[$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->provider[$identifier]);
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return MailEditorWidgetInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier)
+    public function get(string $identifier): MailEditorWidgetInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" widget service does not exist.');
@@ -73,26 +53,17 @@ class MailEditorWidgetRegistry
         return $this->provider[$identifier];
     }
 
-    /**
-     * @return array|MailEditorWidgetInterface[]
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->provider;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllIdentifier()
+    public function getAllIdentifier(): array
     {
         return array_keys($this->provider);
     }
 
-    /**
-     * @return OptionsResolver
-     */
-    protected function getOptionsResolver()
+    protected function getOptionsResolver(): OptionsResolver
     {
         if ($this->widgetOptionsResolver !== null) {
             return $this->widgetOptionsResolver;

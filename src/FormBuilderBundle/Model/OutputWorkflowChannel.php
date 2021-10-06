@@ -4,86 +4,47 @@ namespace FormBuilderBundle\Model;
 
 class OutputWorkflowChannel implements OutputWorkflowChannelInterface
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
+    protected string $type;
+    protected array $configuration;
+    protected OutputWorkflowInterface $outputWorkflow;
 
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var array
-     */
-    protected $configuration;
-
-    /**
-     * @var OutputWorkflowInterface
-     */
-    protected $outputWorkflow;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return $this->configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOutputWorkflow(OutputWorkflowInterface $outputWorkflow)
+    public function setOutputWorkflow(OutputWorkflowInterface $outputWorkflow): void
     {
         $this->outputWorkflow = $outputWorkflow;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputWorkflow()
+    public function getOutputWorkflow(): OutputWorkflowInterface
     {
         return $this->outputWorkflow;
     }

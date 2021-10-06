@@ -6,16 +6,9 @@ use FormBuilderBundle\DynamicMultiFile\Adapter\DynamicMultiFileAdapterInterface;
 
 class DynamicMultiFileAdapterRegistry
 {
-    /**
-     * @var array
-     */
-    protected $adapter = [];
+    protected array $adapter = [];
 
-    /**
-     * @param string                           $identifier
-     * @param DynamicMultiFileAdapterInterface $service
-     */
-    public function register($identifier, $service)
+    public function register(string $identifier, mixed $service): void
     {
         if (isset($this->adapter[$identifier])) {
             throw new \InvalidArgumentException(sprintf('Dynamic multi file adapter with identifier "%s" already exists', $identifier));
@@ -35,24 +28,15 @@ class DynamicMultiFileAdapterRegistry
         $this->adapter[$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->adapter[$identifier]);
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return DynamicMultiFileAdapterInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier)
+    public function get(string $identifier): DynamicMultiFileAdapterInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" dynamic multi file adapter does not exist.');
@@ -61,18 +45,12 @@ class DynamicMultiFileAdapterRegistry
         return $this->adapter[$identifier];
     }
 
-    /**
-     * @return array|DynamicMultiFileAdapterInterface[]
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->adapter;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllIdentifier()
+    public function getAllIdentifier(): array
     {
         return array_keys($this->adapter);
     }

@@ -7,12 +7,12 @@ use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 interface SubFieldsAwareInterface
 {
     /**
-     * @param FormFieldDefinitionInterface[] $fields
+     * @param array<int, FormFieldDefinitionInterface> $fields
      */
-    public function setFields(array $fields);
+    public function setFields(array $fields): void;
 
     /**
-     * @return FormFieldDefinitionInterface[]
+     * @return array<int, FormFieldDefinitionInterface>
      */
-    public function getFields();
+    public function getFields(): array;
 }
