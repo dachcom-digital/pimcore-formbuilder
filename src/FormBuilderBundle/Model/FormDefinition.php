@@ -195,7 +195,7 @@ class FormDefinition implements FormDefinitionInterface
         return $this->fields;
     }
 
-    public function getField(string $name, bool $deep = false): ?FormFieldDefinitionInterface
+    public function getField(string $name, bool $deep = false): ?FieldDefinitionInterface
     {
         return $this->findField($this->getFields(), $name, $deep);
     }
@@ -233,7 +233,7 @@ class FormDefinition implements FormDefinitionInterface
         return $fields;
     }
 
-    protected function findField(array $fields, mixed $value, bool $deep = false): ?FormFieldDefinitionInterface
+    protected function findField(array $fields, mixed $value, bool $deep = false): ?FieldDefinitionInterface
     {
         foreach ($fields as $field) {
             if ($field->getName() === $value) {

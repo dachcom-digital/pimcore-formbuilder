@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\ReturnStack;
 class SimpleReturnStack implements ReturnStackInterface
 {
     public string $actionType;
-    public array $data = [];
+    public mixed $data;
 
     public function __construct(string $actionType, array $data = [])
     {
@@ -18,7 +18,7 @@ class SimpleReturnStack implements ReturnStackInterface
         return $this->actionType;
     }
 
-    public function getData(): array
+    public function getData(): mixed
     {
         return $this->data;
     }

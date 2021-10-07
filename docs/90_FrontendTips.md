@@ -48,6 +48,15 @@ You may want to add some more attention to the upload field if it's in a require
 }
 ```
 
+## Conditional Logic 
+If you want to use the [conditional logic](./81_ConditionalLogic.md) feature, you need to add a custom toggle class:
+
+```css
+.fb-cl-hide-element {
+    display:none;
+}
+```
+
 ## HTML in Checkbox / Radio Labels
 Formbuilder allows you to use HTML tags in checkbox and radio labels.
 Just use the translation html editor to define some html label:

@@ -701,15 +701,17 @@ class ExtJsFormBuilder
         $currentConfiguration = $fieldData['configuration'];
 
         foreach ($containerConfigurations as $containerConfiguration) {
+
             $configName = $containerConfiguration['name'];
             if (!isset($currentConfiguration[$configName])) {
                 continue;
             }
 
-            $blockValue = $currentConfiguration[$configName];
-            $blockConfig = $containerConfiguration['config'];
-
             if (!empty($containerConfiguration['options_transformer'])) {
+
+                $blockValue = $currentConfiguration[$configName];
+                $blockConfig = $containerConfiguration['config'];
+
                 /** @var OptionsTransformerInterface $transformer */
                 $transformer = $this->optionsTransformerRegistry->get($containerConfiguration['options_transformer']);
 
