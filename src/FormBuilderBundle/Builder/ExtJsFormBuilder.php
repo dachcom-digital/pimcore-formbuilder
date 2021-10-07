@@ -638,7 +638,7 @@ class ExtJsFormBuilder
     /**
      * @throws \Exception
      */
-    private function checkDynamicFieldOptions(&$fieldData, array $formTypeConfig, string $optionKey, array $rawData, array $transformedData, bool $reverse = false): void
+    private function checkDynamicFieldOptions(&$fieldData, array $formTypeConfig, string $optionKey, mixed $rawData, mixed $transformedData, bool $reverse = false): void
     {
         $dynamicFields = $formTypeConfig['dynamic_fields'];
 

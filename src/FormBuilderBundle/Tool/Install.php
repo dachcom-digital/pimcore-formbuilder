@@ -58,7 +58,7 @@ class Install extends SettingsStoreAwareInstaller
         }
 
         try {
-            Translation::importTranslationsFromFile($csvAdmin, Translation::DOMAIN_DEFAULT, false, Admin::getLanguages());
+            Translation::importTranslationsFromFile($csvAdmin, Translation::DOMAIN_ADMIN, false, Admin::getLanguages());
         } catch (\Exception $e) {
             throw new InstallationException(sprintf('Failed to install admin translations. error was: "%s"', $e->getMessage()));
         }

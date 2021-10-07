@@ -7,13 +7,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Pimcore\Translation\Translator;
 
 class DropZoneType extends AbstractType
 {
-    protected TranslatorInterface $translator;
+    protected Translator $translator;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(Translator $translator)
     {
         $this->translator = $translator;
     }
@@ -28,7 +28,7 @@ class DropZoneType extends AbstractType
                     'instance_error'     => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance'),
                     'multiple'           => isset($options['multiple']) && is_bool($options['multiple']) && $options['multiple'],
                     'max_file_size'      => is_numeric($options['max_file_size']) && $options['max_file_size'] > 0 ? (int) $options['max_file_size'] : null,
-                    'allowed_extensions' => is_array($options['allowed_extensions']) ? join(',', $options['allowed_extensions']) : null,
+                    'allowed_extensions' => is_array($options['allowed_extensions']) ? implode(',', $options['allowed_extensions']) : null,
                     'item_limit'         => is_numeric($options['item_limit']) && $options['item_limit'] > 0 ? (int) $options['item_limit'] : null
                 ], JSON_THROW_ON_ERROR),
                 'class'               => implode(' ', [

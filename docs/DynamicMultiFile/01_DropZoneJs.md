@@ -1,54 +1,16 @@
-# Dynamic MultiFile | DropZone
+# Dynamic Multi File | DropZone
 
 ![image](https://user-images.githubusercontent.com/700119/119269406-daf90080-bbf7-11eb-9059-01485bf2edf7.png)
 
-- Resource: https://www.dropzonejs.com 
-- Handler: `jquery.fb.dmf.drop-zone.js`
-- Library: [dropzone.min.js](https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js)
+## Enable Handler
 
-***
-
-## Implementation
-
-### Declarative Way
-The simplest way to implement this adapter is by using the precompiled library loading by CDN and the corresponding handler.
-
-```twig
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/dropzone.min.css" />
-<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
+```yaml
+form_builder:
+    dynamic_multi_file_adapter: FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter
 ```
 
-```javascript
-$(function () {
-    $('form.formbuilder.ajax-form').formBuilderAjaxManager({
-        dynamicMultiFileHandlerOptions: {
-            libPath: 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js'
-        }
-    });
-});
-```
+## Configure Library
+Learn how to configure this extension in frontend [here](https://github.com/dachcom-digital/jquery-pimcore-formbuilder/blog/master/docs/11_dmf_fine_uploader.md).
 
-#### Events
-If you're using the default handler, you're able to hook into the most important initialization processes:
-
-```javascript
-$forms.on('formbuilder.dynamic_multi_file.init', function(ev, $dmfField, configuration) {
-    // overwrite configuraiton
-    configuration.addRemoveLinks = false;
-    
-    // NEVER! override configuration.init! this would break all the internal server side communication!
-    // use event below to add your custom events!
-});
-
-$forms.on('formbuilder.dynamic_multi_file.drop_zone.init', function(ev, dropZoneInstance) {
-    // add eventlistener
-    dropZoneInstance.on('sending', function (file, xhr, formData) {
-        console.log(file);
-    });
-});
-```
-
-### Imperative Way
-This requires more work from your side since we only provide a simple jQuery Handler.
-Read more about the implementation [here](https://dropzone.gitbook.io/dropzone/getting-started/setup/imperative). 
-You also need to build your own handler and requires to **[disable the default behaviour](../80_FileUpload.md#disable-default-initialization)**.
+## Field Configuration Notes
+With DropZone you need to use the mime type in `Allowed Extensions` configuration. Example: `image/jpeg,image/png,image/gif,image/jpg,application/pdf` 

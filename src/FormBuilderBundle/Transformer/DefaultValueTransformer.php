@@ -4,7 +4,7 @@ namespace FormBuilderBundle\Transformer;
 
 class DefaultValueTransformer implements OptionsTransformerInterface
 {
-    public function transform(array $values, ?array $optionConfig = null): array
+    public function transform(mixed $values, ?array $optionConfig = null): mixed
     {
         if (!isset($optionConfig['default_value'])) {
             return $values;
@@ -17,7 +17,7 @@ class DefaultValueTransformer implements OptionsTransformerInterface
         return $values;
     }
 
-    public function reverseTransform(array $values, ?array $optionConfig = null): array
+    public function reverseTransform(mixed $values, ?array $optionConfig = null): mixed
     {
         if (!isset($optionConfig['default_value'])) {
             return $values;

@@ -39,6 +39,15 @@ html:not(.form-builder-rec3-available) .grecaptcha-badge {
 With this, the badge is only visible if a form builder form shows up. 
 Read more about the reCAPTCHA Field [here](./03_SpamProtection.md).
 
+## Multi File Validation 
+You may want to add some more attention to the upload field if it's in a required state:
+
+```css
+.dynamic-multi-file.is-invalid .dropzone {
+    border: 1px solid rgb(255, 0, 0);
+}
+```
+
 ## HTML in Checkbox / Radio Labels
 Formbuilder allows you to use HTML tags in checkbox and radio labels.
 Just use the translation html editor to define some html label:

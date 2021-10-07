@@ -15,7 +15,6 @@ There are 5 steps to go:
 
 ```yaml
 services:
-
     _defaults:
         autowire: true
         autoconfigure: true
@@ -30,18 +29,20 @@ services:
         tags:
             - { name: form.type }
 
+## tell form builder to use your custom adapter
+form_builder:
+    dynamic_multi_file_adapter: App\DynamicMultiFile\Adapter\MyUploaderAdapter
 ```
 
 ## II. Override default handler path
 
 ```javascript
 $('form.formbuilder.ajax-form').formBuilderAjaxManager({
-    // tell form builder core extension where to lazy load your handler from!
-    dynamicMultiFileDefaultHandlerPath: '/bundles/app/js/dynamic-multi-file-adapter/lib',
     dynamicMultiFileHandlerOptions: {
-        // these options will be passed to your new handler
+        // tell form builder core extension where to lazy load your handler from!
+        defaultHandlerPath: '/bundles/app/js/dynamic-multi-file-adapter/lib',
+        // other options will be passed to your new handler
         // you can define any options here.
-        // libPath is just an recommendation so your handler will load the lib only if any upload field is available to render.
         libPath: 'https://cdnjs.cloudflare.com/ajax/libs/my-3rd-party-lib.min.js',
     },
 });
@@ -196,8 +197,7 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
 ## V. JavaScript Handler
 
 ```javascript
-// App/Resources/public/js/dynamic-multi-file-adapter/lib/jquery.fb.dmf.my-uploader.js
-
+// assets/js/dynamic-multi-file-adapter/lib/jquery.fb.dmf.my-uploader.js
 ;(function ($, window) {
 
     'use strict';

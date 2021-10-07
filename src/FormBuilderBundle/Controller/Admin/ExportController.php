@@ -34,13 +34,13 @@ class ExportController extends AdminController
         }
 
         $emailLogs = new Email\Log\Listing();
-        $emailLogs->addConditionParam('params LIKE \'%' . $this->generateFormIdQuery($formId) . '%\'');
+        $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateFormIdQuery($formId)));
 
         if ($mailType !== 'all') {
-            $emailLogs->addConditionParam('params LIKE \'%' . $this->generateFormTypeQuery($mailType) . '%\'');
+            $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateFormTypeQuery($mailType)));
         }
 
-        $this->buildCsv($emailLogs->load(), $formId);
+        $this->buildCsv($emailLogs->getEmailLogs(), $formId);
 
         $response = new Response();
         $response->headers->set('Content-Encoding', 'none');

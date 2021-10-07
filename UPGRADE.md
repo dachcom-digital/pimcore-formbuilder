@@ -3,7 +3,7 @@
 ## Migrating from Version 3.x to Version 4.0.0
 ⚠️ If you're still on version `2.x`, you need to update to `3.x` first, then [migrate](https://github.com/dachcom-digital/pimcore-formbuilder/blob/3.x/UPGRADE.md) to `3.3`. After that, you're able to update to `^4.0`.
 
-### Global Changes
+## Global Changes
 - Deprecations have been removed:
   - `FormBuilderBundle\Storage\Form` needs to be `FormBuilderBundle\Model\FormDefinition` now
   - `FormBuilderBundle\Storage\FormInterface` needs to be `FormBuilderBundle\Model\FormDefinitionInterface` now
@@ -16,6 +16,10 @@
 - Area-Brick Configuration does not allow `sendMailTmplate` and `sendCopyMailTemplate` fallbacks anymore. They must be configured by output workflows now
 - All Folders in `views` are lowercase/dashed now (`common/redirect-flash-message.html.twig`, `email/form-data.html.twig`, `form/elements/dynamic-multi-file`, `form/presets`, `form/theme`, ...)
 - If you have a custom email template, make sure that you're passing the `body`, `editmode`, `document` attributes to your email view template (@see `\FormBuilderBundle\Controller::emailAction()`). Also use `{{ body|raw }}` instead of `%Text(body);` inside your view template!
+- `DropZoneAdapter` has been declared to the new default Multi File Handler. You can switch back to FineUploader by changing the `form_builder.dynamic_multi_file_adapter` configuration node
+
+## Fixes
+- Bootstrap Theme: Class `form-control` has been removed from dynamic multi file (see [#253](https://github.com/dachcom-digital/pimcore-formbuilder/pull/253)). You now need to set some [style definitions](docs/90_FrontendTips.md#multi-file-validation) by yourself
 
 ***
 

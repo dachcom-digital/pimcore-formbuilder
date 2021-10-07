@@ -7,10 +7,10 @@ interface OptionsTransformerInterface
     /**
      * Transform ExtJs Array to valid symfony choices array.
      */
-    public function transform(array$values, ?array $optionConfig = null): array;
+    public function transform(mixed $values, ?array $optionConfig = null): mixed;
 
     /**
      * Transform symfony choices array into valid ExtJs Array.
      */
-    public function reverseTransform(array $values, ?array $optionConfig = null): array;
+    public function reverseTransform(mixed $values, ?array $optionConfig = null): mixed;
 }

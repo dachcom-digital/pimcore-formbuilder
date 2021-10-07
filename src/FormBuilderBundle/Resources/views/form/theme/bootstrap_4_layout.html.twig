@@ -1,14 +1,9 @@
 {% extends 'bootstrap_4_layout.html.twig' %}
 
-{% use '@FormBuilder/Form/Theme/Type/dynamic_multi_file.html.twig' %}
-{% use '@FormBuilder/Form/Theme/Type/html_tag.html.twig' %}
-{% use '@FormBuilder/Form/Theme/Type/snippet.html.twig' %}
-{% use '@FormBuilder/Form/Theme/Type/container.html.twig' %}
-
-{%- block form_builder_dynamicmultifile_widget -%}
-    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) -%}
-    {{ parent() }}
-{%- endblock form_builder_dynamicmultifile_widget -%}
+{% use '@FormBuilder/form/theme/type/dynamic_multi_file.html.twig' %}
+{% use '@FormBuilder/form/theme/type/html_tag.html.twig' %}
+{% use '@FormBuilder/form/theme/type/snippet.html.twig' %}
+{% use '@FormBuilder/form/theme/type/container.html.twig' %}
 
 {%- block form_widget_compound -%}
     {%- if form is not rootform -%}

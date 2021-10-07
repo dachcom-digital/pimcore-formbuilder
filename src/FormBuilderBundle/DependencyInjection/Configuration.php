@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\DependencyInjection;
 
-use FormBuilderBundle\DynamicMultiFile\Adapter\FineUploadAdapter;
+use FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -17,7 +17,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('dynamic_multi_file_adapter')->defaultValue(FineUploadAdapter::class)->end()
+                ->scalarNode('dynamic_multi_file_adapter')->defaultValue(DropZoneAdapter::class)->end()
                 ->variableNode('form_attributes')->end()
                 ->arrayNode('flags')
                     ->addDefaultsIfNotSet()
