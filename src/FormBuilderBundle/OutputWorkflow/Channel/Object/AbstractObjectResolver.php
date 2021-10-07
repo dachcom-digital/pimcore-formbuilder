@@ -252,7 +252,7 @@ abstract class AbstractObjectResolver
                 $fieldName = $containerFieldDataBlockItem['name'];
                 $fieldValue = $containerFieldDataBlockItem['value'];
 
-                // currently not possible, but maybe there will be a nested container in the near future.
+                // currently, not possible, but maybe there will be a nested container in the near future.
                 if ($fieldType === 'container') {
                     $this->processObjectData($object, $containerFieldDataBlockItem);
 

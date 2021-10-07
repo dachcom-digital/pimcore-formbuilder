@@ -173,7 +173,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         if (in_array($method, ['GET', 'HEAD', 'TRACE'])) {
             $qs = $submissionEvent->getRequest()->getQueryString();
             if (!empty($qs)) {
-                $uri = strpos($uri, '?' === false) ? ($uri . '?' . $qs) : ($uri . '&' . $qs);
+                $uri = !str_contains($uri, '?') ? ($uri . '?' . $qs) : ($uri . '&' . $qs);
             }
         }
 

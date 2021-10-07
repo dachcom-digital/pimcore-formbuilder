@@ -209,32 +209,32 @@ class MailParser
         $data = '';
         if (is_array($field)) {
             $i = 0;
-            foreach ($field as $k => $f) {
+            foreach ($field as $subField) {
                 $i++;
-                $data .= $this->parseStringForOutput($f);
+                $data .= $this->parseFieldDataForOutput($subField);
                 if ($i !== count($field)) {
                     $data .= $separator;
                 }
             }
         } else {
-            $data = $this->parseStringForOutput($field);
-        }
-
-        // pimcore email log does not get stored if value is a true boolean.
-        if (is_bool($data)) {
-            $data = $data === true ? 1 : 0;
+            $data = $this->parseFieldDataForOutput($field);
         }
 
         return $data;
     }
 
-    protected function parseStringForOutput(string $string = ''): string
+    protected function parseFieldDataForOutput(mixed $fieldData): string
     {
-        if (str_contains($string, "\n")) {
-            return nl2br($string);
+        if (str_contains($fieldData, "\n")) {
+            return nl2br($fieldData);
         }
 
-        return $string;
+        // pimcore email log does not get stored if value is a true boolean.
+        if (is_bool($fieldData)) {
+            return $fieldData === true ? '1' : '0';
+        }
+
+        return (string) $fieldData;
     }
 
     protected function findPlaceholderValues(array $fieldValues, string $prefix = '', array &$values = []): array

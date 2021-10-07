@@ -10,9 +10,9 @@ interface OutputWorkflowRepositoryInterface
 
     public function findByNameAndFormId(string $name, int $formId): ?OutputWorkflowInterface;
 
-    public function findNameById(int $id): ?OutputWorkflowInterface;
+    public function findNameById(int $id): ?string;
 
-    public function findIdByName(string $name): ?OutputWorkflowInterface;
+    public function findIdByName(string $name): ?int;
 
     public function findAll(): array;
 }

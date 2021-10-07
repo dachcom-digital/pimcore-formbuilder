@@ -37,7 +37,7 @@ class FormErrorsSerializer implements FormErrorsSerializerInterface
 
             $fieldName = sprintf('%s%s', $name, $currentFieldName);
 
-            if (!in_array($fieldName, $errors, true)) {
+            if (!array_key_exists($fieldName, $errors)) {
                 $errors[$fieldName] = [];
             }
 

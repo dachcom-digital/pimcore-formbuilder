@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Transformer\Output\Traits;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data\Gender;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
@@ -11,7 +10,7 @@ trait ChoiceTargetTransformerTrait
 {
     public function parseChoiceValue(mixed $target, mixed $rawValue): mixed
     {
-        if ($target instanceof Select || $target instanceof Gender) {
+        if ($target instanceof Select) {
             return $this->parseArrayChoiceToSingle($rawValue);
         }
 

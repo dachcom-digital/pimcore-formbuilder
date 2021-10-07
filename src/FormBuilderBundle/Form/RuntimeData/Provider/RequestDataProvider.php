@@ -30,7 +30,7 @@ class RequestDataProvider implements RuntimeDataProviderInterface
 
     public function hasRuntimeData(FormDefinitionInterface $formDefinition): bool
     {
-        $data = $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMasterRequest()]);
+        $data = $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMainRequest()]);
 
         return $data !== null;
     }
@@ -38,7 +38,7 @@ class RequestDataProvider implements RuntimeDataProviderInterface
     public function getRuntimeData(FormDefinitionInterface $formDefinition): mixed
     {
         try {
-            return $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMasterRequest()]);
+            return $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMainRequest()]);
         } catch (SyntaxError $e) {
             return null;
         }

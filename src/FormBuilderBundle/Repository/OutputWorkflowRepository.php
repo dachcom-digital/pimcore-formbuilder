@@ -34,16 +34,24 @@ class OutputWorkflowRepository implements OutputWorkflowRepositoryInterface
         return $this->repository->findOneBy(['name' => $name, 'formDefinition' => $formId]);
     }
 
-    public function findNameById($id): ?OutputWorkflowInterface
+    public function findNameById($id): ?string
     {
         $outputWorkflow = $this->findById($id);
+
+        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+            return null;
+        }
 
         return $outputWorkflow->getName();
     }
 
-    public function findIdByName(string $name): ?OutputWorkflowInterface
+    public function findIdByName(string $name): ?int
     {
         $outputWorkflow = $this->repository->findOneBy(['name' => $name]);
+
+        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+            return null;
+        }
 
         return $outputWorkflow->getId();
     }

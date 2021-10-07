@@ -83,7 +83,7 @@ class FileStream implements FileStreamInterface
         }
 
         // Validate name
-        if ($fileSafeName === null || $fileSafeName === '') {
+        if ($fileSafeName === '') {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -92,7 +92,7 @@ class FileStream implements FileStreamInterface
         }
 
         // Validate file size
-        if ($size == 0) {
+        if ($size === 0 || $size === '0') {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -164,7 +164,7 @@ class FileStream implements FileStreamInterface
         }
 
         // non-chunked upload
-        $target = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
+        $target = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
 
         if (!is_dir($target)) {
             mkdir($target, 0755, true);
@@ -193,15 +193,15 @@ class FileStream implements FileStreamInterface
     {
         $tmpDirs = [];
         $chunkSuccess = true;
-        $masterRequest = $this->requestStack->getMasterRequest();
+        $masterRequest = $this->requestStack->getMainRequest();
 
         $uuid = $masterRequest->request->get($options['uuid']);
         $serverFileSafeName = $this->getSafeFileName($options['fileName'], true);
         $fileSafeName = $this->getSafeFileName($options['fileName']);
 
-        $targetPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
-        $destinationFolderPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
-        $destinationPath = join(DIRECTORY_SEPARATOR, [$destinationFolderPath, $serverFileSafeName]);
+        $targetPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
+        $destinationFolderPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
+        $destinationPath = implode(DIRECTORY_SEPARATOR, [$destinationFolderPath, $serverFileSafeName]);
 
         $totalParts = $masterRequest->request->has($options['totalChunkCount']) ? (int) $masterRequest->request->get($options['totalChunkCount']) : 1;
 
@@ -280,10 +280,10 @@ class FileStream implements FileStreamInterface
         }
 
         $targetPath = $this->fileLocator->getFilesFolder();
-        $target = join(DIRECTORY_SEPARATOR, [$targetPath, $identifier]);
+        $target = implode(DIRECTORY_SEPARATOR, [$targetPath, $identifier]);
 
         if ($checkChunkFolder === true) {
-            $chunkPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $identifier]);
+            $chunkPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $identifier]);
 
             if (is_dir($chunkPath)) {
                 $this->deleteFolders([$chunkPath]);

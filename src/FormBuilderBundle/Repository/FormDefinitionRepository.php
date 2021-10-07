@@ -45,16 +45,24 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
         return $this->assembleSingle($object);
     }
 
-    public function findNameById($id): ?FormDefinitionInterface
+    public function findNameById($id): ?string
     {
         $form = $this->findById($id);
+
+        if (!$form instanceof FormDefinitionInterface) {
+            return null;
+        }
 
         return $form->getName();
     }
 
-    public function findIdByName(string $name): ?FormDefinitionInterface
+    public function findIdByName(string $name): ?int
     {
         $form = $this->findByName($name);
+
+        if (!$form instanceof FormDefinitionInterface) {
+            return null;
+        }
 
         return $form->getId();
     }

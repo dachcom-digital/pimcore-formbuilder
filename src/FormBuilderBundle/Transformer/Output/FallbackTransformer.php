@@ -94,7 +94,6 @@ class FallbackTransformer implements OutputTransformerInterface
             return $value->format($format);
         }
 
-        $calendar = 'gregorian';
         $formatValues = [
             'none'   => \IntlDateFormatter::NONE,
             'short'  => \IntlDateFormatter::SHORT,
@@ -116,7 +115,7 @@ class FallbackTransformer implements OutputTransformerInterface
             $formatValues[$dateFormat],
             $formatValues[$timeFormat],
             \IntlTimeZone::createTimeZone($value->getTimezone()->getName())->getID(),
-            'gregorian' === $calendar ? \IntlDateFormatter::GREGORIAN : \IntlDateFormatter::TRADITIONAL,
+            \IntlDateFormatter::GREGORIAN, // @todo: allow different formatter types (\IntlDateFormatter::TRADITIONAL)?
             null
         );
 

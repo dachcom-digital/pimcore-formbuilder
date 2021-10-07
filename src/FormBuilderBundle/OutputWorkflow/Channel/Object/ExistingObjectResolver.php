@@ -41,7 +41,6 @@ class ExistingObjectResolver extends AbstractObjectResolver
         $resolvingObjectInfo = $this->getResolvingObject();
         $resolvingObjectId = $resolvingObjectInfo['id'];
 
-        $resolver = null;
         $dataObject = DataObject::getById($resolvingObjectId);
 
         if ($this->getDynamicObjectResolver() !== null) {
@@ -49,7 +48,7 @@ class ExistingObjectResolver extends AbstractObjectResolver
             $dataObject = $resolver->resolve($this->getForm(), $dataObject, $this->getFormRuntimeData(), $this->getLocale());
         }
 
-        if (!$dataObject instanceof DataObject) {
+        if (!$dataObject instanceof DataObject\Concrete) {
             throw new \Exception(sprintf(
                 'Resolving Object with id "%s" not found. %s',
                 $resolvingObjectId,

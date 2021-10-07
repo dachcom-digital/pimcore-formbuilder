@@ -167,9 +167,9 @@ class RequestListener implements EventSubscriberInterface
         }
 
         if (in_array($method, ['GET', 'HEAD', 'TRACE']) && $request->query->has($name)) {
-            $data = $request->query->get($name);
+            $data = $request->query->all($name);
         } elseif ($request->request->has($name)) {
-            $data = $request->request->get($name, null);
+            $data = $request->request->all($name);
         }
 
         if (!is_array($data)) {

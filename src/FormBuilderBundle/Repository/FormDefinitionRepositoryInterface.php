@@ -10,9 +10,9 @@ interface FormDefinitionRepositoryInterface
 
     public function findByName(string $name): ?FormDefinitionInterface;
 
-    public function findNameById(int $id): ?FormDefinitionInterface;
+    public function findNameById(int $id): ?string;
 
-    public function findIdByName(string $name): ?FormDefinitionInterface;
+    public function findIdByName(string $name): ?int;
 
     public function findAll(): array;
 }
