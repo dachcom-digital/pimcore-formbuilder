@@ -77,12 +77,6 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [FormBuilder Javascript Plugins](docs/91_Javascript.md)
 - [Configuration Flags](docs/100_ConfigurationFlags.md)
 
-## Deprecated
-- [Mail Template Configuration](docs/Deprecated/MailTemplates.md)
-  - [Global Mail Editor](docs/Deprecated/MailEditor.md)
-- [Mail Template Success Messages Properties](docs/Deprecated/SuccessMessage.md)
-- [Mail Template Submission Types (html/plain-text)](docs/Deprecated/MailSubmissionTypes.md)
-
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
 

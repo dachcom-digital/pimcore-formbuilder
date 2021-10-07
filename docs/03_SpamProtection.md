@@ -18,7 +18,7 @@ reCAPTCHA v3 returns a score for each request without user friction.
 The score is based on interactions with your site and enables you to take an appropriate action for your site. 
 Register reCAPTCHA v3 keys [here](https://g.co/recaptcha/v3).
 
-> **Important!** It is recommend to load the recaptcha api on every page request.
+> **Important!** It is recommended to load the recaptcha api on every page request.
 > To hide the badge on documents without forms, read our [frontend tips](./90_FrontendTips.md)
 
 1. Get your keys at https://g.co/recaptcha/v3
