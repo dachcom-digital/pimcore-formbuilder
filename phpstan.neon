@@ -1,6 +1,8 @@
 includes:
 	- %currentWorkingDirectory%/vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
+    scanFiles:
+        - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/dynamic-constants.php
     reportUnmatchedIgnoredErrors: false
     symfony:
         container_xml_path: %currentWorkingDirectory%/var/cache/test/TestKernelTestDebugContainer.xml

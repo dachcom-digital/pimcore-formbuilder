@@ -313,16 +313,6 @@ class SettingsController extends AdminController
         return $response;
     }
 
-    public function checkPathAction(Request $request): JsonResponse
-    {
-        // @todo: register via flysystem
-
-        $path = $request->get('path');
-        $pathIsValid = is_dir(PIMCORE_PUBLIC_VAR . '/' . ltrim($path, '/'));
-
-        return $this->json(['success' => $pathIsValid]);
-    }
-
     public function getGroupTemplatesAction(): JsonResponse
     {
         $areaConfig = $this->configuration->getConfig('area');

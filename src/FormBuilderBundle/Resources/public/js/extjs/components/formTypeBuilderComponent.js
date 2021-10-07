@@ -345,48 +345,6 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
     },
 
     /**
-     *
-     * @param path
-     * @param field
-     */
-    checkPath: function (path, field) {
-
-        if (path === '') {
-            return;
-        }
-
-        Ext.Ajax.request({
-            url: '/admin/formbuilder/settings/check-path',
-            method: 'post',
-            params: {
-                path: path
-            },
-            success: this.pathChecked.bind(field)
-        });
-
-    },
-
-    /**
-     * @param response
-     */
-    pathChecked: function (response) {
-
-        //maybe layout is not available anymore => return!
-        if (this.el === null) {
-            return;
-        }
-
-        var ret = Ext.decode(response.responseText);
-
-        if (ret.success === true) {
-            this.clearInvalid();
-        } else {
-            this.markInvalid(t('form_builder_path_does_not_exists'));
-        }
-
-    },
-
-    /**
      * THANKS!
      * https://github.com/Gigzolo/dataobject-parser
      *
