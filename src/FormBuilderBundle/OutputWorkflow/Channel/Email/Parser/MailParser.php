@@ -156,7 +156,7 @@ class MailParser
     {
         foreach ($attachments as $attachmentFileInfo) {
             try {
-                $mail->attachFromPath($attachmentFileInfo['path'], $attachmentFileInfo['name']);
+                $mail->attach(file_get_contents($attachmentFileInfo['path']), $attachmentFileInfo['name']);
             } catch (\Exception $e) {
                 // fail silently.
             }

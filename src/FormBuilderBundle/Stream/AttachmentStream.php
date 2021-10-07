@@ -129,7 +129,7 @@ class AttachmentStream implements AttachmentStreamInterface
     public function removeAttachmentByFileInfo(array $fileInfo): void
     {
         $targetFolder = $this->fileLocator->getFilesFolder();
-        $target = join(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['id']]);
+        $target = implode(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['id']]);
 
         if (!is_dir($target)) {
             return;

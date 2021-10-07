@@ -66,7 +66,7 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
 
     protected function parseField(
         FormDataInterface $formData,
-        FormFieldDefinitionInterface $fieldDefinition,
+        FieldDefinitionInterface $fieldDefinition,
         FormInterface $formField,
         ?string $locale,
         mixed $fieldRawValue

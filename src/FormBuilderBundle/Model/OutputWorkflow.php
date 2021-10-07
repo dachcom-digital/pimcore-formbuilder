@@ -9,7 +9,7 @@ class OutputWorkflow implements OutputWorkflowInterface
 {
     protected int $id;
     protected string $name;
-    protected array $successManagement;
+    protected ?array $successManagement;
     protected FormDefinitionInterface $formDefinition;
     protected Collection $channels;
 
@@ -43,7 +43,7 @@ class OutputWorkflow implements OutputWorkflowInterface
         $this->successManagement = $successManagement;
     }
 
-    public function getSuccessManagement(): array
+    public function getSuccessManagement(): ?array
     {
         return $this->successManagement;
     }

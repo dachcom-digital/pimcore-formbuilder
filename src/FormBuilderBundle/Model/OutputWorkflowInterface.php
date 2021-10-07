@@ -14,7 +14,7 @@ interface OutputWorkflowInterface
 
     public function setSuccessManagement(array $successManagement): void;
 
-    public function getSuccessManagement(): array;
+    public function getSuccessManagement(): ?array;
 
     public function setFormDefinition(FormDefinitionInterface $formDefinition): void;
 

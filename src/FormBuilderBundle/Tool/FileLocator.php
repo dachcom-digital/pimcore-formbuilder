@@ -8,10 +8,10 @@ use Symfony\Component\Finder\Finder;
 class FileLocator
 {
     protected Filesystem $filesystem;
-    private string $tmpFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . 'formbuilder-cache';
-    private string $chunksFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . 'formbuilder-cache/chunks';
-    private string $filesFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . 'formbuilder-cache/files';
-    private string $zipFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . 'formbuilder-cache/zip';
+    private string $tmpFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/formbuilder-cache';
+    private string $chunksFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/formbuilder-cache/chunks';
+    private string $filesFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/formbuilder-cache/files';
+    private string $zipFolder = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/formbuilder-cache/zip';
 
     public function __construct(Filesystem $filesystem)
     {
