@@ -66,7 +66,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         string $outputWorkflowName,
         FormDefinitionInterface $form,
         array $channelDefinitions,
-        string $successMessage = 'Thank you'
+        string $successMessage = 'Success!'
     ): OutputWorkflowInterface {
         $outputWorkflow = $this->createOutputWorkflow($outputWorkflowName, $form, $channelDefinitions, $successMessage);
 
@@ -121,20 +121,23 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
     public function seeAFormAreaElementPlacedOnDocument(
         Page $document,
         FormDefinitionInterface $form,
-        Email $mailTemplate,
+        ?Email $mailTemplate = null,
         ?Email $copyMailTemplate = null,
         ?string $formTemplate = 'form_div_layout.html.twig',
         ?OutputWorkflowInterface $outputWorkflow = null
     ): void {
 
-        $this->assertInstanceOf(Email::class, $mailTemplate);
+        $outputWorkflowChannels = [];
 
-        $outputWorkflowChannels = [
-            [
-                'type'  => 'email',
-                'email' => $mailTemplate
-            ]
-        ];
+        if ($mailTemplate !== null) {
+            $this->assertInstanceOf(Email::class, $mailTemplate);
+            $outputWorkflowChannels = [
+                [
+                    'type'  => 'email',
+                    'email' => $mailTemplate
+                ]
+            ];
+        }
 
         if ($copyMailTemplate !== null) {
             $this->assertInstanceOf(Email::class, $copyMailTemplate);
@@ -250,7 +253,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         string $name,
         FormDefinitionInterface $form,
         array $channelDefinitions,
-        string $successMessage = 'Thank you',
+        string $successMessage = 'Success!',
     ): OutputWorkflowInterface {
         $manager = $this->getOutputWorkflowManager();
 

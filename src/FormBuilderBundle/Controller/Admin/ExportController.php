@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Controller\Admin;
 use Carbon\Carbon;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
 use Pimcore\Model\Tool\Email;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use FormBuilderBundle\Manager\FormDefinitionManager;
@@ -27,7 +28,7 @@ class ExportController extends AdminController
     public function exportFormEmailsAction(Request $request): Response
     {
         $formId = $request->get('id', 0);
-        $mailType = $request->get('mailType', 'all');
+        $filter = $request->get('mailType', 'all');
 
         if (empty($formId)) {
             throw new NotFoundHttpException('FormBuilder: No valid Form ID for csv export given.');
@@ -36,8 +37,8 @@ class ExportController extends AdminController
         $emailLogs = new Email\Log\Listing();
         $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateFormIdQuery($formId)));
 
-        if ($mailType !== 'all') {
-            $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateFormTypeQuery($mailType)));
+        if ($filter !== 'all') {
+            $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateOutputWorkflowFilterQuery($formId, (int) $filter)));
         }
 
         $this->buildCsv($emailLogs->getEmailLogs(), $formId);
@@ -206,14 +207,38 @@ class ExportController extends AdminController
         ], JSON_THROW_ON_ERROR);
     }
 
-    private function generateFormTypeQuery(string $mailType): string
+    private function generateOutputWorkflowFilterQuery(int $formId, int $outputWorkflowId): string
     {
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+
+        if (!$formDefinition instanceof FormDefinitionInterface) {
+            return 'UNKNOWN';
+        }
+
+        if (!$formDefinition->hasOutputWorkflows()) {
+            return 'UNKNOWN';
+        }
+
+        $relatedWorkflows = array_values(array_filter(
+            $formDefinition->getOutputWorkflows()->toArray(),
+            static function (OutputWorkflowInterface $workflow) use ($outputWorkflowId) {
+                return $workflow->getId() === $outputWorkflowId;
+            }
+        ));
+
+        if (count($relatedWorkflows) === 0) {
+            return 'UNKNOWN';
+        }
+
+        /** @var OutputWorkflowInterface $relatedWorkflow */
+        $relatedWorkflow = $relatedWorkflows[0];
+
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
-        $stdClass->value = $mailType === 'only_main' ? 0 : 1;
+        $stdClass->value = $relatedWorkflow->getName();
 
         return json_encode([
-            'key'  => '_form_builder_is_copy',
+            'key'  => '_form_builder_output_workflow_name',
             'data' => $stdClass
         ], JSON_THROW_ON_ERROR);
     }

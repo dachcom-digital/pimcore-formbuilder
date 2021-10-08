@@ -680,6 +680,26 @@ Formbuilder.extjs.formPanel.config = Class.create({
                     ['multipart/form-data', 'multipart/form-data']
                 ]
             }),
+            owStore = new Ext.data.Store({
+                autoLoad: false,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/formbuilder/output-workflow/get-output-workflow-list/' + this.formId,
+                    fields: ['id', 'name'],
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'outputWorkflows'
+                    },
+                },
+                listeners: {
+                    load: function (store) {
+                        store.insert(0, {
+                            id : 'all',
+                            name : t('form_builder_email_csv_export_mail_type_all')
+                        });
+                    }
+                }
+            }),
             keyValueRepeater = new Formbuilder.extjs.types.keyValueRepeater(
                 'attributes',
                 t('form_builder_form_attribute_name') + ' & ' + t('form_builder_form_attribute_value'),
@@ -708,26 +728,18 @@ Formbuilder.extjs.formPanel.config = Class.create({
                     xtype: 'combo',
                     fieldLabel: t('form_builder_email_csv_export_mail_type'),
                     queryDelay: 0,
-                    displayField: 'key',
-                    valueField: 'value',
+                    displayField: 'name',
+                    valueField: 'id',
                     mode: 'local',
                     labelAlign: 'top',
-                    store: new Ext.data.ArrayStore({
-                        fields: ['value', 'key'],
-                        data: [
-                            ['all', t('form_builder_email_csv_export_mail_type_all')],
-                            ['only_main', t('form_builder_email_csv_export_mail_type_only_main')],
-                            ['only_copy', t('form_builder_email_csv_export_mail_type_only_copy')],
-                        ]
-                    }),
+                    store: owStore,
                     value: 'all',
                     editable: false,
+                    allowBlank: false,
+                    submitValue: false,
                     triggerAction: 'all',
                     anchor: '100%',
-                    summaryDisplay: true,
-                    allowBlank: false,
                     name: '_csvExportMailType',
-                    submitValue: false,
                 },
                 {
                     xtype: 'toolbar',
