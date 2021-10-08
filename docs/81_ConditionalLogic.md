@@ -25,5 +25,5 @@ Use the conditional logic to hide/show fields, toggle classes, change validation
 | Fire JS-Event | Fire custom javascript event of one ore more fields. | Yes | Event Name: *string* (only `a-z0-9.` chars) |
 | Toggle Classes | Toggle a Class of one ore more fields | Yes | Class Name: *string* |
 | Toggle Availability | Toggle a availability state | Yes | State: `Enabled`, `Disabled` |
-| ~Mail Behaviour~ | **Deprecated!** This method will be removed in Version 4.0. Change Mail Behavior | No | Type: `Recipient`, `Email Template` |
-| Success Message | Change Success Message | No | Type: `Text`, `Snippet`, `Redirect to Document`, `Redirect to external Page` |
+| Switch Output Workflow | Switch entire Output Workflow | No | None |
+| Success Message | Change Success Message (**Warning!** Use this action with caution. If there is no "Output Workflow" condition, this action will apply to all given output workflows of given form) | No | Type: `Text`, `Snippet`, `Redirect to Document`, `Redirect to external Page` |

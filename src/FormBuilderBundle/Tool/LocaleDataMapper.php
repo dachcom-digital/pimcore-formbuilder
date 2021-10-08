@@ -33,7 +33,7 @@ class LocaleDataMapper
 
     public function mapMultiDimensional(string $requestedLocale, string $identifier, bool $isHref, array $data): array
     {
-        $blockGenerator = function ($locale) use ($isHref, $data, $identifier) {
+        $blockGenerator = static function ($locale) use ($isHref, $data, $identifier) {
             if ($isHref === true) {
                 return isset($data[$locale][$identifier]['id']) && $data[$locale][$identifier]['id'] !== null;
             }

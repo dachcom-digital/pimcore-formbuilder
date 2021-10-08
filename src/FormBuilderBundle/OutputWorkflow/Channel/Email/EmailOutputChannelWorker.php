@@ -13,23 +13,17 @@ use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
-use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData;
 
 class EmailOutputChannelWorker
 {
     protected MailParser $mailParser;
-    protected Dispatcher $dispatcher;
     protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         MailParser $mailParser,
-        Dispatcher $dispatcher,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->mailParser = $mailParser;
-        $this->dispatcher = $dispatcher;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -48,23 +42,10 @@ class EmailOutputChannelWorker
         $isCopy = $hasIsCopyFlag && $channelConfiguration['legacyIsCopy'] === true;
 
         $mailTemplateId = $mailTemplate['id'];
-
-        /** @var MailBehaviourData $mailConditionData */
-        $mailConditionData = $this->checkMailCondition('mail_behaviour', $formData, $formRuntimeData, ['isCopy' => $isCopy]);
-
-        if ($mailConditionData->hasMailTemplate()) {
-            $conditionalMailTemplateId = $mailConditionData->getMailTemplateId($locale);
-            $mailTemplate = is_numeric($conditionalMailTemplateId) ? Document\Email::getById($conditionalMailTemplateId) : null;
-        } else {
-            $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
-        }
+        $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
 
         if (!$mailTemplate instanceof Document\Email) {
             throw new \Exception('Invalid Email Document Id: ' . $mailTemplateId);
-        }
-
-        if ($mailConditionData->hasRecipient()) {
-            $mailTemplate->setTo($mailConditionData->getRecipient());
         }
 
         $mail = $this->mailParser->create($mailTemplate, $form, $channelConfiguration, $locale);
@@ -109,18 +90,6 @@ class EmailOutputChannelWorker
     protected function sendDefault(Mail $mail): void
     {
         $mail->send();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function checkMailCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, array $moduleOptions = []): DataInterface
-    {
-        return $this->dispatcher->runFormDispatcher($dispatchModule, [
-            'formData'           => $formData->getData(),
-            'conditionalLogic'   => $formData->getFormDefinition()->getConditionalLogic(),
-            'formRuntimeOptions' => $formRuntimeOptions
-        ], $moduleOptions);
     }
 
     /**

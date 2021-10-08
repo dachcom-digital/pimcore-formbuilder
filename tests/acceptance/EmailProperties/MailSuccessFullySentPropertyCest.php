@@ -50,7 +50,7 @@ class MailSuccessFullySentPropertyCest
      */
     public function testSuccessFullySentPropertyWithSnippet(AcceptanceTester $I)
     {
-        $snippet = $I->haveASnippet('mail-success-snippet', ['controller' => 'default', 'action' => 'snippet']);
+        $snippet = $I->haveASnippet('mail-success-snippet', ['controller' => 'App\Controller\DefaultController', 'action' => 'snippetAction']);
 
         $property = new Property();
         $property->setName('mail_successfully_sent');

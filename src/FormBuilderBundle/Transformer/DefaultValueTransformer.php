@@ -24,7 +24,7 @@ class DefaultValueTransformer implements OptionsTransformerInterface
         }
 
         if ($values === $optionConfig['default_value']) {
-            return [];
+            return '';
         }
 
         return $values;

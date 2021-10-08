@@ -2,7 +2,6 @@
 
 namespace DachcomBundle\Test\functional\MailSubmissionTypes;
 
-use Dachcom\Codeception\Util\VersionHelper;
 use DachcomBundle\Test\Helper\Traits;
 use DachcomBundle\Test\FunctionalTester;
 use Pimcore\Model\Property;
@@ -30,10 +29,10 @@ class SubmissionTypesCest
         $this->fillSimpleForm($testFormBuilder, $I);
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailSubmissionType('text/html', $adminEmail);
+        $I->seeEmailSubmissionType('text/html', 'html', $adminEmail);
 
         // Html2Text/Html2Text library change text to uppercase if in <strong>, <b>, <td> or <h> tag.
-        $searchText = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.6.0') ? 'SINGLE_CHECKBOX:' : 'Single_checkbox:';
+        $searchText = 'SINGLE_CHECKBOX:';
 
         $I->seeInSubmittedEmailChildrenBody($searchText, $adminEmail);
         $I->seeInSubmittedEmailBody('<strong>Single_checkbox:</strong>', $adminEmail);
@@ -65,11 +64,11 @@ class SubmissionTypesCest
         $this->fillSimpleForm($testFormBuilder, $I);
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailSubmissionType('text/plain', $adminEmail);
+        $I->seeEmailSubmissionType('text/plain', 'text', $adminEmail);
         $I->dontHaveSubmittedEmailChildren($adminEmail);
 
         // Html2Text/Html2Text library change text to uppercase if in <strong>, <b>, <td> or <h> tag.
-        $searchText = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.6.0') ? 'SINGLE_CHECKBOX:' : 'Single_checkbox:';
+        $searchText = 'SINGLE_CHECKBOX:';
 
         $I->seeInSubmittedEmailBody($searchText, $adminEmail);
         $I->dontSeeInSubmittedEmailBody('<strong>Single_checkbox:</strong>', $adminEmail);

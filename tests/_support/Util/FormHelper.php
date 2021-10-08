@@ -10,12 +10,9 @@ use Symfony\Component\Finder\Finder;
 
 class FormHelper
 {
-    const AREA_TEST_NAMESPACE = 'dachcomBundleTest';
+    public const AREA_TEST_NAMESPACE = 'dachcomBundleTest';
 
-    /**
-     * Delete all Forms from db / filesystem
-     */
-    public static function removeAllForms()
+    public static function removeAllForms(): void
     {
         $formPath = Configuration::STORE_PATH;
 
@@ -38,13 +35,7 @@ class FormHelper
         }
     }
 
-    /**
-     * @param string $formName
-     * @param bool   $useAjax
-     *
-     * @return TestFormBuilder
-     */
-    public static function generateSimpleForm(string $formName = 'dachcom_test', $useAjax = false)
+    public static function generateSimpleForm(string $formName = 'dachcom_test', bool $useAjax = false): TestFormBuilder
     {
         return (new TestFormBuilder($formName))
             ->setUseAjax($useAjax)

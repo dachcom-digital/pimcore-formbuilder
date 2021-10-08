@@ -33,6 +33,9 @@ pimcore:
         icc_cmyk_profile: ''
         hide_edit_image: false
         disable_tree_preview: true
+    email:
+        debug:
+            email_addresses: opensource@dachcom.ch
     services:
         google:
             client_id: ''

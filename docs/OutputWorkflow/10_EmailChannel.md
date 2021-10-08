@@ -15,7 +15,7 @@ There is also a `Default` fallback field. If a requested locale can't be found d
 | Mail Template | Pimcore Mail Type | Use it to define the mail template via drag'n'drop. |
 | Ignored Field in Email | Tags | In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user. Add one or multiple fields as string. *Notice:* The field name needs be identical to the field name in your form configuration. |
 | Allow Attachment | Checkbox | If this is checked, attachments or attachments-links will be appended to the mail. |
-| Force Plain Text Submission | Checkbox | If you want to force the plain text submission, you need to check this option. Read more about the submission types [below](./10_EmailChannel.md#mail-submission-types). Please be aware that this option requires the [html2text](http://www.mbayer.de/html2text/index.shtml) binary (But only if you're on Pimcore < 6.6). |
+| Force Plain Text Submission | Checkbox | If you want to force the plain text submission, you need to check this option. Read more about the submission types [below](./10_EmailChannel.md#mail-submission-types). |
 | Required By | Checkbox | If this is checked, you need to add your own data to the mail template. You can use all the field names as placeholder. This function is only necessary in rare cases. |
 
 ***
@@ -36,16 +36,11 @@ To do so, just add a placeholder like `%emailaddress%` to the subject field. The
 
 ### HTML
 FormBuilder always submits html mails. 
-However, if you have installed the [html2text](http://www.mbayer.de/html2text/index.shtml) binary (Only required on Pimcore < 6.6), it will also append a text/plain version to each email.
-With that, the email client is able to choose between html and plain text.
-
-**Attention!** If the html2text binary is not installed (Only required on Pimcore < 6.6), the text/plain version will be skipped silently.
+However, it will also append a text/plain version to each email. With that, the email client is able to choose between html and plain text.
 
 ### Plain Text
 In some cases you may want to force the text/plain submission. 
 To do so, you need to set the [_mail_force_plain_text_ Property](./10_MailTemplates.md#mail_force_plain_text-checkbox).
-
-**Attention!** Please note that you must have installed the html2text binary if you're on Pimcore < 6.6, otherwise an exception will be thrown at time of mail submission.
 
 ### Advanced HTML Templating
 Use the [emailizr](https://github.com/dachcom-digital/pimcore-emailizr) library to generate simple structured html templates and inline styled markup out of the box.

@@ -732,6 +732,10 @@ class ExtJsFormBuilder
         $baseConfig = $this->configuration->getBackendConditionalLogicConfig();
         $typeConfig = $baseConfig[$type];
 
+        if (!isset($typeConfig[$fieldData['type']])) {
+            return;
+        }
+
         $elementConfig = $typeConfig[$fieldData['type']];
         $elementFormConfig = $elementConfig['form'];
 

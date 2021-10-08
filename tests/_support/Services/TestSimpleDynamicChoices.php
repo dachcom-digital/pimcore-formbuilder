@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class TestSimpleDynamicChoices implements ChoiceBuilderInterface
 {
-    protected $builder;
+    protected FormBuilderInterface $builder;
 
-    private function getFakeEntities()
+    private function getFakeEntities(): array
     {
         return [
             1 => 'Entity 1',
@@ -21,7 +21,7 @@ class TestSimpleDynamicChoices implements ChoiceBuilderInterface
         ];
     }
 
-    public function setFormBuilder(FormBuilderInterface $builder)
+    public function setFormBuilder(FormBuilderInterface $builder): void
     {
         $this->builder = $builder;
 
@@ -42,14 +42,14 @@ class TestSimpleDynamicChoices implements ChoiceBuilderInterface
                         $data[] = $fakeEntities[$id];
                     }
                     return implode(', ', $data);
-                } else {
-                    return $fakeEntities[$entries];
                 }
+
+                return $fakeEntities[$entries];
             }
         ));
     }
 
-    public function getList()
+    public function getList(): array
     {
         $data = [];
         foreach ($this->getFakeEntities() as $entityId => $entityName) {

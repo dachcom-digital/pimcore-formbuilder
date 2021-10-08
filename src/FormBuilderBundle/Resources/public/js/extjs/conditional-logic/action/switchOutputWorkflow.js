@@ -1,10 +1,14 @@
-pimcore.registerNS('Formbuilder.extjs.conditionalLogic.condition');
-pimcore.registerNS('Formbuilder.extjs.conditionalLogic.condition.outputWorkflow');
-Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formbuilder.extjs.conditionalLogic.condition.abstract, {
+pimcore.registerNS('Formbuilder.extjs.conditionalLogic.action');
+pimcore.registerNS('Formbuilder.extjs.conditionalLogic.action.switchOutputWorkflow');
+Formbuilder.extjs.conditionalLogic.action.switchOutputWorkflow = Class.create(Formbuilder.extjs.conditionalLogic.action.abstract, {
+
+    valueField: null,
+    fieldPanel: null,
 
     getItem: function () {
-        var _ = this,
 
+        var _ = this,
+            fieldId = Ext.id(),
             items = [
                 {
                     xtype: 'hidden',
@@ -17,20 +21,19 @@ Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formb
                     }
                 },
                 {
-                    xtype: 'tagfield',
-                    name: _.generateFieldName(this.sectionId, this.index, 'outputWorkflows'),
-                    fieldLabel: t('form_builder_output_workflow_select'),
-                    style: 'margin: 0 5px 0 0',
-                    labelAlign: 'top',
+                    xtype: 'combo',
+                    name: _.generateFieldName(this.sectionId, this.index, 'workflowId'),
+                    fieldLabel: t('form_builder_switch_output_workflow_identifier'),
                     anchor: '100%',
-                    stacked: true,
+                    queryDelay: 0,
                     displayField: 'name',
                     valueField: 'id',
+                    mode: 'local',
+                    labelAlign: 'top',
                     allowBlank: false,
-                    flex: 1,
-                    queryMode: 'local',
                     editable: false,
                     triggerAction: 'all',
+                    value: null,
                     store: new Ext.data.Store({
                         autoLoad: false,
                         proxy: {
@@ -43,13 +46,12 @@ Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formb
                             },
                         }
                     }),
-                    value: null,
                     listeners: {
                         afterrender: function (cb) {
                             cb.store.load({
                                 callback: function () {
-                                    var value = this.data ? this.checkFieldAvailability(this.data.outputWorkflows, cb.store, 'id') : null;
-                                    cb.setValue(value);
+                                    var value = this.data ? this.checkFieldAvailability([this.data.workflowId], cb.store, 'id') : null;
+                                    cb.setValue(value !== null && value.length > 0 ? value[0] : null);
                                 }.bind(this)
                             });
                         }.bind(this),
@@ -58,24 +60,17 @@ Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formb
                         }
                     }
                 }
-            ],
-            compositeField = new Ext.form.FieldContainer({
-                layout: 'hbox',
-                hideLabel: true,
-                style: 'padding-bottom:5px;',
-                items: items
-            }),
-            fieldId = Ext.id();
+            ];
 
-        return new Ext.form.FormPanel({
+        this.fieldPanel = new Ext.form.FormPanel({
             id: fieldId,
-            type: 'combo',
             forceLayout: true,
             style: 'margin: 10px 0 0 0',
             bodyStyle: 'padding: 10px 30px 10px 30px; min-height:30px;',
             tbar: this.getTopBar(fieldId),
-            items: [compositeField],
-            listeners: {}
+            items: items
         });
+
+        return this.fieldPanel;
     }
 });

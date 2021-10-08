@@ -37,6 +37,6 @@ class MailForcePlainTextCest
 
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailSubmissionType('text/plain', $adminEmail);
+        $I->seeEmailSubmissionType('text/plain', 'text', $adminEmail);
     }
 }

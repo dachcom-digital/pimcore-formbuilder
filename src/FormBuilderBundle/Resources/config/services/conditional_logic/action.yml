@@ -13,6 +13,6 @@ services:
 
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ToggleElementAction: ~
 
-    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\MailBehaviourAction: ~
+    FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\SwitchOutputWorkflowAction: ~
 
     FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\SuccessMessageAction: ~

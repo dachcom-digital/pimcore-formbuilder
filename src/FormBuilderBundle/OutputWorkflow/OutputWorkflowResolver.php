@@ -5,9 +5,19 @@ namespace FormBuilderBundle\OutputWorkflow;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
+use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SwitchOutputWorkflowData;
 
 class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 {
+    protected Dispatcher $dispatcher;
+
+    public function __construct(Dispatcher $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
     public function resolve(SubmissionEvent $submissionEvent): ?OutputWorkflowInterface
     {
         $form = $submissionEvent->getForm();
@@ -18,6 +28,13 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
         $userSelectedOutputWorkflow = $formRuntimeData['form_output_workflow'] ?? null;
+
+        /** @var SwitchOutputWorkflowData $switchOutputWorkflowData */
+        $switchOutputWorkflowData = $this->checkOutputWorkflowCondition('switch_output_workflow', $data, $formRuntimeData, []);
+
+        if ($switchOutputWorkflowData->hasOutputWorkflowId()) {
+            $userSelectedOutputWorkflow = $switchOutputWorkflowData->getOutputWorkflowId();
+        }
 
         $outputWorkflows = $formDefinition->getOutputWorkflows();
 
@@ -36,5 +53,17 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         }
 
         return null;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function checkOutputWorkflowCondition(string $dispatchModule, FormDataInterface $formData, array $formRuntimeOptions, array $moduleOptions = []): DataInterface
+    {
+        return $this->dispatcher->runFormDispatcher($dispatchModule, [
+            'formData'           => $formData->getData(),
+            'conditionalLogic'   => $formData->getFormDefinition()->getConditionalLogic(),
+            'formRuntimeOptions' => $formRuntimeOptions
+        ], $moduleOptions);
     }
 }

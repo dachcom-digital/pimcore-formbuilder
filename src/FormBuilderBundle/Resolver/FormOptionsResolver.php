@@ -106,32 +106,4 @@ class FormOptionsResolver
 
         return sprintf($path, $template);
     }
-
-    /**
-     * Detect if email is in right i18n context.
-     * This method only works if you have enabled the i18n bundle.
-     *
-     * @see https://github.com/dachcom-digital/pimcore-i18n/blob/master/docs/90_InternalLinkRewriter.md#internal-link-rewriter
-     * @todo: move to output workflow | mail channel?
-     */
-    private function checkI18nPath(Document\Email $mailTemplate): Document\Email
-    {
-        $i18nFullPath = $mailTemplate->getFullPath();
-        $fullPath = $mailTemplate->getPath() . $mailTemplate->getKey();
-
-        if ($i18nFullPath === $fullPath) {
-            return $mailTemplate;
-        }
-
-        $realFullPath = str_replace($fullPath, '', $mailTemplate->getRealFullPath());
-
-        $mailPath = $mailTemplate->getFullPath();
-        $i18nRealFullPath = $realFullPath . $mailPath;
-
-        if (Document\Service::pathExists($i18nRealFullPath)) {
-            $mailTemplate = Document\Email::getByPath($i18nRealFullPath);
-        }
-
-        return $mailTemplate;
-    }
 }

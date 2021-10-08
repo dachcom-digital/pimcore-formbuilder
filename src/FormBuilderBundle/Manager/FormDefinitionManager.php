@@ -80,7 +80,7 @@ class FormDefinitionManager
         }
 
         $this->updateFormAttributes($data, $form, $isUpdate);
-        $this->updateFields(isset($data['form_fields']) ? $data['form_fields'] : [], $form);
+        $this->updateFields($data['form_fields'] ?? [], $form);
 
         $this->entityManager->persist($form);
         $this->entityManager->flush();

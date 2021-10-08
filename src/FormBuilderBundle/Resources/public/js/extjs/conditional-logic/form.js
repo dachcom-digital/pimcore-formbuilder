@@ -2,19 +2,12 @@ pimcore.registerNS('Formbuilder.extjs.conditionalLogic.form');
 Formbuilder.extjs.conditionalLogic.form = Class.create({
 
     panel: null,
-
     formBuilder: null,
-
     tabPanel: null,
-
     conditionsContainer: null,
-
     actionsContainer: null,
-
     sectionData: null,
-
     sectionId: 0,
-
     conditionalStore: [],
 
     initialize: function (sectionData, sectionId, conditionalStore, formBuilder) {
@@ -87,25 +80,15 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
 
     getActionContainer: function () {
 
-        var _ = this;
-        var actionMenu = [],
-            deprecatedActionMenu = [];
+        var _ = this,
+            actionMenu = [];
 
         Ext.Array.each(this.conditionalStore.actions, function (action) {
-
-            if (action.identifier === 'mailBehaviour') {
-                deprecatedActionMenu.push({
-                    iconCls: action.icon,
-                    text: t(action.name),
-                    handler: _.addAction.bind(_, action.identifier)
-                });
-            } else {
-                actionMenu.push({
-                    iconCls: action.icon,
-                    text: t(action.name),
-                    handler: _.addAction.bind(_, action.identifier)
-                });
-            }
+            actionMenu.push({
+                iconCls: action.icon,
+                text: t(action.name),
+                handler: _.addAction.bind(_, action.identifier)
+            });
         });
 
         this.actionsContainer = new Ext.Panel({
@@ -114,7 +97,7 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
             forceLayout: true,
             tbar: [{
                 iconCls: 'pimcore_icon_add',
-                menu: Ext.Array.merge(actionMenu, [{xtype: 'menuseparator'}], deprecatedActionMenu)
+                menu: actionMenu
             }],
             border: false
         });
@@ -140,11 +123,6 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
         return this.actionsContainer;
     },
 
-    /**
-     * add condition item
-     * @param type
-     * @param data
-     */
     addCondition: function (type, data) {
         try {
             var configuration = Ext.Array.filter(this.conditionalStore.conditions, function (item) {
@@ -165,11 +143,6 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
         }
     },
 
-    /**
-     *
-     * @param type
-     * @param data
-     */
     addAction: function (type, data) {
         try {
 
@@ -178,7 +151,7 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
             });
 
             if (configuration.length !== 1) {
-                throw 'invalid or no configuration found';
+                throw 'invalid or no configuration found. ignoring...';
             }
 
             var itemClass = new Formbuilder.extjs.conditionalLogic.action[type](
@@ -191,11 +164,6 @@ Formbuilder.extjs.conditionalLogic.form = Class.create({
         }
     },
 
-    /**
-     *
-     * @param type
-     * @param index
-     */
     removeField: function (type, index) {
         //we need to re-add all elements to avoid index gaps on saving.
         if (type === 'condition') {

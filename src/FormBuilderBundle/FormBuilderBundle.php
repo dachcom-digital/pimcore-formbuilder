@@ -89,7 +89,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/conditional-logic/action/triggerEvent.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/toggleClass.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/toggleAvailability.js',
-            '/bundles/formbuilder/js/extjs/conditional-logic/action/mailBehaviour.js',
+            '/bundles/formbuilder/js/extjs/conditional-logic/action/switchOutputWorkflow.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/successMessage.js',
             '/bundles/formbuilder/js/extjs/components/formTypeBuilderComponent.js',
             '/bundles/formbuilder/js/extjs/components/formFieldConstraintComponent.js',
