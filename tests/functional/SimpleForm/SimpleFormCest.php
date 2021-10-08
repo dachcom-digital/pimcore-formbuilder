@@ -127,7 +127,6 @@ class SimpleFormCest
             'checkboxes'            => 'Check 3',
             'single_checkbox'       => 1,
             '_form_builder_id'      => 1,
-            '_form_builder_is_copy' => 0,
             '_form_builder_preset'  => null
         ]);
 
@@ -169,7 +168,6 @@ class SimpleFormCest
             'checkboxes'            => 'Check 3',
             'single_checkbox'       => 1,
             '_form_builder_id'      => 1,
-            '_form_builder_is_copy' => 0,
             '_form_builder_preset'  => null
         ]);
 
@@ -185,7 +183,6 @@ class SimpleFormCest
             'checkboxes'            => 'Check 3',
             'single_checkbox'       => 1,
             '_form_builder_id'      => 1,
-            '_form_builder_is_copy' => 1,
             '_form_builder_preset'  => null
         ]);
     }

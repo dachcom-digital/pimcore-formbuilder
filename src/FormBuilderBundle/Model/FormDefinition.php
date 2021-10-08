@@ -96,11 +96,17 @@ class FormDefinition implements FormDefinitionInterface
         return (int) $this->createdBy;
     }
 
+    /**
+     * @deprecated since 4.0 and will be removed with 5.0
+     */
     public function setMailLayout(?array $mailLayout = null): void
     {
         $this->mailLayout = $mailLayout;
     }
 
+    /**
+     * @deprecated since 4.0 and will be removed with 5.0
+     */
     public function getMailLayout(): ?array
     {
         return $this->mailLayout;

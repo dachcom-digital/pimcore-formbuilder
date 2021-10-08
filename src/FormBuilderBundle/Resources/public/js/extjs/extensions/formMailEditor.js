@@ -2,7 +2,6 @@ pimcore.registerNS('Formbuilder.extjs.extensions.formMailEditor');
 Formbuilder.extjs.extensions.formMailEditor = Class.create({
 
     formId: null,
-    isLocal: null,
     specificLocale: null,
     callbacks: null,
     fields: {},
@@ -18,11 +17,10 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
     editorData: null,
     mailType: null,
 
-    initialize: function (formId, identifier, additionalParameter, isLocal, specificLocale, callbacks) {
+    initialize: function (formId, identifier, additionalParameter, specificLocale, callbacks) {
 
         this.formId = formId;
         this.specificLocale = specificLocale ? specificLocale : null;
-        this.isLocal = isLocal === true;
         this.callbacks = callbacks;
         this.additionalParameter = additionalParameter ? additionalParameter : {};
 
@@ -31,12 +29,8 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
         this.forceClose = false;
         this.selectionId = 'form_mail_selection_' + Ext.id();
 
-        if (identifier) {
-            this.mailType = identifier;
-            this.loadMailEditor();
-        } else {
-            this.getMailTypeSelectorWindow();
-        }
+        this.mailType = identifier;
+        this.loadMailEditor();
     },
 
     checkClose: function (win) {
@@ -73,139 +67,6 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
         }
     },
 
-    getMailTypeSelectorWindow: function () {
-
-        var mailTypesAvailabilityGrid,
-            mailTypeStore = Ext.data.Store({
-                autoLoad: true,
-                autoDestroy: true,
-                proxy: {
-                    type: 'ajax',
-                    url: '/admin/formbuilder/mail-editor/get-available-mail-types',
-                    extraParams: {
-                        id: this.formId
-                    },
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'types'
-                    },
-                }
-            });
-
-        this.selectionWindow = new Ext.Window({
-            width: 650,
-            height: 250,
-            iconCls: 'pimcore_icon_mail_editor',
-            layout: 'fit',
-            closeAction: 'close',
-            plain: true,
-            autoScroll: false,
-            preventRefocus: true,
-            modal: true,
-            buttons: [{
-                text: t('cancel'),
-                iconCls: 'pimcore_icon_cancel',
-                handler: function () {
-                    this.selectionWindow.hide();
-                    this.selectionWindow.destroy();
-                }.bind(this)
-            }]
-        });
-
-        mailTypesAvailabilityGrid = new Ext.grid.GridPanel({
-            title: t('form_builder.mail_editor.editor_type_selection'),
-            store: mailTypeStore,
-            autoDestroy: true,
-            listeners: {
-                rowdblclick: function (grid, record) {
-                    var d = record.data;
-                    this.selectionWindow.hide();
-                    this.selectionWindow.destroy();
-                    this.mailType = d.identifier;
-                    this.loadMailEditor();
-
-                }.bind(this)
-            },
-            columns: [
-                {
-                    text: t('form_builder.mail_editor.editor_identifier'),
-                    sortable: false,
-                    dataIndex: 'identifier',
-                    hidden: false,
-                    flex: 1,
-                    renderer: function (value) {
-                        return t('form_builder.mail_editor.mail_type_' + value);
-                    }
-                },
-                {
-                    text: t('form_builder.mail_editor.editor_type_available'),
-                    sortable: false,
-                    dataIndex: 'isAvailable',
-                    hidden: false,
-                    flex: 1,
-                    renderer: function (value) {
-                        return value === true
-                            ? t('form_builder.mail_editor.editor_type_available_yes')
-                            : t('form_builder.mail_editor.editor_type_available_no');
-                    }
-                },
-                {
-                    xtype: 'actioncolumn',
-                    text: t('form_builder.mail_editor.editor_remove'),
-                    menuText: t('form_builder.mail_editor.editor_remove'),
-                    width: 100,
-                    dataIndex: 'isAvailable',
-                    items: [{
-                        getTip: function (val) {
-                            return val !== false ? t('remove') : null;
-                        },
-                        getClass: function (val) {
-                            return val !== false ? 'pimcore_icon_delete' : null;
-                        },
-                        handler: function (grid, rowIndex) {
-
-                            var data = grid.getStore().getAt(rowIndex);
-                            if (data.get('isAvailable') === false) {
-                                return;
-                            }
-
-                            this.selectionWindow.setLoading(true);
-                            Ext.Ajax.request({
-                                url: ' /admin/formbuilder/mail-editor/delete-mail-type',
-                                method: 'DELETE',
-                                params: {
-                                    id: this.formId,
-                                    mailType: data.get('identifier'),
-                                    additionalParameter: this.additionalParameter
-                                },
-                                success: function () {
-                                    this.selectionWindow.setLoading(false);
-                                    grid.getStore().reload();
-                                }.bind(this),
-                                failure: function () {
-                                    this.selectionWindow.setLoading(false);
-                                }.bind(this)
-                            });
-
-                        }.bind(this)
-                    }]
-                }
-            ],
-            columnLines: true,
-            stripeRows: true,
-        });
-
-        this.selectionWindow.add(new Ext.form.Panel({
-            closable: false,
-            border: false,
-            autoScroll: false,
-            bodyStyle: 'padding: 10px;',
-            items: [mailTypesAvailabilityGrid]
-        }));
-
-        this.selectionWindow.show();
-    },
-
     loadMailEditor: function () {
 
         if (this.detailWindow !== null) {
@@ -228,9 +89,9 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             },
             buttons: [
                 {
-                    text: this.isLocal ? t('form_builder.output_workflow.apply_and_close') : t('save'),
-                    iconCls: this.isLocal ? 'form_builder_output_workflow_apply_data' : 'pimcore_icon_save',
-                    handler: this.isLocal ? this.saveEditorDataAndClose.bind(this) : this.saveEditorData.bind(this)
+                    text: t('form_builder.output_workflow.apply_and_close'),
+                    iconCls: 'form_builder_output_workflow_apply_data',
+                    handler: this.saveEditorDataAndClose.bind(this)
                 },
                 {
                     text: t('cancel'),
@@ -414,7 +275,7 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
     loadEditorData: function () {
 
         var loadSuccess = function (data) {
-            this.editorData = this.isLocal ? this.callbacks.loadData() : data.data;
+            this.editorData = this.callbacks.loadData();
             this.configuration = data.configuration;
             this.detailWindow.setLoading(false);
             this.createPanel();
@@ -427,8 +288,7 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             params: {
                 id: this.formId,
                 mailType: this.mailType,
-                additionalParameter: this.additionalParameter,
-                externalData: this.isLocal === true
+                additionalParameter: this.additionalParameter
             },
             success: function (resp) {
                 var data = Ext.decode(resp.responseText);
@@ -452,38 +312,11 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             data[editorData['locale']] = editorData['editor'].getData();
         });
 
-        if (this.isLocal === true) {
-            this.callbacks.saveData(data);
-            if (typeof callback === 'function') {
-                callback();
-            }
-            return;
+        this.callbacks.saveData(data);
+
+        if (typeof callback === 'function') {
+            callback();
         }
-
-        this.editPanel.setLoading(true);
-
-        Ext.Ajax.request({
-            url: '/admin/formbuilder/mail-editor/save',
-            params: {
-                id: this.formId,
-                mailType: this.mailType,
-                data: Ext.encode(data)
-            },
-            success: function (resp) {
-
-                var data = Ext.decode(resp.responseText);
-                this.editPanel.setLoading(false);
-
-                if (data.success === false) {
-                    Ext.Msg.alert(t('error'), data.message);
-                    return;
-                }
-
-                if (typeof callback === 'function') {
-                    callback();
-                }
-            }.bind(this)
-        });
     },
 
     initCkEditorPlugins: function () {

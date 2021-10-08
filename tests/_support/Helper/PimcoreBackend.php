@@ -122,7 +122,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         Page $document,
         FormDefinitionInterface $form,
         ?Email $mailTemplate = null,
-        ?Email $copyMailTemplate = null,
+        ?Email $additionalMailTemplate = null,
         ?string $formTemplate = 'form_div_layout.html.twig',
         ?OutputWorkflowInterface $outputWorkflow = null
     ): void {
@@ -139,12 +139,12 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
             ];
         }
 
-        if ($copyMailTemplate !== null) {
-            $this->assertInstanceOf(Email::class, $copyMailTemplate);
+        if ($additionalMailTemplate !== null) {
+            $this->assertInstanceOf(Email::class, $additionalMailTemplate);
             $outputWorkflowChannels[] =
                 [
                     'type'  => 'email',
-                    'email' => $copyMailTemplate
+                    'email' => $additionalMailTemplate
                 ];
         }
 

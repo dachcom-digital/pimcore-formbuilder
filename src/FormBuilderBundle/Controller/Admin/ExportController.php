@@ -65,7 +65,6 @@ class ExportController extends AdminController
             'email_path',
             'email_id',
             'preset',
-            'is_copy',
             'output_workflow_name',
             'to',
             'cc',
@@ -121,7 +120,7 @@ class ExportController extends AdminController
         foreach ($normalizedMailData as $mailValue) {
             $data = [];
             foreach ($mailHeader as $headerName) {
-                $data[$headerName] = isset($mailValue[$headerName]) ? $mailValue[$headerName] : null;
+                $data[$headerName] = $mailValue[$headerName] ?? null;
             }
 
             $rows[] = $data;
@@ -152,31 +151,31 @@ class ExportController extends AdminController
         }
 
         foreach ($mailParams as $mailParam) {
-            if (!$mailParam instanceof \stdClass) {
+
+            if (!is_array($mailParam)) {
                 continue;
             }
 
+            $fieldType = null;
             $key = $mailParam['key'];
+
             if (empty($key) || in_array($key, $forbiddenKeys, true)) {
                 continue;
             }
 
             if ($key === '_form_builder_preset') {
-                $key = 'preset';
-            } elseif ($key === '_form_builder_is_copy') {
-                $key = 'is_copy';
+                $displayKeyName = 'preset';
             } elseif ($key === '_form_builder_output_workflow_name') {
-                $key = 'output_workflow_name';
-            }
+                $displayKeyName = 'output_workflow_name';
+            } else {
+                $displayKeyName = $key;
+                $formField = $formDefinition->getField($key);
 
-            $formField = $formDefinition->getField($key);
-
-            $displayKeyName = $key;
-            $fieldType = null;
-            if ($formField instanceof FormFieldDefinitionInterface) {
-                $fieldType = $formField->getType();
-                if (!empty($formField->getDisplayName())) {
-                    $displayKeyName = $formField->getDisplayName();
+                if ($formField instanceof FormFieldDefinitionInterface) {
+                    $fieldType = $formField->getType();
+                    if (!empty($formField->getDisplayName())) {
+                        $displayKeyName = $formField->getDisplayName();
+                    }
                 }
             }
 
@@ -185,7 +184,7 @@ class ExportController extends AdminController
             }
 
             $value = null;
-            if ($mailParam['data'] instanceof \stdClass && $mailParam['data']['type'] === 'simple') {
+            if (is_array($mailParam['data']) && $mailParam['data']['type'] === 'simple') {
                 $value = $this->cleanValue($mailParam['data']['value'], $fieldType);
             }
 
@@ -268,7 +267,7 @@ class ExportController extends AdminController
         return $contents;
     }
 
-    private function cleanValue(string $value, ?string $fieldType = null): mixed
+    private function cleanValue(?string $value, ?string $fieldType = null): mixed
     {
         if (in_array($fieldType, ['choice', 'dynamic_choice', 'country'])) {
             $value = preg_split('/(<br>|<br \/>)/', $value);

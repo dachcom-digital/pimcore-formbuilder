@@ -166,12 +166,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
     },
 
-    /**
-     * @param scope
-     * @param formTypeValues
-     * @param type
-     * @returns {*}
-     */
     recursiveAddNode: function (scope, formTypeValues, type) {
 
         var nodeObject,
@@ -227,11 +221,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         };
     },
 
-    /**
-     * @param node
-     * @param oldParent
-     * @param newParent
-     */
     onTreeNodeBeforeMove: function (node, oldParent, newParent) {
 
         var targetType = newParent.data.fbType,
@@ -244,10 +233,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return Ext.Array.contains(this.allowedMoveElements[targetType], elementType);
     },
 
-    /**
-     * @param tree
-     * @returns {boolean}
-     */
     onTreeNodeBeforeSelect: function (tree) {
         try {
             this.storeCurrentNodeData();
@@ -257,10 +242,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         }
     },
 
-    /**
-     * @param tree
-     * @param record
-     */
     onTreeNodeSelect: function (tree, record) {
 
         var fbObject, displayField;
@@ -297,13 +278,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         this.editPanel.updateLayout();
     },
 
-    /**
-     * @param tree
-     * @param record
-     * @param item
-     * @param index
-     * @param ev
-     */
     onTreeNodeContextMenu: function (tree, record, item, index, ev) {
 
         var _ = this,
@@ -473,9 +447,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         tree.getSelectionModel().select(newNode, true);
     },
 
-    /**
-     * @param currentNode
-     */
     setCurrentNode: function (currentNode) {
         this.currentNode = currentNode;
     },
@@ -597,9 +568,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         }
     },
 
-    /**
-     * @returns {boolean}
-     */
     formIsValid: function () {
 
         this.storeCurrentNodeData();
@@ -663,9 +631,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
     },
 
-    /**
-     * @returns Ext.form.FormPanel
-     */
     getRootPanel: function () {
 
         var methodStore = new Ext.data.ArrayStore({
@@ -838,9 +803,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return this.rootPanel;
     },
 
-    /**
-     * @returns Ext.Toolbar
-     */
     getRootPanelToolbar: function () {
 
         var toolbar = new Ext.Toolbar(),
@@ -861,15 +823,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
             handler: this.showFormMetaInfo.bind(this)
         });
 
-        if (this.formHasOutputWorkflows === false) {
-            items.push({
-                tooltip: t('form_builder.mail_editor.open_editor'),
-                iconCls: 'pimcore_icon_mail_editor',
-                scale: 'medium',
-                handler: this.showMailEditor.bind(this)
-            });
-        }
-
         toolbar.add(items);
 
         return toolbar;
@@ -882,16 +835,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         new Formbuilder.extjs.extensions.formMetaData(this.formId, this.formMeta);
     },
 
-    showMailEditor: function () {
-        new Formbuilder.extjs.extensions.formMailEditor(this.formId);
-    },
-
-    /**
-     * @param tree
-     * @param formType
-     * @param formTypeValues
-     * @param selectNode
-     */
     createFormField: function (tree, formType, formTypeValues, selectNode) {
 
         var label = formTypeValues === null ? formType.label : formTypeValues.display_name,
@@ -919,10 +862,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return newNode;
     },
 
-    /**
-     * @param nodeLabel
-     * @param iconCls
-     */
     createFormFieldNode: function (nodeLabel, iconCls) {
         return {
             text: nodeLabel,
@@ -937,12 +876,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         };
     },
 
-    /**
-     * @param tree
-     * @param constraint
-     * @param constraintValues
-     * @param selectNode
-     */
     createFormFieldConstraint: function (tree, constraint, constraintValues, selectNode) {
 
         var newNode = this.createFormFieldConstraintNode(constraint.label, constraint.icon_class);
@@ -964,10 +897,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return newNode;
     },
 
-    /**
-     * @param nodeLabel
-     * @param iconCls
-     */
     createFormFieldConstraintNode: function (nodeLabel, iconCls) {
         return {
             text: nodeLabel,
@@ -982,12 +911,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         };
     },
 
-    /**
-     * @param tree
-     * @param container
-     * @param containerValues
-     * @param selectNode
-     */
     createContainerField: function (tree, container, containerValues, selectNode) {
 
         var label = containerValues === null ? container.label : containerValues.display_name,
@@ -1015,10 +938,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return newNode;
     },
 
-    /**
-     * @param nodeLabel
-     * @param iconCls
-     */
     createContainerFieldNode: function (nodeLabel, iconCls) {
         return {
             text: nodeLabel,
@@ -1033,10 +952,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         };
     },
 
-    /**
-     * @param tree
-     * @param record
-     */
     removeFormField: function (tree, record) {
 
         record.remove();
@@ -1048,11 +963,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         }
     },
 
-    /**
-     * @param tree
-     * @param node
-     * @returns {{}}
-     */
     cloneChild: function (tree, node) {
 
         var formFieldObject = node.data.object,
@@ -1098,10 +1008,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
     },
 
-    /**
-     * @param node
-     * @returns {{}}
-     */
     getData: function (node) {
 
         var formFieldData = {};
@@ -1142,10 +1048,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return formFieldData;
     },
 
-    /**
-     * Check if field name is unique
-     * @param node
-     */
     checkNodeHasUniqueName: function (node) {
 
         var c = 0,
@@ -1171,9 +1073,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         importPanel.showPanel();
     },
 
-    /**
-     * @param importedFormData
-     */
     importForm: function (importedFormData) {
 
         this.importIsRunning = true;
@@ -1224,10 +1123,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         pimcore.helpers.download('/admin/formbuilder/export/mail-csv-export/' + this.formId + '?mailType=' + mailTypeValue);
     },
 
-    /**
-     * @param ev
-     * @returns {boolean}
-     */
     save: function (ev) {
 
         var formData, formConfig,
@@ -1258,9 +1153,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
     },
 
-    /**
-     * @param response
-     */
     saveOnComplete: function (response) {
 
         var res = Ext.decode(response.responseText);
@@ -1287,10 +1179,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
     /**
      * Helper: find duplicate form type names
-     *
-     * @param node
-     * @param nodeNames
-     * @returns {Array}
      */
     getUsedFieldNames: function (node, nodeNames) {
 
@@ -1310,10 +1198,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return nodeNames;
     },
 
-    /**
-     * @param typeId
-     * @returns object|boolean
-     */
     getFormTypeStructure: function (typeId) {
         var formTypeElement = false;
         if (this.availableFormFields.length === 0) {
@@ -1332,10 +1216,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return Ext.clone(formTypeElement);
     },
 
-    /**
-     * @param constraintId
-     * @returns object|boolean
-     */
     getFormTypeConstraintStructure: function (constraintId) {
         var formTypeConstraint = false;
         if (this.availableConstraints.length === 0) {
@@ -1352,10 +1232,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return Ext.clone(formTypeConstraint);
     },
 
-    /**
-     * @param containerId
-     * @returns object|boolean
-     */
     getContainerTypeStructure: function (containerId) {
         var container = false;
         if (this.availableContainerTypes.length === 0) {
@@ -1372,18 +1248,10 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return Ext.clone(container);
     },
 
-    /**
-     * @param fbType
-     * @returns {boolean}
-     */
     hasFields: function (fbType) {
         return this.tree.getSelectionModel().getStore().findRecord('fbType', fbType) !== null;
     },
 
-    /**
-     * @param fbTypes
-     * @returns {Array}
-     */
     getFields: function (fbTypes) {
 
         var treeStore = this.tree.getSelectionModel().getStore(),

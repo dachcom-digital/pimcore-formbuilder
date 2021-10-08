@@ -24,15 +24,6 @@ form_builder.controller.admin.delete_form:
 form_builder.controller.admin.load_form_mail_editor_data:
     path: /admin/formbuilder/mail-editor/load
     defaults: { _controller: FormBuilderBundle\Controller\Admin\MailEditorController::getMailEditorDataAction }
-form_builder.controller.admin.save_form_mail_editor_data:
-    path: /admin/formbuilder/mail-editor/save
-    defaults: { _controller: FormBuilderBundle\Controller\Admin\MailEditorController::saveFormMailEditorDataAction }
-form_builder.controller.admin.get_available_mail_types:
-    path: /admin/formbuilder/mail-editor/get-available-mail-types
-    defaults: { _controller: FormBuilderBundle\Controller\Admin\MailEditorController::getMailEditorAvailableMailTypesAction }
-form_builder.controller.admin.delete_mail_type:
-    path: /admin/formbuilder/mail-editor/delete-mail-type
-    defaults: { _controller: FormBuilderBundle\Controller\Admin\MailEditorController::deleteMailEditorMailTypeAction }
 
 form_builder.controller.admin.export_form:
     path: /admin/formbuilder/settings/export-form/{id}

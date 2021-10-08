@@ -14,9 +14,10 @@
   - `FormBuilderBundle\Manager\FormManager` needs to be `FormBuilderBundle\Manager\FormDefinitionManager` now
   - `FormBuilderBundle\Event\MailEvent` has been removed, use `FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent` instead
   - Method `FormBuilderBundle\Assembler\FormAssembler::setFormOptionsResolver` has been removed. `FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionsResolver)` directly requires FormOptionsResolver now
+  - CSV export types `Only Admin-Mail` and `Only User-Mail (Copy)` have been removed. Instead, you're now able to filter CSV export by available output workflows
+  - Mail layout fallback (stored in `formbuilder_forms.mailLayout`) has been removed. Please migrate layouts to email channels. This column will be removed with FormBuilder 5.0
 - PHP8 return type declarations added: you may have to adjust your extensions accordingly
 - Email properties (`mail_successfully_sent`, `mail_ignore_fields`, `mail_force_plain_text`, `mail_disable_default_mail_body`) have been removed and won't be recognized anymore
-- CSV export types `Only Admin-Mail` and `Only User-Mail (Copy)` have been removed. Instead, you're now able to filter CSV export by available output workflows
 - Area-Brick Configuration does not allow `sendMailTmplate` and `sendCopyMailTemplate` fallbacks anymore. They must be configured by output workflows now
 - All Folders in `views` are lowercase/dashed now (`common/redirect-flash-message.html.twig`, `email/form-data.html.twig`, `form/elements/dynamic-multi-file`, `form/presets`, `form/theme`, ...)
 - If you have a custom email template, make sure that you're passing the `body`, `editmode`, `document` attributes to your email view template (@see `\FormBuilderBundle\Controller::emailAction()`). Also use `{{ body|raw }}` instead of `%Text(body);` inside your view template!

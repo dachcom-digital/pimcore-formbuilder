@@ -206,7 +206,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
                 }.bind(this)
             };
 
-        new Formbuilder.extjs.extensions.formMailEditor(this.formId, 'output_workflow_channel', addParams, true, locale, callbacks);
+        new Formbuilder.extjs.extensions.formMailEditor(this.formId, 'output_workflow_channel', addParams, locale, callbacks);
     },
 
     isValid: function () {

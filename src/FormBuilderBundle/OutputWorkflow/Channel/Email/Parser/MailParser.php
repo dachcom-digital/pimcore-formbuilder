@@ -45,9 +45,6 @@ class MailParser
 
         $ignoreFields = is_null($channelConfiguration['ignoreFields']) ? [] : $channelConfiguration['ignoreFields'];
 
-        $hasIsCopyFlag = isset($channelConfiguration['legacyIsCopy']);
-        $isCopy = $hasIsCopyFlag && $channelConfiguration['legacyIsCopy'] === true;
-
         $fieldValues = $this->formValuesOutputApplier->applyForChannel($form, $ignoreFields, 'mail', $locale);
 
         $this->parseMailRecipients($mailTemplate, $fieldValues);
@@ -60,12 +57,12 @@ class MailParser
         $formData = $form->getData();
 
         if ($disableDefaultMailBody === false) {
-            $mailLayout = $this->getMailLayout($formData->getFormDefinition(), $channelConfiguration, $isCopy, $locale);
+            $mailLayout = $this->getMailLayout($channelConfiguration);
             $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
         }
 
         $attachments = [];
-        if ($formData->hasAttachments() && $allowAttachments === true) {
+        if ($allowAttachments === true && $formData->hasAttachments()) {
             $attachments = $formData->getAttachments();
         }
 
@@ -267,27 +264,12 @@ class MailParser
         return $values;
     }
 
-    public function getMailLayout(FormDefinitionInterface $formDefinition, array $channelConfiguration, bool $isCopy, ?string $locale): ?string
+    protected function getMailLayout(array $channelConfiguration): ?string
     {
         if (!empty($channelConfiguration['mailLayoutData'])) {
             return $channelConfiguration['mailLayoutData'];
         }
 
-        $formMailLayout = $formDefinition->getMailLayout();
-
-        if ($formMailLayout !== null) {
-            return $this->getFallbackMailLayoutBasedOnLocale($formMailLayout, $isCopy === false ? 'main' : 'copy', $locale);
-        }
-
         return null;
-    }
-
-    public function getFallbackMailLayoutBasedOnLocale(array $mailLayout, string $mailType, ?string $locale = null): ?string
-    {
-        if (!isset($mailLayout[$mailType])) {
-            return null;
-        }
-
-        return $mailLayout[$mailType][$locale] ?? $mailLayout[$mailType]['default'] ?? null;
     }
 }

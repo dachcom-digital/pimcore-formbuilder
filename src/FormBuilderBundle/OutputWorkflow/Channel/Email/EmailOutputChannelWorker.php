@@ -42,9 +42,6 @@ class EmailOutputChannelWorker
         $mailTemplate = $channelConfiguration['mailTemplate'];
         $forcePlainText = $channelConfiguration['forcePlainText'];
 
-        $hasIsCopyFlag = isset($channelConfiguration['legacyIsCopy']);
-        $isCopy = $hasIsCopyFlag && $channelConfiguration['legacyIsCopy'] === true;
-
         $mailTemplateId = $mailTemplate['id'];
         $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
 
@@ -55,12 +52,7 @@ class EmailOutputChannelWorker
         $mail = $this->mailParser->create($mailTemplate, $form, $channelConfiguration, $locale);
         $forceSubmissionAsPlainText = (bool) $forcePlainText;
 
-        if ($hasIsCopyFlag === true) {
-            $mail->setParam('_form_builder_is_copy', $isCopy ? 1 : 0);
-        } else {
-            $mail->setParam('_form_builder_output_workflow_name', $workflowName);
-        }
-
+        $mail->setParam('_form_builder_output_workflow_name', $workflowName);
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
 
