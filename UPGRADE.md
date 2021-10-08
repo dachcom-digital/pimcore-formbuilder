@@ -29,6 +29,7 @@
 
 ### New Features
 - Conditional Logic Action `Switch Output Workflow` added
+- [Configurable Html2Text Options](./docs/OutputWorkflow/10_EmailChannel.md#configure-html2text-options)
 
 ***
 

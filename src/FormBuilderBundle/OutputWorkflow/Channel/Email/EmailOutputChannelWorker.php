@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email;
 
+use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
@@ -16,13 +17,16 @@ use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
 
 class EmailOutputChannelWorker
 {
+    protected Configuration $configuration;
     protected MailParser $mailParser;
     protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
+        Configuration $configuration,
         MailParser $mailParser,
         EventDispatcherInterface $eventDispatcher
     ) {
+        $this->configuration = $configuration;
         $this->mailParser = $mailParser;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -65,6 +69,12 @@ class EmailOutputChannelWorker
             return;
         }
 
+        // set html2text options
+        $html2textOptions = $this->configuration->getConfig('email');
+        if (isset($html2textOptions['html_2_text_options']) && count($html2textOptions['html_2_text_options']) > 0) {
+            $mail->setHtml2TextOptions($html2textOptions['html_2_text_options']);
+        }
+
         if ($forceSubmissionAsPlainText === true) {
             $this->sendPlainTextOnly($mail);
         } else {
@@ -81,7 +91,7 @@ class EmailOutputChannelWorker
         $bodyTextRendered = $mail->getBodyTextRendered();
 
         if ($bodyTextRendered) {
-            $mail->text($bodyTextRendered, 'text/plain');
+            $mail->text($bodyTextRendered, 'utf-8');
         }
 
         $mail->sendWithoutRendering();

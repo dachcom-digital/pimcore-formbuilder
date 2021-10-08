@@ -32,6 +32,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildContainerTypesNode());
         $rootNode->append($this->buildConditionalLogicNode());
         $rootNode->append($this->buildFormTypesNode());
+        $rootNode->append($this->buildEmailConfigurationNode());
 
         return $treeBuilder;
     }
@@ -286,6 +287,32 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildEmailConfigurationNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('email');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('html_2_text_options')
+                    ->children()
+                        ->scalarNode('header_style')->cannotBeEmpty()->defaultValue('setext')->end()
+                        ->booleanNode('suppress_errors')->defaultValue(true)->end()
+                        ->booleanNode('strip_tags')->defaultValue(false)->end()
+                        ->scalarNode('remove_nodes')->cannotBeEmpty()->defaultValue('')->end()
+                        ->booleanNode('hard_break')->defaultValue(false)->end()
+                        ->scalarNode('list_item_style')->cannotBeEmpty()->defaultValue('-')->end()
+                        ->booleanNode('preserve_comments')->defaultValue(false)->end()
+                        ->booleanNode('use_autolinks')->defaultValue(false)->end()
                     ->end()
                 ->end()
             ->end();

@@ -123,7 +123,8 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         FormDefinitionInterface $form,
         Email $mailTemplate,
         ?Email $copyMailTemplate = null,
-        ?string $formTemplate = 'form_div_layout.html.twig'
+        ?string $formTemplate = 'form_div_layout.html.twig',
+        ?OutputWorkflowInterface $outputWorkflow = null
     ): void {
 
         $this->assertInstanceOf(Email::class, $mailTemplate);
@@ -131,7 +132,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         $outputWorkflowChannels = [
             [
                 'type'  => 'email',
-                'email' => $mailTemplate,
+                'email' => $mailTemplate
             ]
         ];
 
@@ -140,11 +141,13 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
             $outputWorkflowChannels[] =
                 [
                     'type'  => 'email',
-                    'email' => $copyMailTemplate,
+                    'email' => $copyMailTemplate
                 ];
         }
 
-        $outputWorkflow = $this->createOutputWorkflow('Test Output Workflow', $form, $outputWorkflowChannels);
+        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+            $outputWorkflow = $this->createOutputWorkflow('Test Output Workflow', $form, $outputWorkflowChannels);
+        }
 
         $editables = [
             'formName'       => [
@@ -247,7 +250,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         string $name,
         FormDefinitionInterface $form,
         array $channelDefinitions,
-        string $successMessage = 'Thank you'
+        string $successMessage = 'Thank you',
     ): OutputWorkflowInterface {
         $manager = $this->getOutputWorkflowManager();
 
@@ -265,6 +268,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
             if ($channelDefinition['type'] === 'email') {
                 /** @var Email $email */
                 $email = $channelDefinition['email'];
+                $emailConfiguration = $channelDefinition['configuration'] ?? [];
                 $channel->setConfiguration([
                     'default' => [
                         'mailTemplate'           => [
@@ -273,11 +277,11 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
                             'type'    => 'document',
                             'subtype' => 'email',
                         ],
-                        'ignoreFields'           => null,
-                        'allowAttachments'       => true,
-                        'forcePlainText'         => false,
-                        'disableDefaultMailBody' => false,
-                        'mailLayoutData'         => null,
+                        'ignoreFields'           => $emailConfiguration['ignoreFields'] ?? null,
+                        'allowAttachments'       => $emailConfiguration['allowAttachments'] ?? true,
+                        'forcePlainText'         => $emailConfiguration['forcePlainText'] ?? false,
+                        'disableDefaultMailBody' => $emailConfiguration['disableDefaultMailBody'] ?? false,
+                        'mailLayoutData'         => $emailConfiguration['mailLayoutData'] ?? null,
                     ]
                 ]);
 

@@ -46,6 +46,19 @@ To do so, you need to set the [_mail_force_plain_text_ Property](./10_MailTempla
 Use the [emailizr](https://github.com/dachcom-digital/pimcore-emailizr) library to generate simple structured html templates and inline styled markup out of the box.
 This library does **not** comes with the default FormBuilder installation.
 
+### Configure html2text Options
+The default html2text options in PIMCORE are not quite good enough for real text emails. 
+You may want to change those settings:
+
+```yaml
+form_builder:
+    email:
+        html_2_text_options:
+            strip_tags: true
+            hard_break: true
+```
+You'll find all available options directly on GitHub via [thephpleague/html-to-markdown](https://github.com/thephpleague/html-to-markdown)
+
 ***
 
 ## Mail Layout Editor
@@ -61,7 +74,7 @@ This library does **not** comes with the default FormBuilder installation.
 Use the mail editor to specify some special mail templates.
 It's very easy to add some custom template widgets (Eg. date field).
 
-### Register Service:
+### Register Service
 
 ```yml
 App\MailEditor\Widget\SpecialWidget:
@@ -69,7 +82,7 @@ App\MailEditor\Widget\SpecialWidget:
         - { name: form_builder.mail_editor.widget, type: special }
 ```
 
-### Add PHP Service:
+### Add PHP Service
 ```php
 <?php
 
