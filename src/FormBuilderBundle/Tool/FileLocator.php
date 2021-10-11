@@ -65,6 +65,15 @@ class FileLocator
         return $this->zipFolder;
     }
 
+    public function assertDir(string $path): void
+    {
+        if ($this->filesystem->exists($path) === true) {
+            return;
+        }
+
+        $this->filesystem->mkdir($path, 0755, true);
+    }
+
     public function removeDir(string $dir): void
     {
         if ($this->filesystem->exists($dir)) {
