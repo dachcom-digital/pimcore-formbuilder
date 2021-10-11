@@ -12,7 +12,7 @@ class EmailController extends FrontendController
     {
         // @see https://github.com/pimcore/pimcore/issues/10504
 
-        return $this->render('@FormBuilder/Email/email.html.twig', [
+        return $this->render('@FormBuilder/email/email.html.twig', [
             'editmode' => $this->editmode,
             'document' => $this->document,
             'body'     => $request->attributes->has('body') ? $request->attributes->get('body') : null

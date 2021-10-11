@@ -27,8 +27,8 @@ class FormWithPresetsCest
 
         $options = [
             'defaultValue' => 'custom',
-            'width' => 250,
-            'store' => [
+            'width'        => 250,
+            'store'        => [
                 0 => [
                     0 => 'custom',
                     1 => 'No Form Preset',
@@ -37,10 +37,11 @@ class FormWithPresetsCest
                     0 => 'preset1',
                     1 => 'Preset A',
                 ],
-            ]
+            ],
+            'onchange'     => 'formBuilderAreaWatcher.watchPresets.bind(this)',
         ];
 
         $I->seeElement('template#template__pimcore_editable_bundleTestArea_1_formPreset');
-        $I->seeAEditableConfiguration('formPreset', 'select', 'Preset', $options, 'custom', 'script');
+        $I->seeAEditableConfiguration('formPreset', 'select', 'Form Preset', $options, 'custom', 'script');
     }
 }

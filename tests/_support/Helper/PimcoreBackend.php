@@ -167,7 +167,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
             ],
             'outputWorkflow' => [
                 'type'             => 'select',
-                'dataFromEditmode' => $outputWorkflow->getId(),
+                'dataFromEditmode' => $outputWorkflow instanceof OutputWorkflowInterface ? $outputWorkflow->getId() : null,
             ],
         ];
 

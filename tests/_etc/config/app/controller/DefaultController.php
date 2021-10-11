@@ -49,13 +49,14 @@ class DefaultController extends FrontendController
         return $this->renderTemplate('Default/dynamic-multi-file.html.twig', ['options' => $options]);
     }
 
-    public function controllerRenderAction(Request $request): Response
+    public function controllerRenderAction(Request $request, FormAssembler $assembler): Response
     {
         $options = [
-            'form_id'            => $this->document->getProperty('form_id'),
-            'form_template'      => 'bootstrap_4_layout.html.twig',
-            'main_layout'        => false,
-            'preset'             => null
+            'form_id'         => $this->document->getProperty('form_id'),
+            'output_workflow' => $this->document->getProperty('output_workflow_id'),
+            'form_template'   => 'bootstrap_4_layout.html.twig',
+            'main_layout'     => false,
+            'preset'          => null,
         ];
 
         $optionBuilder = new FormOptionsResolver();
@@ -63,9 +64,7 @@ class DefaultController extends FrontendController
         $optionBuilder->setMainLayout($options['main_layout']);
         $optionBuilder->setFormTemplate($options['form_template']);
         $optionBuilder->setFormPreset($options['preset']);
-
-        /** @var FormAssembler $assembler */
-        $assembler = $this->container->get(FormAssembler::class);
+        $optionBuilder->setOutputWorkflow($options['output_workflow']);
 
         return $this->renderTemplate(
             '@FormBuilder/Form/form.html.twig',
