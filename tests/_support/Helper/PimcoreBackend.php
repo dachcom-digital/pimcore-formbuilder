@@ -148,7 +148,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
                 ];
         }
 
-        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+        if ($mailTemplate !== null && !$outputWorkflow instanceof OutputWorkflowInterface) {
             $outputWorkflow = $this->createOutputWorkflow('Test Output Workflow', $form, $outputWorkflowChannels);
         }
 

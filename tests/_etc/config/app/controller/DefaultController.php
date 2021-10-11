@@ -35,9 +35,15 @@ class DefaultController extends FrontendController
         $options = [];
 
         if ($this->document->getKey() === 'drop-zone') {
-            $options = ['libPath' => 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js'];
+            $options = [
+                'defaultHandlerPath' => 'https://github.com/dachcom-digital/jquery-pimcore-formbuilder/tree/v1.0.0/dist/dynamic-multi-file',
+                'libPath'            => 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js'
+            ];
         } elseif ($this->document->getKey() === 'fine-uploader') {
-            $options = ['libPath' => 'https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/jquery.fine-uploader/jquery.fine-uploader.min.js'];
+            $options = [
+                'defaultHandlerPath' => 'https://github.com/dachcom-digital/jquery-pimcore-formbuilder/tree/v1.0.0/dist/dynamic-multi-file',
+                'libPath'            => 'https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/jquery.fine-uploader/jquery.fine-uploader.min.js'
+            ];
         }
 
         return $this->renderTemplate('Default/dynamic-multi-file.html.twig', ['options' => $options]);

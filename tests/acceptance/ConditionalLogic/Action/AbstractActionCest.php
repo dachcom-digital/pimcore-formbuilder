@@ -19,7 +19,7 @@ abstract class AbstractActionCest
 
     protected function runTestWithActionAndCustomFormBuilder(AcceptanceTester $I, array $actions, TestFormBuilder $testFormBuilder): TestFormBuilder
     {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder->addFormConditionBlock($this->conditions, $actions);
 
@@ -41,7 +41,7 @@ abstract class AbstractActionCest
         ?Email $additionalMailTemplate = null,
         string $locale = 'en'
     ): TestFormBuilder {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript'], $locale);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction'], $locale);
 
         $testFormBuilder = $this->generateDefaultForm($actions, $addConstraints, $closure);
 

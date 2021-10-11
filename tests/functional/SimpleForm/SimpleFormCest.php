@@ -73,7 +73,7 @@ class SimpleFormCest
     /**
      * @param FunctionalTester $I
      */
-    public function testSimpleFormSubmissionWithMissingMail(FunctionalTester $I)
+    public function testSimpleFormSubmissionWithMissingOuputWorkflow(FunctionalTester $I)
     {
         $testFormBuilder = $this->generateSimpleForm();
 

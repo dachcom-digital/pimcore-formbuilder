@@ -25,14 +25,9 @@ class FormWithPresetsCest
         $I->amLoggedInAs('dachcom_test');
         $I->amOnPageInEditMode('/form-test');
 
-        $I->see('Form Preset', '.form-config-window .fb-form-group label');
-        $I->see('Form Preset Info', '.preview-fields h5');
-
-        $I->seeElement('.preview-fields .preview-field[data-name="preset1"] .description');
-        $I->see('This is a description of Preset A', '.preview-fields .preview-field[data-name="preset1"] .description');
-
         $options = [
-            'width' => 240,
+            'defaultValue' => 'custom',
+            'width' => 250,
             'store' => [
                 0 => [
                     0 => 'custom',
@@ -45,6 +40,7 @@ class FormWithPresetsCest
             ]
         ];
 
-        $I->seeAEditableConfiguration('formPreset', 'select', $options, 'custom', 'script');
+        $I->seeElement('template#template__pimcore_editable_bundleTestArea_1_formPreset');
+        $I->seeAEditableConfiguration('formPreset', 'select', 'Preset', $options, 'custom', 'script');
     }
 }

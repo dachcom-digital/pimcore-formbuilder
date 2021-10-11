@@ -11,10 +11,10 @@
     {% endblock %}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
-<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.core.form-builder.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.conditional-logic.js') }}"></script>
-<script type="text/javascript" src="{{ preload(asset('bundles/formbuilder/js/frontend/plugins/jquery.fb.ext.repeater.js')) }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/formbuilder/js/frontend/vendor/dependsOn/dependsOn.min.js') }}"></script>
+<script type="text/javascript" src="https://raw.githubusercontent.com/dachcom-digital/jquery-pimcore-formbuilder/v1.0.0/dist/jquery.fb.core.js"></script>
+<script type="text/javascript" src="https://raw.githubusercontent.com/dachcom-digital/jquery-pimcore-formbuilder/v1.0.0/dist/jquery.fb.ext.conditional-logic.js"></script>
+<script type="text/javascript" src="https://raw.githubusercontent.com/dachcom-digital/jquery-pimcore-formbuilder/v1.0.0/dist/jquery.fb.ext.repeater.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-depends-on@1.5.1/src/dependsOn.min.js"></script>
 <style>
     .fb-cl-hide-element {
         display: none;
@@ -22,7 +22,9 @@
 </style>
 <script>
     $(function () {
-        var $forms = $('form.formbuilder'), $ajaxForms = $('form.formbuilder.ajax-form');
+        var $forms = $('form.formbuilder'),
+            $ajaxForms = $('form.formbuilder.ajax-form');
+
         $ajaxForms.formBuilderAjaxManager();
         $forms.formBuilderConditionalLogic();
         $forms.formBuilderRepeater();

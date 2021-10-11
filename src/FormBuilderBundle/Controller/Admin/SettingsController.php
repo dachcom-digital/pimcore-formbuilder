@@ -339,9 +339,9 @@ class SettingsController extends AdminController
         }
 
         return $this->json([
-            'documents' => isset($data['documents']) ? $data['documents'] : [],
+            'documents' => $data['documents'] ?? [],
             'limit'     => $limit,
-            'total'     => isset($data['total']) ? $data['total'] : 0
+            'total'     => $data['total'] ?? 0
         ]);
     }
 

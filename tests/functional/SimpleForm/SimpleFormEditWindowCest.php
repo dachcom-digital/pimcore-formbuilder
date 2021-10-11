@@ -27,14 +27,15 @@ class SimpleFormEditWindowCest
         $this->setupAdminForm($I);
 
         $options = [
-            'width' => 240,
             'store' => [
                 0 => [1, 'dachcom_test'],
-            ]
+            ],
+            'width' => 250,
+            'onChange' => 'formBuilderAreaWatcher.watchOutputWorkflow.bind(this)',
         ];
 
-        $I->see('Form', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('formName', 'select', $options, 1, 'script');
+        $I->seeElement('template#template__pimcore_editable_bundleTestArea_1_formName');
+        $I->seeAEditableConfiguration('formName', 'select', 'Form', $options, 1, 'script');
     }
 
     /**
@@ -45,7 +46,8 @@ class SimpleFormEditWindowCest
         $this->setupAdminForm($I);
 
         $options = [
-            'width' => 240,
+            'defaultValue' => 'form_div_layout.html.twig',
+            'width' => 250,
             'store' => [
                 0 => [
                     0 => 'form_div_layout.html.twig',
@@ -67,58 +69,34 @@ class SimpleFormEditWindowCest
                     0 => 'bootstrap_4_horizontal_layout.html.twig',
                     1 => 'Bootstrap 4 Horizontal Layout',
                 ],
-            ]
+            ],
         ];
 
-        $I->see('Form Template', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('formType', 'select', $options, 'form_div_layout.html.twig', 'script');
+        $I->seeElement('template#template__pimcore_editable_bundleTestArea_1_formType');
+        $I->seeAEditableConfiguration('formType', 'select', 'Form Template', $options, 'form_div_layout.html.twig', 'script');
     }
 
     /**
      * @param FunctionalTester $I
      */
-    public function testConfigFieldFormMailTemplateRelation(FunctionalTester $I)
+    public function testConfigFieldFormMailOutputWorkflowSelector(FunctionalTester $I)
     {
         $this->setupAdminForm($I);
 
         $options = [
-            'width'    => 505,
-            'types'    => ['document'],
-            'subtypes' => ['document' => ['email']]
+            'defaultValue' => 'none',
+            'width' => 250,
+            'store'    => [
+                 0 => [
+                     0 => 'none',
+                     1 => 'No Output Workflow available'
+                 ],
+            ],
+            'class' => 'fb-output-workflow-selector',
         ];
 
-        $I->see('Mail Template', '.form-config-window .fb-row .fb-col-full .fb-form-group label');
-        $I->seeAEditableConfiguration('sendMailTemplate', 'relation', $options, null, 'script');
-
-    }
-
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testConfigFieldFormMailCopyTemplateRelation(FunctionalTester $I)
-    {
-        $this->setupAdminForm($I);
-
-        $options = [
-            'width'    => 240,
-            'types'    => ['document'],
-            'subtypes' => ['document' => ['email']]
-        ];
-
-        $I->see('Copy Mail Template', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('sendCopyMailTemplate', 'relation', $options, null, 'script');
-
-    }
-
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testConfigFieldFormMailCopyCheckbox(FunctionalTester $I)
-    {
-        $this->setupAdminForm($I);
-
-        $I->see('Send Copy to User', '.form-config-window .fb-row .fb-col-half .fb-form-group label');
-        $I->seeAEditableConfiguration('userCopy', 'checkbox', [], false, 'script');
+        $I->seeElement('template#template__pimcore_editable_bundleTestArea_1_outputWorkflow');
+        $I->seeAEditableConfiguration('outputWorkflow', 'select', 'Output Workflow', $options, 'none', 'script');
     }
 
     /**

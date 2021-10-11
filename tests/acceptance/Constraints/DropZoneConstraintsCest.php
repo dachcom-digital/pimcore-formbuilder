@@ -23,7 +23,7 @@ class DropZoneConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -53,7 +53,7 @@ class DropZoneConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);

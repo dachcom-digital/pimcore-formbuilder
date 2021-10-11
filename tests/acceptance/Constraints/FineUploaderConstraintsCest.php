@@ -21,7 +21,7 @@ class FineUploaderConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -49,7 +49,7 @@ class FineUploaderConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);

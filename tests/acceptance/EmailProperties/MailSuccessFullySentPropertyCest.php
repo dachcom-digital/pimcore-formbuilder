@@ -24,7 +24,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -61,7 +61,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -97,7 +97,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -130,7 +130,7 @@ class MailSuccessFullySentPropertyCest
 
         $mailTemplate = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
 
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)

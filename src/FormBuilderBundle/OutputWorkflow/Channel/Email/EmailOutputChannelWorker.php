@@ -41,6 +41,7 @@ class EmailOutputChannelWorker
 
         $mailTemplate = $channelConfiguration['mailTemplate'];
         $forcePlainText = $channelConfiguration['forcePlainText'];
+        $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
 
         $mailTemplateId = $mailTemplate['id'];
         $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
@@ -55,6 +56,10 @@ class EmailOutputChannelWorker
         $mail->setParam('_form_builder_output_workflow_name', $workflowName);
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
+
+        if ($disableDefaultMailBody === true) {
+            $mail->setParam('_form_builder_disabled_default_mail_body', 1);
+        }
 
         // dispatch subject guard event
         if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeData)) {

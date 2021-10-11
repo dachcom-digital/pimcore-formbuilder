@@ -65,7 +65,6 @@ class ElementValueContainsConditionCest extends AbstractConditionCest
         $I->waitForElement($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1', 'div.fb-cl-hide-element'), 5);
     }
 
-
     /**
      * @param AcceptanceTester $I
      *

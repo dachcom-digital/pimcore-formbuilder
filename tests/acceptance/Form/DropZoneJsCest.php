@@ -24,7 +24,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
 
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
@@ -65,7 +65,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -105,7 +105,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -158,7 +158,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -207,7 +207,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -252,7 +252,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -300,7 +300,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -350,7 +350,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -398,7 +398,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
@@ -443,7 +443,7 @@ class DropZoneJsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
         $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);

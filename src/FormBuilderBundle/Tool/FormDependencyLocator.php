@@ -16,14 +16,15 @@ class FormDependencyLocator
     }
 
     /**
-     * @throws Exception|\Doctrine\DBAL\Exception
+     * @throws Exception
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findDocumentDependencies(int $formId, int $offset, int $limit): array
     {
         $stmt = $this->db->prepare(
             sprintf(
                 'SELECT SQL_CALC_FOUND_ROWS `documentId`, `data` 
-                        FROM `documents_elements` 
+                        FROM `documents_editables` 
                         WHERE `name` LIKE :name AND `type` = :type AND `data` = :formId 
                         GROUP BY `documentId` 
                         LIMIT %d, %d',
@@ -32,7 +33,7 @@ class FormDependencyLocator
             )
         );
 
-        $stmt->execute([
+        $result = $stmt->executeQuery([
             'name'   => '%.formName',
             'type'   => 'select',
             'formId' => $formId
@@ -41,10 +42,13 @@ class FormDependencyLocator
         $indexCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
 
         $documents = [];
-        foreach ($stmt->fetchAll() as $data) {
+        foreach ($result->fetchAllAssociative() as $data) {
+
+            $document = null;
+
             try {
                 $document = Document::getById($data['documentId']);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 continue;
             }
 
