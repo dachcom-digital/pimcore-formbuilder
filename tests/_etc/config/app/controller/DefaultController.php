@@ -27,7 +27,7 @@ class DefaultController extends FrontendController
 
     public function javascriptAction(Request $request): Response
     {
-        return $this->renderTemplate('default/snippet.html.twig', [
+        return $this->renderTemplate('default/javascript.html.twig', [
             'document' => $this->document,
             'editmode' => $this->editmode,
         ]);
