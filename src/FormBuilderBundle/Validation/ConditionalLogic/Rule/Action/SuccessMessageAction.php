@@ -11,7 +11,7 @@ class SuccessMessageAction implements ActionInterface
     use ActionTrait;
 
     protected ?string $identifier = null;
-    protected ?string $value = null;
+    protected array|string|null $value = null;
     protected ?string $flashMessage = null;
 
     /**
@@ -39,12 +39,12 @@ class SuccessMessageAction implements ActionInterface
         $this->identifier = $identifier;
     }
 
-    public function getValue(): ?string
+    public function getValue(): array|string|null
     {
         return $this->value;
     }
 
-    public function setValue(string $value): void
+    public function setValue(array|string $value): void
     {
         $this->value = $value;
     }
