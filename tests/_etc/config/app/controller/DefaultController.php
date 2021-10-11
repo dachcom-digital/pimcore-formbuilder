@@ -67,7 +67,7 @@ class DefaultController extends FrontendController
         $optionBuilder->setOutputWorkflow($options['output_workflow']);
 
         return $this->renderTemplate(
-            '@FormBuilder/Form/form.html.twig',
+            '@FormBuilder/form/form.html.twig',
             $assembler->assembleViewVars($optionBuilder)
         );
     }

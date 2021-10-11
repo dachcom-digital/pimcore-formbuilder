@@ -58,6 +58,6 @@ class StaticFormExtension extends AbstractExtension
             $this->formAssembler->assembleViewVars($optionBuilder)
         );
 
-        return $environment->render('@FormBuilder/Form/form.html.twig', $viewVars);
+        return $environment->render('@FormBuilder/form/form.html.twig', $viewVars);
     }
 }
