@@ -17,7 +17,10 @@ class DefaultController extends FrontendController
 
     public function snippetAction(Request $request): Response
     {
-        return $this->renderTemplate('default/snippet.html.twig');
+        return $this->renderTemplate('default/snippet.html.twig', [
+            'document' => $this->document,
+            'editmode' => $this->editmode,
+        ]);
     }
 
     public function twigRenderAction(Request $request): Response
