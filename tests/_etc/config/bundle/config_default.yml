@@ -13,6 +13,8 @@ services:
 
 form_builder:
 
+    dynamic_multi_file_adapter: FormBuilderBundle\DynamicMultiFile\Adapter\FineUploadAdapter
+
     email:
         html_2_text_options:
             strip_tags: true

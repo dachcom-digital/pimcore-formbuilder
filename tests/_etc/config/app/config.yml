@@ -18,4 +18,4 @@ framework:
     mailer:
         transports:
             main: 'null://null'
-            newsletter: 'null://null'
+            pimcore_newsletter: 'null://null'

@@ -96,7 +96,7 @@ class SimpleFormEditWindowCest
         ];
 
         $I->seeElement('template#template__pimcore_editable_bundleTestArea_1_outputWorkflow');
-        $I->seeAEditableConfiguration('outputWorkflow', 'select', 'Output Workflow', $options, 'none', 'script');
+        $I->seeAEditableConfiguration('outputWorkflow', 'select', 'Output Workflow', $options, null, 'script');
     }
 
     /**
