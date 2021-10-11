@@ -10,12 +10,7 @@ use DachcomBundle\Test\AcceptanceTester;
  */
 class FormChangeSuccessMessageActionCest extends AbstractActionCest
 {
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementChangeSuccessMessageToSimpleText(AcceptanceTester $I)
+    public function testElementChangeSuccessMessageToSimpleText(AcceptanceTester $I): void
     {
         $actions = [
             [
@@ -37,14 +32,9 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
 
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementChangeSuccessMessageToSnippet(AcceptanceTester $I)
+    public function testElementChangeSuccessMessageToSnippet(AcceptanceTester $I): void
     {
-        $snippet = $I->haveASnippet('mail-success-snippet', ['action' => 'snippetAction']);
+        $snippet = $I->haveASnippet('mail-success-snippet', ['controller' => 'App\Controller\DefaultController', 'action' => 'snippetAction']);
 
         $actions = [
             [
@@ -74,15 +64,10 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
         $I->waitForText(sprintf('snippet content with id %s', $snippet->getId()), 5, '.form-success-wrapper h3');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementChangeSuccessMessageToSnippetWithAnotherLocale(AcceptanceTester $I)
+    public function testElementChangeSuccessMessageToSnippetWithAnotherLocale(AcceptanceTester $I): void
     {
-        $snippetEn = $I->haveASnippet('mail-success-snippet-en', ['action' => 'snippetAction']);
-        $snippetDe = $I->haveASnippet('mail-success-snippet-de', ['action' => 'snippetAction'], 'de');
+        $snippetEn = $I->haveASnippet('mail-success-snippet-en', ['controller' => 'App\Controller\DefaultController', 'action' => 'snippetAction']);
+        $snippetDe = $I->haveASnippet('mail-success-snippet-de', ['controller' => 'App\Controller\DefaultController', 'action' => 'snippetAction'], 'de');
 
         $actions = [
             [
@@ -114,12 +99,7 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
         $I->waitForText(sprintf('snippet content with id %s', $snippetDe->getId()), 5, '.form-success-wrapper h3');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementChangeSuccessMessageToDocumentRedirect(AcceptanceTester $I)
+    public function testElementChangeSuccessMessageToDocumentRedirect(AcceptanceTester $I): void
     {
         $redirectDocument = $I->haveAPageDocument('form-test-redirect');
 
@@ -151,12 +131,7 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
         $I->waitForText(sprintf('redirect to: %s', $redirectDocument->getFullPath()), 10, '.form-success-wrapper');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementChangeSuccessMessageToDocumentRedirectToAnotherLocale(AcceptanceTester $I)
+    public function testElementChangeSuccessMessageToDocumentRedirectToAnotherLocale(AcceptanceTester $I): void
     {
         $redirectDocumentEn = $I->haveAPageDocument('form-test-redirect-en');
         $redirectDocumentDe = $I->haveAPageDocument('form-test-redirect-de', [], 'de');
@@ -191,12 +166,7 @@ class FormChangeSuccessMessageActionCest extends AbstractActionCest
         $I->waitForText(sprintf('redirect to: %s', $redirectDocumentDe->getFullPath()), 10, '.form-success-wrapper');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testElementChangeSuccessMessageToExternalRedirect(AcceptanceTester $I)
+    public function testElementChangeSuccessMessageToExternalRedirect(AcceptanceTester $I): void
     {
         $actions = [
             [

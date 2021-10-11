@@ -6,12 +6,7 @@ use DachcomBundle\Test\AcceptanceTester;
 
 class ConditionalLogicCest extends AbstractExtJs
 {
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testExtJsConditionalLogicBlockAddition(AcceptanceTester $I)
+    public function testExtJsConditionalLogicBlockAddition(AcceptanceTester $I): void
     {
         $this->amOnFormBuilderBackendBuilder($I);
 

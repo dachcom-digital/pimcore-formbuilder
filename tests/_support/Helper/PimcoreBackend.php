@@ -66,7 +66,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         string $outputWorkflowName,
         FormDefinitionInterface $form,
         array $channelDefinitions,
-        string $successMessage = 'Success!'
+        string|array $successMessage = 'Success!'
     ): OutputWorkflowInterface {
         $outputWorkflow = $this->createOutputWorkflow($outputWorkflowName, $form, $channelDefinitions, $successMessage);
 
@@ -253,7 +253,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         string $name,
         FormDefinitionInterface $form,
         array $channelDefinitions,
-        string $successMessage = 'Success!',
+        string|array $successMessage = 'Success!',
     ): OutputWorkflowInterface {
         $manager = $this->getOutputWorkflowManager();
 
@@ -295,11 +295,17 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
             $outputWorkflow->addChannel($channel);
         }
 
-        $outputWorkflow->setSuccessManagement([
-            'type'       => 'successManagement',
-            'identifier' => 'string',
-            'value'      => $successMessage,
-        ]);
+        if (is_string($successMessage)) {
+            $successManagement = [
+                'type'       => 'successManagement',
+                'identifier' => 'string',
+                'value'      => $successMessage,
+            ];
+        } else {
+            $successManagement = $successMessage;
+        }
+
+        $outputWorkflow->setSuccessManagement($successManagement);
 
         $manager->saveRawEntity($outputWorkflow);
 

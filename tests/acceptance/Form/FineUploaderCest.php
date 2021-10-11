@@ -11,7 +11,7 @@ class FineUploaderCest
 
     public function testUploadFormWithOneFile(AcceptanceTester $I): void
     {
-        //$I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 

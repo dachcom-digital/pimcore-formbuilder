@@ -7,12 +7,7 @@ use DachcomBundle\Test\AcceptanceTester;
 
 class ImportExportCest extends AbstractExtJs
 {
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testFormExportImport(AcceptanceTester $I)
+    public function testFormExportImport(AcceptanceTester $I): void
     {
         $I->setDownloadPathForWebDriver();
 
@@ -66,13 +61,7 @@ class ImportExportCest extends AbstractExtJs
 
     }
 
-    /**
-     * @param AcceptanceTester $I
-     * @param                  $formId
-     *
-     * @throws \Exception
-     */
-    protected function populateFormForExport(AcceptanceTester $I, $formId)
+    protected function populateFormForExport(AcceptanceTester $I, $formId): void
     {
         $this->addFieldToForm($I, $formId, 'first_text_field');
         $this->addFieldToForm($I, $formId, 'second_text_field');
