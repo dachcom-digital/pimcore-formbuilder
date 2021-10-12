@@ -56,7 +56,7 @@ class ExtJsFormBuilder
             'id'                   => $formDefinition->getId(),
             'name'                 => $formDefinition->getName(),
             'group'                => $formDefinition->getGroup(),
-            'config'               => $formDefinition->getConfig(),
+            'config'               => $formDefinition->getConfiguration(),
             'has_output_workflows' => $formDefinition->hasOutputWorkflows(),
             'meta'                 => [
                 'creation_date'     => $formDefinition->getCreationDate(),

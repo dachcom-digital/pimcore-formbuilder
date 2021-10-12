@@ -11,6 +11,6 @@
             {{ form_builder_theme_macro.form_builder_form_foot() }}
         {{ form_end(form) }}
     {% elseif message is defined and form_builder_is_admin_mode is defined and form_builder_is_admin_mode == true %}
-        <div class="formbuilder-error-message">{{ 'form builder error: ' ~ message }}</div>
+        <div class="formbuilder-alert-danger">{{ 'form builder error: ' ~ message }}</div>
     {% endif %}
 {% endblock form_builder_form %}

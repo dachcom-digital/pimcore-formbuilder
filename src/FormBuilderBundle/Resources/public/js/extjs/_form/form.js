@@ -71,6 +71,7 @@ Formbuilder.extjs.rootForm = Class.create({
 
         this.panel.on({
             beforedestroy: function () {
+
                 eventListeners.destroy();
                 Formbuilder.eventObserver.unregisterForm(this.formId);
 

@@ -19,6 +19,9 @@ services:
     # tool: locale data mapper
     FormBuilderBundle\Tool\LocaleDataMapper: ~
 
+    # tool: import/export forms via yaml definition
+    FormBuilderBundle\Tool\ImportExportProcessor: ~
+
     # tool: recaptcha processor
     FormBuilderBundle\Tool\ReCaptchaProcessorInterface: '@FormBuilderBundle\Tool\ReCaptchaProcessor'
     FormBuilderBundle\Tool\ReCaptchaProcessor: ~

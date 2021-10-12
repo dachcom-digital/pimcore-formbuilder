@@ -56,7 +56,7 @@ class FrontendFormBuilder
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        $formDefinitionConfig = $formDefinition->getConfig();
+        $formDefinitionConfig = $formDefinition->getConfiguration();
 
         $formAttributes = [];
 

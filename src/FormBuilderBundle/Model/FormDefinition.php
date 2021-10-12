@@ -17,7 +17,7 @@ class FormDefinition implements FormDefinitionInterface
     protected int $createdBy;
     protected ?array $mailLayout;
     protected Collection $outputWorkflows;
-    public array $config = [];
+    public array $configuration = [];
     public array $conditionalLogic = [];
     public array $fields = [];
 
@@ -143,15 +143,14 @@ class FormDefinition implements FormDefinitionInterface
         return $this->outputWorkflows;
     }
 
-    public function setConfig(array $config): void
+    public function setConfiguration(array $configuration): void
     {
-        $validConfig = array_intersect_key($config, array_flip(self::ALLOWED_FORM_KEYS));
-        $this->config = $validConfig;
+        $this->configuration = array_intersect_key($configuration, array_flip(self::ALLOWED_FORM_KEYS));
     }
 
-    public function getConfig(): array
+    public function getConfiguration(): array
     {
-        return $this->config;
+        return $this->configuration;
     }
 
     public function getConditionalLogic(): array

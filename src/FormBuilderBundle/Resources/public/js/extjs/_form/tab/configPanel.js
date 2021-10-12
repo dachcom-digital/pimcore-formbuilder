@@ -8,7 +8,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
     tree: null,
 
     getDataSuccess: true,
-    importIsRunning: false,
     availableFormFields: [],
     availableContainerTypes: [],
     formId: null,
@@ -20,7 +19,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
     formConditionalsStructured: {},
     formConditionalsStore: {},
     formFields: null,
-    mailLayout: null,
     allowedMoveElements: {
         'root': [
             'field',
@@ -55,7 +53,6 @@ Formbuilder.extjs.formPanel.config = Class.create({
         this.availableContainerTypes = formData.container_types;
         this.availableConstraints = formData.validation_constraints;
         this.availableFormFieldTemplates = formData.fields_template;
-        this.mailLayout = formData.mail_layout;
     },
 
     getLayout: function (parentPanel) {
@@ -474,7 +471,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
             formAttributes = {},
             parsedFormAttributes, items;
 
-        if (this.rootPanel === undefined || this.importIsRunning === true) {
+        if (this.rootPanel === undefined) {
             //root panel not initialized yet.
             return;
         }
@@ -1069,28 +1066,19 @@ Formbuilder.extjs.formPanel.config = Class.create({
      * Create Import Panel (Upload File)
      */
     showImportPanel: function () {
-        var importPanel = new Formbuilder.extjs.components.formImporter(this);
-        importPanel.showPanel();
+        Ext.Msg.confirm(t('export'), t('form_builder.import_note'), function (btn) {
+
+            if (btn !== 'yes') {
+                return;
+            }
+
+            var importPanel = new Formbuilder.extjs.components.formImporter(this);
+            importPanel.showPanel();
+        }.bind(this));
     },
 
-    importForm: function (importedFormData) {
-
-        this.importIsRunning = true;
-        this.formConfig = importedFormData.config;
-        this.formFields = importedFormData.fields;
-        if (importedFormData.hasOwnProperty('conditional_logic')) {
-            this.formConditionalsStructured = importedFormData.conditional_logic;
-        }
-
-        this.resetLayout();
-        this.initLayoutFields();
-
-        this.editPanel.removeAll();
-        this.editPanel.add(this.getRootPanel());
-        this.setCurrentNode('root');
-
-        this.importIsRunning = false;
-
+    importForm: function (formId) {
+        this.formSelectionPanel.rebuildFormPanel(formId);
     },
 
     /**
@@ -1103,9 +1091,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
             return;
         }
 
-        Ext.Msg.alert(t('export'), t('form_builder.export_note'), function (btn) {
-            pimcore.helpers.download('/admin/formbuilder/settings/export-form/' + this.formId);
-        }.bind(this));
+        pimcore.helpers.download('/admin/formbuilder/settings/export-form/' + this.formId);
     },
 
     /**

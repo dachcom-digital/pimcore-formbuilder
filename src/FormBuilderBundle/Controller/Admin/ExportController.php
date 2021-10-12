@@ -6,13 +6,18 @@ use Carbon\Carbon;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\Tool\ImportExportProcessor;
 use Pimcore\Model\Tool\Email;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use FormBuilderBundle\Manager\FormDefinitionManager;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Yaml\Yaml;
 
 class ExportController extends AdminController
 {
@@ -23,6 +28,61 @@ class ExportController extends AdminController
     public function __construct(FormDefinitionManager $formDefinitionManager)
     {
         $this->formDefinitionManager = $formDefinitionManager;
+    }
+
+    public function importFormAction(Request $request, ImportExportProcessor $importExportProcessor): JsonResponse
+    {
+        $formId = (int) $request->request->get('formId');
+        /** @var UploadedFile $file */
+        $file = $request->files->get('formData');
+        $data = file_get_contents($file->getPathname());
+        $encoding = \Pimcore\Tool\Text::detectEncoding($data);
+
+        if ($encoding) {
+            $data = iconv($encoding, 'UTF-8', $data);
+        }
+
+        $response = [
+            'success' => true,
+            'formId'  => $formId,
+            'message' => null,
+        ];
+
+        try {
+            $importExportProcessor->processYamlToFormDefinition($formId, $data);
+        } catch (\Throwable $e) {
+            $response['success'] = false;
+            $response['message'] = sprintf('Error while importing form definition: %s', $e->getMessage());
+        }
+
+        return new JsonResponse(json_encode($response, JSON_THROW_ON_ERROR), 200, ['Content-Type' => 'text/plain'], true);
+    }
+
+    public function exportFormAction(Request $request, ImportExportProcessor $importExportProcessor): Response
+    {
+        $formId = $request->get('id');
+
+        if (!is_numeric($formId)) {
+            throw new NotFoundHttpException(sprintf('form with id %d not found', $formId));
+        }
+
+        try {
+            $data = $importExportProcessor->processFormDefinitionToYaml((int) $formId);
+        } catch (\Throwable $e) {
+            throw new UnprocessableEntityHttpException(sprintf('Error while preparing form definition for export: %s', $e->getMessage()));
+        }
+
+        $response = new Response($data);
+        $exportName = 'form_export_' . $formId . '.yml';
+
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $exportName
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
     public function exportFormEmailsAction(Request $request): Response

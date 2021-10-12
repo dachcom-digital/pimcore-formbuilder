@@ -8,7 +8,6 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Repository\FormDefinitionRepositoryInterface;
-use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\User;
 
@@ -16,20 +15,17 @@ class FormDefinitionManager
 {
     protected FormDefinitionFactoryInterface $formDefinitionFactory;
     protected FormDefinitionRepositoryInterface $formDefinitionRepository;
-    protected FormDataConnectorInterface $formDataConnector;
     protected TokenStorageUserResolver $storageUserResolver;
     protected EntityManagerInterface $entityManager;
 
     public function __construct(
         FormDefinitionFactoryInterface $formDefinitionFactory,
         FormDefinitionRepositoryInterface $formDefinitionRepository,
-        FormDataConnectorInterface $formDataConnector,
         TokenStorageUserResolver $storageUserResolver,
         EntityManagerInterface $entityManager
     ) {
         $this->formDefinitionFactory = $formDefinitionFactory;
         $this->formDefinitionRepository = $formDefinitionRepository;
-        $this->formDataConnector = $formDataConnector;
         $this->storageUserResolver = $storageUserResolver;
         $this->entityManager = $entityManager;
     }
@@ -37,16 +33,6 @@ class FormDefinitionManager
     public function getById(int $id): ?FormDefinitionInterface
     {
         return $this->formDefinitionRepository->findById($id);
-    }
-
-    public function configurationFileExists(int $id): bool
-    {
-        return $this->formDataConnector->formHasAvailableConfigurationFile($id);
-    }
-
-    public function getConfigurationPath(int $id): string
-    {
-        return $this->formDataConnector->getConfigurationPathOfForm($id);
     }
 
     /**
@@ -85,8 +71,6 @@ class FormDefinitionManager
         $this->entityManager->persist($form);
         $this->entityManager->flush();
 
-        $this->formDataConnector->storeFormData($form);
-
         return $form;
     }
 
@@ -109,8 +93,6 @@ class FormDefinitionManager
         if (!$form instanceof FormDefinitionInterface) {
             return;
         }
-
-        $this->formDataConnector->deleteFormData($form);
 
         $this->entityManager->remove($form);
         $this->entityManager->flush();
@@ -153,7 +135,7 @@ class FormDefinitionManager
         $form->setModifiedBy($this->getAdminUserId());
 
         if (isset($data['form_config']) && is_array($data['form_config'])) {
-            $form->setConfig($data['form_config']);
+            $form->setConfiguration($data['form_config']);
         }
 
         if (isset($data['form_conditional_logic']) && is_array($data['form_conditional_logic'])) {
@@ -200,10 +182,13 @@ class FormDefinitionManager
         $configParameter = $this->getValue($fieldData, 'configuration');
         $containerFields = $this->getValue($fieldData, 'fields');
 
-        $fieldContainer = $form->getFieldContainer($fieldName);
+        $originalFieldContainer = $form->getFieldContainer($fieldName);
 
-        if (!$fieldContainer instanceof FormFieldContainerDefinitionInterface) {
+        if (!$originalFieldContainer instanceof FormFieldContainerDefinitionInterface) {
             $fieldContainer = $this->formDefinitionFactory->createFormFieldContainerDefinition();
+        } else {
+            // @see https://github.com/doctrine/orm/issues/5542
+            $fieldContainer = clone $originalFieldContainer;
         }
 
         $fieldContainer->setName($fieldName);
@@ -244,10 +229,13 @@ class FormDefinitionManager
         $optionsParameter = $this->getValue($fieldData, 'options');
         $optionalParameter = $this->getValue($fieldData, 'optional');
 
-        $field = $form->getField($fieldName);
+        $originalField = $form->getField($fieldName);
 
-        if (!$field instanceof FormFieldDefinitionInterface) {
+        if (!$originalField instanceof FormFieldDefinitionInterface) {
             $field = $this->formDefinitionFactory->createFormFieldDefinition();
+        } else {
+            // @see https://github.com/doctrine/orm/issues/5542
+            $field = clone $originalField;
         }
 
         $field->setName($fieldName);

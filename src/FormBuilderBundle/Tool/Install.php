@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Tool;
 
-use FormBuilderBundle\Configuration\Configuration;
 use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
@@ -10,7 +9,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
-use Symfony\Component\Filesystem\Filesystem;
 use Pimcore\Model\User\Permission;
 
 class Install extends SettingsStoreAwareInstaller
@@ -21,7 +19,6 @@ class Install extends SettingsStoreAwareInstaller
 
     public function install(): void
     {
-        $this->setupPaths();
         $this->installDbStructure();
         $this->installPermissions();
         $this->installTranslations();
@@ -29,18 +26,6 @@ class Install extends SettingsStoreAwareInstaller
         $this->installDocumentTypes();
 
         parent::install();
-    }
-
-    protected function setupPaths(): void
-    {
-        $fileSystem = new Filesystem();
-        if (!$fileSystem->exists(Configuration::SYSTEM_CONFIG_DIR_PATH)) {
-            $fileSystem->mkdir(Configuration::SYSTEM_CONFIG_DIR_PATH);
-        }
-
-        if (!$fileSystem->exists(Configuration::STORE_PATH)) {
-            $fileSystem->mkdir(Configuration::STORE_PATH, 0755);
-        }
     }
 
     /**

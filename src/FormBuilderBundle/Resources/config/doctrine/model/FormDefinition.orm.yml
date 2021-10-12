@@ -13,10 +13,12 @@ FormBuilderBundle\Model\FormDefinition:
             nullable: true
             type: string
             unique: true
+            length: 190
         group:
             column: '`group`'
             nullable: true
             type: string
+            length: 190
         creationDate:
             column: creationDate
             type: datetime
@@ -34,6 +36,18 @@ FormBuilderBundle\Model\FormDefinition:
         mailLayout:
             column: mailLayout
             type: object
+            nullable: true
+        configuration:
+            column: configuration
+            type: object
+            nullable: true
+        conditionalLogic:
+            column: conditionalLogic
+            type: object
+            nullable: true
+        fields:
+            column: fields
+            type: form_builder_fields
             nullable: true
     oneToMany:
         outputWorkflows:

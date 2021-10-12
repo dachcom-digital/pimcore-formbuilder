@@ -156,7 +156,7 @@ class RequestListener implements EventSubscriberInterface
 
     protected function detectFormRuntimeDataInRequest(Request $request, FormDefinitionInterface $formDefinition): ?array
     {
-        $formDefinitionConfig = $formDefinition->getConfig();
+        $formDefinitionConfig = $formDefinition->getConfiguration();
 
         $data = null;
         $name = sprintf('formbuilder_%s', $formDefinition->getId());

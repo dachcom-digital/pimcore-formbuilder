@@ -6,18 +6,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FormBuilderBundle\Model\FormDefinition;
 use FormBuilderBundle\Model\FormDefinitionInterface;
-use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 
 class FormDefinitionRepository implements FormDefinitionRepositoryInterface
 {
-    protected FormDataConnectorInterface $formDataConnector;
     protected EntityRepository $repository;
 
-    public function __construct(
-        FormDataConnectorInterface $formDataConnector,
-        EntityManagerInterface $entityManager
-    ) {
-        $this->formDataConnector = $formDataConnector;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
         $this->repository = $entityManager->getRepository(FormDefinition::class);
     }
 
@@ -27,10 +22,7 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
             return null;
         }
 
-        /** @var FormDefinitionInterface $object */
-        $object = $this->repository->find($id);
-
-        return $this->assembleSingle($object);
+        return $this->repository->find($id);
     }
 
     public function findByName(string $name): ?FormDefinitionInterface
@@ -39,10 +31,7 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
             return null;
         }
 
-        /** @var FormDefinitionInterface $object */
-        $object = $this->repository->findOneBy(['name' => $name]);
-
-        return $this->assembleSingle($object);
+        return $this->repository->findOneBy(['name' => $name]);
     }
 
     public function findNameById($id): ?string
@@ -69,32 +58,6 @@ class FormDefinitionRepository implements FormDefinitionRepositoryInterface
 
     public function findAll(): array
     {
-        $objects = $this->repository->findAll();
-
-        return $this->assembleMultiple($objects);
-    }
-
-    protected function assembleSingle(?FormDefinitionInterface $formDefinition): ?FormDefinitionInterface
-    {
-        if (!$formDefinition instanceof FormDefinitionInterface) {
-            return null;
-        }
-
-        $this->formDataConnector->assignRelationDataToFormObject($formDefinition);
-
-        return $formDefinition;
-    }
-
-    protected function assembleMultiple(array $formDefinitions): array
-    {
-        $assembledFormDefinitions = [];
-        foreach ($formDefinitions as $formDefinition) {
-            if ($formDefinition instanceof FormDefinitionInterface) {
-                $this->formDataConnector->assignRelationDataToFormObject($formDefinition);
-                $assembledFormDefinitions[] = $formDefinition;
-            }
-        }
-
-        return $assembledFormDefinitions;
+        return  $this->repository->findAll();
     }
 }

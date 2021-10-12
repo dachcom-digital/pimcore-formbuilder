@@ -6,6 +6,9 @@
 > 💀 Be careful while migrating to production!
 > A lot of things (including form configuration) have changed and will break your installation if you're ignoring the migration guide below!
 
+### Migration
+- Execute `bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'` after you've installed FormBuilder
+
 ### Global Changes
 - Deprecations have been removed:
   - `FormBuilderBundle\Storage\Form` needs to be `FormBuilderBundle\Model\FormDefinition` now
@@ -15,7 +18,7 @@
   - `FormBuilderBundle\Event\MailEvent` has been removed, use `FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent` instead
   - Method `FormBuilderBundle\Assembler\FormAssembler::setFormOptionsResolver` has been removed. `FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionsResolver)` directly requires FormOptionsResolver now
   - CSV export types `Only Admin-Mail` and `Only User-Mail (Copy)` have been removed. Instead, you're now able to filter CSV export by available output workflows
-  - Mail layout fallback (stored in `formbuilder_forms.mailLayout`) has been removed. Please migrate layouts to email channels. This column will be removed with FormBuilder 5.0
+  - Mail layout fallback feature (which was enabled if no workflows have been defined and have been stored in `formbuilder_forms.mailLayout`) has been removed. Please migrate layouts to email channels. This column will be removed with FormBuilder 5.0
 - PHP8 return type declarations added: you may have to adjust your extensions accordingly
 - Email properties (`mail_successfully_sent`, `mail_ignore_fields`, `mail_force_plain_text`, `mail_disable_default_mail_body`) have been removed and won't be recognized anymore
 - Area-Brick Configuration does not allow `sendMailTmplate` and `sendCopyMailTemplate` fallbacks anymore. They must be configured by output workflows now
@@ -32,6 +35,8 @@
 ### New Features
 - Conditional Logic Action `Switch Output Workflow` added
 - [Configurable Html2Text Options](./docs/OutputWorkflow/10_EmailChannel.md#configure-html2text-options)
+- Yaml file storage migrated to Database storage
+- Import/Export Improvement: You're able to export/import the complete form dataset (form, workflows and channels)
 
 ***
 

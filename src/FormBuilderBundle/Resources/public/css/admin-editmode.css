@@ -9,16 +9,6 @@
     text-transform: uppercase;
 }
 
-.formbuilder-error-message {
-    color: #721c24;
-    background-color: #f8d7da;
-    padding: .75rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: .25rem;
-    display: block;
-}
-
 .x-window .preview-field {
     background: #eaeaea;
     border: 1px solid #d8d8d8;

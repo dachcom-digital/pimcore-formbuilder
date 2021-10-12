@@ -10,13 +10,8 @@ use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Yaml\Yaml;
 
 class SettingsController extends AdminController
 {
@@ -246,71 +241,6 @@ class SettingsController extends AdminController
             'success'  => $success,
             'message'  => $message
         ]);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function importFormAction(Request $request): JsonResponse
-    {
-        /** @var UploadedFile $file */
-        $file = $request->files->get('formData');
-        $data = file_get_contents($file->getPathname());
-        $encoding = \Pimcore\Tool\Text::detectEncoding($data);
-
-        if ($encoding) {
-            $data = iconv($encoding, 'UTF-8', $data);
-        }
-
-        $response = [
-            'success' => true,
-            'data'    => [],
-            'message' => 'Success!',
-        ];
-
-        try {
-            $formContent = Yaml::parse($data);
-            $formContent['fields'] = $this->extJsFormBuilder->generateExtJsFields($formContent['fields']);
-            $response['data'] = $formContent;
-        } catch (\Exception $e) {
-            $response['success'] = false;
-            $response['message'] = $e->getMessage();
-        }
-
-        if (!$this->container->has('serializer')) {
-            throw new \LogicException('No serializer found.');
-        }
-
-        $jsonData = $this->container->get('serializer')->serialize($response, 'json', array_merge([
-            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
-        ], []));
-
-        return new JsonResponse($jsonData, 200, ['Content-Type' => 'text/plain'], true);
-    }
-
-    public function exportFormAction(Request $request): Response
-    {
-        $formId = $request->get('id');
-
-        if (!is_numeric($formId)) {
-            throw new NotFoundHttpException('no form with id ' . $formId . ' found.');
-        }
-
-        $exportName = 'form_export_' . $formId . '.yml';
-        $exportFile = Configuration::STORE_PATH . '/main_' . $formId . '.yml';
-        if (!file_exists($exportFile)) {
-            throw new NotFoundHttpException('no form configuration with id ' . $formId . ' found.');
-        }
-
-        $response = new Response(file_get_contents($exportFile));
-        $disposition = $response->headers->makeDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $exportName
-        );
-
-        $response->headers->set('Content-Disposition', $disposition);
-
-        return $response;
     }
 
     public function getGroupTemplatesAction(): JsonResponse

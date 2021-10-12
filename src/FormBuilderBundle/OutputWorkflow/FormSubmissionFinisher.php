@@ -167,7 +167,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         $data = $form->getData();
 
         $formDefinition = $data->getFormDefinition();
-        $formDefinitionConfig = $formDefinition->getConfig();
+        $formDefinitionConfig = $formDefinition->getConfiguration();
         $method = isset($formDefinitionConfig['method']) ? strtoupper($formDefinitionConfig['method']) : 'POST';
 
         if (in_array($method, ['GET', 'HEAD', 'TRACE'])) {

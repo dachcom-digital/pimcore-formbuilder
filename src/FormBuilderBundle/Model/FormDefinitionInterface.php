@@ -65,9 +65,9 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      */
     public function getOutputWorkflows(): Collection;
 
-    public function setConfig(array $config): void;
+    public function setConfiguration(array $configuration): void;
 
-    public function getConfig(): array;
+    public function getConfiguration(): array;
 
     public function setConditionalLogic(array $conditionalLogic): void;
 
@@ -82,6 +82,10 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      * @throws \Exception
      */
     public function removeDynamicField(string $name): void;
+
+    public function setFields(array $fields): void;
+
+    public function getFields(): array;
 
     public function getField(string $name, bool $deep = false): ?FieldDefinitionInterface;
 

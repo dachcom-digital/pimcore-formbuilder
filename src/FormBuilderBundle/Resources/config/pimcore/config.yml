@@ -1,3 +1,7 @@
+doctrine_migrations:
+    migrations_paths:
+        'FormBuilderBundle\Migrations': '@FormBuilderBundle/Migrations'
+
 doctrine:
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'

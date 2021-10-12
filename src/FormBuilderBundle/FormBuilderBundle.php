@@ -3,6 +3,7 @@
 namespace FormBuilderBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
+use Doctrine\DBAL\Types\Type;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicMultiFileAdapterPass;
@@ -12,6 +13,8 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowChannelPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\RuntimeDataProviderPass;
+use FormBuilderBundle\Doctrine\Type\FormBuilderFieldsType;
+use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
@@ -22,6 +25,24 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     use PackageVersionTrait;
 
     public const PACKAGE_NAME = 'dachcom-digital/formbuilder';
+
+    public function boot(): void
+    {
+        $this->addDBALTypes();
+    }
+
+    private function addDBALTypes(): void
+    {
+        if (Type::hasType('form_builder_fields')) {
+            return;
+        }
+
+        Type::addType('form_builder_fields', FormBuilderFieldsType::class);
+
+        /** @var FormBuilderFieldsType $formBuilderFieldsType */
+        $formBuilderFieldsType = Type::getType('form_builder_fields');
+        $formBuilderFieldsType->setFormDefinitionFactory($this->container->get(FormDefinitionFactoryInterface::class));
+    }
 
     public function build(ContainerBuilder $container): void
     {

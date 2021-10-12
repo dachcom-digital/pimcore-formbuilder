@@ -20,9 +20,6 @@ class ImportExportCest extends AbstractExtJs
         $I->click('Save', $this->getFormPanelSelector($formId));
         $I->waitForText('Form successfully saved', 10);
 
-        // remove popup
-        $I->executeJS('document.querySelectorAll(".x-window[aria-hidden=\'false\']")[0].remove();');
-
         $formExportName = 'form_export_1.yml';
 
         $I->click('Export', $this->getFormPanelSelector($formId));
@@ -39,9 +36,13 @@ class ImportExportCest extends AbstractExtJs
         $secondFormId = $this->seeExtJsForm($I, 'NEW_FORM');
 
         $I->click('Import', $this->getFormPanelSelector($secondFormId));
+
+        // remove popup
+        $I->executeJS('document.querySelectorAll(".x-window[aria-hidden=\'false\']")[0].remove();');
+
         $I->attachFile($this->getUploadBoxFileInputSelector(), sprintf('downloads/%s', $formExportName));
 
-        $I->wait(3);
+        $I->wait(5);
 
         $I->see('first_text_field', $this->getFormElementsTreeSelector($secondFormId));
         $I->see('second_text_field', $this->getFormElementsTreeSelector($secondFormId));

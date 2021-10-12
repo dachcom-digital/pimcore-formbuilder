@@ -17,7 +17,7 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
-        $formConfig = $form->getConfig();
+        $formConfig = $form->getConfiguration();
 
         $this->assertIsString($formConfig['action']);
         $this->assertEquals('/', $formConfig['action']);
@@ -82,7 +82,7 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder->addFormAttributes('class', 'my-shiny-class');
         $form = $manager->save($testFormBuilder->build());
 
-        $formConfig = $form->getConfig();
+        $formConfig = $form->getConfiguration();
 
         $this->assertIsArray($formConfig['attributes']);
 
@@ -103,7 +103,7 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder->addFormAttributes('maxlength', 30);
         $form = $manager->save($testFormBuilder->build());
 
-        $formConfig = $form->getConfig();
+        $formConfig = $form->getConfiguration();
 
         $this->assertIsArray($formConfig['attributes']);
 

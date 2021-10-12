@@ -40,9 +40,7 @@ class Form extends AbstractAreabrick implements EditableDialogBoxInterface
     public function action(Document\Editable\Area\Info $info): ?Response
     {
         $formId = null;
-        $isEditMode = $info->getParam('editmode');
-
-        $info->setParams(array_merge($info->getParams(), ['forceEditInView' => true]));
+        $isEditMode = $info->getEditable()->getEditmode();
 
         /** @var Document\Editable\Select $formPresetSelection */
         $formPresetSelection = $this->getDocumentEditable($info->getDocument(), 'select', 'formPreset');

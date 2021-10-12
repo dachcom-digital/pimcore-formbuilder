@@ -35,18 +35,8 @@ class FormAssembler
         if (!empty($formId)) {
             try {
                 $formDefinition = $this->formDefinitionManager->getById($formId);
-                if (!$formDefinition instanceof FormDefinitionInterface || !$this->formDefinitionManager->configurationFileExists($formId)) {
-                    $errorMessage = [];
-                    if (!$formDefinition instanceof FormDefinitionInterface) {
-                        $errorMessage[] = sprintf('Form with id "%s" is not valid.', $formId);
-                    }
-
-                    if (!$this->formDefinitionManager->configurationFileExists($formId)) {
-                        $formConfigurationPath = $this->formDefinitionManager->getConfigurationPath($formId);
-                        $errorMessage[] = sprintf('Configuration file is not available. This file needs to be generated as "%s".', $formConfigurationPath);
-                    }
-
-                    $exceptionMessage = join(' ', $errorMessage);
+                if (!$formDefinition instanceof FormDefinitionInterface) {
+                    $exceptionMessage = sprintf('Form with id "%s" is not valid.', $formId);
                     $builderError = true;
                 }
             } catch (\Exception $e) {

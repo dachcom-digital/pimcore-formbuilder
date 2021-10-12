@@ -4,8 +4,6 @@ namespace FormBuilderBundle\Configuration;
 
 class Configuration
 {
-    public const SYSTEM_CONFIG_DIR_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle';
-    public const STORE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/forms';
     public const INVALID_FIELD_NAMES = [
         'name',
         'date',
