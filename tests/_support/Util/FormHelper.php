@@ -3,10 +3,7 @@
 namespace DachcomBundle\Test\Util;
 
 use Codeception\Util\Debug;
-use FormBuilderBundle\Configuration\Configuration;
 use Pimcore\Db;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class FormHelper
 {
@@ -14,15 +11,6 @@ class FormHelper
 
     public static function removeAllForms(): void
     {
-        $formPath = Configuration::STORE_PATH;
-
-        $finder = new Finder();
-        $fileSystem = new Filesystem();
-
-        foreach ($finder->in($formPath)->name('*.yml') as $file) {
-            $fileSystem->remove($file);
-        }
-
         try {
             $db = Db::get();
             $db->exec('SET FOREIGN_KEY_CHECKS = 0;');
