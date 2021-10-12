@@ -71,7 +71,7 @@ class FileLocator
             return;
         }
 
-        $this->filesystem->mkdir($path, 0755, true);
+        $this->filesystem->mkdir($path, 0755);
     }
 
     public function removeDir(string $dir): void

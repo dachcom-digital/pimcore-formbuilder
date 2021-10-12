@@ -31,7 +31,7 @@
 ## Upgrading
 
 ### Upgrading
-- Execute: `$ bin/console doctrine:migrations:version --add --all --prefix 'FormBuilderBundle\Migrations'`
+- Execute: `$ bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'`
 
 ## Usage
 ![](http://g.recordit.co/39nEX5OhQK.gif)

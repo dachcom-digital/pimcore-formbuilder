@@ -335,11 +335,11 @@ class FileStream implements FileStreamInterface
         $last = strtolower($sizeStr[strlen($sizeStr) - 1]);
         $val = (int) substr($val, 0, -1);
 
-        $val *= match ($last) {
-            'g', 'm', 'k' => 1024,
-        };
+        if (!in_array($last, ['g', 'm', 'k'], true)) {
+            return $val;
+        }
 
-        return $val;
+        return $val * 1024;
     }
 
     protected function isInaccessible(string $directory): bool
