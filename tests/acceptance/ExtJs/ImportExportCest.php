@@ -23,25 +23,21 @@ class ImportExportCest extends AbstractExtJs
         $formExportName = 'form_export_1.yml';
 
         $I->click('Export', $this->getFormPanelSelector($formId));
-
-        $I->wait(1);
-
-        $I->see('OK');
-        $I->click('OK');
-
         $I->wait(3);
+
         $I->seeDownload($formExportName);
 
         // create new form and import exported data
         $secondFormId = $this->seeExtJsForm($I, 'NEW_FORM');
 
         $I->click('Import', $this->getFormPanelSelector($secondFormId));
+        $I->wait(1);
 
-        // remove popup
-        $I->executeJS('document.querySelectorAll(".x-window[aria-hidden=\'false\']")[0].remove();');
+        $I->see('Yes');
+        $I->click('Yes');
+        $I->wait(1);
 
         $I->attachFile($this->getUploadBoxFileInputSelector(), sprintf('downloads/%s', $formExportName));
-
         $I->wait(5);
 
         $I->see('first_text_field', $this->getFormElementsTreeSelector($secondFormId));
@@ -59,7 +55,6 @@ class ImportExportCest extends AbstractExtJs
         $I->click('Actions', $this->getConditionalFieldSetSelector($secondFormId));
         $I->see('second_text_field', $this->getConditionalFieldSetSelector($secondFormId));
         $I->seeElement(sprintf('%s input[value="Hide"]', $this->getConditionalFieldSetSelector($secondFormId)));
-
     }
 
     protected function populateFormForExport(AcceptanceTester $I, $formId): void
