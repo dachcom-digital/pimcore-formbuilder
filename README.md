@@ -3,10 +3,10 @@
 [![Join the chat at https://gitter.im/pimcore/pimcore](https://img.shields.io/gitter/room/pimcore/pimcore.svg?style=flat-square)](https://gitter.im/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/formbuilder.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/formbuilder)
-[![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/Codeception?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22Codeception%22)
-[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/PHP%20Stan?style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A%22PHP%20Stan%22)
+[![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/Codeception/master?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3ACodeception+branch%3Amaster)
+[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-formbuilder/PHP%20Stan/master?style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
 
-![FormBuilder](https://user-images.githubusercontent.com/700119/48312098-066fee80-e5aa-11e8-97d4-02fcfdf4e51e.png)
+![PIMCORE FormBuilder](https://user-images.githubusercontent.com/700119/137106375-3618b401-c2cd-4c56-8c29-179f12e6a94f.png)
 
 ### Release Plan
 
@@ -29,17 +29,15 @@
 - Execute: `$ bin/console pimcore:bundle:install FormBuilderBundle`
 
 ## Upgrading
-
-### Upgrading
 - Execute: `$ bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'`
 
 ## Usage
 ![](http://g.recordit.co/39nEX5OhQK.gif)
-1. Go to `Settings` => `Form Builder Settings` and create your form (Make sure your [spam protection](docs/03_SpamProtection.md) is covered!).
+1. Go to `Settings` => `Form Builder Settings` and create your form (Make sure your [spam protection](docs/03_SpamProtection.md) is covered).
 2. Open a document and place the form area brick like any other bricks via drag and drop. 
 3. Use the edit button at the right top corner to configure your form. 
 
-Also make sure you've included the [flash template](docs/Deprecated/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
+Also make sure you've included the [flash template](docs/OutputWorkflow/20_SuccessManagement.md#flash-messages-implementation) if you want to have some success messages after a redirect.
 It's also possible to render a form via Twig or even within a controller method. [Click here](docs/0_Usage.md) to learn more about the form rendering types.
 
 ## Overriding Templates
@@ -48,7 +46,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 ## Further Information
 - [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
-- [Output Workflows (New!)](docs/OutputWorkflow/0_Usage.md) 🔥
+- [Output Workflows](docs/OutputWorkflow/0_Usage.md)
   - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)
   - [Object Channel](docs/OutputWorkflow/11_ObjectChannel.md)
   - [Custom Channel](docs/OutputWorkflow/12_CustomChannel.md)
