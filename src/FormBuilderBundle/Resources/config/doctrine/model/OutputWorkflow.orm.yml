@@ -12,6 +12,7 @@ FormBuilderBundle\Model\OutputWorkflow:
             column: '`name`'
             nullable: true
             type: string
+            length: 190
         successManagement:
             column: success_management
             nullable: true

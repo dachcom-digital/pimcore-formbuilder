@@ -17,21 +17,21 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
         $form = $manager->save($testFormBuilder->build());
 
-        $formConfig = $form->getConfig();
+        $formConfig = $form->getConfiguration();
 
-        $this->assertInternalType('string', $formConfig['action']);
+        $this->assertIsString($formConfig['action']);
         $this->assertEquals('/', $formConfig['action']);
 
-        $this->assertInternalType('string', $formConfig['method']);
+        $this->assertIsString($formConfig['method']);
         $this->assertEquals('POST', $formConfig['method']);
 
-        $this->assertInternalType('string', $formConfig['enctype']);
+        $this->assertIsString($formConfig['enctype']);
         $this->assertEquals('multipart/form-data', $formConfig['enctype']);
 
-        $this->assertInternalType('boolean', $formConfig['noValidate']);
+        $this->assertIsBool($formConfig['noValidate']);
         $this->assertEquals(true, $formConfig['noValidate']);
 
-        $this->assertInternalType('boolean', $formConfig['useAjax']);
+        $this->assertIsBool($formConfig['useAjax']);
         $this->assertEquals(false, $formConfig['useAjax']);
     }
 
@@ -82,9 +82,9 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder->addFormAttributes('class', 'my-shiny-class');
         $form = $manager->save($testFormBuilder->build());
 
-        $formConfig = $form->getConfig();
+        $formConfig = $form->getConfiguration();
 
-        $this->assertInternalType('array', $formConfig['attributes']);
+        $this->assertIsArray($formConfig['attributes']);
 
         $attributeIndex = array_search('class', array_column($formConfig['attributes'], 'option'));
 
@@ -103,9 +103,9 @@ class FormStorageTest extends DachcomBundleTestCase
         $testFormBuilder->addFormAttributes('maxlength', 30);
         $form = $manager->save($testFormBuilder->build());
 
-        $formConfig = $form->getConfig();
+        $formConfig = $form->getConfiguration();
 
-        $this->assertInternalType('array', $formConfig['attributes']);
+        $this->assertIsArray($formConfig['attributes']);
 
         $attribute1Index = array_search('class', array_column($formConfig['attributes'], 'option'));
         $this->assertNotFalse($attribute1Index);
@@ -197,7 +197,7 @@ class FormStorageTest extends DachcomBundleTestCase
 
         $createdById = $form->getCreatedBy();
 
-        $this->assertInternalType('integer', $createdById);
+        $this->assertIsInt($createdById);
         $this->assertEquals(0, $createdById);
     }
 
@@ -212,7 +212,7 @@ class FormStorageTest extends DachcomBundleTestCase
 
         $createdById = $form->getModifiedBy();
 
-        $this->assertInternalType('integer', $createdById);
+        $this->assertIsInt($createdById);
         $this->assertEquals(0, $createdById);
     }
 }

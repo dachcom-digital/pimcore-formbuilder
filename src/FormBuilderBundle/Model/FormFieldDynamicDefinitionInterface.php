@@ -4,13 +4,7 @@ namespace FormBuilderBundle\Model;
 
 interface FormFieldDynamicDefinitionInterface extends FieldDefinitionInterface
 {
-    /**
-     * @return array
-     */
-    public function getOptions();
+    public function getOptions(): array;
 
-    /**
-     * @return array
-     */
-    public function getOptional();
+    public function getOptional(): array;
 }

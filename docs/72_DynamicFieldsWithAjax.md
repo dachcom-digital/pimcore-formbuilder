@@ -10,7 +10,7 @@ To fix this, you need to add some more form events:
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
@@ -26,14 +26,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderListener implements EventSubscriberInterface
 {
-    protected $requestStack;
+    protected RequestStack $requestStack;
     
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormBuilderEvents::FORM_PRE_SET_DATA  => 'formPreSetData',
@@ -41,7 +41,7 @@ class FormBuilderListener implements EventSubscriberInterface
         ];
     }
 
-    public function formPreSetData(PreSetDataEvent $event)
+    public function formPreSetData(PreSetDataEvent $event): void
     {
         $formEvent = $event->getFormEvent();
         $formOptions = $event->getFormOptions();
@@ -57,7 +57,7 @@ class FormBuilderListener implements EventSubscriberInterface
         $formDefinition = $formData->getFormDefinition();
 
         //create some choices based on a request value.
-        $entryId = $this->requestStack->getMasterRequest()->get('entry', null);
+        $entryId = $this->requestStack->getMainRequest()->get('entry', null);
 
         // 1. Add a hidden field to keep the value,
         // since the request value gets lost during the ajax request.
@@ -67,7 +67,7 @@ class FormBuilderListener implements EventSubscriberInterface
         $this->addEventDateField($formDefinition, $entryId);
     }
     
-    public function formPreSubmit(PreSubmitEvent $event)
+    public function formPreSubmit(PreSubmitEvent $event): void
     {
         $formOptions = $event->getFormOptions();
         if ($formOptions['form_preset'] !== 'dynamic_form') {
@@ -92,7 +92,7 @@ class FormBuilderListener implements EventSubscriberInterface
         $this->addEventDateField($formDefinition, $formData['entry_id']);
     }
 
-    private function addEventDateField(FormDefinitionInterface $formDefinition, $id)
+    private function addEventDateField(FormDefinitionInterface $formDefinition, $id): void
     {
         $formDefinition->addDynamicField(
             'event_date',
@@ -132,7 +132,7 @@ class FormBuilderListener implements EventSubscriberInterface
         );
     }
     
-    private function getChoices($id = null)
+    private function getChoices($id = null): array
     {
         if (empty($id)) {
             return [

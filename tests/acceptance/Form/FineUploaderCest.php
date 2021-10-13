@@ -9,23 +9,20 @@ class FineUploaderCest
 {
     use Traits\FunctionalFormTrait;
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithOneFile(AcceptanceTester $I)
+    public function testUploadFormWithOneFile(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'File Upload');
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -47,23 +44,20 @@ class FineUploaderCest
         $I->seeZipFileInPimcoreAssetsFromField($form, 'file_upload');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithOneLargeFile(AcceptanceTester $I)
+    public function testUploadFormWithOneLargeFile(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'File Upload');
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -85,23 +79,20 @@ class FineUploaderCest
         $I->seeZipFileInPimcoreAssetsFromField($form, 'file_upload');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithMultipleFile(AcceptanceTester $I)
+    public function testUploadFormWithMultipleFile(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField('dynamic_multi_file', 'file_upload', 'File Upload');
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -129,13 +120,10 @@ class FineUploaderCest
         $I->seeZipFileInPimcoreAssetsFromField($form, 'file_upload');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithLimitedAllowedExtensionsMustPass(AcceptanceTester $I)
+    public function testUploadFormWithLimitedAllowedExtensionsMustPass(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $allowedExtensions = ['pdf', 'txt'];
@@ -151,10 +139,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -176,13 +164,10 @@ class FineUploaderCest
         $I->seeZipFileInPimcoreAssetsFromField($form, 'file_upload');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithLimitedAllowedExtensionsMustFail(AcceptanceTester $I)
+    public function testUploadFormWithLimitedAllowedExtensionsMustFail(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $allowedExtensions = ['pdf', 'txt'];
@@ -198,10 +183,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -220,13 +205,10 @@ class FineUploaderCest
         );
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithLimitedItemsLimitMustPass(AcceptanceTester $I)
+    public function testUploadFormWithLimitedItemsLimitMustPass(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -241,10 +223,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -266,13 +248,10 @@ class FineUploaderCest
         $I->seeZipFileInPimcoreAssetsFromField($form, 'file_upload');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithLimitedItemsLimitMustFail(AcceptanceTester $I)
+    public function testUploadFormWithLimitedItemsLimitMustFail(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -287,10 +266,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -314,13 +293,10 @@ class FineUploaderCest
         );
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithLimitedFileSizeMustPass(AcceptanceTester $I)
+    public function testUploadFormWithLimitedFileSizeMustPass(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -335,10 +311,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -360,13 +336,10 @@ class FineUploaderCest
         $I->seeZipFileInPimcoreAssetsFromField($form, 'file_upload');
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithLimitedFileSizeMustFail(AcceptanceTester $I)
+    public function testUploadFormWithLimitedFileSizeMustFail(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -381,10 +354,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 
@@ -403,13 +376,10 @@ class FineUploaderCest
         );
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testUploadFormWithFilesAsAttachment(AcceptanceTester $I)
+    public function testUploadFormWithFilesAsAttachment(AcceptanceTester $I): void
     {
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+
         $testFormBuilder = $this->generateSimpleForm(true);
 
         $testFormBuilder->addFormField(
@@ -424,10 +394,10 @@ class FineUploaderCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('fine-uploader', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/fine-uploader');
 

@@ -6,37 +6,13 @@ use FormBuilderBundle\Model\OutputWorkflowInterface;
 
 interface OutputWorkflowRepositoryInterface
 {
-    /**
-     * @param int $id
-     *
-     * @return null|OutputWorkflowInterface
-     */
-    public function findById($id);
+    public function findById(int $id): ?OutputWorkflowInterface;
 
-    /**
-     * @param string $name
-     * @param int    $formId
-     *
-     * @return null|OutputWorkflowInterface
-     */
-    public function findByNameAndFormId(string $name, int $formId);
+    public function findByNameAndFormId(string $name, int $formId): ?OutputWorkflowInterface;
 
-    /**
-     * @param int $id
-     *
-     * @return null|OutputWorkflowInterface
-     */
-    public function findNameById($id);
+    public function findNameById(int $id): ?string;
 
-    /**
-     * @param string $name
-     *
-     * @return null|OutputWorkflowInterface
-     */
-    public function findIdByName(string $name);
+    public function findIdByName(string $name): ?int;
 
-    /**
-     * @return OutputWorkflowInterface[]
-     */
-    public function findAll();
+    public function findAll(): array;
 }

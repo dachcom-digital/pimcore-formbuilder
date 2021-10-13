@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class TestAdvancedDynamicChoices implements AdvancedChoiceBuilderInterface
 {
-    protected $builder;
+    protected FormBuilderInterface $builder;
 
-    private function getFakeEntities()
+    private function getFakeEntities(): array
     {
         return [
             1 => 'Entity 1',
@@ -21,7 +21,7 @@ class TestAdvancedDynamicChoices implements AdvancedChoiceBuilderInterface
         ];
     }
 
-    public function setFormBuilder(FormBuilderInterface $builder)
+    public function setFormBuilder(FormBuilderInterface $builder): void
     {
         $this->builder = $builder;
 
@@ -42,39 +42,40 @@ class TestAdvancedDynamicChoices implements AdvancedChoiceBuilderInterface
                         $data[] = $fakeEntities[$id];
                     }
                     return implode(', ', $data);
-                } else {
-                    return $fakeEntities[$entries];
                 }
+
+                return $fakeEntities[$entries];
+
             }
         ));
     }
 
-    public function getChoiceValue($value = null)
+    public function getChoiceValue(mixed $value = null): string
     {
         return $value . '-custom-value';
     }
 
-    public function getChoiceLabel($element, $key, $index)
+    public function getChoiceLabel(mixed $choiceValue, string $key, mixed $value): string
     {
         return $key . ' Custom Label';
     }
 
-    public function getChoiceAttributes($element, $key, $index)
+    public function getChoiceAttributes(mixed $element, string $key, mixed $value): array
     {
         return ['class' => 'special-choice-class'];
     }
 
-    public function getGroupBy($element, $key, $index)
+    public function getGroupBy($element, string $key, mixed $value): string
     {
         return 'Group A';
     }
 
-    public function getPreferredChoices($element, $key, $index)
+    public function getPreferredChoices($element, $key, mixed $value): bool
     {
         return $key === 'Entity 5';
     }
 
-    public function getList()
+    public function getList(): array
     {
         $data = [];
         foreach ($this->getFakeEntities() as $entityId => $entityName) {

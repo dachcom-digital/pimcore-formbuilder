@@ -2,15 +2,9 @@
 
 namespace FormBuilderBundle\Configuration;
 
-use Symfony\Component\Filesystem\Filesystem;
-
 class Configuration
 {
-    const SYSTEM_CONFIG_DIR_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle';
-
-    const STORE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/FormBuilderBundle/forms';
-
-    const INVALID_FIELD_NAMES = [
+    public const INVALID_FIELD_NAMES = [
         'name',
         'date',
         'inputusername',
@@ -30,36 +24,16 @@ class Configuration
         'objectbrick'
     ];
 
-    /**
-     * @var Filesystem
-     */
-    private $fileSystem;
+    private array $config;
+    private array $backendConfig;
 
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var array
-     */
-    private $backendConfig;
-
-    public function __construct()
-    {
-        $this->fileSystem = new FileSystem();
-    }
-
-    /**
-     * @param array $config
-     */
-    public function setConfig($config = [])
+    public function setConfig(array $config = []): void
     {
         $this->backendConfig = [
             'backend_base_field_type_groups' => $config['backend_base_field_type_groups'],
             'backend_base_field_type_config' => $config['backend_base_field_type_config'],
             // backend_field_type_config: not implemented yet.
-            'backend_field_type_config'      => isset($config['backend_field_type_config']) ? $config['backend_field_type_config'] : []
+            'backend_field_type_config'      => $config['backend_field_type_config'] ?? []
         ];
 
         unset($config['backend_base_field_type_groups'], $config['backend_base_field_type_config'], $config['backend_field_type_config']);
@@ -67,58 +41,34 @@ class Configuration
         $this->config = $config;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getConfigArray()
+    public function getConfigArray(): array
     {
         return $this->config;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBackendConfigArray()
+    public function getBackendConfigArray(): array
     {
         return $this->backendConfig;
     }
 
-    /**
-     * @param string $slot
-     *
-     * @return mixed
-     */
-    public function getConfig($slot)
+    public function getConfig(string $slot): mixed
     {
         return $this->config[$slot];
     }
 
-    /**
-     * @param string $flag
-     *
-     * @return bool
-     */
-    public function getConfigFlag($flag)
+    public function getConfigFlag(string $flag): bool
     {
         return $this->config['flags'][$flag];
     }
 
-    /**
-     * @param string $containerName
-     *
-     * @return mixed
-     */
-    public function getContainerFieldClass(string $containerName)
+    public function getContainerFieldClass(string $containerName): mixed
     {
         $containerTypes = $this->config['container_types'];
 
         return $containerTypes[$containerName]['class'];
     }
 
-    /**
-     * @return array
-     */
-    public function getAvailableContainer()
+    public function getAvailableContainer(): array
     {
         $containerTypes = $this->config['container_types'];
 
@@ -135,10 +85,7 @@ class Configuration
         return $containerData;
     }
 
-    /**
-     * @return array
-     */
-    public function getAvailableConstraints()
+    public function getAvailableConstraints(): array
     {
         $constraints = $this->config['validation_constraints'];
 
@@ -188,30 +135,17 @@ class Configuration
         return $constraintData;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return mixed
-     */
-    public function getFieldTypeConfig($type)
+    public function getFieldTypeConfig(string $type): mixed
     {
         return $this->config['types'][$type];
     }
 
-    /**
-     * @param string $slot
-     *
-     * @return mixed
-     */
-    public function getBackendConfig($slot)
+    public function getBackendConfig(string $slot): mixed
     {
         return $this->backendConfig[$slot];
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBackendConditionalLogicConfig()
+    public function getBackendConditionalLogicConfig(): ?array
     {
         return $this->config['conditional_logic'];
     }

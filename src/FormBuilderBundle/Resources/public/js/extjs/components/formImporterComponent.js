@@ -25,7 +25,7 @@ Formbuilder.extjs.components.formImporter = Class.create({
         });
 
         if (pimcore.hasOwnProperty('settings') && pimcore.settings.hasOwnProperty('csrfToken')) {
-            requestParams = {csrfToken: pimcore.settings['csrfToken']};
+            requestParams = {csrfToken: pimcore.settings['csrfToken'], formId: this.parentPanel.formId};
         }
 
         uploadForm = new Ext.form.FormPanel({
@@ -52,7 +52,8 @@ Formbuilder.extjs.components.formImporter = Class.create({
                             success: this.getImportComplete.bind(this),
                             failure: function (el, data) {
                                 this.uploadWindow.close();
-                                Ext.Msg.alert(t('error'), data.response.responseText, 'error');
+                                var response = Ext.decode(data.response.responseText);
+                                Ext.Msg.alert(t('error'), response && response.hasOwnProperty('message') ? response.message : data.response.responseText);
                             }.bind(this)
                         });
                     }.bind(this)
@@ -67,17 +68,13 @@ Formbuilder.extjs.components.formImporter = Class.create({
 
     },
 
-    /**
-     * @param el
-     * @param data
-     */
     getImportComplete: function (el, data) {
         var response = Ext.decode(data.response.responseText);
         this.uploadWindow.close();
         if (response.success === true) {
-            this.parentPanel.importForm(response.data);
+            this.parentPanel.importForm(response.formId);
         } else {
-            Ext.Msg.alert(t('error'), response.message, 'error');
+            Ext.Msg.alert(t('error'), response.message);
         }
     }
 

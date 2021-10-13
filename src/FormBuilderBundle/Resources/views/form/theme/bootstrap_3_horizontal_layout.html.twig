@@ -1,0 +1,75 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% use '@FormBuilder/form/theme/type/dynamic_multi_file.html.twig' %}
+{% use '@FormBuilder/form/theme/type/html_tag.html.twig' %}
+{% use '@FormBuilder/form/theme/type/snippet.html.twig' %}
+{% use '@FormBuilder/form/theme/type/container.html.twig' %}
+
+{% block help_text_label %}
+    <span class="help-block">{{ help_text|trans }}</span>
+{% endblock help_text_label %}
+
+{% block form_widget_simple -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock form_widget_simple %}
+
+{% block textarea_widget -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock textarea_widget %}
+
+{% block choice_widget -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock choice_widget %}
+
+{% block checkbox_widget -%}
+    {{ parent() }}
+    {% if help_text %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock checkbox_widget %}
+
+{% block form_builder_honeypot_row -%}
+    {{- form_widget(form) -}}
+{%- endblock form_builder_honeypot_row %}
+
+{% block form_row -%}
+    {% set form_row_class = attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' %}
+    {% if form.vars.is_form_builder_container_block is defined %}
+        {% set form_row_class = 'formbuilder-container-block' %}
+    {% endif %}
+    <div class="formbuilder-row {{ form_row_class }}">
+        {{ parent() }}
+    </div>
+{%- endblock form_row %}
+
+{% block button_row -%}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock button_row %}
+
+{% block checkbox_row -%}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock checkbox_row %}
+
+{% block radio_row -%}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' }}">
+        {{ parent() }}
+    </div>
+{%- endblock radio_row %}
+
+{% block form_builder_container_collection_widget %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' row')|trim}) -%}
+    {{- parent() -}}
+{% endblock form_builder_container_collection_widget %}

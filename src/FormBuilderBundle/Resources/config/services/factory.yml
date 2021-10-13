@@ -8,7 +8,10 @@ services:
     FormBuilderBundle\Factory\FormDataFactoryInterface: '@FormBuilderBundle\Factory\FormDataFactory'
     FormBuilderBundle\Factory\FormDataFactory: ~
 
-    FormBuilderBundle\Factory\FormDefinitionFactoryInterface: '@FormBuilderBundle\Factory\FormDefinitionFactory'
+    FormBuilderBundle\Factory\FormDefinitionFactoryInterface:
+        alias: FormBuilderBundle\Factory\FormDefinitionFactory
+        public: true
+
     FormBuilderBundle\Factory\FormDefinitionFactory: ~
 
     FormBuilderBundle\Factory\OutputWorkflowFactoryInterface: '@FormBuilderBundle\Factory\OutputWorkflowFactory'

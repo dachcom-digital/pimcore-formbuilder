@@ -10,9 +10,6 @@ class ExportControllerCest
 {
     use Traits\FunctionalFormTrait;
 
-    /**
-     * @param FunctionalTester $I
-     */
     public function testExportFormEmailsActionEmptyAction(FunctionalTester $I)
     {
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
@@ -32,11 +29,6 @@ class ExportControllerCest
         $I->see('NO_CSV_DATA_FOUND');
     }
 
-    /**
-     * @param FunctionalTester $I
-     *
-     * @throws \Codeception\Exception\ModuleException
-     */
     public function testExportFormEmailsActionActionWithAllTypes(FunctionalTester $I)
     {
         $testFormBuilder = $this->generateSimpleForm();
@@ -53,7 +45,7 @@ class ExportControllerCest
 
         $I->haveAUser('form_tester');
         $I->amLoggedInAs('form_tester');
-        $I->amOnPage('/admin/formbuilder/export/mail-csv-export/' . $form->getId());
+        $I->amOnPage(sprintf('/admin/formbuilder/export/mail-csv-export/%d', $form->getId()));
 
         $header = [
             'form_id',
@@ -61,7 +53,7 @@ class ExportControllerCest
             'email_path',
             'email_id',
             'preset',
-            'is_copy',
+            'output_workflow_name',
             'to',
             'cc',
             'bcc',
@@ -72,26 +64,36 @@ class ExportControllerCest
         $I->seeResponseIsCsv();
         $I->seeResponseCsvHeaderHasValues($header);
         $I->seeResponseCsvLength(3);
-        $I->seeResponseCsvRowValues(1, ['form_id' => $form->getId(), 'is_copy' => '0', 'email_path' => $adminEmail->getFullPath()]);
-        $I->seeResponseCsvRowValues(2, ['form_id' => $form->getId(), 'is_copy' => '1', 'email_path' => $userEmail->getFullPath()]);
+        $I->seeResponseCsvRowValues(1, ['form_id' => $form->getId(), 'output_workflow_name' => 'Test Output Workflow', 'email_path' => $adminEmail->getFullPath()]);
+        $I->seeResponseCsvRowValues(2, ['form_id' => $form->getId(), 'output_workflow_name' => 'Test Output Workflow', 'email_path' => $userEmail->getFullPath()]);
     }
 
-    /**
-     * @depends testExportFormEmailsActionActionWithAllTypes
-     *
-     * @param FunctionalTester $I
-     *
-     * @throws \Codeception\Exception\ModuleException
-     */
-    public function testExportFormEmailsActionActionWithMainType(FunctionalTester $I)
+    public function testExportFormEmailsActionActionWithOutputWorkflowFilter(FunctionalTester $I)
     {
         $testFormBuilder = $this->generateSimpleForm();
         $document = $I->haveAPageDocument('form-test');
-        $adminEmail = $I->haveAEmailDocumentForAdmin();
-        $userEmail = $I->haveAEmailDocumentForUser();
-        $form = $I->haveAForm($testFormBuilder);
+        $firstMail = $I->haveAEmailDocumentForAdmin();
+        $secondMail = $I->haveAEmailDocumentForUser();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, $userEmail);
+        $firstOutputWorkflowChannels = [
+            [
+                'type' => 'email',
+                'email' => $firstMail
+            ]
+        ];
+
+        $secondOutputWorkflowChannels = [
+            [
+                'type' => 'email',
+                'email' => $secondMail
+            ]
+        ];
+
+        $form = $I->haveAForm($testFormBuilder);
+        $firstOutputWorkflow = $I->haveAOutputWorkflow('First Test Output Workflow', $form, $firstOutputWorkflowChannels);
+        $secondOutputWorkflow = $I->haveAOutputWorkflow('Second Test Output Workflow', $form, $secondOutputWorkflowChannels);
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $firstMail, $secondMail, 'form_div_layout.html.twig', $firstOutputWorkflow);
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
@@ -99,40 +101,13 @@ class ExportControllerCest
 
         $I->haveAUser('form_tester');
         $I->amLoggedInAs('form_tester');
-        $I->amOnPage(sprintf('/admin/formbuilder/export/mail-csv-export/%s?mailType=%s', $form->getId(), 'only_main'));
 
+        $I->amOnPage(sprintf('/admin/formbuilder/export/mail-csv-export/%s?mailType=%s', $form->getId(), $firstOutputWorkflow->getId()));
         $I->seeResponseIsCsv();
         $I->seeResponseCsvLength(2);
-        $I->seeResponseCsvRowValues(1, ['form_id' => $form->getId(), 'is_copy' => '0', 'email_path' => $adminEmail->getFullPath()]);
-    }
+        $I->seeResponseCsvRowValues(1, ['form_id' => $form->getId(), 'output_workflow_name' => 'First Test Output Workflow', 'email_path' => $firstMail->getFullPath()]);
 
-    /**
-     * @depends testExportFormEmailsActionActionWithAllTypes
-     *
-     * @param FunctionalTester $I
-     *
-     * @throws \Codeception\Exception\ModuleException
-     */
-    public function testExportFormEmailsActionActionWithCopyType(FunctionalTester $I)
-    {
-        $testFormBuilder = $this->generateSimpleForm();
-        $document = $I->haveAPageDocument('form-test');
-        $adminEmail = $I->haveAEmailDocumentForAdmin();
-        $userEmail = $I->haveAEmailDocumentForUser();
-        $form = $I->haveAForm($testFormBuilder);
-
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, $userEmail);
-        $I->amOnPage('/form-test');
-
-        $this->fillSimpleForm($testFormBuilder, $I);
-        $this->clickSimpleFormSubmit($testFormBuilder, $I);
-
-        $I->haveAUser('form_tester');
-        $I->amLoggedInAs('form_tester');
-        $I->amOnPage(sprintf('/admin/formbuilder/export/mail-csv-export/%s?mailType=%s', $form->getId(), 'only_copy'));
-
-        $I->seeResponseIsCsv();
-        $I->seeResponseCsvLength(2);
-        $I->seeResponseCsvRowValues(1, ['form_id' => $form->getId(), 'is_copy' => '1', 'email_path' => $userEmail->getFullPath()]);
+        $I->amOnPage(sprintf('/admin/formbuilder/export/mail-csv-export/%s?mailType=%s', $form->getId(), $secondOutputWorkflow->getId()));
+        $I->see('NO_CSV_DATA_FOUND');
     }
 }

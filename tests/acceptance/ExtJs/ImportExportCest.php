@@ -7,12 +7,7 @@ use DachcomBundle\Test\AcceptanceTester;
 
 class ImportExportCest extends AbstractExtJs
 {
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testFormExportImport(AcceptanceTester $I)
+    public function testFormExportImport(AcceptanceTester $I): void
     {
         $I->setDownloadPathForWebDriver();
 
@@ -25,28 +20,25 @@ class ImportExportCest extends AbstractExtJs
         $I->click('Save', $this->getFormPanelSelector($formId));
         $I->waitForText('Form successfully saved', 10);
 
-        // remove popup
-        $I->executeJS('document.querySelectorAll(".x-window[aria-hidden=\'false\']")[0].remove();');
-
         $formExportName = 'form_export_1.yml';
 
         $I->click('Export', $this->getFormPanelSelector($formId));
-
-        $I->wait(1);
-
-        $I->see('OK');
-        $I->click('OK');
-
         $I->wait(3);
+
         $I->seeDownload($formExportName);
 
         // create new form and import exported data
         $secondFormId = $this->seeExtJsForm($I, 'NEW_FORM');
 
         $I->click('Import', $this->getFormPanelSelector($secondFormId));
-        $I->attachFile($this->getUploadBoxFileInputSelector(), sprintf('downloads/%s', $formExportName));
+        $I->wait(1);
 
-        $I->wait(3);
+        $I->see('Yes');
+        $I->click('Yes');
+        $I->wait(1);
+
+        $I->attachFile($this->getUploadBoxFileInputSelector(), sprintf('downloads/%s', $formExportName));
+        $I->wait(5);
 
         $I->see('first_text_field', $this->getFormElementsTreeSelector($secondFormId));
         $I->see('second_text_field', $this->getFormElementsTreeSelector($secondFormId));
@@ -63,16 +55,9 @@ class ImportExportCest extends AbstractExtJs
         $I->click('Actions', $this->getConditionalFieldSetSelector($secondFormId));
         $I->see('second_text_field', $this->getConditionalFieldSetSelector($secondFormId));
         $I->seeElement(sprintf('%s input[value="Hide"]', $this->getConditionalFieldSetSelector($secondFormId)));
-
     }
 
-    /**
-     * @param AcceptanceTester $I
-     * @param                  $formId
-     *
-     * @throws \Exception
-     */
-    protected function populateFormForExport(AcceptanceTester $I, $formId)
+    protected function populateFormForExport(AcceptanceTester $I, $formId): void
     {
         $this->addFieldToForm($I, $formId, 'first_text_field');
         $this->addFieldToForm($I, $formId, 'second_text_field');

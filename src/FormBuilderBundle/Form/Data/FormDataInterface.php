@@ -6,41 +6,17 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 interface FormDataInterface
 {
-    /**
-     * @return FormDefinitionInterface
-     */
-    public function getFormDefinition();
+    public function getFormDefinition(): FormDefinitionInterface;
 
-    /**
-     * @return array
-     */
-    public function getData();
+    public function getData(): array;
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getFieldValue(string $name);
+    public function getFieldValue(string $name): mixed;
 
-    /**
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function setFieldValue(string $name, $value);
+    public function setFieldValue(string $name, mixed $value);
 
-    /**
-     * @return bool
-     */
-    public function hasAttachments();
+    public function hasAttachments(): bool;
 
-    /**
-     * @return array
-     */
-    public function getAttachments();
+    public function getAttachments(): array;
 
-    /**
-     * @param array $attachmentFileInfo
-     */
-    public function addAttachment(array $attachmentFileInfo);
+    public function addAttachment(array $attachmentFileInfo): void;
 }

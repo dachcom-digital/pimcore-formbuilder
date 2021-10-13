@@ -7,15 +7,8 @@ use DachcomBundle\Test\Util\TestFormBuilder;
 
 class DropZoneConstraintsCest
 {
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testEmptyFileUploadFormWithNotBlankConstraint(AcceptanceTester $I)
+    public function testEmptyFileUploadFormWithNotBlankConstraint(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
-
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
             ->addFormField('dynamic_multi_file', 'file_upload', 'File Upload', ['dynamic_multi_file_not_blank'])
@@ -23,10 +16,10 @@ class DropZoneConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/drop-zone');
 
@@ -37,15 +30,8 @@ class DropZoneConstraintsCest
         $I->waitForElementNotVisible('.form-success-wrapper', 15);
     }
 
-    /**
-     * @param AcceptanceTester $I
-     *
-     * @throws \Exception
-     */
-    public function testPopulatedFileUploadFormWithNotBlankConstraint(AcceptanceTester $I)
+    public function testPopulatedFileUploadFormWithNotBlankConstraint(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_dropzonejs.yml');
-
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
             ->addFormField('dynamic_multi_file', 'file_upload', 'File Upload', ['dynamic_multi_file_not_blank'])
@@ -53,10 +39,10 @@ class DropZoneConstraintsCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFile']);
+        $document = $I->haveAPageDocument('drop-zone', ['action' => 'dynamicMultiFileAction']);
         $adminEmail = $I->haveAEmailDocumentForAdmin();
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
 
         $I->amOnPage('/drop-zone');
 

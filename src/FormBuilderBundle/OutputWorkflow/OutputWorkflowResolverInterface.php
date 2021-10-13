@@ -7,10 +7,5 @@ use FormBuilderBundle\Model\OutputWorkflowInterface;
 
 interface OutputWorkflowResolverInterface
 {
-    /**
-     * @param SubmissionEvent $submissionEvent
-     *
-     * @return OutputWorkflowInterface|null
-     */
-    public function resolve(SubmissionEvent $submissionEvent);
+    public function resolve(SubmissionEvent $submissionEvent): ?OutputWorkflowInterface;
 }

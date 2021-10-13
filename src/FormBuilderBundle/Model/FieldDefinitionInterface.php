@@ -2,22 +2,11 @@
 
 namespace FormBuilderBundle\Model;
 
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
-
-interface FieldDefinitionInterface extends FormFieldSimpleInterface
+interface FieldDefinitionInterface
 {
-    /**
-     * @return int
-     */
-    public function getOrder();
+    public function getOrder(): int;
 
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 }

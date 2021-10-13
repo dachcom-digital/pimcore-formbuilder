@@ -8,14 +8,8 @@ use Twig\TwigFunction;
 
 class FlashMessageExtension extends AbstractExtension
 {
-    /**
-     * @var FlashBagManagerInterface
-     */
-    protected $flashBagManager;
+    protected FlashBagManagerInterface $flashBagManager;
 
-    /**
-     * @param FlashBagManagerInterface $flashBagManager
-     */
     public function __construct(FlashBagManagerInterface $flashBagManager)
     {
         $this->flashBagManager = $flashBagManager;
@@ -24,7 +18,7 @@ class FlashMessageExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('form_builder_get_flash_messages', [$this, 'getFlashMessagesForForm']),
@@ -32,13 +26,7 @@ class FlashMessageExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param int   $formId
-     * @param array $types
-     *
-     * @return array
-     */
-    public function getFlashMessagesForForm($formId, $types = ['success', 'error'])
+    public function getFlashMessagesForForm(string|int $formId, array $types = ['success', 'error']): array
     {
         $messages = [];
         foreach ($types as $type) {
@@ -57,10 +45,7 @@ class FlashMessageExtension extends AbstractExtension
         return $messages;
     }
 
-    /**
-     * @return array
-     */
-    public function getFlashMessagesForRedirectForm()
+    public function getFlashMessagesForRedirectForm(): array
     {
         if (!$this->flashBagManager->has('formbuilder_redirect_flash_message')) {
             return [];

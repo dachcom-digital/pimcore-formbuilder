@@ -10,44 +10,22 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class FileStream implements FileStreamInterface
 {
-    /**
-     * @var FileLocator
-     */
-    protected $fileLocator;
+    protected FileLocator $fileLocator;
+    protected RequestStack $requestStack;
+    public array $allowedExtensions = [];
+    public ?int $sizeLimit = null;
 
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var array
-     */
-    public $allowedExtensions = [];
-
-    /**
-     * @var null
-     */
-    public $sizeLimit = null;
-
-    /**
-     * @param FileLocator  $fileLocator
-     * @param RequestStack $requestStack
-     */
     public function __construct(FileLocator $fileLocator, RequestStack $requestStack)
     {
         $this->fileLocator = $fileLocator;
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handleUpload(array $options = [], bool $instantChunkCombining = true)
+    public function handleUpload(array $options = [], bool $instantChunkCombining = true): array
     {
         $binaryIdentifier = $options['binary'];
 
-        $masterRequest = $this->requestStack->getMasterRequest();
+        $mainRequest = $this->requestStack->getMainRequest();
 
         if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit || $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
             $neededRequestSize = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
@@ -65,7 +43,7 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        $type = $masterRequest->headers->get('Content-Type');
+        $type = $mainRequest->headers->get('Content-Type');
 
         if (empty($type)) {
             return [
@@ -74,7 +52,7 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        if (strpos(strtolower($type), 'multipart/') !== 0) {
+        if (!str_starts_with(strtolower($type), 'multipart/')) {
             return [
                 'success' => false,
                 'error'   => 'Server error. Not a multipart request. Please set forceMultipart to default value (true).'
@@ -82,14 +60,14 @@ class FileStream implements FileStreamInterface
         }
 
         /** @var UploadedFile $file */
-        $file = $masterRequest->files->get($binaryIdentifier);
+        $file = $mainRequest->files->get($binaryIdentifier);
 
         $size = $file->getSize();
         $fileName = $file->getClientOriginalName();
         $fileExtension = $file->getClientOriginalExtension();
 
-        if ($masterRequest->request->has($options['totalFileSize'])) {
-            $size = $masterRequest->request->get($options['totalFileSize']);
+        if ($mainRequest->request->has($options['totalFileSize'])) {
+            $size = $mainRequest->request->get($options['totalFileSize']);
         }
 
         $serverFileSafeName = $this->getSafeFileName($fileName, true);
@@ -105,7 +83,7 @@ class FileStream implements FileStreamInterface
         }
 
         // Validate name
-        if ($fileSafeName === null || $fileSafeName === '') {
+        if ($fileSafeName === '') {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -114,7 +92,7 @@ class FileStream implements FileStreamInterface
         }
 
         // Validate file size
-        if ($size == 0) {
+        if ($size === 0 || $size === '0') {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -131,8 +109,9 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        if (is_array($this->allowedExtensions) && count($this->allowedExtensions) > 0 && !in_array(strtolower($fileExtension),
-                array_map('strtolower', $this->allowedExtensions))) {
+        if (is_array($this->allowedExtensions) &&
+            count($this->allowedExtensions) > 0 &&
+            !in_array(strtolower($fileExtension), array_map('strtolower', $this->allowedExtensions), true)) {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -140,14 +119,14 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        $totalParts = $masterRequest->request->has($options['totalChunkCount']) ? (int) $masterRequest->request->get($options['totalChunkCount']) : 1;
-        $uuid = $masterRequest->request->get($options['uuid']);
+        $totalParts = $mainRequest->request->has($options['totalChunkCount']) ? (int) $mainRequest->request->get($options['totalChunkCount']) : 1;
+        $uuid = $mainRequest->request->get($options['uuid']);
 
         if ($totalParts > 1) {
 
             // chunked upload
             $chunksFolder = $this->fileLocator->getChunksFolder();
-            $partIndex = (int) $masterRequest->request->get($options['chunkIndex']);
+            $partIndex = (int) $mainRequest->request->get($options['chunkIndex']);
 
             if (!is_writable($chunksFolder) && !is_executable($this->fileLocator->getFilesFolder())) {
                 return [
@@ -158,8 +137,16 @@ class FileStream implements FileStreamInterface
             }
 
             $targetPath = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
-            if (!is_dir($targetPath)) {
-                mkdir($targetPath, 0755, true);
+
+            try {
+                $this->fileLocator->assertDir($targetPath);
+            } catch (\Throwable $e) {
+                return [
+                    'success'  => false,
+                    'fileName' => $fileSafeName,
+                    'error'    => sprintf('Could not create directory: %s', $e->getMessage()),
+                    'uuid'     => $uuid
+                ];
             }
 
             try {
@@ -186,10 +173,17 @@ class FileStream implements FileStreamInterface
         }
 
         // non-chunked upload
-        $target = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
+        $target = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
 
-        if (!is_dir($target)) {
-            mkdir($target, 0755, true);
+        try {
+            $this->fileLocator->assertDir($target);
+        } catch (\Throwable $e) {
+            return [
+                'success'  => false,
+                'fileName' => $fileSafeName,
+                'error'    => sprintf('Could not create directory: %s', $e->getMessage()),
+                'uuid'     => $uuid
+            ];
         }
 
         try {
@@ -211,27 +205,32 @@ class FileStream implements FileStreamInterface
 
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function combineChunks(array $options = [])
+    public function combineChunks(array $options = []): array
     {
         $tmpDirs = [];
         $chunkSuccess = true;
-        $masterRequest = $this->requestStack->getMasterRequest();
+        $mainRequest = $this->requestStack->getMainRequest();
 
-        $uuid = $masterRequest->request->get($options['uuid']);
+        $uuid = $mainRequest->request->get($options['uuid']);
         $serverFileSafeName = $this->getSafeFileName($options['fileName'], true);
         $fileSafeName = $this->getSafeFileName($options['fileName']);
 
-        $targetPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
-        $destinationFolderPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
-        $destinationPath = join(DIRECTORY_SEPARATOR, [$destinationFolderPath, $serverFileSafeName]);
+        $targetPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
+        $destinationFolderPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
+        $destinationPath = implode(DIRECTORY_SEPARATOR, [$destinationFolderPath, $serverFileSafeName]);
 
-        $totalParts = $masterRequest->request->has($options['totalChunkCount']) ? (int) $masterRequest->request->get($options['totalChunkCount']) : 1;
+        $totalParts = $mainRequest->request->has($options['totalChunkCount']) ? (int) $mainRequest->request->get($options['totalChunkCount']) : 1;
 
-        if (!file_exists($destinationPath)) {
-            mkdir(dirname($destinationPath), 0755, true);
+        try {
+            $this->fileLocator->assertDir(dirname($destinationPath));
+        } catch (\Throwable $e) {
+            return [
+                'statusCode'   => 413,
+                'success'      => false,
+                'preventRetry' => true,
+                'uuid'         => $uuid,
+                'fileName'     => $fileSafeName
+            ];
         }
 
         $destinationResource = fopen($destinationPath, 'wb');
@@ -267,7 +266,7 @@ class FileStream implements FileStreamInterface
         if ($chunkSuccess === false) {
 
             $tmpDirs[] = $destinationFolderPath;
-            $this->deleteFolders($tmpDirs);
+            $this->deleteDirectories($tmpDirs);
 
             return [
                 'statusCode'   => 413,
@@ -278,7 +277,7 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        $this->deleteFolders($tmpDirs);
+        $this->deleteDirectories($tmpDirs);
 
         if (!is_null($this->sizeLimit) && filesize($destinationPath) > $this->sizeLimit) {
             return [
@@ -298,43 +297,35 @@ class FileStream implements FileStreamInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handleDelete($uuid, bool $checkChunkFolder = false)
+    public function handleDelete(string $identifier, bool $checkChunkFolder = false): array
     {
         if ($this->isInaccessible($this->fileLocator->getFilesFolder())) {
             return ['error' => 'Server error. Upload directory isn\'t writable' . ((!$this->isWindows()) ? ' or executable.' : '.')];
         }
 
         $targetPath = $this->fileLocator->getFilesFolder();
-        $target = join(DIRECTORY_SEPARATOR, [$targetPath, $uuid]);
+        $target = implode(DIRECTORY_SEPARATOR, [$targetPath, $identifier]);
 
         if ($checkChunkFolder === true) {
-            $chunkPath = join(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
+            $chunkPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $identifier]);
 
             if (is_dir($chunkPath)) {
-                $this->deleteFolders([$chunkPath]);
+                $this->deleteDirectories([$chunkPath]);
             }
         }
 
         if (is_dir($target)) {
-            $this->deleteFolders([$target]);
+            $this->deleteDirectories([$target]);
         }
 
         return [
             'success' => true,
-            'uuid'    => $uuid
+            'uuid'    => $identifier
         ];
 
     }
 
-    /**
-     * @param string $sizeStr
-     *
-     * @return int|string
-     */
-    protected function toBytes($sizeStr)
+    protected function toBytes(mixed $sizeStr): int|string
     {
         $val = trim($sizeStr);
         if (is_numeric($val)) {
@@ -344,41 +335,24 @@ class FileStream implements FileStreamInterface
         $last = strtolower($sizeStr[strlen($sizeStr) - 1]);
         $val = (int) substr($val, 0, -1);
 
-        switch ($last) {
-            case 'g':
-            case 'm':
-            case 'k':
-                $val *= 1024;
-
-                break;
+        if (!in_array($last, ['g', 'm', 'k'], true)) {
+            return $val;
         }
 
-        return $val;
+        return $val * 1024;
     }
 
-    /**
-     * @return bool
-     */
-    protected function isInaccessible($directory)
+    protected function isInaccessible(string $directory): bool
     {
         return $this->isWindows() ? !is_writable($directory) : (!is_writable($directory) && !is_executable($directory));
     }
 
-    /**
-     * @return bool
-     */
-    protected function isWindows()
+    protected function isWindows(): bool
     {
         return (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
     }
 
-    /**
-     * @param string $fileName
-     * @param bool   $strong
-     *
-     * @return string
-     */
-    protected function getSafeFileName(string $fileName, bool $strong = false)
+    protected function getSafeFileName(string $fileName, bool $strong = false): string
     {
         if ($strong === false) {
             return File::getValidFilename($fileName);
@@ -387,10 +361,7 @@ class FileStream implements FileStreamInterface
         return preg_replace('/[^a-zA-Z0-9]_+/', '', str_replace('.', '_', $fileName));
     }
 
-    /**
-     * @param array $foldersToDelete
-     */
-    protected function deleteFolders(array $foldersToDelete)
+    protected function deleteDirectories(array $foldersToDelete): void
     {
         foreach ($foldersToDelete as $folder) {
             $this->fileLocator->removeDir($folder);

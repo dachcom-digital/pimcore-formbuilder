@@ -10,9 +10,6 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\Worker\Valid
 
 class FieldCollectionWorkerType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('fieldCollectionClassKey', TextType::class);

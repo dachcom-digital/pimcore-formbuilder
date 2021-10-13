@@ -9,33 +9,22 @@ use Pimcore\Tool;
 
 class PresetManager
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return array
-     */
-    public function getAll(Document $document)
+    public function getAll(Document\PageSnippet $document): array
     {
         $areaConfig = $this->configuration->getConfig('area');
         $formPresets = $areaConfig['presets'];
 
-        $dat = [];
+        $data = [];
 
         if (empty($formPresets)) {
-            return $dat;
+            return $data;
         }
 
         foreach ($formPresets as $presetName => $presetConfig) {
@@ -46,31 +35,34 @@ class PresetManager
                 if ($currentSite !== null) {
                     $allowedSites = (array) $presetConfig['sites'];
 
-                    if (!in_array($currentSite->getMainDomain(), $allowedSites)) {
+                    if (!in_array($currentSite->getMainDomain(), $allowedSites, true)) {
                         continue;
                     }
                 }
             }
 
-            $dat[$presetName] = $presetConfig;
+            $data[$presetName] = $presetConfig;
         }
 
-        return $dat;
+        return $data;
     }
 
-    /**
-     * @param string $presetName
-     * @param array  $presetConfig
-     *
-     * @return array
-     */
-    public function getDataForPreview($presetName, $presetConfig)
+    public function getDataForPreview(string $presetName): array
     {
+        $areaConfig = $this->configuration->getConfig('area');
+        $formPresets = $areaConfig['presets'];
+
         $previewData = [
             'presetName'  => $presetName,
             'description' => '',
             'fields'      => []
         ];
+
+        if (!is_array($formPresets) || !array_key_exists($presetName, $formPresets)) {
+            return $previewData;
+        }
+
+        $presetConfig = $formPresets[$presetName];
 
         if (isset($presetConfig['admin_description'])) {
             $previewData['description'] = strip_tags($presetConfig['admin_description'], '<br><strong><em><p><span>');
@@ -79,14 +71,7 @@ class PresetManager
         return $previewData;
     }
 
-    /**
-     * Get Site in EditMode if SiteRequest is available.
-     *
-     * @param Document $originDocument
-     *
-     * @return null|Site
-     */
-    private function getCurrentSiteInAdminMode($originDocument)
+    private function getCurrentSiteInAdminMode(Document $originDocument): ?Site
     {
         $currentSite = null;
 

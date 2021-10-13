@@ -146,11 +146,6 @@ class SettingsControllerCest
      */
     public function testFindFormDependenciesAction(FunctionalTester $I)
     {
-        $document = $I->haveAPageDocument('form-test');
-        $dummyDocument = $I->haveAPageDocument('content-test-page');
-
-        $adminEmail = $I->haveAEmailDocumentForAdmin();
-
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(false)
             ->addFormField(
@@ -161,7 +156,12 @@ class SettingsControllerCest
 
         $form = $I->haveAForm($testFormBuilder);
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'bootstrap_4_layout.html.twig');
+        $document = $I->haveAPageDocument('form-test');
+        $dummyDocument = $I->haveAPageDocument('content-test-page');
+
+        $adminEmail = $I->haveAEmailDocumentForAdmin();
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
 
         $I->haveAUser('form_tester');
         $I->amLoggedInAs('form_tester');

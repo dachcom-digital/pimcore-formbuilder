@@ -6,123 +6,58 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FormBuilderBundle\Model\FormDefinition;
 use FormBuilderBundle\Model\FormDefinitionInterface;
-use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 
 class FormDefinitionRepository implements FormDefinitionRepositoryInterface
 {
-    /**
-     * @var FormDataConnectorInterface
-     */
-    protected $formDataConnector;
+    protected EntityRepository $repository;
 
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
-    /**
-     * @param FormDataConnectorInterface $formDataConnector
-     * @param EntityManagerInterface     $entityManager
-     */
-    public function __construct(
-        FormDataConnectorInterface $formDataConnector,
-        EntityManagerInterface $entityManager
-    ) {
-        $this->formDataConnector = $formDataConnector;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
         $this->repository = $entityManager->getRepository(FormDefinition::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findById($id)
+    public function findById($id): ?FormDefinitionInterface
     {
         if ($id < 1) {
             return null;
         }
 
-        /** @var FormDefinitionInterface $object */
-        $object = $this->repository->find($id);
-
-        return $this->assembleSingle($object);
+        return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findByName(string $name)
+    public function findByName(string $name): ?FormDefinitionInterface
     {
         if (empty($name)) {
             return null;
         }
 
-        /** @var FormDefinitionInterface $object */
-        $object = $this->repository->findOneBy(['name' => $name]);
-
-        return $this->assembleSingle($object);
+        return $this->repository->findOneBy(['name' => $name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findNameById($id)
+    public function findNameById($id): ?string
     {
         $form = $this->findById($id);
+
+        if (!$form instanceof FormDefinitionInterface) {
+            return null;
+        }
 
         return $form->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findIdByName(string $name)
+    public function findIdByName(string $name): ?int
     {
         $form = $this->findByName($name);
+
+        if (!$form instanceof FormDefinitionInterface) {
+            return null;
+        }
 
         return $form->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll(): array
     {
-        $objects = $this->repository->findAll();
-
-        return $this->assembleMultiple($objects);
-    }
-
-    /**
-     * @param FormDefinitionInterface|null $formDefinition
-     *
-     * @return FormDefinitionInterface|null
-     */
-    protected function assembleSingle(?FormDefinitionInterface $formDefinition)
-    {
-        if (!$formDefinition instanceof FormDefinitionInterface) {
-            return null;
-        }
-
-        $this->formDataConnector->assignRelationDataToFormObject($formDefinition);
-
-        return $formDefinition;
-    }
-
-    /**
-     * @param FormDefinitionInterface[] $formDefinitions
-     *
-     * @return FormDefinitionInterface[]
-     */
-    protected function assembleMultiple(array $formDefinitions)
-    {
-        $assembledFormDefinitions = [];
-        foreach ($formDefinitions as $formDefinition) {
-            if ($formDefinition instanceof FormDefinitionInterface) {
-                $this->formDataConnector->assignRelationDataToFormObject($formDefinition);
-                $assembledFormDefinitions[] = $formDefinition;
-            }
-        }
-
-        return $assembledFormDefinitions;
+        return  $this->repository->findAll();
     }
 }

@@ -8,11 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class DynamicMultiFileNotBlankValidator extends ConstraintValidator
 {
-    /**
-     * @param mixed      $value
-     * @param Constraint $constraint
-     */
-    public function validate($value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof DynamicMultiFileNotBlank) {
             throw new UnexpectedTypeException($constraint, DynamicMultiFileNotBlank::class);

@@ -2,78 +2,45 @@
 
 namespace FormBuilderBundle\Form\Data;
 
-use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 
-class FormData extends Form implements FormDataInterface
+class FormData implements FormDataInterface
 {
-    /**
-     * @var FormDefinitionInterface
-     */
-    protected $formDefinition;
+    protected FormDefinitionInterface $formDefinition;
+    protected array $data = [];
+    protected array $attachments = [];
 
-    /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * @var array
-     */
-    protected $attachments = [];
-
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     */
     public function __construct(FormDefinitionInterface $formDefinition)
     {
         $this->formDefinition = $formDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormDefinition()
+    public function getFormDefinition(): FormDefinitionInterface
     {
         return $this->formDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasAttachments()
+    public function hasAttachments(): bool
     {
         return count($this->attachments) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttachments()
+    public function getAttachments(): array
     {
         return $this->attachments;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addAttachment(array $attachmentFileInfo)
+    public function addAttachment(array $attachmentFileInfo): void
     {
         $this->attachments[] = $attachmentFileInfo;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFieldValue(string $name)
+    public function getFieldValue(string $name): mixed
     {
         $array = $this->getData();
         if (isset($array[$name])) {
@@ -83,29 +50,17 @@ class FormData extends Form implements FormDataInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setFieldValue(string $name, $value)
+    public function setFieldValue(string $name, $value): void
     {
         $this->data[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $this->data[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         if (!is_string($name)) {
             return false;
@@ -116,12 +71,7 @@ class FormData extends Form implements FormDataInterface
         return isset($data[$name]);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed|null
-     */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->getFieldValue($name);
     }

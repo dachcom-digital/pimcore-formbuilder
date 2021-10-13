@@ -17,38 +17,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class OutputWorkflowController extends AdminController
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected FormFactoryInterface $formFactory;
+    protected FormDefinitionManager $formDefinitionManager;
+    protected OutputWorkflowManager $outputWorkflowManager;
+    protected ExtJsFormBuilder $extJsFormBuilder;
 
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
-
-    /**
-     * @var OutputWorkflowManager
-     */
-    protected $outputWorkflowManager;
-
-    /**
-     * @var ExtJsFormBuilder
-     */
-    protected $extJsFormBuilder;
-
-    /**
-     * @param Configuration         $configuration
-     * @param FormFactoryInterface  $formFactory
-     * @param FormDefinitionManager $formDefinitionManager
-     * @param OutputWorkflowManager $outputWorkflowManager
-     * @param ExtJsFormBuilder      $extJsFormBuilder
-     */
     public function __construct(
         Configuration $configuration,
         FormFactoryInterface $formFactory,
@@ -63,13 +37,7 @@ class OutputWorkflowController extends AdminController
         $this->extJsFormBuilder = $extJsFormBuilder;
     }
 
-    /**
-     * @param Request $request
-     * @param int     $formId
-     *
-     * @return JsonResponse
-     */
-    public function getOutputWorkflowTreeAction(Request $request, int $formId)
+    public function getOutputWorkflowTreeAction(Request $request, int $formId): JsonResponse
     {
         $mainItems = [];
 
@@ -97,13 +65,7 @@ class OutputWorkflowController extends AdminController
         return $this->adminJson($mainItems);
     }
 
-    /**
-     * @param Request $request
-     * @param int     $formId
-     *
-     * @return JsonResponse
-     */
-    public function getOutputWorkflowListAction(Request $request, int $formId)
+    public function getOutputWorkflowListAction(Request $request, int $formId): JsonResponse
     {
         $formDefinition = $this->formDefinitionManager->getById($formId);
 
@@ -130,14 +92,9 @@ class OutputWorkflowController extends AdminController
     }
 
     /**
-     * @param Request $request
-     * @param int     $outputWorkflowId
-     *
-     * @return JsonResponse
-     *
      * @throws \Throwable
      */
-    public function getOutputWorkflowDataAction(Request $request, int $outputWorkflowId)
+    public function getOutputWorkflowDataAction(Request $request, int $outputWorkflowId): JsonResponse
     {
         $data = [
             'success' => true,
@@ -161,13 +118,7 @@ class OutputWorkflowController extends AdminController
         return $this->adminJson($data);
     }
 
-    /**
-     * @param Request $request
-     * @param int     $formId
-     *
-     * @return JsonResponse
-     */
-    public function addOutputWorkflowAction(Request $request, int $formId)
+    public function addOutputWorkflowAction(Request $request, int $formId): JsonResponse
     {
         $name = $request->request->get('outputWorkflowName');
 
@@ -201,14 +152,9 @@ class OutputWorkflowController extends AdminController
     }
 
     /**
-     * @param Request $request
-     * @param int     $outputWorkflowId
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
-    public function saveOutputWorkflowAction(Request $request, int $outputWorkflowId)
+    public function saveOutputWorkflowAction(Request $request, int $outputWorkflowId): JsonResponse
     {
         $errors = [];
         $success = true;
@@ -264,13 +210,7 @@ class OutputWorkflowController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param int     $outputWorkflowId
-     *
-     * @return JsonResponse
-     */
-    public function deleteOutputWorkflowAction(Request $request, int $outputWorkflowId)
+    public function deleteOutputWorkflowAction(Request $request, int $outputWorkflowId): JsonResponse
     {
         $success = true;
         $message = null;

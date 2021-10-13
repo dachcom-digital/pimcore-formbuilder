@@ -15,7 +15,7 @@ use FormBuilderBundle\Event\Form\PreSubmitEvent;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -25,41 +25,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected Dispatcher $dispatcher;
+    protected FormRegistryInterface $formRegistry;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    private array $availableConstraints;
+    private array $availableFormTypes;
 
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var FormRegistryInterface
-     */
-    protected $formRegistry;
-
-    /**
-     * @var array
-     */
-    private $availableConstraints;
-
-    /**
-     * @var array
-     */
-    private $availableFormTypes;
-
-    /**
-     * @param Configuration             $configuration
-     * @param Dispatcher                $dispatcher
-     * @param FormRegistryInterface     $formRegistry
-     */
     public function __construct(
         Configuration $configuration,
         EventDispatcherInterface $eventDispatcher,
@@ -74,14 +47,19 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $this->availableFormTypes = $this->configuration->getConfig('types');
     }
 
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            FormEvents::PRE_SET_DATA  => ['onPreSetData'],
+            FormEvents::POST_SET_DATA => ['onPostSetData'],
+            FormEvents::PRE_SUBMIT    => ['onPreSubmit']
+        ];
+    }
+
     /**
-     * @param FormEvent $event
-     *
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public function getFormOptions(FormEvent $event)
+    public function getFormOptions(FormEvent $event): ?array
     {
         $form = $event->getForm();
 
@@ -100,62 +78,40 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            FormEvents::PRE_SET_DATA  => ['onPreSetData'],
-            FormEvents::POST_SET_DATA => ['onPostSetData'],
-            FormEvents::PRE_SUBMIT    => ['onPreSubmit']
-        ];
-    }
-
-    /**
-     * @param FormEvent $event
-     *
      * @throws \Exception
      */
-    public function onPreSetData(FormEvent $event)
+    public function onPreSetData(FormEvent $event): void
     {
         $preSetDataEvent = new PreSetDataEvent($event, $this->getFormOptions($event));
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SET_DATA, $preSetDataEvent);
+        $this->eventDispatcher->dispatch($preSetDataEvent, FormBuilderEvents::FORM_PRE_SET_DATA);
     }
 
     /**
-     * @param FormEvent $event
-     *
      * @throws \Exception
      */
-    public function onPostSetData(FormEvent $event)
+    public function onPostSetData(FormEvent $event): void
     {
         $postSetDataEvent = new PostSetDataEvent($event, $this->getFormOptions($event));
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_POST_SET_DATA, $postSetDataEvent);
+        $this->eventDispatcher->dispatch($postSetDataEvent, FormBuilderEvents::FORM_POST_SET_DATA);
 
         $this->populateForm($event->getForm(), $event->getData());
     }
 
     /**
-     * @param FormEvent $event
-     *
      * @throws \Exception
      */
-    public function onPreSubmit(FormEvent $event)
+    public function onPreSubmit(FormEvent $event): void
     {
         $preSubmitEvent = new PreSubmitEvent($event, $this->getFormOptions($event));
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_PRE_SUBMIT, $preSubmitEvent);
+        $this->eventDispatcher->dispatch($preSubmitEvent, FormBuilderEvents::FORM_PRE_SUBMIT);
 
         $this->populateForm($event->getForm(), $event->getForm()->getData(), $event->getData());
     }
 
     /**
-     * @param FormInterface     $form
-     * @param FormDataInterface $formData
-     * @param array             $data
-     *
      * @throws \Exception
      */
-    private function populateForm(FormInterface $form, FormDataInterface $formData, array $data = [])
+    private function populateForm(FormInterface $form, FormDataInterface $formData, array $data = []): void
     {
         $orderedFields = $formData->getFormDefinition()->getFields();
         usort($orderedFields, function (FieldDefinitionInterface $a, FieldDefinitionInterface $b) {
@@ -188,14 +144,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param FormFieldContainerDefinitionInterface $fieldContainer
-     * @param array                                 $conditionalLogicOptions
-     *
-     * @return array
-     *
      * @throws \Exception
      */
-    private function addFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldContainer, array $conditionalLogicOptions)
+    private function addFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldContainer, array $conditionalLogicOptions): array
     {
         $fields = [];
         foreach ($fieldContainer->getFields() as $subField) {
@@ -205,7 +156,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $typeClass = $this->configuration->getContainerFieldClass($fieldContainer->getSubType());
         $configuration = $fieldContainer->getConfiguration();
 
-        $containerAttributes = isset($configuration['attr']) ? $configuration['attr'] : [];
+        $containerAttributes = $configuration['attr'] ?? [];
 
         $containerClasses = ['formbuilder-container formbuilder-container-' . strtolower($fieldContainer->getSubType())];
         if (isset($containerAttributes['class']) && is_string($containerAttributes['class'])) {
@@ -213,7 +164,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         // merge core and attributes class definition
-        $containerAttributes['class'] = join(' ', $containerClasses);
+        $containerAttributes['class'] = implode(' ', $containerClasses);
 
         // options enrichment: conditional logic class mapping
         $conditionalContainerClassData = $this->dispatchConditionalLogicModule('form_type_classes', array_merge($conditionalLogicOptions, ['field' => $fieldContainer]));
@@ -221,7 +172,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         if ($conditionalContainerClassData->hasData()) {
             $attrDataTemplate = isset($containerAttributes['data-template']) ? [$containerAttributes['data-template']] : [];
             $attrDataTemplate = array_merge($attrDataTemplate, $conditionalContainerClassData->getData());
-            $containerAttributes['data-template'] = join(' ', $attrDataTemplate);
+            $containerAttributes['data-template'] = implode(' ', $attrDataTemplate);
         }
 
         return [
@@ -239,14 +190,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param FormFieldDefinitionInterface $field
-     * @param array                        $conditionalLogicOptions
-     *
-     * @return array
-     *
      * @throws \Exception
      */
-    private function addFormBuilderField(FormFieldDefinitionInterface $field, array $conditionalLogicOptions)
+    private function addFormBuilderField(FormFieldDefinitionInterface $field, array $conditionalLogicOptions): array
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -258,7 +204,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         $templateClasses = [];
 
         // options enrichment: tweak preferred choice options
-        if (in_array($field->getType(), $this->getChoiceFieldTypes())) {
+        if (in_array($field->getType(), $this->getChoiceFieldTypes(), true)) {
             if (isset($options['multiple']) && $options['multiple'] === false
                 && isset($options['data'])
                 && is_array($options['data'])
@@ -297,7 +243,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check for custom radio / checkbox layout
         if ($this->configuration->getConfigFlag('use_custom_radio_checkbox') === true) {
             if (in_array('label_attr', $availableOptions)) {
-                if (in_array($field->getType(), ['checkbox'])) {
+                if ($field->getType() === 'checkbox') {
                     $options['label_attr'] = ['class' => 'checkbox-custom'];
                 } elseif (in_array($field->getType(), $this->getChoiceFieldTypes())) {
                     if (isset($options['expanded']) && $options['expanded'] === true) {
@@ -320,7 +266,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         }
 
         if (!empty($templateClasses)) {
-            $options['attr']['data-template'] = join(' ', $templateClasses);
+            $options['attr']['data-template'] = implode(' ', $templateClasses);
         }
 
         return [
@@ -331,14 +277,9 @@ class FormBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param string $dispatcherModule
-     * @param array  $options
-     *
-     * @return DataInterface
-     *
      * @throws \Exception
      */
-    private function dispatchConditionalLogicModule(string $dispatcherModule, array $options)
+    private function dispatchConditionalLogicModule(string $dispatcherModule, array $options): DataInterface
     {
         $moduleOptions = [];
 
@@ -351,12 +292,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         return $this->dispatcher->runFieldDispatcher($dispatcherModule, $options, $moduleOptions);
     }
 
-    /**
-     * @param FormFieldDynamicDefinitionInterface $field
-     *
-     * @return array
-     */
-    private function addDynamicField(FormFieldDynamicDefinitionInterface $field)
+    private function addDynamicField(FormFieldDynamicDefinitionInterface $field): array
     {
         $options = $field->getOptions();
         $optional = $field->getOptional();
@@ -373,23 +309,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    private function getChoiceFieldTypes()
+    private function getChoiceFieldTypes(): array
     {
         return ['choice', 'dynamic_choice', 'country'];
     }
 
-    /**
-     * Add pre-filled data to value store.
-     *
-     * @param array $fields
-     * @param array $data
-     *
-     * @return array
-     */
-    private function preFillData(array $fields, array &$data)
+    private function preFillData(array $fields, array &$data): array
     {
         /** @var FormFieldDefinitionInterface $field */
         foreach ($fields as $field) {

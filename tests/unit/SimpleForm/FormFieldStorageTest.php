@@ -22,7 +22,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('simple_dropdown', $field->getName());
         $this->assertEquals('choice', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(5, $field->getOptions());
     }
 
@@ -39,7 +39,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('simple_text_input_1', $field->getName());
         $this->assertEquals('text', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -56,7 +56,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('simple_text_input_2', $field->getName());
         $this->assertEquals('text', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -73,7 +73,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('simple_text_input_3', $field->getName());
         $this->assertEquals('text', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -90,7 +90,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('simple_text_input_4', $field->getName());
         $this->assertEquals('text', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -107,7 +107,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('single_checkbox', $field->getName());
         $this->assertEquals('checkbox', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -124,7 +124,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('checkboxes', $field->getName());
         $this->assertEquals('choice', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(5, $field->getOptions());
     }
 
@@ -141,7 +141,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('radios', $field->getName());
         $this->assertEquals('choice', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(5, $field->getOptions());
     }
 
@@ -158,7 +158,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('simple_text_area', $field->getName());
         $this->assertEquals('textarea', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -175,7 +175,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $this->assertInstanceOf(FormFieldDefinitionInterface::class, $field);
         $this->assertEquals('submit', $field->getName());
         $this->assertEquals('submit', $field->getType());
-        $this->assertInternalType('array', $field->getOptions());
+        $this->assertIsArray($field->getOptions());
         $this->assertCount(1, $field->getOptions());
     }
 
@@ -191,7 +191,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $field = $form->getField('input_with_options');
         $options = $field->getOptions();
 
-        $this->assertInternalType('array', $options);
+        $this->assertIsArray($options);
         $this->assertArrayHasKey('class', $options);
         $this->assertEquals('my-shiny-class', $options['class']);
     }
@@ -208,7 +208,7 @@ class FormFieldStorageTest extends DachcomBundleTestCase
         $field = $form->getField('input_with_optional');
         $optionals = $field->getOptional();
 
-        $this->assertInternalType('array', $optionals);
+        $this->assertIsArray($optionals);
         $this->assertArrayHasKey('template', $optionals);
         $this->assertEquals('default', $optionals['template']);
     }

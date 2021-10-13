@@ -8,47 +8,47 @@ class ElementValueCondition implements ConditionInterface
 {
     use ConditionTrait;
 
-    /**
-     * @var string
-     */
-    protected $comparator;
+    protected array $fields = [];
+    protected string $comparator = '';
+    protected string|array $value = '';
 
-    /**
-     * @var array
-     */
-    protected $fields = [];
-
-    /**
-     * @var string|array
-     */
-    protected $value;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValid($formData, $ruleId, $configuration = [])
+    public function isValid(array $formData, int $ruleId, array $configuration = []): bool
     {
         foreach ($this->getFields() as $conditionFieldName) {
-            $fieldValue = isset($formData[$conditionFieldName]) ? $formData[$conditionFieldName] : null;
+            $fieldValue = $formData[$conditionFieldName] ?? null;
 
             if ($this->getComparator() === 'contains') {
                 $value = is_array($this->getValue()) ? $this->getValue() : (is_string($this->getValue()) ? explode(',', $this->getValue()) : [$this->getValue()]);
 
                 return !empty(array_intersect($value, (array) $fieldValue));
-            } elseif ($this->getComparator() === 'is_checked') {
+            }
+
+            if ($this->getComparator() === 'is_checked') {
                 return array_key_exists($conditionFieldName, $formData) && !empty($fieldValue);
-            } elseif ($this->getComparator() === 'is_not_checked') {
+            }
+
+            if ($this->getComparator() === 'is_not_checked') {
                 return empty($fieldValue);
-            } elseif ($this->getComparator() === 'is_greater') {
+            }
+
+            if ($this->getComparator() === 'is_greater') {
                 return $this->getValue() > $fieldValue;
-            } elseif ($this->getComparator() === 'is_less') {
+            }
+
+            if ($this->getComparator() === 'is_less') {
                 return $this->getValue() < $fieldValue;
-            } elseif ($this->getComparator() === 'is_value') {
+            }
+
+            if ($this->getComparator() === 'is_value') {
                 //could be an array (multiple)
                 return $this->getValue() == $fieldValue || in_array($this->getValue(), (array) $fieldValue);
-            } elseif ($this->getComparator() === 'is_empty_value') {
+            }
+
+            if ($this->getComparator() === 'is_empty_value') {
                 return empty($fieldValue);
-            } elseif ($this->getComparator() === 'is_not_value') {
+            }
+
+            if ($this->getComparator() === 'is_not_value') {
                 return $this->getValue() != $fieldValue;
             }
         }
@@ -56,62 +56,32 @@ class ElementValueCondition implements ConditionInterface
         return false;
     }
 
-    /**
-     * @return string
-     *
-     * @internal
-     */
-    public function getComparator()
+    public function getComparator(): string
     {
         return $this->comparator;
     }
 
-    /**
-     * @param string $comparator
-     *
-     * @internal
-     */
-    public function setComparator($comparator)
+    public function setComparator($comparator): void
     {
         $this->comparator = $comparator;
     }
 
-    /**
-     * @return array
-     *
-     * @internal
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * @param array $fields
-     *
-     * @internal
-     */
-    public function setFields($fields)
+    public function setFields($fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return string|array
-     *
-     * @internal
-     */
-    public function getValue()
+    public function getValue(): string|array
     {
         return $this->value;
     }
 
-    /**
-     * @param string|array $value
-     *
-     * @internal
-     */
-    public function setValue($value)
+    public function setValue(string|array $value): void
     {
         $this->value = $value;
     }

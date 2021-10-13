@@ -29,7 +29,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', 'subject with TEST_FIRST_NAME');
+        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with TEST_FIRST_NAME', $adminEmail->getKey()));
     }
 
     /**
@@ -72,7 +72,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', 'subject with TEST_FIELDSET_CONTAINER_VALUE');
+        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with TEST_FIELDSET_CONTAINER_VALUE', $adminEmail->getKey()));
     }
 
     /**
@@ -97,7 +97,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', 'subject with Check 1, Check 3');
+        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with Check 1, Check 3', $adminEmail->getKey()));
     }
 
     /**
@@ -166,7 +166,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'to', 'test@test.com');
+        $I->seeEmailIsSentTo('test@test.com', $adminEmail);
     }
 
     /**
@@ -209,7 +209,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'to', 'test@test.com');
+        $I->seeEmailIsSentTo('test@test.com', $adminEmail);
     }
 
 }

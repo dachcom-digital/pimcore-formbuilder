@@ -53,7 +53,7 @@ class ContainerRepeaterCest extends AbstractFieldCest
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, $optional);
 
         $repeaterSelector = $testFormBuilder->getFormFieldSelector(1, 'repeater_container');
-        $fieldGenerator = function ($index, $subIndex) {
+        $fieldGenerator = static function ($index, $subIndex) {
             return sprintf('input#formbuilder_1_repeater_container_%d_sub_text_field_%d', $index, $subIndex);
         };
 
@@ -134,7 +134,7 @@ class ContainerRepeaterCest extends AbstractFieldCest
 
         $this->setupField($I, $options, $optional);
 
-        $I->seeElement('.formbuilder-container.formbuilder-container-repeater', ['data-repeater-min' => 1]);
+        $I->seeElement('.formbuilder-container.formbuilder-container-repeater', ['data-repeater-min' => '1']);
         $I->seeElement('.formbuilder-container.formbuilder-container-repeater input#formbuilder_1_repeater_container_0_sub_text_field');
     }
 
@@ -162,7 +162,7 @@ class ContainerRepeaterCest extends AbstractFieldCest
 
         $this->setupField($I, $options, $optional);
 
-        $I->seeElement('.formbuilder-container.formbuilder-container-repeater', ['data-repeater-max' => 1]);
+        $I->seeElement('.formbuilder-container.formbuilder-container-repeater', ['data-repeater-max' => '1']);
         $I->dontSeeElement('.formbuilder-container.formbuilder-container-repeater input#formbuilder_1_repeater_container_0_sub_text_field');
     }
 

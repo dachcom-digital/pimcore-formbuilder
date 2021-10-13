@@ -2,10 +2,8 @@
 
 namespace DachcomBundle\Test\functional\MailSubmissionTypes;
 
-use Dachcom\Codeception\Util\VersionHelper;
 use DachcomBundle\Test\Helper\Traits;
 use DachcomBundle\Test\FunctionalTester;
-use Pimcore\Model\Property;
 
 class SubmissionTypesCest
 {
@@ -30,13 +28,15 @@ class SubmissionTypesCest
         $this->fillSimpleForm($testFormBuilder, $I);
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailSubmissionType('text/html', $adminEmail);
+        $I->seeEmailSubmissionType('utf-8', 'text', $adminEmail);
+        $I->seeEmailSubmissionType('utf-8', 'html', $adminEmail);
 
         // Html2Text/Html2Text library change text to uppercase if in <strong>, <b>, <td> or <h> tag.
-        $searchText = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.6.0') ? 'SINGLE_CHECKBOX:' : 'Single_checkbox:';
+        $searchText = ' **Single\_checkbox:** 1';
 
-        $I->seeInSubmittedEmailChildrenBody($searchText, $adminEmail);
-        $I->seeInSubmittedEmailBody('<strong>Single_checkbox:</strong>', $adminEmail);
+        $I->seeInSubmittedEmailBodyOfType($searchText, 'text', $adminEmail);
+        $I->seeInSubmittedEmailBodyOfType('<strong>Single_checkbox:</strong>', 'html', $adminEmail);
+
     }
 
     /**
@@ -46,32 +46,36 @@ class SubmissionTypesCest
      */
     public function testForcedTextMail(FunctionalTester $I)
     {
-        $property = new Property();
-        $property->setName('mail_force_plain_text');
-        $property->setType('checkbox');
-        $property->setData(true);
-        $property->setInheritable(true);
-        $property->setInherited(false);
-
-        $adminEmail = $I->haveAEmailDocumentForAdmin(['properties' => [$property]]);
+        $adminEmail = $I->haveAEmailDocumentForAdmin();
         $document = $I->haveAPageDocument('form-test');
         $testFormBuilder = $this->generateSimpleForm();
         $form = $I->haveAForm($testFormBuilder);
 
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail);
+        $channels = [
+            [
+                'type' => 'email',
+                'email' => $adminEmail,
+                'configuration' => [
+                    'forcePlainText' => true
+                ]
+            ]
+        ];
+
+        $outputWorkflow = $I->haveAOutputWorkflow('Test Output Workflow', $form, $channels);
+
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $adminEmail, null, 'form_div_layout.html.twig', $outputWorkflow);
 
         $I->amOnPage('/form-test');
 
         $this->fillSimpleForm($testFormBuilder, $I);
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailSubmissionType('text/plain', $adminEmail);
-        $I->dontHaveSubmittedEmailChildren($adminEmail);
 
         // Html2Text/Html2Text library change text to uppercase if in <strong>, <b>, <td> or <h> tag.
-        $searchText = VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.6.0') ? 'SINGLE_CHECKBOX:' : 'Single_checkbox:';
+        $searchText = ' **Single\_checkbox:** 1';
 
-        $I->seeInSubmittedEmailBody($searchText, $adminEmail);
-        $I->dontSeeInSubmittedEmailBody('<strong>Single_checkbox:</strong>', $adminEmail);
+        $I->seeEmptyEmailSubmissionType('html', $adminEmail);
+        $I->seeInSubmittedEmailBodyOfType($searchText, 'text', $adminEmail);
+        $I->dontSeeInSubmittedEmailBodyOfType('<strong>Single_checkbox:</strong>', 'html', $adminEmail);
     }
 }

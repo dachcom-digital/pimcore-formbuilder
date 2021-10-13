@@ -9,10 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class DynamicMultiFileAdapterPass implements CompilerPassInterface
 {
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(DynamicMultiFileAdapterRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.dynamic_multi_file.adapter') as $id => $tags) {

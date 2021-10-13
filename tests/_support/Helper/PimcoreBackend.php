@@ -6,12 +6,14 @@ use Codeception\Exception\ModuleException;
 use Codeception\TestInterface;
 use Codeception\Util\Debug;
 use Dachcom\Codeception\Util\EditableHelper;
-use Dachcom\Codeception\Util\VersionHelper;
 use DachcomBundle\Test\Util\FormHelper;
 use DachcomBundle\Test\Util\TestFormBuilder;
 use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Manager\OutputWorkflowManager;
 use FormBuilderBundle\Model\FormDefinition;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\OutputWorkflowChannel;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
 use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
@@ -19,9 +21,6 @@ use Pimcore\Model\Document\Page;
 
 class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
 {
-    /**
-     * @param TestInterface $test
-     */
     public function _after(TestInterface $test)
     {
         parent::_after($test);
@@ -43,14 +42,8 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
 
     /**
      * Actor Function to create a Form
-     *
-     * @param TestFormBuilder $formBuilder
-     *
-     * @return FormDefinitionInterface
-     *
-     * @throws ModuleException
      */
-    public function haveAForm(TestFormBuilder $formBuilder)
+    public function haveAForm(TestFormBuilder $formBuilder): FormDefinitionInterface
     {
         $formDefinition = $this->createForm($formBuilder);
         $this->assertInstanceOf(FormDefinition::class, $this->getFormManager()->getById($formDefinition->getId()));
@@ -59,56 +52,62 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
     }
 
     /**
-     * Actor Function to create a mail document for admin
-     *
-     * @param array  $mailParams
-     * @param string $locale
-     *
-     * @return Email
+     * Actor Function to update a Form
      */
-    public function haveAEmailDocumentForAdmin(array $mailParams = [], $locale = 'en')
+    public function updateAForm(FormDefinitionInterface $form, TestFormBuilder $formBuilder): FormDefinitionInterface
+    {
+        return $this->updateForm($form, $formBuilder);
+    }
+
+    /**
+     * Actor Function to create an Output Workflow
+     */
+    public function haveAOutputWorkflow(
+        string $outputWorkflowName,
+        FormDefinitionInterface $form,
+        array $channelDefinitions,
+        string|array $successMessage = 'Success!'
+    ): OutputWorkflowInterface {
+        $outputWorkflow = $this->createOutputWorkflow($outputWorkflowName, $form, $channelDefinitions, $successMessage);
+
+        $this->assertInstanceOf(OutputWorkflowInterface::class, $this->getOutputWorkflowManager()->getById($outputWorkflow->getId()));
+
+        return $outputWorkflow;
+    }
+
+    /**
+     * Actor Function to create a mail document for admin
+     */
+    public function haveAEmailDocumentForAdmin(array $mailParams = [], string $locale = 'en'): Email
     {
         return $this->haveAEmailDocumentForType('admin', $mailParams, $locale);
     }
 
     /**
      * Actor Function to create a mail document for user
-     *
-     * @param array  $mailParams
-     * @param string $locale
-     *
-     * @return Email
      */
-    public function haveAEmailDocumentForUser(array $mailParams = [], $locale = 'en')
+    public function haveAEmailDocumentForUser(array $mailParams = [], string $locale = 'en'): Email
     {
         return $this->haveAEmailDocumentForType('user', $mailParams, $locale);
     }
 
     /**
      * Actor Function to create a mail document for given type
-     *
-     * @param        $type
-     * @param array  $mailParams
-     * @param string $locale
-     *
-     * @return Email
      */
-    public function haveAEmailDocumentForType($type, array $mailParams = [], $locale = null)
+    public function haveAEmailDocumentForType(string $type, array $mailParams = [], ?string $locale = null): Email
     {
         $params = array_merge([
-            'module'     => 'FormBuilderBundle',
-            'controller' => 'Email',
-            'action'     => 'email',
+            'controller' => 'FormBuilderBundle\Controller\EmailController',
+            'action'     => 'emailAction',
             'template'   => 'FormBuilderBundle:Email:email.html.twig'
         ], $mailParams);
 
-        $document = $mailTemplate = $this->generateEmailDocument(sprintf('email-%s', $type), $params, $locale);
+        $document = $this->generateEmailDocument(sprintf('email-%s', $type), $params, $locale);
 
         try {
             $document->save();
         } catch (\Exception $e) {
-            Debug::debug(sprintf('[TEST BUNDLE ERROR] error while creating email. message was: ' . $e->getMessage()));
-            return null;
+            Debug::debug(sprintf('[TEST BUNDLE ERROR] error while creating email. message was: %s', $e->getMessage()));
         }
 
         $this->assertInstanceOf(Email::class, Email::getById($document->getId()));
@@ -118,67 +117,57 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
 
     /**
      * Actor Function to place a form area on a document
-     *
-     * @param Page                    $document
-     * @param FormDefinitionInterface $form
-     * @param bool                    $mailTemplate
-     * @param bool                    $copyMailTemplate
-     * @param string                  $formTemplate
      */
     public function seeAFormAreaElementPlacedOnDocument(
         Page $document,
         FormDefinitionInterface $form,
-        $mailTemplate = null,
-        $copyMailTemplate = null,
-        $formTemplate = 'form_div_layout.html.twig'
-    ) {
+        ?Email $mailTemplate = null,
+        ?Email $additionalMailTemplate = null,
+        ?string $formTemplate = 'form_div_layout.html.twig',
+        ?OutputWorkflowInterface $outputWorkflow = null
+    ): void {
+
+        $outputWorkflowChannels = [];
 
         if ($mailTemplate !== null) {
             $this->assertInstanceOf(Email::class, $mailTemplate);
+            $outputWorkflowChannels = [
+                [
+                    'type'  => 'email',
+                    'email' => $mailTemplate
+                ]
+            ];
         }
 
-        $sendUserCopy = false;
-        if ($copyMailTemplate !== null) {
-            $sendUserCopy = true;
-            $this->assertInstanceOf(Email::class, $copyMailTemplate);
+        if ($additionalMailTemplate !== null) {
+            $this->assertInstanceOf(Email::class, $additionalMailTemplate);
+            $outputWorkflowChannels[] =
+                [
+                    'type'  => 'email',
+                    'email' => $additionalMailTemplate
+                ];
+        }
+
+        if ($mailTemplate !== null && !$outputWorkflow instanceof OutputWorkflowInterface) {
+            $outputWorkflow = $this->createOutputWorkflow('Test Output Workflow', $form, $outputWorkflowChannels);
         }
 
         $editables = [
-            'formName'             => [
+            'formName'       => [
                 'type'             => 'select',
                 'dataFromEditmode' => $form->getId(),
             ],
-            'formType'             => [
+            'formType'       => [
                 'type'             => 'select',
                 'dataFromEditmode' => $formTemplate,
             ],
-            'formPreset'           => [
+            'formPreset'     => [
                 'type'             => 'select',
                 'dataFromEditmode' => 'custom',
             ],
-            'outputWorkflow'       => [
+            'outputWorkflow' => [
                 'type'             => 'select',
-                'dataFromEditmode' => 'none',
-            ],
-            'userCopy'             => [
-                'type'             => 'checkbox',
-                'dataFromEditmode' => $sendUserCopy,
-            ],
-            'sendMailTemplate'     => [
-                'type'             => 'relation',
-                'dataFromEditmode' => $mailTemplate instanceof Email ? [
-                    'id'      => $mailTemplate->getId(),
-                    'type'    => 'document',
-                    'subtype' => $mailTemplate->getType()
-                ] : [],
-            ],
-            'sendCopyMailTemplate' => [
-                'type'             => 'relation',
-                'dataFromEditmode' => $copyMailTemplate instanceof Email ? [
-                    'id'      => $copyMailTemplate->getId(),
-                    'type'    => 'document',
-                    'subtype' => $copyMailTemplate->getType()
-                ] : [],
+                'dataFromEditmode' => $outputWorkflow instanceof OutputWorkflowInterface ? $outputWorkflow->getId() : null,
             ],
         ];
 
@@ -188,36 +177,25 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
             throw new ModuleException($this, sprintf('area generator error: %s', $e->getMessage()));
         }
 
-        if (VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0')) {
-            $document->setEditables($editables);
-        } else {
-            $document->setElements($editables);
-        }
-
-        if (method_exists($document, 'setMissingRequiredEditable')) {
-            $document->setMissingRequiredEditable(false);
-        }
+        $document->setEditables($editables);
+        $document->setMissingRequiredEditable(false);
 
         try {
             $document->save();
         } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: ' . $e->getMessage()));
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while saving document. message was: %s', $e->getMessage()));
         }
 
-        $this->assertCount(8, VersionHelper::pimcoreVersionIsGreaterOrEqualThan('6.8.0') ? $document->getEditables() : $document->getElements());
+        $this->assertCount(5, $document->getEditables());
 
         \Pimcore::collectGarbage();
         //\Pimcore\Cache\Runtime::set(sprintf('document_%s', $document->getId()), null);
-
     }
 
     /**
-     * @param FormDefinitionInterface $form
-     * @param string                  $fieldName
-     *
-     * @throws \Exception
+     * Actor Function to see if a form attachment field has been stored as pimcore asset
      */
-    public function seeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName)
+    public function seeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName): void
     {
         $assetList = Asset::getList([
             'condition' => sprintf(
@@ -234,12 +212,9 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
     }
 
     /**
-     * @param FormDefinitionInterface $form
-     * @param string                  $fieldName
-     *
-     * @throws \Exception
+     * Actor Function to not see if a form attachment field has been stored as pimcore asset
      */
-    public function cantSeeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName)
+    public function cantSeeZipFileInPimcoreAssetsFromField(FormDefinitionInterface $form, string $fieldName): void
     {
         $assetList = Asset::getList([
             'condition' => sprintf(
@@ -249,16 +224,12 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         ]);
 
         $this->assertEquals(0, count($assetList));
-
     }
 
     /**
-     * @param TestFormBuilder $formBuilder
-     *
-     * @return FormDefinitionInterface
-     * @throws \Exception
+     * API Method to create a form
      */
-    protected function createForm(TestFormBuilder $formBuilder)
+    protected function createForm(TestFormBuilder $formBuilder): FormDefinitionInterface
     {
         $manager = $this->getFormManager();
 
@@ -266,15 +237,102 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
     }
 
     /**
-     * @return FormDefinitionManager
+     * API Method to update a form
      */
-    protected function getFormManager()
+    protected function updateForm(FormDefinitionInterface $form, TestFormBuilder $formBuilder): FormDefinitionInterface
     {
+        $manager = $this->getFormManager();
+
+        return $manager->save($formBuilder->build(), $form->getId());
+    }
+
+    /**
+     * API Method to create an output workflow
+     */
+    protected function createOutputWorkflow(
+        string $name,
+        FormDefinitionInterface $form,
+        array $channelDefinitions,
+        string|array $successMessage = 'Success!',
+    ): OutputWorkflowInterface {
+        $manager = $this->getOutputWorkflowManager();
+
+        $outputWorkflow = $manager->save([
+            'name'           => $name,
+            'formDefinition' => $form,
+        ]);
+
+        foreach ($channelDefinitions as $channelDefinition) {
+
+            $channel = new OutputWorkflowChannel();
+            $channel->setType($channelDefinition['type']);
+            $channel->setOutputWorkflow($outputWorkflow);
+
+            if ($channelDefinition['type'] === 'email') {
+                /** @var Email $email */
+                $email = $channelDefinition['email'];
+                $emailConfiguration = $channelDefinition['configuration'] ?? [];
+                $channel->setConfiguration([
+                    'default' => [
+                        'mailTemplate'           => [
+                            'id'      => $email->getId(),
+                            'path'    => $email->getFullPath(),
+                            'type'    => 'document',
+                            'subtype' => 'email',
+                        ],
+                        'ignoreFields'           => $emailConfiguration['ignoreFields'] ?? null,
+                        'allowAttachments'       => $emailConfiguration['allowAttachments'] ?? true,
+                        'forcePlainText'         => $emailConfiguration['forcePlainText'] ?? false,
+                        'disableDefaultMailBody' => $emailConfiguration['disableDefaultMailBody'] ?? false,
+                        'mailLayoutData'         => $emailConfiguration['mailLayoutData'] ?? null,
+                    ]
+                ]);
+
+            } elseif ($channelDefinition['type'] === 'object') {
+                // @todo!
+            }
+
+            $outputWorkflow->addChannel($channel);
+        }
+
+        if (is_string($successMessage)) {
+            $successManagement = [
+                'type'       => 'successManagement',
+                'identifier' => 'string',
+                'value'      => $successMessage,
+            ];
+        } else {
+            $successManagement = $successMessage;
+        }
+
+        $outputWorkflow->setSuccessManagement($successManagement);
+
+        $manager->saveRawEntity($outputWorkflow);
+
+        return $outputWorkflow;
+    }
+
+    protected function getFormManager(): FormDefinitionManager
+    {
+        $manager = null;
+
         try {
             $manager = $this->getContainer()->get(FormDefinitionManager::class);
         } catch (\Exception $e) {
-            Debug::debug(sprintf('[FORMBUILDER ERROR] error while creating form. message was: ' . $e->getMessage()));
-            return null;
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while loading form manager. message was: %s', $e->getMessage()));
+        }
+
+        return $manager;
+    }
+
+    protected function getOutputWorkflowManager(): OutputWorkflowManager
+    {
+        $manager = null;
+
+        try {
+            $manager = $this->getContainer()->get(OutputWorkflowManager::class);
+        } catch (\Exception $e) {
+            Debug::debug(sprintf('[FORMBUILDER ERROR] error while loading output workflow manager. message was: %s', $e->getMessage()));
         }
 
         return $manager;

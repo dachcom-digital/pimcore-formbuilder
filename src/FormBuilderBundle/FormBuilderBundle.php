@@ -3,6 +3,7 @@
 namespace FormBuilderBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
+use Doctrine\DBAL\Types\Type;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicMultiFileAdapterPass;
@@ -12,6 +13,8 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowChannelPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\RuntimeDataProviderPass;
+use FormBuilderBundle\Doctrine\Type\FormBuilderFieldsType;
+use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
@@ -21,12 +24,27 @@ class FormBuilderBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    const PACKAGE_NAME = 'dachcom-digital/formbuilder';
+    public const PACKAGE_NAME = 'dachcom-digital/formbuilder';
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function build(ContainerBuilder $container)
+    public function boot(): void
+    {
+        $this->addDBALTypes();
+    }
+
+    private function addDBALTypes(): void
+    {
+        if (Type::hasType('form_builder_fields')) {
+            return;
+        }
+
+        Type::addType('form_builder_fields', FormBuilderFieldsType::class);
+
+        /** @var FormBuilderFieldsType $formBuilderFieldsType */
+        $formBuilderFieldsType = Type::getType('form_builder_fields');
+        $formBuilderFieldsType->setFormDefinitionFactory($this->container->get(FormDefinitionFactoryInterface::class));
+    }
+
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -43,18 +61,12 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new DynamicMultiFileAdapterPass());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstaller()
+    public function getInstaller(): Install
     {
         return $this->container->get(Install::class);
     }
 
-    /**
-     * @return string[]
-     */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [
             '/bundles/formbuilder/js/extjs/plugin.js',
@@ -98,7 +110,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/conditional-logic/action/triggerEvent.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/toggleClass.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/toggleAvailability.js',
-            '/bundles/formbuilder/js/extjs/conditional-logic/action/mailBehaviour.js',
+            '/bundles/formbuilder/js/extjs/conditional-logic/action/switchOutputWorkflow.js',
             '/bundles/formbuilder/js/extjs/conditional-logic/action/successMessage.js',
             '/bundles/formbuilder/js/extjs/components/formTypeBuilderComponent.js',
             '/bundles/formbuilder/js/extjs/components/formFieldConstraintComponent.js',
@@ -110,47 +122,32 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/formbuilder/css/admin.css'
         ];
     }
 
-    /**
-     * @return string[]
-     */
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         return [
             '/bundles/formbuilder/js/admin/area.js'
         ];
     }
 
-    /**
-     * @return string[]
-     */
-    public function getEditmodeCssPaths()
+    public function getEditmodeCssPaths(): array
     {
         return [
             '/bundles/formbuilder/css/admin-editmode.css',
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getComposerPackageName(): string
     {
         return self::PACKAGE_NAME;
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     protected function configureDoctrineExtension(ContainerBuilder $container): void
     {
         $container->addCompilerPass(
@@ -162,18 +159,12 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         );
     }
 
-    /**
-     * @return string|null
-     */
-    protected function getNamespaceName()
+    protected function getNamespaceName(): string
     {
         return 'FormBuilderBundle\Model';
     }
 
-    /**
-     * @return string
-     */
-    protected function getNameSpacePath()
+    protected function getNameSpacePath(): string
     {
         return sprintf(
             '%s/Resources/config/doctrine/%s',

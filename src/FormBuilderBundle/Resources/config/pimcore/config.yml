@@ -1,3 +1,7 @@
+doctrine_migrations:
+    migrations_paths:
+        'FormBuilderBundle\Migrations': '@FormBuilderBundle/Migrations'
+
 doctrine:
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
@@ -155,34 +159,14 @@ form_builder:
                             options:
                                 - ['form_builder_toggle_availability_enable', 'enable']
                                 - ['form_builder_toggle_availability_disable', 'disable']
-            mailBehaviour:
-                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\MailBehaviourAction'
-                name: 'form_builder.cl.action.mail_behaviour'
-                icon: 'form_builder_cl_mail_behaviour'
+            switchOutputWorkflow:
+                class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\SwitchOutputWorkflowAction'
+                name: 'form_builder.cl.action.switch_output_workflow'
+                icon: 'form_builder_cl_switch_output_workflow'
                 form:
                     identifier:
-                        type: conditional_select
-                        label: 'form_builder_mail_behaviour_identifier'
-                        config:
-                            options:
-                                - ['form_builder_mail_behaviour_identifier_recipient', 'recipient']
-                                - ['form_builder_mail_behaviour_identifier_mail_template', 'mailTemplate']
-                        conditional_identifier: 'value'
-                        conditional:
-                            recipient:
-                                type: email
-                                label: 'form_builder_mail_behaviour_mail_address'
-                            mailTemplate:
-                                type: localized_href
-                                label: 'form_builder_mail_behaviour_mail_path'
-                                options_transformer: FormBuilderBundle\Transformer\HrefTransformer
-                    mailType:
-                        type: select
-                        label: 'form_builder_mail_behaviour_mail_type'
-                        config:
-                            options:
-                                - ['form_builder_mail_behaviour_mail_type_main', 'main']
-                                - ['form_builder_mail_behaviour_mail_type_copy', 'copy']
+                        type: workflow_select
+                        label: 'form_builder_switch_output_workflow_identifier'
             successMessage:
                 class: 'FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\SuccessMessageAction'
                 name: 'form_builder.cl.action.success_message'

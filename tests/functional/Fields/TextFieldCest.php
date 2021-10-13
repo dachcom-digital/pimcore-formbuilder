@@ -7,9 +7,7 @@ use DachcomBundle\Test\FunctionalTester;
 class TextFieldCest extends AbstractFieldCest
 {
     protected $type = 'text';
-
     protected $name = 'simple_text';
-
     protected $displayName = 'simple_text';
 
     /**

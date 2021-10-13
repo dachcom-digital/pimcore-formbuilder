@@ -1,0 +1,16 @@
+{% extends form_layout %}
+{% block form_builder_form %}
+    {% if form_template is not null %}
+        {% import form_block_template as form_builder_theme_macro %}
+        {% form_theme form form_template %}
+        {{ form_start(form) }}
+            {{ form_builder_theme_macro.form_builder_form_head() }}
+                {% set flashMessages = form_builder_get_flash_messages(form.vars.id) %}
+                {{ form_builder_theme_macro.form_builder_form_message(flashMessages) }}
+                {{ form_widget(form) }}
+            {{ form_builder_theme_macro.form_builder_form_foot() }}
+        {{ form_end(form) }}
+    {% elseif message is defined and form_builder_is_admin_mode is defined and form_builder_is_admin_mode == true %}
+        <div class="formbuilder-alert-danger">{{ 'form builder error: ' ~ message }}</div>
+    {% endif %}
+{% endblock form_builder_form %}

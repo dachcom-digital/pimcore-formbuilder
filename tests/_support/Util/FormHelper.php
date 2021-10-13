@@ -3,29 +3,14 @@
 namespace DachcomBundle\Test\Util;
 
 use Codeception\Util\Debug;
-use FormBuilderBundle\Configuration\Configuration;
 use Pimcore\Db;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class FormHelper
 {
-    const AREA_TEST_NAMESPACE = 'dachcomBundleTest';
+    public const AREA_TEST_NAMESPACE = 'dachcomBundleTest';
 
-    /**
-     * Delete all Forms from db / filesystem
-     */
-    public static function removeAllForms()
+    public static function removeAllForms(): void
     {
-        $formPath = Configuration::STORE_PATH;
-
-        $finder = new Finder();
-        $fileSystem = new Filesystem();
-
-        foreach ($finder->in($formPath)->name('*.yml') as $file) {
-            $fileSystem->remove($file);
-        }
-
         try {
             $db = Db::get();
             $db->exec('SET FOREIGN_KEY_CHECKS = 0;');
@@ -38,13 +23,7 @@ class FormHelper
         }
     }
 
-    /**
-     * @param string $formName
-     * @param bool   $useAjax
-     *
-     * @return TestFormBuilder
-     */
-    public static function generateSimpleForm(string $formName = 'dachcom_test', $useAjax = false)
+    public static function generateSimpleForm(string $formName = 'dachcom_test', bool $useAjax = false): TestFormBuilder
     {
         return (new TestFormBuilder($formName))
             ->setUseAjax($useAjax)

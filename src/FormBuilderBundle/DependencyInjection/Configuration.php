@@ -2,7 +2,8 @@
 
 namespace FormBuilderBundle\DependencyInjection;
 
-use FormBuilderBundle\DynamicMultiFile\Adapter\FineUploadAdapter;
+use FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -10,65 +11,536 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('form_builder');
-
-        $rootNode->append($this->createPersistenceNode());
+        $treeBuilder = new TreeBuilder('form_builder');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
-                ->scalarNode('dynamic_multi_file_adapter')->defaultValue(FineUploadAdapter::class)->end()
+                ->scalarNode('dynamic_multi_file_adapter')->defaultValue(DropZoneAdapter::class)->end()
                 ->variableNode('form_attributes')->end()
-                ->arrayNode('flags')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('use_custom_radio_checkbox')->defaultValue(true)->end()
-                        ->booleanNode('use_honeypot_field')->defaultValue(true)->end()
-                    ->end()
-                ->end()
-                ->arrayNode('spam_protection')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('honeypot')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('field_name')->defaultValue('inputUserName')->end()
-                                ->booleanNode('enable_inline_style')->defaultTrue()->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('recaptcha_v3')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('site_key')->defaultNull()->end()
-                                ->scalarNode('secret_key')->defaultNull()->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('area')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('presets')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('nice_name')->isRequired()->end()
-                                    ->scalarNode('admin_description')->isRequired()->end()
-                                    ->arrayNode('sites')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('scalar')->end()
+            ->end();
+
+        $rootNode->append($this->createPersistenceNode());
+        $rootNode->append($this->buildFlagsNode());
+        $rootNode->append($this->buildSpamProductionNode());
+        $rootNode->append($this->buildAreaNode());
+        $rootNode->append($this->buildFormConfigurationNode());
+        $rootNode->append($this->buildAdminConfigurationNode());
+        $rootNode->append($this->buildBackendBaseFieldTypeGroupsNode());
+        $rootNode->append($this->buildBackendBaseFieldTypeConfigNode());
+        $rootNode->append($this->buildValidationConstraintsNode());
+        $rootNode->append($this->buildContainerTypesNode());
+        $rootNode->append($this->buildConditionalLogicNode());
+        $rootNode->append($this->buildFormTypesNode());
+        $rootNode->append($this->buildEmailConfigurationNode());
+
+        return $treeBuilder;
+    }
+
+    private function buildConditionalLogicNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('conditional_logic');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->children()
+                ->arrayNode('action')
+                ->useAttributeAsKey('id')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('class')->defaultValue(null)->end()
+                            ->scalarNode('name')->isRequired()->end()
+                            ->scalarNode('icon')->isRequired()->end()
+                            ->arrayNode('form')
+                                ->useAttributeAsKey('name')
+                                ->arrayPrototype()
+                                    ->validate()
+                                        ->ifTrue(function ($v) {
+                                            return !empty($v['conditional']) && empty($v['conditional_identifier']);
+                                        })
+                                        ->thenInvalid('conditional form fields requires a valid conditional_identifier.')
+                                    ->end()
+                                    ->validate()
+                                        ->ifTrue(function ($v) {
+                                            return !empty($v['conditional']) && $v['type'] !== 'conditional_select';
+                                        })
+                                        ->thenInvalid('conditional form is only allowed for type "conditional_select".')
+                                    ->end()
+                                    ->children()
+                                        ->scalarNode('type')->isRequired()->end()
+                                        ->scalarNode('label')->isRequired()->end()
+                                        ->variableNode('config')->end()
+                                        ->scalarNode('options_transformer')->defaultValue(null)->end()
+                                        ->scalarNode('conditional_identifier')
+                                            ->validate()
+                                                ->ifTrue(function ($v) {
+                                                    return empty($v);
+                                                })
+                                                ->thenUnset()
+                                            ->end()
+                                        ->end()
+                                        ->arrayNode('conditional')
+                                            ->useAttributeAsKey('name')
+                                            ->arrayPrototype()
+                                                ->children()
+                                                    ->scalarNode('type')->isRequired()->end()
+                                                    ->scalarNode('label')->isRequired()->end()
+                                                    ->variableNode('config')->end()
+                                                    ->scalarNode('options_transformer')->defaultValue(null)->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('form')
+                ->arrayNode('condition')
+                ->useAttributeAsKey('id')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('class')->defaultValue(null)->end()
+                            ->scalarNode('name')->isRequired()->end()
+                            ->scalarNode('icon')->isRequired()->end()
+                            ->arrayNode('form')
+                                ->useAttributeAsKey('name')
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('type')->isRequired()->end()
+                                        ->scalarNode('label')->isRequired()->end()
+                                        ->variableNode('config')->end()
+                                        ->scalarNode('options_transformer')->defaultValue(null)->end()
+                                        ->scalarNode('conditional_identifier')
+                                            ->validate()
+                                                ->ifTrue(function ($v) {
+                                                    return empty($v);
+                                                })
+                                                ->thenUnset()
+                                            ->end()
+                                        ->end()
+                                        ->arrayNode('conditional')
+                                            ->useAttributeAsKey('name')
+                                            ->arrayPrototype()
+                                                ->children()
+                                                    ->scalarNode('type')->isRequired()->end()
+                                                    ->scalarNode('label')->isRequired()->end()
+                                                    ->variableNode('config')->end()
+                                                    ->scalarNode('options_transformer')->defaultValue(null)->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildFormTypesNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('types');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->useAttributeAsKey('name')
+            ->arrayPrototype()
+                ->children()
+                    ->scalarNode('output_transformer')->cannotBeEmpty()->defaultValue('fallback_transformer')->end()
+                    ->scalarNode('class')->cannotBeEmpty()->end()
+                        ->arrayNode('configurations')
+                        ->scalarPrototype()->cannotBeEmpty()->end()
+                    ->end()
+                    ->arrayNode('backend')
+                        ->children()
+                            ->scalarNode('form_type_group')->isRequired()->end()
+                            ->scalarNode('label')->isRequired()->end()
+                            ->scalarNode('icon_class')->end()
+                            ->arrayNode('output_workflow')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->arrayNode('object')
+                                        ->addDefaultsIfNotSet()
+                                        ->children()
+                                            ->arrayNode('allowed_class_types')
+                                                ->scalarPrototype()->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('constraints')
+                                ->beforeNormalization()
+                                    ->ifTrue(function ($value) {
+                                        // legacy
+                                        return is_bool($value);
+                                    })
+                                    ->then(function ($value) {
+                                        return $value === true
+                                            ? ['enabled' => ['all']]
+                                            : ['disabled' => ['all']];
+                                    })
+                                ->end()
+                                ->validate()
+                                    ->ifTrue(function ($value) {
+                                        return count($value['enabled']) > 0 && count($value['disabled']) > 0;
+                                    })
+                                    ->thenInvalid('%s is invalid, only one node can be defined ("enabled" or "disabled").')
+                                ->end()
+                                ->validate()
+                                    ->always(function ($value) {
+                                        if (isset($value['enabled']) && in_array('all', $value['enabled'], true)) {
+                                            return ['disabled' => []];
+                                        }
+
+                                        if (isset($value['disabled']) && in_array('all', $value['disabled'], true)) {
+                                            return ['enabled' => []];
+                                        }
+
+                                        if (isset($value['enabled']) && !empty($value['enabled'])) {
+                                            return ['enabled' => $value['enabled']];
+                                        }
+
+                                        if (isset($value['disabled']) && !empty($value['disabled'])) {
+                                            return ['disabled' => $value['disabled']];
+                                        }
+
+                                        return $value;
+                                    })
+                                ->end()
+                                ->children()
+                                    ->arrayNode('enabled')
+                                        ->scalarPrototype()->end()
+                                    ->end()
+                                    ->arrayNode('disabled')
+                                        ->scalarPrototype()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('tabs')
+                                ->useAttributeAsKey('name')
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('label')->isRequired()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('display_groups')
+                                ->useAttributeAsKey('name')
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('tab_id')->isRequired()->end()
+                                        ->scalarNode('label')->isRequired()->end()
+                                        ->booleanNode('collapsed')->defaultFalse()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('fields')
+                                ->useAttributeAsKey('name')
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('display_group_id')
+                                            ->isRequired()
+                                            ->validate()
+                                                ->ifInArray(['display_name', 'type', 'template', 'order', 'options'])
+                                                ->thenInvalid('%s is a reserved field type id.')
+                                            ->end()
+                                        ->end()
+                                        ->scalarNode('type')->isRequired()->end()
+                                        ->scalarNode('label')->isRequired()->end()
+                                        ->scalarNode('options_transformer')->defaultValue(null)->end()
+                                        ->variableNode('config')->end()
+                                    ->end()
+                                    ->canBeUnset()
+                                    ->canBeDisabled()
+                                    ->treatNullLike(['enabled' => false])
+                                    ->beforeNormalization()
+                                        ->ifNull()
+                                        ->then(function ($v) {
+                                            return ['display_group_id' => null, 'type' => null, 'label' => null, 'enabled' => false];
+                                        })
+                                    ->end()
+                                    ->validate()
+                                        ->ifTrue(function ($v) {
+                                            return $v['enabled'] === false;
+                                        })
+                                        ->then(function ($v) {
+                                            return false;
+                                        })
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('dynamic_fields')
+                                ->useAttributeAsKey('name')
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('source')->isRequired()->end()
+                                        ->scalarNode('options_transformer')->isRequired()->end()
+                                        ->variableNode('config')->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildEmailConfigurationNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('email');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('html_2_text_options')
+                    ->children()
+                        ->scalarNode('header_style')->cannotBeEmpty()->defaultValue('setext')->end()
+                        ->booleanNode('suppress_errors')->defaultValue(true)->end()
+                        ->booleanNode('strip_tags')->defaultValue(false)->end()
+                        ->scalarNode('remove_nodes')->cannotBeEmpty()->defaultValue('')->end()
+                        ->booleanNode('hard_break')->defaultValue(false)->end()
+                        ->scalarNode('list_item_style')->cannotBeEmpty()->defaultValue('-')->end()
+                        ->booleanNode('preserve_comments')->defaultValue(false)->end()
+                        ->booleanNode('use_autolinks')->defaultValue(false)->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildBackendBaseFieldTypeConfigNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('backend_base_field_type_config');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->children()
+                ->arrayNode('tabs')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('label')->isRequired()->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('display_groups')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('tab_id')->isRequired()->end()
+                            ->scalarNode('label')->isRequired()->end()
+                            ->booleanNode('collapsed')->defaultFalse()->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('fields')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('display_group_id')
+                                ->isRequired()
+                                ->validate()
+                                    ->ifInArray(['display_name', 'type', 'template', 'order', 'options'])
+                                    ->thenInvalid('%s is a reserved field type id.')
+                                ->end()
+                            ->end()
+                            ->scalarNode('type')->isRequired()->end()
+                            ->scalarNode('label')->isRequired()->end()
+                            ->scalarNode('options_transformer')->defaultValue(null)->end()
+                            ->variableNode('config')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildContainerTypesNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('container_types');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->useAttributeAsKey('name')
+            ->arrayPrototype()
+                ->children()
+                    ->scalarNode('class')->end()
+                    ->scalarNode('label')->end()
+                    ->scalarNode('icon_class')->end()
+                    ->arrayNode('output_workflow')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('object')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->arrayNode('allowed_class_types')
+                                        ->scalarPrototype()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('configuration')
+                        ->arrayPrototype()
+                            ->children()
+                                ->scalarNode('name')->isRequired()->end()
+                                ->scalarNode('type')->isRequired()->end()
+                                ->scalarNode('label')->isRequired()->end()
+                                ->scalarNode('options_transformer')->defaultValue(null)->end()
+                                ->variableNode('config')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->canBeUnset()
+                ->canBeDisabled()
+                ->treatNullLike(['enabled' => false])
+                ->validate()
+                    ->ifTrue(function ($v) {
+                        return $v['enabled'] === false;
+                    })
+                    ->thenUnset()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildValidationConstraintsNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('validation_constraints');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->useAttributeAsKey('name')
+            ->arrayPrototype()
+                ->children()
+                    ->scalarNode('class')->end()
+                    ->scalarNode('label')->end()
+                    ->scalarNode('icon_class')->end()
+                ->end()
+                ->canBeUnset()
+                ->canBeDisabled()
+                ->treatNullLike(['enabled' => false])
+                ->validate()
+                    ->ifTrue(function ($v) {
+                        return $v['enabled'] === false;
+                    })
+                    ->thenUnset()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildBackendBaseFieldTypeGroupsNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('backend_base_field_type_groups');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->useAttributeAsKey('name')
+            ->arrayPrototype()
+                ->children()
+                    ->scalarNode('label')->end()
+                    ->scalarNode('icon_class')->end()
+                ->end()
+                ->canBeUnset()
+                ->canBeDisabled()
+                ->treatNullLike(['enabled' => false])
+                ->validate()
+                    ->ifTrue(function ($v) {
+                        return $v['enabled'] === false;
+                    })
+                    ->thenUnset()
+                ->end()
+            ->end()
+            ;
+
+        return $rootNode;
+    }
+
+    private function buildAdminConfigurationNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('admin');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('active_elements')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('fields')
+                            ->scalarPrototype()->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('inactive_elements')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('fields')
+                            ->scalarPrototype()->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildFormConfigurationNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('form');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('templates')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('label')->isRequired()->end()
+                            ->scalarNode('value')->isRequired()->end()
+                            ->booleanNode('default')->isRequired()->end()
+                        ->end()
+                        ->canBeUnset()
+                        ->canBeDisabled()
+                        ->treatNullLike(['enabled' => false])
+                        ->validate()
+                            ->ifTrue(function ($v) {
+                                return $v['enabled'] === false;
+                            })
+                            ->thenUnset()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('field')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('templates')
                             ->useAttributeAsKey('name')
-                            ->prototype('array')
+                            ->arrayPrototype()
                                 ->children()
                                     ->scalarNode('label')->isRequired()->end()
                                     ->scalarNode('value')->isRequired()->end()
@@ -85,412 +557,88 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
-                        ->arrayNode('field')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('templates')
-                                    ->useAttributeAsKey('name')
-                                    ->prototype('array')
-                                        ->children()
-                                            ->scalarNode('label')->isRequired()->end()
-                                            ->scalarNode('value')->isRequired()->end()
-                                            ->booleanNode('default')->isRequired()->end()
-                                        ->end()
-                                        ->canBeUnset()
-                                        ->canBeDisabled()
-                                        ->treatNullLike(['enabled' => false])
-                                        ->validate()
-                                            ->ifTrue(function ($v) {
-                                                return $v['enabled'] === false;
-                                            })
-                                            ->thenUnset()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
                     ->end()
                 ->end()
-                ->arrayNode('admin')
-                    ->children()
-                        ->arrayNode('active_elements')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('fields')
-                                ->prototype('scalar')->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('inactive_elements')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('fields')
-                                ->prototype('scalar')->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('backend_base_field_type_groups')
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('label')->end()
-                            ->scalarNode('icon_class')->end()
-                        ->end()
-                        ->canBeUnset()
-                        ->canBeDisabled()
-                        ->treatNullLike(['enabled' => false])
-                        ->validate()
-                            ->ifTrue(function ($v) {
-                                return $v['enabled'] === false;
-                            })
-                            ->thenUnset()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('validation_constraints')
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('class')->end()
-                            ->scalarNode('label')->end()
-                            ->scalarNode('icon_class')->end()
-                        ->end()
-                        ->canBeUnset()
-                        ->canBeDisabled()
-                        ->treatNullLike(['enabled' => false])
-                        ->validate()
-                            ->ifTrue(function ($v) {
-                                return $v['enabled'] === false;
-                            })
-                            ->thenUnset()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('container_types')
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('class')->end()
-                            ->scalarNode('label')->end()
-                            ->scalarNode('icon_class')->end()
-                            ->arrayNode('output_workflow')
-                                ->addDefaultsIfNotSet()
-                                ->children()
-                                    ->arrayNode('object')
-                                        ->addDefaultsIfNotSet()
-                                        ->children()
-                                            ->arrayNode('allowed_class_types')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                            ->arrayNode('configuration')
-                                ->prototype('array')
-                                    ->children()
-                                        ->scalarNode('name')->isRequired()->end()
-                                        ->scalarNode('type')->isRequired()->end()
-                                        ->scalarNode('label')->isRequired()->end()
-                                        ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                        ->variableNode('config')->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->canBeUnset()
-                        ->canBeDisabled()
-                        ->treatNullLike(['enabled' => false])
-                        ->validate()
-                            ->ifTrue(function ($v) {
-                                return $v['enabled'] === false;
-                            })
-                            ->thenUnset()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('backend_base_field_type_config')
-                    ->children()
-                        ->arrayNode('tabs')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('label')->isRequired()->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('display_groups')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('tab_id')->isRequired()->end()
-                                    ->scalarNode('label')->isRequired()->end()
-                                    ->booleanNode('collapsed')->defaultFalse()->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('fields')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('display_group_id')
-                                        ->isRequired()
-                                        ->validate()
-                                            ->ifInArray(['display_name', 'type', 'template', 'order', 'options'])
-                                            ->thenInvalid('%s is a reserved field type id.')
-                                        ->end()
-                                    ->end()
-                                    ->scalarNode('type')->isRequired()->end()
-                                    ->scalarNode('label')->isRequired()->end()
-                                    ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                    ->variableNode('config')->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('types')
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('output_transformer')->cannotBeEmpty()->defaultValue('fallback_transformer')->end()
-                            ->scalarNode('class')->cannotBeEmpty()->end()
-                                ->arrayNode('configurations')
-                                ->scalarPrototype()->cannotBeEmpty()->end()
-                            ->end()
-                            ->arrayNode('backend')
-                                ->children()
-                                    ->scalarNode('form_type_group')->isRequired()->end()
-                                    ->scalarNode('label')->isRequired()->end()
-                                    ->scalarNode('icon_class')->end()
-                                    ->arrayNode('output_workflow')
-                                        ->addDefaultsIfNotSet()
-                                        ->children()
-                                            ->arrayNode('object')
-                                                ->addDefaultsIfNotSet()
-                                                ->children()
-                                                    ->arrayNode('allowed_class_types')
-                                                        ->prototype('scalar')->end()
-                                                    ->end()
-                                                ->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('constraints')
-                                        ->beforeNormalization()
-                                            ->ifTrue(function ($value) {
-                                                // legacy
-                                                return is_bool($value);
-                                            })
-                                            ->then(function ($value) {
-                                                return $value === true
-                                                    ? ['enabled' => ['all']]
-                                                    : ['disabled' => ['all']];
-                                            })
-                                        ->end()
-                                        ->validate()
-                                            ->ifTrue(function ($value) {
-                                                return count($value['enabled']) > 0 && count($value['disabled']) > 0;
-                                            })
-                                            ->thenInvalid('%s is invalid, only one node can be defined ("enabled" or "disabled").')
-                                        ->end()
-                                        ->validate()
-                                            ->always(function ($value) {
-                                                if (isset($value['enabled']) && in_array('all', $value['enabled'])) {
-                                                    return ['disabled' => []];
-                                                } elseif (isset($value['disabled']) && in_array('all', $value['disabled'])) {
-                                                    return ['enabled' => []];
-                                                } elseif (isset($value['enabled']) && !empty($value['enabled'])) {
-                                                    return ['enabled' => $value['enabled']];
-                                                } elseif (isset($value['disabled']) && !empty($value['disabled'])) {
-                                                    return ['disabled' => $value['disabled']];
-                                                }
+            ->end();
 
-                                                return $value;
-                                            })
-                                        ->end()
-                                        ->children()
-                                            ->arrayNode('enabled')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                            ->arrayNode('disabled')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('tabs')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('array')
-                                            ->children()
-                                                ->scalarNode('label')->isRequired()->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('display_groups')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('array')
-                                            ->children()
-                                                ->scalarNode('tab_id')->isRequired()->end()
-                                                ->scalarNode('label')->isRequired()->end()
-                                                ->booleanNode('collapsed')->defaultFalse()->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('fields')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('array')
-                                            ->children()
-                                                ->scalarNode('display_group_id')
-                                                    ->isRequired()
-                                                    ->validate()
-                                                        ->ifInArray(['display_name', 'type', 'template', 'order', 'options'])
-                                                        ->thenInvalid('%s is a reserved field type id.')
-                                                    ->end()
-                                                ->end()
-                                                ->scalarNode('type')->isRequired()->end()
-                                                ->scalarNode('label')->isRequired()->end()
-                                                ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                                ->variableNode('config')->end()
-                                            ->end()
-                                            ->canBeUnset()
-                                            ->canBeDisabled()
-                                            ->treatNullLike(['enabled' => false])
-                                            ->beforeNormalization()
-                                                ->ifNull()
-                                                ->then(function ($v) {
-                                                    $v = ['display_group_id' => null, 'type' => null, 'label' => null, 'enabled' => false];
+        return $rootNode;
+    }
 
-                                                    return $v;
-                                                })
-                                            ->end()
-                                            ->validate()
-                                                ->ifTrue(function ($v) {
-                                                    return $v['enabled'] === false;
-                                                })
-                                                ->then(function ($v) {
-                                                    return false;
-                                                })
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('dynamic_fields')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('array')
-                                            ->children()
-                                                ->scalarNode('source')->isRequired()->end()
-                                                ->scalarNode('options_transformer')->isRequired()->end()
-                                                ->variableNode('config')->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('conditional_logic')
-                    ->children()
-                        ->arrayNode('action')
-                        ->useAttributeAsKey('id')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('class')->defaultValue(null)->end()
-                                    ->scalarNode('name')->isRequired()->end()
-                                    ->scalarNode('icon')->isRequired()->end()
-                                    ->arrayNode('form')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('array')
-                                            ->validate()
-                                                ->ifTrue(function ($v) {
-                                                    return !empty($v['conditional']) && empty($v['conditional_identifier']);
-                                                })
-                                                ->thenInvalid('conditional form fields requires a valid conditional_identifier.')
-                                            ->end()
-                                            ->validate()
-                                                ->ifTrue(function ($v) {
-                                                    return !empty($v['conditional']) && $v['type'] !== 'conditional_select';
-                                                })
-                                                ->thenInvalid('conditional form is only allowed for type "conditional_select".')
-                                            ->end()
-                                            ->children()
-                                                ->scalarNode('type')->isRequired()->end()
-                                                ->scalarNode('label')->isRequired()->end()
-                                                ->variableNode('config')->end()
-                                                ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                                ->scalarNode('conditional_identifier')
-                                                    ->validate()
-                                                        ->ifEmpty()
-                                                        ->thenUnset()
-                                                    ->end()
-                                                ->end()
-                                                ->arrayNode('conditional')
-                                                    ->useAttributeAsKey('name')
-                                                    ->prototype('array')
-                                                        ->children()
-                                                            ->scalarNode('type')->isRequired()->end()
-                                                            ->scalarNode('label')->isRequired()->end()
-                                                            ->variableNode('config')->end()
-                                                            ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                                        ->end()
-                                                    ->end()
-                                                ->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('condition')
-                        ->useAttributeAsKey('id')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('class')->defaultValue(null)->end()
-                                    ->scalarNode('name')->isRequired()->end()
-                                    ->scalarNode('icon')->isRequired()->end()
-                                    ->arrayNode('form')
-                                        ->useAttributeAsKey('name')
-                                        ->prototype('array')
-                                            ->children()
-                                                ->scalarNode('type')->isRequired()->end()
-                                                ->scalarNode('label')->isRequired()->end()
-                                                ->variableNode('config')->end()
-                                                ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                                ->scalarNode('conditional_identifier')
-                                                    ->validate()
-                                                        ->ifEmpty()
-                                                        ->thenUnset()
-                                                    ->end()
-                                                ->end()
-                                                ->arrayNode('conditional')
-                                                    ->useAttributeAsKey('name')
-                                                    ->prototype('array')
-                                                        ->children()
-                                                            ->scalarNode('type')->isRequired()->end()
-                                                            ->scalarNode('label')->isRequired()->end()
-                                                            ->variableNode('config')->end()
-                                                            ->scalarNode('options_transformer')->defaultValue(null)->end()
-                                                        ->end()
-                                                    ->end()
-                                                ->end()
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
+    private function buildAreaNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('area');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('presets')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('nice_name')->isRequired()->end()
+                            ->scalarNode('admin_description')->isRequired()->end()
+                            ->arrayNode('sites')
+                                ->useAttributeAsKey('name')
+                                ->scalarPrototype()->end()
                             ->end()
                         ->end()
                     ->end()
                 ->end()
             ->end();
 
-        return $treeBuilder;
+        return $rootNode;
     }
 
-    private function createPersistenceNode()
+    private function buildSpamProductionNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('spam_protection');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('honeypot')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('field_name')->defaultValue('inputUserName')->end()
+                        ->booleanNode('enable_inline_style')->defaultTrue()->end()
+                    ->end()
+                ->end()
+                ->arrayNode('recaptcha_v3')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('site_key')->defaultNull()->end()
+                        ->scalarNode('secret_key')->defaultNull()->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildFlagsNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('flags');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('use_custom_radio_checkbox')->defaultValue(true)->end()
+                ->booleanNode('use_honeypot_field')->defaultValue(true)->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function createPersistenceNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('persistence');
-        $node = $treeBuilder->root('persistence');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()

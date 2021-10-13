@@ -8,57 +8,27 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInt
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
+use Pimcore\Translation\Translator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class Constraints implements ModuleInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected Translator $translator;
+    protected DataFactory $dataFactory;
+    protected FormFieldDefinitionInterface $field;
+    protected array $formData;
+    protected array $availableConstraints;
+    protected array $appliedConditions;
 
-    /**
-     * @var DataFactory
-     */
-    protected $dataFactory;
-
-    /**
-     * @var array
-     */
-    protected $formData;
-
-    /**
-     * @var FormFieldDefinitionInterface
-     */
-    protected $field;
-
-    /**
-     * @var array
-     */
-    protected $availableConstraints;
-
-    /**
-     * @var array
-     */
-    protected $appliedConditions;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param DataFactory         $dataFactory
-     */
     public function __construct(
-        TranslatorInterface $translator,
+        Translator $translator,
         DataFactory $dataFactory
     ) {
         $this->translator = $translator;
         $this->dataFactory = $dataFactory;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'formData'             => [],
@@ -75,11 +45,9 @@ class Constraints implements ModuleInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return DataInterface
+     * {@inheritDoc}
      */
-    public function apply($options)
+    public function apply(array $options): DataInterface
     {
         $this->formData = $options['formData'];
         $this->field = $options['field'];
@@ -93,19 +61,20 @@ class Constraints implements ModuleInterface
         $completeConstraintData = $this->appendConstraintsData($validConstraints);
 
         $returnContainer = $this->dataFactory->generate(ConstraintsData::class);
+
+        if(!$returnContainer instanceof DataInterface) {
+            throw new \Exception('Could not create Constraints container');
+        }
+
         $returnContainer->setData($completeConstraintData);
 
         return $returnContainer;
     }
 
     /**
-     * Constraints from current conditional logic.
-     *
-     * @param array $defaultFieldConstraints
-     *
-     * @return array
+     * Constraints from current conditional logic
      */
-    private function checkConditionalLogicConstraints($defaultFieldConstraints)
+    private function checkConditionalLogicConstraints(array $defaultFieldConstraints): array
     {
         if (empty($this->appliedConditions)) {
             return $defaultFieldConstraints;
@@ -137,18 +106,13 @@ class Constraints implements ModuleInterface
             }
         }
 
-        $tempArr = array_unique(array_column($defaultFieldConstraints, 'type'));
-        array_intersect_key($defaultFieldConstraints, $tempArr);
+        //$tempArr = array_unique(array_column($defaultFieldConstraints, 'type'));
+        //array_intersect_key($defaultFieldConstraints, $tempArr);
 
         return $defaultFieldConstraints;
     }
 
-    /**
-     * @param array $constraints
-     *
-     * @return array
-     */
-    private function appendConstraintsData($constraints)
+    private function appendConstraintsData(array $constraints): array
     {
         $constraintData = [];
         foreach ($constraints as $constraint) {
@@ -163,7 +127,7 @@ class Constraints implements ModuleInterface
 
             //translate custom message.
             if (isset($constraintConfig['message']) && !empty($constraintConfig['message'])) {
-                $configKey = array_search('message', array_column($constraintInfo['config'], 'name'));
+                $configKey = array_search('message', array_column($constraintInfo['config'], 'name'), true);
                 if ($configKey !== false) {
                     $defaultMessage = $constraintInfo['config'][$configKey]['defaultValue'];
                     if (!empty($defaultMessage) && !empty($constraintConfig['message']) && $defaultMessage !== $constraintConfig['message']) {

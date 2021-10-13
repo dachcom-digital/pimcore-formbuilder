@@ -7,7 +7,7 @@ It's possible to add some custom fields (we call them dynamic fields) to every f
 1. Register a Listener:
 ```yaml
 services:
-    AppBundle\EventListener\FormListener:
+    App\EventListener\FormListener:
         autowire: true
         tags:
             - { name: kernel.event_subscriber }
@@ -21,7 +21,7 @@ services:
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use FormBuilderBundle\Event\Form\PreSetDataEvent;
 use FormBuilderBundle\FormBuilderEvents;

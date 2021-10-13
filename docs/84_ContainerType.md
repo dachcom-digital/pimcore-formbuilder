@@ -2,7 +2,7 @@
 ![](http://g.recordit.co/DVeoPw7zYh.gif)
 
 The Container Type allows you to create field collection. 
-There is also a [jQuery Repeater Extension](./91_Javascript.md#repeater-plugin) to create repeatable fields in frontend.
+There is also a [jQuery Repeater Extension](./91_Javascript.md) to create repeatable fields in frontend.
 
 ## Repeater
 Create repeatable field collections. There are several options to configure:

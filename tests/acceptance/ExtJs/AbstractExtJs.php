@@ -49,11 +49,6 @@ abstract class AbstractExtJs
         // close left pimcore tree
         $I->click('.pimcore_main_accordion + .x-splitter > div');
 
-        // hide symfony toolbar
-        if ($this->env === 'local') {
-            //$I->click('a.hide-button');
-        }
-
         // wait for pimcore settings => click
         $I->waitForElement('li#pimcore_menu_settings', 10);
         $I->click('li#pimcore_menu_settings');
@@ -166,7 +161,7 @@ abstract class AbstractExtJs
         $I->click('Conditions', sprintf('#%s', $sectionId));
         $I->wait(0.2);
 
-        $activePanelToolbarSelector = sprintf('#%s .x-panel:not(.x-hidden-offsets) > .x-toolbar-default', $sectionId);
+        $activePanelToolbarSelector = sprintf('#%s .x-panel:not(.x-hidden-offsets) > div > .x-toolbar-default', $sectionId);
         $activePanelPanelSelector = sprintf('%s + .x-panel-body', $activePanelToolbarSelector);
 
         $I->click(sprintf('%s .pimcore_icon_add', $activePanelToolbarSelector));
@@ -183,12 +178,12 @@ abstract class AbstractExtJs
         // POPULATE CONDITION
 
         // field
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.fields"]', $id, $conditionBlockIndex), 145, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.fields"]', $id, $conditionBlockIndex), 80, 10);
         $I->waitForText($fieldsToSelect[0], 10, 'ul.x-list-plain[aria-hidden="false"]');
         $I->clickWithLeftButton(sprintf('//ul[@aria-hidden="false"]//li[text()="%s"]', $fieldsToSelect[0]));
 
         // comparator
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.comparator"]', $id, $conditionBlockIndex), 145, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.condition.%d.comparator"]', $id, $conditionBlockIndex), 80, 10);
         $I->clickWithLeftButton('//ul[@aria-hidden="false"]//li[text()="Contains"]');
 
         // value
@@ -215,7 +210,7 @@ abstract class AbstractExtJs
         $I->click('Actions');
         $I->wait(0.2);
 
-        $activePanelToolbarSelector = sprintf('#%s .x-panel:not(.x-hidden-offsets) > .x-toolbar-default', $sectionId);
+        $activePanelToolbarSelector = sprintf('#%s .x-panel:not(.x-hidden-offsets) > div > .x-toolbar-default', $sectionId);
         $activePanelPanelSelector = sprintf('%s + .x-panel-body', $activePanelToolbarSelector);
 
         $I->click(sprintf('%s .pimcore_icon_add', $activePanelToolbarSelector));
@@ -232,12 +227,12 @@ abstract class AbstractExtJs
         // POPULATE ACTION
 
         // field
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.fields"]', $id, $actionBlockIndex), 230, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.fields"]', $id, $actionBlockIndex), 120, 10);
         $I->waitForText($fieldsToSelect[0], 10, 'ul.x-list-plain[aria-hidden="false"]');
         $I->clickWithLeftButton(sprintf('//ul[@aria-hidden="false"]//li[text()="%s"]', $fieldsToSelect[0]));
 
         // state
-        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.state"]', $id, $actionBlockIndex), 230, 10);
+        $I->clickWithLeftButton(sprintf('input[name="cl.%d.action.%d.state"]', $id, $actionBlockIndex), 120, 10);
         $I->clickWithLeftButton('//ul[@aria-hidden="false"]//li[text()="Hide"]');
 
         return ['selector' => $id, 'index' => $actionBlockIndex];
@@ -252,7 +247,7 @@ abstract class AbstractExtJs
     protected function scrollConfigurationPanel(AcceptanceTester $I, $formId, $scrollTop = 500)
     {
         // scroll to field
-        $id = $I->grabAttributeFrom(sprintf('%s > .x-panel-body', $this->getFormConfigurationPanelSelector($formId)), 'id');
+        $id = $I->grabAttributeFrom(sprintf('%s > div > .x-panel-body', $this->getFormConfigurationPanelSelector($formId)), 'id');
         $I->executeJS(sprintf('document.getElementById("%s").scrollTop = %d', $id, $scrollTop));
     }
 

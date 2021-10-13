@@ -21,32 +21,25 @@
     "autoload-dev": {
         "psr-4": {
             "": "src/"
-        },
-        "classmap": [
-            "app/TestKernel.php"
-        ]
+        }
     },
     "extra": {
         "pimcore": {
             "bundles": [
                 "FormBuilderBundle\\FormBuilderBundle"
             ]
-        },
-        "branch-alias": {
-            "dev-master": "4.x-dev"
         }
     },
     "require": {
-        "pimcore/pimcore": "^6.0",
+        "pimcore/pimcore": "^10.1",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {
-        "codeception/codeception": "~2.4.0",
+        "codeception/codeception": "^4.1",
+        "codeception/module-webdriver": "^1.4",
+        "codeception/module-symfony": "^1.6",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
-        "symplify/easy-coding-standard": "^5.4"
-    },
-    "conflict": {
-        "symfony/monolog-bundle": "3.6.0"
+        "symplify/easy-coding-standard": "^9.0"
     }
 }

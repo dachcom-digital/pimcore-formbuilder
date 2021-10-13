@@ -10,7 +10,7 @@ FormBuilder itself requires the runtime data provider if you're using dynamic ob
 
 ```yaml
 services:
-    AppBundle\RuntimeData\Provider\MyRuntimeData:
+    App\RuntimeData\Provider\MyRuntimeData:
         autowire: true
         tags:
             - { name: form_builder.runtime_data_provider}
@@ -21,7 +21,7 @@ services:
 ```php
 <?php
 
-namespace AppBundle\RuntimeData\Provider;
+namespace App\RuntimeData\Provider;
 
 use FormBuilderBundle\Form\RuntimeData\RuntimeDataProviderInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;

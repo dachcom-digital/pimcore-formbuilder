@@ -6,39 +6,21 @@ use Pimcore\Model\Element\Service;
 
 class HrefTransformer implements OptionsTransformerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function transform($optionValue, $optionConfig = null)
+    public function transform(mixed $values, $optionConfig = null): array
     {
         $transformedValues = [];
-        foreach ($optionValue as $locale => $value) {
+        foreach ($values as $locale => $value) {
             $transformedValues[$locale] = [
-                'id'   => isset($value['id']) ? $value['id'] : null,
-                'type' => isset($value['type']) ? $value['type'] : null,
+                'id'   => $value['id'] ?? null,
+                'type' => $value['type'] ?? null,
             ];
         }
 
         return $transformedValues;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function reverseTransform($optionValue, $optionConfig = null)
+    public function reverseTransform(mixed $values, $optionConfig = null): array
     {
-        $values = [];
-        // legacy
-        if (is_string($optionValue)) {
-            $websiteLocales = \Pimcore\Tool::getValidLanguages();
-            foreach ($websiteLocales as $locale) {
-                // we don't now the type here: since we only had documents at this point: guess it's a document!
-                $values[$locale] = ['id' => $optionValue, 'type' => 'document'];
-            }
-        } else {
-            $values = $optionValue;
-        }
-
         $optionValues = [];
         foreach ($values as $locale => $value) {
             $optionValues[$locale] = [];

@@ -12,6 +12,12 @@ services:
             - { name: form_builder.dynamic_choice_builder, label: 'Advanced Test Selector' }
 
 form_builder:
+
+    email:
+        html_2_text_options:
+            strip_tags: true
+            hard_break: false
+
     form:
         field:
             templates:

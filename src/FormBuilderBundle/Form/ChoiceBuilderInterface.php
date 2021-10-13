@@ -6,13 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 interface ChoiceBuilderInterface
 {
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    public function setFormBuilder(FormBuilderInterface $builder);
+    public function setFormBuilder(FormBuilderInterface $builder): void;
 
-    /**
-     * @return mixed
-     */
-    public function getList();
+    public function getList(): mixed;
 }

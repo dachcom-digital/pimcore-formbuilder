@@ -8,43 +8,22 @@ use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\OutputWorkflow\FormSubmissionFinisherInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequestListener implements EventSubscriberInterface
 {
-    /**
-     * @var FrontendFormBuilder
-     */
-    protected $frontendFormBuilder;
+    protected FrontendFormBuilder $frontendFormBuilder;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected FormSubmissionFinisherInterface $formSubmissionFinisher;
+    protected FormDefinitionManager $formDefinitionManager;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var FormSubmissionFinisherInterface
-     */
-    protected $formSubmissionFinisher;
-
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
-
-    /**
-     * @param FrontendFormBuilder             $frontendFormBuilder
-     * @param EventDispatcherInterface        $eventDispatcher
-     * @param FormSubmissionFinisherInterface $formSubmissionFinisher
-     * @param FormDefinitionManager           $formDefinitionManager
-     */
     public function __construct(
         FrontendFormBuilder $frontendFormBuilder,
         EventDispatcherInterface $eventDispatcher,
@@ -57,22 +36,16 @@ class RequestListener implements EventSubscriberInterface
         $this->formDefinitionManager = $formDefinitionManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest'],
         ];
     }
 
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -108,11 +81,7 @@ class RequestListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param GetResponseEvent $event
-     * @param FormInterface    $form
-     */
-    protected function doneWithError(GetResponseEvent $event, FormInterface $form)
+    protected function doneWithError(RequestEvent $event, FormInterface $form): void
     {
         $request = $event->getRequest();
         $finishResponse = $this->formSubmissionFinisher->finishWithError($request, $form);
@@ -122,16 +91,11 @@ class RequestListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param GetResponseEvent $event
-     * @param FormInterface    $form
-     * @param array|null       $formRuntimeData
-     */
-    protected function doneWithSuccess(GetResponseEvent $event, FormInterface $form, $formRuntimeData)
+    protected function doneWithSuccess(RequestEvent $event, FormInterface $form, $formRuntimeData): void
     {
         $request = $event->getRequest();
         $submissionEvent = new SubmissionEvent($request, $formRuntimeData, $form);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::FORM_SUBMIT_SUCCESS, $submissionEvent);
+        $this->eventDispatcher->dispatch($submissionEvent, FormBuilderEvents::FORM_SUBMIT_SUCCESS);
 
         $finishResponse = $this->formSubmissionFinisher->finishWithSuccess($request, $submissionEvent);
 
@@ -140,12 +104,7 @@ class RequestListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param GetResponseEvent $event
-     * @param \Exception|null  $e
-     * @param string|null      $message
-     */
-    protected function generateErroredJsonReturn(GetResponseEvent $event, ?\Exception $e, string $message = null)
+    protected function generateErroredJsonReturn(RequestEvent $event, ?\Exception $e, ?string $message = null): void
     {
         $request = $event->getRequest();
 
@@ -162,12 +121,7 @@ class RequestListener implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return null|int
-     */
-    public function findFormIdByRequest(Request $request)
+    public function findFormIdByRequest(Request $request): ?int
     {
         $isProcessed = false;
         $data = null;
@@ -188,7 +142,7 @@ class RequestListener implements EventSubscriberInterface
         }
 
         foreach ($data as $key => $parameters) {
-            if (strpos($key, 'formbuilder_') === false) {
+            if (!str_contains($key, 'formbuilder_')) {
                 continue;
             }
 
@@ -200,15 +154,9 @@ class RequestListener implements EventSubscriberInterface
         return null;
     }
 
-    /**
-     * @param Request                 $request
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return array|null
-     */
-    protected function detectFormRuntimeDataInRequest(Request $request, FormDefinitionInterface $formDefinition)
+    protected function detectFormRuntimeDataInRequest(Request $request, FormDefinitionInterface $formDefinition): ?array
     {
-        $formDefinitionConfig = $formDefinition->getConfig();
+        $formDefinitionConfig = $formDefinition->getConfiguration();
 
         $data = null;
         $name = sprintf('formbuilder_%s', $formDefinition->getId());
@@ -219,9 +167,9 @@ class RequestListener implements EventSubscriberInterface
         }
 
         if (in_array($method, ['GET', 'HEAD', 'TRACE']) && $request->query->has($name)) {
-            $data = $request->query->get($name);
+            $data = $request->query->all($name);
         } elseif ($request->request->has($name)) {
-            $data = $request->request->get($name, null);
+            $data = $request->request->all($name);
         }
 
         if (!is_array($data)) {

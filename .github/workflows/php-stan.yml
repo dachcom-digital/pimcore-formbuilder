@@ -11,13 +11,13 @@ jobs:
         env:
             TEST_BUNDLE_NAME: "FormBuilderBundle"
             TEST_BUNDLE_INSTALLER_CLASS: "FormBuilderBundle\\Tool\\Install"
-            TEST_BUNDLE_TEST_DIR: "${{ github.workspace }}/tests"
+            TEST_BUNDLE_TEST_DIR: "${{ github.workspace }}/lib/test-bundle/tests"
             TEST_PROJECT_ROOT_DIR: "${{ github.workspace }}"
 
             PIMCORE_CODECEPTION_FRAMEWORK: "${{ github.workspace }}/pimcore-codeception-framework"
-            PIMCORE_CODECEPTION_VERSION: "1.0"
+            PIMCORE_CODECEPTION_VERSION: "2.0"
 
-            PIMCORE_ENVIRONMENT: test
+            APP_ENV: test
             PIMCORE_TEST_DB_DSN: "mysql://root:root@localhost/dachcom_bundle_test"
             PIMCORE_TEST_URL: "http://localhost"
 
@@ -40,23 +40,28 @@ jobs:
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         strategy:
             matrix:
-                php: [7.4]
-                symfony: [^4.4]
-                pimcore: [^6.8]
+                php: [ 8.0 ]
+                symfony: [ ^5.3 ]
+                pimcore: [ ~10.1.0 ]
                 include:
-                    -   pimcore: ^6.8
-                        template_tag: v2.8.0
+                    -   pimcore: ~10.1.0
+                        template_tag: v10.1.0
         steps:
             -   uses: actions/checkout@v2
+                with:
+                    path: lib/test-bundle
 
             -   name: Generate Application Structure
                 run: |
                     git clone -b ${{ matrix.template_tag }} --single-branch --depth 1 https://github.com/pimcore/skeleton.git
-                    mv skeleton/app .
+                    mv skeleton/composer.json .
                     mv skeleton/bin .
+                    mv skeleton/config .
+                    mv skeleton/public .
+                    mv skeleton/src .
+                    mv skeleton/templates .
                     mv skeleton/var .
-                    mv skeleton/web .
-                    mv skeleton/src/AppBundle src
+                    rm -r skeleton
 
             -   name: Setup Pimcore Codeception Framework
                 env:
@@ -115,9 +120,9 @@ jobs:
 
             -   name: Assets Install
                 run: |
-                    bin/console assets:install web --relative --symlink
+                    bin/console assets:install public --relative --symlink
 
             -   name: Php Stan
                 run: |
                     bin/console cache:warmup --env=test
-                    vendor/bin/phpstan analyse -c phpstan.neon -a tests/_phpstan-bootstrap.php src -l 2
+                    vendor/bin/phpstan analyse -c${{ github.workspace }}/lib/test-bundle/phpstan.neon -a ${{ github.workspace }}/lib/test-bundle/tests/_phpstan-bootstrap.php ${{ github.workspace }}/lib/test-bundle/src -l 4

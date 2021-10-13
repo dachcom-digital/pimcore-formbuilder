@@ -14,37 +14,12 @@ use FormBuilderBundle\Stream\AttachmentStreamInterface;
 
 class MailParser
 {
-    /**
-     * @var EngineInterface
-     */
-    protected $templating;
+    protected EngineInterface $templating;
+    protected Email $mailTemplate;
+    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
+    protected PlaceholderParserInterface $placeholderParser;
+    protected AttachmentStreamInterface $attachmentStream;
 
-    /**
-     * @var Email
-     */
-    protected $mailTemplate;
-
-    /**
-     * @var FormValuesOutputApplierInterface
-     */
-    protected $formValuesOutputApplier;
-
-    /**
-     * @var PlaceholderParserInterface
-     */
-    protected $placeholderParser;
-
-    /**
-     * @var AttachmentStreamInterface
-     */
-    protected $attachmentStream;
-
-    /**
-     * @param EngineInterface                  $templating
-     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
-     * @param PlaceholderParserInterface       $placeholderParser
-     * @param AttachmentStreamInterface        $attachmentStream
-     */
     public function __construct(
         EngineInterface $templating,
         FormValuesOutputApplierInterface $formValuesOutputApplier,
@@ -58,16 +33,9 @@ class MailParser
     }
 
     /**
-     * @param Email         $mailTemplate
-     * @param FormInterface $form
-     * @param array         $channelConfiguration
-     * @param string        $locale
-     *
-     * @return Mail
-     *
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, array $channelConfiguration, $locale)
+    public function create(Email $mailTemplate, FormInterface $form, array $channelConfiguration, string $locale): Mail
     {
         $mail = new Mail();
 
@@ -77,10 +45,6 @@ class MailParser
 
         $ignoreFields = is_null($channelConfiguration['ignoreFields']) ? [] : $channelConfiguration['ignoreFields'];
 
-        $hasIsCopyFlag = isset($channelConfiguration['legacyIsCopy']);
-        $isCopy = $hasIsCopyFlag && $channelConfiguration['legacyIsCopy'] === true;
-
-        $initialCharset = $mail->getCharset();
         $fieldValues = $this->formValuesOutputApplier->applyForChannel($form, $ignoreFields, 'mail', $locale);
 
         $this->parseMailRecipients($mailTemplate, $fieldValues);
@@ -93,12 +57,12 @@ class MailParser
         $formData = $form->getData();
 
         if ($disableDefaultMailBody === false) {
-            $mailLayout = $this->getMailLayout($formData->getFormDefinition(), $channelConfiguration, $isCopy, $locale);
+            $mailLayout = $this->getMailLayout($channelConfiguration);
             $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
         }
 
         $attachments = [];
-        if ($formData->hasAttachments() && $allowAttachments === true) {
+        if ($allowAttachments === true && $formData->hasAttachments()) {
             $attachments = $formData->getAttachments();
         }
 
@@ -109,29 +73,16 @@ class MailParser
 
         $mail->setDocument($mailTemplate);
 
-        // fix charset
-        if ($mail->getCharset() === null) {
-            $mail->setCharset($initialCharset);
-        }
-
         return $mail;
     }
 
-    /**
-     * @param Email $mailTemplate
-     * @param array $data
-     */
-    protected function parseMailRecipients(Email $mailTemplate, $data = [])
+    protected function parseMailRecipients(Email $mailTemplate, array $data = []): void
     {
         $parsedTo = $this->extractPlaceHolder($mailTemplate->getTo(), $data);
         $mailTemplate->setTo($parsedTo);
     }
 
-    /**
-     * @param Email $mailTemplate
-     * @param array $data
-     */
-    protected function parseMailSender(Email $mailTemplate, $data = [])
+    protected function parseMailSender(Email $mailTemplate, array $data = []): void
     {
         $from = $mailTemplate->getFrom();
         $parsedFrom = $this->extractPlaceHolder($from, $data);
@@ -139,11 +90,7 @@ class MailParser
         $mailTemplate->setFrom($parsedFrom);
     }
 
-    /**
-     * @param Email $mailTemplate
-     * @param array $data
-     */
-    protected function parseReplyTo(Email $mailTemplate, $data = [])
+    protected function parseReplyTo(Email $mailTemplate, array $data = []): void
     {
         $replyTo = $mailTemplate->getReplyTo();
         $parsedReplyTo = $this->extractPlaceHolder($replyTo, $data);
@@ -151,11 +98,7 @@ class MailParser
         $mailTemplate->setReplyTo($parsedReplyTo);
     }
 
-    /**
-     * @param Email $mailTemplate
-     * @param array $fieldValues
-     */
-    protected function parseSubject(Email $mailTemplate, $fieldValues = [])
+    protected function parseSubject(Email $mailTemplate, array $fieldValues = []): void
     {
         $realSubject = $mailTemplate->getSubject();
         $availableValues = $this->findPlaceholderValues($fieldValues);
@@ -184,11 +127,7 @@ class MailParser
         $mailTemplate->setSubject($realSubject);
     }
 
-    /**
-     * @param Mail  $mail
-     * @param array $fieldValues
-     */
-    protected function setMailPlaceholders(Mail $mail, array $fieldValues)
+    protected function setMailPlaceholders(Mail $mail, array $fieldValues): void
     {
         $availablePlaceholder = $this->findPlaceholderValues($fieldValues);
         foreach ($availablePlaceholder as $placeHolderName => $placeholderValue) {
@@ -196,17 +135,11 @@ class MailParser
         }
     }
 
-    /**
-     * @param Mail          $mail
-     * @param FormInterface $form
-     * @param array         $fieldValues
-     * @param null|string   $mailLayout
-     */
-    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, $mailLayout = null)
+    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, ?string $mailLayout = null): void
     {
         if ($mailLayout === null) {
             $body = $this->templating->render(
-                '@FormBuilder/Email/formData.html.twig',
+                '@FormBuilder/email/form-data.html.twig',
                 ['fields' => $fieldValues]
             );
         } else {
@@ -216,18 +149,11 @@ class MailParser
         $mail->setParam('body', $body);
     }
 
-    /**
-     * @param Mail  $mail
-     * @param array $attachments
-     */
-    protected function parseMailAttachment(Mail $mail, array $attachments)
+    protected function parseMailAttachment(Mail $mail, array $attachments): void
     {
         foreach ($attachments as $attachmentFileInfo) {
             try {
-                $attachment = new \Swift_Attachment();
-                $attachment->setBody(file_get_contents($attachmentFileInfo['path']));
-                $attachment->setFilename($attachmentFileInfo['name']);
-                $mail->attach($attachment);
+                $mail->attach(file_get_contents($attachmentFileInfo['path']), $attachmentFileInfo['name']);
             } catch (\Exception $e) {
                 // fail silently.
             }
@@ -238,13 +164,8 @@ class MailParser
 
     /**
      * Extract Placeholder Data from given String like %email% and compare it with given form data.
-     *
-     * @param string $str
-     * @param array  $fieldValues
-     *
-     * @return mixed|string
      */
-    protected function extractPlaceHolder($str, $fieldValues)
+    protected function extractPlaceHolder(string $str, array $fieldValues): mixed
     {
         $availablePlaceholder = $this->findPlaceholderValues($fieldValues);
 
@@ -280,58 +201,40 @@ class MailParser
         return $extractedValue;
     }
 
-    /**
-     * @param mixed  $field
-     * @param string $separator
-     *
-     * @return string
-     */
-    protected function getSingleRenderedValue($field, $separator = '<br>')
+    protected function getSingleRenderedValue(mixed $field, string $separator = '<br>'): string
     {
         $data = '';
         if (is_array($field)) {
             $i = 0;
-            foreach ($field as $k => $f) {
+            foreach ($field as $subField) {
                 $i++;
-                $data .= $this->parseStringForOutput($f);
+                $data .= $this->parseFieldDataForOutput($subField);
                 if ($i !== count($field)) {
                     $data .= $separator;
                 }
             }
         } else {
-            $data = $this->parseStringForOutput($field);
-        }
-
-        // pimcore email log does not get stored if value is a true boolean.
-        if (is_bool($data)) {
-            $data = $data === true ? 1 : 0;
+            $data = $this->parseFieldDataForOutput($field);
         }
 
         return $data;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    protected function parseStringForOutput($string = '')
+    protected function parseFieldDataForOutput(mixed $fieldData): string
     {
-        if (strstr($string, "\n")) {
-            return nl2br($string);
+        if (str_contains($fieldData, "\n")) {
+            return nl2br($fieldData);
         }
 
-        return $string;
+        // pimcore email log does not get stored if value is a true boolean.
+        if (is_bool($fieldData)) {
+            return $fieldData === true ? '1' : '0';
+        }
+
+        return (string) $fieldData;
     }
 
-    /**
-     * @param array  $fieldValues
-     * @param string $prefix
-     * @param array  $values
-     *
-     * @return array
-     */
-    protected function findPlaceholderValues(array $fieldValues, string $prefix = '', array &$values = [])
+    protected function findPlaceholderValues(array $fieldValues, string $prefix = '', array &$values = []): array
     {
         //allow access to all form placeholders
         foreach ($fieldValues as $formField) {
@@ -361,50 +264,10 @@ class MailParser
         return $values;
     }
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $channelConfiguration
-     * @param bool                    $isCopy
-     * @param string                  $locale
-     *
-     * @return string|null
-     */
-    public function getMailLayout(FormDefinitionInterface $formDefinition, array $channelConfiguration, bool $isCopy, string $locale)
+    protected function getMailLayout(array $channelConfiguration): ?string
     {
         if (!empty($channelConfiguration['mailLayoutData'])) {
             return $channelConfiguration['mailLayoutData'];
-        }
-
-        $formMailLayout = $formDefinition->getMailLayout();
-
-        if ($formMailLayout !== null) {
-            return $this->getFallbackMailLayoutBasedOnLocale($formMailLayout, $isCopy === false ? 'main' : 'copy', $locale);
-        }
-
-        return null;
-    }
-
-    /**
-     * Fallback mail layout.
-     *
-     * @param array       $mailLayout
-     * @param string      $mailType
-     * @param string|null $locale
-     *
-     * @return string|null
-     */
-    public function getFallbackMailLayoutBasedOnLocale(array $mailLayout, string $mailType, string $locale = null)
-    {
-        if (!isset($mailLayout[$mailType])) {
-            return null;
-        }
-
-        if (isset($mailLayout[$mailType][$locale])) {
-            return $mailLayout[$mailType][$locale];
-        }
-
-        if (isset($mailLayout[$mailType]['default'])) {
-            return $mailLayout[$mailType]['default'];
         }
 
         return null;

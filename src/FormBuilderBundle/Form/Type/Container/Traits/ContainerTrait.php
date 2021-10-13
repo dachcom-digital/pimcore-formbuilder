@@ -7,12 +7,7 @@ use Symfony\Component\Form\FormInterface;
 
 trait ContainerTrait
 {
-    /**
-     * @param array $options
-     *
-     * @return bool|string
-     */
-    protected function getContainerLabel(array $options)
+    protected function getContainerLabel(array $options): bool|string
     {
         if (!isset($options['formbuilder_configuration']['label'])) {
             return false;
@@ -27,12 +22,7 @@ trait ContainerTrait
         return $label;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param array         $entryOptions
-     * @param int           $counter
-     */
-    protected function addEmptyCollections(FormInterface $form, array $entryOptions, int $counter = 1)
+    protected function addEmptyCollections(FormInterface $form, array $entryOptions, int $counter = 1): void
     {
         for ($i = 0; $i < $counter; $i++) {
             $form->add($i, ContainerCollectionType::class, $entryOptions);

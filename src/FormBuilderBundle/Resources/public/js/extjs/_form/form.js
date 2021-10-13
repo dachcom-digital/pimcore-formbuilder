@@ -11,10 +11,6 @@ Formbuilder.extjs.rootForm = Class.create({
     formName: null,
     sensitiveFormFields: null,
 
-    /**
-     * @param formData
-     * @param parentPanel
-     */
     initialize: function (formData, parentPanel) {
 
         this.parentPanel = parentPanel;
@@ -75,6 +71,7 @@ Formbuilder.extjs.rootForm = Class.create({
 
         this.panel.on({
             beforedestroy: function () {
+
                 eventListeners.destroy();
                 Formbuilder.eventObserver.unregisterForm(this.formId);
 
@@ -82,10 +79,10 @@ Formbuilder.extjs.rootForm = Class.create({
                     delete this.parentPanel.panels['form_' + this.formId];
                 }
 
-                if (this.parentPanel.tree.initialConfig !== null &&
-                    Object.keys(this.parentPanel.panels).length === 0) {
+                if (this.parentPanel.tree.getSelectionModel().selected !== null) {
                     this.parentPanel.tree.getSelectionModel().deselectAll();
                 }
+
             }.bind(this),
             render: function () {
                 this.setActiveTab(0);

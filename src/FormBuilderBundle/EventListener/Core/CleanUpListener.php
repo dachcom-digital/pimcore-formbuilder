@@ -8,20 +8,14 @@ use Pimcore\Maintenance\TaskInterface;
 
 class CleanUpListener implements TaskInterface
 {
-    /**
-     * @var FileLocator
-     */
-    protected $fileLocator;
+    protected FileLocator $fileLocator;
 
-    /**
-     * @param FileLocator $fileLocator
-     */
     public function __construct(FileLocator $fileLocator)
     {
         $this->fileLocator = $fileLocator;
     }
 
-    public function execute()
+    public function execute(): void
     {
         foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {
             Logger::log('Remove form builder files folder: ' . $file);

@@ -6,7 +6,7 @@ services:
         public: true
 
     FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory:
-        arguments: [!tagged form_builder.module.data]
+        arguments: [!tagged { tag: 'form_builder.module.data' }]
 
     # Module
     FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Constraints:
@@ -17,9 +17,9 @@ services:
         tags:
             - { name: 'form_builder.dispatcher', type: 'form_type_classes' }
 
-    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\MailBehaviour:
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\SwitchOutputWorkflow:
         tags:
-            - { name: 'form_builder.dispatcher', type: 'mail_behaviour' }
+            - { name: 'form_builder.dispatcher', type: 'switch_output_workflow' }
 
     FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\SuccessMessage:
         tags:
@@ -36,7 +36,7 @@ services:
         tags:
             - { name: 'form_builder.module.data' }
 
-    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\MailBehaviourData:
+    FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SwitchOutputWorkflowData:
         shared: false
         tags:
             - { name: 'form_builder.module.data' }

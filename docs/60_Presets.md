@@ -9,7 +9,7 @@ Presets will help you here: Create a preset and add some description to it.
 From now on, your customer is able to choose between presets within the dropped area element. 
 
 ### Things to know
-- If a preset gets selected, form builder will change the layout view to `Form/Presets/your_preset_name.html.twig` instead of `Form/default.html.twig`.
+- If a preset gets selected, form builder will change the layout view to `form/presets/your_preset_name.html.twig` instead of `form/default.html.twig`.
 - [Create a EventListener](70_Events.md) and add some specific data depending on the selected preset - regardless of the configured form.
 
 ### Configuration

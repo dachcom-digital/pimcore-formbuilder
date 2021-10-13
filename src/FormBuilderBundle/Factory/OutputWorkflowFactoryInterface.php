@@ -6,8 +6,5 @@ use FormBuilderBundle\Model\OutputWorkflowInterface;
 
 interface OutputWorkflowFactoryInterface
 {
-    /**
-     * @return OutputWorkflowInterface
-     */
-    public function createOutputWorkflow();
+    public function createOutputWorkflow(): OutputWorkflowInterface;
 }

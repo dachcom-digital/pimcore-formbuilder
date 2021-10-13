@@ -3,17 +3,13 @@
 namespace FormBuilderBundle\Factory;
 
 use FormBuilderBundle\Form\Data\FormData;
+use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 
 class FormDataFactory implements FormDataFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createFormData(FormDefinitionInterface $formDefinition)
+    public function createFormData(FormDefinitionInterface $formDefinition): FormDataInterface
     {
-        $form = new FormData($formDefinition);
-
-        return $form;
+        return new FormData($formDefinition);
     }
 }

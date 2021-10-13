@@ -14,7 +14,7 @@ class ContainerRepeaterCest
      */
     public function testContainerRepeaterBlockAddition(AcceptanceTester $I)
     {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -65,7 +65,7 @@ class ContainerRepeaterCest
      */
     public function testContainerRepeaterBlockMaxAddition(AcceptanceTester $I)
     {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -119,7 +119,7 @@ class ContainerRepeaterCest
      */
     public function testContainerRepeaterBlockRemoval(AcceptanceTester $I)
     {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -170,7 +170,7 @@ class ContainerRepeaterCest
      */
     public function testContainerRepeaterBlockMinRemoval(AcceptanceTester $I)
     {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)

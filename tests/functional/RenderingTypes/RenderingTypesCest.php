@@ -18,16 +18,28 @@ class RenderingTypesCest
     {
         $testFormBuilder = $this->generateSimpleForm();
 
-        $adminEmail = $I->haveAEmailDocumentForAdmin();
-        $userEmail = $I->haveAEmailDocumentForUser();
-        $document = $I->haveAPageDocument('form-test-with-twig-generated-form', ['action' => 'twigRender']);
+        $mainEmail = $I->haveAEmailDocumentForAdmin();
+        $secondEmail = $I->haveAEmailDocumentForUser();
+        $document = $I->haveAPageDocument('form-test-with-twig-generated-form', ['action' => 'twigRenderAction']);
+
+        $channels = [
+            [
+                'type' => 'email',
+                'email' => $mainEmail
+            ],
+            [
+                'type' => 'email',
+                'email' => $secondEmail
+            ]
+        ];
 
         $form = $I->haveAForm($testFormBuilder);
 
+        $outputWorkflow = $I->haveAOutputWorkflow('Test Output Workflow', $form, $channels);
+
         try {
             $document->setProperty('form_id', 'text', $form->getId(), false, false);
-            $document->setProperty('mail_id', 'text', $adminEmail->getId(), false, false);
-            $document->setProperty('mail_copy_id', 'text', $userEmail->getId(), false, false);
+            $document->setProperty('output_workflow_id', 'text', $outputWorkflow->getId(), false, false);
             $document->save();
         } catch (\Exception $e) {
             // fail silently
@@ -39,9 +51,8 @@ class RenderingTypesCest
         $this->fillSimpleForm($testFormBuilder, $I);
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailIsSent($adminEmail);
-        $I->seeEmailIsSent($userEmail);
-
+        $I->seeEmailIsSent($mainEmail);
+        $I->seeEmailIsSent($secondEmail);
     }
 
     /**
@@ -53,16 +64,28 @@ class RenderingTypesCest
     {
         $testFormBuilder = $this->generateSimpleForm();
 
-        $adminEmail = $I->haveAEmailDocumentForAdmin();
-        $userEmail = $I->haveAEmailDocumentForUser();
-        $document = $I->haveAPageDocument('form-test-with-controller-generated-form', ['action' => 'controllerRender']);
+        $mainEmail = $I->haveAEmailDocumentForAdmin();
+        $secondEmail = $I->haveAEmailDocumentForUser();
+        $document = $I->haveAPageDocument('form-test-with-controller-generated-form', ['action' => 'controllerRenderAction']);
+
+        $channels = [
+            [
+                'type' => 'email',
+                'email' => $mainEmail
+            ],
+            [
+                'type' => 'email',
+                'email' => $secondEmail
+            ]
+        ];
 
         $form = $I->haveAForm($testFormBuilder);
 
+        $outputWorkflow = $I->haveAOutputWorkflow('Test Output Workflow', $form, $channels);
+
         try {
             $document->setProperty('form_id', 'text', $form->getId(), false, false);
-            $document->setProperty('mail_id', 'text', $adminEmail->getId(), false, false);
-            $document->setProperty('mail_copy_id', 'text', $userEmail->getId(), false, false);
+            $document->setProperty('output_workflow_id', 'text', $outputWorkflow->getId(), false, false);
             $document->save();
         } catch (\Exception $e) {
             // fail silently
@@ -74,8 +97,7 @@ class RenderingTypesCest
         $this->fillSimpleForm($testFormBuilder, $I);
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
-        $I->seeEmailIsSent($adminEmail);
-        $I->seeEmailIsSent($userEmail);
-
+        $I->seeEmailIsSent($mainEmail);
+        $I->seeEmailIsSent($secondEmail);
     }
 }

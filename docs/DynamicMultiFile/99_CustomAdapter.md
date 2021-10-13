@@ -15,33 +15,34 @@ There are 5 steps to go:
 
 ```yaml
 services:
-
     _defaults:
         autowire: true
         autoconfigure: true
         public: true
 
-    AppBundle\DynamicMultiFile\Adapter\MyUploaderAdapter:
+    App\DynamicMultiFile\Adapter\MyUploaderAdapter:
         tags:
             - { name: form_builder.dynamic_multi_file.adapter }
 
-    AppBundle\Form\Type\DynamicMultiFile\MyUploaderType:
+    App\Form\Type\DynamicMultiFile\MyUploaderType:
         public: false
         tags:
             - { name: form.type }
 
+## tell form builder to use your custom adapter
+form_builder:
+    dynamic_multi_file_adapter: App\DynamicMultiFile\Adapter\MyUploaderAdapter
 ```
 
 ## II. Override default handler path
 
 ```javascript
 $('form.formbuilder.ajax-form').formBuilderAjaxManager({
-    // tell form builder core extension where to lazy load your handler from!
-    dynamicMultiFileDefaultHandlerPath: '/bundles/app/js/dynamic-multi-file-adapter/lib',
     dynamicMultiFileHandlerOptions: {
-        // these options will be passed to your new handler
+        // tell form builder core extension where to lazy load your handler from!
+        defaultHandlerPath: '/bundles/app/js/dynamic-multi-file-adapter/lib',
+        // other options will be passed to your new handler
         // you can define any options here.
-        // libPath is just an recommendation so your handler will load the lib only if any upload field is available to render.
         libPath: 'https://cdnjs.cloudflare.com/ajax/libs/my-3rd-party-lib.min.js',
     },
 });
@@ -54,7 +55,7 @@ $('form.formbuilder.ajax-form').formBuilderAjaxManager({
 ```php
 <?php
 
-namespace AppBundle\Form\Type\DynamicMultiFile;
+namespace App\Form\Type\DynamicMultiFile;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -64,10 +65,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MyUploaderType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
          $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
@@ -86,10 +84,7 @@ class MyUploaderType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         // these options are required to support!
         
@@ -101,18 +96,12 @@ class MyUploaderType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'form_builder_dynamicmultifile_my_uploader';
     }
 
-    /**
-     * @return string
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return TextType::class;
     }
@@ -124,9 +113,9 @@ class MyUploaderType extends AbstractType
 ```php
 <?php
 
-namespace AppBundle\DynamicMultiFile\Adapter;
+namespace App\DynamicMultiFile\Adapter;
 
-use AppBundle\Form\Type\DynamicMultiFile\MyUploaderType;
+use App\Form\Type\DynamicMultiFile\MyUploaderType;
 use FormBuilderBundle\DynamicMultiFile\Adapter\DynamicMultiFileAdapterInterface;
 use FormBuilderBundle\Stream\FileStreamInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -137,33 +126,21 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
 {
     protected FileStreamInterface $fileStream;
 
-    /**
-     * @param FileStreamInterface $fileStream
-     */
     public function __construct(FileStreamInterface $fileStream)
     {
         $this->fileStream = $fileStream;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getForm(): string
     {
         return MyUploaderType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getJsHandler(): string
     {
         return 'my-uploader';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onUpload(Request $request): Response
     {
         // second argument needs to be false, if you also invoke the onDone action!
@@ -179,9 +156,6 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
         return new JsonResponse($result);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDone(Request $request): Response
     {
         // if you need a dedicated endpoint for a chunked upload completion event,
@@ -193,9 +167,6 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
         ], 403);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onDelete(Request $request): Response
     {
         // $identifier = mostly the upload uuid
@@ -226,8 +197,7 @@ class MyUploaderAdapter implements DynamicMultiFileAdapterInterface
 ## V. JavaScript Handler
 
 ```javascript
-// AppBundle/Resources/public/js/dynamic-multi-file-adapter/lib/jquery.fb.dmf.my-uploader.js
-
+// assets/js/dynamic-multi-file-adapter/lib/jquery.fb.dmf.my-uploader.js
 ;(function ($, window) {
 
     'use strict';

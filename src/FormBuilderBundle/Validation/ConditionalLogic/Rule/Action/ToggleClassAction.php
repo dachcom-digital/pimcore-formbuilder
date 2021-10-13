@@ -10,26 +10,13 @@ class ToggleClassAction implements ActionInterface
 {
     use ActionTrait;
 
-    /**
-     * @var array
-     */
-    protected $fields = [];
+    protected array $fields = [];
+    protected ?string $class = null;
 
     /**
-     * @var string
+     * {@inheritDoc}
      */
-    protected $class = null;
-
-    /**
-     * @param bool  $validationState
-     * @param array $formData
-     * @param int   $ruleId
-     *
-     * @return FieldReturnStack|ReturnStackInterface
-     *
-     * @throws \Exception
-     */
-    public function apply($validationState, $formData, $ruleId)
+    public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         $class = $this->getClass();
@@ -43,34 +30,22 @@ class ToggleClassAction implements ActionInterface
         return new FieldReturnStack('toggleClass', $data);
     }
 
-    /**
-     * @param array $fields
-     */
-    public function setFields($fields)
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * @param string $class
-     */
-    public function setClass($class)
+    public function setClass(string $class): void
     {
         $this->class = $class;
     }
 
-    /**
-     * @return string
-     */
-    public function getClass()
+    public function getClass(): ?string
     {
         return $this->class;
     }

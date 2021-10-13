@@ -7,30 +7,15 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 
 interface ChannelInterface
 {
-    /**
-     * @return string
-     */
     public function getFormType(): string;
 
-    /**
-     * @return bool
-     */
-    public function isLocalizedConfiguration();
+    public function isLocalizedConfiguration(): bool;
+
+    public function getUsedFormFieldNames(array $channelConfiguration): array;
 
     /**
-     * @param array $channelConfiguration
-     *
-     * @return array
-     */
-    public function getUsedFormFieldNames(array $channelConfiguration);
-
-    /**
-     * @param SubmissionEvent $submissionEvent
-     * @param string          $workflowName
-     * @param array           $channelConfiguration
-     *
      * @throws \Exception
      * @throws GuardException
      */
-    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration);
+    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void;
 }

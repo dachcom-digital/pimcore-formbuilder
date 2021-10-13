@@ -5,52 +5,22 @@ namespace FormBuilderBundle\Controller\Admin;
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Yaml\Yaml;
 
 class SettingsController extends AdminController
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
+    protected FormDefinitionManager $formDefinitionManager;
+    protected ExtJsFormBuilder $extJsFormBuilder;
+    protected ChoiceBuilderRegistry $choiceBuilderRegistry;
+    protected FormDependencyLocator $formDependencyLocator;
 
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
-
-    /**
-     * @var ExtJsFormBuilder
-     */
-    protected $extJsFormBuilder;
-
-    /**
-     * @var ChoiceBuilderRegistry
-     */
-    protected $choiceBuilderRegistry;
-
-    /**
-     * @var FormDependencyLocator
-     */
-    protected $formDependencyLocator;
-
-    /**
-     * @param Configuration         $configuration
-     * @param FormDefinitionManager $formDefinitionManager
-     * @param ExtJsFormBuilder      $extJsFormBuilder
-     * @param ChoiceBuilderRegistry $choiceBuilderRegistry
-     * @param FormDependencyLocator $formDependencyLocator
-     */
     public function __construct(
         Configuration $configuration,
         FormDefinitionManager $formDefinitionManager,
@@ -65,15 +35,11 @@ class SettingsController extends AdminController
         $this->formDependencyLocator = $formDependencyLocator;
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getTreeAction()
+    public function getTreeAction(): JsonResponse
     {
         $forms = $this->formDefinitionManager->getAll();
 
         $mainItems = [];
-        /** @var FormDefinitionInterface $form */
         foreach ($forms as $form) {
             if (!is_null($form->getGroup())) {
                 if (array_search($form->getGroup(), array_column($mainItems, 'id')) === false) {
@@ -113,10 +79,7 @@ class SettingsController extends AdminController
         return $this->json($mainItems);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getSettingsAction()
+    public function getSettingsAction(): JsonResponse
     {
         $settings = $this->configuration->getConfigArray();
         $honeypotFieldName = $settings['spam_protection']['honeypot']['field_name'];
@@ -125,10 +88,7 @@ class SettingsController extends AdminController
         return $this->json(['settings' => $settings]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function getDynamicChoiceBuilderAction()
+    public function getDynamicChoiceBuilderAction(): JsonResponse
     {
         $services = $this->choiceBuilderRegistry->getAll();
         $data = [];
@@ -139,12 +99,7 @@ class SettingsController extends AdminController
         return $this->json($data);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getFormAction(Request $request)
+    public function getFormAction(Request $request): JsonResponse
     {
         $id = $request->query->get('id');
 
@@ -170,12 +125,7 @@ class SettingsController extends AdminController
         return $this->json($data);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function addFormAction(Request $request)
+    public function addFormAction(Request $request): JsonResponse
     {
         $name = $this->getSaveName($request->query->get('form_name'));
 
@@ -209,12 +159,7 @@ class SettingsController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteFormAction(Request $request)
+    public function deleteFormAction(Request $request): JsonResponse
     {
         $id = $request->get('id');
         $success = true;
@@ -235,13 +180,9 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
-    public function saveFormAction(Request $request)
+    public function saveFormAction(Request $request): JsonResponse
     {
         $id = (int) $request->get('form_id');
         $success = true;
@@ -302,99 +243,7 @@ class SettingsController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function importFormAction(Request $request)
-    {
-        /** @var UploadedFile $file */
-        $file = $request->files->get('formData');
-        $data = file_get_contents($file->getPathname());
-        $encoding = \Pimcore\Tool\Text::detectEncoding($data);
-
-        if ($encoding) {
-            $data = iconv($encoding, 'UTF-8', $data);
-        }
-
-        $response = [
-            'success' => true,
-            'data'    => [],
-            'message' => 'Success!',
-        ];
-
-        try {
-            $formContent = Yaml::parse($data);
-            $formContent['fields'] = $this->extJsFormBuilder->generateExtJsFields($formContent['fields']);
-            $response['data'] = $formContent;
-        } catch (\Exception $e) {
-            $response['success'] = false;
-            $response['message'] = $e->getMessage();
-        }
-
-        if (!$this->container->has('serializer')) {
-            throw new \LogicException('No serializer found.');
-        }
-
-        $jsonData = $this->container->get('serializer')->serialize($response, 'json', array_merge([
-            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
-        ], []));
-
-        $response = new JsonResponse($jsonData, 200, ['Content-Type' => 'text/plain'], true);
-
-        return $response;
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportFormAction(Request $request)
-    {
-        $formId = $request->get('id');
-
-        if (!is_numeric($formId)) {
-            throw new NotFoundHttpException('no form with id ' . $formId . ' found.');
-        }
-
-        $exportName = 'form_export_' . $formId . '.yml';
-        $exportFile = Configuration::STORE_PATH . '/main_' . $formId . '.yml';
-        if (!file_exists($exportFile)) {
-            throw new NotFoundHttpException('no form configuration with id ' . $formId . ' found.');
-        }
-
-        $response = new Response(file_get_contents($exportFile));
-        $disposition = $response->headers->makeDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $exportName
-        );
-
-        $response->headers->set('Content-Disposition', $disposition);
-
-        return $response;
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function checkPathAction(Request $request)
-    {
-        $path = $request->get('path');
-        $pathIsValid = is_dir(PIMCORE_PUBLIC_VAR . '/' . ltrim($path, '/'));
-
-        return $this->json(['success' => $pathIsValid]);
-    }
-
-    /**
-     * @return JsonResponse
-     */
-    public function getGroupTemplatesAction()
+    public function getGroupTemplatesAction(): JsonResponse
     {
         $areaConfig = $this->configuration->getConfig('area');
 
@@ -407,12 +256,7 @@ class SettingsController extends AdminController
         return $this->json($templates);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function findFormDependenciesAction(Request $request)
+    public function findFormDependenciesAction(Request $request): JsonResponse
     {
         $formId = (int) $request->get('formId');
         $offset = (int) $request->get('start', 0);
@@ -425,18 +269,25 @@ class SettingsController extends AdminController
         }
 
         return $this->json([
-            'documents' => isset($data['documents']) ? $data['documents'] : [],
+            'documents' => $data['documents'] ?? [],
             'limit'     => $limit,
-            'total'     => isset($data['total']) ? $data['total'] : 0
+            'total'     => $data['total'] ?? 0
         ]);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    private function getSaveName($name)
+    public function getPresetDescriptionAction(Request $request, PresetManager $presetManager, string $name): JsonResponse
+    {
+        $preset = $presetManager->getDataForPreview($name);
+
+        return $this->json(
+            [
+                'success'     => true,
+                'previewData' => $preset
+            ]
+        );
+    }
+
+    private function getSaveName(string $name): string
     {
         return (string) preg_replace('/[^A-Za-z0-9aäüöÜÄÖß \-]/', '', $name);
     }

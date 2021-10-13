@@ -7,10 +7,5 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 interface FormDataFactoryInterface
 {
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return FormDataInterface
-     */
-    public function createFormData(FormDefinitionInterface $formDefinition);
+    public function createFormData(FormDefinitionInterface $formDefinition): FormDataInterface;
 }

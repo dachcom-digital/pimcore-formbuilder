@@ -199,7 +199,7 @@ Formbuilder.settings = Class.create({
         }
 
         if (in_array(value, this.usedFormNames)) {
-            Ext.Msg.alert(t('error'), t('form_builder_some_fields_names_double'), 'error');
+            Ext.Msg.alert(t('error'), t('form_builder_some_fields_names_double'));
             return false;
         }
 
@@ -269,6 +269,21 @@ Formbuilder.settings = Class.create({
         this.panels[formPanelKey] = formPanel;
 
         pimcore.layout.refresh();
+    },
+
+    rebuildFormPanel: function (formId) {
+
+        var formPanelKey = 'form_' + formId;
+
+        if (!this.panels[formPanelKey]) {
+            return;
+        }
+
+        this.panels[formPanelKey].remove();
+
+        setTimeout(function() {
+            this.createFormConfigurationPanel(formId);
+        }.bind(this), 200);
     },
 
     deleteForm: function (tree, record) {

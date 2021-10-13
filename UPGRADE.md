@@ -1,86 +1,46 @@
 # Upgrade Notes
-![upgrade](https://user-images.githubusercontent.com/700119/31535145-3c01a264-affa-11e7-8d86-f04c33571f65.png)  
+
+## Migrating from Version 3.x to Version 4.0.0
+⚠️ If you're still on version `2.x`, you need to update to `3.x` first, then [migrate](https://github.com/dachcom-digital/pimcore-formbuilder/blob/3.x/UPGRADE.md) to `3.3`. After that, you're able to update to `^4.0`.
+
+> 💀 Be careful while migrating to production!
+> A lot of things (including form configuration) have changed and will break your installation if you're ignoring the migration guide below!
+
+### Migration
+- Execute `bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'` after you've installed FormBuilder
+- Remove `var/bundles/FormBuilderBundle/forms` if migration was successful
+
+### Global Changes
+- Deprecations have been removed:
+  - `FormBuilderBundle\Storage\Form` needs to be `FormBuilderBundle\Model\FormDefinition` now
+  - `FormBuilderBundle\Storage\FormInterface` needs to be `FormBuilderBundle\Model\FormDefinitionInterface` now
+  - `FormBuilderBundle\Storage\FormFieldSimpleInterface` needs to be `FormBuilderBundle\Model\FieldDefinitionInterface` now
+  - `FormBuilderBundle\Manager\FormManager` needs to be `FormBuilderBundle\Manager\FormDefinitionManager` now
+  - `FormBuilderBundle\Event\MailEvent` has been removed, use `FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent` instead
+  - Method `FormBuilderBundle\Assembler\FormAssembler::setFormOptionsResolver` has been removed. `FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionsResolver)` directly requires FormOptionsResolver now
+  - CSV export types `Only Admin-Mail` and `Only User-Mail (Copy)` have been removed. Instead, you're now able to filter CSV export by available output workflows
+  - Mail layout fallback feature has been removed (which was enabled if no workflows have been defined and have been stored in `formbuilder_forms.mailLayout`). Please migrate layouts to email channels. This column will be removed with FormBuilder 5.0
+- PHP8 return type declarations added: you may have to adjust your extensions accordingly
+- Email properties (`mail_successfully_sent`, `mail_ignore_fields`, `mail_force_plain_text`, `mail_disable_default_mail_body`) have been removed and won't be recognized anymore
+- Area-Brick Configuration does not allow `sendMailTmplate` and `sendCopyMailTemplate` fallbacks anymore. They must be configured by output workflows now
+- All Folders in `views` are lowercase/dashed now (`common/redirect-flash-message.html.twig`, `email/form-data.html.twig`, `form/elements/dynamic-multi-file`, `form/presets`, `form/theme`, ...)
+- If you have a custom email template, make sure that you're passing the `body`, `editmode`, `document` attributes to your email view template (@see `\FormBuilderBundle\Controller::emailAction()`). Also use `{{ body|raw }}` instead of `%Text(body);` inside your view template!
+- `DropZoneAdapter` has been declared to the new default Multi File Handler. You can switch back to FineUploader by changing the `form_builder.dynamic_multi_file_adapter` configuration node
+- All frontend javascript libraries have been removed from core. If you still want to use the jQuery extensions, please check out our [jquery-pimcore-formbuilder repo](https://github.com/dachcom-digital/jquery-pimcore-formbuilder)
+
+### Conditional Logic Changes
+- ⚠️ Action `Change Mail Behaviour` has been removed. Use `Switch Output Workflow` Action instead. 
+
+### Fixes
+- Bootstrap Theme: Class `form-control` has been removed from dynamic multi file (see [#253](https://github.com/dachcom-digital/pimcore-formbuilder/pull/253)). You now need to set some [style definitions](docs/90_FrontendTips.md#multi-file-validation) by yourself
+- Fixes root meta validation [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/290)
+
+### New Features
+- Conditional Logic Action `Switch Output Workflow` added
+- [Configurable Html2Text Options](./docs/OutputWorkflow/10_EmailChannel.md#configure-html2text-options)
+- Yaml file storage migrated to Database storage
+- Import/Export Improvement: You're able to export/import the complete form dataset (form, workflows and channels)
 
 ***
 
-After every update you should check the pimcore extension manager. 
-Just click the "update" button or execute the migration command to finish the bundle update.
-
-#### Update from Version 3.3.5 to Version 3.4.0
-- **[NEW FEATURE]**: Conditional Logic for Fieldset Container Fields [#232](https://github.com/dachcom-digital/pimcore-formbuilder/issues/232)
-- **[NEW FEATURE]**: Introduce Dynamic Multi File Adapter (DropZoneJs added) [#261](https://github.com/dachcom-digital/pimcore-formbuilder/issues/261)
-    - **[DEPRECATION]**: FineUploader Adapter has been marked as deprecated and will be removed with version 4.0.
-- **[NEW FEATURE]**: Choice Meta Data [#275](https://github.com/dachcom-digital/pimcore-formbuilder/issues/275)
-- **[NEW FEATURE]**: Pimcore 6.9.0 ready
-- **[IMPROVEMENT]**: D&D-Support/Sortable Container Fields [#231](https://github.com/dachcom-digital/pimcore-formbuilder/issues/231)
-- **[IMPROVEMENT]**: Adjust field attribute label "Preselected" [#270](https://github.com/dachcom-digital/pimcore-formbuilder/issues/270)
-- **[IMPROVEMENT]**: Field name preview added [#237](https://github.com/dachcom-digital/pimcore-formbuilder/issues/237)
-- **[IMPROVEMENT]**: Added `CRM/Firstname`, `CRM/Lastname`, `CRM/Email`, `CRM/NewsletterActive`, `CRM/NewsletterConfirmed`, `CRM/Consent`, `Number/Slider`, `CRM/Gender` fields to allowed object mapping types [#238](https://github.com/dachcom-digital/pimcore-formbuilder/issues/238)
-- **[IMPROVEMENT]**: Adds fatal error event for captcha [@patric-eberle](https://github.com/dachcom-digital/pimcore-formbuilder/pull/267)
-- **[BUGFIX]**: Remove `body` param from mail object after rendering [#268](https://github.com/dachcom-digital/pimcore-formbuilder/issues/268)
-- **[BUGFIX]**: Fix container toggle in conditional logic
-
-#### Update from Version 3.3.5 to Version 3.3.6
-- **[IMPROVEMENT]**: Allow `label_translation_parameters` [#252](https://github.com/dachcom-digital/pimcore-formbuilder/issues/252) and restrict translated labels to 190 characters [#226 (comment)](https://github.com/dachcom-digital/pimcore-formbuilder/issues/226#issuecomment-769022296)
-
-#### Update from Version 3.3.0 to Version 3.3.5
-- **[IMPROVEMENT]**: Implement Output Workflow Condition [#223](https://github.com/dachcom-digital/pimcore-formbuilder/pull/223)
-- **[IMPROVEMENT]**: Do not use RENAME function in migration [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/issues/243)
-- **[IMPROVEMENT]**: Unify uft8mb4 tables and use VARCHAR(190) field length [#234](https://github.com/dachcom-digital/pimcore-formbuilder/issues/234)
-- **[BUGFIX]**: reCaptcha V3 token reset issue [#240](https://github.com/dachcom-digital/pimcore-formbuilder/issues/240)
-- **[BUGFIX]**: NotBlank constraint for multi file upload ignored [#228](https://github.com/dachcom-digital/pimcore-formbuilder/issues/228)
-- **[BUGFIX]**: Dynamic Multi File not working if placed in container [#179](https://github.com/dachcom-digital/pimcore-formbuilder/issues/179)
-- **[BUGFIX]**: Checkbox Validation Rendering Issue [#177](https://github.com/dachcom-digital/pimcore-formbuilder/issues/177)
-- **[BUGFIX]**: Dynamic Multi File Validation not working [#236](https://github.com/dachcom-digital/pimcore-formbuilder/issues/236)
-- **[BUGFIX]**: Missing row class in repeater container [#206](https://github.com/dachcom-digital/pimcore-formbuilder/issues/206)
-
-#### Update from Version 3.2.0 to Version 3.3.0
-- **[IMPROVEMENT]**: Pimcore 6.6 ready
-- **[IMPROVEMENT]**: Use doctrine ORM instead of DAO for Form Data
-- **[IMPROVEMENT]**: Improve request management: Allow true `GET`, `HEAD`, `TRACE` submissions 
-- **[IMPROVEMENT]**: Introduced FormDataInterface and FormDefinitionInterface to split submitted data from the definition itself. 
-- **[IMPROVEMENT]**: RuntimeData Resolver added (The session based form configuration has been removed)
-- **[IMPROVEMENT]**: Huge code base refactoring to improve symfony standards
-- **[IMPROVEMENT]**: Implement Output Workflows [#114](https://github.com/dachcom-digital/pimcore-formbuilder/issues/114)
-- **[DEPRECATION]**: Calling `\FormBuilderBundle\Assembler\FormAssembler::setFormOptionsResolver($optionBuilder);` has been marked as deprecated and will be removed with version 4.0. Pass the `$optionBuilder` directly via `\FormBuilderBundle\Assembler\FormAssembler::assembleViewVars($optionBuilder)`.
-- **[DEPRECATION]**: `\Formbuilder\Storage\Form` and `\Formbuilder\Storage\FormInterface` has been marked as deprecated and will be removed with version 4.0. Use `\Formbuilder\Model\Form` and `\Formbuilder\Model\FormInterface` instead.
-- **[DEPRECATION]**: `\Formbuilder\Manager\FormManager` has been marked as deprecated and will be removed with version 4.0. Use `\Formbuilder\Manager\FormDefinitionManager` instead.
-
-#### Update from Version 3.2.0 to Version 3.2.1
-- **[NEW FEATURE]**: Pimcore 6.5 ready
-
-#### Update from Version 3.1.x to Version 3.2.0
-- **[NEW FEATURE]**: Pimcore 6.4 ready
-- **[NEW FEATURE]**: Make Honeypot field optional [@ihmels](https://github.com/dachcom-digital/pimcore-formbuilder/issues/167)
-- **[NEW FEATURE]**: Allow global copy/paste of fields from form to form [@albertmueller](https://github.com/dachcom-digital/pimcore-formbuilder/pull/207)
-- **[NEW FEATURE]**: Allow specific honeypot config [#212](https://github.com/dachcom-digital/pimcore-formbuilder/issues/212)
-- **[NEW FEATURE]**: Implement reCAPTCHA v3 Field [#165](https://github.com/dachcom-digital/pimcore-formbuilder/issues/165)
-- **[NEW FEATURE]**: Allow passing custom options in Twig- or Controller-Forms [#208](https://github.com/dachcom-digital/pimcore-formbuilder/issues/208)
-- **[IMPROVEMENT]** html2text binary is not required anymore in pimcore >= 6.6 [#218](https://github.com/dachcom-digital/pimcore-formbuilder/issues/218)
-- **[BUGFIX]**: Fix (multiple) dynamic choice data mapping [#205](https://github.com/dachcom-digital/pimcore-formbuilder/issues/205)
-
-#### Update from Version 3.0.x to Version 3.1.0
-- **[NEW FEATURE]**: Pimcore 6.3.0 ready
-
-#### Update from Version 3.0.4 to Version 3.0.5
-- **[BUGFIX]**: Check if checkbox configuration is available
-
-#### Update from Version 3.0.3 to Version 3.0.4
-- **[BUGFIX]**: [TRACKER] Check `window.dataLayer`
-
-#### Update from Version 3.0.x to Version 3.0.3
-- **[NEW FEATURE]**: Date-fields support choice for usage of html5 date-type
-- **[BUGFIX]**: Fix dynamic choice type service detection
-
-#### Update from Version 3.0.x to Version 3.0.2
-- **[NEW FEATURE]**: [Tracker Extension](https://github.com/dachcom-digital/pimcore-formbuilder/issues/183)
-- [Milestone](https://github.com/dachcom-digital/pimcore-formbuilder/milestone/23?closed=1)
-
-#### Update from Version 2.x to Version 3.0.0
-- **[NEW FEATURE]**: Pimcore 6.0.0 ready
-- **[BC BREAK]**: All Controllers are registered as services now! (Also check your email controller definition!)
-- **[ATTENTION]**: All `href`, `multihref` elements has been replaced by `relation`, `relations`
-
-***
-
-FormBuilder 2.x Upgrade Notes: https://github.com/dachcom-digital/pimcore-formbuilder/blob/2.7/UPGRADE.md
+FormBuilder 3.x Upgrade Notes: https://github.com/dachcom-digital/pimcore-formbuilder/blob/3.x/UPGRADE.md

@@ -5,26 +5,18 @@ namespace FormBuilderBundle\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FormBuilderBundle\Model\OutputWorkflow;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
 
 class OutputWorkflowRepository implements OutputWorkflowRepositoryInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
+    protected EntityRepository $repository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(OutputWorkflow::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findById($id)
+    public function findById(int $id): ?OutputWorkflowInterface
     {
         if ($id < 1) {
             return null;
@@ -33,10 +25,7 @@ class OutputWorkflowRepository implements OutputWorkflowRepositoryInterface
         return $this->repository->find($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findByNameAndFormId(string $name, int $formId)
+    public function findByNameAndFormId(string $name, int $formId): ?OutputWorkflowInterface
     {
         if (empty($name) || empty($formId)) {
             return null;
@@ -45,29 +34,28 @@ class OutputWorkflowRepository implements OutputWorkflowRepositoryInterface
         return $this->repository->findOneBy(['name' => $name, 'formDefinition' => $formId]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findNameById($id)
+    public function findNameById($id): ?string
     {
         $outputWorkflow = $this->findById($id);
+
+        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+            return null;
+        }
 
         return $outputWorkflow->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findIdByName(string $name)
+    public function findIdByName(string $name): ?int
     {
         $outputWorkflow = $this->repository->findOneBy(['name' => $name]);
+
+        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+            return null;
+        }
 
         return $outputWorkflow->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll(): array
     {
         return $this->repository->findAll();

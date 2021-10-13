@@ -6,48 +6,21 @@ use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 
 interface FormFieldContainerDefinitionInterface extends FieldDefinitionInterface, SubFieldsAwareInterface
 {
-    /**
-     * @param int $order
-     */
-    public function setOrder(int $order);
+    public function setOrder(int $order): void;
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name);
+    public function setName(string $name): void;
 
-    /**
-     * @param string $name
-     */
-    public function setDisplayName(string $name);
+    public function setDisplayName(string $name): void;
 
-    /**
-     * @return mixed
-     */
-    public function getDisplayName();
+    public function getDisplayName(): string;
 
-    /**
-     * @param string $type
-     */
-    public function setType(string $type);
+    public function setType(string $type): void;
 
-    /**
-     * @param string $subType
-     */
-    public function setSubType(string $subType);
+    public function setSubType(string $subType): void;
 
-    /**
-     * @return string
-     */
-    public function getSubType();
+    public function getSubType(): string;
 
-    /**
-     * @param array $configuration
-     */
-    public function setConfiguration(array $configuration = []);
+    public function setConfiguration(array $configuration = []): void;
 
-    /**
-     * @return array
-     */
-    public function getConfiguration();
+    public function getConfiguration(): array;
 }

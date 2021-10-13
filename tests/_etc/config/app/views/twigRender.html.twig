@@ -9,14 +9,10 @@
 
 <div id="site">
     {% block content %}
-        {% set config = {
-            'form_id': document.getProperty('form_id') ,
-            'form_template': 'bootstrap_4_layout.html.twig',
-            'mail_template': document.getProperty('mail_id'),
-            'copy_mail_template': document.getProperty('mail_copy_id'),
-            'send_copy': true
-        } %}
-        {{ form_builder_static(config) }}
+        {{ form_builder_static({
+            form_id: document.getProperty('form_id'),
+            form_template: 'bootstrap_4_layout.html.twig'
+        }) }}
     {% endblock %}
 </div>
 </body>

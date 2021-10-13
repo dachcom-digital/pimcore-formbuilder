@@ -2,12 +2,11 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits;
 
+use FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ActionInterface;
+
 trait ActionTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function setValues(array $values)
+    public function setValues(array $values): ActionInterface
     {
         foreach ($values as $key => $value) {
             $setter = 'set' . ucfirst($key);

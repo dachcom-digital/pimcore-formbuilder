@@ -4,58 +4,25 @@ namespace FormBuilderBundle\Model;
 
 interface FormFieldDefinitionInterface extends FieldDefinitionInterface
 {
-    /**
-     * @param int $order
-     */
-    public function setOrder(int $order);
+    public function setOrder(int $order): void;
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name);
+    public function setName(string $name): void;
 
-    /**
-     * @param string $name
-     */
-    public function setDisplayName(string $name);
+    public function setDisplayName(string $name): void;
 
-    /**
-     * @return mixed
-     */
-    public function getDisplayName();
+    public function getDisplayName(): string;
 
-    /**
-     * @param string $type
-     */
-    public function setType(string $type);
+    public function setType(string $type): void;
 
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options = []);
+    public function setOptions(array $options = []): void;
 
-    /**
-     * @return array
-     */
-    public function getOptions();
+    public function getOptions(): array;
 
-    /**
-     * @param array $options
-     */
-    public function setOptional(array $options = []);
+    public function setOptional(array $options = []): void;
 
-    /**
-     * @return array
-     */
-    public function getOptional();
+    public function getOptional(): array;
 
-    /**
-     * @param array $constraints
-     */
-    public function setConstraints(array $constraints = []);
+    public function setConstraints(array $constraints = []): void;
 
-    /**
-     * @return array
-     */
-    public function getConstraints();
+    public function getConstraints(): array;
 }

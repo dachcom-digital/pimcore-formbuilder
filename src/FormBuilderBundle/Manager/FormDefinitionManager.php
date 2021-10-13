@@ -8,115 +8,50 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Repository\FormDefinitionRepositoryInterface;
-use FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\User;
 
 class FormDefinitionManager
 {
-    /**
-     * @var FormDefinitionFactoryInterface
-     */
-    protected $formDefinitionFactory;
+    protected FormDefinitionFactoryInterface $formDefinitionFactory;
+    protected FormDefinitionRepositoryInterface $formDefinitionRepository;
+    protected TokenStorageUserResolver $storageUserResolver;
+    protected EntityManagerInterface $entityManager;
 
-    /**
-     * @var FormDefinitionRepositoryInterface
-     */
-    protected $formDefinitionRepository;
-
-    /**
-     * @var FormDataConnectorInterface
-     */
-    protected $formDataConnector;
-
-    /**
-     * TokenStorageUserResolver.
-     */
-    protected $storageUserResolver;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * @param FormDefinitionFactoryInterface    $formDefinitionFactory
-     * @param FormDefinitionRepositoryInterface $formDefinitionRepository
-     * @param FormDataConnectorInterface        $formDataConnector
-     * @param TokenStorageUserResolver          $storageUserResolver
-     * @param EntityManagerInterface            $entityManager
-     */
     public function __construct(
         FormDefinitionFactoryInterface $formDefinitionFactory,
         FormDefinitionRepositoryInterface $formDefinitionRepository,
-        FormDataConnectorInterface $formDataConnector,
         TokenStorageUserResolver $storageUserResolver,
         EntityManagerInterface $entityManager
     ) {
         $this->formDefinitionFactory = $formDefinitionFactory;
         $this->formDefinitionRepository = $formDefinitionRepository;
-        $this->formDataConnector = $formDataConnector;
         $this->storageUserResolver = $storageUserResolver;
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return FormDefinitionInterface|null
-     */
-    public function getById(int $id)
+    public function getById(int $id): ?FormDefinitionInterface
     {
         return $this->formDefinitionRepository->findById($id);
     }
 
     /**
-     * @param int $id
-     *
-     * @return bool
+     * @return array<int, FormDefinitionInterface>
      */
-    public function configurationFileExists(int $id)
-    {
-        return $this->formDataConnector->formHasAvailableConfigurationFile($id);
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return string
-     */
-    public function getConfigurationPath(int $id)
-    {
-        return $this->formDataConnector->getConfigurationPathOfForm($id);
-    }
-
-    /**
-     * @return FormDefinitionInterface[]
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->formDefinitionRepository->findAll();
     }
 
-    /**
-     * @param string $name
-     *
-     * @return FormDefinitionInterface|null
-     */
-    public function getIdByName(string $name)
+    public function getIdByName(string $name): ?FormDefinitionInterface
     {
         return $this->formDefinitionRepository->findByName($name);
     }
 
     /**
-     * @param array    $data
-     * @param null|int $id
-     *
-     * @return FormDefinitionInterface|null
-     *
      * @throws \Exception
      */
-    public function save(array $data, $id = null)
+    public function save(array $data, ?int $id = null): ?FormDefinitionInterface
     {
         $isUpdate = false;
         if (!is_null($id)) {
@@ -131,22 +66,18 @@ class FormDefinitionManager
         }
 
         $this->updateFormAttributes($data, $form, $isUpdate);
-        $this->updateFields(isset($data['form_fields']) ? $data['form_fields'] : [], $form);
+        $this->updateFields($data['form_fields'] ?? [], $form);
 
         $this->entityManager->persist($form);
         $this->entityManager->flush();
-
-        $this->formDataConnector->storeFormData($form);
 
         return $form;
     }
 
     /**
-     * @param FormDefinitionInterface $form
-     *
      * @throws \Exception
      */
-    public function saveRawEntity(FormDefinitionInterface $form)
+    public function saveRawEntity(FormDefinitionInterface $form): void
     {
         $date = new \DateTime();
         $form->setModificationDate($date);
@@ -155,10 +86,7 @@ class FormDefinitionManager
         $this->entityManager->flush();
     }
 
-    /**
-     * @param int $id
-     */
-    public function delete($id)
+    public function delete(int $id): void
     {
         $form = $this->getById($id);
 
@@ -166,21 +94,14 @@ class FormDefinitionManager
             return;
         }
 
-        $this->formDataConnector->deleteFormData($form);
-
         $this->entityManager->remove($form);
         $this->entityManager->flush();
     }
 
     /**
-     * @param int    $id
-     * @param string $newName
-     *
-     * @return FormDefinitionInterface|null
-     *
      * @throws \Exception
      */
-    public function rename(int $id, string $newName)
+    public function rename(int $id, string $newName): ?FormDefinitionInterface
     {
         $form = $this->getById($id);
 
@@ -196,12 +117,7 @@ class FormDefinitionManager
         return $form;
     }
 
-    /**
-     * @param array                   $data
-     * @param FormDefinitionInterface $form
-     * @param bool                    $isUpdate
-     */
-    protected function updateFormAttributes(array $data, FormDefinitionInterface $form, $isUpdate = false)
+    protected function updateFormAttributes(array $data, FormDefinitionInterface $form, bool $isUpdate = false): void
     {
         $form->setName((string) $data['form_name']);
 
@@ -219,7 +135,7 @@ class FormDefinitionManager
         $form->setModifiedBy($this->getAdminUserId());
 
         if (isset($data['form_config']) && is_array($data['form_config'])) {
-            $form->setConfig($data['form_config']);
+            $form->setConfiguration($data['form_config']);
         }
 
         if (isset($data['form_conditional_logic']) && is_array($data['form_conditional_logic'])) {
@@ -228,12 +144,9 @@ class FormDefinitionManager
     }
 
     /**
-     * Updates the contained fields in the form.
-     *
-     * @param array                   $data
-     * @param FormDefinitionInterface $form
+     * @throws \Exception
      */
-    public function updateFields($data, $form)
+    public function updateFields(array $data, FormDefinitionInterface $form): void
     {
         $order = 0;
         $fields = [];
@@ -258,15 +171,9 @@ class FormDefinitionManager
     }
 
     /**
-     * @param FormDefinitionInterface $form
-     * @param array                   $fieldData
-     * @param int                     $order
-     *
-     * @return FormFieldContainerDefinitionInterface
-     *
      * @throws \Exception
      */
-    protected function generateFormFieldContainer(FormDefinitionInterface $form, array $fieldData, int $order)
+    protected function generateFormFieldContainer(FormDefinitionInterface $form, array $fieldData, int $order): FormFieldContainerDefinitionInterface
     {
         $fieldType = $this->getValueAsString($fieldData, 'type');
         $fieldSubType = $this->getValueAsString($fieldData, 'sub_type');
@@ -275,10 +182,13 @@ class FormDefinitionManager
         $configParameter = $this->getValue($fieldData, 'configuration');
         $containerFields = $this->getValue($fieldData, 'fields');
 
-        $fieldContainer = $form->getFieldContainer($fieldName);
+        $originalFieldContainer = $form->getFieldContainer($fieldName);
 
-        if (!$fieldContainer instanceof FormFieldContainerDefinitionInterface) {
+        if (!$originalFieldContainer instanceof FormFieldContainerDefinitionInterface) {
             $fieldContainer = $this->formDefinitionFactory->createFormFieldContainerDefinition();
+        } else {
+            // @see https://github.com/doctrine/orm/issues/5542
+            $fieldContainer = clone $originalFieldContainer;
         }
 
         $fieldContainer->setName($fieldName);
@@ -310,14 +220,7 @@ class FormDefinitionManager
         return $fieldContainer;
     }
 
-    /**
-     * @param FormDefinitionInterface $form
-     * @param array                   $fieldData
-     * @param int                     $order
-     *
-     * @return FormFieldDefinitionInterface
-     */
-    protected function generateFormField(FormDefinitionInterface $form, array $fieldData, int $order)
+    protected function generateFormField(FormDefinitionInterface $form, array $fieldData, int $order): FormFieldDefinitionInterface
     {
         $fieldType = $this->getValueAsString($fieldData, 'type');
         $fieldName = $this->getValueAsString($fieldData, 'name');
@@ -326,10 +229,13 @@ class FormDefinitionManager
         $optionsParameter = $this->getValue($fieldData, 'options');
         $optionalParameter = $this->getValue($fieldData, 'optional');
 
-        $field = $form->getField($fieldName);
+        $originalField = $form->getField($fieldName);
 
-        if (!$field instanceof FormFieldDefinitionInterface) {
+        if (!$originalField instanceof FormFieldDefinitionInterface) {
             $field = $this->formDefinitionFactory->createFormFieldDefinition();
+        } else {
+            // @see https://github.com/doctrine/orm/issues/5542
+            $field = clone $originalField;
         }
 
         $field->setName($fieldName);
@@ -358,40 +264,19 @@ class FormDefinitionManager
         return $field;
     }
 
-    /**
-     * @param array  $data
-     * @param string $value
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    protected function getValue($data, $value, $default = null)
+    protected function getValue(array $data, string $value, mixed $default = null): mixed
     {
-        if (isset($data[$value])) {
-            return $data[$value];
-        }
-
-        return $default;
+        return $data[$value] ?? $default;
     }
 
-    /**
-     * @param array  $data
-     * @param string $value
-     * @param string $default
-     *
-     * @return string
-     */
-    protected function getValueAsString($data, $value, $default = '')
+    protected function getValueAsString(array $data, string $value, string $default = ''): string
     {
         $value = $this->getValue($data, $value, $default);
 
         return is_string($value) ? $value : $default;
     }
 
-    /**
-     * @return int
-     */
-    protected function getAdminUserId()
+    protected function getAdminUserId(): int
     {
         $user = $this->storageUserResolver->getUser();
 

@@ -221,8 +221,8 @@
     background: url(/bundles/formbuilder/img/cl_toggle_availability.svg) left center no-repeat !important;
 }
 
-.form_builder_cl_mail_behaviour {
-    background: url(/bundles/formbuilder/img/cl_mail_behaviour.svg) left center no-repeat !important;
+.form_builder_cl_switch_output_workflow {
+    background: url(/bundles/formbuilder/img/cl_switch_output_workflow.svg) left center no-repeat !important;
 }
 
 .form_builder_cl_success_message {
@@ -316,11 +316,4 @@
 
 .formbuilder-object-editor-grid-unavailable {
     background: url(/bundles/formbuilder/img/grid_unavailable.svg) left center no-repeat !important;
-}
-/*
-    Pimcore 6
-*/
-
-body.pimcore_version_6 .form_builder_icon_fbuilder {
-    background: url(/bundles/formbuilder/img/p6/formBuilder.svg) left center no-repeat !important;
 }

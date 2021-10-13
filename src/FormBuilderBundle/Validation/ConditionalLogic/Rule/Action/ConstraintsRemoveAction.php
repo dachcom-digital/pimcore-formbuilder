@@ -10,31 +10,14 @@ class ConstraintsRemoveAction implements ActionInterface
 {
     use ActionTrait;
 
-    /**
-     * @var array
-     */
-    protected $fields = [];
+    protected array $fields = [];
+    protected array $validation = [];
+    protected bool $removeAllValidations = false;
 
     /**
-     * @var array
-     */
-    protected $validation = [];
-
-    /**
-     * @var bool
-     */
-    protected $removeAllValidations = false;
-
-    /**
-     * @param bool  $validationState
-     * @param array $formData
-     * @param int   $ruleId
-     *
-     * @return FieldReturnStack|ReturnStackInterface
-     *
      * @throws \Exception
      */
-    public function apply($validationState, $formData, $ruleId)
+    public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         if ($validationState === true) {
@@ -53,50 +36,32 @@ class ConstraintsRemoveAction implements ActionInterface
         return new FieldReturnStack('removeConstraints', $data);
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    /**
-     * @param array $fields
-     */
-    public function setFields($fields)
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    /**
-     * @return array
-     */
-    public function getValidation()
+    public function getValidation(): array
     {
         return $this->validation;
     }
 
-    /**
-     * @param array $validation
-     */
-    public function setValidation($validation)
+    public function setValidation(array $validation): void
     {
         $this->validation = $validation;
     }
 
-    /**
-     * @return bool
-     */
-    public function getRemoveAllValidations()
+    public function getRemoveAllValidations(): bool
     {
         return $this->removeAllValidations;
     }
 
-    /**
-     * @param bool $removeAllValidations
-     */
-    public function setRemoveAllValidations($removeAllValidations)
+    public function setRemoveAllValidations(bool $removeAllValidations): void
     {
         $this->removeAllValidations = $removeAllValidations;
     }

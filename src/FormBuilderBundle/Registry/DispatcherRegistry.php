@@ -6,16 +6,9 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\ModuleInterf
 
 class DispatcherRegistry
 {
-    /**
-     * @var array
-     */
-    protected $services = [];
+    protected array $services = [];
 
-    /**
-     * @param string          $identifier
-     * @param ModuleInterface $service
-     */
-    public function register($identifier, $service)
+    public function register(string $identifier, mixed $service): void
     {
         if (!in_array(ModuleInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -26,24 +19,15 @@ class DispatcherRegistry
         $this->services[$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return ModuleInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier)
+    public function get(string $identifier): ModuleInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" dispatcher service does not exist.');

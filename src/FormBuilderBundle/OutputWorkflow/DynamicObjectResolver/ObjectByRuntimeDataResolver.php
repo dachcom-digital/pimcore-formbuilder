@@ -7,37 +7,18 @@ use Symfony\Component\Form\FormInterface;
 
 class ObjectByRuntimeDataResolver implements DynamicObjectResolverInterface
 {
-    /**
-     * @var string
-     */
-    protected $runtimeDataId;
+    protected string $runtimeDataId;
+    protected string $objectIdentifier;
+    protected bool $isLocalizedValue;
 
-    /**
-     * @var string
-     */
-    protected $objectIdentifier;
-
-    /**
-     * @var bool
-     */
-    protected $isLocalizedValue;
-
-    /**
-     * @param string $runtimeDataId
-     * @param string $objectIdentifier
-     * @param bool   $isLocalizedValue
-     */
-    public function __construct(string $runtimeDataId, string $objectIdentifier, $isLocalizedValue = false)
+    public function __construct(string $runtimeDataId, string $objectIdentifier, bool $isLocalizedValue = false)
     {
         $this->runtimeDataId = $runtimeDataId;
         $this->objectIdentifier = $objectIdentifier;
         $this->isLocalizedValue = $isLocalizedValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(FormInterface $form, DataObject $referenceObject, array $formRuntimeData, string $locale)
+    public function resolve(FormInterface $form, DataObject $referenceObject, array $formRuntimeData, string $locale): ?DataObject
     {
         if (!isset($formRuntimeData[$this->runtimeDataId])) {
             return null;

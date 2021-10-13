@@ -84,6 +84,10 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
             omFieldAttributes,
             outputWorkflowConfig;
 
+        if(node === null) {
+            return null;
+        }
+
         if (!node.hasOwnProperty('data')) {
             return null;
         }
@@ -293,6 +297,8 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
 
                     }.bind(this),
                     handler: function (grid, rowIndex) {
+
+                        console.log(rowIndex);
                         var record = grid.getStore().getAt(rowIndex),
                             fieldData = this.buildFormFieldConfigFromNode(record);
 

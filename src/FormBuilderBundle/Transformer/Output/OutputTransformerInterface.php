@@ -2,28 +2,12 @@
 
 namespace FormBuilderBundle\Transformer\Output;
 
-use FormBuilderBundle\Storage\FormFieldSimpleInterface;
+use FormBuilderBundle\Model\FieldDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
 
 interface OutputTransformerInterface
 {
-    /**
-     * @param FormFieldSimpleInterface $fieldDefinition
-     * @param FormInterface            $formField
-     * @param mixed                    $rawValue
-     * @param string|null              $locale
-     *
-     * @return mixed
-     */
-    public function getValue(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale);
+    public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): mixed;
 
-    /**
-     * @param FormFieldSimpleInterface $fieldDefinition
-     * @param FormInterface            $formField
-     * @param mixed                    $rawValue
-     * @param string|null              $locale
-     *
-     * @return mixed
-     */
-    public function getLabel(FormFieldSimpleInterface $fieldDefinition, FormInterface $formField, $rawValue, $locale);
+    public function getLabel(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): ?string;
 }

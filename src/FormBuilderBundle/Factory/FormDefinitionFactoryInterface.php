@@ -5,21 +5,15 @@ namespace FormBuilderBundle\Factory;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDynamicDefinition;
 
 interface FormDefinitionFactoryInterface
 {
-    /**
-     * @return FormDefinitionInterface
-     */
-    public function createFormDefinition();
+    public function createFormDefinition(): FormDefinitionInterface;
 
-    /**
-     * @return FormFieldDefinitionInterface
-     */
-    public function createFormFieldDefinition();
+    public function createFormFieldDefinition(): FormFieldDefinitionInterface;
 
-    /**
-     * @return FormFieldContainerDefinitionInterface
-     */
-    public function createFormFieldContainerDefinition();
+    public function createFormFieldContainerDefinition(): FormFieldContainerDefinitionInterface;
+
+    public function createFormFieldDynamicDefinition(string $name, string $type, array $options, array $optional = []): FormFieldDynamicDefinition;
 }

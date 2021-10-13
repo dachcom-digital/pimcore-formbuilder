@@ -6,25 +6,14 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInt
 
 class DataFactory
 {
-    /**
-     * @var array
-     */
-    protected $dataHandler;
+    protected iterable $dataHandler;
 
-    /**
-     * @param array $dataHandler
-     */
-    public function __construct($dataHandler)
+    public function __construct(iterable $dataHandler)
     {
         $this->dataHandler = $dataHandler;
     }
 
-    /**
-     * @param string $serviceId
-     *
-     * @return null|DataInterface
-     */
-    public function generate($serviceId)
+    public function generate(string $serviceId): ?DataInterface
     {
         foreach ($this->dataHandler as $dataHandler) {
             if ($dataHandler instanceof $serviceId) {

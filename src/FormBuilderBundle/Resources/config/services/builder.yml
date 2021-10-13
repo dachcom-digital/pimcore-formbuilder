@@ -18,7 +18,3 @@ services:
     # error serializer
     FormBuilderBundle\Form\FormErrorsSerializer: ~
     FormBuilderBundle\Form\FormErrorsSerializerInterface: '@FormBuilderBundle\Form\FormErrorsSerializer'
-
-    # form data connector
-    FormBuilderBundle\Form\Data\Connector\FormDataConnectorInterface: '@FormBuilderBundle\Form\Data\Connector\FormDataConnector'
-    FormBuilderBundle\Form\Data\Connector\FormDataConnector: ~

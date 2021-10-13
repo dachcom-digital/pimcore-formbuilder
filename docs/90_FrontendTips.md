@@ -39,6 +39,24 @@ html:not(.form-builder-rec3-available) .grecaptcha-badge {
 With this, the badge is only visible if a form builder form shows up. 
 Read more about the reCAPTCHA Field [here](./03_SpamProtection.md).
 
+## Multi File Validation 
+You may want to add some more attention to the upload field if it's in a required state:
+
+```css
+.dynamic-multi-file.is-invalid .dropzone {
+    border: 1px solid rgb(255, 0, 0);
+}
+```
+
+## Conditional Logic 
+If you want to use the [conditional logic](./81_ConditionalLogic.md) feature, you need to add a custom toggle class:
+
+```css
+.fb-cl-hide-element {
+    display:none;
+}
+```
+
 ## HTML in Checkbox / Radio Labels
 Formbuilder allows you to use HTML tags in checkbox and radio labels.
 Just use the translation html editor to define some html label:

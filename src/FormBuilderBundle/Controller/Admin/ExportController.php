@@ -5,53 +5,103 @@ namespace FormBuilderBundle\Controller\Admin;
 use Carbon\Carbon;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\Tool\ImportExportProcessor;
 use Pimcore\Model\Tool\Email;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use FormBuilderBundle\Manager\FormDefinitionManager;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Yaml\Yaml;
 
 class ExportController extends AdminController
 {
-    const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
+    public const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
 
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
+    protected FormDefinitionManager $formDefinitionManager;
 
-    /**
-     * @param FormDefinitionManager $formDefinitionManager
-     */
     public function __construct(FormDefinitionManager $formDefinitionManager)
     {
         $this->formDefinitionManager = $formDefinitionManager;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function exportFormEmailsAction(Request $request)
+    public function importFormAction(Request $request, ImportExportProcessor $importExportProcessor): JsonResponse
+    {
+        $formId = (int) $request->request->get('formId');
+        /** @var UploadedFile $file */
+        $file = $request->files->get('formData');
+        $data = file_get_contents($file->getPathname());
+        $encoding = \Pimcore\Tool\Text::detectEncoding($data);
+
+        if ($encoding) {
+            $data = iconv($encoding, 'UTF-8', $data);
+        }
+
+        $response = [
+            'success' => true,
+            'formId'  => $formId,
+            'message' => null,
+        ];
+
+        try {
+            $importExportProcessor->processYamlToFormDefinition($formId, $data);
+        } catch (\Throwable $e) {
+            $response['success'] = false;
+            $response['message'] = sprintf('Error while importing form definition: %s', $e->getMessage());
+        }
+
+        return new JsonResponse(json_encode($response, JSON_THROW_ON_ERROR), 200, ['Content-Type' => 'text/plain'], true);
+    }
+
+    public function exportFormAction(Request $request, ImportExportProcessor $importExportProcessor): Response
+    {
+        $formId = $request->get('id');
+
+        if (!is_numeric($formId)) {
+            throw new NotFoundHttpException(sprintf('form with id %d not found', $formId));
+        }
+
+        try {
+            $data = $importExportProcessor->processFormDefinitionToYaml((int) $formId);
+        } catch (\Throwable $e) {
+            throw new UnprocessableEntityHttpException(sprintf('Error while preparing form definition for export: %s', $e->getMessage()));
+        }
+
+        $response = new Response($data);
+        $exportName = 'form_export_' . $formId . '.yml';
+
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $exportName
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
+
+    public function exportFormEmailsAction(Request $request): Response
     {
         $formId = $request->get('id', 0);
-        $mailType = $request->get('mailType', 'all');
+        $filter = $request->get('mailType', 'all');
 
         if (empty($formId)) {
             throw new NotFoundHttpException('FormBuilder: No valid Form ID for csv export given.');
         }
 
         $emailLogs = new Email\Log\Listing();
-        $emailLogs->addConditionParam('params LIKE \'%' . $this->generateFormIdQuery($formId) . '%\'');
+        $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateFormIdQuery($formId)));
 
-        if ($mailType !== 'all') {
-            $emailLogs->addConditionParam('params LIKE \'%' . $this->generateFormTypeQuery($mailType) . '%\'');
+        if ($filter !== 'all') {
+            $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateOutputWorkflowFilterQuery($formId, (int) $filter)));
         }
 
-        $this->buildCsv($emailLogs->load(), $formId);
+        $this->buildCsv($emailLogs->getEmailLogs(), $formId);
 
         $response = new Response();
         $response->headers->set('Content-Encoding', 'none');
@@ -67,13 +117,7 @@ class ExportController extends AdminController
         return $response;
     }
 
-    /**
-     * @param array $mailData
-     * @param int   $formId
-     *
-     * @return string
-     */
-    private function buildCsv(array $mailData, $formId)
+    private function buildCsv(array $mailData, int $formId): string
     {
         $mailHeader = [
             'form_id',
@@ -81,7 +125,6 @@ class ExportController extends AdminController
             'email_path',
             'email_id',
             'preset',
-            'is_copy',
             'output_workflow_name',
             'to',
             'cc',
@@ -137,7 +180,7 @@ class ExportController extends AdminController
         foreach ($normalizedMailData as $mailValue) {
             $data = [];
             foreach ($mailHeader as $headerName) {
-                $data[$headerName] = isset($mailValue[$headerName]) ? $mailValue[$headerName] : null;
+                $data[$headerName] = $mailValue[$headerName] ?? null;
             }
 
             $rows[] = $data;
@@ -152,20 +195,13 @@ class ExportController extends AdminController
         return $this->generateCsvStructure($header, $rows);
     }
 
-    /**
-     * @param Email\Log               $log
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $mailHeader
-     *
-     * @return array
-     */
-    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, &$mailHeader)
+    private function extractMailParams(Email\Log $log, FormDefinitionInterface $formDefinition, array &$mailHeader): array
     {
         $normalizedParams = [];
         $forbiddenKeys = ['body', '_form_builder_id'];
 
         try {
-            $mailParams = json_decode($log->getParams());
+            $mailParams = json_decode($log->getParams(), true);
         } catch (\Exception $e) {
             return $normalizedParams;
         }
@@ -175,41 +211,41 @@ class ExportController extends AdminController
         }
 
         foreach ($mailParams as $mailParam) {
-            if (!$mailParam instanceof \stdClass) {
+
+            if (!is_array($mailParam)) {
                 continue;
             }
 
-            $key = $mailParam->key;
-            if (empty($key) || in_array($key, $forbiddenKeys)) {
+            $fieldType = null;
+            $key = $mailParam['key'];
+
+            if (empty($key) || in_array($key, $forbiddenKeys, true)) {
                 continue;
             }
 
             if ($key === '_form_builder_preset') {
-                $key = 'preset';
-            } elseif ($key === '_form_builder_is_copy') {
-                $key = 'is_copy';
+                $displayKeyName = 'preset';
             } elseif ($key === '_form_builder_output_workflow_name') {
-                $key = 'output_workflow_name';
-            }
+                $displayKeyName = 'output_workflow_name';
+            } else {
+                $displayKeyName = $key;
+                $formField = $formDefinition->getField($key);
 
-            $formField = $formDefinition->getField($key);
-
-            $displayKeyName = $key;
-            $fieldType = null;
-            if ($formField instanceof FormFieldDefinitionInterface) {
-                $fieldType = $formField->getType();
-                if (!empty($formField->getDisplayName())) {
-                    $displayKeyName = $formField->getDisplayName();
+                if ($formField instanceof FormFieldDefinitionInterface) {
+                    $fieldType = $formField->getType();
+                    if (!empty($formField->getDisplayName())) {
+                        $displayKeyName = $formField->getDisplayName();
+                    }
                 }
             }
 
-            if (!in_array($displayKeyName, $mailHeader)) {
+            if (!in_array($displayKeyName, $mailHeader, true)) {
                 $mailHeader[] = $displayKeyName;
             }
 
             $value = null;
-            if ($mailParam->data instanceof \stdClass && $mailParam->data->type === 'simple') {
-                $value = $this->cleanValue($mailParam->data->value, $fieldType);
+            if (is_array($mailParam['data']) && $mailParam['data']['type'] === 'simple') {
+                $value = $this->cleanValue($mailParam['data']['value'], $fieldType);
             }
 
             $normalizedParams[$displayKeyName] = $value;
@@ -218,12 +254,7 @@ class ExportController extends AdminController
         return $normalizedParams;
     }
 
-    /**
-     * @param int $formId
-     *
-     * @return string
-     */
-    private function generateFormIdQuery($formId)
+    private function generateFormIdQuery(int $formId): string
     {
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
@@ -232,33 +263,46 @@ class ExportController extends AdminController
         return json_encode([
             'key'  => '_form_builder_id',
             'data' => $stdClass
-        ]);
+        ], JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * @param string $mailType
-     *
-     * @return string
-     */
-    private function generateFormTypeQuery($mailType)
+    private function generateOutputWorkflowFilterQuery(int $formId, int $outputWorkflowId): string
     {
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+
+        if (!$formDefinition instanceof FormDefinitionInterface) {
+            return 'UNKNOWN';
+        }
+
+        if (!$formDefinition->hasOutputWorkflows()) {
+            return 'UNKNOWN';
+        }
+
+        $relatedWorkflows = array_values(array_filter(
+            $formDefinition->getOutputWorkflows()->toArray(),
+            static function (OutputWorkflowInterface $workflow) use ($outputWorkflowId) {
+                return $workflow->getId() === $outputWorkflowId;
+            }
+        ));
+
+        if (count($relatedWorkflows) === 0) {
+            return 'UNKNOWN';
+        }
+
+        /** @var OutputWorkflowInterface $relatedWorkflow */
+        $relatedWorkflow = $relatedWorkflows[0];
+
         $stdClass = new \stdClass();
         $stdClass->type = 'simple';
-        $stdClass->value = $mailType === 'only_main' ? 0 : 1;
+        $stdClass->value = $relatedWorkflow->getName();
 
         return json_encode([
-            'key'  => '_form_builder_is_copy',
+            'key'  => '_form_builder_output_workflow_name',
             'data' => $stdClass
-        ]);
+        ], JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * @param array $header
-     * @param array $data
-     *
-     * @return string
-     */
-    private function generateCsvStructure($header, $data)
+    private function generateCsvStructure(array $header, array $data): string
     {
         $handle = fopen('php://temp', 'r+');
         if (!is_resource($handle)) {
@@ -283,20 +327,14 @@ class ExportController extends AdminController
         return $contents;
     }
 
-    /**
-     * @param string $value
-     * @param string $fieldType
-     *
-     * @return mixed
-     */
-    private function cleanValue($value, $fieldType = null)
+    private function cleanValue(?string $value, ?string $fieldType = null): mixed
     {
         if (in_array($fieldType, ['choice', 'dynamic_choice', 'country'])) {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = is_array($value) ? join(', ', array_filter($value)) : $value;
+            $value = is_array($value) ? implode(', ', array_filter($value)) : $value;
         } elseif ($fieldType === 'textarea') {
             $value = preg_split('/(<br>|<br \/>)/', $value);
-            $value = is_array($value) ? join("\n", array_filter($value)) : $value;
+            $value = is_array($value) ? implode("\n", array_filter($value)) : $value;
             $value = preg_replace("/[\r\n]+/", "\n", $value);
         }
 

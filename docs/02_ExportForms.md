@@ -9,8 +9,7 @@ It's possible to export submitted form mails as CSV.
 | Name | Description
 |------|------------|
 | `All` | Export all mails |
-| ~`Only Admin Mail`~ | **Deprecated!** Only export all main mails |
-| ~`Only User Mail`~ | **Deprecated!** Only export all user mails (defined in copy field) |
+| `... Output Workflow Name` | Filter by output workflows related to given form |
 
 ## Facts
 - The header gets defined from the field `display_name` property and does not get translated

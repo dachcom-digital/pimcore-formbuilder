@@ -2,106 +2,61 @@
 
 namespace FormBuilderBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class SubmissionEvent extends Event
 {
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
+    private FormInterface $form;
+    private ?array $formRuntimeData;
+    private ?string $redirectUri = null;
+    private bool $outputWorkflowFinisherDisabled = false;
 
-    /**
-     * @var array
-     */
-    private $formRuntimeData;
-
-    /**
-     * @var FormInterface
-     */
-    private $form;
-
-    /**
-     * @var null|string
-     */
-    private $redirectUri = null;
-
-    /**
-     * @var bool
-     */
-    private $outputWorkflowFinisherDisabled = false;
-
-    /**
-     * @param Request       $request
-     * @param array         $formRuntimeData
-     * @param FormInterface $form
-     */
-    public function __construct(Request $request, $formRuntimeData, FormInterface $form)
+    public function __construct(Request $request, ?array $formRuntimeData, FormInterface $form)
     {
         $this->request = $request;
         $this->formRuntimeData = $formRuntimeData;
         $this->form = $form;
     }
 
-    public function disableOutputWorkflowFinisher()
+    public function disableOutputWorkflowFinisher(): void
     {
         $this->outputWorkflowFinisherDisabled = true;
     }
 
-    /**
-     * @return bool
-     */
-    public function outputWorkflowFinisherIsDisabled()
+    public function outputWorkflowFinisherIsDisabled(): bool
     {
         return $this->outputWorkflowFinisherDisabled === true;
     }
 
-    /**
-     * @param string $uri
-     */
-    public function setRedirectUri($uri)
+    public function setRedirectUri(?string $uri): void
     {
         $this->redirectUri = $uri;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRedirectUri()
+    public function getRedirectUri(): ?string
     {
         return $this->redirectUri;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasRedirectUri()
+    public function hasRedirectUri(): bool
     {
         return !is_null($this->redirectUri);
     }
 
-    /**
-     * @return Request
-     */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @return array
-     */
-    public function getFormRuntimeData()
+    public function getFormRuntimeData(): ?array
     {
         return $this->formRuntimeData;
     }
 
-    /**
-     * @return FormInterface
-     */
-    public function getForm()
+    public function getForm(): FormInterface
     {
         return $this->form;
     }

@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS `formbuilder_forms` (
   `createdBy` int(11) NOT NULL,
   `modifiedBy` int(11) NOT NULL,
   `mailLayout` longtext COMMENT '(DC2Type:object)',
+  `configuration` longtext COMMENT '(DC2Type:object)',
+  `conditionalLogic` longtext COMMENT '(DC2Type:object)',
+  `fields` longtext COMMENT '(DC2Type:form_builder_fields)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_29DA5346999517A` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

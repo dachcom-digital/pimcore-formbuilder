@@ -9,10 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class OutputTransformerPass implements CompilerPassInterface
 {
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(OutputTransformerRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.transformer.output') as $id => $tags) {

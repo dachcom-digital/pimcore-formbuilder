@@ -10,31 +10,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestDataProvider implements RuntimeDataProviderInterface
 {
-    /**
-     * @var string
-     */
-    protected $expr;
+    protected string $expr;
+    protected string $runtimeId;
+    protected RequestStack $requestStack;
+    protected ExpressionLanguage $expressionLanguage;
 
-    /**
-     * @var string
-     */
-    protected $runtimeId;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var ExpressionLanguage
-     */
-    protected $expressionLanguage;
-
-    /**
-     * @param RequestStack $requestStack
-     * @param string       $expr
-     * @param string       $runtimeId
-     */
     public function __construct(RequestStack $requestStack, string $expr, string $runtimeId)
     {
         $this->expressionLanguage = new ExpressionLanguage();
@@ -43,31 +23,22 @@ class RequestDataProvider implements RuntimeDataProviderInterface
         $this->runtimeId = $runtimeId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeDataId()
+    public function getRuntimeDataId(): string
     {
         return $this->runtimeId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasRuntimeData(FormDefinitionInterface $formDefinition)
+    public function hasRuntimeData(FormDefinitionInterface $formDefinition): bool
     {
-        $data = $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMasterRequest()]);
+        $data = $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMainRequest()]);
 
         return $data !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeData(FormDefinitionInterface $formDefinition)
+    public function getRuntimeData(FormDefinitionInterface $formDefinition): mixed
     {
         try {
-            return $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMasterRequest()]);
+            return $this->expressionLanguage->evaluate($this->expr, ['request' => $this->requestStack->getMainRequest()]);
         } catch (SyntaxError $e) {
             return null;
         }

@@ -1,8 +1,0 @@
-services:
-
-    # deprecated since version 3.3, to be removed in 4.0; use FormBuilderBundle\Model\FieldDefinitionInterface instead.
-    FormBuilderBundle\Manager\FormManager:
-        parent: FormBuilderBundle\Manager\FormDefinitionManager
-        autoconfigure: false
-        autowire: true
-        public: true

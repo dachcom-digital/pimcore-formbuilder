@@ -8,10 +8,7 @@ use Pimcore\Model\Document\Email;
 
 abstract class AbstractActionCest
 {
-    /**
-     * @var array
-     */
-    protected $conditions = [
+    protected array $conditions = [
         [
             'type'       => 'elementValue',
             'fields'     => ['simple_text_input_1'],
@@ -20,16 +17,9 @@ abstract class AbstractActionCest
         ]
     ];
 
-    /**
-     * @param AcceptanceTester $I
-     * @param array            $actions
-     * @param TestFormBuilder  $testFormBuilder
-     *
-     * @return TestFormBuilder
-     */
-    protected function runTestWithActionAndCustomFormBuilder(AcceptanceTester $I, array $actions, TestFormBuilder $testFormBuilder)
+    protected function runTestWithActionAndCustomFormBuilder(AcceptanceTester $I, array $actions, TestFormBuilder $testFormBuilder): TestFormBuilder
     {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript']);
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction']);
 
         $testFormBuilder->addFormConditionBlock($this->conditions, $actions);
 
@@ -42,43 +32,28 @@ abstract class AbstractActionCest
         return $testFormBuilder;
     }
 
-    /**
-     * @param AcceptanceTester $I
-     * @param array            $actions
-     * @param null             $closure
-     * @param bool             $addConstraints
-     * @param Email|null       $mailTemplate
-     * @param Email|null       $copyMailTemplate
-     * @param string           $locale
-     *
-     * @return TestFormBuilder|mixed
-     */
     protected function runTestWithActions(
         AcceptanceTester $I,
         array $actions,
-        $closure = null,
-        $addConstraints = false,
-        $mailTemplate = null,
-        $copyMailTemplate = null,
-        $locale = 'en'
-    ) {
-        $document = $I->haveAPageDocument('form-test', ['action' => 'javascript'], $locale);
+        ?\Closure $closure = null,
+        bool $addConstraints = false,
+        ?Email $mailTemplate = null,
+        ?Email $additionalMailTemplate = null,
+        string $locale = 'en'
+    ): TestFormBuilder {
+        $document = $I->haveAPageDocument('form-test', ['action' => 'javascriptAction'], $locale);
 
         $testFormBuilder = $this->generateDefaultForm($actions, $addConstraints, $closure);
 
         $form = $I->haveAForm($testFormBuilder);
 
         $formTemplate = 'bootstrap_4_layout.html.twig';
-        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, $copyMailTemplate, $formTemplate);
+        $I->seeAFormAreaElementPlacedOnDocument($document, $form, $mailTemplate, $additionalMailTemplate, $formTemplate);
         $I->amOnPage('/form-test');
 
         return $testFormBuilder;
     }
 
-    /**
-     * @param AcceptanceTester $I
-     * @param TestFormBuilder  $testFormBuilder
-     */
     protected function triggerCondition(AcceptanceTester $I, TestFormBuilder $testFormBuilder)
     {
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_1'), 'text1');
@@ -86,14 +61,7 @@ abstract class AbstractActionCest
         $I->fillField($testFormBuilder->getFormFieldSelector(1, 'simple_text_input_4'), '');
     }
 
-    /**
-     * @param $actions
-     * @param $addConstraints
-     * @param $closure
-     *
-     * @return TestFormBuilder|mixed
-     */
-    protected function generateDefaultForm($actions, $addConstraints, $closure)
+    protected function generateDefaultForm(array $actions, bool $addConstraints, ?\Closure $closure = null): TestFormBuilder
     {
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)

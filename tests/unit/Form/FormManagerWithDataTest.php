@@ -9,7 +9,7 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 class FormManagerWithDataTest extends DachcomBundleTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $manager = $this->getContainer()->get(FormDefinitionManager::class);
         $testFormBuilder = FormHelper::generateSimpleForm('TEST_FORM');
