@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 3.4.2 to Version 3.4.3
+- **[BUGFIX]**: Fixes root meta validation [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/290)
+
 #### Update from Version 3.4.1 to Version 3.4.2
 - **[BUGFIX]**: Fix behaviour of conditional logic plugin when toggling required state of custom controls [#287](https://github.com/dachcom-digital/pimcore-formbuilder/issues/287)
 

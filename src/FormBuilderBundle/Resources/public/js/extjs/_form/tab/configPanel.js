@@ -515,10 +515,12 @@ Formbuilder.extjs.formPanel.config = Class.create({
         if (rootFields.length > 0) {
             rootFields.each(function (field) {
                 if (typeof field.getValue === 'function') {
-                    if (field.allowBlank !== true && (
-                        field.getValue() === null ||
-                        field.getValue() === '' ||
-                        (Ext.isArray(field.getValue()) && field.getValue().length === 0))
+                    if (field.allowBlank !== true &&
+                        field.getXType() !== 'hiddenfield' && (
+                            field.getValue() === null ||
+                            field.getValue() === '' ||
+                            (Ext.isArray(field.getValue()) && field.getValue().length === 0)
+                        )
                     ) {
                         this.formValidator.root.push({name: field.getName(), message: field.getName() + ' cannot be empty.'});
                     }
