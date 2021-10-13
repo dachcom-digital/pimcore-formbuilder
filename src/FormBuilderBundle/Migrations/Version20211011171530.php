@@ -27,7 +27,7 @@ final class Version20211011171530 extends AbstractMigration
             $this->addSql('ALTER TABLE formbuilder_forms ADD conditionalLogic LONGTEXT DEFAULT NULL COMMENT "(DC2Type:object)"');
         }
 
-        if (!$table->hasColumn('configuration')) {
+        if (!$table->hasColumn('fields')) {
             $this->addSql('ALTER TABLE formbuilder_forms ADD fields LONGTEXT DEFAULT NULL COMMENT "(DC2Type:form_builder_fields)"');
         }
 
@@ -38,7 +38,6 @@ final class Version20211011171530 extends AbstractMigration
         }
 
         $finder = new Finder();
-        $filesystem = new Filesystem();
 
         foreach ($finder->in($legacyFormStoragePath)->files()->name('*.yml') as $configFile) {
 
@@ -62,9 +61,6 @@ final class Version20211011171530 extends AbstractMigration
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `configuration` = "%s" WHERE `id` = %d', addslashes(serialize($configuration)), $formDefinitionId));
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `conditionalLogic` = "%s" WHERE `id` = %d', addslashes(serialize($conditionalLogic)), $formDefinitionId));
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `fields` = "%s" WHERE `id` = %d', addslashes(serialize($fields)), $formDefinitionId));
-
-            // remove config file
-            $filesystem->remove($configFile->getRealPath());
         }
     }
 

@@ -8,6 +8,7 @@
 
 ### Migration
 - Execute `bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'` after you've installed FormBuilder
+- Remove `var/bundles/FormBuilderBundle/forms` if migration was successful
 
 ### Global Changes
 - Deprecations have been removed:
