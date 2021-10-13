@@ -32,6 +32,7 @@
 
 ### Fixes
 - Bootstrap Theme: Class `form-control` has been removed from dynamic multi file (see [#253](https://github.com/dachcom-digital/pimcore-formbuilder/pull/253)). You now need to set some [style definitions](docs/90_FrontendTips.md#multi-file-validation) by yourself
+- Fixes root meta validation [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/290)
 
 ### New Features
 - Conditional Logic Action `Switch Output Workflow` added
