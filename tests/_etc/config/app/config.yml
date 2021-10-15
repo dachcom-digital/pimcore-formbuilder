@@ -10,6 +10,14 @@ services:
         calls:
             - [setContainer, ['@service_container']]
 
+doctrine:
+    dbal:
+        connections:
+            default:
+                mapping_types:
+                    enum: string
+                    bit: boolean
+
 framework:
     profiler:
         enabled: true
