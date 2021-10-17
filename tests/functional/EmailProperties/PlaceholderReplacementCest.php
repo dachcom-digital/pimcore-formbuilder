@@ -29,7 +29,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with TEST_FIRST_NAME', $adminEmail->getKey()));
+        $I->seeSentEmailHasHeaderValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with TEST_FIRST_NAME', $adminEmail->getKey()));
     }
 
     /**
@@ -72,7 +72,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with TEST_FIELDSET_CONTAINER_VALUE', $adminEmail->getKey()));
+        $I->seeSentEmailHasHeaderValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with TEST_FIELDSET_CONTAINER_VALUE', $adminEmail->getKey()));
     }
 
     /**
@@ -97,7 +97,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with Check 1, Check 3', $adminEmail->getKey()));
+        $I->seeSentEmailHasHeaderValue($adminEmail, 'subject', sprintf('Debug email: [%s] subject with Check 1, Check 3', $adminEmail->getKey()));
     }
 
     /**
@@ -120,7 +120,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'replyTo', 'test@test.com');
+        $I->seeSentEmailHasHeaderValue($adminEmail, 'replyTo', 'test@test.com');
     }
 
     /**
@@ -143,7 +143,7 @@ class PlaceholderReplacementCest
         $this->clickSimpleFormSubmit($testFormBuilder, $I);
 
         $I->seeEmailIsSent($adminEmail);
-        $I->seeSentEmailHasPropertyValue($adminEmail, 'from', 'test@test.com');
+        $I->seeSentEmailHasHeaderValue($adminEmail, 'from', 'test@test.com');
     }
 
     /**
