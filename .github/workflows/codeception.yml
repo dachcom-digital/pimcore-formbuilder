@@ -43,10 +43,12 @@ jobs:
             matrix:
                 php: [ 8.0 ]
                 symfony: [ ^5.3 ]
-                pimcore: [ ~10.1.0 ]
+                pimcore: [ ~10.1.0, ~10.2.0 ]
                 include:
                     -   pimcore: ~10.1.0
                         template_tag: v10.1.0
+                    -   pimcore: ~10.2.0
+                        template_tag: v10.1.4
         steps:
             -   uses: actions/checkout@v2
                 with:
