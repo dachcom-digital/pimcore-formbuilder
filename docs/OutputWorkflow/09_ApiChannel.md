@@ -34,11 +34,16 @@ If no API field is assigned to the repeater itself, the child elements will be s
 ***
 
 ## API Provider
-
 Integrating an api provider is very simple. In this example, we're going to set up an API provider for MailChimp.
 
-Requirements
+### API Configuration Fields
+Every API Provider is allowed to provide custom configuration fields (see example below).
+This allows you to select various data for each form (like a campaign ID in MailChimp)
 
+### API Predefined Fields
+If the API Provider returns predefined you **must** map your form fields with these given fields.
+
+### Requirements
 ```bash
 $ composer require mailchimp/marketing
 ```
