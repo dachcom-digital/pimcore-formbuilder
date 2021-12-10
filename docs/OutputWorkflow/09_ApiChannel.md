@@ -5,7 +5,6 @@
 Use the mail channel to submit structured to any kind of API you want.
 
 ## Note
-
 **The FormBuilder API Channel does **not** ship preconfigured API Provider. They can be simple but also complex. But no worries,
 it's quite easy to integrate your own api provider, read more about it [here](./09_ApiChannel.md#api-provider)
 
@@ -23,12 +22,10 @@ If the API Provider supports predefined API fields, you're able to map form fiel
 dropdown element. If there are no predefined API fields, you need to enter them manually.
 
 ### Container "Fieldset" Mapping
-
 If an API field is assigned to the fieldset itself, the child elements will be created as an array branch. Otherwise, child
 elements will be assigned flat.
 
 ### Container "Repeater" Mapping
-
 If no API field is assigned to the repeater itself, the child elements will be skipped.
 
 ***
@@ -42,6 +39,8 @@ This allows you to select various data for each form (like a campaign ID in Mail
 
 ### API Predefined Fields
 If the API Provider returns predefined you **must** map your form fields with these given fields.
+
+> Note! You're allowed to add a predefined only once, but you're allowed to add multiple predefined properties to a single form field!
 
 ### Requirements
 ```bash

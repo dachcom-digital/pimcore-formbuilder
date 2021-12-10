@@ -121,6 +121,13 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
     getFormTreePanel: function () {
 
         var treeItems,
+            hasPredefinedApiFields = this.apiProviderData.predefinedApiFields.length > 0,
+            predefinedApiFields = this.apiProviderData.predefinedApiFields,
+            predefinedApiFieldStore = new Ext.data.Store({
+                fields: ['label', 'value'],
+                data: predefinedApiFields === null ? [] : predefinedApiFields,
+            }),
+            storeCollection = new Ext.util.Collection(),
             generateFields = function (fields, treeItems, parent) {
 
                 Ext.Array.each(fields, function (field) {
@@ -128,6 +135,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                     var fieldData = field.data,
                         fieldTypeConfig = field.type,
                         editorData = this.editorData !== null ? this.editorData.fields : null,
+                        apiMappingValues = this.findApiMappingValue(editorData, fieldData.name),
                         item = {
                             type: 'layout',
                             text: fieldData.display_name,
@@ -138,11 +146,19 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                             expandable: false,
                             expanded: true,
                             children: [],
-                            apiMapping: this.findApiMappingValue(editorData, fieldData.name),
+                            apiMapping: apiMappingValues,
                             formFieldAttributes: {
                                 fieldData: fieldData
                             }
                         };
+
+                    Ext.Array.each(apiMappingValues, function (mappingKey) {
+                        var record = predefinedApiFieldStore.findRecord('value', mappingKey);
+                        if (record !== null) {
+                            storeCollection.add(predefinedApiFieldStore.findRecord('value', mappingKey));
+                            predefinedApiFieldStore.getData().onFilterChange();
+                        }
+                    });
 
                     if (parent !== null) {
                         parent.children.push(item);
@@ -158,6 +174,14 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
 
                 return treeItems;
             }.bind(this);
+
+        predefinedApiFieldStore.filter(new Ext.util.Filter({
+            filterFn: function (rec) {
+                return storeCollection.findIndexBy(function (item) {
+                    return item.get('value') === rec.get('value');
+                }) === -1;
+            }
+        }));
 
         treeItems = generateFields(this.formFieldDefinitions, [], null);
 
@@ -200,14 +224,10 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                     sortable: false,
                     getEditor: function (ev) {
 
-                        var editor, predefinedApiFields = null;
+                        var editor;
 
                         if (ev.id === '0') {
                             return false;
-                        }
-
-                        if (this.apiProviderData.predefinedApiFields.length > 0) {
-                            predefinedApiFields = this.apiProviderData.predefinedApiFields;
                         }
 
                         editor = Ext.create('Ext.form.field.Tag', {
@@ -215,18 +235,23 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                             displayField: 'label',
                             valueField: 'value',
                             anchor: '100%',
-                            store: new Ext.data.Store({
-                                fields: ['label', 'value'],
-                                data: predefinedApiFields === null ? [] : predefinedApiFields
-                            }),
+                            store: predefinedApiFieldStore,
                             allowBlank: true,
                             editable: true,
-                            createNewOnBlur: predefinedApiFields === null,
-                            createNewOnEnter: predefinedApiFields === null,
+                            createNewOnBlur: !hasPredefinedApiFields,
+                            createNewOnEnter: !hasPredefinedApiFields,
                             selectOnFocus: false,
-                            filterPickList: true,
-                            forceSelection: predefinedApiFields !== null,
-                            hideTrigger: true,
+                            forceSelection: true,
+                            listeners: {
+                                select: function (ev, record) {
+                                    storeCollection.add(record);
+                                    predefinedApiFieldStore.getData().onFilterChange();
+                                },
+                                beforedeselect: function (ev, record) {
+                                    storeCollection.remove(record);
+                                    predefinedApiFieldStore.getData().onFilterChange();
+                                }
+                            }
                         });
 
                         return editor;
@@ -263,7 +288,6 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
         this.getFormFieldsRecursive(this.formTreePanel.getRootNode());
 
         if (this.formApiConfigurationPanel !== null) {
-            console.warn(this.formApiConfigurationPanel.form.isValid());
             this.formDataHasInvalidFields = !this.formApiConfigurationPanel.form.isValid();
         }
 
