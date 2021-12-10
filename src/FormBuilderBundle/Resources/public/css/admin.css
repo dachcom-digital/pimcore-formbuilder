@@ -233,6 +233,14 @@
     Output Workflow
 */
 
+.form_builder_output_workflow_channel_api {
+    background: url(/bundles/formbuilder/img/ow_channel_api.svg) left center no-repeat !important;
+}
+
+.form_builder_output_workflow_channel_api_mapper {
+    background: url(/bundles/formbuilder/img/ow_channel_api_mapper.svg) left center no-repeat !important;
+}
+
 .form_builder_output_workflow_channel_email {
     background: url(/bundles/formbuilder/img/ow_channel_email.svg) left center no-repeat !important;
 }

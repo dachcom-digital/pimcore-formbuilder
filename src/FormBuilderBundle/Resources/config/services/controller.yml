@@ -33,3 +33,6 @@ services:
         calls:
             - [setContainer, ['@service_container']]
 
+    FormBuilderBundle\Controller\Admin\OutputWorkflowApiController:
+        calls:
+            - [setContainer, ['@service_container']]

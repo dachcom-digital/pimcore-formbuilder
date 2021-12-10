@@ -16,3 +16,8 @@ services:
     FormBuilderBundle\OutputWorkflow\Channel\Object\ObjectOutputChannel:
         tags:
             - { name: form_builder.output_workflow.channel, type: object }
+
+    FormBuilderBundle\OutputWorkflow\Channel\Api\ApiOutputChannelWorker: ~
+    FormBuilderBundle\OutputWorkflow\Channel\Api\ApiOutputChannel:
+        tags:
+            - { name: form_builder.output_workflow.channel, type: api }

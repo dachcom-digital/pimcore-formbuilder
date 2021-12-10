@@ -20,7 +20,7 @@
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~3.4.0"
+    "dachcom-digital/formbuilder" : "~3.5.0"
 }
 ```
 
@@ -54,7 +54,7 @@ Does actually the same as the update command and preferred in CI-Workflow:
 2. Open a document and place the form area brick like any other bricks via drag and drop. 
 3. Use the edit button at the right top corner to configure your form. 
 
-Also make sure you've included the [flash template](docs/Deprecated/11_SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
+Also make sure you've included the [flash template](docs/Deprecated/SuccessMessage.md#flash-messages-implementation) if you want to have some success messages after a redirect.
 It's also possible to render a form via Twig or even within a controller method. [Click here](docs/0_Usage.md) to learn more about the form rendering types.
 
 ## Overriding Templates
@@ -63,7 +63,8 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 ## Further Information
 - [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
-- [Output Workflows (New!)](docs/OutputWorkflow/0_Usage.md) 🔥
+- [Output Workflows (New!)](docs/OutputWorkflow/0_Usage.md)
+  - [API Channel](docs/OutputWorkflow/09_ApiChannel.md)
   - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)
   - [Object Channel](docs/OutputWorkflow/11_ObjectChannel.md)
   - [Custom Channel](docs/OutputWorkflow/12_CustomChannel.md)

@@ -112,6 +112,16 @@ form_builder.controller.admin.output_workflow.object.get_dynamic_object_resolver
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowObjectController::getDynamicObjectResolverAction }
     methods: [GET]
 
+form_builder.controller.admin.output_workflow.api.get_form_data:
+    path: /admin/formbuilder/output-workflow/api/get-form-data
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowApiController::getFormDataAction }
+    methods: [POST]
+
+form_builder.controller.admin.output_workflow.api.get_api_provider:
+    path: /admin/formbuilder/output-workflow/api/get-api-provider
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowApiController::getApiProviderAction }
+    methods: [GET]
+
 # Frontend Routing
 form_builder.controller.ajax.url_structure:
     path: /{_locale}/form-control/get-url-structure
