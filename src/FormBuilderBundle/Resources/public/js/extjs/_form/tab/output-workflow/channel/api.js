@@ -25,6 +25,10 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
 
         if (this.data !== null) {
             formConfig = this.data;
+            if (formConfig.hasOwnProperty('apiConfiguration') && formConfig.apiConfiguration.length === 0) {
+                delete formConfig['apiConfiguration'];
+            }
+
             if (formConfig.hasOwnProperty('apiMappingData')) {
                 delete formConfig['apiMappingData'];
                 this.lastConsistentConfigHash = md5(Ext.encode(formConfig));
@@ -54,7 +58,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
                 listeners: {
                     change: function (combo, value) {
                         var record = combo.getStore().findRecord('key', value);
-                        this.buildApiProviderPanel(value, record.get('label'));
+                        this.buildApiProviderPanel(value, record);
                     }.bind(this),
                     render: function (combo) {
                         combo.getStore().load();
@@ -68,6 +72,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
                     type: 'ajax',
                     url: '/admin/formbuilder/output-workflow/api/get-api-provider',
                     fields: ['label', 'key'],
+                    extraParams: {
+                        id: this.formId
+                    },
                     reader: {
                         type: 'json',
                         rootProperty: 'types'
@@ -106,7 +113,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
                             return;
                         }
 
-                        this.buildApiProviderPanel(value, record.get('label'));
+                        this.buildApiProviderPanel(value, record);
 
                     }.bind(this)
                 }
@@ -117,7 +124,16 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
         return [comboBox]
     },
 
-    buildApiProviderPanel: function (apiProvider, label) {
+    buildApiProviderPanel: function (apiProvider, record) {
+
+        var label, configurationFields;
+        if (record === null) {
+            Ext.Msg.alert(t('error'), t('form_builder.output_workflow.output_workflow_channel.api.editor.invalid_configuration'));
+            return;
+        }
+
+        label = record.get('label');
+        configurationFields = record.get('configurationFields');
 
         if (this.apiProviderPanel !== null) {
             this.panel.remove(this.apiProviderPanel);
@@ -128,25 +144,83 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
             collapsible: false,
             collapsed: false,
             autoHeight: true,
+            defaultType: 'textfield',
             defaults: {
                 labelWidth: 200
-            },
-            defaultType: 'textfield'
+            }
         });
 
-        this.apiProviderPanel.add(this.generateDataMapperControlPanel());
+        this.apiProviderPanel.add(this.generateDataMapperControlPanel(configurationFields));
 
         this.panel.add(this.apiProviderPanel);
 
         this.validateDataMapper();
     },
 
-    generateDataMapperControlPanel: function () {
+    generateDataMapperControlPanel: function (configurationFieldDefinitions) {
 
         var hasData = this.apiMappingData !== null,
-            hasInconsistentData = this.mappingDataIsConsistent === false;
+            hasInconsistentData = this.mappingDataIsConsistent === false,
+            panels = [], configurationFields = [];
 
-        return new Ext.Panel({
+        if (configurationFieldDefinitions.length > 0) {
+
+            Ext.Array.each(configurationFieldDefinitions, function (configRow) {
+
+                var apiConfiguration = Ext.isObject(this.apiConfiguration) ? this.apiConfiguration : {},
+                    value = apiConfiguration.hasOwnProperty(configRow.name) ? apiConfiguration[configRow.name] : null;
+
+                switch (configRow.type) {
+                    case 'text' :
+                        configurationFields.push({
+                            xtype: 'textfield',
+                            name: 'apiConfiguration.' + configRow['name'],
+                            fieldLabel: configRow['label'],
+                            allowBlank: configRow['required'] === false,
+                            value: value,
+                            listeners: {
+                                change: function () {
+                                    this.validateDataMapper();
+                                }.bind(this)
+                            }
+                        });
+                        break;
+                    case 'select' :
+                        configurationFields.push({
+                            xtype: 'combobox',
+                            name: 'apiConfiguration.' + configRow['name'],
+                            fieldLabel: configRow['label'],
+                            allowBlank: configRow['required'] === false,
+                            store: new Ext.data.Store({
+                                fields: ['label', 'value'],
+                                data: configRow['store']
+                            }),
+                            value: value,
+                            queryDelay: 0,
+                            displayField: 'label',
+                            valueField: 'value',
+                            mode: 'local',
+                            editable: false,
+                            triggerAction: 'all',
+                            listeners: {
+                                change: function () {
+                                    this.validateDataMapper();
+                                }.bind(this)
+                            }
+                        });
+                        break;
+                }
+            }.bind(this));
+
+            panels.push(new Ext.form.FormPanel({
+                title: false,
+                border: false,
+                items: configurationFields
+            }));
+
+        }
+
+        panels.push(new Ext.Panel({
             layout: 'hbox',
             anchor: '100%',
             hidden: true,
@@ -169,7 +243,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
                     text: t('form_builder.output_workflow.output_workflow_channel.object.object_mapping.' + (hasData ? (hasInconsistentData ? 'status_inconsistent' : 'status_in_sync') : 'status_disabled'))
                 }
             ]
-        });
+        }));
+
+        return panels;
     },
 
     showDataMappingEditor: function () {
@@ -179,19 +255,15 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
             callbacks = {
                 loadData: function () {
                     if (this.apiMappingData !== null) {
-                        return {
-                            configuration: this.apiConfiguration,
-                            fields: this.apiMappingData
-                        };
+                        return this.apiMappingData;
                     }
 
                     return null;
 
                 }.bind(this),
                 saveData: function (data) {
-                    this.apiMappingData = data.fields;
-                    this.apiConfiguration = data.configuration;
-                    this.lastConsistentConfigHash = md5(Ext.encode(this.panel.form.getValues()));
+                    this.apiMappingData = data;
+                    this.lastConsistentConfigHash = md5(Ext.encode(this.getFormValues()));
                     this.mappingDataIsConsistent = true;
                     this.checkDataMappingEditorSignals();
 
@@ -207,7 +279,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
 
         var isValid = this.panel.form.isValid(),
             controlPanel = this.panel.query('panel[cls~="form_builder_channel_api_data_mapper_control_panel"]'),
-            currentConfigHash = md5(Ext.encode(this.panel.form.getValues()));
+            currentConfigHash = md5(Ext.encode(this.getFormValues()));
 
         if (controlPanel.length === 0) {
             return;
@@ -244,12 +316,25 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
 
     getValues: function () {
 
-        var formValues = this.panel.form.getValues();
+        var formValues = this.getFormValues();
 
         formValues['apiMappingData'] = this.apiMappingData;
-        formValues['apiConfiguration'] = this.apiConfiguration;
 
         return formValues;
+    },
+
+    getFormValues: function () {
+
+        var formValues = DataObjectParser.transpose(this.panel.form.getValues()),
+            formData = formValues.data();
+
+        if (formData.hasOwnProperty('apiConfiguration') && Ext.isObject(formData.apiConfiguration)) {
+            Ext.Object.each(formData.apiConfiguration, function (key, value) {
+                formData.apiConfiguration[key] = value === '' ? null : value;
+            })
+        }
+
+        return formData;
     },
 
     getUsedFormFields: function () {

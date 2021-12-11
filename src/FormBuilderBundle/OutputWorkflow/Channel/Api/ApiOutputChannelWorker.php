@@ -52,7 +52,7 @@ class ApiOutputChannelWorker
 
         $apiProviderName = $channelConfiguration['apiProvider'];
         $apiMappingData = $channelConfiguration['apiMappingData'];
-        $apiConfiguration = $channelConfiguration['apiConfiguration'];
+        $providerConfiguration = $channelConfiguration['apiConfiguration'];
 
         // no data no gain.
         if (!is_array($apiMappingData)) {
@@ -64,7 +64,7 @@ class ApiOutputChannelWorker
         $mapping = $this->buildMapping([], $apiMappingData, $formData);
         $nodes = $this->buildApiNodes([], $mapping);
 
-        $apiData = new ApiData($nodes, $apiConfiguration, $locale, $formRuntimeData, $form);
+        $apiData = new ApiData($nodes, $providerConfiguration, $locale, $formRuntimeData, $form);
 
         if (null === $apiData = $this->dispatchGuardEvent($apiData, $form, $workflowName, $formRuntimeData)) {
             return;

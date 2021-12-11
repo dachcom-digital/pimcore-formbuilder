@@ -10,7 +10,6 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
     formDataHasInvalidFields: false,
     editPanel: null,
     formTreePanel: null,
-    formApiConfigurationPanel: null,
 
     initialize: function (formId, editorData, configuration, formRootName, formRootIconCls) {
         this.formId = formId;
@@ -30,10 +29,6 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
             autoScroll: true,
             border: false
         });
-
-        if (this.apiProviderData.configurationFields.length > 0) {
-            this.editPanel.add(this.getApiConfigurationPanel());
-        }
 
         this.editPanel.add(this.getFormTreePanel());
 
@@ -68,56 +63,6 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
         return apiMapping;
     },
 
-    getApiConfigurationPanel: function () {
-
-        var configurationFields = [],
-            storedConfiguration = this.editorData !== null ? this.editorData.configuration : null
-
-        Ext.Array.each(this.apiProviderData.configurationFields, function (configRow) {
-
-            var value = storedConfiguration !== null && storedConfiguration.hasOwnProperty(configRow.name) ? storedConfiguration[configRow.name] : null;
-
-            switch (configRow.type) {
-                case 'text' :
-                    configurationFields.push({
-                        xtype: 'textfield',
-                        name: configRow['name'],
-                        fieldLabel: configRow['label'],
-                        allowBlank: configRow['required'] === false,
-                        value: value
-                    });
-                    break;
-                case 'select' :
-                    configurationFields.push({
-                        xtype: 'combobox',
-                        name: configRow['name'],
-                        fieldLabel: configRow['label'],
-                        allowBlank: configRow['required'] === false,
-                        store: new Ext.data.Store({
-                            fields: ['label', 'value'],
-                            data: configRow['store']
-                        }),
-                        value: value,
-                        queryDelay: 0,
-                        displayField: 'label',
-                        valueField: 'value',
-                        mode: 'local',
-                        editable: false,
-                        triggerAction: 'all',
-                    });
-                    break;
-            }
-        }.bind(this));
-
-        this.formApiConfigurationPanel = new Ext.form.FormPanel({
-            title: false,
-            border: false,
-            items: configurationFields
-        });
-
-        return this.formApiConfigurationPanel;
-    },
-
     getFormTreePanel: function () {
 
         var treeItems,
@@ -134,7 +79,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
 
                     var fieldData = field.data,
                         fieldTypeConfig = field.type,
-                        editorData = this.editorData !== null ? this.editorData.fields : null,
+                        editorData = this.editorData,
                         apiMappingValues = this.findApiMappingValue(editorData, fieldData.name),
                         item = {
                             type: 'layout',
@@ -287,10 +232,6 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
 
         this.getFormFieldsRecursive(this.formTreePanel.getRootNode());
 
-        if (this.formApiConfigurationPanel !== null) {
-            this.formDataHasInvalidFields = !this.formApiConfigurationPanel.form.isValid();
-        }
-
         if (this.formDataHasInvalidFields === true) {
             Ext.Msg.alert(t('error'), t('form_builder.output_workflow.output_workflow_channel.api.editor.invalid_configuration'));
             return false;
@@ -305,10 +246,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
             return null;
         }
 
-        return {
-            configuration: this.formApiConfigurationPanel !== null ? this.formApiConfigurationPanel.form.getValues() : null,
-            fields: this.getFormFieldsRecursive(this.formTreePanel.getRootNode())
-        };
+        return this.getFormFieldsRecursive(this.formTreePanel.getRootNode());
     },
 
     getFormFieldsRecursive: function (node) {

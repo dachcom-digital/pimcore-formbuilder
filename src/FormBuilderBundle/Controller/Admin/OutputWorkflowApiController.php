@@ -31,6 +31,7 @@ class OutputWorkflowApiController extends AdminController
     /**
      * @param FormDefinitionManager $formDefinitionManager
      * @param ExtJsFormBuilder      $extJsFormBuilder
+     * @param ApiProviderRegistry   $apiProviderRegistry
      */
     public function __construct(
         FormDefinitionManager $formDefinitionManager,
@@ -66,6 +67,7 @@ class OutputWorkflowApiController extends AdminController
         $configuration['formFieldDefinitions'] = $extJsFormFields;
 
         $apiProviderName = $baseConfiguration['apiProvider'];
+        $configurationFields = $baseConfiguration['apiConfiguration'] ?? [];
 
         try {
             $apiProvider = $this->apiProviderRegistry->get($apiProviderName);
@@ -74,8 +76,7 @@ class OutputWorkflowApiController extends AdminController
         }
 
         try {
-            $configurationFields = $this->validateApiConfigurationFields($apiProvider->getApiConfigurationFields($formDefinition));
-            $predefinedApiFields = $this->validateApPredefinedFields($apiProvider->getPredefinedApiFields($formDefinition));
+            $predefinedApiFields = $this->validateApPredefinedFields($apiProvider->getPredefinedApiFields($formDefinition, $configurationFields));
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -83,7 +84,6 @@ class OutputWorkflowApiController extends AdminController
         $configuration['apiProvider'] = [
             'key'                 => $apiProviderName,
             'label'               => $apiProvider->getName(),
-            'configurationFields' => $configurationFields,
             'predefinedApiFields' => $predefinedApiFields
         ];
 
@@ -152,8 +152,26 @@ class OutputWorkflowApiController extends AdminController
         $data = [];
         $services = $this->apiProviderRegistry->getAll();
 
+        $formId = $request->get('id');
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+
+        if (!$formDefinition instanceof FormDefinitionInterface) {
+            return $this->json(['success' => false, 'message' => 'form is not available']);
+        }
+
         foreach ($services as $identifier => $service) {
-            $data[] = ['label' => $service->getName(), 'key' => $identifier];
+
+            try {
+                $configurationFields = $this->validateApiConfigurationFields($service->getApiConfigurationFields($formDefinition));
+            } catch (\Throwable $e) {
+                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            }
+
+            $data[] = [
+                'label'               => $service->getName(),
+                'key'                 => $identifier,
+                'configurationFields' => $configurationFields
+            ];
         }
 
         return $this->adminJson([

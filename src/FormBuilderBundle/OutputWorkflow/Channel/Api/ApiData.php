@@ -7,20 +7,20 @@ use Symfony\Component\Form\FormInterface;
 class ApiData
 {
     protected array $apiNodes;
-    protected ?array $apiConfiguration;
+    protected ?array $providerConfiguration;
     protected string $locale;
     protected array $formRuntimeData;
     protected FormInterface $form;
 
     public function __construct(
         array $apiNodes,
-        ?array $apiConfiguration,
+        ?array $providerConfiguration,
         string $locale,
         array $formRuntimeData,
         FormInterface $form
     ) {
         $this->apiNodes = $apiNodes;
-        $this->apiConfiguration = $apiConfiguration;
+        $this->providerConfiguration = $providerConfiguration;
         $this->locale = $locale;
         $this->formRuntimeData = $formRuntimeData;
         $this->form = $form;
@@ -53,9 +53,9 @@ class ApiData
     /**
      * @return null|array
      */
-    public function getAPiConfiguration()
+    public function getProviderConfiguration()
     {
-        return $this->apiConfiguration;
+        return $this->providerConfiguration;
     }
 
     /**
@@ -63,13 +63,13 @@ class ApiData
      *
      * @return mixed|null
      */
-    public function getAPiConfigurationNode(string $node)
+    public function getProviderConfigurationNode(string $node)
     {
-        if (!is_array($this->apiConfiguration)) {
+        if (!is_array($this->providerConfiguration)) {
             return null;
         }
 
-        return $this->apiConfiguration[$node] ?? null;
+        return $this->providerConfiguration[$node] ?? null;
     }
 
     /**
@@ -77,13 +77,13 @@ class ApiData
      *
      * @return bool
      */
-    public function hasAPiConfigurationNode(string $node)
+    public function hasProviderConfigurationNode(string $node)
     {
-        if (!is_array($this->apiConfiguration)) {
+        if (!is_array($this->providerConfiguration)) {
             return false;
         }
 
-        return isset($this->apiConfiguration[$node]);
+        return isset($this->providerConfiguration[$node]);
     }
 
     /**

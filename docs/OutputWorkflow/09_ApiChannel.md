@@ -75,7 +75,7 @@ class MailChimpApiProvider implements ApiProviderInterface
         return 'MailChimp';
     }
     
-    public function getApiConfigurationFields(FormDefinitionInterface $formDefinition)
+    public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition)
     {
         $mailchimp = $this->getClient();
         $campaignsData = $mailchimp->campaigns->list();
@@ -105,23 +105,29 @@ class MailChimpApiProvider implements ApiProviderInterface
         ];
     }
 
-    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition)
+    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration)
     {
         // maybe they will come from a remote campaign list.
         // just return an empty array if you don't want to provide predefined api fields.
         
-        return [
+        $fields = [
             'EMAIL',
-            'FNAME',
-            'LNAME',
             'MMERGE6',
+            'FNAME',
+            'LNAME'
         ];
+        
+        if ($providerConfiguration['campaign'] === '123') {
+            $fields[] = 'SPECIAL_FIELD';
+        }
+        
+        return $fields;
     }
     
     public function process(ApiData $apiData)
     {
         $mailchimp = $this->getClient();
-        $campaignId = $apiData->getAPiConfigurationNode('campaign');
+        $campaignId = $apiData->getProviderConfigurationNode('campaign');
 
         $campaigns = $mailchimp->campaigns->get($campaignId);
 

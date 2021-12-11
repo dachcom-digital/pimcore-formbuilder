@@ -16,14 +16,15 @@ interface ApiProviderInterface
      *
      * @return array
      */
-    public function getApiConfigurationFields(FormDefinitionInterface $formDefinition);
+    public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition);
 
     /**
      * @param FormDefinitionInterface $formDefinition
+     * @param array                   $providerConfiguration
      *
      * @return array
      */
-    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition);
+    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration);
 
     /**
      * @param ApiData $apiData
