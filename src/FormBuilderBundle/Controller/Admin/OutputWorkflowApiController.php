@@ -162,7 +162,7 @@ class OutputWorkflowApiController extends AdminController
         foreach ($services as $identifier => $service) {
 
             try {
-                $configurationFields = $this->validateApiConfigurationFields($service->getApiConfigurationFields($formDefinition));
+                $configurationFields = $this->validateApiConfigurationFields($service->getProviderConfigurationFields($formDefinition));
             } catch (\Throwable $e) {
                 return $this->json(['success' => false, 'message' => $e->getMessage()]);
             }

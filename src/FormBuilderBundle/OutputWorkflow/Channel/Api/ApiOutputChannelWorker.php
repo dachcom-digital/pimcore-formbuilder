@@ -87,6 +87,10 @@ class ApiOutputChannelWorker
             $apiMappingFields = $mapRow['apiMapping'];
             $hasChildren = count($mapRow['children']) > 0;
 
+            if ($formField === null) {
+                continue;
+            }
+
             $apiField = $hasParent ? $nodes : $this->findFormFieldValue($formField, $formField['type']);
 
             foreach ($apiMappingFields as $apiMappingField) {
