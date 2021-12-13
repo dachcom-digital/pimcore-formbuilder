@@ -51,10 +51,6 @@ jobs:
                         template_tag: v2.7.0
                     -   pimcore: ~6.8.0
                         template_tag: v2.8.0
-                    -   pimcore: ~6.8.0
-                        symfony: ^3.4
-                        php: 7.4
-                        template_tag: v2.8.0
                     -   pimcore: ~6.9.0
                         template_tag: v2.8.19
         steps:
