@@ -54,7 +54,7 @@ class ApiOutputChannelWorker
         $apiMappingData = $channelConfiguration['apiMappingData'];
         $providerConfiguration = $channelConfiguration['apiConfiguration'];
 
-        // no data no gain.
+        // no data, no gain.
         if (!is_array($apiMappingData)) {
             return;
         }
@@ -64,15 +64,54 @@ class ApiOutputChannelWorker
         $mapping = $this->buildMapping([], $apiMappingData, $formData);
         $nodes = $this->buildApiNodes([], $mapping);
 
-        $apiData = new ApiData($nodes, $providerConfiguration, $locale, $formRuntimeData, $form);
+        try {
+            $apiProvider = $this->apiProviderRegistry->get($apiProviderName);
+        } catch (\Throwable $e) {
+            // no api provider found. return silently.
+            return;
+        }
+
+        $apiData = new ApiData($apiProviderName, $nodes, $providerConfiguration, $locale, $formRuntimeData, $form);
 
         if (null === $apiData = $this->dispatchGuardEvent($apiData, $form, $workflowName, $formRuntimeData)) {
             return;
         }
 
-        $apiProvider = $this->apiProviderRegistry->get($apiProviderName);
-
         $apiProvider->process($apiData);
+    }
+
+    protected function buildMapping(array $apiStructure, array $apiMappingData, array $formData, bool $hasParent = false)
+    {
+        foreach ($apiMappingData as $apiMappingField) {
+
+            $fieldName = $apiMappingField['name'];
+            $hasChildren = isset($apiMappingField['children']) && is_array($apiMappingField['children']) && count($apiMappingField['children']) > 0;
+            $mapping = $apiMappingField['config']['apiMapping'] ?? null;
+
+            $relatedFormField = $this->findFormDataField($fieldName, $formData);
+
+            $apiField = [
+                'formField'  => $relatedFormField,
+                'apiMapping' => $mapping,
+                'children'   => []
+            ];
+
+            if ($hasParent === true) {
+                $apiStructure['children'][] = $apiField;
+            }
+
+            if ($hasChildren) {
+                $apiStructure[] = $this->buildMapping($apiField, $apiMappingField['children'], $formData, true);
+                continue;
+            }
+
+            if ($hasParent === false) {
+                $apiStructure[] = $apiField;
+            }
+
+        }
+
+        return $apiStructure;
     }
 
     protected function buildApiNodes(array $nodes, array $mapping, bool $hasParent = false, ?string $parentType = null)
@@ -146,40 +185,6 @@ class ApiOutputChannelWorker
         }
 
         return $fields;
-    }
-
-    protected function buildMapping(array $apiStructure, array $apiMappingData, array $formData, bool $hasParent = false)
-    {
-        foreach ($apiMappingData as $apiMappingField) {
-
-            $fieldName = $apiMappingField['name'];
-            $hasChildren = isset($apiMappingField['children']) && is_array($apiMappingField['children']) && count($apiMappingField['children']) > 0;
-            $mapping = $apiMappingField['config']['apiMapping'] ?? null;
-
-            $relatedFormField = $this->findFormDataField($fieldName, $formData);
-
-            $apiField = [
-                'formField'  => $relatedFormField,
-                'apiMapping' => $mapping,
-                'children'   => []
-            ];
-
-            if ($hasParent === true) {
-                $apiStructure['children'][] = $apiField;
-            }
-
-            if ($hasChildren) {
-                $apiStructure[] = $this->buildMapping($apiField, $apiMappingField['children'], $formData, true);
-                continue;
-            }
-
-            if ($hasParent === false) {
-                $apiStructure[] = $apiField;
-            }
-
-        }
-
-        return $apiStructure;
     }
 
     protected function findFormFieldValue(array $node, string $type)

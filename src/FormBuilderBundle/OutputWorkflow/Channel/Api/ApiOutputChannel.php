@@ -60,7 +60,7 @@ class ApiOutputChannel implements ChannelInterface
      *
      * @return array
      */
-    protected function findUsedFormFieldsInConfiguration(array $definitionFields, $fieldNames = [])
+    protected function findUsedFormFieldsInConfiguration(array $definitionFields, array $fieldNames = [])
     {
         foreach ($definitionFields as $definitionField) {
             $hasChildren = isset($definitionField['children']) && is_array($definitionField['children']) && count($definitionField['children']) > 0;

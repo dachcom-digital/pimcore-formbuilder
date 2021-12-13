@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormInterface;
 
 class ApiData
 {
+    protected string $apiProviderName;
     protected array $apiNodes;
     protected ?array $providerConfiguration;
     protected string $locale;
@@ -13,17 +14,27 @@ class ApiData
     protected FormInterface $form;
 
     public function __construct(
+        string $apiProviderName,
         array $apiNodes,
         ?array $providerConfiguration,
         string $locale,
         array $formRuntimeData,
         FormInterface $form
     ) {
+        $this->apiProviderName = $apiProviderName;
         $this->apiNodes = $apiNodes;
         $this->providerConfiguration = $providerConfiguration;
         $this->locale = $locale;
         $this->formRuntimeData = $formRuntimeData;
         $this->form = $form;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiProviderName()
+    {
+        return $this->apiProviderName;
     }
 
     /**
