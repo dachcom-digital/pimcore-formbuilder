@@ -32,7 +32,7 @@ jobs:
             MYSQL_DATABASE: dachcom_bundle_test
         services:
             mysql:
-                image: mysql:8.0
+                image: mysql:5.7
                 env:
                     MYSQL_ROOT_PASSWORD: root
                     MYSQL_DATABASE: dachcom_bundle_test
@@ -92,7 +92,7 @@ jobs:
             -   name: Verify MySql Connection
                 run: |
                     sudo apt-get update
-                    sudo apt-get install -y mysql-client-8.0
+                    sudo apt-get install -y mysql-client
                     mysql -uroot -h127.0.0.1 -proot -e "SHOW DATABASES"
 
             -   name: Setup MySql
