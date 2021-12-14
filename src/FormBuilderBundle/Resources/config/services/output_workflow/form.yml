@@ -48,3 +48,7 @@ services:
     FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ObjectChannelType:
         tags:
             - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ApiChannelType:
+        tags:
+            - { name: form.type }

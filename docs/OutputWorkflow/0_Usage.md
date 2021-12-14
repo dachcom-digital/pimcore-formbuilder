@@ -34,6 +34,7 @@ As you can see, these are powerful tools which allows you to define workflows wi
 Want to learn more? Let's start with the [Email Channel](./10_EmailChannel.md).
 
 ## Output Workflow Topics
+  - [API Channel](./09_ApiChannel.md)
   - [Email Channel](./10_EmailChannel.md)
   - [Object Channel](./11_ObjectChannel.md)
   - [Custom Channel](./12_CustomChannel.md)
