@@ -7,7 +7,7 @@ on:
 
 jobs:
     codeception:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-18.04
         env:
             TEST_BUNDLE_NAME: "FormBuilderBundle"
             TEST_BUNDLE_INSTALLER_CLASS: "FormBuilderBundle\\Tool\\Install"
