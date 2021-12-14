@@ -5,9 +5,10 @@ namespace FormBuilderBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use FormBuilderBundle\Tool\Install;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class Version20211208110858 extends AbstractPimcoreMigration
+class Version20211208110858 extends AbstractPimcoreMigration implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
