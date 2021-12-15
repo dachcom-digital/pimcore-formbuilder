@@ -18,3 +18,4 @@ services:
     FormBuilderBundle\OutputWorkflow\OutputWorkflowResolver: ~
 
     FormBuilderBundle\Registry\OutputWorkflowChannelRegistry: ~
+    FormBuilderBundle\Registry\FieldTransformerRegistry: ~

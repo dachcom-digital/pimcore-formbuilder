@@ -6,6 +6,7 @@ use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Registry\ApiProviderRegistry;
+use FormBuilderBundle\Registry\FieldTransformerRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,18 +30,26 @@ class OutputWorkflowApiController extends AdminController
     protected $apiProviderRegistry;
 
     /**
-     * @param FormDefinitionManager $formDefinitionManager
-     * @param ExtJsFormBuilder      $extJsFormBuilder
-     * @param ApiProviderRegistry   $apiProviderRegistry
+     * @var FieldTransformerRegistry
+     */
+    protected $fieldTransformerRegistry;
+
+    /**
+     * @param FormDefinitionManager    $formDefinitionManager
+     * @param ExtJsFormBuilder         $extJsFormBuilder
+     * @param ApiProviderRegistry      $apiProviderRegistry
+     * @param FieldTransformerRegistry $fieldTransformerRegistry
      */
     public function __construct(
         FormDefinitionManager $formDefinitionManager,
         ExtJsFormBuilder $extJsFormBuilder,
-        ApiProviderRegistry $apiProviderRegistry
+        ApiProviderRegistry $apiProviderRegistry,
+        FieldTransformerRegistry $fieldTransformerRegistry
     ) {
         $this->formDefinitionManager = $formDefinitionManager;
         $this->extJsFormBuilder = $extJsFormBuilder;
         $this->apiProviderRegistry = $apiProviderRegistry;
+        $this->fieldTransformerRegistry = $fieldTransformerRegistry;
     }
 
     /**
@@ -54,6 +63,9 @@ class OutputWorkflowApiController extends AdminController
         $baseConfiguration = json_decode($request->get('baseConfiguration', ''), true);
         $formDefinition = $this->formDefinitionManager->getById($formId);
 
+        $apiProviderName = $baseConfiguration['apiProvider'];
+        $configurationFields = $baseConfiguration['apiConfiguration'] ?? [];
+
         if (!$formDefinition instanceof FormDefinitionInterface) {
             return $this->json(['success' => false, 'message' => 'form is not available']);
         }
@@ -63,11 +75,6 @@ class OutputWorkflowApiController extends AdminController
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
-
-        $configuration['formFieldDefinitions'] = $extJsFormFields;
-
-        $apiProviderName = $baseConfiguration['apiProvider'];
-        $configurationFields = $baseConfiguration['apiConfiguration'] ?? [];
 
         try {
             $apiProvider = $this->apiProviderRegistry->get($apiProviderName);
@@ -81,18 +88,72 @@ class OutputWorkflowApiController extends AdminController
             return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
 
-        $configuration['apiProvider'] = [
-            'key'                 => $apiProviderName,
-            'label'               => $apiProvider->getName(),
-            'predefinedApiFields' => $predefinedApiFields
-        ];
+        $fieldTransformer = [];
+        foreach ($this->fieldTransformerRegistry->getAll() as $fieldTransformerIdentifier => $transformer) {
+            $fieldTransformer[] = [
+                'value'       => $fieldTransformerIdentifier,
+                'label'       => $transformer->getName(),
+                'description' => $transformer->getDescription(),
+            ];
+        }
 
         return $this->adminJson([
             'success'       => true,
-            'configuration' => $configuration
+            'configuration' => [
+                'formFieldDefinitions' => $extJsFormFields,
+                'fieldTransformer'     => $fieldTransformer,
+                'apiProvider'          => [
+                    'key'                 => $apiProviderName,
+                    'label'               => $apiProvider->getName(),
+                    'predefinedApiFields' => $predefinedApiFields
+                ]
+            ]
         ]);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getApiProviderAction(Request $request)
+    {
+        $data = [];
+        $services = $this->apiProviderRegistry->getAll();
+
+        $formId = $request->get('id');
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+
+        if (!$formDefinition instanceof FormDefinitionInterface) {
+            return $this->json(['success' => false, 'message' => 'form is not available']);
+        }
+
+        foreach ($services as $identifier => $service) {
+
+            try {
+                $configurationFields = $this->validateApiConfigurationFields($service->getProviderConfigurationFields($formDefinition));
+            } catch (\Throwable $e) {
+                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            }
+
+            $data[] = [
+                'label'               => $service->getName(),
+                'key'                 => $identifier,
+                'configurationFields' => $configurationFields
+            ];
+        }
+
+        return $this->adminJson([
+            'success' => true,
+            'types'   => $data
+        ]);
+    }
+
+    /**
+     * @param array $fields
+     *
+     * @return array
+     */
     protected function validateApPredefinedFields(array $fields)
     {
         return array_map(static function ($property) {
@@ -142,41 +203,4 @@ class OutputWorkflowApiController extends AdminController
         return $validatedConfigurationFields;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getApiProviderAction(Request $request)
-    {
-        $data = [];
-        $services = $this->apiProviderRegistry->getAll();
-
-        $formId = $request->get('id');
-        $formDefinition = $this->formDefinitionManager->getById($formId);
-
-        if (!$formDefinition instanceof FormDefinitionInterface) {
-            return $this->json(['success' => false, 'message' => 'form is not available']);
-        }
-
-        foreach ($services as $identifier => $service) {
-
-            try {
-                $configurationFields = $this->validateApiConfigurationFields($service->getProviderConfigurationFields($formDefinition));
-            } catch (\Throwable $e) {
-                return $this->json(['success' => false, 'message' => $e->getMessage()]);
-            }
-
-            $data[] = [
-                'label'               => $service->getName(),
-                'key'                 => $identifier,
-                'configurationFields' => $configurationFields
-            ];
-        }
-
-        return $this->adminJson([
-            'success' => true,
-            'types'   => $data
-        ]);
-    }
 }

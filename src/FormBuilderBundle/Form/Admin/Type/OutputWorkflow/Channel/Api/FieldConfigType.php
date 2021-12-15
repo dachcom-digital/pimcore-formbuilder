@@ -15,5 +15,6 @@ class FieldConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('apiMapping', CollectionType::class, ['allow_add' => true, 'entry_type' => TextType::class]);
+        $builder->add('fieldTransformer', TextType::class);
     }
 }
