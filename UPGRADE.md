@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update to Version 3.5.1
+- **[NEW FEATURE]**: API Output channel Field Transformer
+
 #### Update to Version 3.5.0
 - **[NEW FEATURE]**: API Output channel [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/301)
 

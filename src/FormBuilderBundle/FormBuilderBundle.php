@@ -8,6 +8,7 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicMultiFileAdapterPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicObjectResolverPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\FieldTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
@@ -43,6 +44,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new RuntimeDataProviderPass());
         $container->addCompilerPass(new DynamicMultiFileAdapterPass());
         $container->addCompilerPass(new ApiProviderPass());
+        $container->addCompilerPass(new FieldTransformerPass());
     }
 
     /**

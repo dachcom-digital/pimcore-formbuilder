@@ -7,9 +7,10 @@ Use the mail channel to submit structured to any kind of API you want.
 - [API Provider](./09_ApiChannel.md#api-provider) | Create a custom api provider
 - [Guard Event Listener](./09_ApiChannel.md#guard-event-listener) | Hook into api provider process
 - [Code Example: Trigger Value](./09_ApiChannel.md#example-trigger-value) | Dispatch Channel by given trigger
+- [Field Transformer](./16_FieldTransformer.md) *(Optional)* | Use a field transformer to modify single api field values
 
 ## Note
-**The FormBuilder API Channel does **not** ship preconfigured API Provider. They can be simple but also complex. But no worries,
+The FormBuilder API Channel does **not** ship preconfigured API Provider. They can be simple but also complex. But no worries,
 it's quite easy to integrate your own api provider, read more about it [here](./09_ApiChannel.md#api-provider)
 
 ## Available Options

@@ -330,7 +330,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.api = Class.create(Formbuilde
 
         if (formData.hasOwnProperty('apiConfiguration') && Ext.isObject(formData.apiConfiguration)) {
             Ext.Object.each(formData.apiConfiguration, function (key, value) {
-                formData.apiConfiguration[key] = value === '' ? null : value;
+                formData.apiConfiguration[key] = value === '' ? null : String(value);
             })
         }
 
