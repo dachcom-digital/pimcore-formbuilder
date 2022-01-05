@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
-use FormBuilderBundle\Model\FormDefinitionInterface;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
