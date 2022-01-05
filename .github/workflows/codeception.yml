@@ -18,7 +18,7 @@ jobs:
             PIMCORE_CODECEPTION_VERSION: "2.0"
 
             APP_ENV: test
-            PIMCORE_TEST_DB_DSN: "mysql://root:root@localhost/dachcom_bundle_test"
+            PIMCORE_TEST_DB_DSN: "mysql://root:root@127.0.0.1:3306/dachcom_bundle_test"
             PIMCORE_TEST_URL: "http://localhost"
             PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes/DataObject"
 
@@ -28,14 +28,11 @@ jobs:
             WEBDRIVER_HOST: localhost
             WEBDRIVER_URL: "http://localhost:8080/"
 
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: dachcom_bundle_test
         services:
             mysql:
                 image: mysql:8.0
                 env:
                     MYSQL_ROOT_PASSWORD: root
-                    MYSQL_DATABASE: dachcom_bundle_test
                 ports:
                     - 3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -86,19 +83,10 @@ jobs:
             -   name: Check PHP Version
                 run: php -v
 
-            -   name: Start MySql Service
-                run: |
-                    sudo /etc/init.d/mysql start
-
-            -   name: Verify MySql Connection
-                run: |
-                    sudo apt-get update
-                    sudo apt-get install -y mysql-client-8.0
-                    mysql -uroot -h127.0.0.1 -proot -e "SHOW DATABASES"
-
             -   name: Setup MySql
                 run: |
-                    mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
+                    sudo systemctl start mysql
+                    mysql -uroot -proot -h127.0.0.1 -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
 
             -   name: Setup Chromium
                 run: |
