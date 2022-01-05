@@ -80,6 +80,10 @@ class MailParser
     {
         $parsedTo = $this->extractPlaceHolder($mailTemplate->getTo(), $data);
         $mailTemplate->setTo($parsedTo);
+        $parsedCC = $this->extractPlaceHolder($mailTemplate->getCc(), $data);
+        $mailTemplate->setCC($parsedCC);
+        $parsedBCC = $this->extractPlaceHolder($mailTemplate->getBcc(), $data);
+        $mailTemplate->setBcc($parsedBCC);
     }
 
     protected function parseMailSender(Email $mailTemplate, array $data = []): void
