@@ -24,7 +24,7 @@ framework:
 
     # @see https://github.com/pimcore/pimcore/issues/11042
     session:
-        storage_id: session.storage.native
+        storage_id: session.storage.php_bridge
 
     profiler:
         enabled: true
