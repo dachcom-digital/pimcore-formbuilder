@@ -86,6 +86,7 @@ jobs:
             -   name: Setup MySql
                 run: |
                     sudo systemctl start mysql
+                    mysql -uroot -proot -h127.0.0.1 -e "SET GLOBAL max_connections=300;"
                     mysql -uroot -proot -h127.0.0.1 -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
 
             -   name: Setup Chromium

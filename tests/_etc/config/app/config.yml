@@ -15,7 +15,7 @@ doctrine:
         connections:
             default:
                 options:
-                    1002: 'SET SESSION wait_timeout=300;'
+                    1002: 'SET SESSION wait_timeout=30;'
                 mapping_types:
                     enum: string
                     bit: boolean
