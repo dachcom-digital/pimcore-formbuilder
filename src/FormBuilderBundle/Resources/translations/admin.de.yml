@@ -83,10 +83,7 @@ form_builder_toggle_availability_enable: 'Aktiviert'
 form_builder_toggle_availability_disable: 'Deaktiviert'
 form_builder_trigger_event_fields: 'Felder'
 form_builder_trigger_event_event: 'Event-Name'
-form_builder_trigger_event_description: 'Hierbei werden zwei Events ausgelöst:<br><ul><li><code>EVENT_NAME.enable</code></li><li><code>EVENT_NAME.disabled</code></li></ul><strong>Anwendung:</strong><br><span style="background: white; padding:10px; display:block; margin:10px 0 0 0; border: 1px solid #b7b7b7;"><code>$("feld selektor").on("EVENT_NAME.enable", function() {<br>&nbsp;&nbsp;&nbsp;&nbsp;console.warn($(this));<br>});</code></span>'
-
-
-
+form_builder_trigger_event_description: 'Hierbei werden zwei Events ausgelöst:<br><ul><li><code>EVENT_NAME.enable</code></li><li><code>EVENT_NAME.disable</code></li></ul><strong>Anwendung:</strong><br><span style="background: white; padding:10px; display:block; margin:10px 0 0 0; border: 1px solid #b7b7b7;"><code>$("feld selektor").on("EVENT_NAME.enable", function() {<br>&nbsp;&nbsp;&nbsp;&nbsp;console.warn($(this));<br>});</code></span>'
 form_builder_success_message_identifier: 'Typ'
 form_builder_success_message_identifier_string: 'Einfacher Text'
 form_builder_success_message_identifier_snippet: 'Snippet'
