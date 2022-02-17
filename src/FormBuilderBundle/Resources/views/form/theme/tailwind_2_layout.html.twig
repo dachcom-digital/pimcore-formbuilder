@@ -1,0 +1,174 @@
+{% extends 'tailwind_2_layout.html.twig' %}
+
+{% use '@FormBuilder/form/theme/type/dynamic_multi_file.html.twig' %}
+{% use '@FormBuilder/form/theme/type/html_tag.html.twig' %}
+{% use '@FormBuilder/form/theme/type/snippet.html.twig' %}
+{% use '@FormBuilder/form/theme/type/container.html.twig' %}
+
+{%- block form_widget_compound -%}
+    {%- if form is not rootform -%}
+        <div {{ block('widget_container_attributes') }}>
+    {% endif %}
+    {%- if form is rootform -%}
+        {{ form_errors(form) }}
+    {%- endif -%}
+    {{- block('form_rows') -}}
+    {{- form_rest(form) -}}
+    {%- if form is not rootform -%}
+        </div>
+    {% endif %}
+{%- endblock form_widget_compound -%}
+
+{% block checkbox_label -%}
+    {{- block('checkbox_radio_label') -}}
+{%- endblock checkbox_label %}
+
+{% block radio_label -%}
+    {{- block('checkbox_radio_label') -}}
+{%- endblock radio_label %}
+
+{% block checkbox_radio_label -%}
+    {%- set label_attr = label_attr|merge({class: (label_attr.class|default() ~ ' form-label-choice')|trim}) -%}
+    {{- block('form_label') -}}
+{%- endblock checkbox_radio_label %}
+
+{% block form_label %}
+    {%- set label_html = true -%}
+    {%- set label_attr = label_attr|merge({class: (label_attr.class|default() ~ ' form-label')|trim}) -%}
+    {{ parent() }}
+{% endblock form_label %}
+
+{% block form_errors %}
+    {%- set error_item_class = 'form-invalid-message' -%}
+    {{ parent() }}
+{% endblock form_errors %}
+
+{%- block radio_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-radio')|trim}) -%}
+    {{- parent() -}}
+{%- endblock radio_widget -%}
+
+{%- block choice_widget_expanded -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-choice-expanded-group')|trim}) -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            <div class="flex items-center form-choice-expanded">
+                {{- form_widget(child) -}}
+                {{- form_label(child, null, { translation_domain: choice_translation_domain }) -}}
+            </div>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{% block help_text_label %}
+    <small class="form-help-text">{{ help_text|trans }}</small>
+{% endblock help_text_label %}
+
+{% block form_widget_simple -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-input')|trim}) -%}
+    {{ parent() }}
+    {% if help_text|default %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock form_widget_simple %}
+
+{% block textarea_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-textarea')|trim}) -%}
+    {{ parent() }}
+    {% if help_text|default %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock textarea_widget %}
+
+{% block choice_widget -%}
+    {{ parent() }}
+    {% if help_text|default %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock choice_widget %}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ multiple ? ' form-multiselect' :  ' form-select')|trim}) -%}
+    {{ parent() }}
+{%- endblock choice_widget_collapsed %}
+
+{% block checkbox_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-checkbox')|trim}) -%}
+    {{ parent() }}
+    {% if help_text|default %}
+        {{ block('help_text_label') }}
+    {% endif %}
+{%- endblock checkbox_widget %}
+
+{%- block checkbox_row -%}
+    {%- set widget_attr = {class: 'form-row'} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'form-template-full' }}">
+        <div{% with {attr: row_attr|merge(widget_attr)} %}{{ block('attributes') }}{% endwith %}>
+            {{- form_errors(form) -}}
+            <div class="inline-flex items-center">
+                {{- form_widget(form, widget_attr) -}}
+                {{- form_label(form) -}}
+            </div>
+            {{- form_help(form) -}}
+        </div>
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block button_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-button')|trim}) -%}
+    {{- parent() -}}
+{%- endblock button_widget %}
+
+{%- block submit_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default() ~ ' form-button form-submit')|trim}) -%}
+    {{- parent() -}}
+{%- endblock submit_widget %}
+
+{% block form_builder_honeypot_row -%}
+    {{- form_widget(form) -}}
+{%- endblock form_builder_honeypot_row %}
+
+{% block form_row -%}
+    {%- set row_class = row_class|default ~ ' form-row' -%}
+    {%- set form_row_class = attr['data-template'] is defined ? attr['data-template'] : 'form-template-full' -%}
+    {% if form.vars.is_form_builder_container_block is defined %}
+        {%- set form_row_class = 'formbuilder-container-block' -%}
+    {% endif %}
+    <div class="formbuilder-row {{ not valid ? 'form-invalid' }} {{ form_row_class }}">
+        {%- set widget_attr = {} -%}
+        {%- if help is not empty -%}
+            {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+        {%- endif -%}
+        <div{% with {attr: row_attr|merge({class: row_class})} %}{{ block('attributes') }}{% endwith %}>
+            {%- if 'floating-label' in row_class -%}
+                {{- form_widget(form, widget_attr) -}}
+                {{- form_label(form) -}}
+            {%- else -%}
+                {{- form_label(form) -}}
+                {{- form_widget(form, widget_attr) -}}
+            {%- endif -%}
+            {{- form_errors(form) -}}
+            {{- form_help(form) -}}
+        </div>
+    </div>
+{%- endblock form_row %}
+
+{% block button_row -%}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'form-template-full' }}">
+        {{ parent() }}
+    </div>
+{%- endblock button_row %}
+
+{% block radio_row -%}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'form-template-full' }}">
+        {{ parent() }}
+    </div>
+{%- endblock radio_row %}
+
+{% block form_builder_container_collection_widget %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-template-wrapper')|trim}) -%}
+    {{- parent() -}}
+{% endblock form_builder_container_collection_widget %}

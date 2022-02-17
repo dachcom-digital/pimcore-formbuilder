@@ -62,6 +62,10 @@ form_builder:
                 value: 'bootstrap_4_horizontal_layout.html.twig'
                 label: 'form_builder_form_template.bootstrap_4_horizontal_layout'
                 default: false
+            tailwind_2_layout:
+                value: 'tailwind_2_layout.html.twig'
+                label: 'form_builder_form_template.tailwind_2_layout'
+                default: true
         field:
             templates:
                 default:
