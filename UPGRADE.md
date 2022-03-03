@@ -3,6 +3,7 @@
 #### Version 4.1.0
 - **[NEW FEATURE]**: API Output channel [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/301)
 - **[NEW FEATURE]**: API Output channel Field Transformer
+- **[BUGFIX]**: ensure migration of form configs will be symfony5 compatible [@grizzlydotweb](https://github.com/dachcom-digital/pimcore-formbuilder/pull/310)
 
 ## Version 4.0.2
 - [ENHANCEMENT] enable placeholder in cc and bcc field in email output workflow [@frithjof](https://github.com/dachcom-digital/pimcore-formbuilder/pull/305)

@@ -74,7 +74,7 @@ final class Version20211011171530 extends AbstractMigration
     {
         $fixedFields = [];
         foreach ($fields as $field) {
-            if ($field['type'] == 'choice') {
+            if ($field['type'] === 'choice') {
                 $this->fixChoiceField($field);
             }
 
@@ -88,7 +88,7 @@ final class Version20211011171530 extends AbstractMigration
         return $fixedFields;
     }
 
-    private function fixChoiceField(array &$field)
+    private function fixChoiceField(array &$field): void
     {
         if (array_key_exists('choice_attr', $field['options'])) {
             return;
@@ -97,15 +97,15 @@ final class Version20211011171530 extends AbstractMigration
         $field['options']['choice_attr'] = [];
     }
 
-    private function fixConstraints(array &$field)
+    private function fixConstraints(array &$field): void
     {
         for ($i = 0; $i < count($field['constraints']); $i++) {
+
             if ($field['constraints'][$i]['type'] !== 'email') {
                 continue;
             }
 
-            unset($field['constraints'][$i]['config']['checkMX']);
-            unset($field['constraints'][$i]['config']['checkHost']);
+            unset($field['constraints'][$i]['config']['checkMX'], $field['constraints'][$i]['config']['checkHost']);
         }
     }
 }
