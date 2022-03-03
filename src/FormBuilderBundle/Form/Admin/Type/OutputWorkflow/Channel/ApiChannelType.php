@@ -10,10 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ApiChannelType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('apiProvider', TextType::class);
         $builder->add('apiMappingData', DataMappingElementCollectionType::class);

@@ -15,32 +15,11 @@ use Symfony\Component\Form\FormInterface;
 
 class ApiOutputChannelWorker
 {
-    /**
-     * @var FormValuesOutputApplierInterface
-     */
-    protected $formValuesOutputApplier;
+    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
+    protected ApiProviderRegistry $apiProviderRegistry;
+    protected FieldTransformerRegistry $fieldTransformerRegistry;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var ApiProviderRegistry
-     */
-    protected $apiProviderRegistry;
-
-    /**
-     * @var FieldTransformerRegistry
-     */
-    protected $fieldTransformerRegistry;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @param FormValuesOutputApplierInterface $formValuesOutputApplier
-     * @param ApiProviderRegistry              $apiProviderRegistry
-     * @param FieldTransformerRegistry         $fieldTransformerRegistry
-     * @param EventDispatcherInterface         $eventDispatcher
-     */
     public function __construct(
         FormValuesOutputApplierInterface $formValuesOutputApplier,
         ApiProviderRegistry $apiProviderRegistry,
@@ -53,7 +32,7 @@ class ApiOutputChannelWorker
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function process(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
+    public function process(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
         $locale = $submissionEvent->getRequest()->getLocale();
@@ -89,15 +68,7 @@ class ApiOutputChannelWorker
         $apiProvider->process($apiData);
     }
 
-    /**
-     * @param array $apiStructure
-     * @param array $apiMappingData
-     * @param array $formData
-     * @param bool  $hasParent
-     *
-     * @return array
-     */
-    protected function buildMapping(array $apiStructure, array $apiMappingData, array $formData, bool $hasParent = false)
+    protected function buildMapping(array $apiStructure, array $apiMappingData, array $formData, bool $hasParent = false): array
     {
         foreach ($apiMappingData as $apiMappingField) {
 
@@ -131,16 +102,7 @@ class ApiOutputChannelWorker
         return $apiStructure;
     }
 
-    /**
-     * @param array       $nodes
-     * @param array       $formData
-     * @param array       $mapping
-     * @param bool        $hasParent
-     * @param string|null $parentType
-     *
-     * @return array
-     */
-    protected function buildApiNodes(array $nodes, array $formData, array $mapping, bool $hasParent = false, ?string $parentType = null)
+    protected function buildApiNodes(array $nodes, array $formData, array $mapping, bool $hasParent = false, ?string $parentType = null): array
     {
         // repeater incoming. we need to map differently:
         if ($parentType === 'repeater') {
@@ -185,13 +147,7 @@ class ApiOutputChannelWorker
         return $nodes;
     }
 
-    /**
-     * @param array $mapping
-     * @param array $formData
-     *
-     * @return array
-     */
-    protected function buildRepeaterApiNodes(array $mapping, array $formData)
+    protected function buildRepeaterApiNodes(array $mapping, array $formData): array
     {
         if (count($mapping) === 0) {
             return [];
@@ -210,13 +166,7 @@ class ApiOutputChannelWorker
         return $repeaterBlocks;
     }
 
-    /**
-     * @param array $rows
-     * @param int   $index
-     *
-     * @return array
-     */
-    protected function buildRepeaterBlock(array $rows, int $index)
+    protected function buildRepeaterBlock(array $rows, int $index): array
     {
         $fields = [];
         foreach ($rows as $mapRow) {
@@ -236,14 +186,7 @@ class ApiOutputChannelWorker
         return $fields;
     }
 
-    /**
-     * @param array       $node
-     * @param string|null $fieldTransformer
-     * @param array       $context
-     *
-     * @return mixed
-     */
-    protected function findFormFieldValue(array $node, ?string $fieldTransformer, array $context)
+    protected function findFormFieldValue(array $node, ?string $fieldTransformer, array $context): mixed
     {
         $type = $context['type'] ?? $context['parentType'];
 
@@ -266,14 +209,7 @@ class ApiOutputChannelWorker
         return $this->applyFieldTransformer($values, $fieldTransformer, $context);
     }
 
-    /**
-     * @param mixed       $value
-     * @param string|null $fieldTransformerName
-     * @param array       $context
-     *
-     * @return mixed
-     */
-    protected function applyFieldTransformer($value, ?string $fieldTransformerName, array $context)
+    protected function applyFieldTransformer($value, ?string $fieldTransformerName, array $context): mixed
     {
         if ($fieldTransformerName === null) {
             return $value;
@@ -288,13 +224,7 @@ class ApiOutputChannelWorker
         return $fieldTransformer->transform($value, $context);
     }
 
-    /**
-     * @param string $requestedFieldName
-     * @param array  $data
-     *
-     * @return array|null
-     */
-    protected function findFormDataField(string $requestedFieldName, array $data)
+    protected function findFormDataField(string $requestedFieldName, array $data): ?array
     {
         foreach ($data as $fieldData) {
 
@@ -322,20 +252,13 @@ class ApiOutputChannelWorker
     }
 
     /**
-     * @param mixed         $subject
-     * @param FormInterface $form
-     * @param string        $workflowName
-     * @param array         $formRuntimeData
-     *
-     * @return mixed|null
-     *
      * @throws GuardChannelException
      * @throws GuardOutputWorkflowException
      */
-    protected function dispatchGuardEvent($subject, FormInterface $form, string $workflowName, array $formRuntimeData)
+    protected function dispatchGuardEvent($subject, FormInterface $form, string $workflowName, array $formRuntimeData): mixed
     {
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($form->getData(), $subject, $workflowName, 'api', $formRuntimeData);
-        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH, $channelSubjectGuardEvent);
+        $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {
             return null;
@@ -349,5 +272,4 @@ class ApiOutputChannelWorker
 
         return $channelSubjectGuardEvent->getSubject();
     }
-
 }

@@ -29,52 +29,32 @@ class ApiData
         $this->form = $form;
     }
 
-    /**
-     * @return string
-     */
-    public function getApiProviderName()
+    public function getApiProviderName(): string
     {
         return $this->apiProviderName;
     }
 
-    /**
-     * @return FormInterface
-     */
     public function getForm(): FormInterface
     {
         return $this->form;
     }
 
-    /**
-     * @return array
-     */
-    public function getFormRuntimeData()
+    public function getFormRuntimeData(): array
     {
         return $this->formRuntimeData;
     }
 
-    /**
-     * @return string
-     */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
 
-    /**
-     * @return null|array
-     */
-    public function getProviderConfiguration()
+    public function getProviderConfiguration(): ?array
     {
         return $this->providerConfiguration;
     }
 
-    /**
-     * @param string $node
-     *
-     * @return mixed|null
-     */
-    public function getProviderConfigurationNode(string $node)
+    public function getProviderConfigurationNode(string $node): mixed
     {
         if (!is_array($this->providerConfiguration)) {
             return null;
@@ -83,12 +63,7 @@ class ApiData
         return $this->providerConfiguration[$node] ?? null;
     }
 
-    /**
-     * @param string $node
-     *
-     * @return bool
-     */
-    public function hasProviderConfigurationNode(string $node)
+    public function hasProviderConfigurationNode(string $node): bool
     {
         if (!is_array($this->providerConfiguration)) {
             return false;
@@ -97,38 +72,22 @@ class ApiData
         return isset($this->providerConfiguration[$node]);
     }
 
-    /**
-     * @param array $apiNodes
-     */
-    public function setApiNodes(array $apiNodes)
+    public function setApiNodes(array $apiNodes): void
     {
         $this->apiNodes = $apiNodes;
     }
 
-    /**
-     * @return array
-     */
-    public function getApiNodes()
+    public function getApiNodes(): array
     {
         return $this->apiNodes;
     }
 
-    /**
-     * @param string $node
-     *
-     * @return mixed|null
-     */
-    public function getApiNode(string $node)
+    public function getApiNode(string $node): mixed
     {
         return $this->apiNodes[$node] ?? null;
     }
 
-    /**
-     * @param string $node
-     *
-     * @return bool
-     */
-    public function hasApiNode(string $node)
+    public function hasApiNode(string $node): bool
     {
         return isset($this->apiNodes[$node]);
     }

@@ -10,10 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class FieldTransformerPass implements CompilerPassInterface
 {
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(FieldTransformerRegistry::class);
         foreach ($container->findTaggedServiceIds('form_builder.output_workflow.field_transform') as $id => $tags) {

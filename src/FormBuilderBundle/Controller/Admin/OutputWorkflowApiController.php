@@ -14,32 +14,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputWorkflowApiController extends AdminController
 {
-    /**
-     * @var FormDefinitionManager
-     */
-    protected $formDefinitionManager;
+    protected FormDefinitionManager $formDefinitionManager;
+    protected ExtJsFormBuilder $extJsFormBuilder;
+    protected ApiProviderRegistry $apiProviderRegistry;
+    protected FieldTransformerRegistry $fieldTransformerRegistry;
 
-    /**
-     * @var ExtJsFormBuilder
-     */
-    protected $extJsFormBuilder;
-
-    /**
-     * @var ApiProviderRegistry
-     */
-    protected $apiProviderRegistry;
-
-    /**
-     * @var FieldTransformerRegistry
-     */
-    protected $fieldTransformerRegistry;
-
-    /**
-     * @param FormDefinitionManager    $formDefinitionManager
-     * @param ExtJsFormBuilder         $extJsFormBuilder
-     * @param ApiProviderRegistry      $apiProviderRegistry
-     * @param FieldTransformerRegistry $fieldTransformerRegistry
-     */
     public function __construct(
         FormDefinitionManager $formDefinitionManager,
         ExtJsFormBuilder $extJsFormBuilder,
@@ -52,12 +31,7 @@ class OutputWorkflowApiController extends AdminController
         $this->fieldTransformerRegistry = $fieldTransformerRegistry;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getFormDataAction(Request $request)
+    public function getFormDataAction(Request $request): JsonResponse
     {
         $formId = $request->get('id');
         $baseConfiguration = json_decode($request->get('baseConfiguration', ''), true);
@@ -111,12 +85,7 @@ class OutputWorkflowApiController extends AdminController
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getApiProviderAction(Request $request)
+    public function getApiProviderAction(Request $request): JsonResponse
     {
         $data = [];
         $services = $this->apiProviderRegistry->getAll();
@@ -149,12 +118,7 @@ class OutputWorkflowApiController extends AdminController
         ]);
     }
 
-    /**
-     * @param array $fields
-     *
-     * @return array
-     */
-    protected function validateApPredefinedFields(array $fields)
+    protected function validateApPredefinedFields(array $fields): array
     {
         return array_map(static function ($property) {
             return [
@@ -165,12 +129,7 @@ class OutputWorkflowApiController extends AdminController
         }, $fields);
     }
 
-    /**
-     * @param array $fields
-     *
-     * @return array
-     */
-    protected function validateApiConfigurationFields(array $fields)
+    protected function validateApiConfigurationFields(array $fields): array
     {
         if (count($fields) === 0) {
             return $fields;
@@ -202,5 +161,4 @@ class OutputWorkflowApiController extends AdminController
 
         return $validatedConfigurationFields;
     }
-
 }

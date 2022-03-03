@@ -9,9 +9,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FieldConfigType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('apiMapping', CollectionType::class, ['allow_add' => true, 'entry_type' => TextType::class]);

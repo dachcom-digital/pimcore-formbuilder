@@ -8,36 +8,24 @@ use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 
 class ApiOutputChannel implements ChannelInterface
 {
-    /**
-     * @var ApiOutputChannelWorker
-     */
-    protected $apiOutputChannelWorker;
+    protected ApiOutputChannelWorker $apiOutputChannelWorker;
 
     public function __construct(ApiOutputChannelWorker $apiOutputChannelWorker)
     {
         $this->apiOutputChannelWorker = $apiOutputChannelWorker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFormType(): string
     {
         return ApiChannelType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocalizedConfiguration(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsedFormFieldNames(array $channelConfiguration)
+    public function getUsedFormFieldNames(array $channelConfiguration): array
     {
         if (count($channelConfiguration['apiMappingData']) === 0) {
             return [];
@@ -46,21 +34,12 @@ class ApiOutputChannel implements ChannelInterface
         return $this->findUsedFormFieldsInConfiguration($channelConfiguration['apiMappingData']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
+    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
         $this->apiOutputChannelWorker->process($submissionEvent, $workflowName, $channelConfiguration);
     }
 
-    /**
-     * @param array $definitionFields
-     * @param array $fieldNames
-     *
-     * @return array
-     */
-    protected function findUsedFormFieldsInConfiguration(array $definitionFields, array $fieldNames = [])
+    protected function findUsedFormFieldsInConfiguration(array $definitionFields, array $fieldNames = []): array
     {
         foreach ($definitionFields as $definitionField) {
             $hasChildren = isset($definitionField['children']) && is_array($definitionField['children']) && count($definitionField['children']) > 0;

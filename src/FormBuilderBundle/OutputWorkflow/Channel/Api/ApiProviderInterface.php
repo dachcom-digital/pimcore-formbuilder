@@ -6,28 +6,11 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 interface ApiProviderInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     *
-     * @return array
-     */
-    public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition);
+    public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition): array;
 
-    /**
-     * @param FormDefinitionInterface $formDefinition
-     * @param array                   $providerConfiguration
-     *
-     * @return array
-     */
-    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration);
+    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration): array;
 
-    /**
-     * @param ApiData $apiData
-     */
-    public function process(ApiData $apiData);
+    public function process(ApiData $apiData): void;
 }

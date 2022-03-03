@@ -29,26 +29,17 @@ use libphonenumber\PhoneNumberUtil;
 
 class PhoneNumberTransformer implements FieldTransformerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'Phone Number Transformer';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return 'Add your description here';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function transform($value, array $context)
+    public function transform($value, array $context): mixed
     {
         $phoneUtil = PhoneNumberUtil::getInstance();
         $phoneInstance = $phoneUtil->parse($value, 'DE');

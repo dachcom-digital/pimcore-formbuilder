@@ -72,12 +72,12 @@ use FormBuilderBundle\OutputWorkflow\Channel\Api\ApiProviderInterface;
 
 class MailChimpApiProvider implements ApiProviderInterface
 {
-    public function getName()
+    public function getName(): string
     {
         return 'MailChimp';
     }
     
-    public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition)
+    public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition): array
     {
         $mailchimp = $this->getClient();
         $campaignsData = $mailchimp->campaigns->list();
@@ -107,7 +107,7 @@ class MailChimpApiProvider implements ApiProviderInterface
         ];
     }
 
-    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration)
+    public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration): array
     {
         // maybe they will come from a remote campaign list.
         // just return an empty array if you don't want to provide predefined api fields.
@@ -126,7 +126,7 @@ class MailChimpApiProvider implements ApiProviderInterface
         return $fields;
     }
     
-    public function process(ApiData $apiData)
+    public function process(ApiData $apiData): void
     {
         $mailchimp = $this->getClient();
         $campaignId = $apiData->getProviderConfigurationNode('campaign');
@@ -189,14 +189,14 @@ use AppBundle\FormBuilder\ApiProvider\MailChimpApiProvider;
 
 class OutputWorkflowEventListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH  => 'checkSubject',
         ];
     }
 
-    public function checkSubject(ChannelSubjectGuardEvent $event)
+    public function checkSubject(ChannelSubjectGuardEvent $event): void
     {
         $subject = $event->getSubject();
 
@@ -236,7 +236,7 @@ Until then, this can be solved by use a custom provider configuration field:
 First, we have to add a configuration field. Let's call it `consentTriggerValue`:
 ```php
 // AppBundle\FormBuilder\ApiProvider\MailChimpApiProvider
-public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition)
+public function getProviderConfigurationFields(FormDefinitionInterface $formDefinition): array
 {
     return [
         [
@@ -254,7 +254,7 @@ public function getProviderConfigurationFields(FormDefinitionInterface $formDefi
 Then, we need to add a trigger field. Let's call it `CONSENT_TRIGGER`:
 ```php
 // AppBundle\FormBuilder\ApiProvider\MailChimpApiProvider
-public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration)
+public function getPredefinedApiFields(FormDefinitionInterface $formDefinition, array $providerConfiguration): array
 {
     return [
         ...
@@ -271,7 +271,7 @@ Append our freshly created fields in the API output channel:
 ### Dispatch Process
 And finally, check given consent value in your `process` method:
 ```php
-public function process(ApiData $apiData)
+public function process(ApiData $apiData): void
 {
     $consentTriggerValue = $apiData->getProviderConfigurationNode('consentTriggerValue');
 

@@ -6,16 +6,9 @@ use FormBuilderBundle\OutputWorkflow\Channel\Api\ApiProviderInterface;
 
 class ApiProviderRegistry
 {
-    /**
-     * @var array
-     */
-    protected $services = [];
+    protected array $services = [];
 
-    /**
-     * @param string               $identifier
-     * @param ApiProviderInterface $service
-     */
-    public function register($identifier, $service)
+    public function register(string $identifier, $service): void
     {
         if (!in_array(ApiProviderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -25,29 +18,20 @@ class ApiProviderRegistry
 
         if (isset($this->services[$identifier])) {
             throw new \InvalidArgumentException(sprintf('API Provider "%s" already has been registered.', $identifier));
-
         }
+
         $this->services[$identifier] = $service;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier)
+    public function has(string $identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return ApiProviderInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier)
+    public function get(string $identifier): ApiProviderInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('Api provider "' . $identifier . '" does not exist.');
@@ -57,9 +41,9 @@ class ApiProviderRegistry
     }
 
     /**
-     * @return ApiProviderInterface[]
+     * @return array<int, ApiProviderInterface>
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->services;
     }

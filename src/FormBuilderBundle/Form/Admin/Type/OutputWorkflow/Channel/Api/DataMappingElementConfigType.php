@@ -10,9 +10,6 @@ use Symfony\Component\Form\FormEvents;
 
 class DataMappingElementConfigType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class);
