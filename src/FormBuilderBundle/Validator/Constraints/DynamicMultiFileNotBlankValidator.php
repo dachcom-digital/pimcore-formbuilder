@@ -14,13 +14,17 @@ class DynamicMultiFileNotBlankValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, DynamicMultiFileNotBlank::class);
         }
 
-        if(!isset($value['data'])) {
+        if (!isset($value['adapter'])) {
             return;
         }
 
-        if (!is_array($value['data'])) {
+        if (!isset($value['adapter']['data'])) {
+            return;
+        }
+
+        if (!is_array($value['adapter']['data'])) {
             $this->context->buildViolation($constraint->message)->addViolation();
-        } elseif (count($value['data']) === 0) {
+        } elseif (count($value['adapter']['data']) === 0) {
             $this->context->buildViolation($constraint->message)->addViolation();
         }
     }

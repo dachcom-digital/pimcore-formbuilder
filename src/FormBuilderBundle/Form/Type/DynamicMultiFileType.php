@@ -8,19 +8,21 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DynamicMultiFileType extends AbstractType
 {
+    protected FormFactoryInterface $formFactory;
     protected Configuration $configuration;
     protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry;
 
     public function __construct(
+        FormFactoryInterface $formFactory,
         Configuration $configuration,
         DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
     ) {
+        $this->formFactory = $formFactory;
         $this->configuration = $configuration;
         $this->dynamicMultiFileAdapterRegistry = $dynamicMultiFileAdapterRegistry;
     }
@@ -41,27 +43,24 @@ class DynamicMultiFileType extends AbstractType
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
         $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
 
-        $options['mapped'] = false;
+        $options['compound'] = true;
         $options['label'] = empty($options['label']) ? false : $options['label'];
         $options['attr']['data-dynamic-multi-file-instance'] = 'true';
         $options['attr']['data-js-handler'] = $dmfAdapter->getJsHandler();
 
-        $builder->add('adapter', $dmfAdapter->getForm(), $options);
-        $builder->add('data', HiddenType::class, []);
+        $dmfForm = $this->formFactory->createNamedBuilder('adapter', $dmfAdapter->getForm(), null, $options);
 
-        $builder->get('data')->addModelTransformer(new CallbackTransformer(
+        $dmfForm->add('data', HiddenType::class, []);
+        $dmfForm->get('data')->addModelTransformer(new CallbackTransformer(
             function ($identifier) {
-                return $identifier === null ? null : json_encode($identifier);
+                return $identifier === null ? null : json_encode($identifier, JSON_THROW_ON_ERROR);
             },
             function ($identifier) {
-                return $identifier === null ? [] : json_decode($identifier, true);
+                return $identifier === null ? [] : json_decode($identifier, true, 512, JSON_THROW_ON_ERROR);
             }
         ));
-    }
 
-    public function buildView(FormView $view, FormInterface $form, array $options): void
-    {
-        $view->vars['attr']['id'] = $view->vars['id'];
+        $builder->add($dmfForm);
     }
 
     public function getBlockPrefix(): string

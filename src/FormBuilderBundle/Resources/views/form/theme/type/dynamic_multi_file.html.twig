@@ -1,12 +1,6 @@
 {% block form_builder_dynamicmultifile_widget %}
     {%- for child in form %}
-        {% if child.vars.name == 'adapter' %}
-            {# pass row attributes to compount adapter form #}
-            {% set widget_attr = attr|merge({class: (child.vars.attr.class|default('') ~ ' ' ~ attr.class|default(''))|trim}) %}
-            {{- form_row(child, {compound: false, attr: widget_attr, id: id}) -}}
-        {% else %}
-            {{- form_row(child) -}}
-        {% endif %}
+        {{- form_row(child, {compound: false}) -}}
     {% endfor -%}
 {% endblock %}
 
@@ -19,6 +13,11 @@
                     {% include '@FormBuilder/form/elements/dynamic-multi-file/form.html.twig' %}
                 </div>
             </div>
+            {% for child in form -%}
+                {% if not child.rendered %}
+                    {{- form_row(child) -}}
+                {% endif %}
+            {%- endfor -%}
         </div>
     {% endapply %}
 {% endblock %}
@@ -30,6 +29,11 @@
             <div class="dropzone-template" style="display: none;">
                 {% include '@FormBuilder/form/elements/dynamic-multi-file/form-drop-zone.html.twig' %}
             </div>
+            {% for child in form -%}
+                {% if not child.rendered %}
+                    {{- form_row(child) -}}
+                {% endif %}
+            {%- endfor -%}
         </div>
     {% endapply %}
 {% endblock %}

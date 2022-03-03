@@ -17,6 +17,7 @@ services:
     FormBuilderBundle\Form\Type\DynamicMultiFileType:
         public: false
         arguments:
+            - '@Symfony\Component\Form\FormFactoryInterface'
             - '@FormBuilderBundle\Configuration\Configuration'
             - '@FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry'
         tags:

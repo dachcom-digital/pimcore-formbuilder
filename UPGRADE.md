@@ -1,11 +1,12 @@
 # Upgrade Notes
 
-#### Version 4.1.0
+## Version 4.1.0
 - **[NEW FEATURE]**: API Output channel [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/301)
-- **[NEW FEATURE]**: API Output channel Field Transformer
+- **[NEW FEATURE]**: API Output channel field transformer
 - **[BUGFIX]**: ensure migration of form configs will be symfony5 compatible [@grizzlydotweb](https://github.com/dachcom-digital/pimcore-formbuilder/pull/310)
 - **[BUGFIX]**: fix typo in translation [#312](https://github.com/dachcom-digital/pimcore-formbuilder/issues/312)
-- **[BUGFIX]**: disable selectOnFocus [#315](https://github.com/dachcom-digital/pimcore-formbuilder/issues/315)
+- **[BUGFIX]**: disable `selectOnFocus` [#315](https://github.com/dachcom-digital/pimcore-formbuilder/issues/315)
+- **[BUGFIX]**: ⚠️ multi file upload: hidden type `_data` not in form row. touched view: `form/theme/type/dynamic_multi_file.html.twig` [#316](https://github.com/dachcom-digital/pimcore-formbuilder/issues/316) 
 
 ## Version 4.0.2
 - [ENHANCEMENT] enable placeholder in cc and bcc field in email output workflow [@frithjof](https://github.com/dachcom-digital/pimcore-formbuilder/pull/305)

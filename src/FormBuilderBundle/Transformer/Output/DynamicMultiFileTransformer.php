@@ -27,12 +27,14 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
             return null;
         }
 
+        $attachmentData = $rawValue['adapter']['data'];
+
         $options = $fieldDefinition->getOptions();
         /** @var FormDataInterface $rootFormData */
         $rootFormData = $formField->getRoot()->getData();
 
         if (isset($options['submit_as_attachment']) && $options['submit_as_attachment'] === true) {
-            $attachmentLinks = $this->attachmentStream->createAttachmentLinks($rawValue['data'], $fieldDefinition->getName());
+            $attachmentLinks = $this->attachmentStream->createAttachmentLinks($attachmentData, $fieldDefinition->getName());
             foreach ($attachmentLinks as $attachmentLink) {
                 $rootFormData->addAttachment($attachmentLink);
             }
@@ -42,7 +44,7 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
             return null;
         }
 
-        $asset = $this->attachmentStream->createAttachmentAsset($rawValue['data'], $fieldDefinition->getName(), $rootFormData->getFormDefinition()->getName());
+        $asset = $this->attachmentStream->createAttachmentAsset($attachmentData, $fieldDefinition->getName(), $rootFormData->getFormDefinition()->getName());
 
         if ($asset instanceof Asset) {
             return sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath());
