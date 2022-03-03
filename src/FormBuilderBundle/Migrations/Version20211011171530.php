@@ -5,7 +5,6 @@ namespace FormBuilderBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Exception\MigrationNotExecuted;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
@@ -58,14 +57,55 @@ final class Version20211011171530 extends AbstractMigration
             $conditionalLogic = $data['conditional_logic'] ?? [];
             $fields = $data['fields'] ?? [];
 
+            $fixedFields = $this->ensureSymfony5Compatibility($fields);
+
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `configuration` = "%s" WHERE `id` = %d', addslashes(serialize($configuration)), $formDefinitionId));
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `conditionalLogic` = "%s" WHERE `id` = %d', addslashes(serialize($conditionalLogic)), $formDefinitionId));
-            $this->addSql(sprintf('UPDATE formbuilder_forms SET `fields` = "%s" WHERE `id` = %d', addslashes(serialize($fields)), $formDefinitionId));
+            $this->addSql(sprintf('UPDATE formbuilder_forms SET `fields` = "%s" WHERE `id` = %d', addslashes(serialize($fixedFields)), $formDefinitionId));
         }
     }
 
     public function down(Schema $schema): void
     {
         // disabled
+    }
+
+    private function ensureSymfony5Compatibility(array $fields): array
+    {
+        $fixedFields = [];
+        foreach ($fields as $field) {
+            if ($field['type'] === 'choice') {
+                $this->fixChoiceField($field);
+            }
+
+            if (isset($field['constraints'])) {
+                $this->fixConstraints($field);
+            }
+
+            $fixedFields[] = $field;
+        }
+
+        return $fixedFields;
+    }
+
+    private function fixChoiceField(array &$field): void
+    {
+        if (array_key_exists('choice_attr', $field['options'])) {
+            return;
+        }
+
+        $field['options']['choice_attr'] = [];
+    }
+
+    private function fixConstraints(array &$field): void
+    {
+        for ($i = 0; $i < count($field['constraints']); $i++) {
+
+            if ($field['constraints'][$i]['type'] !== 'email') {
+                continue;
+            }
+
+            unset($field['constraints'][$i]['config']['checkMX'], $field['constraints'][$i]['config']['checkHost']);
+        }
     }
 }
