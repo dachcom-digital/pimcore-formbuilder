@@ -21,7 +21,7 @@
 
 ```json
 "require" : {
-    "dachcom-digital/formbuilder" : "~4.0.0"
+    "dachcom-digital/formbuilder" : "~4.1.0"
 }
 ```
 
