@@ -80,7 +80,7 @@ form_builder:
 ## Extended Type Configuration
 
 ### Html Tag Type
-To define your custom html tags, add this to your `app/config/config.yml':
+To define your custom html tags, add this to your `config/config.yaml':
 
 ```yaml
 parameters:

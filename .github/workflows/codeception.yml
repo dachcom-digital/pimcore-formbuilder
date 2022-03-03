@@ -40,12 +40,14 @@ jobs:
             matrix:
                 php: [ 8.0 ]
                 symfony: [ ^5.3 ]
-                pimcore: [ ~10.1.0, ~10.2.0 ]
+                pimcore: [ ~10.1.0, ~10.2.0, ~10.3.0 ]
                 include:
                     -   pimcore: ~10.1.0
                         template_tag: v10.1.0
                     -   pimcore: ~10.2.0
                         template_tag: v10.1.4
+                    -   pimcore: ~10.3.0
+                        template_tag: v10.1.9
         steps:
             -   uses: actions/checkout@v2
                 with:
@@ -86,7 +88,6 @@ jobs:
             -   name: Setup MySql
                 run: |
                     sudo systemctl start mysql
-                    mysql -uroot -proot -h127.0.0.1 -e "SET GLOBAL max_connections=300;"
                     mysql -uroot -proot -h127.0.0.1 -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
 
             -   name: Setup Chromium
