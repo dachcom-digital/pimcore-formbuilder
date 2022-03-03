@@ -29,6 +29,7 @@ Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formb
                     allowBlank: false,
                     flex: 1,
                     queryMode: 'local',
+                    selectOnFocus: false,
                     editable: false,
                     triggerAction: 'all',
                     store: new Ext.data.Store({
