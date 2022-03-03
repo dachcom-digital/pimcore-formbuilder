@@ -18,11 +18,14 @@ class DropZoneType extends AbstractType
         $this->translator = $translator;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
-                'data-field-id'       => $view->parent->vars['id'],
+                'data-field-id'       => $view->vars['id'],
                 'data-engine-options' => json_encode([
                     'translations'       => $this->getInterfaceTranslations(),
                     'instance_error'     => $this->translator->trans('form_builder.dynamic_multi_file.global.cannot_destroy_active_instance'),
