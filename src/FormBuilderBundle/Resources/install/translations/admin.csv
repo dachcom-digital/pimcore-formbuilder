@@ -126,3 +126,4 @@
 "form_builder_type_field.date_html5","use HTML5 type", "HTML5-Typ benutzen"
 "form_builder.output_workflow.channel.email","Email Channel", "E-Mail Channel"
 "form_builder.output_workflow.channel.object","Object Channel", "Object Channel"
+"form_builder.output_workflow.channel.api","API Channel", "API Channel"

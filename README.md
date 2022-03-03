@@ -12,7 +12,7 @@
 
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
 |---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **4.x** | `10.1` - `10.2`                   | `5.3`                      | 13.10.2021   | Feature Branch | master     |
+| **4.x** | `10.1` - `10.3`                   | `5.3`                      | 13.10.2021   | Feature Branch | master     |
 | **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Bugfix only    | [3.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/3.x) |
 | **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Unsupported    | [2.7](https://github.com/dachcom-digital/pimcore-formbuilder/tree/2.7) |
 | **1.5** | `4.0`                             | --                         | 18.03.2017   | Unsupported    | [pimcore4](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4) |
@@ -47,10 +47,13 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
 - [Output Workflows](docs/OutputWorkflow/0_Usage.md)
+- [Output Workflows](docs/OutputWorkflow/0_Usage.md)
+  - [API Channel](docs/OutputWorkflow/09_ApiChannel.md)
   - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)
   - [Object Channel](docs/OutputWorkflow/11_ObjectChannel.md)
   - [Custom Channel](docs/OutputWorkflow/12_CustomChannel.md)
   - [Output Transformer](docs/OutputWorkflow/15_OutputTransformer.md)
+  - [Field Transformer](docs/OutputWorkflow/16_FieldTransformer.md)
   - [Success Management](docs/OutputWorkflow/20_SuccessManagement.md)
 - [Backend Administration of Forms](docs/01_BackendUsage.md)
 - [Export Forms](docs/02_ExportForms.md)

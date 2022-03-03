@@ -4,10 +4,12 @@ namespace FormBuilderBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Doctrine\DBAL\Types\Type;
+use FormBuilderBundle\DependencyInjection\CompilerPass\ApiProviderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicMultiFileAdapterPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicObjectResolverPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\FieldTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
@@ -59,6 +61,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new DynamicObjectResolverPass());
         $container->addCompilerPass(new RuntimeDataProviderPass());
         $container->addCompilerPass(new DynamicMultiFileAdapterPass());
+        $container->addCompilerPass(new ApiProviderPass());
+        $container->addCompilerPass(new FieldTransformerPass());
     }
 
     public function getInstaller(): Install
@@ -82,6 +86,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/abstractChannel.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/email.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/object.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/api.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/abstract.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/checkbox.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/href.js',
@@ -94,6 +99,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/_form/config-fields/textfield.js',
             '/bundles/formbuilder/js/extjs/extensions/formMetaData.js',
             '/bundles/formbuilder/js/extjs/extensions/formMailEditor.js',
+            '/bundles/formbuilder/js/extjs/extensions/formApiMappingEditor.js',
+            '/bundles/formbuilder/js/extjs/extensions/formDataMappingEditor/formDataMapper.js',
             '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor.js',
             '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor/formObjectTreeMapper.js',
             '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor/worker/fieldCollectionWorker.js',

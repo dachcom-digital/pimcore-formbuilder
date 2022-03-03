@@ -28,6 +28,11 @@ class Install extends SettingsStoreAwareInstaller
         parent::install();
     }
 
+    public function updateTranslations(): void
+    {
+        $this->installTranslations();
+    }
+
     /**
      * @throws InstallationException
      */
