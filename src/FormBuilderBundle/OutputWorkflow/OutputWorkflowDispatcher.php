@@ -53,7 +53,7 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
                         $outputWorkflow->getName(),
                         $channel->getType(),
                         $index + 1,
-                        $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine()
+                        $e->getMessage()
                     )
                 );
             }
