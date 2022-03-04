@@ -2,29 +2,34 @@
 
 namespace FormBuilderBundle\Stream;
 
+use Doctrine\DBAL\Query\QueryBuilder;
+use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalEvent;
+use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent;
 use FormBuilderBundle\Tool\FileLocator;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AttachmentStream implements AttachmentStreamInterface
 {
+    protected const PACKAGE_IDENTIFIER = 'formbuilder_package_identifier';
+    protected const SIGNAL_CLEAN_UP = 'tmp_file_attachment_stream';
+
+    protected EventDispatcherInterface $eventDispatcher;
     protected FileLocator $fileLocator;
 
-    public function __construct(FileLocator $fileLocator)
+    public function __construct(EventDispatcherInterface $eventDispatcher, FileLocator $fileLocator)
     {
+        $this->eventDispatcher = $eventDispatcher;
         $this->fileLocator = $fileLocator;
     }
 
+    /**
+     * @return array<int, File>
+     */
     public function createAttachmentLinks(array $data, string $formName): array
     {
-        $files = $this->extractFiles($data);
-
-        if (empty($files)) {
-            return [];
-        }
-
-        return $files;
+        return $this->extractFiles($data);
     }
 
     public function createAttachmentAsset($data, $fieldName, $formName): ?Asset
@@ -35,42 +40,51 @@ class AttachmentStream implements AttachmentStreamInterface
 
         $files = $this->extractFiles($data);
 
-        if (empty($files)) {
+        if (count($files) === 0) {
             return null;
         }
 
-        $key = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 5);
-        $zipFileName = File::getValidFilename($fieldName) . '-' . $key . '.zip';
-        $zipPath = $this->fileLocator->getZipFolder() . '/' . $zipFileName;
+        $packageIdentifier = '';
+        foreach ($files as $file) {
+            $packageIdentifier .= sprintf('%s-%s-%s-%s', filesize($file->getPath()), $file->getId(), $file->getPath(), $file->getName());
+        }
+
+        // create package identifier to check if we just in another channel
+        $packageIdentifier = md5($packageIdentifier);
+
+        $formName = \Pimcore\File::getValidFilename($formName);
+        $zipKey = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 5);
+        $zipFileName = sprintf('%s-%s.zip', \Pimcore\File::getValidFilename($fieldName), $zipKey);
+        $zipPath = sprintf('%s/%s', $this->fileLocator->getZipFolder(), $zipFileName);
+
+        $existingAssetPackage = $this->findExistingAssetPackage($packageIdentifier, $formName);
+
+        if ($existingAssetPackage instanceof Asset) {
+            return $existingAssetPackage;
+        }
 
         try {
             $zip = new \ZipArchive();
             $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-            foreach ($files as $fileInfo) {
-                $zip->addFile($fileInfo['path'], $fileInfo['name']);
+            foreach ($files as $file) {
+                $zip->addFile($file->getPath(), $file->getName());
             }
 
             $zip->close();
 
-            //clean up!
-            foreach ($files as $fileInfo) {
-                $this->removeAttachmentByFileInfo($fileInfo);
-            }
         } catch (\Exception $e) {
-            echo $e->getMessage();
-            Logger::log('Error while creating zip for FormBuilder (' . $zipPath . '): ' . $e->getMessage());
+            Logger::error(sprintf('Error while creating attachment zip (%s): %s', $zipPath, $e->getMessage()));
 
             return null;
         }
 
         if (!file_exists($zipPath)) {
-            Logger::log('zip path does not exist (' . $zipPath . ')');
+            Logger::error(sprintf('zip path does not exist (%s)', $zipPath));
 
             return null;
         }
 
-        $formDataFolder = null;
         $formDataParentFolder = Asset\Folder::getByPath('/formdata');
 
         if (!$formDataParentFolder instanceof Asset\Folder) {
@@ -79,8 +93,7 @@ class AttachmentStream implements AttachmentStreamInterface
             return null;
         }
 
-        $formName = File::getValidFilename($formName);
-        $formFolderExists = Asset\Service::pathExists('/formdata/' . $formName);
+        $formFolderExists = Asset\Service::pathExists(sprintf('/formdata/%s', $formName));
 
         if ($formFolderExists === false) {
             $formDataFolder = new Asset\Folder();
@@ -97,11 +110,11 @@ class AttachmentStream implements AttachmentStreamInterface
                 // fail silently.
             }
         } else {
-            $formDataFolder = Asset\Folder::getByPath('/formdata/' . $formName);
+            $formDataFolder = Asset\Folder::getByPath(sprintf('/formdata/%s', $formName));
         }
 
         if (!$formDataFolder instanceof Asset\Folder) {
-            Logger::error('Error while creating formDataFolder: (/formdata/' . $formName . ')');
+            Logger::error(sprintf('Error while creating form data folder (/formdata/%s)', $formName));
 
             return null;
         }
@@ -113,12 +126,13 @@ class AttachmentStream implements AttachmentStreamInterface
 
         try {
             $asset = Asset::create($formDataFolder->getId(), $assetData, false);
+            $asset->setProperty(self::PACKAGE_IDENTIFIER, 'text', $packageIdentifier, false, false);
             $asset->save();
             if (file_exists($zipPath)) {
                 unlink($zipPath);
             }
         } catch (\Exception $e) {
-            Logger::log('Error while storing asset in Pimcore (' . $zipPath . '): ' . $e->getMessage());
+            Logger::error(sprintf('Error while storing asset in pimcore (%s): %s', $zipPath, $e->getMessage()));
 
             return null;
         }
@@ -126,10 +140,29 @@ class AttachmentStream implements AttachmentStreamInterface
         return $asset;
     }
 
-    public function removeAttachmentByFileInfo(array $fileInfo): void
+    /**
+     * @internal
+     */
+    public function cleanUp(OutputWorkflowSignalsEvent $signalsEvent): void
+    {
+        // keep assets if guard exception occurs: use may want to retry!
+
+        if ($signalsEvent->hasGuardException() === true) {
+            return;
+        }
+
+        foreach ($signalsEvent->getSignalsByName(self::SIGNAL_CLEAN_UP) as $signal) {
+            /** @var File $attachmentFile */
+            foreach ($signal->getData() as $attachmentFile) {
+                $this->removeAttachmentFile($attachmentFile);
+            }
+        }
+    }
+
+    protected function removeAttachmentFile(File $attachmentFile): void
     {
         $targetFolder = $this->fileLocator->getFilesFolder();
-        $target = implode(DIRECTORY_SEPARATOR, [$targetFolder, $fileInfo['id']]);
+        $target = implode(DIRECTORY_SEPARATOR, [$targetFolder, $attachmentFile->getId()]);
 
         if (!is_dir($target)) {
             return;
@@ -138,23 +171,56 @@ class AttachmentStream implements AttachmentStreamInterface
         $this->fileLocator->removeDir($target);
     }
 
+    /**
+     * @return array<int, File>
+     */
     protected function extractFiles(array $data): array
     {
         $files = [];
         foreach ($data as $fileData) {
-            $fileDir = $this->fileLocator->getFilesFolder() . '/' . $fileData['id'];
+
+            $fileId = (string) $fileData['id'];
+            $fileDir = sprintf('%s/%s', $this->fileLocator->getFilesFolder(), $fileId);
+
             if (is_dir($fileDir)) {
                 $dirFiles = glob($fileDir . '/*');
                 if (count($dirFiles) === 1) {
-                    $files[] = [
-                        'name' => $fileData['fileName'],
-                        'id'   => $fileData['id'],
-                        'path' => $dirFiles[0]
-                    ];
+                    $files[] = new File($fileId, $fileData['fileName'], $dirFiles[0]);
                 }
             }
         }
 
+        // add signal for later clean up
+        $this->eventDispatcher->dispatch(
+            new OutputWorkflowSignalEvent(self::SIGNAL_CLEAN_UP, $files),
+            OutputWorkflowSignalEvent::NAME
+        );
+
         return $files;
+    }
+
+    protected function findExistingAssetPackage(string $packageIdentifier, string $formName): ?Asset
+    {
+        $assetListing = new Asset\Listing();
+        $assetListing->addConditionParam('`assets`.path = ?', sprintf('/formdata/%s/', $formName));
+        $assetListing->addConditionParam('`properties`.data = ?', $packageIdentifier);
+        $assetListing->setLimit(1);
+
+        $assetListing->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) {
+            $queryBuilder->leftJoin(
+                'assets',
+                'properties',
+                'properties',
+                sprintf('properties.`cid` = assets.`id` AND properties.`name` = "%s"', self::PACKAGE_IDENTIFIER)
+            );
+        });
+
+        $assets = $assetListing->getAssets();
+
+        if (count($assets) === 0) {
+            return null;
+        }
+
+        return $assets[0];
     }
 }

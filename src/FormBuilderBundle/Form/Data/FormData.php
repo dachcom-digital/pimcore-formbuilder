@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Form\Data;
 
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Stream\File;
 
 class FormData implements FormDataInterface
 {
@@ -32,12 +33,16 @@ class FormData implements FormDataInterface
 
     public function getAttachments(): array
     {
-        return $this->attachments;
+        return array_values($this->attachments);
     }
 
-    public function addAttachment(array $attachmentFileInfo): void
+    public function addAttachment(File $attachmentFile): void
     {
-        $this->attachments[] = $attachmentFileInfo;
+        if (array_key_exists($attachmentFile->getId(), $this->attachments)) {
+            return;
+        }
+
+        $this->attachments[$attachmentFile->getId()] = $attachmentFile;
     }
 
     public function getFieldValue(string $name): mixed

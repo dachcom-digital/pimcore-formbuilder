@@ -35,8 +35,8 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
 
         if (isset($options['submit_as_attachment']) && $options['submit_as_attachment'] === true) {
             $attachmentLinks = $this->attachmentStream->createAttachmentLinks($attachmentData, $fieldDefinition->getName());
-            foreach ($attachmentLinks as $attachmentLink) {
-                $rootFormData->addAttachment($attachmentLink);
+            foreach ($attachmentLinks as $attachment) {
+                $rootFormData->addAttachment($attachment);
             }
 
             // attachment is not required to get displayed in mail body
