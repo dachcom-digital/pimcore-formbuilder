@@ -18,6 +18,9 @@
                     {{- form_row(child) -}}
                 {% endif %}
             {%- endfor -%}
+            {% if help_text %}
+                {{ block('help_text_label') }}
+            {% endif %}
         </div>
     {% endapply %}
 {% endblock %}
@@ -34,6 +37,9 @@
                     {{- form_row(child) -}}
                 {% endif %}
             {%- endfor -%}
+            {% if help_text %}
+                {{ block('help_text_label') }}
+            {% endif %}
         </div>
     {% endapply %}
 {% endblock %}

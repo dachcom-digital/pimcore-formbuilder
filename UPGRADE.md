@@ -7,6 +7,7 @@
 - **[BUGFIX]**: introduce output workflow signals: attachments not working with multiple channels [#311](https://github.com/dachcom-digital/pimcore-formbuilder/issues/311) 
 - **[BUGFIX]**: fix typo in translation [#312](https://github.com/dachcom-digital/pimcore-formbuilder/issues/312)
 - **[BUGFIX]**: disable `selectOnFocus` [#315](https://github.com/dachcom-digital/pimcore-formbuilder/issues/315)
+- **[BUGFIX]**: ⚠️ add help text block to dynamic multi file. touched view: `form/theme/type/dynamic_multi_file.html.twig` [#308](https://github.com/dachcom-digital/pimcore-formbuilder/issues/308)
 - **[BUGFIX]**: ⚠️ multi file upload: hidden type `_data` not in form row. touched view: `form/theme/type/dynamic_multi_file.html.twig` [#316](https://github.com/dachcom-digital/pimcore-formbuilder/issues/316) 
 
 ## Version 4.0.2
