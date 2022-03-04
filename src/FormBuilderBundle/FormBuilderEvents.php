@@ -52,4 +52,9 @@ final class FormBuilderEvents
      * @see \FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent
      */
     const OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH = 'form_builder.output_workflow.guard.subject.pre_dispatch';
+
+    /**
+     * @see \FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent
+     */
+    const OUTPUT_WORKFLOW_SIGNALS = 'form_builder.output_workflow.signals';
 }

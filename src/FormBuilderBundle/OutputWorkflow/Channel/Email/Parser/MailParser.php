@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
+use FormBuilderBundle\Stream\File;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
@@ -10,7 +11,6 @@ use Symfony\Component\Templating\EngineInterface;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
-use FormBuilderBundle\Stream\AttachmentStreamInterface;
 
 class MailParser
 {
@@ -35,26 +35,18 @@ class MailParser
     protected $placeholderParser;
 
     /**
-     * @var AttachmentStreamInterface
-     */
-    protected $attachmentStream;
-
-    /**
      * @param EngineInterface                  $templating
      * @param FormValuesOutputApplierInterface $formValuesOutputApplier
      * @param PlaceholderParserInterface       $placeholderParser
-     * @param AttachmentStreamInterface        $attachmentStream
      */
     public function __construct(
         EngineInterface $templating,
         FormValuesOutputApplierInterface $formValuesOutputApplier,
-        PlaceholderParserInterface $placeholderParser,
-        AttachmentStreamInterface $attachmentStream
+        PlaceholderParserInterface $placeholderParser
     ) {
         $this->templating = $templating;
         $this->formValuesOutputApplier = $formValuesOutputApplier;
         $this->placeholderParser = $placeholderParser;
-        $this->attachmentStream = $attachmentStream;
     }
 
     /**
@@ -222,17 +214,16 @@ class MailParser
      */
     protected function parseMailAttachment(Mail $mail, array $attachments)
     {
-        foreach ($attachments as $attachmentFileInfo) {
+        /** @var File $attachmentFile */
+        foreach ($attachments as $attachmentFile) {
             try {
                 $attachment = new \Swift_Attachment();
-                $attachment->setBody(file_get_contents($attachmentFileInfo['path']));
-                $attachment->setFilename($attachmentFileInfo['name']);
+                $attachment->setBody(file_get_contents($attachmentFile->getPath()));
+                $attachment->setFilename($attachmentFile->getName());
                 $mail->attach($attachment);
             } catch (\Exception $e) {
                 // fail silently.
             }
-
-            $this->attachmentStream->removeAttachmentByFileInfo($attachmentFileInfo);
         }
     }
 

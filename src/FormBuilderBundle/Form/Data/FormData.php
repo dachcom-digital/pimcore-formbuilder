@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Form\Data;
 
 use FormBuilderBundle\Storage\Form;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Stream\File;
 
 class FormData extends Form implements FormDataInterface
 {
@@ -59,15 +60,19 @@ class FormData extends Form implements FormDataInterface
      */
     public function getAttachments()
     {
-        return $this->attachments;
+        return array_values($this->attachments);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addAttachment(array $attachmentFileInfo)
+    public function addAttachment(File $attachmentFile)
     {
-        $this->attachments[] = $attachmentFileInfo;
+        if (array_key_exists($attachmentFile->getId(), $this->attachments)) {
+            return;
+        }
+
+        $this->attachments[$attachmentFile->getId()] = $attachmentFile;
     }
 
     /**

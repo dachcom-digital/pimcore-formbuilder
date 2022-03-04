@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Form\Data;
 
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Stream\File;
 
 interface FormDataInterface
 {
@@ -40,7 +41,7 @@ interface FormDataInterface
     public function getAttachments();
 
     /**
-     * @param array $attachmentFileInfo
+     * @param File $attachmentFile
      */
-    public function addAttachment(array $attachmentFileInfo);
+    public function addAttachment(File $attachmentFile);
 }
