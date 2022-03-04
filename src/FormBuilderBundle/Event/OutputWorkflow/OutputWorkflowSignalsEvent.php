@@ -13,15 +13,15 @@ class OutputWorkflowSignalsEvent extends Event
     protected $signals;
 
     /**
-     * @var \Exception|null
+     * @var \Throwable|null
      */
     protected $exception;
 
     /**
      * @param array           $signals
-     * @param \Exception|null $exception
+     * @param \Throwable|null $exception
      */
-    public function __construct(array $signals, ?\Exception $exception)
+    public function __construct(array $signals, $exception)
     {
         $this->signals = $signals;
         $this->exception = $exception;
@@ -32,7 +32,7 @@ class OutputWorkflowSignalsEvent extends Event
      */
     public function hasException(): bool
     {
-        return $this->exception instanceof \Exception;
+        return $this->exception instanceof \Throwable;
     }
 
     /**
@@ -46,9 +46,9 @@ class OutputWorkflowSignalsEvent extends Event
     }
 
     /**
-     * @return \Exception|null
+     * @return \Throwable|null
      */
-    public function getException(): ?\Exception
+    public function getException()
     {
         return $this->exception;
     }

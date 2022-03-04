@@ -58,7 +58,7 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
             return null;
         }
 
-        $asset = $this->attachmentStream->createAttachmentAsset($rawValue['data'], $fieldDefinition->getName(), $rootFormData->getFormDefinition()->getName());
+        $asset = $this->attachmentStream->createAttachmentAsset($attachmentData, $fieldDefinition->getName(), $rootFormData->getFormDefinition()->getName());
 
         if ($asset instanceof Asset) {
             return sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath());

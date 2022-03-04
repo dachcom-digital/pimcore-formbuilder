@@ -88,7 +88,10 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         $this->dispatchSignalsEvent();
     }
 
-    protected function dispatchSignalsEvent(?\Exception $exception = null): void
+    /**
+     * @param \Throwable|null $exception
+     */
+    protected function dispatchSignalsEvent($exception = null): void
     {
         $signals = $this->subscriber->getSignals();
         $this->eventDispatcher->removeSubscriber($this->subscriber);
