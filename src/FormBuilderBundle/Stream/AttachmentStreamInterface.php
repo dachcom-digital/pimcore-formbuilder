@@ -22,9 +22,4 @@ interface AttachmentStreamInterface
      * @return array
      */
     public function createAttachmentLinks($data, $formName);
-
-    /**
-     * @param array $fileInfo
-     */
-    public function removeAttachmentByFileInfo(array $fileInfo);
 }
