@@ -28,11 +28,10 @@ class EmailOutputChannel implements ChannelInterface
         return true;
     }
 
-    /**
-     * Currently unsupported for EmailOutputChanel.
-     */
     public function getUsedFormFieldNames(array $channelConfiguration): array
     {
+        // Unsupported for EmailOutputChanel
+
         return [];
     }
 

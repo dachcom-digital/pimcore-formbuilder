@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
+use FormBuilderBundle\Stream\File;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
@@ -9,7 +10,6 @@ use Symfony\Component\Templating\EngineInterface;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
-use FormBuilderBundle\Stream\AttachmentStreamInterface;
 
 class MailParser
 {
@@ -17,18 +17,15 @@ class MailParser
     protected Email $mailTemplate;
     protected FormValuesOutputApplierInterface $formValuesOutputApplier;
     protected PlaceholderParserInterface $placeholderParser;
-    protected AttachmentStreamInterface $attachmentStream;
 
     public function __construct(
         EngineInterface $templating,
         FormValuesOutputApplierInterface $formValuesOutputApplier,
-        PlaceholderParserInterface $placeholderParser,
-        AttachmentStreamInterface $attachmentStream
+        PlaceholderParserInterface $placeholderParser
     ) {
         $this->templating = $templating;
         $this->formValuesOutputApplier = $formValuesOutputApplier;
         $this->placeholderParser = $placeholderParser;
-        $this->attachmentStream = $attachmentStream;
     }
 
     /**
@@ -154,14 +151,13 @@ class MailParser
 
     protected function parseMailAttachment(Mail $mail, array $attachments): void
     {
-        foreach ($attachments as $attachmentFileInfo) {
+        /** @var File $attachmentFile */
+        foreach ($attachments as $attachmentFile) {
             try {
-                $mail->attach(file_get_contents($attachmentFileInfo['path']), $attachmentFileInfo['name']);
+                $mail->attach(file_get_contents($attachmentFile->getPath()), $attachmentFile->getName());
             } catch (\Exception $e) {
                 // fail silently.
             }
-
-            $this->attachmentStream->removeAttachmentByFileInfo($attachmentFileInfo);
         }
     }
 

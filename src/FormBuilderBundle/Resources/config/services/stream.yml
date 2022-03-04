@@ -11,4 +11,6 @@ services:
 
      # stream: attachment
     FormBuilderBundle\Stream\AttachmentStreamInterface: '@FormBuilderBundle\Stream\AttachmentStream'
-    FormBuilderBundle\Stream\AttachmentStream: ~
+    FormBuilderBundle\Stream\AttachmentStream:
+        tags:
+            - { name: kernel.event_listener, event: !php/const FormBuilderBundle\FormBuilderEvents::OUTPUT_WORKFLOW_SIGNALS, method: cleanUp }

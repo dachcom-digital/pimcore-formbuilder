@@ -4,6 +4,7 @@
 - **[NEW FEATURE]**: API Output channel [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/301)
 - **[NEW FEATURE]**: API Output channel field transformer
 - **[BUGFIX]**: ensure migration of form configs will be symfony5 compatible [@grizzlydotweb](https://github.com/dachcom-digital/pimcore-formbuilder/pull/310)
+- **[BUGFIX]**: introduce output workflow signals: attachments not working with multiple channels [#311](https://github.com/dachcom-digital/pimcore-formbuilder/issues/311) 
 - **[BUGFIX]**: fix typo in translation [#312](https://github.com/dachcom-digital/pimcore-formbuilder/issues/312)
 - **[BUGFIX]**: disable `selectOnFocus` [#315](https://github.com/dachcom-digital/pimcore-formbuilder/issues/315)
 - **[BUGFIX]**: ⚠️ multi file upload: hidden type `_data` not in form row. touched view: `form/theme/type/dynamic_multi_file.html.twig` [#316](https://github.com/dachcom-digital/pimcore-formbuilder/issues/316) 
