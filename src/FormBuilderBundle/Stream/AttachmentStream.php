@@ -217,8 +217,8 @@ class AttachmentStream implements AttachmentStreamInterface
 
         // add signal for later clean up
         $this->eventDispatcher->dispatch(
-            new OutputWorkflowSignalEvent(self::SIGNAL_CLEAN_UP, $files),
-            OutputWorkflowSignalEvent::NAME
+            OutputWorkflowSignalEvent::NAME,
+            new OutputWorkflowSignalEvent(self::SIGNAL_CLEAN_UP, $files)
         );
 
         return $files;

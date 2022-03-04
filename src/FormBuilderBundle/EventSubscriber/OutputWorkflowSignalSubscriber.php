@@ -7,21 +7,33 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class OutputWorkflowSignalSubscriber implements EventSubscriberInterface
 {
-    protected array $signals = [];
+    /**
+     * @var array
+     */
+    protected $signals = [];
 
-    public static function getSubscribedEvents(): array
+    /**
+     * @return string[]
+     */
+    public static function getSubscribedEvents()
     {
         return [
             OutputWorkflowSignalEvent::NAME => 'addSignal',
         ];
     }
 
-    public function addSignal(OutputWorkflowSignalEvent $signalEvent): void
+    /**
+     * @param OutputWorkflowSignalEvent $signalEvent
+     */
+    public function addSignal(OutputWorkflowSignalEvent $signalEvent)
     {
         $this->signals[] = $signalEvent;
     }
 
-    public function getSignals(): array
+    /**
+     * @return array
+     */
+    public function getSignals()
     {
         return $this->signals;
     }

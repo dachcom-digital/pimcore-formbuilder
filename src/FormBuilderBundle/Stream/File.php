@@ -4,28 +4,53 @@ namespace FormBuilderBundle\Stream;
 
 class File
 {
-    protected string $id;
-    protected string $name;
-    protected string $path;
+    /**
+     * @var string
+     */
+    protected $id;
 
-    public function __construct(string $id, string $name, string $path)
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var string
+     */
+    protected $path;
+
+    /**
+     * @param string $id
+     * @param string $name
+     * @param string $path
+     */
+    public function __construct($id, $name, $path)
     {
         $this->id = $id;
         $this->name = $name;
         $this->path = $path;
     }
 
-    public function getId(): string
+    /**
+     * @return string
+     */
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getName(): string
+    /**
+     * @return string
+     */
+    public function getName()
     {
         return $this->name;
     }
 
-    public function getPath(): string
+    /**
+     * @return string
+     */
+    public function getPath()
     {
         return $this->path;
     }

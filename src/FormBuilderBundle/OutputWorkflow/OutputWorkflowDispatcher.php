@@ -31,6 +31,7 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
     protected $subscriber;
 
     /**
+     * @param EventDispatcherInterface $eventDispatcher
      * @param OutputWorkflowChannelRegistry $channelRegistry
      */
     public function __construct(EventDispatcherInterface $eventDispatcher, OutputWorkflowChannelRegistry $channelRegistry)
@@ -91,6 +92,6 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
     {
         $signals = $this->subscriber->getSignals();
         $this->eventDispatcher->removeSubscriber($this->subscriber);
-        $this->eventDispatcher->dispatch(new OutputWorkflowSignalsEvent($signals, $exception), FormBuilderEvents::OUTPUT_WORKFLOW_SIGNALS);
+        $this->eventDispatcher->dispatch(FormBuilderEvents::OUTPUT_WORKFLOW_SIGNALS, new OutputWorkflowSignalsEvent($signals, $exception));
     }
 }

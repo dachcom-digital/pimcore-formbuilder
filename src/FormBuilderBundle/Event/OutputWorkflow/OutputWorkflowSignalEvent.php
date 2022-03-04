@@ -2,27 +2,44 @@
 
 namespace FormBuilderBundle\Event\OutputWorkflow;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 class OutputWorkflowSignalEvent extends Event
 {
     public const NAME = 'form_builder.output_workflow.signal';
 
-    protected string $name;
-    protected mixed $data;
+    /**
+     * @var string
+     */
+    protected $name;
 
-    public function __construct(string $name, mixed $data)
+    /**
+     * @var mixed
+     */
+    protected $data;
+
+    /**
+     * @param string $name
+     * @param mixed  $data
+     */
+    public function __construct($name, $data)
     {
         $this->name = $name;
         $this->data = $data;
     }
 
-    public function getName(): string
+    /**
+     * @return string
+     */
+    public function getName()
     {
         return $this->name;
     }
 
-    public function getData(): mixed
+    /**
+     * @return mixed
+     */
+    public function getData()
     {
         return $this->data;
     }
