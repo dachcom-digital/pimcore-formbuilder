@@ -8,9 +8,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 class OutputWorkflowSignalsEvent extends Event
 {
     protected array $signals;
-    protected ?\Exception $exception;
+    protected ?\Throwable $exception;
 
-    public function __construct(array $signals, ?\Exception $exception)
+    public function __construct(array $signals, ?\Throwable $exception)
     {
         $this->signals = $signals;
         $this->exception = $exception;
@@ -18,7 +18,7 @@ class OutputWorkflowSignalsEvent extends Event
 
     public function hasException(): bool
     {
-        return $this->exception instanceof \Exception;
+        return $this->exception instanceof \Throwable;
     }
 
     public function hasGuardException(): bool
@@ -28,7 +28,7 @@ class OutputWorkflowSignalsEvent extends Event
             $this->exception instanceof OutputWorkflow\GuardStackedException;
     }
 
-    public function getException(): ?\Exception
+    public function getException(): ?\Throwable
     {
         return $this->exception;
     }
