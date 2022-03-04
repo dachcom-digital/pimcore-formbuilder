@@ -2,10 +2,10 @@
 
 namespace FormBuilderBundle\Stream;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalEvent;
 use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent;
 use FormBuilderBundle\Tool\FileLocator;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -238,11 +238,10 @@ class AttachmentStream implements AttachmentStreamInterface
         $assetListing->setLimit(1);
 
         $assetListing->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) {
-            $queryBuilder->leftJoin(
-                'assets',
-                'properties',
-                'properties',
-                sprintf('properties.`cid` = assets.`id` AND properties.`name` = "%s"', self::PACKAGE_IDENTIFIER)
+            $queryBuilder->join(
+                ['properties' => 'properties'],
+                sprintf('properties.`cid` = assets.`id` AND properties.`ctype` = "asset" AND properties.`name` = "%s"', self::PACKAGE_IDENTIFIER),
+                ['sdi' => 'properties.data']
             );
         });
 
