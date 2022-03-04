@@ -211,7 +211,7 @@ class AttachmentStream implements AttachmentStreamInterface
                 'assets',
                 'properties',
                 'properties',
-                sprintf('properties.`cid` = assets.`id` AND properties.`name` = "%s"', self::PACKAGE_IDENTIFIER)
+                sprintf('properties.`cid` = assets.`id` AND properties.`ctype` = "asset" AND properties.`name` = "%s"', self::PACKAGE_IDENTIFIER)
             );
         });
 
