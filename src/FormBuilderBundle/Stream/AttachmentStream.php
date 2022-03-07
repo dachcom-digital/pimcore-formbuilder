@@ -237,7 +237,7 @@ class AttachmentStream implements AttachmentStreamInterface
         $assetListing->addConditionParam('`properties`.data = ?', $packageIdentifier);
         $assetListing->setLimit(1);
 
-        $assetListing->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) {
+        $assetListing->onCreateQuery(function (QueryBuilder $queryBuilder) {
             $queryBuilder->join(
                 ['properties' => 'properties'],
                 sprintf('properties.`cid` = assets.`id` AND properties.`ctype` = "asset" AND properties.`name` = "%s"', self::PACKAGE_IDENTIFIER),
