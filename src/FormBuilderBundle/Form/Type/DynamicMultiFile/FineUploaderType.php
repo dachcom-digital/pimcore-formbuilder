@@ -18,11 +18,14 @@ class FineUploaderType extends AbstractType
         $this->translator = $translator;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars = array_merge_recursive($view->vars, [
             'attr' => [
-                'data-field-id'       => $view->parent->vars['id'],
+                'data-field-id'       => $view->vars['id'],
                 'data-engine-options' => json_encode([
                     'messages'           => $this->getInterfaceTranslations(),
                     'multiple'           => isset($options['multiple']) && $options['multiple'] === true ? 1 : 0,

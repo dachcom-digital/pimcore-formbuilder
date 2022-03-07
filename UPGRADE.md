@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Version 4.1.1
+- **[BUGFIX]**: Fix legacy fine uploader identifier
+
 ## Version 4.1.0
 - **[NEW FEATURE]**: API Output channel [#290](https://github.com/dachcom-digital/pimcore-formbuilder/issues/301)
 - **[NEW FEATURE]**: API Output channel field transformer
