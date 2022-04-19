@@ -8,5 +8,6 @@ class EmailController extends FrontendController
 {
     public function emailAction()
     {
+        return $this->renderTemplate('@FormBuilder/Email/email.html.twig');
     }
 }
