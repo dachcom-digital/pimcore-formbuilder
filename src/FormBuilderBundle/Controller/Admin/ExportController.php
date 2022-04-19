@@ -51,8 +51,6 @@ class ExportController extends AdminController
             $emailLogs->addConditionParam('params LIKE \'%' . $this->generateFormTypeQuery($mailType) . '%\'');
         }
 
-        $this->buildCsv($emailLogs->load(), $formId);
-
         $response = new Response();
         $response->headers->set('Content-Encoding', 'none');
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
