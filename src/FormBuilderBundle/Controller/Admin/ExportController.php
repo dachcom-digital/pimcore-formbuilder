@@ -95,10 +95,10 @@ class ExportController extends AdminController
         }
 
         $emailLogs = new Email\Log\Listing();
-        $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateFormIdQuery($formId)));
+        $emailLogs->addConditionParam('params LIKE :form', ['form' => sprintf('%%%s%%', $this->generateFormIdQuery($formId))]);
 
         if ($filter !== 'all') {
-            $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateOutputWorkflowFilterQuery($formId, (int) $filter)));
+            $emailLogs->addConditionParam('params LIKE :workflow', ['workflow' => sprintf('%%%s%%', $this->generateOutputWorkflowFilterQuery($formId, (int) $filter))]);
         }
 
         $this->buildCsv($emailLogs->getEmailLogs(), $formId);
