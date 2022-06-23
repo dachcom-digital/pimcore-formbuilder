@@ -1,7 +1,8 @@
 # Upgrade Notes
 
-#### Update to Version 4.1.2
+## Version 4.1.2
 - **[BUGFIX]**: Email CSV export: delete unnecessary line to prevent out of memory issues. [#328](https://github.com/dachcom-digital/pimcore-formbuilder/pull/328)
+- **[ENHANCEMENT]**: Add `role="presentation"` to honeypot. [#333](https://github.com/dachcom-digital/pimcore-formbuilder/issues/333)
 
 ## Version 4.1.1
 - **[BUGFIX]**: Fix legacy fine uploader identifier
