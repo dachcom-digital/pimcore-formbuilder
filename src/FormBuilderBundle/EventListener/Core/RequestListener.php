@@ -63,6 +63,11 @@ class RequestListener implements EventSubscriberInterface
 
         try {
             $formRuntimeData = $this->detectFormRuntimeDataInRequest($event->getRequest(), $formDefinition);
+
+            if (null === $formRuntimeData) {
+                return;
+            }
+            
             $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
         } catch (\Exception $e) {
             $this->generateErroredJsonReturn($event, $e);

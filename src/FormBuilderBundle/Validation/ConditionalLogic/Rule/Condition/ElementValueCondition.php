@@ -15,7 +15,7 @@ class ElementValueCondition implements ConditionInterface
     public function isValid(array $formData, int $ruleId, array $configuration = []): bool
     {
         foreach ($this->getFields() as $conditionFieldName) {
-            $fieldValue = $formData[$conditionFieldName] ?? null;
+            $fieldValue = $this->getFieldValue($formData, $conditionFieldName);
 
             if ($this->getComparator() === 'contains') {
                 $value = is_array($this->getValue()) ? $this->getValue() : (is_string($this->getValue()) ? explode(',', $this->getValue()) : [$this->getValue()]);
@@ -54,6 +54,27 @@ class ElementValueCondition implements ConditionInterface
         }
 
         return false;
+    }
+
+    protected function getFieldValue(array $formData, string $fieldname) {
+        $fieldValue = $formData[$fieldname] ?? null;
+        if ($fieldValue !== null) {
+            return $fieldValue;
+        }
+
+        $containers = array_filter($formData, static function ($data) {
+            return is_array($data) && !empty($data);
+        });
+
+        // iterate over container data until field is found
+        foreach ($containers as $container) {
+            $fieldValue = $this->getFieldValue($container, $fieldname);
+            if ($fieldValue !== null) {
+                break;
+            }
+        }
+
+        return $fieldValue;
     }
 
     public function getComparator(): string

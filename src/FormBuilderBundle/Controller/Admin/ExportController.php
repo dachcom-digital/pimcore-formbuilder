@@ -101,8 +101,6 @@ class ExportController extends AdminController
             $emailLogs->addConditionParam('params LIKE ?', sprintf('%%%s%%', $this->generateOutputWorkflowFilterQuery($formId, (int) $filter)));
         }
 
-        $this->buildCsv($emailLogs->getEmailLogs(), $formId);
-
         $response = new Response();
         $response->headers->set('Content-Encoding', 'none');
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
