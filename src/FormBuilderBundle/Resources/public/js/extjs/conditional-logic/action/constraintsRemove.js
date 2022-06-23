@@ -91,6 +91,7 @@ Formbuilder.extjs.conditionalLogic.action.constraintsRemove = Class.create(Formb
                         },
                         change: function (e) {
                             validationSelectionField.setDisabled(this.checked);
+                            validationSelectionField.allowBlank = this.checked;
                             if (this.checked) {
                                 validationSelectionField.clearValue();
                             }
