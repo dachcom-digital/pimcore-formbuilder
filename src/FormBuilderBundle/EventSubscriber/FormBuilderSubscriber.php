@@ -131,8 +131,7 @@ class FormBuilderSubscriber implements EventSubscriberInterface
                 $formTypeData = $this->addDynamicField($field);
                 $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
             } elseif ($field instanceof FormFieldContainerDefinitionInterface) {
-                $subFieldData = isset($data[$field->getName()]) ? $data[$field->getName()] : [];
-                $conditionalLogicOptions = array_merge(['formData' => $subFieldData, 'field' => null], $conditionalLogicBaseOptions);
+                $conditionalLogicOptions = array_merge(['formData' => $data, 'field' => null], $conditionalLogicBaseOptions);
                 $formTypeData = $this->addFormBuilderContainerField($field, $conditionalLogicOptions);
                 $form->add($formTypeData['name'], $formTypeData['type'], $formTypeData['options']);
             } else {
