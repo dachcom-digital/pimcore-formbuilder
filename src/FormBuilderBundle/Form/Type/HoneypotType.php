@@ -23,15 +23,21 @@ class HoneypotType extends AbstractType
         $config = $this->configuration->getConfig('spam_protection');
         $honeyPotConfig = $config['honeypot'];
 
+        $attributes = [
+            'autocomplete' => 'off',
+            'tabindex'     => -1,
+            'style'        => $honeyPotConfig['enable_inline_style'] === true ? 'position: absolute; left: -500%; top: -500%;' : ''
+        ];
+
+        if ($honeyPotConfig['enable_role_attribute'] === true) {
+            $attributes['role'] = 'presentation';
+        }
+
         $resolver->setDefaults([
             'required'       => false,
             'mapped'         => false,
             'data'           => '',
-            'attr'           => [
-                'autocomplete' => 'off',
-                'tabindex'     => -1,
-                'style'        => $honeyPotConfig['enable_inline_style'] === true ? 'position: absolute; left: -500%; top: -500%;' : ''
-            ],
+            'attr'           => $attributes,
             'constraints'    => [
                 new Blank(
                     [
