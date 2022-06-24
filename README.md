@@ -10,11 +10,11 @@
 
 ### Release Plan
 
-| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
-|---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **4.x** | `10.1` - `10.3`                   | `5.3`                      | 13.10.2021   | Feature Branch | master     |
-| **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Bugfix only    | [3.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/3.x) |
-| **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Unsupported    | [2.7](https://github.com/dachcom-digital/pimcore-formbuilder/tree/2.7) |
+| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch                                                                           |
+|---------|-----------------------------------|----------------------------|--------------|----------------|----------------------------------------------------------------------------------|
+| **4.x** | `10.1` - `10.4`                   | `5.4`                      | 13.10.2021   | Feature Branch | master                                                                           |
+| **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Bugfix only    | [3.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/3.x)           |
+| **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Unsupported    | [2.7](https://github.com/dachcom-digital/pimcore-formbuilder/tree/2.7)           |
 | **1.5** | `4.0`                             | --                         | 18.03.2017   | Unsupported    | [pimcore4](https://github.com/dachcom-digital/pimcore-formbuilder/tree/pimcore4) |
 
 ## Installation

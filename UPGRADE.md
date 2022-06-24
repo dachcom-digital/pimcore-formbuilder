@@ -1,8 +1,13 @@
 # Upgrade Notes
 
 ## Version 4.1.2
-- **[BUGFIX]**: Email CSV export: delete unnecessary line to prevent out of memory issues. [#328](https://github.com/dachcom-digital/pimcore-formbuilder/pull/328)
-- **[ENHANCEMENT]**: Add `role="presentation"` to honeypot. [#333](https://github.com/dachcom-digital/pimcore-formbuilder/issues/333)
+- **[BUGFIX]**: Remove dummy csv generation loader [@pascalmoser](https://github.com/dachcom-digital/pimcore-formbuilder/pull/328)
+- **[BUGFIX]**: ConditionalLogic: Load form data from container fields [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/330)
+- **[BUGFIX]**: ConditionalLogic: Allow empty Validation field when removeAllValidations action is checked [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/331)
+- **[BUGFIX]**: Fix detectFormRuntimeDataInRequest null return [@dpfaffenbauer](https://github.com/dachcom-digital/pimcore-formbuilder/pull/335)
+- **[BUGFIX]**: Consider Pimcore Frontend FullPath for File Output [@dpfaffenbauer](https://github.com/dachcom-digital/pimcore-formbuilder/pull/336)
+- **[BUGFIX]**: E-Mail CSV Export contains data of several forms when their Output Workflows share the same title [@anyMOTION-GRAPHICS](https://github.com/dachcom-digital/pimcore-formbuilder/issues/325)
+- **[ENHANCEMENT]**: Add `role="presentation"` to honeypot field [#333](https://github.com/dachcom-digital/pimcore-formbuilder/issues/333)
 
 ## Version 4.1.1
 - **[BUGFIX]**: Fix legacy fine uploader identifier
