@@ -2,34 +2,41 @@
 
 namespace FormBuilderBundle\EventListener\Core;
 
-use FormBuilderBundle\Tool\FileLocator;
+use League\Flysystem\FilesystemOperator;
 use Pimcore\Logger;
 use Pimcore\Maintenance\TaskInterface;
 
 class CleanUpListener implements TaskInterface
 {
-    protected FileLocator $fileLocator;
-
-    public function __construct(FileLocator $fileLocator)
+    public function __construct(
+        protected FilesystemOperator $formbuilderChunkStorage,
+        protected FilesystemOperator $formbuilderFilesStorage,
+    )
     {
-        $this->fileLocator = $fileLocator;
     }
 
     public function execute(): void
     {
-        foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {
-            Logger::log('Remove form builder files folder: ' . $file);
-            $this->fileLocator->removeDir($file->getPathname());
+        foreach ($this->formbuilderFilesStorage->listContents('/') as $file) {
+            Logger::log('Remove form builder files folder: ' . $file->path());
+
+            if ($file->isDir()) {
+                $this->formbuilderFilesStorage->deleteDirectory($file->path());
+            }
+            else {
+                $this->formbuilderFilesStorage->delete($file->path());
+            }
         }
 
-        foreach ($this->fileLocator->getFolderContent($this->fileLocator->getChunksFolder()) as $file) {
-            Logger::log('Remove form builder chunk folder: ' . $file);
-            $this->fileLocator->removeDir($file->getPathname());
-        }
+        foreach ($this->formbuilderChunkStorage->listContents('/') as $file) {
+            Logger::log('Remove form builder chunks folder: ' . $file->path());
 
-        foreach ($this->fileLocator->getFolderContent($this->fileLocator->getZipFolder()) as $file) {
-            Logger::log('Remove form builder zip folder: ' . $file);
-            $this->fileLocator->removeDir($file->getPathname());
+            if ($file->isDir()) {
+                $this->formbuilderChunkStorage->deleteDirectory($file->path());
+            }
+            else {
+                $this->formbuilderChunkStorage->delete($file->path());
+            }
         }
     }
 }

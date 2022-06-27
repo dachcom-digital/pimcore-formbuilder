@@ -9,6 +9,18 @@ doctrine:
             default:
                 auto_mapping: true
 
+flysystem:
+    storages:
+        formbuilder.chunk.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/tmp/formbuilder-chunks'
+        formbuilder.files.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/tmp/formbuilder-files'
+
+
 parameters:
     form_builder_html_tag_elements:
         - ['label','label']

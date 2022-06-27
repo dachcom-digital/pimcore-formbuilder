@@ -2,23 +2,23 @@
 
 namespace FormBuilderBundle\Stream;
 
-use FormBuilderBundle\Tool\FileLocator;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use Pimcore\File;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class FileStream implements FileStreamInterface
 {
-    protected FileLocator $fileLocator;
-    protected RequestStack $requestStack;
     public array $allowedExtensions = [];
     public ?int $sizeLimit = null;
 
-    public function __construct(FileLocator $fileLocator, RequestStack $requestStack)
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected FilesystemOperator $formbuilderChunkStorage,
+        protected FilesystemOperator $formbuilderFilesStorage,
+    )
     {
-        $this->fileLocator = $fileLocator;
-        $this->requestStack = $requestStack;
     }
 
     public function handleUpload(array $options = [], bool $instantChunkCombining = true): array
@@ -36,12 +36,6 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        if ($this->isInaccessible($this->fileLocator->getFilesFolder())) {
-            return [
-                'success' => false,
-                'error'   => 'Server error. Upload directory isn\'t writable'
-            ];
-        }
 
         $type = $mainRequest->headers->get('Content-Type');
 
@@ -125,33 +119,11 @@ class FileStream implements FileStreamInterface
         if ($totalParts > 1) {
 
             // chunked upload
-            $chunksFolder = $this->fileLocator->getChunksFolder();
             $partIndex = (int) $mainRequest->request->get($options['chunkIndex']);
 
-            if (!is_writable($chunksFolder) && !is_executable($this->fileLocator->getFilesFolder())) {
-                return [
-                    'success'  => false,
-                    'fileName' => $fileSafeName,
-                    'error'    => 'Server error. Chunks directory isn\'t writable or executable.'
-                ];
-            }
-
-            $targetPath = $this->fileLocator->getChunksFolder() . DIRECTORY_SEPARATOR . $uuid;
-
             try {
-                $this->fileLocator->assertDir($targetPath);
-            } catch (\Throwable $e) {
-                return [
-                    'success'  => false,
-                    'fileName' => $fileSafeName,
-                    'error'    => sprintf('Could not create directory: %s', $e->getMessage()),
-                    'uuid'     => $uuid
-                ];
-            }
-
-            try {
-                $file->move(sprintf('%s%s%s', $targetPath, DIRECTORY_SEPARATOR, $partIndex));
-            } catch (FileException $e) {
+                $this->formbuilderChunkStorage->write(sprintf('%s%s%s', $uuid, DIRECTORY_SEPARATOR, $partIndex), file_get_contents($file->getPathname()));
+            } catch (FilesystemException $e) {
                 return [
                     'success'  => false,
                     'fileName' => $fileSafeName,
@@ -172,23 +144,9 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        // non-chunked upload
-        $target = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
-
         try {
-            $this->fileLocator->assertDir($target);
-        } catch (\Throwable $e) {
-            return [
-                'success'  => false,
-                'fileName' => $fileSafeName,
-                'error'    => sprintf('Could not create directory: %s', $e->getMessage()),
-                'uuid'     => $uuid
-            ];
-        }
-
-        try {
-            $file->move($target, $serverFileSafeName);
-        } catch (FileException $e) {
+            $this->formbuilderFilesStorage->write($uuid . '/' . $serverFileSafeName, file_get_contents($file->getPathname()));
+        } catch (FilesystemException $e) {
             return [
                 'success'  => false,
                 'fileName' => $fileSafeName,
@@ -202,71 +160,55 @@ class FileStream implements FileStreamInterface
             'fileName' => $fileSafeName,
             'uuid'     => $uuid
         ];
-
     }
 
     public function combineChunks(array $options = []): array
     {
-        $tmpDirs = [];
         $chunkSuccess = true;
         $mainRequest = $this->requestStack->getMainRequest();
 
         $uuid = $mainRequest->request->get($options['uuid']);
-        $serverFileSafeName = $this->getSafeFileName($options['fileName'], true);
         $fileSafeName = $this->getSafeFileName($options['fileName']);
-
-        $targetPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $uuid]);
-        $destinationFolderPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getFilesFolder(), $uuid]);
-        $destinationPath = implode(DIRECTORY_SEPARATOR, [$destinationFolderPath, $serverFileSafeName]);
-
         $totalParts = $mainRequest->request->has($options['totalChunkCount']) ? (int) $mainRequest->request->get($options['totalChunkCount']) : 1;
 
-        try {
-            $this->fileLocator->assertDir(dirname($destinationPath));
-        } catch (\Throwable $e) {
-            return [
-                'statusCode'   => 413,
-                'success'      => false,
-                'preventRetry' => true,
-                'uuid'         => $uuid,
-                'fileName'     => $fileSafeName
-            ];
+        $tmpStream = tmpfile();
+
+        for ($i = 0; $i < $totalParts; $i++) {
+            $chunkFiles = $this->formbuilderChunkStorage->listContents($uuid);
+
+            foreach ($chunkFiles as $chunkFile) {
+                $chunkPathResource = $this->formbuilderChunkStorage->readStream($chunkFile->path());
+                stream_copy_to_stream($chunkPathResource, $tmpStream);
+                fclose($chunkPathResource);
+            }
         }
 
-        $destinationResource = fopen($destinationPath, 'wb');
-        if (is_resource($destinationResource)) {
-            for ($i = 0; $i < $totalParts; $i++) {
-                $chunkPath = $targetPath . DIRECTORY_SEPARATOR . $i;
-                $chunkFiles = $this->fileLocator->getFilesFromFolder($chunkPath);
-                if ($chunkFiles === null) {
-                    $chunkSuccess = false;
-                } else {
-                    foreach ($chunkFiles as $chunkFile) {
-                        $chunkPathResource = fopen($chunkFile->getPathname(), 'rb');
-                        if (!is_resource($chunkPathResource)) {
-                            $chunkSuccess = false;
-
-                            continue;
-                        }
-
-                        stream_copy_to_stream($chunkPathResource, $destinationResource);
-                        fclose($chunkPathResource);
-                    }
-                }
-            }
-
-            // Success
-            fclose($destinationResource);
-        } else {
+        try {
+            $this->formbuilderFilesStorage->writeStream($uuid . '/' . $fileSafeName, $tmpStream);
+        }
+        catch (FilesystemException $exception) {
             $chunkSuccess = false;
         }
 
-        $tmpDirs[] = $targetPath;
+        // Success
+        fclose($tmpStream);
+
+        $tmpDirs[] = $uuid;
 
         if ($chunkSuccess === false) {
+            try {
+                $this->formbuilderChunkStorage->deleteDirectory($uuid);
+            }
+            catch (FilesystemException $exception) {
+                //Ignore
+            }
 
-            $tmpDirs[] = $destinationFolderPath;
-            $this->deleteDirectories($tmpDirs);
+            try {
+                $this->formbuilderFilesStorage->deleteDirectory($uuid);
+            }
+            catch (FilesystemException $exception) {
+                //Ignore
+            }
 
             return [
                 'statusCode'   => 413,
@@ -279,7 +221,9 @@ class FileStream implements FileStreamInterface
 
         $this->deleteDirectories($tmpDirs);
 
-        if (!is_null($this->sizeLimit) && filesize($destinationPath) > $this->sizeLimit) {
+        $fileSize = $this->formbuilderFilesStorage->fileSize($uuid . '/' . $fileSafeName);
+
+        if (!is_null($this->sizeLimit) && $fileSize > $this->sizeLimit) {
             return [
                 'statusCode'   => 413,
                 'success'      => false,
@@ -299,30 +243,20 @@ class FileStream implements FileStreamInterface
 
     public function handleDelete(string $identifier, bool $checkChunkFolder = false): array
     {
-        if ($this->isInaccessible($this->fileLocator->getFilesFolder())) {
-            return ['error' => 'Server error. Upload directory isn\'t writable' . ((!$this->isWindows()) ? ' or executable.' : '.')];
-        }
-
-        $targetPath = $this->fileLocator->getFilesFolder();
-        $target = implode(DIRECTORY_SEPARATOR, [$targetPath, $identifier]);
-
         if ($checkChunkFolder === true) {
-            $chunkPath = implode(DIRECTORY_SEPARATOR, [$this->fileLocator->getChunksFolder(), $identifier]);
-
-            if (is_dir($chunkPath)) {
-                $this->deleteDirectories([$chunkPath]);
+            if ($this->formbuilderChunkStorage->directoryExists($identifier)) {
+                $this->formbuilderChunkStorage->deleteDirectory($identifier);
             }
         }
 
-        if (is_dir($target)) {
-            $this->deleteDirectories([$target]);
+        if ($this->formbuilderFilesStorage->directoryExists($identifier)) {
+            $this->formbuilderFilesStorage->deleteDirectory($identifier);
         }
 
         return [
             'success' => true,
             'uuid'    => $identifier
         ];
-
     }
 
     protected function toBytes(mixed $sizeStr): int|string
@@ -359,12 +293,5 @@ class FileStream implements FileStreamInterface
         }
 
         return preg_replace('/[^a-zA-Z0-9]_+/', '', str_replace('.', '_', $fileName));
-    }
-
-    protected function deleteDirectories(array $foldersToDelete): void
-    {
-        foreach ($foldersToDelete as $folder) {
-            $this->fileLocator->removeDir($folder);
-        }
     }
 }

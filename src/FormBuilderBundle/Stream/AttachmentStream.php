@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Stream;
 use Doctrine\DBAL\Query\QueryBuilder;
 use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalEvent;
 use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent;
-use FormBuilderBundle\Tool\FileLocator;
+use League\Flysystem\FilesystemOperator;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -16,12 +16,13 @@ class AttachmentStream implements AttachmentStreamInterface
     protected const SIGNAL_CLEAN_UP = 'tmp_file_attachment_stream';
 
     protected EventDispatcherInterface $eventDispatcher;
-    protected FileLocator $fileLocator;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, FileLocator $fileLocator)
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        protected FilesystemOperator $formbuilderFilesStorage
+    )
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->fileLocator = $fileLocator;
     }
 
     /**
@@ -46,7 +47,7 @@ class AttachmentStream implements AttachmentStreamInterface
 
         $packageIdentifier = '';
         foreach ($files as $file) {
-            $packageIdentifier .= sprintf('%s-%s-%s-%s', filesize($file->getPath()), $file->getId(), $file->getPath(), $file->getName());
+            $packageIdentifier .= sprintf('%s-%s-%s-%s', $this->formbuilderFilesStorage->fileSize($file->getPath()), $file->getId(), $file->getPath(), $file->getName());
         }
 
         // create package identifier to check if we just in another channel
@@ -55,7 +56,7 @@ class AttachmentStream implements AttachmentStreamInterface
         $formName = \Pimcore\File::getValidFilename($formName);
         $zipKey = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 5);
         $zipFileName = sprintf('%s-%s.zip', \Pimcore\File::getValidFilename($fieldName), $zipKey);
-        $zipPath = sprintf('%s/%s', $this->fileLocator->getZipFolder(), $zipFileName);
+        $zipPath = sprintf('%s/%s', PIMCORE_SYSTEM_TEMP_DIRECTORY, $zipFileName);
 
         $existingAssetPackage = $this->findExistingAssetPackage($packageIdentifier, $formName);
 
@@ -68,7 +69,7 @@ class AttachmentStream implements AttachmentStreamInterface
             $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
             foreach ($files as $file) {
-                $zip->addFile($file->getPath(), $file->getName());
+                $zip->addFromString($file->getName(), $this->formbuilderFilesStorage->read($file->getPath()));
             }
 
             $zip->close();
@@ -161,14 +162,9 @@ class AttachmentStream implements AttachmentStreamInterface
 
     protected function removeAttachmentFile(File $attachmentFile): void
     {
-        $targetFolder = $this->fileLocator->getFilesFolder();
-        $target = implode(DIRECTORY_SEPARATOR, [$targetFolder, $attachmentFile->getId()]);
-
-        if (!is_dir($target)) {
-            return;
+        if ($this->formbuilderFilesStorage->directoryExists($attachmentFile->getId())) {
+            $this->formbuilderFilesStorage->deleteDirectory($attachmentFile->getId());
         }
-
-        $this->fileLocator->removeDir($target);
     }
 
     /**
@@ -180,12 +176,12 @@ class AttachmentStream implements AttachmentStreamInterface
         foreach ($data as $fileData) {
 
             $fileId = (string) $fileData['id'];
-            $fileDir = sprintf('%s/%s', $this->fileLocator->getFilesFolder(), $fileId);
 
-            if (is_dir($fileDir)) {
-                $dirFiles = glob($fileDir . '/*');
-                if (count($dirFiles) === 1) {
-                    $files[] = new File($fileId, $fileData['fileName'], $dirFiles[0]);
+            if ($this->formbuilderFilesStorage->directoryExists($fileId)) {
+                $dirFiles = $this->formbuilderFilesStorage->listContents($fileId);
+                $flyFiles = iterator_to_array($dirFiles->getIterator());
+                if (count($flyFiles) === 1) {
+                    $files[] = new File($fileId, $fileData['fileName'], $flyFiles[0]->path());
                 }
             }
         }

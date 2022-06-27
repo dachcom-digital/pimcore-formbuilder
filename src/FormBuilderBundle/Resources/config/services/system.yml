@@ -11,9 +11,6 @@ services:
             $bundle: "@=service('kernel').getBundle('FormBuilderBundle')"
 
     # tool: file locator
-    FormBuilderBundle\Tool\FileLocator: ~
-
-    # tool: file locator
     FormBuilderBundle\Tool\FormDependencyLocator: ~
 
     # tool: locale data mapper
