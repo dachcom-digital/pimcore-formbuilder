@@ -156,7 +156,7 @@ class MailParser
         /** @var File $attachmentFile */
         foreach ($attachments as $attachmentFile) {
             try {
-                $mail->attach($this->formbuilderFilesStorage->read(attachmentFile->getPath()), $attachmentFile->getName());
+                $mail->attach($this->formbuilderFilesStorage->read($attachmentFile->getPath()), $attachmentFile->getName());
             } catch (\Exception $e) {
                 // fail silently.
             }

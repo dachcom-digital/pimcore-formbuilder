@@ -219,8 +219,6 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        $this->deleteDirectories($tmpDirs);
-
         $fileSize = $this->formbuilderFilesStorage->fileSize($uuid . '/' . $fileSafeName);
 
         if (!is_null($this->sizeLimit) && $fileSize > $this->sizeLimit) {
