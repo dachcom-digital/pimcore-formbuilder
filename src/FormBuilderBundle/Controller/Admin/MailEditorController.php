@@ -17,18 +17,18 @@ class MailEditorController extends AdminController
     protected MailEditorWidgetRegistry $mailEditorWidgetRegistry;
     protected FormDefinitionManager $formDefinitionManager;
     protected ExtJsFormBuilder $extJsFormBuilder;
-    protected Translator $translator;
+    protected Translator $translation;
 
     public function __construct(
         MailEditorWidgetRegistry $mailEditorWidgetRegistry,
         FormDefinitionManager $formDefinitionManager,
         ExtJsFormBuilder $extJsFormBuilder,
-        Translator $translator
+        Translator $translation
     ) {
         $this->mailEditorWidgetRegistry = $mailEditorWidgetRegistry;
         $this->formDefinitionManager = $formDefinitionManager;
         $this->extJsFormBuilder = $extJsFormBuilder;
-        $this->translator = $translator;
+        $this->translation = $translation;
     }
 
     public function getMailEditorDataAction(Request $request): JsonResponse
@@ -56,7 +56,7 @@ class MailEditorController extends AdminController
 
             if (!isset($allWidgets[$groupName])) {
                 $allWidgets[$groupName] = [
-                    'label'    => $this->translator->trans($groupName, [], 'admin'),
+                    'label'    => $this->translation->trans($groupName, [], 'admin'),
                     'elements' => []
                 ];
             }
@@ -77,7 +77,7 @@ class MailEditorController extends AdminController
                 $allWidgets[$groupName]['elements'][] = [
                     'type'             => $widgetType,
                     'subType'          => null,
-                    'label'            => $this->translator->trans($widget->getWidgetLabel(), [], 'admin'),
+                    'label'            => $this->translation->trans($widget->getWidgetLabel(), [], 'admin'),
                     'configIdentifier' => $widgetType,
                 ];
             }
@@ -115,7 +115,7 @@ class MailEditorController extends AdminController
     protected function translateWidgetConfig(array $config): array
     {
         foreach ($config as $index => $element) {
-            $config[$index]['label'] = $this->translator->trans($element['label'], [], 'admin');
+            $config[$index]['label'] = $this->translation->trans($element['label'], [], 'admin');
         }
 
         return $config;
