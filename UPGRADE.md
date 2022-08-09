@@ -8,6 +8,7 @@ Just click the "update" button or execute the migration command to finish the bu
 
 #### Update to Version 3.5.3
 - **[BUGFIX]**: Email CSV export: delete unnecessary line to prevent out of memory issues. [#327](https://github.com/dachcom-digital/pimcore-formbuilder/pull/327)
+- **[BUGFIX]**: Explicitly render the twig email template. [@aarongerig](https://github.com/dachcom-digital/pimcore-formbuilder/pull/326)
 
 #### Update to Version 3.5.2
 - **[BUGFIX]**: introduce output workflow signals: attachments not working with multiple channels [#311](https://github.com/dachcom-digital/pimcore-formbuilder/issues/311) 
