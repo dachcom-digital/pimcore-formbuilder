@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## Version 4.1.2
+- **[BUGFIX]**: Rename overwitten `$translator` property in `MailEditorController` (Pimcore 10.5 compatibility). [@vollborn](https://github.com/dachcom-digital/pimcore-formbuilder/pull/345)
 - **[BUGFIX]**: Type mismatch in `FormOptionsResolver` fixed. [#346](https://github.com/dachcom-digital/pimcore-formbuilder/pull/347)
 - **[BUGFIX]**: Remove dummy csv generation loader [@pascalmoser](https://github.com/dachcom-digital/pimcore-formbuilder/pull/328)
 - **[BUGFIX]**: ConditionalLogic: Load form data from container fields [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/330)
