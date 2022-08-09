@@ -10,7 +10,7 @@ class FormOptionsResolver
     protected ?string $mainLayout = null;
     protected ?string $formTemplate = null;
     protected ?string $formBlockTemplate = null;
-    protected ?int $outputWorkflow = null;
+    protected int|string|null $outputWorkflow = null;
     protected string $preset = 'custom';
     protected array $customOptions = [];
 
