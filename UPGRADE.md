@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## Version 4.1.2
+- **[BUGFIX]**: Type mismatch in `FormOptionsResolver` fixed. [#346](https://github.com/dachcom-digital/pimcore-formbuilder/pull/347)
 - **[BUGFIX]**: Remove dummy csv generation loader [@pascalmoser](https://github.com/dachcom-digital/pimcore-formbuilder/pull/328)
 - **[BUGFIX]**: ConditionalLogic: Load form data from container fields [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/330)
 - **[BUGFIX]**: ConditionalLogic: Allow empty Validation field when removeAllValidations action is checked [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/331)
