@@ -10,7 +10,7 @@
 "form_builder.dynamic_multi_file.close","close","Schließen"
 "form_builder.dynamic_multi_file.no","no","Nein"
 "form_builder.dynamic_multi_file.yes","yes","Ja"
-"form_builder.dynamic_multi_file.file_invalid_extension","Invalid file extension.","Ugültige Dateiendung."
+"form_builder.dynamic_multi_file.file_invalid_extension","Invalid file extension.","Ungültige Dateiendung."
 "form_builder.dynamic_multi_file.file_is_too_large","File is too large.","Datei ist zu groß."
 "form_builder.dynamic_multi_file.file_is_too_small","File is too small.","Datei ist zu klein."
 "form_builder.dynamic_multi_file.file_is_empty","File is empty, please select files again without it.","Datei ist leer, bitte wählen Sie die Dateien ohne diese Datei erneut."
