@@ -179,6 +179,9 @@ abstract class AbstractObjectResolver
         // there could be more than just one data field assignment
         foreach ($fieldDefinition['childs'] as $formDefinitionChild) {
             if ($formDefinitionChild['type'] !== 'data_class_field') {
+                foreach ($containerFieldData['fields'] as $field) {
+                    $this->processObjectData($object, $field);
+                }
                 continue;
             }
 
