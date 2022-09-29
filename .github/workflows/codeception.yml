@@ -100,8 +100,8 @@ jobs:
 
             -   name: Start Webserver and Chrome
                 run: |
-                    wget https://get.symfony.com/cli/installer -O - | bash
-                    ~/.symfony/bin/symfony server:start --port=8080 --dir=public --force-php-discovery --allow-http --no-tls --daemon
+                    curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir=$HOME/.symfony/bin
+                    ~/.symfony/bin/symfony server:start --port=8080 --dir=public --allow-http --no-tls --daemon
 
             -   name: Get Composer Cache Directory
                 id: composer-cache
