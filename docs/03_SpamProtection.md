@@ -9,6 +9,7 @@ form_builder:
         honeypot:
             field_name: 'inputUserName'     # this is the default value
             enable_inline_style: true       # ths is the default value
+            enable_role_attribute: true     # this is the default value and will add the role="presentation" attribute
 ```
 
 ***

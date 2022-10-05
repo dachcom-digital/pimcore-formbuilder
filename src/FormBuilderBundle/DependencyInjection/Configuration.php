@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('field_name')->defaultValue('inputUserName')->end()
                                 ->booleanNode('enable_inline_style')->defaultTrue()->end()
+                                ->booleanNode('enable_role_attribute')->defaultTrue()->end()
                             ->end()
                         ->end()
                         ->arrayNode('recaptcha_v3')
