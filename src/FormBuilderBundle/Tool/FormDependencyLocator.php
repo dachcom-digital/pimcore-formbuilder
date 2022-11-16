@@ -52,6 +52,10 @@ class FormDependencyLocator
                 continue;
             }
 
+            if ($document === null) {
+                continue;
+            }
+
             $documents[] = [
                 'id'      => $document->getId(),
                 'type'    => 'document',
