@@ -18,7 +18,7 @@ jobs:
             PIMCORE_CODECEPTION_VERSION: "2.0"
 
             APP_ENV: test
-            PIMCORE_TEST_DB_DSN: "mysql://root:root@127.0.0.1:3306/dachcom_bundle_test"
+            PIMCORE_TEST_DB_DSN: "mysql://test:test@127.0.0.1:3306/dachcom_bundle_test"
             PIMCORE_TEST_URL: "http://localhost"
             PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes/DataObject"
 
@@ -93,8 +93,8 @@ jobs:
                 uses: shogo82148/actions-setup-mysql@v1
                 with:
                     mysql-version: '8.0'
-                    user: root
-                    password: root
+                    user: test
+                    password: test
                     root-password: root
                     my-cnf: |
                         max_allowed_packet=200MB
