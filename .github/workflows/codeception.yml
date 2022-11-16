@@ -141,7 +141,7 @@ jobs:
             -   name: Tests
                 run: |
                     bin/console cache:warmup --env=test
-                    vendor/bin/codecept run --env github -c ${{ github.workspace }}/lib/test-bundle
+                    vendor/bin/codecept run --env github -c ${{ github.workspace }}/lib/test-bundle --debug
 
             -   name: Log Output
                 uses: actions/upload-artifact@v2
