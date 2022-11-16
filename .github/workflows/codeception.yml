@@ -90,9 +90,13 @@ jobs:
                 run: php -v
 
             -   name: Setup MySql
-                run: |
-                    sudo systemctl start mysql
-                    mysql -uroot -proot -h127.0.0.1 -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
+                uses: shogo82148/actions-setup-mysql@v1
+                with:
+                    mysql-version: '8.0'
+                    my-cnf: |
+                        max_allowed_packet=200MB
+                        max_connections=100
+                run: mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
 
             -   name: Setup Chromium
                 run: |
