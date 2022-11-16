@@ -98,8 +98,8 @@ jobs:
                     root-password: root
                     auto-start: true
                     my-cnf: |
-                        max_allowed_packet=200MB
-                        max_connections=100
+                        max_allowed_packet=32505856
+                        max_connections=1000
 
             -   name: Initial Database
                 run: mysql -utest -ptest -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
