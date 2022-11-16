@@ -96,6 +96,8 @@ jobs:
                     my-cnf: |
                         max_allowed_packet=200MB
                         max_connections=100
+
+            -   name: Initial Database
                 run: mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
 
             -   name: Setup Chromium
