@@ -25,17 +25,32 @@ Formbuilder.extjs.form.fields.textfield = Class.create(Formbuilder.extjs.form.fi
                     cls: 'pimcore_icon_language',
                     handler: function () {
 
-                        var user = pimcore.globalmanager.get('user');
+                        var
+                            user = pimcore.globalmanager.get('user'),
+                            translationManager,
+                            translationManagerClass,
+                            translationArguments;
 
                         if (user && !user.isAllowed('translations')) {
                             alert(t('access_denied'));
                             return;
                         }
 
-                        if (pimcore.globalmanager.get('translationwebsitemanager') === false) {
-                            pimcore.globalmanager.add('translationwebsitemanager', new pimcore.settings.translation.website(this.getValue()));
+                        if (typeof pimcore.settings.translation.website === 'undefined') {
+                            translationManager = 'translationdomainmanager';
+                            translationManagerClass = pimcore.settings.translation.domain;
+                            translationArguments = ['messages', this.getValue()];
                         } else {
-                            pimcore.globalmanager.get('translationwebsitemanager').activate(this.getValue());
+                            // remove this if we drop pimcore support < 10.5
+                            translationManager = 'translationwebsitemanager';
+                            translationManagerClass = pimcore.settings.translation.website;
+                            translationArguments = [this.getValue()];
+                        }
+
+                        if (pimcore.globalmanager.get(translationManager) === false) {
+                            pimcore.globalmanager.add(translationManager, new translationManagerClass(...translationArguments));
+                        } else {
+                            pimcore.globalmanager.get(translationManager).activate(...translationArguments);
                         }
                     }
                 }

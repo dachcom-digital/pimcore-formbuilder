@@ -2,6 +2,7 @@
 
 ## Version 4.1.3
 - **[BUGFIX]**: Fix `ignoreFields` Assignment: Use `CollectionType` instead of `ChoiceType` [#352](https://github.com/dachcom-digital/pimcore-formbuilder/pull/352)
+- **[BUGFIX]**: Fix link to translation list
 
 ## Version 4.1.2
 - **[BUGFIX]**: Rename overwitten `$translator` property in `MailEditorController` (Pimcore 10.5 compatibility). [@vollborn](https://github.com/dachcom-digital/pimcore-formbuilder/pull/345)
