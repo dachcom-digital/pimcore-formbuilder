@@ -93,6 +93,9 @@ jobs:
                 uses: shogo82148/actions-setup-mysql@v1
                 with:
                     mysql-version: '8.0'
+                    user: root
+                    password: root
+                    root-password: root
                     my-cnf: |
                         max_allowed_packet=200MB
                         max_connections=100
