@@ -38,8 +38,8 @@
         "codeception/codeception": "^4.1",
         "codeception/module-webdriver": "^1.4",
         "codeception/module-symfony": "^1.6",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-symfony": "^0.12",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0",
         "symplify/easy-coding-standard": "^9.0"
     }
 }

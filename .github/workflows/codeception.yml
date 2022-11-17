@@ -40,16 +40,8 @@ jobs:
             matrix:
                 php: [ 8.0 ]
                 symfony: [ ^5.4 ]
-                pimcore: [ ~10.1.0, ~10.2.0, ~10.3.0, ~10.4.0, ~10.5.0 ]
+                pimcore: [ ~10.5.0 ]
                 include:
-                    -   pimcore: ~10.1.0
-                        template_tag: v10.1.0
-                    -   pimcore: ~10.2.0
-                        template_tag: v10.1.4
-                    -   pimcore: ~10.3.0
-                        template_tag: v10.1.9
-                    -   pimcore: ~10.4.0
-                        template_tag: v10.1.13
                     -   pimcore: ~10.5.0
                         template_tag: v10.2.0
         steps:
