@@ -59,9 +59,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         if (!$outputWorkflow instanceof OutputWorkflowInterface) {
             $errorMessage = 'No valid output workflow found.';
 
-            return $request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
+            return $this->buildErrorResponse($request, $submissionEvent, $errorMessage);
         }
 
         try {
@@ -75,9 +73,11 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
                 $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
             }
 
-            return $request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
+            return $this->buildErrorResponse($request, $submissionEvent, $errorMessage);
+        }
+
+        if ($outputWorkflow->getSuccessManagement() === null) {
+            return $this->buildErrorResponse($request, $submissionEvent, 'No valid success management found.');
         }
 
         try {
@@ -85,9 +85,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         } catch (\Exception $e) {
             $errorMessage = sprintf('Error while processing success management of workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
 
-            return $request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
+            return $this->buildErrorResponse($request, $submissionEvent, $errorMessage);
         }
 
         return $request->isXmlHttpRequest()
@@ -196,5 +194,12 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             'success'           => false,
             'validation_errors' => ['general' => $errors],
         ]);
+    }
+
+    protected function buildErrorResponse(Request $request, SubmissionEvent $submissionEvent, ?string $errorMessage): ?Response
+    {
+        return $request->isXmlHttpRequest()
+                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
+                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
     }
 }
