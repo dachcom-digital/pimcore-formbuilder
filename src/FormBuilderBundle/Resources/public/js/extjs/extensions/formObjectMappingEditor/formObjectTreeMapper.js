@@ -133,7 +133,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
         var treeItems,
             _ = this;
 
-        var generateFields = function (fields, treeItems, parent) {
+        var generateFields = function (fields, treeItems) {
 
             Ext.Array.each(fields, function (field) {
 
@@ -191,19 +191,16 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                     }
                 };
 
-                if (fieldData.hasOwnProperty('fields') && Ext.isArray(fieldData.fields) && fieldData.type === 'container') {
+                // allow all container types except repeater!
+                if (fieldData.hasOwnProperty('fields') && Ext.isArray(fieldData.fields) && (fieldData.type === 'container' && fieldData.sub_type !== 'repeater')) {
                     item.omContainerFields = fieldData.fields;
+                    item.children = generateFields(fieldData.fields,[])
                 }
 
                 // do not add any data to form item, if it has been forced disabled
                 item = forcedDisabled ? item : _.resolveItemChildren(item);
 
-                if (parent) {
-                    parent.children.push(item);
-                } else {
-                    treeItems.push(item);
-                }
-
+                treeItems.push(item);
 
             }.bind(this));
 
@@ -298,7 +295,6 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                     }.bind(this),
                     handler: function (grid, rowIndex) {
 
-                        console.log(rowIndex);
                         var record = grid.getStore().getAt(rowIndex),
                             fieldData = this.buildFormFieldConfigFromNode(record);
 
@@ -548,7 +544,10 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
             }
 
             if (fieldData.hasOwnProperty('childs') && Ext.isArray(fieldData.childs) && fieldData.childs.length > 0) {
-                return this.findStoredConfigNodeData(item, fieldData.childs);
+                d = this.findStoredConfigNodeData(item, fieldData.childs);
+                if (d !== null) {
+                    return false;
+                }
             }
         }.bind(this));
 

@@ -1,10 +1,11 @@
 # Upgrade Notes
 
 ## Version 4.1.4
-- **[BUGFIX]**: Fix link to translation list
+- **[BUGFIX]**: Fix link to translation list [#359](https://github.com/dachcom-digital/pimcore-formbuilder/pull/359)
 - **[BUGFIX]**: skip dependency if document is null [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/354)
 - **[BUGFIX]**: Check for valid success management configuration [#299](https://github.com/dachcom-digital/pimcore-formbuilder/issues/299)
-- **[NEW FEATURE]**: Add Mail-Log Filter to Email Channel  [#297](https://github.com/dachcom-digital/pimcore-formbuilder/issues/297)
+- **[NEW FEATURE]**: Add Mail-Log Filter to Email Channel [#297](https://github.com/dachcom-digital/pimcore-formbuilder/issues/297)
+- **[NEW FEATURE]**: Allow mapping of elements in fieldset container in Object Chanel [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/355)
 
 ## Version 4.1.3
 - **[BUGFIX]**: Fix `ignoreFields` Assignment: Use `CollectionType` instead of `ChoiceType` [#352](https://github.com/dachcom-digital/pimcore-formbuilder/pull/352)
