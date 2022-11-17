@@ -112,6 +112,18 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
                 }
             },
             {
+                xtype: 'checkbox',
+                inputValue: true,
+                uncheckedValue: false,
+                value: localeData !== null ? localeData['disableMailLogging'] : null,
+                fieldLabel: t('form_builder.output_workflow.output_workflow_channel.email.disable_mail_logging'),
+                name: locale + '.disableMailLogging',
+                autoEl: {
+                    tag: 'div',
+                    'data-qtip': t('form_builder.output_workflow.output_workflow_channel.email.disable_mail_logging_help'),
+                }
+            },
+            {
                 xtype: 'panel',
                 layout: 'hbox',
                 anchor: '100%',
