@@ -191,7 +191,8 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                     }
                 };
 
-                if (fieldData.hasOwnProperty('fields') && Ext.isArray(fieldData.fields) && fieldData.type === 'container') {
+                // allow all container types except repeater!
+                if (fieldData.hasOwnProperty('fields') && Ext.isArray(fieldData.fields) && (fieldData.type === 'container' && fieldData.sub_type !== 'repeater')) {
                     item.omContainerFields = fieldData.fields;
                     item.children = generateFields(fieldData.fields,[])
                 }
@@ -294,7 +295,6 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                     }.bind(this),
                     handler: function (grid, rowIndex) {
 
-                        console.log(rowIndex);
                         var record = grid.getStore().getAt(rowIndex),
                             fieldData = this.buildFormFieldConfigFromNode(record);
 
