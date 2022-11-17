@@ -58,12 +58,12 @@ class EmailOutputChannelWorker
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
 
-        if($disableMailLogging === true) {
-            $mail->disableLogging();
-        }
-
         if ($disableDefaultMailBody === true) {
             $mail->setParam('_form_builder_disabled_default_mail_body', 1);
+        }
+
+        if ($disableMailLogging === true) {
+            $mail->disableLogging();
         }
 
         // dispatch subject guard event
