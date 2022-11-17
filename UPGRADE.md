@@ -3,6 +3,7 @@
 ## Version 4.1.4
 - **[BUGFIX]**: Fix link to translation list
 - **[BUGFIX]**: skip dependency if document is null [@JHeimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/354)
+- **[NEW FEATURE]**: Add Mail-Log Filter to Email Channel  [#297](https://github.com/dachcom-digital/pimcore-formbuilder/issues/297)
 
 ## Version 4.1.3
 - **[BUGFIX]**: Fix `ignoreFields` Assignment: Use `CollectionType` instead of `ChoiceType` [#352](https://github.com/dachcom-digital/pimcore-formbuilder/pull/352)

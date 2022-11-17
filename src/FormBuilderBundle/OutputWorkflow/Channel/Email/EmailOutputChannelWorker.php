@@ -42,6 +42,7 @@ class EmailOutputChannelWorker
         $mailTemplate = $channelConfiguration['mailTemplate'];
         $forcePlainText = $channelConfiguration['forcePlainText'];
         $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
+        $disableMailLogging = $channelConfiguration['disableMailLogging'] ?? false;
 
         $mailTemplateId = $mailTemplate['id'];
         $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
@@ -59,6 +60,10 @@ class EmailOutputChannelWorker
 
         if ($disableDefaultMailBody === true) {
             $mail->setParam('_form_builder_disabled_default_mail_body', 1);
+        }
+
+        if ($disableMailLogging === true) {
+            $mail->disableLogging();
         }
 
         // dispatch subject guard event

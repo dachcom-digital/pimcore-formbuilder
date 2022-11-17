@@ -22,6 +22,7 @@ class EmailChannelType extends AbstractType
         $builder->add('allowAttachments', CheckboxType::class);
         $builder->add('forcePlainText', CheckboxType::class);
         $builder->add('disableDefaultMailBody', CheckboxType::class);
+        $builder->add('disableMailLogging', CheckboxType::class);
         $builder->add('mailLayoutData', TextType::class);
 
         $builder->get('ignoreFields')->addEventListener(

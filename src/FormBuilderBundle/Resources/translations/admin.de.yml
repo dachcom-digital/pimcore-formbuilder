@@ -149,6 +149,8 @@ form_builder.output_workflow.output_workflow_channel.email.force_plain_text: 'Al
 form_builder.output_workflow.output_workflow_channel.email.force_plain_text_help: 'Dieses Dokument wird als einfaches Text-E-Mail versendet. Alle HTML-Werte werden automatisch entfernt.'
 form_builder.output_workflow.output_workflow_channel.email.disable_default_mail_body: 'Standard Mail-Vorlage deaktivieren'
 form_builder.output_workflow.output_workflow_channel.email.disable_default_mail_body_help: 'Wenn gewählt, müssen Sie Ihre eigenen Daten zur Mail-Vorlage hinzufügen. Sie können alle Feldnamen als Platzhalter verwenden. Diese Funktion ist nur in seltenen Fällen notwendig.'
+form_builder.output_workflow.output_workflow_channel.email.disable_mail_logging: 'Mail-Logging deaktivieren'
+form_builder.output_workflow.output_workflow_channel.email.disable_mail_logging_help: 'Wenn gewählt, wird kein Logeintrag des versendeten E-Mails erstellt.'
 form_builder.output_workflow.output_workflow_channel.email.ignore_fields: 'Ignorierte Felder in E-Mail'
 form_builder.output_workflow.output_workflow_channel.email.ignore_fields_help: 'In einigen Fällen möchten Sie bestimmte Felder nicht per E-Mail versenden. Fügen Sie ein oder mehrere Felder hinzu.'
 form_builder.output_workflow.output_workflow_channel.email.mail_editor.reset: 'Mail-Layout Editor Daten zurücksetzen'
