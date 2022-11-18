@@ -22,6 +22,9 @@ doctrine:
 
 framework:
 
+    session:
+        storage_factory_id: session.storage.factory.native
+
     profiler:
         enabled: true
         collect: false
