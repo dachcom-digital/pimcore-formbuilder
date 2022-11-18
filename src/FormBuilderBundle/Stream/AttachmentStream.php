@@ -128,9 +128,9 @@ class AttachmentStream implements AttachmentStreamInterface
             $asset = Asset::create($formDataFolder->getId(), $assetData, false);
             $asset->setProperty(self::PACKAGE_IDENTIFIER, 'text', $packageIdentifier, false, false);
             $asset->save();
-            if (file_exists($zipPath)) {
-                unlink($zipPath);
-            }
+
+            unlink($zipPath);
+
         } catch (\Exception $e) {
             Logger::error(sprintf('Error while storing asset in pimcore (%s): %s', $zipPath, $e->getMessage()));
 
