@@ -18,7 +18,7 @@ jobs:
             PIMCORE_CODECEPTION_VERSION: "2.0"
 
             APP_ENV: test
-            PIMCORE_TEST_DB_DSN: "mysql://root:root@127.0.0.1:3306/dachcom_bundle_test"
+            PIMCORE_TEST_DB_DSN: "mysql://test:test@127.0.0.1:3306/dachcom_bundle_test"
             PIMCORE_TEST_URL: "http://localhost"
             PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes/DataObject"
 
@@ -40,16 +40,8 @@ jobs:
             matrix:
                 php: [ 8.0 ]
                 symfony: [ ^5.4 ]
-                pimcore: [ ~10.1.0, ~10.2.0, ~10.3.0, ~10.4.0, ~10.5.0 ]
+                pimcore: [ ~10.5.0 ]
                 include:
-                    -   pimcore: ~10.1.0
-                        template_tag: v10.1.0
-                    -   pimcore: ~10.2.0
-                        template_tag: v10.1.4
-                    -   pimcore: ~10.3.0
-                        template_tag: v10.1.9
-                    -   pimcore: ~10.4.0
-                        template_tag: v10.1.13
                     -   pimcore: ~10.5.0
                         template_tag: v10.2.0
         steps:
@@ -90,9 +82,19 @@ jobs:
                 run: php -v
 
             -   name: Setup MySql
-                run: |
-                    sudo systemctl start mysql
-                    mysql -uroot -proot -h127.0.0.1 -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
+                uses: shogo82148/actions-setup-mysql@v1
+                with:
+                    mysql-version: '8.0'
+                    user: test
+                    password: test
+                    root-password: root
+                    auto-start: true
+                    my-cnf: |
+                        max_allowed_packet=32505856
+                        max_connections=1000
+
+            -   name: Initial Database
+                run: mysql -utest -ptest -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
 
             -   name: Setup Chromium
                 run: |

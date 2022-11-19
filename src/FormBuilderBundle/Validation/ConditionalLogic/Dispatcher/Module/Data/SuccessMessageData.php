@@ -139,6 +139,6 @@ class SuccessMessageData implements DataInterface
             return null;
         }
 
-        return $this->hasFlashMessage() ? $this->translator->trans((string) $this->data['flashMessage'], [], null, $locale) : null;
+        return $this->translator->trans((string) $this->data['flashMessage'], [], null, $locale);
     }
 }
