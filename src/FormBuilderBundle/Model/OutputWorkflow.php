@@ -9,6 +9,7 @@ class OutputWorkflow implements OutputWorkflowInterface
 {
     protected int $id;
     protected string $name;
+    protected bool $funnelWorkflow;
     protected ?array $successManagement;
     protected FormDefinitionInterface $formDefinition;
     protected Collection $channels;
@@ -36,6 +37,21 @@ class OutputWorkflow implements OutputWorkflowInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function setFunnelWorkflow(bool $funnelWorkflow): void
+    {
+        $this->funnelWorkflow = $funnelWorkflow;
+    }
+
+    public function getFunnelWorkflow(): bool
+    {
+        return $this->funnelWorkflow;
+    }
+
+    public function isFunnelWorkflow(): bool
+    {
+        return $this->funnelWorkflow === true;
     }
 
     public function setSuccessManagement(array $successManagement): void

@@ -37,6 +37,26 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Layer\SimpleLayoutLayerType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\FunnelActionsCollectionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\FunnelActionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\Type\ReturnToFormActionType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\Type\ChannelActionType:
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Admin\Type\OutputWorkflow\SuccessManagementType:
         tags:
             - { name: form.type }
@@ -50,5 +70,9 @@ services:
             - { name: form.type }
 
     FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ApiChannelType:
+        tags:
+            - { name: form.type }
+
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\FunnelChannelType:
         tags:
             - { name: form.type }

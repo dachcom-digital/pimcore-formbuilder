@@ -52,12 +52,18 @@ class OutputWorkflowController extends AdminController
         }
 
         foreach ($formDefinition->getOutputWorkflows() as $outputWorkflow) {
+
+            $icon = 'pimcore_icon_output_workflow';
+            if ($outputWorkflow->isFunnelWorkflow()) {
+                $icon = 'pimcore_icon_output_workflow_funnel_aware';
+            }
+
             $mainItems[] = [
                 'id'            => $outputWorkflow->getId(),
                 'text'          => $outputWorkflow->getName(),
                 'icon'          => '',
                 'leaf'          => true,
-                'iconCls'       => 'pimcore_icon_output_workflow',
+                'iconCls'       => $icon,
                 'allowChildren' => false
             ];
         }
@@ -121,6 +127,7 @@ class OutputWorkflowController extends AdminController
     public function addOutputWorkflowAction(Request $request, int $formId): JsonResponse
     {
         $name = $request->request->get('outputWorkflowName');
+        $outputWorkflowFunnelAware = $request->request->get('outputWorkflowFunnelAware');
 
         $success = true;
         $message = null;
@@ -136,8 +143,15 @@ class OutputWorkflowController extends AdminController
             $message = sprintf('Output Workflow with name "%s" already exists!', $name);
         } else {
             try {
-                $outputWorkflow = $this->outputWorkflowManager->save(['formDefinition' => $formDefinition, 'name' => $name]);
+
+                $outputWorkflow = $this->outputWorkflowManager->save([
+                    'name'           => $name,
+                    'formDefinition' => $formDefinition,
+                    'funnelAware'    => $outputWorkflowFunnelAware === 'true'
+                ]);
+
                 $id = $outputWorkflow->getId();
+
             } catch (\Exception $e) {
                 $success = false;
                 $message = sprintf('Error while creating new output workflow with name "%s". Error was: %s', $name, $e->getMessage());

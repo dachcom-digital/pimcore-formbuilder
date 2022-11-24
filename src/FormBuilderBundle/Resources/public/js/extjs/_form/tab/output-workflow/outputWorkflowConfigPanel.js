@@ -7,6 +7,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
     panel: null,
     channelPanel: null,
     channelSuccessManagementPanel: null,
+    funnelNagPanel: null,
     channelPanelConfigClasses: null,
 
     workflowData: null,
@@ -23,11 +24,14 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         this.outputWorkflowChannelStore = this.workflowData.hasOwnProperty('output_workflow_channels_store') ? this.workflowData.output_workflow_channels_store : [];
         this.outputWorkflowChannels = this.workflowData.hasOwnProperty('output_workflow_channels') ? this.workflowData.output_workflow_channels : [];
         this.outputWorkflowSuccessManagementData = this.workflowData.hasOwnProperty('output_workflow_success_management') ? this.workflowData.output_workflow_success_management : {};
+
+        Formbuilder.eventObserver.registerObservable('ow' + this.workflowData.id);
     },
 
     getLayout: function () {
 
-        var observerListener;
+        var observerListener,
+            observerChannelListener;
 
         this.panel = new Ext.form.FormPanel({
             title: t('form_builder.tab.output_workflow') + ' "' + this.workflowData.name + '"',
@@ -70,23 +74,62 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
                     ]
                 },
 
+                this.getFunnelNagPanel(),
                 this.getOutputSuccessManagementPanel(),
                 this.getOutputChannelPanel()
             ]
         });
 
-        observerListener = Formbuilder.eventObserver.getObserver(this.formId).addListener(
+        observerListener = Formbuilder.eventObserver.getObserver(this.formId).on(
             'output_workflow.required_form_fields_requested',
             this.getUsedFormFields.bind(this),
             null, {destroyable: true}
         );
 
+        observerChannelListener = Formbuilder.eventObserver.getObserver('ow' + this.workflowData.id).on(
+            'output_workflow.channel.request.list',
+            function (listModifier) {
+                listModifier.call(this, this.channelPanelConfigClasses);
+                return true;
+            }.bind(this),
+            null, {destroyable: true}
+        );
+
         this.panel.on('beforedestroy', function () {
             observerListener.destroy();
+            observerChannelListener.destroy();
+            Formbuilder.eventObserver.unregisterObservable('ow' + this.workflowData.id);
             this.channelPanelConfigClasses = null;
         }.bind(this));
 
         return this.panel;
+    },
+
+    isFunnelOutputWorkflow: function () {
+        return this.workflowData.funnel_workflow === true;
+    },
+
+    getFunnelNagPanel: function () {
+
+        if (this.isFunnelOutputWorkflow() === false) {
+            return [];
+        }
+
+        this.funnelNagPanel = new Ext.form.Panel({
+            iconCls: 'pimcore_icon_output_workflow_funnel',
+            title: t('form_builder.output_workflow.output_workflow_channel_funnel_workflow'),
+            autoScroll: true,
+            border: false,
+            items: [
+                {
+                    xtype: 'label',
+                    style: 'display: block; padding: 10px 0;',
+                    html: t('form_builder.output_workflow.output_workflow_channel_funnel_workflow_description')
+                }
+            ]
+        });
+
+        return this.funnelNagPanel;
     },
 
     getOutputSuccessManagementPanel: function () {
@@ -97,13 +140,17 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
                 identifier: 'successManagement',
                 sectionId: this.sectionId,
                 index: this.index,
-                onGenerateFieldName: function (elementType, args, el) {
+                onGenerateFieldName: function (elementType) {
                     return elementType;
                 }.bind(this),
                 onGenerateTopBar: function () {
                     return [];
                 }.bind(this)
             };
+
+        if (this.isFunnelOutputWorkflow() === true) {
+            return [];
+        }
 
         successMessageToggleComponent = new Formbuilder.extjs.components.successMessageToggleComponent(fieldId, componentConfiguration, this.outputWorkflowSuccessManagementData, true);
         successMessageToggleComponent.setBodyStyle('');
@@ -189,13 +236,55 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         });
     },
 
-    getDeleteControl: function (data, channelConfig) {
+    getDeleteControl: function (data, channelConfig, channelDataClass) {
 
-        var items = [{
+        var
+            items = [],
+            label,
+            toolbar;
+
+        label = channelConfig.hasOwnProperty('label') ? '<strong>' + channelConfig.label + '</strong>' : ('Channel ' + index);
+
+        if (channelDataClass !== null && this.isFunnelOutputWorkflow()) {
+            label = label + ' (<em>' + channelDataClass.getName() + '</em>)';
+        }
+
+        if (channelDataClass !== null && this.isFunnelOutputWorkflow()) {
+            items.push({
+                xtype: 'button',
+                iconCls: 'pimcore_icon_edit',
+                handler: function () {
+
+                    Ext.MessageBox.prompt(
+                        t('form_builder.output_workflow.output_workflow_channel_rename'),
+                        t('form_builder.output_workflow.output_workflow_channel_rename_set'),
+                        function (button, value) {
+
+                            var items = toolbar.query('tbtext');
+
+                            if (button === 'cancel') {
+                                return false;
+                            }
+
+                            channelDataClass.setName(value);
+
+                            if (items.length > 0) {
+                                items[0].setHtml(value);
+                            }
+
+                            this.fireOutputWorkflowObserverEvent('output_workflow.channel.rename', {channelDataClass: channelDataClass});
+                        }.bind(this),
+                        null, null, channelDataClass.getName()
+                    );
+                }.bind(this)
+            });
+        }
+
+        items.push({
             xtype: 'tbtext',
-            html: channelConfig.hasOwnProperty('label') ? '<strong>' + channelConfig.label + '</strong>' : ('Channel ' + index),
+            html: label,
             iconCls: channelConfig.hasOwnProperty('icon_class') ? channelConfig.icon_class : 'pimcore_icon_output_workflow_channel',
-        }];
+        });
 
         items.push('->');
 
@@ -203,20 +292,23 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             cls: 'pimcore_block_button_minus',
             iconCls: 'pimcore_icon_minus',
             listeners: {
-                'click': this.removeOutputChannel.bind(this)
+                click: this.removeOutputChannel.bind(this)
             }
         });
 
-        return new Ext.Toolbar({
+        return toolbar = new Ext.Toolbar({
             items: items
         });
     },
 
     removeOutputChannel: function (btn) {
-        var panel = btn.up('panel');
+
+        var panel = btn.up('panel'),
+            removedChannelId = null;
 
         Ext.each(this.channelPanelConfigClasses, function (channelWrapper) {
             if (channelWrapper.id === panel.id) {
+                removedChannelId = channelWrapper.id;
                 Ext.Array.remove(this.channelPanelConfigClasses, channelWrapper);
                 return false;
             }
@@ -225,19 +317,31 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         this.channelPanel.remove(panel);
 
         this.fireObserverEvent('output_workflow.required_form_fields_refreshed', {workflowId: this.workflowData.id});
+        this.fireOutputWorkflowObserverEvent('output_workflow.channel.remove', {removedChannelId: removedChannelId});
     },
 
     addOutputChannel: function (data, channelConfig) {
 
         var element,
-            items = [],
+            items,
             channelPanelConfigId = null,
-            channelPanelConfig = this.createChannelConfigPanel(data, channelConfig);
+            channelPanelConfigClass = null,
+            channelDataClass = this.createChannelConfigPanel(data, channelConfig);
 
-        if (channelPanelConfig !== null) {
-            channelPanelConfigId = channelPanelConfig.getId();
-            this.channelPanelConfigClasses.push({id: channelPanelConfigId, dataClass: channelPanelConfig});
-            items = [channelPanelConfig.getLayout()]
+        if (channelDataClass !== null) {
+
+            channelPanelConfigId = channelDataClass.getId();
+            channelPanelConfigClass = {id: channelPanelConfigId, dataClass: channelDataClass}
+
+            items = Ext.Array.merge(
+                [channelDataClass.getLayout()],
+                this.isFunnelOutputWorkflow()
+                    ? channelDataClass.getFunnelActionLayout(channelDataClass)
+                    : []
+            );
+
+            this.channelPanelConfigClasses.push(channelPanelConfigClass);
+
         } else {
             items = [{
                 xtype: 'tbtext',
@@ -251,8 +355,20 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             autoHeight: true,
             border: true,
             id: channelPanelConfigId,
-            tbar: this.getDeleteControl(data, channelConfig),
-            items: items
+            tbar: this.getDeleteControl(data, channelConfig, channelDataClass),
+            items: items,
+            listeners: {
+                render: function () {
+
+                    var virtualFunnelActions = this.isFunnelOutputWorkflow() && channelDataClass.isVirtualFunnelAware()
+                        ? channelDataClass.getVirtualFunnelActions()
+                        : [];
+
+                    if (virtualFunnelActions.length > 0) {
+                        channelDataClass.populateFunnelActions(virtualFunnelActions)
+                    }
+                }.bind(this)
+            }
         });
 
         this.channelPanel.add(element);
@@ -260,6 +376,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         if (this.panel) {
             this.panel.updateLayout();
         }
+
+        this.fireOutputWorkflowObserverEvent('output_workflow.channel.add', {channelDataClass: channelDataClass});
     },
 
     createChannelConfigPanel: function (data, channelConfig) {
@@ -275,23 +393,47 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         }
 
         channelConfigPanel = new Formbuilder.extjs.formPanel.outputWorkflow.channel[channelIdentifier](channelIdentifier, data, this.formId, this.workflowData.id);
+        channelConfigPanel.setVirtualFunnelAware(this.isFunnelOutputWorkflow() && channelIdentifier !== 'funnel');
 
         return channelConfigPanel;
     },
 
     saveOutputChannel: function (ev) {
 
-        var channelData = [],
+        var errorMessage = null,
+            channelData = [],
             hasInvalidConfigChannel = false,
-            successManagementData,
+            successManagementData = [],
             formData;
 
         Ext.each(this.channelPanelConfigClasses, function (channelWrapper) {
-            var transposedData, compiledData = {}, dataClass = channelWrapper.dataClass;
+
+            var transposedData,
+                compiledData = {},
+                funnelActions = null,
+                dataClass = channelWrapper.dataClass;
+
             if (dataClass.isValid()) {
+
                 transposedData = DataObjectParser.transpose(dataClass.getValues());
-                compiledData['configuration'] = transposedData.data();
+
                 compiledData['type'] = dataClass.getType();
+                compiledData['name'] = dataClass.getName();
+                compiledData['configuration'] = transposedData.data();
+
+                if (this.isFunnelOutputWorkflow() === true) {
+
+                    if (dataClass.funnelActionsValid()) {
+                        funnelActions = dataClass.getFunnelActionDefinitionData();
+                    } else {
+                        errorMessage = t('form_builder.output_workflow.output_workflow_channel.funnel_action.invalid_action');
+                        hasInvalidConfigChannel = true;
+                        return false;
+                    }
+                }
+
+                compiledData['funnelActions'] = funnelActions;
+
                 channelData.push(compiledData);
             } else {
                 hasInvalidConfigChannel = true;
@@ -300,12 +442,14 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         }.bind(this));
 
         if (hasInvalidConfigChannel === true) {
-            Ext.Msg.alert(t('error'), t('form_builder.output_workflow.output_workflow_channel_invalid_configuration'));
+            Ext.Msg.alert(t('error'), errorMessage !== null ? errorMessage : t('form_builder.output_workflow.output_workflow_channel_invalid_configuration'));
             return;
         }
 
-        successManagementData = DataObjectParser.transpose(this.channelSuccessManagementPanel.getForm().getValues());
-        successManagementData = successManagementData.data();
+        if (this.channelSuccessManagementPanel !== null) {
+            successManagementData = DataObjectParser.transpose(this.channelSuccessManagementPanel.getForm().getValues());
+            successManagementData = successManagementData.data();
+        }
 
         formData = {
             name: this.panel.getForm().findField('output_workflow_name').getValue(),
@@ -359,5 +503,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
 
     fireObserverEvent: function (name, data) {
         Formbuilder.eventObserver.getObserver(this.formId).fireEvent(name, data);
+    },
+
+    fireOutputWorkflowObserverEvent: function (name, data) {
+        Formbuilder.eventObserver.getObserver('ow' + this.workflowData.id).fireEvent(name, data);
     }
 });

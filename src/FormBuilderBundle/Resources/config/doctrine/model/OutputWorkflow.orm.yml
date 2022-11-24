@@ -13,6 +13,10 @@ FormBuilderBundle\Model\OutputWorkflow:
             nullable: true
             type: string
             length: 190
+        funnelWorkflow:
+            column: funnel_workflow
+            nullable: false
+            type: boolean
         successManagement:
             column: success_management
             nullable: true
@@ -30,6 +34,8 @@ FormBuilderBundle\Model\OutputWorkflow:
             targetEntity: FormBuilderBundle\Model\OutputWorkflowChannel
             orphanRemoval: true
             mappedBy: outputWorkflow
+            orderBy:
+                id: ASC
             cascade:
                 - all
     uniqueConstraints:

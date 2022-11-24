@@ -4,7 +4,11 @@ FormBuilderBundle\Model\OutputWorkflowChannel:
             groups: [Default, ExtJs]
         type:
             groups: [Default, ExtJs]
+        name:
+            groups: [Default, ExtJs]
         configuration:
+            groups: [Default, ExtJs]
+        funnelActions:
             groups: [Default, ExtJs]
         outputWorkflow:
             groups: [Default]

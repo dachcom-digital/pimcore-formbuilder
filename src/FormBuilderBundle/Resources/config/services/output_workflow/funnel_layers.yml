@@ -1,0 +1,18 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\SimpleLayoutLayer:
+        tags:
+            - { name: form_builder.output_workflow.funnel_layer, type: simpleLayout }
+
+    FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\ChannelAction:
+        tags:
+            - { name: form_builder.output_workflow.funnel_action, type: channelAction }
+
+    FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\ReturnToFormAction:
+        tags:
+            - { name: form_builder.output_workflow.funnel_action, type: returnToFormAction }

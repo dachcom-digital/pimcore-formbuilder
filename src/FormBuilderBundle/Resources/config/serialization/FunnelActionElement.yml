@@ -1,0 +1,6 @@
+FormBuilderBundle\Model\FunnelActionElement:
+    attributes:
+        name:
+            groups: [Default, ExtJs]
+        label:
+            groups: [Default, ExtJs]

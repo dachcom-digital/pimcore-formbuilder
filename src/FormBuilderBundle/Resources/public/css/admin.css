@@ -59,6 +59,10 @@
     background: url(/bundles/formbuilder/img/output_workflow.svg) left center no-repeat !important;
 }
 
+.pimcore_icon_output_workflow_funnel_aware {
+    background: url(/bundles/formbuilder/img/output_workflow_funnel_aware.svg) left center no-repeat !important;
+}
+
 .pimcore_icon_output_workflow_add {
     background: url(/bundles/formbuilder/img/output_workflow_add.svg) left center no-repeat !important;
 }
@@ -69,6 +73,10 @@
 
 .pimcore_icon_output_workflow_channel_add {
     background: url(/bundles/formbuilder/img/output_workflow_channel_add.svg) left center no-repeat !important;
+}
+
+.pimcore_icon_output_workflow_funnel {
+    background: url(/bundles/formbuilder/img/ow_channel_funnel.svg) left center no-repeat !important;
 }
 
 /*
@@ -232,6 +240,10 @@
 /*
     Output Workflow
 */
+
+.form_builder_output_workflow_channel_funnel {
+    background: url(/bundles/formbuilder/img/ow_channel_funnel.svg) left center no-repeat !important;
+}
 
 .form_builder_output_workflow_channel_api {
     background: url(/bundles/formbuilder/img/ow_channel_api.svg) left center no-repeat !important;

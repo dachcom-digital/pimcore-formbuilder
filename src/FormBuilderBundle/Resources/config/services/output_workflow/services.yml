@@ -19,3 +19,6 @@ services:
 
     FormBuilderBundle\Registry\OutputWorkflowChannelRegistry: ~
     FormBuilderBundle\Registry\FieldTransformerRegistry: ~
+
+    FormBuilderBundle\Registry\FunnelLayerRegistry: ~
+    FormBuilderBundle\Registry\FunnelActionRegistry: ~

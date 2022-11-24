@@ -20,6 +20,7 @@ class Configuration implements ConfigurationInterface
                 ->variableNode('form_attributes')->end()
             ->end();
 
+        $rootNode->append($this->buildFunnelNode());
         $rootNode->append($this->createPersistenceNode());
         $rootNode->append($this->buildFlagsNode());
         $rootNode->append($this->buildSpamProductionNode());
@@ -659,4 +660,20 @@ class Configuration implements ConfigurationInterface
 
         return $node;
     }
+
+    private function buildFunnelNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('funnel');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')->defaultValue(false)->end()
+            ->end();
+
+        return $rootNode;
+    }
+
 }

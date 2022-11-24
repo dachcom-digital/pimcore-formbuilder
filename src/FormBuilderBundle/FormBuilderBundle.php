@@ -14,6 +14,8 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowChannelPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowFunnelActionPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowFunnelLayerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\RuntimeDataProviderPass;
 use FormBuilderBundle\Doctrine\Type\FormBuilderFieldsType;
 use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
@@ -58,6 +60,8 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new MailEditorWidgetPass());
         $container->addCompilerPass(new OutputTransformerPass());
         $container->addCompilerPass(new OutputWorkflowChannelPass());
+        $container->addCompilerPass(new OutputWorkflowFunnelLayerPass());
+        $container->addCompilerPass(new OutputWorkflowFunnelActionPass());
         $container->addCompilerPass(new DynamicObjectResolverPass());
         $container->addCompilerPass(new RuntimeDataProviderPass());
         $container->addCompilerPass(new DynamicMultiFileAdapterPass());
@@ -87,6 +91,13 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/email.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/object.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/api.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/funnelActionDispatcher.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/abstractAction.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/channelAction.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/returnToFormAction.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/abstractLayer.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/simpleLayoutLayer.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/abstract.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/checkbox.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/href.js',

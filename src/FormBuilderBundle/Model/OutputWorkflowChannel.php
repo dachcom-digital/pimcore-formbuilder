@@ -6,7 +6,9 @@ class OutputWorkflowChannel implements OutputWorkflowChannelInterface
 {
     protected int $id;
     protected string $type;
+    protected string $name;
     protected array $configuration;
+    protected array $funnelActions;
     protected OutputWorkflowInterface $outputWorkflow;
 
     public function setId($id): void
@@ -29,6 +31,16 @@ class OutputWorkflowChannel implements OutputWorkflowChannelInterface
         return $this->type;
     }
 
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
@@ -37,6 +49,16 @@ class OutputWorkflowChannel implements OutputWorkflowChannelInterface
     public function getConfiguration(): array
     {
         return $this->configuration;
+    }
+
+    public function setFunnelActions(array $funnelActions): void
+    {
+        $this->funnelActions = $funnelActions;
+    }
+
+    public function getFunnelActions(): array
+    {
+        return $this->funnelActions;
     }
 
     public function setOutputWorkflow(OutputWorkflowInterface $outputWorkflow): void

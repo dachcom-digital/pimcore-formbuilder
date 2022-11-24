@@ -11,6 +11,7 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
     importIsRunning: false,
     formId: null,
     formName: null,
+    funnelConfiguration: null,
 
     activeWorkflowId: null,
     loading: false,
@@ -19,6 +20,7 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
         this.formSelectionPanel = formSelectionPanel;
         this.formId = formData.id;
         this.formName = formData.name;
+        this.funnelConfiguration = formData.funnel;
         this.activeWorkflowId = null;
     },
 
@@ -192,6 +194,8 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
 
     addOutputWorkflow: function (btn) {
 
+        var messageBox;
+
         if (this.formId === null) {
             Ext.Msg.alert(t('error'), 'You need to save your form first.');
             return;
@@ -202,25 +206,71 @@ Formbuilder.extjs.formPanel.outputWorkflowPanel = Class.create({
             return;
         }
 
-        Ext.MessageBox.prompt(
-            t('form_builder.output_workflow.new_output_workflow_name_title'),
-            t('form_builder.output_workflow.new_output_workflow_name'),
-            this.createNewOutputWorkflow.bind(this),
-            null, null, ''
-        );
+        messageBox = new Ext.Window({
+            modal: true,
+            width: 500,
+            closeAction: 'destroy',
+            title: t('form_builder.output_workflow.new_output_workflow_name_title'),
+            bodyStyle: 'padding: 10px 10px 0px 10px',
+            buttonAlign: 'center',
+            items: [
+                {
+                    xtype: 'container',
+                    html: t('form_builder.output_workflow.new_output_workflow_name'),
+                },
+                {
+                    xtype: 'textfield',
+                    width: '100%',
+                    name: 'output_workflow_name',
+                    itemId: 'output_workflow_name',
+                    listeners: {
+                        afterrender: function () {
+                            window.setTimeout(function () {
+                                this.focus(true);
+                            }.bind(this), 100);
+                        }
+                    }
+                },
+                {
+                    xtype: 'checkbox',
+                    boxLabel: t('form_builder.output_workflow.new_output_workflow_funnel_aware'),
+                    name: 'output_workflow_funnel_aware',
+                    itemId: 'output_workflow_funnel_aware',
+                    checked: false,
+                    hidden: this.funnelConfiguration.enabled === false
+                }
+            ],
+            buttons: [
+                {
+                    text: t('OK'),
+                    handler: this.createNewOutputWorkflow.bind(this),
+                },
+                {
+                    text: t('cancel'),
+                    handler: function () {
+                        messageBox.close();
+                    }
+                }
+            ]
+        });
+
+        messageBox.show();
     },
 
-    createNewOutputWorkflow: function (button, value) {
+    createNewOutputWorkflow: function (button) {
 
-        if (button !== 'ok') {
-            return false;
-        }
+        var owWindow = button.up('window'),
+            owName = owWindow.getComponent('output_workflow_name').getValue(),
+            owFunnelAware = owWindow.getComponent('output_workflow_funnel_aware').getValue();
+
+        owWindow.close();
 
         Ext.Ajax.request({
             url: '/admin/formbuilder/output-workflow/add-output-workflow/' + this.formId,
             method: 'POST',
             params: {
-                outputWorkflowName: value
+                outputWorkflowName: owName,
+                outputWorkflowFunnelAware: owFunnelAware,
             },
             success: function (response) {
 

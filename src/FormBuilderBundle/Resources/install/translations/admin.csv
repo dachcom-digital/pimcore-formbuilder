@@ -127,3 +127,4 @@
 "form_builder.output_workflow.channel.email","Email Channel", "E-Mail Channel"
 "form_builder.output_workflow.channel.object","Object Channel", "Object Channel"
 "form_builder.output_workflow.channel.api","API Channel", "API Channel"
+"form_builder.output_workflow.channel.funnel","Funnel Layer", "Funnel Layer"

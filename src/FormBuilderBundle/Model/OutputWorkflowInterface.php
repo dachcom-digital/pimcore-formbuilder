@@ -12,6 +12,12 @@ interface OutputWorkflowInterface
 
     public function getName(): string;
 
+    public function setFunnelWorkflow(bool $funnelWorkflow): void;
+
+    public function getFunnelWorkflow(): bool;
+
+    public function isFunnelWorkflow(): bool;
+
     public function setSuccessManagement(array $successManagement): void;
 
     public function getSuccessManagement(): ?array;
