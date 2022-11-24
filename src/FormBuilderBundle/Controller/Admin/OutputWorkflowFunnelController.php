@@ -9,6 +9,7 @@ use FormBuilderBundle\Registry\FunnelLayerRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class OutputWorkflowFunnelController extends AdminController
@@ -42,7 +43,9 @@ class OutputWorkflowFunnelController extends AdminController
                 'label'         => $service->getName(),
                 'key'           => $identifier,
                 'configuration' => [
-                    'funnelActions' => $this->serializer->normalize($service->getFunnelActions(), 'array', ['groups' => ['ExtJs']])
+                    'funnelActions' => $this->serializer instanceof NormalizerInterface
+                        ? $this->serializer->normalize($service->getFunnelActions(), 'array', ['groups' => ['ExtJs']])
+                        : []
                 ]
             ];
         }

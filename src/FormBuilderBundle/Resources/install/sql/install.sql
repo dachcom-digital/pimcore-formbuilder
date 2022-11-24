@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `form_definition` int(11) DEFAULT NULL,
   `name` varchar(190) DEFAULT NULL,
+  `funnel_workflow` tinyint(1) NOT NULL,
   `success_management` longtext COMMENT '(DC2Type:object)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_form` (`name`,`form_definition`),

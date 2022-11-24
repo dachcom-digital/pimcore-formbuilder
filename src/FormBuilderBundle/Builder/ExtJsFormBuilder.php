@@ -7,7 +7,6 @@ use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
-use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
