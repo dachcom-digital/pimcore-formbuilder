@@ -260,6 +260,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         $outputWorkflow = $manager->save([
             'name'           => $name,
             'formDefinition' => $form,
+            'funnelAware'    => false,
         ]);
 
         foreach ($channelDefinitions as $channelDefinition) {
