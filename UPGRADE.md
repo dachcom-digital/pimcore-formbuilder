@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update to Version 3.5.5
+- **[BUGFIX]**: Fix `ignoreFields` Assignment: Use `CollectionType` instead of `ChoiceType` 3.x [#366](https://github.com/dachcom-digital/pimcore-formbuilder/issues/366)
+
 #### Update to Version 3.5.4
 - **[ENHANCEMENT]**: Add `role="presentation"` to honeypot. [#333](https://github.com/dachcom-digital/pimcore-formbuilder/issues/333)
 
