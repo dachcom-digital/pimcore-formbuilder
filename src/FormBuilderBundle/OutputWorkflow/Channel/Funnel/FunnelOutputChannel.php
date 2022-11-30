@@ -19,6 +19,7 @@ use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -133,14 +134,14 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
 
         if ($funnelWorkerData->getRequest()->isXmlHttpRequest()) {
 
-            $jsonArguments = $this->serializer->normalize(
+            $jsonArguments = $this->serializer instanceof NormalizerInterface ? $this->serializer->normalize(
                 array_merge(
                     [
                         'funnelActions' => $funnelWorkerData->getFunnelActionElementStack()->getAll(),
                     ],
                     $funnelLayerResponse->getFunnelLayerViewArguments()
                 ), null, ['groups' => ['FunnelOutput']]
-            );
+            ) : [];
 
             return new JsonResponse(
                 array_merge(

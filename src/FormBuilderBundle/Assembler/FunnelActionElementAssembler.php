@@ -113,10 +113,6 @@ class FunnelActionElementAssembler
 
     private function assertFunnelQueryArguments(OutputWorkflowChannelInterface $channel, FunnelActionElement $funnelActionElement, array $context): void
     {
-        if ($funnelActionElement->getPath() === null) {
-            $funnelActionElement->setPath('#');
-        }
-
         if ($funnelActionElement->getPath() === '#') {
             return;
         }
