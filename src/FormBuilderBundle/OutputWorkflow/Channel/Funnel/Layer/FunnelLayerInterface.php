@@ -2,7 +2,8 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer;
 
-use FormBuilderBundle\Model\FunnelActionElement;
+use FormBuilderBundle\Model\FunnelActionDefinition;
+use Symfony\Component\Form\FormBuilderInterface;
 
 interface FunnelLayerInterface
 {
@@ -11,7 +12,9 @@ interface FunnelLayerInterface
     public function getFormType(): array;
 
     /**
-     * @return array<int, FunnelActionElement>
+     * @return array<int, FunnelActionDefinition>
      */
-    public function getFunnelActions(): array;
+    public function getFunnelActionDefinitions(): array;
+
+    public function buildResponse(FunnelLayerResponse $funnelLayerResponse, FormBuilderInterface $formBuilder): FunnelLayerResponse;
 }

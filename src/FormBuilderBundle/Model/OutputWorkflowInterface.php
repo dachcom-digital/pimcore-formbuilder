@@ -38,4 +38,6 @@ interface OutputWorkflowInterface
      * @return Collection<int, OutputWorkflowChannelInterface>
      */
     public function getChannels(): Collection;
+
+    public function getChannelByName(string $name): ?OutputWorkflowChannelInterface;
 }

@@ -13,6 +13,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
     workflowData: null,
     formId: null,
     outputWorkflowChannelStore: null,
+    outputWorkflowChannelVirtualFunnelActionDefinitions: null,
     outputWorkflowChannels: null,
     outputWorkflowSuccessManagementData: null,
 
@@ -22,6 +23,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         this.workflowData = workflowData;
         this.formId = formId;
         this.outputWorkflowChannelStore = this.workflowData.hasOwnProperty('output_workflow_channels_store') ? this.workflowData.output_workflow_channels_store : [];
+        this.outputWorkflowChannelVirtualFunnelActionDefinitions = this.workflowData.hasOwnProperty('output_workflow_channels_virtual_funnel_action_definitions') ? this.workflowData.output_workflow_channels_virtual_funnel_action_definitions : [];
         this.outputWorkflowChannels = this.workflowData.hasOwnProperty('output_workflow_channels') ? this.workflowData.output_workflow_channels : [];
         this.outputWorkflowSuccessManagementData = this.workflowData.hasOwnProperty('output_workflow_success_management') ? this.workflowData.output_workflow_success_management : {};
 
@@ -361,7 +363,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
                 render: function () {
 
                     var virtualFunnelActions = this.isFunnelOutputWorkflow() && channelDataClass.isVirtualFunnelAware()
-                        ? channelDataClass.getVirtualFunnelActions()
+                        ? channelDataClass.getVirtualFunnelActionDefinitions()
                         : [];
 
                     if (virtualFunnelActions.length > 0) {
@@ -393,7 +395,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
         }
 
         channelConfigPanel = new Formbuilder.extjs.formPanel.outputWorkflow.channel[channelIdentifier](channelIdentifier, data, this.formId, this.workflowData.id);
+
         channelConfigPanel.setVirtualFunnelAware(this.isFunnelOutputWorkflow() && channelIdentifier !== 'funnel');
+        channelConfigPanel.setVirtualFunnelActionDefinitions(this.outputWorkflowChannelVirtualFunnelActionDefinitions);
 
         return channelConfigPanel;
     },

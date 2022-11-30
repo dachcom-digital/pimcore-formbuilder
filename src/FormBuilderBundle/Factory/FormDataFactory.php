@@ -8,8 +8,8 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 
 class FormDataFactory implements FormDataFactoryInterface
 {
-    public function createFormData(FormDefinitionInterface $formDefinition): FormDataInterface
+    public function createFormData(FormDefinitionInterface $formDefinition, array $data = []): FormDataInterface
     {
-        return new FormData($formDefinition);
+        return new FormData($formDefinition, $data);
     }
 }

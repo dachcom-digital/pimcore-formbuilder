@@ -18,6 +18,7 @@ use Pimcore\File;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Page;
+use Symfony\Component\Uid\Uuid;
 
 class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
 {
@@ -266,6 +267,7 @@ class PimcoreBackend extends \Dachcom\Codeception\Helper\PimcoreBackend
         foreach ($channelDefinitions as $channelDefinition) {
 
             $channel = new OutputWorkflowChannel();
+            $channel->setName(Uuid::v4()->toRfc4122());
             $channel->setType($channelDefinition['type']);
             $channel->setOutputWorkflow($outputWorkflow);
 

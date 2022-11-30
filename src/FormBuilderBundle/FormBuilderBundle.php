@@ -17,6 +17,7 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowChannelPass
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowFunnelActionPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowFunnelLayerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\RuntimeDataProviderPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\StorageProviderPass;
 use FormBuilderBundle\Doctrine\Type\FormBuilderFieldsType;
 use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
 use FormBuilderBundle\Tool\Install;
@@ -67,6 +68,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new DynamicMultiFileAdapterPass());
         $container->addCompilerPass(new ApiProviderPass());
         $container->addCompilerPass(new FieldTransformerPass());
+        $container->addCompilerPass(new StorageProviderPass());
     }
 
     public function getInstaller(): Install
@@ -96,6 +98,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/abstractAction.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/channelAction.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/returnToFormAction.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/disabledAction.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/abstractLayer.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/simpleLayoutLayer.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/abstract.js',

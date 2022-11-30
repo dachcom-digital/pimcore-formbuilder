@@ -16,3 +16,7 @@ services:
     FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\ReturnToFormAction:
         tags:
             - { name: form_builder.output_workflow.funnel_action, type: returnToFormAction }
+
+    FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\DisabledAction:
+        tags:
+            - { name: form_builder.output_workflow.funnel_action, type: disabledAction }

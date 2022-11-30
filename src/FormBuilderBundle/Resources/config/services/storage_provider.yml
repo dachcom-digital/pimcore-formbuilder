@@ -1,0 +1,12 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Registry\StorageProviderRegistry: ~
+
+    FormBuilderBundle\Storage\SessionStorageProvider:
+        tags:
+            - { name: form_builder.storage_provider }

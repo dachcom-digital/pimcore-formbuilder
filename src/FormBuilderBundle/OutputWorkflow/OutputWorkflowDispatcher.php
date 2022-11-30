@@ -17,12 +17,17 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
 {
     protected EventDispatcherInterface $eventDispatcher;
     protected OutputWorkflowChannelRegistry $channelRegistry;
+    protected FunnelWorkerInterface $funnelWorker;
     protected OutputWorkflowSignalSubscriber $subscriber;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher, OutputWorkflowChannelRegistry $channelRegistry)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        OutputWorkflowChannelRegistry $channelRegistry,
+        FunnelWorkerInterface $funnelWorker
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->channelRegistry = $channelRegistry;
+        $this->funnelWorker = $funnelWorker;
     }
 
     public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
@@ -30,6 +35,43 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         $this->subscriber = new OutputWorkflowSignalSubscriber();
         $this->eventDispatcher->addSubscriber($this->subscriber);
 
+        if ($outputWorkflow->isFunnelWorkflow()) {
+            $this->dispatchOutputWorkflowFunnel($outputWorkflow, $submissionEvent);
+        } else {
+            $this->dispatchOutputWorkflow($outputWorkflow, $submissionEvent);
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function dispatchOutputWorkflowFunnel(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
+    {
+        // @todo: handle signals in funnel workflow!
+
+        try {
+            $this->funnelWorker->initiateFunnel($outputWorkflow, $submissionEvent);
+        } catch (\Throwable $e) {
+
+            $this->dispatchSignalsEvent($e);
+
+            throw new \Exception(
+                sprintf(
+                    '"%s" workflow funnel errored at initialization: %s',
+                    $outputWorkflow->getName(),
+                    $e->getMessage()
+                )
+            );
+        }
+    }
+
+    /**
+     * @throws GuardOutputWorkflowException
+     * @throws GuardStackedException
+     * @throws \Exception
+     */
+    protected function dispatchOutputWorkflow(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
+    {
         $exceptionStack = [];
         foreach ($outputWorkflow->getChannels() as $index => $channel) {
             try {

@@ -16,10 +16,19 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelAction.returnToFormActi
     },
 
     getConfigItems: function () {
+
         return [{
-            xtype: 'tbtext',
-            style: 'padding: 10px 10px 10px 0',
-            text: 'No configuration available.',
+            xtype: 'checkbox',
+            name: 'populateForm',
+            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.funnel_action.return_to_form.populate_form'),
+            checked: this.data && this.data.hasOwnProperty('populateForm') ? this.data.populateForm === true : false,
+            listeners: {
+                change: function (checkbox, value) {
+                    this.data = {
+                        populateForm: value
+                    }
+                }.bind(this)
+            }
         }];
     },
 

@@ -1,0 +1,12 @@
+{% extends '@FormBuilder/layout_funnel.html.twig' %}
+
+{% block funnel_content %}
+
+    {% form_theme form with ['foundation_5_layout.html.twig'] only %}
+
+    {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+        {% include layerView %}
+        {{ form_rest(form) }}
+    {{  form_end(form) }}
+
+{% endblock funnel_content %}

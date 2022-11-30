@@ -126,7 +126,7 @@ class RequestListener implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    public function findFormIdByRequest(Request $request): ?int
+    protected function findFormIdByRequest(Request $request): ?int
     {
         $isProcessed = false;
         $data = null;

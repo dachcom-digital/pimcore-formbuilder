@@ -4,22 +4,53 @@ namespace FormBuilderBundle\Model;
 
 class FunnelActionElement
 {
-    protected string $name;
-    protected string $label;
+    protected string $path;
+    protected mixed $subject = null;
+    protected bool $isDisabled = false;
+    protected FunnelActionDefinition $funnelActionDefinition;
 
-    public function __construct(string $name, string $label)
+    public function __construct(FunnelActionDefinition $funnelActionDefinition)
     {
-        $this->name = $name;
-        $this->label = $label;
+        $this->funnelActionDefinition = $funnelActionDefinition;
     }
 
-    public function getName(): string
+    public function setPath(string $path): void
     {
-        return $this->name;
+        $this->path = $path;
     }
 
-    public function getLabel(): string
+    public function getPath(): string
     {
-        return $this->label;
+        return $this->path;
+    }
+
+    public function getSubject(): mixed
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(mixed $subject): void
+    {
+        $this->subject = $subject;
+    }
+
+    public function isChannelAware(): bool
+    {
+        return $this->subject instanceof OutputWorkflowChannelInterface;
+    }
+
+    public function setDisabled(bool $disabled): void
+    {
+        $this->isDisabled = $disabled;
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->isDisabled === true;
+    }
+
+    public function getFunnelActionDefinition(): FunnelActionDefinition
+    {
+        return $this->funnelActionDefinition;
     }
 }

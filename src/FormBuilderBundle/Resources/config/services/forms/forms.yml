@@ -48,6 +48,11 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Type\LayerType:
+        public: false
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Type\ContainerCollectionType:
         autowire: true
         public: false

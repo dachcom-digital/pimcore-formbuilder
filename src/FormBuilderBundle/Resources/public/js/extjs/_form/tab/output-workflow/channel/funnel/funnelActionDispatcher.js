@@ -3,7 +3,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
     workflowId: null,
     channelName: null,
-    triggerElement: null,
+    funnelActionDefinition: null,
     data: null,
 
     button: null,
@@ -15,11 +15,11 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
     store: null,
 
-    initialize: function (workflowId, channelName, triggerElement, data) {
+    initialize: function (workflowId, channelName, funnelActionDefinition, data) {
 
         this.workflowId = workflowId;
         this.channelName = channelName;
-        this.triggerElement = triggerElement;
+        this.funnelActionDefinition = funnelActionDefinition;
         this.data = data;
 
         this.button = null;
@@ -33,9 +33,9 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
     buildActionElement: function () {
 
         this.button = new Ext.Button({
-            name: this.triggerElement.name,
-            text: this.triggerElement.label,
-            cls: this.triggerElement.label,
+            name: this.funnelActionDefinition.name,
+            text: this.funnelActionDefinition.label,
+            cls: this.funnelActionDefinition.label,
             handler: this.openFunnelActionWindow.bind(this),
             listeners: {
                 render: this.bootActionChannel.bind(this),
@@ -266,7 +266,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
         this.data = {
             type: this.funnelActionDataClass.getType(),
             configuration: this.funnelActionDataClass.getActionData(),
-            triggerName: this.triggerElement.name,
+            triggerName: this.funnelActionDefinition.name,
         };
 
         this.window.close();

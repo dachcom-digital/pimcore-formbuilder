@@ -22,3 +22,10 @@ services:
 
     FormBuilderBundle\Registry\FunnelLayerRegistry: ~
     FormBuilderBundle\Registry\FunnelActionRegistry: ~
+
+
+    #
+    # Funnel
+
+    FormBuilderBundle\OutputWorkflow\FunnelWorkerInterface: '@FormBuilderBundle\OutputWorkflow\FunnelWorker'
+    FormBuilderBundle\OutputWorkflow\FunnelWorker: ~

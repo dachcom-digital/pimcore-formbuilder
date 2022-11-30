@@ -38,13 +38,12 @@ class OutputWorkflowFunnelController extends AdminController
          * @var FunnelLayerInterface $service
          */
         foreach ($services as $identifier => $service) {
-
             $data[] = [
                 'label'         => $service->getName(),
                 'key'           => $identifier,
                 'configuration' => [
-                    'funnelActions' => $this->serializer instanceof NormalizerInterface
-                        ? $this->serializer->normalize($service->getFunnelActions(), 'array', ['groups' => ['ExtJs']])
+                    'funnelActionDefinitions' => $this->serializer instanceof NormalizerInterface
+                        ? $this->serializer->normalize($service->getFunnelActionDefinitions(), 'array', ['groups' => ['ExtJs']])
                         : []
                 ]
             ];

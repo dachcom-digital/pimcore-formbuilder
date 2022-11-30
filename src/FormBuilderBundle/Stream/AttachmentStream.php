@@ -145,7 +145,7 @@ class AttachmentStream implements AttachmentStreamInterface
      */
     public function cleanUp(OutputWorkflowSignalsEvent $signalsEvent): void
     {
-        // keep assets if guard exception occurs: use may want to retry!
+        // keep assets if guard exception occurs: user may want to retry!
 
         if ($signalsEvent->hasGuardException() === true) {
             return;

@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\DependencyInjection;
 
 use FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter;
+use FormBuilderBundle\Storage\SessionStorageProvider;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -671,6 +672,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->booleanNode('enabled')->defaultValue(false)->end()
+                ->scalarNode('storage_provider')->defaultValue(SessionStorageProvider::class)->end()
             ->end();
 
         return $rootNode;

@@ -7,6 +7,7 @@ use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\VirtualActionDefinitions;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
@@ -155,8 +156,13 @@ class ExtJsFormBuilder
             ? $this->serializer->normalize($outputWorkflow->getChannels(), 'array', ['groups' => ['ExtJs']])
             : [];
 
+        $virtualFunnelActionDefinitions = $this->serializer instanceof NormalizerInterface
+            ? $this->serializer->normalize(VirtualActionDefinitions::getVirtualFunnelActionDefinitions(), 'array', ['groups' => ['ExtJs']])
+            : [];
+
         $data['output_workflow_channels'] = $outputWorkflowChannels;
         $data['output_workflow_channels_store'] = $this->generateAvailableWorkflowChannelsList($outputWorkflow);
+        $data['output_workflow_channels_virtual_funnel_action_definitions'] = $virtualFunnelActionDefinitions;
         $data['output_workflow_success_management'] = $outputWorkflow->getSuccessManagement();
 
         return $data;

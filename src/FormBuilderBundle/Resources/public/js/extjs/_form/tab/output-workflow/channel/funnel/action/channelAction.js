@@ -42,7 +42,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelAction.channelAction = 
             queryMode: 'local',
             valueField: 'channelName',
             displayField: 'label',
-            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.funnel_layer.funnel_channel_relation'),
+            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.funnel_action.channel.channel'),
             listeners: {
                 render: this.onChannelComboRender.bind(this),
                 change: this.onChannelChange.bind(this)

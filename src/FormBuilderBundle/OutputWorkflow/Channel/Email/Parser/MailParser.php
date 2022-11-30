@@ -14,7 +14,6 @@ use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
 class MailParser
 {
     protected EngineInterface $templating;
-    protected Email $mailTemplate;
     protected FormValuesOutputApplierInterface $formValuesOutputApplier;
     protected PlaceholderParserInterface $placeholderParser;
 

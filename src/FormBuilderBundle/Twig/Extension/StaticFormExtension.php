@@ -54,8 +54,10 @@ class StaticFormExtension extends AbstractExtension
         $optionBuilder->setOutputWorkflow($options['output_workflow']);
 
         $viewVars = array_merge(
-            ['editmode' => $context['editmode']],
-            $this->formAssembler->assembleViewVars($optionBuilder)
+            [
+                'editmode' => $context['editmode']
+            ],
+            $this->formAssembler->assemble($optionBuilder)
         );
 
         return $environment->render('@FormBuilder/form/form.html.twig', $viewVars);

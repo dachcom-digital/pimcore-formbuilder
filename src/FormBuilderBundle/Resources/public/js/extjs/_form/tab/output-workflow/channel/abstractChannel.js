@@ -12,6 +12,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.abstractChannel = Class.creat
     panel: null,
 
     virtualFunnelAware: false,
+    virtualFunnelActionDefinitions: [],
     funnelActionLayout: null,
     funnelActionDispatcherDataClasses: null,
 
@@ -28,6 +29,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.abstractChannel = Class.creat
         this.funnelActions = data && data.hasOwnProperty('funnelActions') ? data.funnelActions : null;
 
         this.virtualFunnelAware = false;
+        this.virtualFunnelActionDefinitions = [];
         this.funnelActionLayout = null;
         this.funnelActionDispatcherDataClasses = null;
 
@@ -84,20 +86,15 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.abstractChannel = Class.creat
         return data;
     },
 
-    getVirtualFunnelActions: function () {
-        return [
-            {
-                name: 'virtualFunnelSuccess',
-                label: 'On Success'
-            },
-            {
-                name: 'virtualFunnelError',
-                label: 'On Error'
-            }
-        ];
+    setVirtualFunnelActionDefinitions: function (virtualFunnelActionDefinitions) {
+        this.virtualFunnelActionDefinitions = virtualFunnelActionDefinitions;
     },
 
-    populateFunnelActions: function (funnelActionElements, clearActionLayout) {
+    getVirtualFunnelActionDefinitions: function () {
+        return this.virtualFunnelActionDefinitions;
+    },
+
+    populateFunnelActions: function (funnelActionDefinitions, clearActionLayout) {
 
         var funnelActions = [],
             funnelActionDispatcherDataClasses = [];
@@ -110,14 +107,14 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.abstractChannel = Class.creat
             this.funnelActionLayout.removeAll();
         }
 
-        Ext.Array.each(funnelActionElements, function (triggerElement) {
+        Ext.Array.each(funnelActionDefinitions, function (funnelActionDefinition) {
 
             var funnelActionDispatcherDataClass,
                 funnelActionConfig = null;
 
             if (this.getFunnelActions() !== null) {
                 Ext.Array.each(this.getFunnelActions(), function (funnelAction) {
-                    if (funnelAction.triggerName === triggerElement.name) {
+                    if (funnelAction.triggerName === funnelActionDefinition.name) {
                         funnelActionConfig = funnelAction;
                         return false;
                     }
@@ -127,7 +124,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.abstractChannel = Class.creat
             funnelActionDispatcherDataClass = new Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher(
                 this.workflowId,
                 this.channelName,
-                triggerElement,
+                funnelActionDefinition,
                 funnelActionConfig
             );
 

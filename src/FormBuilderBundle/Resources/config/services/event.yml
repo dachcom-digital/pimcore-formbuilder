@@ -5,22 +5,22 @@ services:
         autoconfigure: true
         public: false
 
-    # event subscriber: builder
     FormBuilderBundle\EventSubscriber\FormBuilderSubscriber:
         tags:
             - { name: kernel.event_subscriber }
 
-    # core event: request
     FormBuilderBundle\EventListener\Core\RequestListener:
         tags:
             - { name: kernel.event_subscriber }
 
-    # core event: mail param listener
     FormBuilderBundle\EventListener\Core\MailParamListener:
         tags:
             - { name: kernel.event_subscriber }
 
-    # core event: clean up unused tmp files
+    FormBuilderBundle\EventListener\Funnel\FunnelFormListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
     FormBuilderBundle\EventListener\Core\CleanUpListener:
         tags:
             - {name: pimcore.maintenance.task, type: formbuilder_clean_up }

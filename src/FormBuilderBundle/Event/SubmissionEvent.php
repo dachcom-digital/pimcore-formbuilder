@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Event;
 
+use FormBuilderBundle\Form\RuntimeData\FunnelFormRuntimeData;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,15 +11,18 @@ class SubmissionEvent extends Event
 {
     private Request $request;
     private FormInterface $form;
+    protected ?FunnelFormRuntimeData $funnelFormRuntimeData = null;
+
     private ?array $formRuntimeData;
     private ?string $redirectUri = null;
     private bool $outputWorkflowFinisherDisabled = false;
 
-    public function __construct(Request $request, ?array $formRuntimeData, FormInterface $form)
+    public function __construct(Request $request, ?array $formRuntimeData, FormInterface $form, ?FunnelFormRuntimeData $funnelFormRuntimeData = null)
     {
         $this->request = $request;
         $this->formRuntimeData = $formRuntimeData;
         $this->form = $form;
+        $this->funnelFormRuntimeData = $funnelFormRuntimeData;
     }
 
     public function disableOutputWorkflowFinisher(): void
@@ -56,8 +60,14 @@ class SubmissionEvent extends Event
         return $this->formRuntimeData;
     }
 
+    public function getFunnelFormRuntimeData(): ?FunnelFormRuntimeData
+    {
+        return $this->funnelFormRuntimeData;
+    }
+
     public function getForm(): FormInterface
     {
         return $this->form;
     }
+
 }

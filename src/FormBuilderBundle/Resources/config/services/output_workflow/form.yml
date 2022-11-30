@@ -57,6 +57,10 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\Type\DisabledActionType:
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Admin\Type\OutputWorkflow\SuccessManagementType:
         tags:
             - { name: form.type }

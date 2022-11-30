@@ -1,0 +1,8 @@
+FormBuilderBundle\Model\FunnelActionDefinition:
+    attributes:
+        name:
+            groups: [Default, ExtJs, FunnelOutput]
+        label:
+            groups: [Default, ExtJs, FunnelOutput]
+        parameters:
+            groups: [Default, ExtJs, FunnelOutput]

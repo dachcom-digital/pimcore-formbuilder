@@ -20,7 +20,11 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnel = Class.create(Formbui
         return this.panel;
     },
 
-    getVirtualFunnelActions: function () {
+    getVirtualFunnelActionDefinitions: function () {
+
+        // do not allow virtual funnel action definitions
+        // in this channel, we have real ones!
+
         return [];
     },
 
@@ -117,7 +121,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnel = Class.create(Formbui
 
         this.panel.add(this.funnelLayerPanel);
 
-        this.populateFunnelActions(funnelLayerOptions === null ? [] : funnelLayerOptions.funnelActions, true);
+        this.populateFunnelActions(funnelLayerOptions === null ? [] : funnelLayerOptions.funnelActionDefinitions, true);
     },
 
     createFunnelLayerDataClass: function (funnelLayerType, funnelLayerOptions) {

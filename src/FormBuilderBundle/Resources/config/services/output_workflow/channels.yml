@@ -22,7 +22,6 @@ services:
         tags:
             - { name: form_builder.output_workflow.channel, type: api }
 
-    FormBuilderBundle\OutputWorkflow\Channel\Funnel\FunnelOutputChannelWorker: ~
     FormBuilderBundle\OutputWorkflow\Channel\Funnel\FunnelOutputChannel:
         tags:
             - { name: form_builder.output_workflow.channel, type: funnel }

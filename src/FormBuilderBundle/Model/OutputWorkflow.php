@@ -103,4 +103,20 @@ class OutputWorkflow implements OutputWorkflowInterface
     {
         return $this->channels;
     }
+
+    public function getChannelByName(string $name): ?OutputWorkflowChannelInterface
+    {
+        if (!$this->hasChannels()) {
+            return null;
+        }
+
+        /** @var OutputWorkflowChannelInterface $channel */
+        foreach ($this->getChannels() as $channel) {
+            if ($channel->getName() === $name) {
+                return $channel;
+            }
+        }
+
+        return null;
+    }
 }

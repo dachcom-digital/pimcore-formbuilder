@@ -3,39 +3,32 @@
 namespace FormBuilderBundle\Builder;
 
 use FormBuilderBundle\EventSubscriber\FormBuilderSubscriber;
-use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Factory\FormDataFactoryInterface;
-use FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface;
 use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FrontendFormBuilder
 {
     protected FormBuilderSubscriber $formBuilderSubscriber;
-    protected Configuration $configuration;
     protected RequestStack $requestStack;
-    protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator;
     protected FormFactoryInterface $formFactory;
     protected FormDataFactoryInterface $formDataFactory;
     protected UrlGeneratorInterface $router;
 
     public function __construct(
         FormBuilderSubscriber $formBuilderSubscriber,
-        Configuration $configuration,
         RequestStack $requestStack,
-        FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator,
         FormFactoryInterface $formFactory,
         FormDataFactoryInterface $formDataFactory,
         UrlGeneratorInterface $router
     ) {
         $this->formBuilderSubscriber = $formBuilderSubscriber;
-        $this->configuration = $configuration;
         $this->requestStack = $requestStack;
-        $this->formRuntimeDataAllocator = $formRuntimeDataAllocator;
         $this->formFactory = $formFactory;
         $this->formDataFactory = $formDataFactory;
         $this->router = $router;
@@ -44,7 +37,7 @@ class FrontendFormBuilder
     /**
      * @throws \Exception
      */
-    public function buildForm(FormDefinitionInterface $formDefinition, array $formRuntimeData = []): FormInterface
+    public function buildForm(FormDefinitionInterface $formDefinition, array $formRuntimeData = [], array $formData = []): FormInterface
     {
         $defaults = [
             'form_preset'   => null,
@@ -55,6 +48,7 @@ class FrontendFormBuilder
             $formRuntimeData = array_merge($defaults, $formRuntimeData);
         }
 
+        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         $formDefinitionConfig = $formDefinition->getConfiguration();
 
@@ -69,7 +63,7 @@ class FrontendFormBuilder
 
         if ($formDefinitionConfig['useAjax'] === true) {
             $formAttributes['data-ajax-structure-url'] = $this->router->generate('form_builder.controller.ajax.url_structure');
-            $formAttributes['class'] = $formAttributes['class'] . ' ajax-form';
+            $formAttributes['class'] = sprintf('%s ajax-form', $formAttributes['class']);
         }
 
         //@todo: implement inline functionality.
@@ -82,7 +76,7 @@ class FrontendFormBuilder
         $builder = $this->formFactory->createNamedBuilder(
             sprintf('formbuilder_%s', $formDefinition->getId()),
             DynamicFormType::class,
-            $this->formDataFactory->createFormData($formDefinition),
+            $this->formDataFactory->createFormData($formDefinition, $formData),
             [
                 'method'            => $formDefinitionConfig['method'],
                 'action'            => $formDefinitionConfig['action'] === '/' ? $request->getUri() : $formDefinitionConfig['action'],

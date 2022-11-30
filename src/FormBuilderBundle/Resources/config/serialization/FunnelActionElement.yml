@@ -1,6 +1,12 @@
 FormBuilderBundle\Model\FunnelActionElement:
     attributes:
-        name:
-            groups: [Default, ExtJs]
-        label:
-            groups: [Default, ExtJs]
+        path:
+            groups: [Default, FunnelOutput]
+        subject:
+            groups: [Default]
+        isChannelAware:
+            groups: [Default, FunnelOutput]
+        isDisabled:
+            groups: [Default, FunnelOutput]
+        funnelActionDefinition:
+            groups: [Default, FunnelOutput]

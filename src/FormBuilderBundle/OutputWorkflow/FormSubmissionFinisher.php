@@ -76,6 +76,11 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             return $this->buildErrorResponse($request, $submissionEvent, $errorMessage);
         }
 
+        if ($outputWorkflow->isFunnelWorkflow()) {
+            // A funnel initialization does not provide any success management
+            return $this->buildSuccessResponse($request, $submissionEvent);
+        }
+
         if ($outputWorkflow->getSuccessManagement() === null) {
             return $this->buildErrorResponse($request, $submissionEvent, 'No valid success management found.');
         }
@@ -88,6 +93,18 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             return $this->buildErrorResponse($request, $submissionEvent, $errorMessage);
         }
 
+        return $this->buildSuccessResponse($request, $submissionEvent);
+    }
+
+    protected function buildErrorResponse(Request $request, SubmissionEvent $submissionEvent, ?string $errorMessage): ?Response
+    {
+        return $request->isXmlHttpRequest()
+            ? $this->generateAjaxFinisherErrorResponse($errorMessage)
+            : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
+    }
+
+    protected function buildSuccessResponse(Request $request, SubmissionEvent $submissionEvent): ?Response
+    {
         return $request->isXmlHttpRequest()
             ? $this->generateAjaxFormSuccessResponse($submissionEvent)
             : $this->generateRedirectFormSuccessResponse($submissionEvent);
@@ -194,12 +211,5 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             'success'           => false,
             'validation_errors' => ['general' => $errors],
         ]);
-    }
-
-    protected function buildErrorResponse(Request $request, SubmissionEvent $submissionEvent, ?string $errorMessage): ?Response
-    {
-        return $request->isXmlHttpRequest()
-                ? $this->generateAjaxFinisherErrorResponse($errorMessage)
-                : $this->generateRedirectFinisherErrorResponse($submissionEvent, $errorMessage);
     }
 }
