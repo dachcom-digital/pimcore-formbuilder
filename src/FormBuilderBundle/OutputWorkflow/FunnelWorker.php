@@ -16,7 +16,7 @@ use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\FunnelActionElementSt
 use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use FormBuilderBundle\Registry\StorageProviderRegistry;
-use FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface;
+use FormBuilderBundle\Resolver\FunnelDataResolver;
 use FormBuilderBundle\Storage\StorageProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,24 +27,24 @@ class FunnelWorker implements FunnelWorkerInterface
     protected Configuration $configuration;
     protected StorageProviderRegistry $storageProviderRegistry;
     protected OutputWorkflowChannelRegistry $channelRegistry;
-    protected OutputWorkflowRepositoryInterface $outputWorkflowRepository;
     protected FrontendFormBuilder $frontendFormBuilder;
     protected FunnelActionElementAssembler $funnelActionElementAssembler;
+    protected FunnelDataResolver $funnelDataResolver;
 
     public function __construct(
         Configuration $configuration,
         StorageProviderRegistry $storageProviderRegistry,
         OutputWorkflowChannelRegistry $channelRegistry,
-        OutputWorkflowRepositoryInterface $outputWorkflowRepository,
         FrontendFormBuilder $frontendFormBuilder,
-        FunnelActionElementAssembler $funnelActionElementAssembler
+        FunnelActionElementAssembler $funnelActionElementAssembler,
+        FunnelDataResolver $funnelDataResolver,
     ) {
         $this->configuration = $configuration;
         $this->storageProviderRegistry = $storageProviderRegistry;
         $this->channelRegistry = $channelRegistry;
-        $this->outputWorkflowRepository = $outputWorkflowRepository;
         $this->frontendFormBuilder = $frontendFormBuilder;
         $this->funnelActionElementAssembler = $funnelActionElementAssembler;
+        $this->funnelDataResolver = $funnelDataResolver;
     }
 
     /**
@@ -110,24 +110,27 @@ class FunnelWorker implements FunnelWorkerInterface
     /**
      * @throws \Exception
      */
-    public function processFunnel(Request $request, string $funnelId, string $channelId, string $storageToken): Response
+    public function processFunnel(OutputWorkflowInterface $outputWorkflow, Request $request): Response
     {
-        $outputWorkflow = $this->outputWorkflowRepository->findById($funnelId);
-        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
-            throw new \Exception(sprintf('Funnel with id %d not found', $funnelId));
+        $funnelData = $this->funnelDataResolver->getFunnelData($request);
+
+        if (!$funnelData instanceof FunnelData) {
+            throw new \Exception($request, 'Invalid Funnel Data');
         }
 
         if (!$outputWorkflow->isFunnelWorkflow()) {
             throw new \Exception(sprintf('Funnel with id %d is not a valid funnel', $outputWorkflow->getId()));
         }
 
-        $channel = $outputWorkflow->getChannelByName($channelId);
+        $storageToken = $funnelData->getStorageToken();
+
+        $channel = $outputWorkflow->getChannelByName($funnelData->getChannelId());
+
         if (!$channel instanceof OutputWorkflowChannelInterface) {
-            throw new \Exception(sprintf('Channel with id %d not found', $channelId));
+            throw new \Exception(sprintf('Channel with id %d not found', $funnelData->getChannelId()));
         }
 
-        $storageProvider = $this->getStorageProvider();
-        $formStorageData = $storageProvider->fetch($request, $storageToken);
+        $formStorageData = $funnelData->getFormStorageData();
 
         if (!$formStorageData instanceof FormStorageData) {
             throw new \Exception(sprintf('No storage data for token "%s" found', $storageToken));
@@ -140,15 +143,12 @@ class FunnelWorker implements FunnelWorkerInterface
         $channelProcessor = $this->channelRegistry->get($channel->getType());
 
         $funnelWorkerData = new FunnelWorkerData(
-            $request,
+            $funnelData,
+            $submissionEvent,
             $outputWorkflow,
             $channel,
             $channelProcessor,
-            $submissionEvent,
-            $funnelFormRuntimeData,
-            $formStorageData,
-            $storageProvider,
-            $storageToken
+            $funnelFormRuntimeData
         );
 
         // it's a layout funnel
@@ -160,7 +160,7 @@ class FunnelWorker implements FunnelWorkerInterface
 
             if ($funnelFormRuntimeData->hasFunnelFormData($channel->getName())) {
                 $formStorageData->addFunnelFormData($channel->getName(), $funnelFormRuntimeData->getFunnelFormData($channel->getName()));
-                $storageProvider->update($request, $storageToken, $formStorageData);
+                $this->getStorageProvider()->update($request, $storageToken, $formStorageData);
             }
 
             return $funnelResponse;
@@ -182,7 +182,7 @@ class FunnelWorker implements FunnelWorkerInterface
 
             $funnelErrorToken = $funnelWorkerData->getFormStorageData()->addFunnelError($e->getMessage());
 
-            $funnelWorkerData->getStorageProvider()->update(
+            $this->getStorageProvider()->update(
                 $funnelWorkerData->getRequest(),
                 $funnelWorkerData->getStorageToken(),
                 $funnelWorkerData->getFormStorageData()

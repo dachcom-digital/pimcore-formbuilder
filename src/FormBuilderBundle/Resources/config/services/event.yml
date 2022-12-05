@@ -17,7 +17,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    FormBuilderBundle\EventListener\Funnel\FunnelFormListener:
+    FormBuilderBundle\EventListener\Core\FunnelRouteListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Core\FunnelFormAssemblingListener:
         tags:
             - { name: kernel.event_subscriber }
 

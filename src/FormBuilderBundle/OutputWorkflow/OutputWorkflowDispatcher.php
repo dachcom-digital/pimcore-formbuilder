@@ -3,75 +3,44 @@
 namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\SubmissionEvent;
-use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent;
-use FormBuilderBundle\EventSubscriber\OutputWorkflowSignalSubscriber;
+use FormBuilderBundle\EventSubscriber\SignalSubscribeHandler;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardStackedException;
-use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
 {
-    protected EventDispatcherInterface $eventDispatcher;
     protected OutputWorkflowChannelRegistry $channelRegistry;
     protected FunnelWorkerInterface $funnelWorker;
-    protected OutputWorkflowSignalSubscriber $subscriber;
+    protected SignalSubscribeHandler $signalSubscribeHandler;
 
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
         OutputWorkflowChannelRegistry $channelRegistry,
-        FunnelWorkerInterface $funnelWorker
+        FunnelWorkerInterface $funnelWorker,
+        SignalSubscribeHandler $signalSubscribeHandler
     ) {
-        $this->eventDispatcher = $eventDispatcher;
         $this->channelRegistry = $channelRegistry;
         $this->funnelWorker = $funnelWorker;
+        $this->signalSubscribeHandler = $signalSubscribeHandler;
     }
 
     public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
     {
-        $this->subscriber = new OutputWorkflowSignalSubscriber();
-        $this->eventDispatcher->addSubscriber($this->subscriber);
-
         if ($outputWorkflow->isFunnelWorkflow()) {
-            $this->dispatchOutputWorkflowFunnel($outputWorkflow, $submissionEvent);
+            $this->dispatchOutputWorkflowFunnelInitiating($outputWorkflow, $submissionEvent);
         } else {
-            $this->dispatchOutputWorkflow($outputWorkflow, $submissionEvent);
+            $this->dispatchOutputWorkflowInitiating($outputWorkflow, $submissionEvent);
         }
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function dispatchOutputWorkflowFunnel(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
+    protected function dispatchOutputWorkflowInitiating(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
     {
-        // @todo: handle signals in funnel workflow!
+        $this->signalSubscribeHandler->listen(SignalSubscribeHandler::CHANNEL_OUTPUT_WORKFLOW);
 
-        try {
-            $this->funnelWorker->initiateFunnel($outputWorkflow, $submissionEvent);
-        } catch (\Throwable $e) {
-
-            $this->dispatchSignalsEvent($e);
-
-            throw new \Exception(
-                sprintf(
-                    '"%s" workflow funnel errored at initialization: %s',
-                    $outputWorkflow->getName(),
-                    $e->getMessage()
-                )
-            );
-        }
-    }
-
-    /**
-     * @throws GuardOutputWorkflowException
-     * @throws GuardStackedException
-     * @throws \Exception
-     */
-    protected function dispatchOutputWorkflow(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
-    {
         $exceptionStack = [];
         foreach ($outputWorkflow->getChannels() as $index => $channel) {
             try {
@@ -81,13 +50,13 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
                 $exceptionStack[] = $e;
             } catch (GuardOutputWorkflowException $e) {
 
-                $this->dispatchSignalsEvent($e);
+                $this->signalSubscribeHandler->broadcast(['exception' => $e]);
 
                 throw $e;
 
             } catch (\Throwable $e) {
 
-                $this->dispatchSignalsEvent($e);
+                $this->signalSubscribeHandler->broadcast(['exception' => $e]);
 
                 throw new \Exception(
                     sprintf(
@@ -104,18 +73,54 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         if (count($exceptionStack) > 0) {
 
             $exception = new GuardStackedException($exceptionStack);
-            $this->dispatchSignalsEvent($exception);
+            $this->signalSubscribeHandler->broadcast(['exception' => $exception]);
 
             throw $exception;
         }
 
-        $this->dispatchSignalsEvent();
+        $this->signalSubscribeHandler->broadcast();
     }
 
-    protected function dispatchSignalsEvent(?\Throwable $exception = null): void
+    protected function dispatchOutputWorkflowFunnelInitiating(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
     {
-        $signals = $this->subscriber->getSignals();
-        $this->eventDispatcher->removeSubscriber($this->subscriber);
-        $this->eventDispatcher->dispatch(new OutputWorkflowSignalsEvent($signals, $exception), FormBuilderEvents::OUTPUT_WORKFLOW_SIGNALS);
+        $this->signalSubscribeHandler->listen(SignalSubscribeHandler::CHANNEL_FUNNEL_INITIATE);
+
+        try {
+            $this->funnelWorker->initiateFunnel($outputWorkflow, $submissionEvent);
+        } catch (\Throwable $e) {
+
+            $this->signalSubscribeHandler->broadcast(['exception' => $e]);
+
+            throw new \Exception(
+                sprintf(
+                    '"%s" workflow funnel errored at initialization state: %s',
+                    $outputWorkflow->getName(),
+                    $e->getMessage()
+                )
+            );
+        }
+
+        $this->signalSubscribeHandler->broadcast();
     }
+
+    public function dispatchOutputWorkflowFunnelProcessing(OutputWorkflowInterface $outputWorkflow, Request $request): Response
+    {
+        // signals for funnel processing will be handled in FunnelRouteListener
+
+        try {
+            $response = $this->funnelWorker->processFunnel($outputWorkflow, $request);
+        } catch (\Throwable $e) {
+
+            throw new \Exception(
+                sprintf(
+                    '"%s" workflow funnel errored at processing state: %s',
+                    $outputWorkflow->getName(),
+                    $e->getMessage()
+                )
+            );
+        }
+
+        return $response;
+    }
+
 }

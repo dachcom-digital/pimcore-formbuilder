@@ -12,8 +12,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AttachmentStream implements AttachmentStreamInterface
 {
+    public const SIGNAL_CLEAN_UP = 'tmp_file_attachment_stream';
     protected const PACKAGE_IDENTIFIER = 'formbuilder_package_identifier';
-    protected const SIGNAL_CLEAN_UP = 'tmp_file_attachment_stream';
 
     protected EventDispatcherInterface $eventDispatcher;
     protected FileLocator $fileLocator;
@@ -29,7 +29,7 @@ class AttachmentStream implements AttachmentStreamInterface
      */
     public function createAttachmentLinks(array $data, string $formName): array
     {
-        return $this->extractFiles($data);
+        return $this->extractFiles($data)->getFiles();
     }
 
     public function createAttachmentAsset($data, $fieldName, $formName): ?Asset
@@ -40,7 +40,7 @@ class AttachmentStream implements AttachmentStreamInterface
 
         $files = $this->extractFiles($data);
 
-        if (count($files) === 0) {
+        if ($files->count() === 0) {
             return null;
         }
 
@@ -152,8 +152,13 @@ class AttachmentStream implements AttachmentStreamInterface
         }
 
         foreach ($signalsEvent->getSignalsByName(self::SIGNAL_CLEAN_UP) as $signal) {
-            /** @var File $attachmentFile */
-            foreach ($signal->getData() as $attachmentFile) {
+
+            $fileStack = $signal->getData();
+            if (!$fileStack instanceof FileStack) {
+                continue;
+            }
+
+            foreach ($fileStack->getFiles() as $attachmentFile) {
                 $this->removeAttachmentFile($attachmentFile);
             }
         }
@@ -171,12 +176,9 @@ class AttachmentStream implements AttachmentStreamInterface
         $this->fileLocator->removeDir($target);
     }
 
-    /**
-     * @return array<int, File>
-     */
-    protected function extractFiles(array $data): array
+    protected function extractFiles(array $data): FileStack
     {
-        $files = [];
+        $files = new FileStack();
         foreach ($data as $fileData) {
 
             $fileId = (string) $fileData['id'];
@@ -185,16 +187,13 @@ class AttachmentStream implements AttachmentStreamInterface
             if (is_dir($fileDir)) {
                 $dirFiles = glob($fileDir . '/*');
                 if (count($dirFiles) === 1) {
-                    $files[] = new File($fileId, $fileData['fileName'], $dirFiles[0]);
+                    $files->addFile(new File($fileId, $fileData['fileName'], $dirFiles[0]));
                 }
             }
         }
 
         // add signal for later clean up
-        $this->eventDispatcher->dispatch(
-            new OutputWorkflowSignalEvent(self::SIGNAL_CLEAN_UP, $files),
-            OutputWorkflowSignalEvent::NAME
-        );
+        $this->eventDispatcher->dispatch(new OutputWorkflowSignalEvent(self::SIGNAL_CLEAN_UP, $files), OutputWorkflowSignalEvent::NAME);
 
         return $files;
     }

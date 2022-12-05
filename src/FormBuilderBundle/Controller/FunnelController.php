@@ -2,7 +2,10 @@
 
 namespace FormBuilderBundle\Controller;
 
-use FormBuilderBundle\OutputWorkflow\FunnelWorkerInterface;
+use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\OutputWorkflow\OutputWorkflowDispatcherInterface;
+use FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface;
+use FormBuilderBundle\Resolver\FunnelDataResolver;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,24 +13,47 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FunnelController extends FrontendController
 {
-    protected FunnelWorkerInterface $funnelWorker;
+    protected OutputWorkflowRepositoryInterface $outputWorkflowRepository;
+    protected OutputWorkflowDispatcherInterface $outputWorkflowDispatcher;
+    protected FunnelDataResolver $funnelDataResolver;
 
-    public function __construct(FunnelWorkerInterface $funnelWorker)
-    {
-        $this->funnelWorker = $funnelWorker;
+    public function __construct(
+        OutputWorkflowRepositoryInterface $outputWorkflowRepository,
+        OutputWorkflowDispatcherInterface $outputWorkflowDispatcher,
+        FunnelDataResolver $funnelDataResolver,
+    ) {
+        $this->outputWorkflowRepository = $outputWorkflowRepository;
+        $this->outputWorkflowDispatcher = $outputWorkflowDispatcher;
+        $this->funnelDataResolver = $funnelDataResolver;
     }
 
     public function dispatchAction(Request $request, string $funnelId, string $channelId, string $storageToken): Response
     {
-        try {
-            $response = $this->funnelWorker->processFunnel($request, $funnelId, $channelId, $storageToken);
-        } catch (\Throwable $e) {
+        // funnel processing will be handled in FunnelRouteListener
 
-            return $request->isXmlHttpRequest()
-                ? new JsonResponse(['success' => false, 'message' => $e->getMessage()])
-                : $this->renderTemplate('@FormBuilder/funnel/error.html.twig', ['error' => $e->getMessage()]);
+        if (!$this->funnelDataResolver->isFunnelProcessRequest($request)) {
+            return $this->renderError($request, 'Funnel Request not found or expired.');
+        }
+
+        try {
+
+            $outputWorkflow = $this->outputWorkflowRepository->findById($funnelId);
+            if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+                return $this->renderError($request, sprintf('Funnel with id %d not found', $funnelId));
+            }
+
+            $response = $this->outputWorkflowDispatcher->dispatchOutputWorkflowFunnelProcessing($outputWorkflow, $request);
+        } catch (\Throwable $e) {
+            return $this->renderError($request, $e->getMessage());
         }
 
         return $response;
+    }
+
+    protected function renderError(Request $request, string $error): Response
+    {
+        return $request->isXmlHttpRequest()
+            ? new JsonResponse(['success' => false, 'message' => $error])
+            : $this->renderTemplate('@FormBuilder/funnel/error.html.twig', ['error' => $error]);
     }
 }

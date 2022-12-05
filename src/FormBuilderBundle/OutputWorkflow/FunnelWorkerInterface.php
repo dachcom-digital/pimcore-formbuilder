@@ -17,5 +17,5 @@ interface FunnelWorkerInterface
     /**
      * @throws \Exception
      */
-    public function processFunnel(Request $request, string $funnelId, string $channelId, string $storageToken): Response;
+    public function processFunnel(OutputWorkflowInterface $outputWorkflow, Request $request): Response;
 }

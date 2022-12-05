@@ -48,6 +48,7 @@ class SimpleLayoutLayer implements FunnelLayerInterface
 
         $funnelLayerResponse->setFunnelLayerView('@FormBuilder/funnel/layer/simple_layout_layer.html.twig');
         $funnelLayerResponse->setFunnelLayerViewArguments(['layout' => $layout]);
+        $funnelLayerResponse->setRenderType(FunnelLayerResponse::RENDER_TYPE_PRERENDER);
 
         return $funnelLayerResponse;
     }

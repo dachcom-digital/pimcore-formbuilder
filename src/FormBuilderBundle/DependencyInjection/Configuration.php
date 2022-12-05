@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\DependencyInjection;
 
 use FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter;
+use FormBuilderBundle\EventSubscriber\SignalStorage\FormDataSignalStorage;
 use FormBuilderBundle\Storage\SessionStorageProvider;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -673,6 +674,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->booleanNode('enabled')->defaultValue(false)->end()
                 ->scalarNode('storage_provider')->defaultValue(SessionStorageProvider::class)->end()
+                ->scalarNode('signal_storage_class')->defaultValue(FormDataSignalStorage::class)->end()
             ->end();
 
         return $rootNode;

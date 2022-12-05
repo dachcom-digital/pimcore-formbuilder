@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterface
 {
@@ -29,17 +30,20 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
     protected SerializerInterface $serializer;
     protected FunnelLayerRegistry $funnelLayerRegistry;
     protected FormFactoryInterface $formFactory;
+    protected Environment $renderer;
 
     public function __construct(
         EngineInterface $templating,
         SerializerInterface $serializer,
         FunnelLayerRegistry $funnelLayerRegistry,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
+        Environment $renderer
     ) {
         $this->templating = $templating;
         $this->serializer = $serializer;
         $this->funnelLayerRegistry = $funnelLayerRegistry;
         $this->formFactory = $formFactory;
+        $this->renderer = $renderer;
     }
 
     public function getFormType(): string
@@ -117,20 +121,29 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
 
         $viewArguments = array_merge($funnelLayerResponse->getFunnelLayerViewArguments(), [
             'form'          => $form->createView(),
+            'formTheme'  => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template'] ?? null,
             'funnelActions' => $funnelWorkerData->getFunnelActionElementStack(),
         ]);
 
+        $templateArguments = [
+            'renderType' => $funnelLayerResponse->getRenderType(),
+            'view'       => $funnelLayerResponse->getFunnelLayerView()
+        ];
+
+        if ($funnelLayerResponse->getRenderType() === FunnelLayerResponse::RENDER_TYPE_PRERENDER) {
+
+            $template = $this->renderer->createTemplate($this->templating->render(
+                $funnelLayerResponse->getFunnelLayerView(),
+                $viewArguments
+            ));
+
+            $templateArguments['view'] = $template->render($viewArguments);
+        }
+
         $template = $this->templating->render(
             '@FormBuilder/funnel/base.html.twig',
-            array_merge(
-                $viewArguments,
-                [
-                    'layerView' => $funnelLayerResponse->getFunnelLayerView(),
-                ]
-            )
+            array_merge($viewArguments, $templateArguments)
         );
-
-        // @todo: placeholder
 
         if ($funnelWorkerData->getRequest()->isXmlHttpRequest()) {
 

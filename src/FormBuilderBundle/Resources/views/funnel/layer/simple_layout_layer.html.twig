@@ -1,4 +1,6 @@
-{% extends '@FormBuilder/layout_funnel.html.twig' %}
+{% if formTheme is not null %}
+    {% form_theme form with [formTheme ~ '.html.twig'] only %}
+{% endif %}
 
 {% block funnel_content %}
 
@@ -9,7 +11,7 @@
     {% endif %}
 
     {% if funnelActions.hasByName('button1') %}
-        <a href="{{ funnelActions.getByName('button1').path }}" class="btn btn-default">Go!</a>
+
     {% endif %}
 
 {% endblock funnel_content %}

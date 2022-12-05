@@ -23,7 +23,7 @@ class SessionStorageProvider implements StorageProviderInterface
 
         // clean-up?
 
-        $session->set($token, $this->serializer->serialize($formStorageData, 'json'));
+        $session->set($token, $this->serializer->serialize($formStorageData, 'json', ['groups' => ['OutputWorkflow']]));
 
         return $token;
     }
@@ -32,7 +32,7 @@ class SessionStorageProvider implements StorageProviderInterface
     {
         $session = $request->getSession();
 
-        $session->set($token, $this->serializer->serialize($formStorageData, 'json'));
+        $session->set($token, $this->serializer->serialize($formStorageData, 'json', ['groups' => ['OutputWorkflow']]));
     }
 
     public function flush(Request $request, string $token): void
@@ -54,7 +54,7 @@ class SessionStorageProvider implements StorageProviderInterface
             return null;
         }
 
-        return $this->serializer->deserialize($data, FormStorageData::class, 'json');
+        return $this->serializer->deserialize($data, FormStorageData::class, 'json', ['groups' => ['OutputWorkflow']]);
     }
 
     protected function generateToken(): string

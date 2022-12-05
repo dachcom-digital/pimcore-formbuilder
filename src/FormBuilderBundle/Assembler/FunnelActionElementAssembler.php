@@ -11,14 +11,11 @@ use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\FunnelActionElementSt
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\VirtualActionDefinitions;
 use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
 use FormBuilderBundle\Registry\FunnelActionRegistry;
+use FormBuilderBundle\Resolver\FunnelDataResolver;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FunnelActionElementAssembler
 {
-    public const FUNNEL_STORAGE_TOKEN_FRAGMENT = 'funnel_data_token';
-    public const FUNNEL_ERROR_TOKEN_FRAGMENT = 'funnel_error_token';
-    public const FUNNEL_FUNNEL_FINISHED_FRAGMENT = 'funnel_finished';
-
     protected FunnelActionRegistry $funnelActionRegistry;
 
     public function __construct(FunnelActionRegistry $funnelActionRegistry)
@@ -121,6 +118,8 @@ class FunnelActionElementAssembler
         $outputWorkflow = $channel->getOutputWorkflow();
 
         if ($funnelActionElement->isChannelAware()) {
+            // @todo: no necessarily true, we need to add a flag to the channel to determinate if it's the last one
+            // which allows us to shutdown the funnel process!
             $funnelFinished = $this->isLastChannel($outputWorkflow, $funnelActionElement->getSubject());
         }
 
@@ -129,15 +128,15 @@ class FunnelActionElementAssembler
         $query = [];
 
         if (!str_contains($path, $context['storageToken'])) {
-            $query[self::FUNNEL_STORAGE_TOKEN_FRAGMENT] = $context['storageToken'];
+            $query[FunnelDataResolver::FUNNEL_STORAGE_TOKEN_FRAGMENT] = $context['storageToken'];
         }
 
         if ($context['errorToken'] !== null) {
-            $query[self::FUNNEL_ERROR_TOKEN_FRAGMENT] = $context['errorToken'];
+            $query[FunnelDataResolver::FUNNEL_ERROR_TOKEN_FRAGMENT] = $context['errorToken'];
         }
 
         if ($funnelFinished === true) {
-            $query[self::FUNNEL_FUNNEL_FINISHED_FRAGMENT] = $outputWorkflow->getFormDefinition()->getId();
+            $query[FunnelDataResolver::FUNNEL_FUNNEL_FINISHED_FRAGMENT] = $outputWorkflow->getFormDefinition()->getId();
         }
 
         if (count($query) === 0) {

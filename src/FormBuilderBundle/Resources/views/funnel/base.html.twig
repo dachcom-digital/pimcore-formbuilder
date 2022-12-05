@@ -1,12 +1,20 @@
 {% extends '@FormBuilder/layout_funnel.html.twig' %}
 
+{% if formTheme is not null %}
+    {% form_theme form with [formTheme ~ '.html.twig'] only %}
+{% endif %}
+
 {% block funnel_content %}
 
-    {% form_theme form with ['foundation_5_layout.html.twig'] only %}
-
     {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
-        {% include layerView %}
-        {{ form_rest(form) }}
-    {{  form_end(form) }}
+
+    {% if renderType == 'include' %}
+        {% include view %}
+    {% elseif renderType == 'prerender' %}
+        {{ view|raw }}
+    {% endif %}
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
 
 {% endblock funnel_content %}
