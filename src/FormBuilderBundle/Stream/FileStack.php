@@ -16,6 +16,9 @@ class FileStack
         $this->files[] = $file;
     }
 
+    /**
+     * @return array<int, File>
+     */
     public function getFiles(): array
     {
         return $this->files;

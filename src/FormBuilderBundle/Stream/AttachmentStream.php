@@ -38,14 +38,14 @@ class AttachmentStream implements AttachmentStreamInterface
             return null;
         }
 
-        $files = $this->extractFiles($data);
+        $fileStack = $this->extractFiles($data);
 
-        if ($files->count() === 0) {
+        if ($fileStack->count() === 0) {
             return null;
         }
 
         $packageIdentifier = '';
-        foreach ($files as $file) {
+        foreach ($fileStack->getFiles() as $file) {
             $packageIdentifier .= sprintf('%s-%s-%s-%s', filesize($file->getPath()), $file->getId(), $file->getPath(), $file->getName());
         }
 
@@ -67,7 +67,7 @@ class AttachmentStream implements AttachmentStreamInterface
             $zip = new \ZipArchive();
             $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-            foreach ($files as $file) {
+            foreach ($fileStack->getFiles() as $file) {
                 $zip->addFile($file->getPath(), $file->getName());
             }
 
