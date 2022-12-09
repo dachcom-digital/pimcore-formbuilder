@@ -226,16 +226,23 @@ class FormDefinition implements FormDefinitionInterface
         return $fieldContainerDefinition;
     }
 
-    public function getFieldsByType(string $type): array
+    public function getFieldsByType(string $type, ?array $fields = null, array $foundFields = []): array
     {
-        $fields = [];
-        foreach ($this->getFields() as $field) {
+        if ($fields === null) {
+            $fields = $this->getFields();
+        }
+
+        foreach ($fields as $field) {
             if ($field->getType() === $type) {
-                $fields[] = $field;
+                $foundFields[] = $field;
+            }
+
+            if ($field instanceof FormFieldContainerDefinitionInterface && count($field->getFields()) > 0) {
+                return $this->getFieldsByType($type, $field->getFields(), $foundFields);
             }
         }
 
-        return $fields;
+        return $foundFields;
     }
 
     protected function findField(array $fields, mixed $value, bool $deep = false): ?FieldDefinitionInterface
