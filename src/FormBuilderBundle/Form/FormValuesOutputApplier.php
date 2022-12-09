@@ -54,7 +54,7 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
             $formField = $form->get($field->getName());
             $formFieldValue = $formData->getFieldValue($field->getName());
 
-            $parsedField = $this->parseField($formData, $field, $formField, $locale, $formFieldValue);
+            $parsedField = $this->parseField($formData, $field, $formField, $locale, $formFieldValue, $ignoreFields);
 
             if ($parsedField !== null) {
                 $fieldValues[$field->getName()] = $parsedField;
@@ -69,7 +69,8 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         FieldDefinitionInterface $fieldDefinition,
         FormInterface $formField,
         ?string $locale,
-        mixed $fieldRawValue
+        mixed $fieldRawValue,
+        array $ignoreFields
     ): ?array {
 
         if ($fieldDefinition instanceof FormFieldContainerDefinitionInterface) {
@@ -78,13 +79,19 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
                 $subCollectionFieldValues = [];
                 /** @var FormFieldDefinitionInterface $subEntityField */
                 foreach ($fieldDefinition->getFields() as $subEntityField) {
+
+                    if (in_array($subEntityField->getName(), $ignoreFields, true)) {
+                        continue;
+                    }
+
                     $subFormField = $subFieldCollection->get($subEntityField->getName());
                     $subFieldRawValue = is_array($fieldRawValue) && isset($fieldRawValue[$index][$subEntityField->getName()]) ? $fieldRawValue[$index][$subEntityField->getName()] : null;
-                    $parsedSubField = $this->parseField($formData, $subEntityField, $subFormField, $locale, $subFieldRawValue);
+                    $parsedSubField = $this->parseField($formData, $subEntityField, $subFormField, $locale, $subFieldRawValue, $ignoreFields);
                     if ($parsedSubField !== null) {
                         $subCollectionFieldValues[] = $parsedSubField;
                     }
                 }
+
                 if (count($subCollectionFieldValues) > 0) {
                     $subFieldValues[] = $subCollectionFieldValues;
                 }

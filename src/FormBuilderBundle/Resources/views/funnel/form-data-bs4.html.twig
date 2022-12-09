@@ -1,0 +1,45 @@
+{% macro render(field) %}
+    {% set value = field.value %}
+    {% if value is iterable %}
+        {% set value = value|join(', ') %}
+    {% endif %}
+    {% if value is not empty %}
+        <li class="list-group-item">
+            <strong>{{ field.email_label|default(field.label)|raw }}:</strong> <span>{{ value }}</span>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as formFieldRenderer %}
+
+<ul class="list-group list-group-flush">
+    {% for field in fields|default([]) %}
+        {% if field.field_type == 'simple' %}
+            {{ formFieldRenderer.render(field) }}
+        {% elseif field.field_type == 'container' %}
+            {% if field.fields is defined and field.fields is iterable and field.fields|length > 0 %}
+                {% if field.label != false %}
+                    <li class="list-group-item bg-light">
+                        <strong>{{ field.label|trans }}</strong>
+                    </li>
+                {% endif %}
+                <li class="list-group-item">
+                    <ul class="list-group list-group-flush bg-light">
+                        {% for field_container in field.fields %}
+                            {% if field_container is iterable %}
+                                {% if field.block_label is defined and field.block_label != false %}
+                                    <li class="list-group-item">
+                                        <strong>{{ field.block_label|trans }}:</strong>
+                                    </li>
+                                {% endif %}
+                                {% for sub_field in field_container %}
+                                    {{ formFieldRenderer.render(sub_field) }}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</ul>
