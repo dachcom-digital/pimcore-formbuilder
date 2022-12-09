@@ -103,5 +103,5 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
      *
      * @internal
      */
-    public function getFieldsByType(string $type): array;
+    public function getFieldsByType(string $type, ?array $fields = null, array $foundFields = []): array;
 }

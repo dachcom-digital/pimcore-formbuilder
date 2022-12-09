@@ -12,16 +12,16 @@ services:
 
     FormBuilderBundle\Transformer\ChoicesTransformer:
         tags:
-            - {name: form_builder.transformer.options}
+            - { name: form_builder.transformer.options }
 
     FormBuilderBundle\Transformer\DefaultValueTransformer:
         tags:
-            - {name: form_builder.transformer.options}
+            - { name: form_builder.transformer.options }
 
     FormBuilderBundle\Transformer\HrefTransformer:
         tags:
-            - {name: form_builder.transformer.options}
+            - { name: form_builder.transformer.options }
 
     FormBuilderBundle\Transformer\ChoicesMetaTransformer:
         tags:
-            - {name: form_builder.transformer.dynamic_options}
+            - { name: form_builder.transformer.dynamic_options }

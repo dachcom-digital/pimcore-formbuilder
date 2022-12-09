@@ -9,24 +9,25 @@ services:
 
     FormBuilderBundle\Transformer\Output\FallbackTransformer:
         tags:
-            - {name: form_builder.transformer.output, type: fallback_transformer, channel: _all }
+            - { name: form_builder.transformer.output, type: fallback_transformer, channel: _all }
 
     FormBuilderBundle\Transformer\Output\DynamicMultiFileTransformer:
         tags:
-            - {name: form_builder.transformer.output, type: dynamic_multi_file_transformer, channel: mail }
+            - { name: form_builder.transformer.output, type: dynamic_multi_file_transformer, channel: mail }
+            - { name: form_builder.transformer.output, type: dynamic_multi_file_transformer, channel: funnel }
 
     FormBuilderBundle\Transformer\Output\DateDataObjectTransformer:
         tags:
-            - {name: form_builder.transformer.output, type: date_transformer, channel: object }
+            - { name: form_builder.transformer.output, type: date_transformer, channel: object }
 
     FormBuilderBundle\Transformer\Output\ChoiceDataObjectTransformer:
         tags:
-            - {name: form_builder.transformer.output, type: choice_transformer, channel: object }
+            - { name: form_builder.transformer.output, type: choice_transformer, channel: object }
 
     FormBuilderBundle\Transformer\Output\CountryDataObjectTransformer:
         tags:
-            - {name: form_builder.transformer.output, type: country_transformer, channel: object }
+            - { name: form_builder.transformer.output, type: country_transformer, channel: object }
 
     FormBuilderBundle\Transformer\Output\CheckboxObjectTransformer:
         tags:
-            - {name: form_builder.transformer.output, type: checkbox_transformer, channel: object }
+            - { name: form_builder.transformer.output, type: checkbox_transformer, channel: object }

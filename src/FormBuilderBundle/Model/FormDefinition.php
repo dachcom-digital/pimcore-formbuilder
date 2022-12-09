@@ -238,7 +238,7 @@ class FormDefinition implements FormDefinitionInterface
             }
 
             if ($field instanceof FormFieldContainerDefinitionInterface && count($field->getFields()) > 0) {
-                return $this->getFieldsByType($type, $field->getFields(), $foundFields);
+                $foundFields = $this->getFieldsByType($type, $field->getFields(), $foundFields);
             }
         }
 
