@@ -11,16 +11,18 @@ class FormStorageData
     protected array $formData;
     protected ?array $formRuntimeData;
     protected string $initiationPath;
-    protected array $funnelData = [];
+    protected array $funnelRuntimeData = [];
     protected array $funnelErrors = [];
     protected array $attachmentSignals = [];
+
+    protected bool $funnelRuntimeDataDirty = false;
 
     public function __construct(
         ?int $formId,
         array $formData,
         ?array $formRuntimeData,
         string $initiationPath,
-        array $funnelData = [],
+        array $funnelRuntimeData = [],
         array $funnelErrors = [],
         array $attachmentSignals = []
     ) {
@@ -28,9 +30,10 @@ class FormStorageData
         $this->formData = $formData;
         $this->formRuntimeData = $formRuntimeData;
         $this->initiationPath = $initiationPath;
-        $this->funnelData = $funnelData;
+        $this->funnelRuntimeData = $funnelRuntimeData;
         $this->funnelErrors = $funnelErrors;
         $this->attachmentSignals = $attachmentSignals;
+        $this->funnelRuntimeDataDirty = false;
     }
 
     public function getFormId(): ?int
@@ -53,28 +56,49 @@ class FormStorageData
         return $this->initiationPath;
     }
 
-    public function addFunnelFormData(string $namespace, array $data): void
+    public function funnelRuntimeDataDirty(): bool
+    {
+        return $this->funnelRuntimeDataDirty === true;
+    }
+
+    public function resetRuntimeDataDirty(): void
+    {
+        $this->funnelRuntimeDataDirty = false;
+    }
+
+    public function setFunnelRuntimeData(array $funnelRuntimeData): void
+    {
+        $this->funnelRuntimeData = $funnelRuntimeData;
+    }
+
+    public function getFunnelRuntimeData(): array
+    {
+        return $this->funnelRuntimeData;
+    }
+
+    public function getNamespacedFunnelRuntimeData(string $namespace): ?array
+    {
+        return $this->funnelRuntimeData[$namespace] ?? null;
+    }
+
+    public function hasFunnelRuntimeData(string $namespace): bool
+    {
+        return count($this->funnelRuntimeData) > 0;
+    }
+
+    public function hasNamespacedFunnelRuntimeData(string $namespace): bool
+    {
+        return array_key_exists($namespace, $this->funnelRuntimeData) && count($this->funnelRuntimeData[$namespace]) > 0;
+    }
+
+    public function addFunnelRuntimeData(string $namespace, array $data): void
     {
         if (count($data) === 0) {
             return;
         }
 
-        $this->funnelData[$namespace] = $data;
-    }
-
-    public function getFunnelData(): array
-    {
-        return $this->funnelData;
-    }
-
-    public function hasFunnelFormData(string $namespace): bool
-    {
-        return array_key_exists($namespace, $this->funnelData) && count($this->funnelData[$namespace]) > 0;
-    }
-
-    public function getFunnelFormData(string $namespace): ?array
-    {
-        return $this->funnelData[$namespace] ?? null;
+        $this->funnelRuntimeData[$namespace] = $data;
+        $this->funnelRuntimeDataDirty = true;
     }
 
     public function addFunnelError(string $errorMessage): string

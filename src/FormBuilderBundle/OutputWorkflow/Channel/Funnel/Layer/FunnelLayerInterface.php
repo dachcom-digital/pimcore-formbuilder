@@ -16,5 +16,9 @@ interface FunnelLayerInterface
      */
     public function getFunnelActionDefinitions(): array;
 
-    public function buildResponse(FunnelLayerResponse $funnelLayerResponse, FormBuilderInterface $formBuilder): FunnelLayerResponse;
+    public function buildForm(FunnelLayerData $funnelLayerData, FormBuilderInterface $formBuilder): void;
+
+    public function handleFormData(FunnelLayerData $funnelLayerData, array $formData): array;
+
+    public function buildView(FunnelLayerData $funnelLayerData): void;
 }

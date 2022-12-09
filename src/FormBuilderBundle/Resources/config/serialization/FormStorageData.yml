@@ -6,9 +6,9 @@ FormBuilderBundle\Model\FormStorageData:
             groups: [Default, OutputWorkflow]
         formRuntimeData:
             groups: [Default, OutputWorkflow]
-        initiationPath:
+        funnelRuntimeData:
             groups: [Default, OutputWorkflow]
-        funnelData:
+        initiationPath:
             groups: [Default, OutputWorkflow]
         funnelErrors:
             groups: [Default, OutputWorkflow]

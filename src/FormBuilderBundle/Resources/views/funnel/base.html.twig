@@ -8,6 +8,8 @@
 
     {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
 
+    {{ form_errors(form) }}
+
     {% if renderType == 'include' %}
         {% include view %}
     {% elseif renderType == 'prerender' %}

@@ -362,11 +362,11 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             listeners: {
                 render: function () {
 
-                    var virtualFunnelActions = this.isFunnelOutputWorkflow() && channelDataClass.isVirtualFunnelAware()
+                    var virtualFunnelActions = this.isFunnelOutputWorkflow() && channelDataClass !== null && channelDataClass.isVirtualFunnelAware()
                         ? channelDataClass.getVirtualFunnelActionDefinitions()
                         : [];
 
-                    if (virtualFunnelActions.length > 0) {
+                    if (virtualFunnelActions.length > 0 && channelDataClass !== null) {
                         channelDataClass.populateFunnelActions(virtualFunnelActions)
                     }
                 }.bind(this)

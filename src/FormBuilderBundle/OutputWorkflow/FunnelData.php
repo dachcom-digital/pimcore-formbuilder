@@ -18,7 +18,7 @@ class FunnelData
         FormStorageData $formStorageData,
         string $funnelId,
         string $channelId,
-        string $storageToken,
+        string $storageToken
     ) {
         $this->request = $request;
         $this->formStorageData = $formStorageData;

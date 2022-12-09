@@ -2,27 +2,44 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer;
 
-use FormBuilderBundle\OutputWorkflow\FunnelWorkerData;
+use FormBuilderBundle\Event\SubmissionEvent;
+use Symfony\Component\HttpFoundation\Request;
 
-class FunnelLayerResponse
+class FunnelLayerData
 {
     public const RENDER_TYPE_INCLUDE = 'include';
     public const RENDER_TYPE_PRERENDER = 'prerender';
 
-    protected FunnelWorkerData $funnelWorkerData;
-
     protected string $view;
     protected string $renderType = self::RENDER_TYPE_INCLUDE;
     protected array $arguments = [];
+    protected Request $request;
+    protected SubmissionEvent $submissionEvent;
+    protected array $funnelLayerConfiguration;
 
-    public function __construct(FunnelWorkerData $funnelWorkerData)
-    {
-        $this->funnelWorkerData = $funnelWorkerData;
+    public function __construct(
+        Request $request,
+        SubmissionEvent $submissionEvent,
+        array $funnelLayerConfiguration
+    ) {
+        $this->request = $request;
+        $this->submissionEvent = $submissionEvent;
+        $this->funnelLayerConfiguration = $funnelLayerConfiguration;
     }
 
-    public function getFunnelWorkerData(): FunnelWorkerData
+    public function getRequest(): Request
     {
-        return $this->funnelWorkerData;
+        return $this->request;
+    }
+
+    public function getRootFormSubmissionEvent(): SubmissionEvent
+    {
+        return $this->submissionEvent;
+    }
+
+    public function getFunnelLayerConfiguration(): array
+    {
+        return $this->funnelLayerConfiguration;
     }
 
     public function setFunnelLayerView(string $view): void
@@ -54,4 +71,5 @@ class FunnelLayerResponse
     {
         return $this->arguments;
     }
+
 }

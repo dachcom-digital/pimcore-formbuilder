@@ -27,17 +27,26 @@ class SimpleLayoutLayer implements FunnelLayerInterface
     public function getFunnelActionDefinitions(): array
     {
         return [
-            new FunnelActionDefinition('button1', 'Top Button')
+            new FunnelActionDefinition('button1', 'Top Button'),
         ];
     }
 
-    public function buildResponse(FunnelLayerResponse $funnelLayerResponse, FormBuilderInterface $formBuilder): FunnelLayerResponse
+    public function buildForm(FunnelLayerData $funnelLayerData, FormBuilderInterface $formBuilder): void
     {
-        $funnelConfiguration = $funnelLayerResponse->getFunnelWorkerData()->getChannel()->getConfiguration();
-        $funnelLayerConfiguration = $funnelConfiguration['configuration'] ?? [];
+
+    }
+
+    public function handleFormData(FunnelLayerData $funnelLayerData, array $formData): array
+    {
+        return $formData;
+    }
+
+    public function buildView(FunnelLayerData $funnelLayerData): void
+    {
+        $funnelLayerConfiguration = $funnelLayerData->getFunnelLayerConfiguration();
 
         $layout = null;
-        $locale = $funnelLayerResponse->getFunnelWorkerData()->getRequest()->getLocale();
+        $locale = $funnelLayerData->getRequest()->getLocale();
 
         foreach (['default', $locale] as $layoutLocale) {
             if (isset($funnelLayerConfiguration[$layoutLocale]['layout']['path']) && !empty($funnelLayerConfiguration[$layoutLocale]['layout']['path'])) {
@@ -46,10 +55,8 @@ class SimpleLayoutLayer implements FunnelLayerInterface
             }
         }
 
-        $funnelLayerResponse->setFunnelLayerView('@FormBuilder/funnel/layer/simple_layout_layer.html.twig');
-        $funnelLayerResponse->setFunnelLayerViewArguments(['layout' => $layout]);
-        $funnelLayerResponse->setRenderType(FunnelLayerResponse::RENDER_TYPE_PRERENDER);
-
-        return $funnelLayerResponse;
+        $funnelLayerData->setFunnelLayerView('@FormBuilder/funnel/layer/simple_layout_layer.html.twig');
+        $funnelLayerData->setFunnelLayerViewArguments(['layout' => $layout]);
+        $funnelLayerData->setRenderType(FunnelLayerData::RENDER_TYPE_PRERENDER);
     }
 }

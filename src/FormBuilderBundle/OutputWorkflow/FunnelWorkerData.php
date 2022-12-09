@@ -3,7 +3,6 @@
 namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\SubmissionEvent;
-use FormBuilderBundle\Form\RuntimeData\FunnelFormRuntimeData;
 use FormBuilderBundle\Model\FormStorageData;
 use FormBuilderBundle\Model\OutputWorkflowChannelInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
@@ -11,6 +10,9 @@ use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\FunnelActionElementStack;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @internal
+ */
 class FunnelWorkerData
 {
     protected FunnelData $funnelData;
@@ -18,7 +20,6 @@ class FunnelWorkerData
     protected OutputWorkflowInterface $outputWorkflow;
     protected OutputWorkflowChannelInterface $channel;
     protected ChannelInterface $channelProcessor;
-    protected FunnelFormRuntimeData $funnelFormRuntimeData;
     protected ?FunnelActionElementStack $funnelActionElementStack = null;
 
     public function __construct(
@@ -26,15 +27,13 @@ class FunnelWorkerData
         SubmissionEvent $submissionEvent,
         OutputWorkflowInterface $outputWorkflow,
         OutputWorkflowChannelInterface $channel,
-        ChannelInterface $channelProcessor,
-        FunnelFormRuntimeData $funnelFormRuntimeData
+        ChannelInterface $channelProcessor
     ) {
         $this->funnelData = $funnelData;
         $this->submissionEvent = $submissionEvent;
         $this->outputWorkflow = $outputWorkflow;
         $this->channel = $channel;
         $this->channelProcessor = $channelProcessor;
-        $this->funnelFormRuntimeData = $funnelFormRuntimeData;
     }
 
     public function getSubmissionEvent(): SubmissionEvent
@@ -75,11 +74,6 @@ class FunnelWorkerData
     public function getChannelProcessor(): ChannelInterface
     {
         return $this->channelProcessor;
-    }
-
-    public function getFunnelFormRuntimeData(): FunnelFormRuntimeData
-    {
-        return $this->funnelFormRuntimeData;
     }
 
     public function setFunnelActionElementStack(FunnelActionElementStack $funnelActionElementStack): void

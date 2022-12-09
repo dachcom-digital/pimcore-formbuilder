@@ -7,11 +7,12 @@ use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
-use FormBuilderBundle\Form\RuntimeData\FunnelFormRuntimeData;
 use FormBuilderBundle\Model\FormStorageData;
 use FormBuilderBundle\Model\FunnelActionElement;
 use FormBuilderBundle\Model\OutputWorkflowChannelInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelResponseAwareInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\FunnelActionElementStack;
 use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
@@ -136,9 +137,8 @@ class FunnelWorker implements FunnelWorkerInterface
             throw new \Exception(sprintf('No storage data for token "%s" found', $storageToken));
         }
 
-        $funnelFormRuntimeData = $this->buildFunnelFormRuntimeData($formStorageData);
         // restore submission event to allow seamless output workflow channel processing
-        $submissionEvent = $this->buildSubmissionEvent($request, $outputWorkflow, $formStorageData, $funnelFormRuntimeData);
+        $submissionEvent = $this->buildSubmissionEvent($request, $outputWorkflow, $formStorageData);
 
         $channelProcessor = $this->channelRegistry->get($channel->getType());
 
@@ -147,8 +147,7 @@ class FunnelWorker implements FunnelWorkerInterface
             $submissionEvent,
             $outputWorkflow,
             $channel,
-            $channelProcessor,
-            $funnelFormRuntimeData
+            $channelProcessor
         );
 
         // it's a layout funnel
@@ -158,9 +157,9 @@ class FunnelWorker implements FunnelWorkerInterface
 
             $funnelResponse = $channelProcessor->dispatchFunnelProcessing($funnelWorkerData);
 
-            if ($funnelFormRuntimeData->hasFunnelFormData($channel->getName())) {
-                $formStorageData->addFunnelFormData($channel->getName(), $funnelFormRuntimeData->getFunnelFormData($channel->getName()));
+            if ($formStorageData->funnelRuntimeDataDirty()) {
                 $this->getStorageProvider()->update($request, $storageToken, $formStorageData);
+                $formStorageData->resetRuntimeDataDirty();
             }
 
             return $funnelResponse;
@@ -172,12 +171,23 @@ class FunnelWorker implements FunnelWorkerInterface
 
     protected function processDataFunnel(FunnelWorkerData $funnelWorkerData): Response
     {
+        $dataChannelResponse = null;
+        $channelProcessor = $funnelWorkerData->getChannelProcessor();
+
         try {
-            $funnelWorkerData->getChannelProcessor()->dispatchOutputProcessing(
+
+            $arguments = [
                 $funnelWorkerData->getSubmissionEvent(),
                 $funnelWorkerData->getOutputWorkflow()->getName(),
                 $funnelWorkerData->getChannel()->getConfiguration()
-            );
+            ];
+
+            if($channelProcessor instanceof ChannelResponseAwareInterface) {
+                $dataChannelResponse = $channelProcessor->dispatchResponseOutputProcessing(...$arguments);
+            } else {
+                $channelProcessor->dispatchOutputProcessing(...$arguments);
+            }
+
         } catch (\Throwable $e) {
 
             $funnelErrorToken = $funnelWorkerData->getFormStorageData()->addFunnelError($e->getMessage());
@@ -196,6 +206,10 @@ class FunnelWorker implements FunnelWorkerInterface
             }
 
             return new RedirectResponse($virtualFunnelError->getPath());
+        }
+
+        if ($dataChannelResponse instanceof Response) {
+            return $dataChannelResponse;
         }
 
         $funnelWorkerData->setFunnelActionElementStack($this->buildFunnelActionElementStack($funnelWorkerData));
@@ -242,8 +256,7 @@ class FunnelWorker implements FunnelWorkerInterface
     protected function buildSubmissionEvent(
         Request $request,
         OutputWorkflowInterface $outputWorkflow,
-        FormStorageData $formStorageData,
-        FunnelFormRuntimeData $funnelFormRuntimeData
+        FormStorageData $formStorageData
     ): SubmissionEvent {
 
         $formRuntimeData = $formStorageData->getFormRuntimeData() ?? [];
@@ -254,12 +267,7 @@ class FunnelWorker implements FunnelWorkerInterface
             $formStorageData->getFormData(),
         );
 
-        return new SubmissionEvent($request, $formRuntimeData, $form, $funnelFormRuntimeData);
-    }
-
-    protected function buildFunnelFormRuntimeData(FormStorageData $formStorageData): FunnelFormRuntimeData
-    {
-        return new FunnelFormRuntimeData($formStorageData->getFunnelData());
+        return new SubmissionEvent($request, $formRuntimeData, $form, $formStorageData->getFunnelRuntimeData());
     }
 
     protected function getStorageProvider(): StorageProviderInterface

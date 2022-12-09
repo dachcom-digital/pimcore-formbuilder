@@ -8,13 +8,16 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\FunnelChannelType;
 use FormBuilderBundle\Form\Type\LayerType;
 use FormBuilderBundle\Model\FunnelActionElement;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\FunnelLayerData;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\FunnelLayerInterface;
-use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\FunnelLayerResponse;
 use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
 use FormBuilderBundle\OutputWorkflow\FunnelWorkerData;
 use FormBuilderBundle\Registry\FunnelLayerRegistry;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -82,58 +85,60 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
             ]
         );
 
-        $funnelLayerResponse = new FunnelLayerResponse($funnelWorkerData);
+        $funnelLayerData = new FunnelLayerData(
+            $funnelWorkerData->getRequest(),
+            $funnelWorkerData->getSubmissionEvent(),
+            $funnelConfiguration['configuration'] ?? [],
+        );
 
-        $funnelLayerResponse = $this->funnelLayerRegistry
-            ->get($funnelConfiguration['type'])
-            ->buildResponse($funnelLayerResponse, $formBuilder);
+        $funnelLayer = $this->funnelLayerRegistry->get($funnelConfiguration['type']);
+        $funnelLayer->buildForm($funnelLayerData, $formBuilder);
+
+        $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($funnelWorkerData) {
+
+            $form = $event->getForm();
+
+            try {
+                $this->findTargetPath($funnelWorkerData, $form);
+            } catch (\Throwable $e) {
+                $form->addError(new FormError($e->getMessage()));
+            }
+
+        }, 250);
 
         $form = $formBuilder->getForm();
-
         $form->handleRequest($funnelWorkerData->getRequest());
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $target = null;
-            foreach ($form->all() as $formType) {
-                if ($formType instanceof SubmitButton && $formType->isClicked() === true) {
-                    $target = $formType->getName();
-                    break;
-                }
+            // exception already handled in post submit event!
+            $targetPath = $this->findTargetPath($funnelWorkerData, $form);
+
+            if (!empty($form->getData())) {
+                $handledFormData = $funnelLayer->handleFormData($funnelLayerData, $form->getData());
+                $funnelWorkerData->getFormStorageData()->addFunnelRuntimeData($funnelName, $handledFormData);
             }
 
-            if ($target !== null) {
-
-                $funnelWorkerData->getFunnelFormRuntimeData()->addFunnelFormData($funnelName, $form->getData());
-
-                $targetPath = $funnelWorkerData->getFunnelActionElementStack()->getByName($target);
-
-                if ($targetPath instanceof FunnelActionElement) {
-                    // redirect!
-                    return new RedirectResponse($targetPath->getPath());
-                }
-
-                $form->addError(new FormError(sprintf('No target path for "%s" found', $target)));
-            }
-
-            $form->addError(new FormError('No funnel target found'));
+            return new RedirectResponse($targetPath);
         }
 
-        $viewArguments = array_merge($funnelLayerResponse->getFunnelLayerViewArguments(), [
+        $funnelLayer->buildView($funnelLayerData);
+
+        $viewArguments = array_merge($funnelLayerData->getFunnelLayerViewArguments(), [
             'form'          => $form->createView(),
-            'formTheme'  => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template'] ?? null,
+            'formTheme'     => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template'] ?? null,
             'funnelActions' => $funnelWorkerData->getFunnelActionElementStack(),
         ]);
 
         $templateArguments = [
-            'renderType' => $funnelLayerResponse->getRenderType(),
-            'view'       => $funnelLayerResponse->getFunnelLayerView()
+            'renderType' => $funnelLayerData->getRenderType(),
+            'view'       => $funnelLayerData->getFunnelLayerView()
         ];
 
-        if ($funnelLayerResponse->getRenderType() === FunnelLayerResponse::RENDER_TYPE_PRERENDER) {
+        if ($funnelLayerData->getRenderType() === FunnelLayerData::RENDER_TYPE_PRERENDER) {
 
             $template = $this->renderer->createTemplate($this->templating->render(
-                $funnelLayerResponse->getFunnelLayerView(),
+                $funnelLayerData->getFunnelLayerView(),
                 $viewArguments
             ));
 
@@ -152,7 +157,7 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
                     [
                         'funnelActions' => $funnelWorkerData->getFunnelActionElementStack()->getAll(),
                     ],
-                    $funnelLayerResponse->getFunnelLayerViewArguments()
+                    $funnelLayerData->getFunnelLayerViewArguments()
                 ), null, ['groups' => ['FunnelOutput']]
             ) : [];
 
@@ -173,5 +178,32 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
     public function getFunnelLayer(array $funnelConfiguration): FunnelLayerInterface
     {
         return $this->funnelLayerRegistry->get($funnelConfiguration['type']);
+    }
+
+    /**
+     * @throws \RuntimeException
+     */
+    private function findTargetPath(FunnelWorkerData $funnelWorkerData, FormInterface $form): string
+    {
+        $target = null;
+
+        foreach ($form->all() as $formType) {
+
+            if ($formType instanceof SubmitButton && $formType->isClicked()) {
+                $target = $formType->getName();
+                break;
+            }
+        }
+
+        if ($target === null) {
+            throw new \RuntimeException('No funnel target found');
+        }
+
+        $targetPath = $funnelWorkerData->getFunnelActionElementStack()->getByName($target);
+        if (!$targetPath instanceof FunnelActionElement) {
+            throw new \RuntimeException(sprintf('No target path for "%s" found', $target));
+        }
+
+        return $targetPath->getPath();
     }
 }

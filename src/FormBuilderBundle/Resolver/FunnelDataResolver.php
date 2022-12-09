@@ -27,7 +27,6 @@ class FunnelDataResolver
     ) {
         $this->configuration = $configuration;
         $this->storageProviderRegistry = $storageProviderRegistry;
-
         $this->isFunnelAware = $this->isFunnelAware();
     }
 
@@ -55,19 +54,22 @@ class FunnelDataResolver
 
         $formStorageData = $this->getFunnelStorageData($request, $storageToken);
 
+       // dump($storageToken, $formStorageData); exit;
+
         if (!$formStorageData instanceof FormStorageData) {
             throw new \Exception('Could not resolve funnel data. No form storage data found');
         }
 
-        $funnelData = new FunnelData(
-            $request,
-            $formStorageData,
-            $funnelId,
-            $channelId,
-            $storageToken
+        $request->attributes->set(
+            self::FUNNEL_DATA_NAME,
+            new FunnelData(
+                $request,
+                $formStorageData,
+                $funnelId,
+                $channelId,
+                $storageToken
+            )
         );
-
-        $request->attributes->set(self::FUNNEL_DATA_NAME, $funnelData);
     }
 
     public function getFunnelData(Request $request): FunnelData
