@@ -54,8 +54,6 @@ class FunnelDataResolver
 
         $formStorageData = $this->getFunnelStorageData($request, $storageToken);
 
-       // dump($storageToken, $formStorageData); exit;
-
         if (!$formStorageData instanceof FormStorageData) {
             throw new \Exception('Could not resolve funnel data. No form storage data found');
         }
