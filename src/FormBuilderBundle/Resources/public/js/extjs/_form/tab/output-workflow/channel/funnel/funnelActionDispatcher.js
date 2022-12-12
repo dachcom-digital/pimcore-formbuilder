@@ -50,7 +50,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
         this.initializeEventListener();
 
-        if (this.getSelectedFunnelActionType() !== null) {
+        if (this.getSelectedFunnelActionCoreConfig('type') !== null) {
             // initialize data class only
             this.generateFunnelActionPanel(this.data.type, true);
         }
@@ -69,15 +69,26 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
     openFunnelActionWindow: function () {
 
-        var funnelActionValue = this.getSelectedFunnelActionType(),
+        var funnelActionValue = this.getSelectedFunnelActionCoreConfig('type'),
+            funnelActionAllowInvalidSubmissionValue = this.getSelectedFunnelActionCoreConfig('ignoreInvalidFormSubmission'),
+            funnelActionAllowInvalidSubmission,
             funnelActionCombo,
             funnelActionStore;
+
+        funnelActionAllowInvalidSubmission = new Ext.form.Checkbox({
+            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.funnel_action.ignore_invalid_form_submission'),
+            name: 'ignoreInvalidFormSubmission',
+            checked: funnelActionAllowInvalidSubmissionValue === true,
+            uncheckedValue: false,
+            inputValue: true,
+            labelWidth: 200
+        });
 
         funnelActionCombo = new Ext.form.ComboBox({
             fieldLabel: t('form_builder.output_workflow.output_workflow_channel.funnel_action.action'),
             name: 'funnelLayer',
             submitValue: false,
-            width: 350,
+            labelWidth: 200,
             value: null,
             displayField: 'label',
             valueField: 'key',
@@ -128,7 +139,11 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
         funnelActionCombo.setStore(funnelActionStore);
 
-        this.windowActionPanel = new Ext.form.Panel({});
+        this.windowActionPanel = new Ext.form.Panel({
+            title: t('form_builder.output_workflow.output_workflow_channel.funnel_layer.funnel_action_configuration'),
+            bodyStyle: 'padding: 10px',
+            border: false,
+        });
 
         this.window = new Ext.Window({
             width: 600,
@@ -148,6 +163,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
                     border: false,
                     items: [
                         funnelActionCombo,
+                        funnelActionAllowInvalidSubmission,
                         this.windowActionPanel
                     ]
                 }
@@ -237,16 +253,24 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
         return this.data.hasOwnProperty('configuration') ? this.data.configuration : null;
     },
 
-    getSelectedFunnelActionType: function () {
+    getSelectedFunnelActionCoreConfig: function (slot) {
 
         if (this.data === null) {
             return null;
         }
 
-        return this.data.hasOwnProperty('type') ? this.data.type : null
+        if (slot === 'type') {
+            return this.data.hasOwnProperty('type') ? this.data.type : null
+        }
+
+        if (!this.data.hasOwnProperty('coreConfiguration')) {
+            return null;
+        }
+
+        return this.data.coreConfiguration.hasOwnProperty(slot) ? this.data.coreConfiguration[slot] : null
     },
 
-    isValid: function() {
+    isValid: function () {
 
         if (this.funnelActionDataClass === null) {
             return false;
@@ -255,7 +279,12 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
         return this.funnelActionDataClass.isValid() === true;
     },
 
-    saveAction: function () {
+    saveAction: function (btn) {
+
+        var coreConfiguration = {},
+            window = btn.up('window');
+
+        coreConfiguration['ignoreInvalidFormSubmission'] = window.query('checkbox[name="ignoreInvalidFormSubmission"]')[0].getValue()
 
         if (this.isValid() === false) {
             Ext.MessageBox.alert(t('error'), t('form_builder.output_workflow.output_workflow_channel.funnel_action.invalid_action'));
@@ -265,6 +294,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
         this.data = {
             type: this.funnelActionDataClass.getType(),
+            coreConfiguration: coreConfiguration,
             configuration: this.funnelActionDataClass.getActionData(),
             triggerName: this.funnelActionDefinition.name,
         };

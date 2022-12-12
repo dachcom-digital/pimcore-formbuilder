@@ -49,6 +49,10 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\FunnelActionCoreConfigType:
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\Type\ReturnToFormActionType:
         tags:
             - { name: form.type }

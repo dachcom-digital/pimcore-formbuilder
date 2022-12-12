@@ -228,7 +228,15 @@ class FunnelWorker implements FunnelWorkerInterface
                 return new RedirectResponse($virtualFunnelSuccess->getPath());
             }
 
-            return $this->processDataFunnel($funnelWorkerData);
+            $nextVirtualFunnelWorkerData = new FunnelWorkerData(
+                $funnelWorkerData->getFunnelData(),
+                $funnelWorkerData->getSubmissionEvent(),
+                $funnelWorkerData->getOutputWorkflow(),
+                $nextVirtualChannel,
+                $nextVirtualChannelProcessor
+            );
+
+            return $this->processDataFunnel($nextVirtualFunnelWorkerData);
         }
 
         return new RedirectResponse($virtualFunnelSuccess->getPath());

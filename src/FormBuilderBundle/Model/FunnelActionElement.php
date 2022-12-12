@@ -7,11 +7,16 @@ class FunnelActionElement
     protected string $path;
     protected mixed $subject = null;
     protected bool $isDisabled = false;
-    protected FunnelActionDefinition $funnelActionDefinition;
 
-    public function __construct(FunnelActionDefinition $funnelActionDefinition)
-    {
+    protected FunnelActionDefinition $funnelActionDefinition;
+    protected array $coreConfiguration;
+
+    public function __construct(
+        FunnelActionDefinition $funnelActionDefinition,
+        array $coreConfiguration
+    ) {
         $this->funnelActionDefinition = $funnelActionDefinition;
+        $this->coreConfiguration = $coreConfiguration;
     }
 
     public function setPath(string $path): void
@@ -47,6 +52,11 @@ class FunnelActionElement
     public function isDisabled(): bool
     {
         return $this->isDisabled === true;
+    }
+
+    public function ignoreInvalidSubmission(): bool
+    {
+        return $this->coreConfiguration['ignoreInvalidFormSubmission'] ?? false === true;
     }
 
     public function getFunnelActionDefinition(): FunnelActionDefinition

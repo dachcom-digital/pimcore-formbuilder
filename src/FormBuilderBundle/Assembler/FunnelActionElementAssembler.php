@@ -82,7 +82,7 @@ class FunnelActionElementAssembler
         $funnelAction = $this->funnelActionRegistry->get($funnelActionConfiguration['type']);
 
         $funnelActionElement = $funnelAction->buildFunnelActionElement(
-            new FunnelActionElement($funnelActionDefinition),
+            new FunnelActionElement($funnelActionDefinition, $funnelActionConfiguration['coreConfiguration'] ?? []),
             $channel,
             $funnelActionConfiguration['configuration'] ?? [],
             $context

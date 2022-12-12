@@ -99,7 +99,7 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
             $form = $event->getForm();
 
             try {
-                $this->findTargetPath($funnelWorkerData, $form);
+                $this->findFunnelTargetAction($funnelWorkerData, $form);
             } catch (\Throwable $e) {
                 $form->addError(new FormError($e->getMessage()));
             }
@@ -109,17 +109,24 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
         $form = $formBuilder->getForm();
         $form->handleRequest($funnelWorkerData->getRequest());
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
 
             // exception already handled in post submit event!
-            $targetPath = $this->findTargetPath($funnelWorkerData, $form);
+            $funnelTargetAction = $this->findFunnelTargetAction($funnelWorkerData, $form);
 
-            if (!empty($form->getData())) {
-                $handledFormData = $funnelLayer->handleFormData($funnelLayerData, $form->getData());
-                $funnelWorkerData->getFormStorageData()->addFunnelRuntimeData($funnelName, $handledFormData);
+            if ($funnelTargetAction->ignoreInvalidSubmission() === true) {
+                return new RedirectResponse($funnelTargetAction->getPath());
             }
 
-            return new RedirectResponse($targetPath);
+            if ($form->isValid()) {
+
+                if (!empty($form->getData())) {
+                    $handledFormData = $funnelLayer->handleFormData($funnelLayerData, $form->getData());
+                    $funnelWorkerData->getFormStorageData()->addFunnelRuntimeData($funnelName, $handledFormData);
+                }
+
+                return new RedirectResponse($funnelTargetAction->getPath());
+            }
         }
 
         $funnelLayer->buildView($funnelLayerData);
@@ -183,7 +190,7 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
     /**
      * @throws \RuntimeException
      */
-    private function findTargetPath(FunnelWorkerData $funnelWorkerData, FormInterface $form): string
+    private function findFunnelTargetAction(FunnelWorkerData $funnelWorkerData, FormInterface $form): FunnelActionElement
     {
         $target = null;
 
@@ -199,11 +206,11 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
             throw new \RuntimeException('No funnel target found');
         }
 
-        $targetPath = $funnelWorkerData->getFunnelActionElementStack()->getByName($target);
-        if (!$targetPath instanceof FunnelActionElement) {
+        $funnelTargetAction = $funnelWorkerData->getFunnelActionElementStack()->getByName($target);
+        if (!$funnelTargetAction instanceof FunnelActionElement) {
             throw new \RuntimeException(sprintf('No target path for "%s" found', $target));
         }
 
-        return $targetPath->getPath();
+        return $funnelTargetAction;
     }
 }
