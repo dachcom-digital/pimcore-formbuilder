@@ -1,5 +1,5 @@
-pimcore.registerNS('Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.simpleLayout');
-Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.simpleLayout = Class.create(Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.abstractLayer, {
+pimcore.registerNS('Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.dynamicLayout');
+Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.dynamicLayout = Class.create(Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.abstractLayer, {
 
     getConfigItems: function () {
 
@@ -16,7 +16,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.simpleLayout = Class.crea
 
         var hrefValue = this.getLocalizedValue('layout', locale),
             fieldConfig = {
-                label: t('form_builder.output_workflow.output_workflow_channel.funnel_layer.simple_layout.layout'),
+                label: t('form_builder.output_workflow.output_workflow_channel.funnel_layer.dynamic_layout.layout'),
                 id: locale + '.layout',
                 config: {
                     types: ['document'],

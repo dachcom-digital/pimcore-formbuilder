@@ -11,6 +11,8 @@ interface FunnelLayerInterface
 
     public function getFormType(): array;
 
+    public function dynamicFunnelActionAware(): bool;
+
     /**
      * @return array<int, FunnelActionDefinition>
      */

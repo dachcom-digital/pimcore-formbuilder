@@ -29,6 +29,9 @@ use Twig\Environment;
 
 class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterface
 {
+    public const RENDER_TYPE_INCLUDE = 'include';
+    public const RENDER_TYPE_PRERENDER = 'prerender';
+
     protected EngineInterface $templating;
     protected SerializerInterface $serializer;
     protected FunnelLayerRegistry $funnelLayerRegistry;
@@ -131,18 +134,21 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
 
         $funnelLayer->buildView($funnelLayerData);
 
+        $renderType = $funnelLayer->dynamicFunnelActionAware() ? self::RENDER_TYPE_PRERENDER : self::RENDER_TYPE_INCLUDE;
+
         $viewArguments = array_merge($funnelLayerData->getFunnelLayerViewArguments(), [
             'form'          => $form->createView(),
             'formTheme'     => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template'] ?? null,
+            'formRenderRest' => $renderType === self::RENDER_TYPE_INCLUDE,
             'funnelActions' => $funnelWorkerData->getFunnelActionElementStack(),
         ]);
 
         $templateArguments = [
-            'renderType' => $funnelLayerData->getRenderType(),
+            'renderType' => $renderType,
             'view'       => $funnelLayerData->getFunnelLayerView()
         ];
 
-        if ($funnelLayerData->getRenderType() === FunnelLayerData::RENDER_TYPE_PRERENDER) {
+        if ($renderType === self::RENDER_TYPE_PRERENDER) {
 
             $template = $this->renderer->createTemplate($this->templating->render(
                 $funnelLayerData->getFunnelLayerView(),

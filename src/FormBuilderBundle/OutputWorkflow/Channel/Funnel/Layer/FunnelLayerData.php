@@ -7,11 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FunnelLayerData
 {
-    public const RENDER_TYPE_INCLUDE = 'include';
-    public const RENDER_TYPE_PRERENDER = 'prerender';
-
     protected string $view;
-    protected string $renderType = self::RENDER_TYPE_INCLUDE;
     protected array $arguments = [];
     protected Request $request;
     protected SubmissionEvent $submissionEvent;
@@ -52,16 +48,6 @@ class FunnelLayerData
         return $this->view;
     }
 
-    public function setRenderType(string $renderType): void
-    {
-        $this->renderType = $renderType;
-    }
-
-    public function getRenderType(): string
-    {
-        return $this->renderType;
-    }
-
     public function setFunnelLayerViewArguments(array $arguments): void
     {
         $this->arguments = $arguments;
@@ -71,5 +57,4 @@ class FunnelLayerData
     {
         return $this->arguments;
     }
-
 }

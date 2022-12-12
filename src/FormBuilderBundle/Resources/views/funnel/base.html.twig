@@ -16,7 +16,6 @@
         {{ view|raw }}
     {% endif %}
 
-    {{ form_rest(form) }}
-    {{ form_end(form) }}
+    {{ form_end(form, {render_rest: formRenderRest}) }}
 
 {% endblock funnel_content %}

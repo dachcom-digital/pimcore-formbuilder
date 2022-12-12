@@ -2,16 +2,15 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer;
 
-use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Layer\SimpleLayoutLayerType;
+use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Layer\DynamicLayoutLayerType;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\LocalizedValuesCollectionType;
-use FormBuilderBundle\Model\FunnelActionDefinition;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class SimpleLayoutLayer implements FunnelLayerInterface
+class DynamicLayoutLayer implements FunnelLayerInterface
 {
     public function getName(): string
     {
-        return 'Simple Layout Layer';
+        return 'Dynamic Layout Layer';
     }
 
     public function getFormType(): array
@@ -19,16 +18,19 @@ class SimpleLayoutLayer implements FunnelLayerInterface
         return [
             'type'    => LocalizedValuesCollectionType::class,
             'options' => [
-                'entry_type' => SimpleLayoutLayerType::class,
+                'entry_type' => DynamicLayoutLayerType::class,
             ]
         ];
     }
 
+    public function dynamicFunnelActionAware(): bool
+    {
+        return true;
+    }
+
     public function getFunnelActionDefinitions(): array
     {
-        return [
-            new FunnelActionDefinition('button1', 'Top Button'),
-        ];
+        return [];
     }
 
     public function buildForm(FunnelLayerData $funnelLayerData, FormBuilderInterface $formBuilder): void
@@ -57,6 +59,5 @@ class SimpleLayoutLayer implements FunnelLayerInterface
 
         $funnelLayerData->setFunnelLayerView('@FormBuilder/funnel/layer/simple_layout_layer.html.twig');
         $funnelLayerData->setFunnelLayerViewArguments(['layout' => $layout]);
-        $funnelLayerData->setRenderType(FunnelLayerData::RENDER_TYPE_PRERENDER);
     }
 }

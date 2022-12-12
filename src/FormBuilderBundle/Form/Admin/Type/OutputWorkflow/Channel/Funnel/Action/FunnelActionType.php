@@ -22,6 +22,7 @@ class FunnelActionType extends AbstractType
     {
         $builder->add('type', TextType::class);
         $builder->add('triggerName', TextType::class);
+        $builder->add('label', TextType::class);
         $builder->add('coreConfiguration', FunnelActionCoreConfigType::class);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {

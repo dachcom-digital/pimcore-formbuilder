@@ -4,6 +4,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
     workflowId: null,
     channelName: null,
     funnelActionDefinition: null,
+    dynamicFunnelActionAware: null,
     data: null,
 
     button: null,
@@ -15,11 +16,12 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
 
     store: null,
 
-    initialize: function (workflowId, channelName, funnelActionDefinition, data) {
+    initialize: function (workflowId, channelName, funnelActionDefinition, dynamicFunnelActionAware, data) {
 
         this.workflowId = workflowId;
         this.channelName = channelName;
         this.funnelActionDefinition = funnelActionDefinition;
+        this.dynamicFunnelActionAware = dynamicFunnelActionAware;
         this.data = data;
 
         this.button = null;
@@ -36,10 +38,33 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
             name: this.funnelActionDefinition.name,
             text: this.funnelActionDefinition.label,
             cls: this.funnelActionDefinition.label,
+            style: 'margin: 0 2px 0 0;',
             handler: this.openFunnelActionWindow.bind(this),
             listeners: {
                 render: this.bootActionChannel.bind(this),
                 beforedestroy: this.shutDownActionChannel.bind(this),
+                afterrender: function (el) {
+
+                    if (this.dynamicFunnelActionAware !== true) {
+                        return;
+                    }
+
+                    el.getEl().on('contextmenu', function (event) {
+                        event.preventDefault();
+                        new Ext.menu.Menu({
+                            items: [
+                                {
+                                    text: t('delete'),
+                                    iconCls: 'pimcore_icon_delete',
+                                    handler: function() {
+                                        this.button.fireEvent('removeFunnelActionButton', this);
+                                        this.button.destroy();
+                                    }.bind(this)
+                                }
+                            ]
+                        }).showAt(event.getXY());
+                    }.bind(this));
+                }.bind(this)
             }
         });
 
@@ -297,6 +322,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnelActionDispatcher = Clas
             coreConfiguration: coreConfiguration,
             configuration: this.funnelActionDataClass.getActionData(),
             triggerName: this.funnelActionDefinition.name,
+            label: this.funnelActionDefinition.label
         };
 
         this.window.close();

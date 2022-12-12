@@ -94,7 +94,10 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnel = Class.create(Formbui
 
     generateFunnelLayerPanel: function (funnelLayerType, funnelLayerOptions) {
 
-        var element, items;
+        var element,
+            items,
+            funnelActionDefinitions = [],
+            dynamicFunnelActionAware = false;
 
         if (this.funnelLayerPanel !== null) {
             this.panel.remove(this.funnelLayerPanel);
@@ -121,7 +124,12 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.funnel = Class.create(Formbui
 
         this.panel.add(this.funnelLayerPanel);
 
-        this.populateFunnelActions(funnelLayerOptions === null ? [] : funnelLayerOptions.funnelActionDefinitions, true);
+        if(funnelLayerOptions !== null) {
+            funnelActionDefinitions = funnelLayerOptions.funnelActionDefinitions;
+            dynamicFunnelActionAware = funnelLayerOptions.dynamicFunnelActionAware;
+        }
+
+        this.populateFunnelActions(funnelActionDefinitions, dynamicFunnelActionAware, true);
     },
 
     createFunnelLayerDataClass: function (funnelLayerType, funnelLayerOptions) {

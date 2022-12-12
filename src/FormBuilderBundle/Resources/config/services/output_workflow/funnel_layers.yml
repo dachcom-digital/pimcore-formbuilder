@@ -5,9 +5,9 @@ services:
         autoconfigure: true
         public: false
 
-    FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\SimpleLayoutLayer:
+    FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\DynamicLayoutLayer:
         tags:
-            - { name: form_builder.output_workflow.funnel_layer, type: simpleLayout }
+            - { name: form_builder.output_workflow.funnel_layer, type: dynamicLayout }
 
     FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\ChannelAction:
         tags:

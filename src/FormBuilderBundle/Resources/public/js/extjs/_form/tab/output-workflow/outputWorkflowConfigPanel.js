@@ -338,7 +338,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             items = Ext.Array.merge(
                 [channelDataClass.getLayout()],
                 this.isFunnelOutputWorkflow()
-                    ? channelDataClass.getFunnelActionLayout(channelDataClass)
+                    ? channelDataClass.getFunnelActionLayout()
                     : []
             );
 
@@ -362,12 +362,12 @@ Formbuilder.extjs.formPanel.outputWorkflow.configPanel = Class.create({
             listeners: {
                 render: function () {
 
-                    var virtualFunnelActions = this.isFunnelOutputWorkflow() && channelDataClass !== null && channelDataClass.isVirtualFunnelAware()
+                    var virtualFunnelActionDefinitions = this.isFunnelOutputWorkflow() && channelDataClass !== null && channelDataClass.isVirtualFunnelAware()
                         ? channelDataClass.getVirtualFunnelActionDefinitions()
                         : [];
 
-                    if (virtualFunnelActions.length > 0 && channelDataClass !== null) {
-                        channelDataClass.populateFunnelActions(virtualFunnelActions)
+                    if (virtualFunnelActionDefinitions.length > 0 && channelDataClass !== null) {
+                        channelDataClass.populateFunnelActions(virtualFunnelActionDefinitions, false);
                     }
                 }.bind(this)
             }

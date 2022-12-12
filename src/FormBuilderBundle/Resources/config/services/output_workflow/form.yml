@@ -37,7 +37,7 @@ services:
         tags:
             - { name: form.type }
 
-    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Layer\SimpleLayoutLayerType:
+    FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Layer\DynamicLayoutLayerType:
         tags:
             - { name: form.type }
 

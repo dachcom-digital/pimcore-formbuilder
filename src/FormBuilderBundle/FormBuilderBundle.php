@@ -100,7 +100,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/returnToFormAction.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/action/disabledAction.js',
             '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/abstractLayer.js',
-            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/simpleLayoutLayer.js',
+            '/bundles/formbuilder/js/extjs/_form/tab/output-workflow/channel/funnel/layer/dynamicLayoutLayer.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/abstract.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/checkbox.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/href.js',

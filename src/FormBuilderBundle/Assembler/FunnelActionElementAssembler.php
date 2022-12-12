@@ -68,10 +68,10 @@ class FunnelActionElementAssembler
         $channelConfiguration = $channel->getConfiguration();
 
         if ($channelProcessor instanceof FunnelAwareChannelInterface) {
-            $funnelActionDefinition = $this->getFunnelActionDefinition(
-                $channelProcessor->getFunnelLayer($channelConfiguration)->getFunnelActionDefinitions(),
-                $funnelActionConfiguration['triggerName']
-            );
+            $funnelLayer = $channelProcessor->getFunnelLayer($channelConfiguration);
+            $funnelActionDefinition = $funnelLayer->dynamicFunnelActionAware()
+                ? $this->getFunnelActionDefinition($funnelActionConfiguration, $funnelActionConfiguration['triggerName'], true)
+                : $this->getFunnelActionDefinition($funnelLayer->getFunnelActionDefinitions(), $funnelActionConfiguration['triggerName']);
         } else {
             $funnelActionDefinition = $this->getFunnelActionDefinition(
                 VirtualActionDefinitions::getVirtualFunnelActionDefinitions(),
@@ -93,10 +93,14 @@ class FunnelActionElementAssembler
         return $funnelActionElement;
     }
 
-    private function getFunnelActionDefinition(array $funnelActionDefinitions, string $name): FunnelActionDefinition
+    private function getFunnelActionDefinition(array $funnelActionDefinitions, string $name, bool $isDynamicAction = false): FunnelActionDefinition
     {
         if ($name === '__INITIATE_FUNNEL') {
             return new FunnelActionDefinition($name, $name, []);
+        }
+
+        if ($isDynamicAction === true) {
+            return new FunnelActionDefinition($funnelActionDefinitions['triggerName'], $funnelActionDefinitions['label'] ?? null, []);
         }
 
         foreach ($funnelActionDefinitions as $definition) {

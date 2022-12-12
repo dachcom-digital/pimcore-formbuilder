@@ -6,7 +6,7 @@ use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Component\PimcoreHrefType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class SimpleLayoutLayerType extends AbstractType
+class DynamicLayoutLayerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

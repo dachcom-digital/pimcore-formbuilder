@@ -38,12 +38,20 @@ class OutputWorkflowFunnelController extends AdminController
          * @var FunnelLayerInterface $service
          */
         foreach ($services as $identifier => $service) {
+
+            $funnelActionDefinitions = $service->getFunnelActionDefinitions();
+
+            if ($service->dynamicFunnelActionAware() === true && count($funnelActionDefinitions) > 0) {
+                throw new \Exception('Dynamic action aware funnel is not allowed to provide any preconfigured action elements.');
+            }
+
             $data[] = [
                 'label'         => $service->getName(),
                 'key'           => $identifier,
                 'configuration' => [
-                    'funnelActionDefinitions' => $this->serializer instanceof NormalizerInterface
-                        ? $this->serializer->normalize($service->getFunnelActionDefinitions(), 'array', ['groups' => ['ExtJs']])
+                    'dynamicFunnelActionAware' => $service->dynamicFunnelActionAware(),
+                    'funnelActionDefinitions'  => $this->serializer instanceof NormalizerInterface
+                        ? $this->serializer->normalize($funnelActionDefinitions, 'array', ['groups' => ['ExtJs']])
                         : []
                 ]
             ];
@@ -66,8 +74,8 @@ class OutputWorkflowFunnelController extends AdminController
          */
         foreach ($services as $identifier => $service) {
             $data[] = [
-                'label'         => $service->getName(),
-                'key'           => $identifier
+                'label' => $service->getName(),
+                'key'   => $identifier
             ];
         }
 
