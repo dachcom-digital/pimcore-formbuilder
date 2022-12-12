@@ -56,7 +56,11 @@ class FunnelActionElement
 
     public function ignoreInvalidSubmission(): bool
     {
-        return $this->coreConfiguration['ignoreInvalidFormSubmission'] ?? false === true;
+        if (!array_key_exists('ignoreInvalidFormSubmission', $this->coreConfiguration)) {
+            return false;
+        }
+
+        return $this->coreConfiguration['ignoreInvalidFormSubmission'] === true;
     }
 
     public function getFunnelActionDefinition(): FunnelActionDefinition
