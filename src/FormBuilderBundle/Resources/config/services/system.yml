@@ -29,11 +29,6 @@ services:
     # configuration
     FormBuilderBundle\Configuration\Configuration: ~
 
-    # session: configurator
-    FormBuilderBundle\Session\SessionConfigurator:
-        tags:
-            - { name: pimcore.session.configurator }
-
     # session: flash bag manager
     FormBuilderBundle\Session\FlashBagManagerInterface: '@FormBuilderBundle\Session\FlashBagManager'
     FormBuilderBundle\Session\FlashBagManager:
