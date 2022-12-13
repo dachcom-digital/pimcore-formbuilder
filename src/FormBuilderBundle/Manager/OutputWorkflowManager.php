@@ -43,12 +43,16 @@ class OutputWorkflowManager
             return null;
         }
 
-        if (isset($data['name'])) {
+        if (array_key_exists('name', $data)) {
             $outputWorkflow->setName($data['name']);
         }
 
-        if (isset($data['formDefinition'])) {
+        if (array_key_exists('formDefinition', $data)) {
             $outputWorkflow->setFormDefinition($data['formDefinition']);
+        }
+
+        if (array_key_exists('funnelAware', $data)) {
+            $outputWorkflow->setFunnelWorkflow($data['funnelAware'] === true);
         }
 
         $this->entityManager->persist($outputWorkflow);

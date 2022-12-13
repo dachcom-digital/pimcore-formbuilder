@@ -12,8 +12,16 @@ FormBuilderBundle\Model\OutputWorkflowChannel:
             column: type
             type: string
             length: 190
+        name:
+            column: name
+            type: string
+            length: 190
         configuration:
             column: configuration
+            nullable: true
+            type: object
+        funnelActions:
+            column: funnel_actions
             nullable: true
             type: object
     manyToOne:
@@ -23,3 +31,6 @@ FormBuilderBundle\Model\OutputWorkflowChannel:
             joinColumn:
                 name: output_workflow
                 referencedColumnName: id
+    uniqueConstraints:
+        ow_name:
+            columns: [ output_workflow, name ]

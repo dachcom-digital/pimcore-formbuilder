@@ -1,0 +1,16 @@
+FormBuilderBundle\Model\FormStorageData:
+    attributes:
+        formId:
+            groups: [Default, OutputWorkflow]
+        formData:
+            groups: [Default, OutputWorkflow]
+        formRuntimeData:
+            groups: [Default, OutputWorkflow]
+        funnelRuntimeData:
+            groups: [Default, OutputWorkflow]
+        initiationPath:
+            groups: [Default, OutputWorkflow]
+        funnelErrors:
+            groups: [Default, OutputWorkflow]
+        attachmentSignals:
+            groups: [Default, OutputWorkflow]

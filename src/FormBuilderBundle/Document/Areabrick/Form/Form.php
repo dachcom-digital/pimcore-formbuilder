@@ -68,7 +68,7 @@ class Form extends AbstractAreabrick implements EditableDialogBoxInterface
         $optionBuilder->setFormPreset($formPreset);
         $optionBuilder->setOutputWorkflow($formOutputWorkflow);
 
-        $assemblerViewVars = $this->formAssembler->assembleViewVars($optionBuilder);
+        $assemblerViewVars = $this->formAssembler->assemble($optionBuilder);
 
         foreach ($assemblerViewVars as $var => $varValue) {
             $info->setParam($var, $varValue);

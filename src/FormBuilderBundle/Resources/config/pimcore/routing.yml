@@ -114,6 +114,16 @@ form_builder.controller.admin.output_workflow.api.get_api_provider:
     defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowApiController::getApiProviderAction }
     methods: [GET]
 
+form_builder.controller.admin.output_workflow.funnel_layer.get_layers:
+    path: /admin/formbuilder/output-workflow/funnel-layer/get-layers
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowFunnelController::getFunnelLayersAction }
+    methods: [GET]
+
+form_builder.controller.admin.output_workflow.funnel_layer.get_actions:
+    path: /admin/formbuilder/output-workflow/funnel-layer/get-actions
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\OutputWorkflowFunnelController::getFunnelActionsAction }
+    methods: [GET]
+
 # Frontend Routing
 form_builder.controller.ajax.url_structure:
     path: /{_locale}/form-control/get-url-structure

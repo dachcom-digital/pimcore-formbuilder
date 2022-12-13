@@ -2,8 +2,6 @@
 
 namespace FormBuilderBundle\Resolver;
 
-use Pimcore\Model\Document;
-
 class FormOptionsResolver
 {
     protected ?int $formId = null;
@@ -82,7 +80,7 @@ class FormOptionsResolver
 
     public function getFormTemplate(): string
     {
-        return '@FormBuilder/form/theme/' . $this->formTemplate;
+        return sprintf('@FormBuilder/form/theme/%s', $this->formTemplate);
     }
 
     public function getFormTemplateName(): ?string
@@ -96,13 +94,13 @@ class FormOptionsResolver
 
     public function getFormBlockTemplate(): string
     {
-        return '@FormBuilder/form/theme/macro/' . $this->formBlockTemplate;
+        return sprintf('@FormBuilder/form/theme/macro/%s', $this->formBlockTemplate);
     }
 
     public function getFormLayout(): string
     {
         $path = '@FormBuilder/form/%s.html.twig';
-        $template = $this->getFormPreset() === 'custom' ? 'default' : 'presets/' . $this->getFormPreset();
+        $template = $this->getFormPreset() === 'custom' ? 'default' : sprintf('presets/%s', $this->getFormPreset());
 
         return sprintf($path, $template);
     }

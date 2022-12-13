@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Registry;
 
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
 
 class OutputWorkflowChannelRegistry
 {
@@ -53,5 +54,14 @@ class OutputWorkflowChannelRegistry
     public function getAllIdentifier(): array
     {
         return array_keys($this->channels);
+    }
+
+    public function isFunnelAwareChannel(string $identifier): bool
+    {
+        if (!$this->has($identifier)) {
+            return false;
+        }
+
+        return $this->get($identifier) instanceof FunnelAwareChannelInterface;
     }
 }

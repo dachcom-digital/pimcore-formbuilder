@@ -20,7 +20,7 @@ Formbuilder.extjs.rootForm = Class.create({
         this.sensitiveFormFields = {};
         this.sensitiveFormFieldsBackup = {};
 
-        Formbuilder.eventObserver.registerForm(this.formId);
+        Formbuilder.eventObserver.registerObservable(this.formId);
 
         if (formData.has_output_workflows === true) {
             this.sensitiveFormFields = formData.sensitive_field_names;
@@ -73,7 +73,7 @@ Formbuilder.extjs.rootForm = Class.create({
             beforedestroy: function () {
 
                 eventListeners.destroy();
-                Formbuilder.eventObserver.unregisterForm(this.formId);
+                Formbuilder.eventObserver.unregisterObservable(this.formId);
 
                 if (this.formId && this.parentPanel.panels['form_' + this.formId]) {
                     delete this.parentPanel.panels['form_' + this.formId];

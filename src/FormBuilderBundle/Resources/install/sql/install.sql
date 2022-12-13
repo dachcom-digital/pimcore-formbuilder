@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `form_definition` int(11) DEFAULT NULL,
   `name` varchar(190) DEFAULT NULL,
+  `funnel_workflow` tinyint(1) NOT NULL,
   `success_management` longtext COMMENT '(DC2Type:object)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_form` (`name`,`form_definition`),
@@ -29,8 +30,11 @@ CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow_channel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `output_workflow` int(11) DEFAULT NULL,
   `type` varchar(190) NOT NULL,
+  `name` varchar(190) NOT NULL,
   `configuration` longtext COMMENT '(DC2Type:object)',
+  `funnel_actions` longtext COMMENT '(DC2Type:object)',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `ow_name` (`output_workflow`,`name`),
   KEY `IDX_CEC462362C75DDDC` (`output_workflow`),
   CONSTRAINT `FK_CEC462362C75DDDC` FOREIGN KEY (`output_workflow`) REFERENCES `formbuilder_output_workflow` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

@@ -1,0 +1,21 @@
+{% extends '@FormBuilder/layout_funnel.html.twig' %}
+
+{% if formTheme is not null %}
+    {% form_theme form with [formTheme ~ '.html.twig'] only %}
+{% endif %}
+
+{% block funnel_content %}
+
+    {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+
+    {{ form_errors(form) }}
+
+    {% if renderType == 'include' %}
+        {% include view %}
+    {% elseif renderType == 'prerender' %}
+        {{ view|raw }}
+    {% endif %}
+
+    {{ form_end(form, {render_rest: formRenderRest}) }}
+
+{% endblock funnel_content %}

@@ -5,5 +5,5 @@ services:
         autoconfigure: true
         public: true
 
-    # form assembler
     FormBuilderBundle\Assembler\FormAssembler: ~
+    FormBuilderBundle\Assembler\FunnelActionElementAssembler: ~

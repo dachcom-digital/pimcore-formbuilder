@@ -1,0 +1,12 @@
+FormBuilderBundle\Model\FunnelActionElement:
+    attributes:
+        path:
+            groups: [Default, FunnelOutput]
+        subject:
+            groups: [Default]
+        isChannelAware:
+            groups: [Default, FunnelOutput]
+        isDisabled:
+            groups: [Default, FunnelOutput]
+        funnelActionDefinition:
+            groups: [Default, FunnelOutput]

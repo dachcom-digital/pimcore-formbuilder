@@ -1,0 +1,5 @@
+# Frontend Routing
+form_builder.controller.funnel.dispatch:
+    path: /fb/funnel/{funnelId}/{channelId}/{storageToken}
+    controller: FormBuilderBundle\Controller\FunnelController::dispatchAction
+    methods: [POST, GET]

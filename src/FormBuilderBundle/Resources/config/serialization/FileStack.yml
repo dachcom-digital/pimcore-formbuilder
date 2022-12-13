@@ -1,0 +1,4 @@
+FormBuilderBundle\Stream\FileStack:
+    attributes:
+        files:
+            groups: [Default, OutputWorkflow]

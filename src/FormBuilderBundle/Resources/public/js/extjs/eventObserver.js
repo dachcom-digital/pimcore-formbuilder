@@ -6,25 +6,25 @@ FormbuilderEventObserver = Class.create({
         this.observerSections = {};
     },
 
-    registerForm: function (formId) {
+    registerObservable: function (observableId) {
 
-        if (this.observerSections.hasOwnProperty(formId)) {
+        if (this.observerSections.hasOwnProperty(observableId)) {
             return;
         }
 
-        this.observerSections[formId] = new Ext.util.Observable();
+        this.observerSections[observableId] = new Ext.util.Observable();
     },
 
-    unregisterForm: function (formId) {
+    unregisterObservable: function (observableId) {
 
-        if (!this.observerSections.hasOwnProperty(formId)) {
+        if (!this.observerSections.hasOwnProperty(observableId)) {
             return;
         }
 
-        delete this.observerSections[formId];
+        delete this.observerSections[observableId];
     },
 
-    getObserver: function (formId) {
-        return this.observerSections[formId];
+    getObserver: function (observableId) {
+        return this.observerSections[observableId];
     }
 });

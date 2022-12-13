@@ -1,0 +1,8 @@
+FormBuilderBundle\Stream\File:
+    attributes:
+        id:
+            groups: [Default, OutputWorkflow]
+        name:
+            groups: [Default, OutputWorkflow]
+        path:
+            groups: [Default, OutputWorkflow]

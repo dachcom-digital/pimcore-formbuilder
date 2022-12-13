@@ -7,6 +7,7 @@ use FormBuilderBundle\Manager\TemplateManager;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\VirtualActionDefinitions;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
@@ -77,6 +78,7 @@ class ExtJsFormBuilder
         $data['fields'] = $this->generateExtJsFields($fieldData);
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
+        $data['funnel'] = $this->generateFunnelConfiguration();
         $data['config_store'] = $this->getFormStoreData();
         $data['container_types'] = $this->getTranslatedContainerTypes();
         $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
@@ -144,17 +146,23 @@ class ExtJsFormBuilder
     public function generateExtJsOutputWorkflowForm(OutputWorkflowInterface $outputWorkflow): array
     {
         $data = [
-            'id'   => $outputWorkflow->getId(),
-            'name' => $outputWorkflow->getName(),
-            'meta' => []
+            'id'              => $outputWorkflow->getId(),
+            'name'            => $outputWorkflow->getName(),
+            'funnel_workflow' => $outputWorkflow->isFunnelWorkflow(),
+            'meta'            => []
         ];
 
         $outputWorkflowChannels = $this->serializer instanceof NormalizerInterface
             ? $this->serializer->normalize($outputWorkflow->getChannels(), 'array', ['groups' => ['ExtJs']])
             : [];
 
+        $virtualFunnelActionDefinitions = $this->serializer instanceof NormalizerInterface
+            ? $this->serializer->normalize(VirtualActionDefinitions::getVirtualFunnelActionDefinitions(), 'array', ['groups' => ['ExtJs']])
+            : [];
+
         $data['output_workflow_channels'] = $outputWorkflowChannels;
-        $data['output_workflow_channels_store'] = $this->generateAvailableWorkflowChannelsList();
+        $data['output_workflow_channels_store'] = $this->generateAvailableWorkflowChannelsList($outputWorkflow);
+        $data['output_workflow_channels_virtual_funnel_action_definitions'] = $virtualFunnelActionDefinitions;
         $data['output_workflow_success_management'] = $outputWorkflow->getSuccessManagement();
 
         return $data;
@@ -252,10 +260,15 @@ class ExtJsFormBuilder
         return $fieldNames;
     }
 
-    private function generateAvailableWorkflowChannelsList(): array
+    private function generateAvailableWorkflowChannelsList(OutputWorkflowInterface $outputWorkflow): array
     {
         $data = [];
         foreach ($this->outputWorkflowChannelRegistry->getAllIdentifier() as $availableChannel) {
+
+            if ($this->outputWorkflowChannelRegistry->isFunnelAwareChannel($availableChannel) && $outputWorkflow->isFunnelWorkflow() === false) {
+                continue;
+            }
+
             $data[] = [
                 'identifier' => $availableChannel,
                 'label'      => $this->translate(sprintf('form_builder.output_workflow.channel.%s', strtolower($availableChannel))),
@@ -540,6 +553,11 @@ class ExtJsFormBuilder
         }
 
         return $typeTemplates;
+    }
+
+    private function generateFunnelConfiguration(): array
+    {
+        return $this->configuration->getConfig('funnel');
     }
 
     private function getFormStoreData(): array

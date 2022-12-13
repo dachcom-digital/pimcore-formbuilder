@@ -1,0 +1,6 @@
+FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalEvent:
+    attributes:
+        name:
+            groups: [Default, OutputWorkflow]
+        data:
+            groups: [Default, OutputWorkflow]

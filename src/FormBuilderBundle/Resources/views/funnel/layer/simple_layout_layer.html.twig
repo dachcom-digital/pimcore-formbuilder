@@ -1,0 +1,11 @@
+{% if formTheme is not null %}
+    {% form_theme form with [formTheme ~ '.html.twig'] only %}
+{% endif %}
+
+{% block funnel_content %}
+
+    {% if layout is not null %}
+        {{ pimcore_inc(layout) }}
+    {% endif %}
+
+{% endblock funnel_content %}

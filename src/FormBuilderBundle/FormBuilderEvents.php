@@ -57,4 +57,13 @@ final class FormBuilderEvents
      * @see \FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent
      */
     public const OUTPUT_WORKFLOW_SIGNALS = 'form_builder.output_workflow.signals';
+
+    /**
+     * @see \FormBuilderBundle\Event\FormAssembleEvent
+     */
+    public const FORM_ASSEMBLE_PRE = 'form_builder.form_assemble.pre';
+    /**
+     * @see \FormBuilderBundle\Event\FormAssembleEvent
+     */
+    public const FORM_ASSEMBLE_POST = 'form_builder.form_assemble.post';
 }

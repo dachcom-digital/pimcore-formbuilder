@@ -79,7 +79,7 @@ class DefaultController extends FrontendController
 
         return $this->renderTemplate(
             '@FormBuilder/Form/form.html.twig', 
-            $assembler->assembleViewVars($optionBuilder)
+            $assembler->assemble($optionBuilder)
         );
     }
 }

@@ -19,3 +19,21 @@ services:
 
     FormBuilderBundle\Registry\OutputWorkflowChannelRegistry: ~
     FormBuilderBundle\Registry\FieldTransformerRegistry: ~
+
+    FormBuilderBundle\Registry\FunnelLayerRegistry: ~
+    FormBuilderBundle\Registry\FunnelActionRegistry: ~
+
+
+    #
+    # Signal
+
+    FormBuilderBundle\EventSubscriber\SignalSubscribeHandler: ~
+
+
+    #
+    # Funnel
+
+    FormBuilderBundle\OutputWorkflow\FunnelWorkerInterface: '@FormBuilderBundle\OutputWorkflow\FunnelWorker'
+    FormBuilderBundle\OutputWorkflow\FunnelWorker: ~
+
+    FormBuilderBundle\Resolver\FunnelDataResolver: ~

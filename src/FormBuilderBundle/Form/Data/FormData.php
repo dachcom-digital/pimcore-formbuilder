@@ -11,9 +11,10 @@ class FormData implements FormDataInterface
     protected array $data = [];
     protected array $attachments = [];
 
-    public function __construct(FormDefinitionInterface $formDefinition)
+    public function __construct(FormDefinitionInterface $formDefinition, array $data = [])
     {
         $this->formDefinition = $formDefinition;
+        $this->data = $data;
     }
 
     public function getFormDefinition(): FormDefinitionInterface

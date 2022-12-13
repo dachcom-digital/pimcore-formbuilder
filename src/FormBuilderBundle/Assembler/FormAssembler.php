@@ -3,26 +3,36 @@
 namespace FormBuilderBundle\Assembler;
 
 use FormBuilderBundle\Builder\FrontendFormBuilder;
+use FormBuilderBundle\Event\FormAssembleEvent;
 use FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface;
+use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class FormAssembler
 {
+    protected EventDispatcherInterface $eventDispatcher;
     protected FrontendFormBuilder $frontendFormBuilder;
     protected FormDefinitionManager $formDefinitionManager;
     protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator;
-    protected string $preset = '';
 
     public function __construct(
+        EventDispatcherInterface $eventDispatcher,
         FrontendFormBuilder $frontendFormBuilder,
         FormDefinitionManager $formDefinitionManager,
         FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
     ) {
+        $this->eventDispatcher = $eventDispatcher;
         $this->frontendFormBuilder = $frontendFormBuilder;
         $this->formDefinitionManager = $formDefinitionManager;
         $this->formRuntimeDataAllocator = $formRuntimeDataAllocator;
+    }
+
+    public function assemble(FormOptionsResolver $optionsResolver): array
+    {
+        return $this->assembleViewVars($optionsResolver);
     }
 
     public function assembleViewVars(FormOptionsResolver $optionsResolver): array
@@ -31,8 +41,12 @@ class FormAssembler
         $exceptionMessage = null;
         $formDefinition = null;
 
+        $formAssembleEvent = new FormAssembleEvent($optionsResolver);
+        $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_PRE);
+
         $formId = $optionsResolver->getFormId();
-        if (!empty($formId)) {
+
+        if ($formId !== null) {
             try {
                 $formDefinition = $this->formDefinitionManager->getById($formId);
                 if (!$formDefinition instanceof FormDefinitionInterface) {
@@ -66,17 +80,21 @@ class FormAssembler
             'custom_options'       => $optionsResolver->getCustomOptions()
         ];
 
-        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
-        $formRuntimeData = $formRuntimeDataCollector->getData();
-
-        $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
-
         $viewVars['form_block_template'] = $optionsResolver->getFormBlockTemplate();
         $viewVars['form_template'] = $optionsResolver->getFormTemplate();
         $viewVars['form_id'] = $optionsResolver->getFormId();
         $viewVars['form_preset'] = $optionsResolver->getFormPreset();
         $viewVars['form_output_workflow'] = $optionsResolver->getOutputWorkflow();
         $viewVars['main_layout'] = $optionsResolver->getMainLayout();
+
+        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
+        $formRuntimeData = $formRuntimeDataCollector->getData();
+
+        $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData, $formAssembleEvent->getFormData());
+
+        $formAssembleEvent = new FormAssembleEvent($optionsResolver, $form);
+        $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_POST);
+
         $viewVars['form'] = $form->createView();
 
         return $viewVars;

@@ -3,6 +3,8 @@
 namespace FormBuilderBundle\DependencyInjection;
 
 use FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter;
+use FormBuilderBundle\EventSubscriber\SignalStorage\FormDataSignalStorage;
+use FormBuilderBundle\Storage\SessionStorageProvider;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -20,6 +22,7 @@ class Configuration implements ConfigurationInterface
                 ->variableNode('form_attributes')->end()
             ->end();
 
+        $rootNode->append($this->buildFunnelNode());
         $rootNode->append($this->createPersistenceNode());
         $rootNode->append($this->buildFlagsNode());
         $rootNode->append($this->buildSpamProductionNode());
@@ -659,4 +662,22 @@ class Configuration implements ConfigurationInterface
 
         return $node;
     }
+
+    private function buildFunnelNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('funnel');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')->defaultValue(false)->end()
+                ->scalarNode('storage_provider')->defaultValue(SessionStorageProvider::class)->end()
+                ->scalarNode('signal_storage_class')->defaultValue(FormDataSignalStorage::class)->end()
+            ->end();
+
+        return $rootNode;
+    }
+
 }
