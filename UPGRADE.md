@@ -1,8 +1,12 @@
 # Upgrade Notes
 
 ## Version 4.2.0
-- **[FEATURE]**: PIMCORE 10.5 Support only!
 - **[NEW FEATURE]**: Funnel Feature [#362](https://github.com/dachcom-digital/pimcore-formbuilder/issues/362)
+- **[FEATURE]**: PIMCORE 10.5 Support only!
+- **[ENHANCEMENT]**: Removed deprecated session `NamespacedAttributeBag` which was unused
+- **[ENHANCEMENT]**: Remove session from service DI
+- **[ENHANCEMENT]**: Use EventListener instead of legacy plugin architecture, to boot ExtJS extensions
+- **[DEPRECATION]**: Deprecated Method `assembleViewVars()` in `FormAssembler`, use `assemble()` instead
 
 ## Version 4.1.4
 - **[BUGFIX]**: Fix link to translation list [#359](https://github.com/dachcom-digital/pimcore-formbuilder/pull/359)
