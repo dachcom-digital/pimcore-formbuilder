@@ -31,7 +31,7 @@
         }
     },
     "require": {
-        "pimcore/pimcore": "^10.1",
+        "pimcore/pimcore": "^10.5",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {
