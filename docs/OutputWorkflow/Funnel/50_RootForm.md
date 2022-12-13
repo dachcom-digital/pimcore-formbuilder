@@ -14,5 +14,4 @@ App\Entity\MyEntity:
     attributes:
         id:
             groups: [Default, OutputWorkflow]
-
 ```
