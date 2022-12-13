@@ -2,17 +2,14 @@
 
 namespace FormBuilderBundle\Session;
 
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class FlashBagManager implements FlashBagManagerInterface
 {
-    protected SessionInterface $session;
-
-    public function __construct(SessionInterface $session)
+    public function __construct(protected RequestStack $requestStack)
     {
-        $this->session = $session;
     }
 
     public function has(string $type): bool
@@ -44,15 +41,21 @@ class FlashBagManager implements FlashBagManagerInterface
 
     public function flashBagIsAvailable(): bool
     {
-        return $this->session instanceof Session;
+        try {
+            $this->requestStack->getSession();
+        } catch (SessionNotFoundException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     public function getFlashBag(): ?FlashBagInterface
     {
-        if (!$this->session instanceof Session) {
+        if (!$this->flashBagIsAvailable()) {
             return null;
         }
 
-        return $this->session->getFlashBag();
+        return $this->requestStack->getSession()->getFlashBag();
     }
 }
