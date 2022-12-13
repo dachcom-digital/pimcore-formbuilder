@@ -5,6 +5,7 @@ namespace FormBuilderBundle\Session;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class FlashBagManager implements FlashBagManagerInterface
 {
@@ -56,6 +57,9 @@ class FlashBagManager implements FlashBagManagerInterface
             return null;
         }
 
-        return $this->requestStack->getSession()->getFlashBag();
+        /** @var Session $session */
+        $session = $this->requestStack->getSession();
+
+        return $session->getFlashBag();
     }
 }
