@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 
 class DateDataObjectTransformer implements OutputTransformerInterface, InputTransformerInterface
 {
-    public function getValueReverse(FieldDefinitionInterface $fieldDefinition, mixed $formValue): \DateTime
+    public function getValueReverse(FieldDefinitionInterface $fieldDefinition, mixed $formValue): ?\DateTime
     {
         if (!in_array($fieldDefinition->getType(), ['date', 'date_time', 'time', 'birthday'])) {
             return $formValue;
