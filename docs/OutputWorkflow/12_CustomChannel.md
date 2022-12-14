@@ -4,18 +4,16 @@ To create a custom output workflow channel, you need to create some configuratio
 ## Service Definition
 
 ```yaml
-
 services:
     App\FormBuilder\MyChannel:
         tags:
             - { name: form_builder.output_workflow.channel, type: myChannel }
-
 ```
+
 ## Output Transformer
 Read [here](./15_OutputTransformer.md#custom-output-transformer) how to add a single output transformer to your new custom channel.
 
 ## PHP Configuration Form Type Class
-
 ```php
 <?php
 

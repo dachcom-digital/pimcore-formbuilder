@@ -15,10 +15,10 @@ it's quite easy to integrate your own api provider, read more about it [here](./
 
 ## Available Options
 
-| Name | Type        | Description |
-|------|-------------|-------------|
-| Api Provider| `ApiProviderInterface` | Select your API Provider. |
-| Options | `mixed` | If available, various provider configuration fields |
+| Name         | Type                   | Description                                         |
+|--------------|------------------------|-----------------------------------------------------|
+| Api Provider | `ApiProviderInterface` | Select your API Provider.                           |
+| Options      | `mixed`                | If available, various provider configuration fields |
 
 ## Mapping
 ![image](https://user-images.githubusercontent.com/700119/145618709-686d5022-1ed9-4722-9600-0d41eccf55a3.png)

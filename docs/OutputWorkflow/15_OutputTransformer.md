@@ -16,7 +16,7 @@ If no transformer has been found, the `fallback_transformer` will be used.
 If you want to transform the text field value for example, you need to add your own transformer.
 First, let FormBuilder know about your transformer. 
 
-> You're also able to set up your custom output transform for your dynamic fields via `output_transformer` in the optional option configuration node.
+> You're also able to set up your custom input transform for your dynamic fields via the `input_transformer` configuration node.
 
  ```yaml
 form_builder:
@@ -60,31 +60,19 @@ use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
 
 class TextInputTransformer implements OutputTransformerInterface
 {
-    /**
-     * @var Translator
-     */
-    protected $translator;
+    protected Translator $translator;
 
-    /**
-     * @param Translator $translator
-     */
     public function __construct(Translator $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getValue(FieldDefinitionInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         // manipulate or change the value
         return $rawValue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getLabel(FieldDefinitionInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         // manipulate or change the label
@@ -99,10 +87,10 @@ class TextInputTransformer implements OutputTransformerInterface
 
 After you've created a [custom output channel](./12_CustomChannel.md), you may want to control the output values too.
 It is possible to use one transformer for all available fields, like we'll show you below.
-If you want to add a fallback to all the other fields in your channel, you need to add an additional tag with type `fallback_transformer`.
+If you want to add a fallback to all the other fields in your channel, you need to add a tag with type `fallback_transformer`.
 
-> **Note:** If you don't add any transformer, the `fallback_transformer` will be used again.
->
+> **Note:** If you don't add any transformer, the `fallback_transformer` will be used again.  
+
 ```yaml
 App\OutputTransformer\MyChannelOutputTransformer:
     autowire: true

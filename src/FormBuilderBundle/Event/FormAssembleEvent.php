@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Event;
 
+use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -12,10 +13,12 @@ class FormAssembleEvent extends Event
     protected ?FormInterface $form;
 
     protected array $formData = [];
+    protected FormDefinitionInterface $formDefinition;
 
-    public function __construct(FormOptionsResolver $formOptionsResolver, ?FormInterface $form = null)
+    public function __construct(FormOptionsResolver $formOptionsResolver, FormDefinitionInterface $formDefinition, ?FormInterface $form = null)
     {
         $this->formOptionsResolver = $formOptionsResolver;
+        $this->formDefinition = $formDefinition;
         $this->form = $form;
     }
 
@@ -27,6 +30,11 @@ class FormAssembleEvent extends Event
     public function getForm(): FormInterface
     {
         return $this->form;
+    }
+
+    public function getFormDefinition(): FormDefinitionInterface
+    {
+        return $this->formDefinition;
     }
 
     public function getFormData(): array

@@ -15,6 +15,10 @@ services:
     FormBuilderBundle\Form\FormValuesOutputApplier: ~
     FormBuilderBundle\Form\FormValuesOutputApplierInterface: '@FormBuilderBundle\Form\FormValuesOutputApplier'
 
+    # form values input applier
+    FormBuilderBundle\Form\FormValuesInputApplier: ~
+    FormBuilderBundle\Form\FormValuesInputApplierInterface: '@FormBuilderBundle\Form\FormValuesInputApplier'
+
     # error serializer
     FormBuilderBundle\Form\FormErrorsSerializer: ~
     FormBuilderBundle\Form\FormErrorsSerializerInterface: '@FormBuilderBundle\Form\FormErrorsSerializer'
