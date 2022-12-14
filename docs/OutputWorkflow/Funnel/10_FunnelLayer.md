@@ -134,8 +134,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.funnelLayer.dummyLayer = Class.create
 
 #### Twig Partial
 ```twig
-{% if formTheme is not null %}
-    {% form_theme form with (formTheme ~ '.html.twig') only %}
+{% if formThemePath is not null %}
+    {% form_theme form formThemePath %}
 {% endif %}
 
 {% block funnel_content %}
