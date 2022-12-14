@@ -15,6 +15,10 @@ class DateDataObjectTransformer implements OutputTransformerInterface, InputTran
             return $formValue;
         }
 
+        if (!is_string($formValue)) {
+            return $formValue;
+        }
+
         return Carbon::parse($formValue)->toDateTime();
     }
 
