@@ -32,6 +32,7 @@ Below you'll find a brief walk through to get the idea behind this powerful feat
 - Every funnel layer receives the `SubmissionEvent` object, so you're able to process users data which has been collected via form builders root form
 - Every funnel layer will be submitted as a form. If a funnel layer provides some additional form data, it will be stored within the storage provider via `FunnelRuntimeData`
 - After the last channel has been called OR an exception raised, a `funnel_finished` flag will be added to the url. This indicates, that the workflow is done and the current storage will be flushed
+- If you're using some custom form fields, make sure you've also defined an [Input Transformer](./14_InputTransformer.md)!
 
 ***
 

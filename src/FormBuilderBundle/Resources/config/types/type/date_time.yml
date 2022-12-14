@@ -3,6 +3,7 @@ form_builder:
         date_time:
             class: Symfony\Component\Form\Extension\Core\Type\DateTimeType
             output_transformer: date_transformer
+            input_transformer: date_transformer
             backend:
                 form_type_group: date_time_fields
                 label: 'form_builder_type.date_time_type'

@@ -156,6 +156,7 @@ class Configuration implements ConfigurationInterface
             ->arrayPrototype()
                 ->children()
                     ->scalarNode('output_transformer')->cannotBeEmpty()->defaultValue('fallback_transformer')->end()
+                    ->scalarNode('input_transformer')->defaultNull()->end()
                     ->scalarNode('class')->cannotBeEmpty()->end()
                         ->arrayNode('configurations')
                         ->scalarPrototype()->cannotBeEmpty()->end()

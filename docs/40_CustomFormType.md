@@ -14,6 +14,12 @@ form_builder:
         
             # define the class
             class: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            
+            # If you need some custom transformers, uncomment these lines:
+            #
+            #output_transformer: my_custom_output_transformer
+            #input_transformer: my_custom_input_transformer
+            
             backend:
             
                 # you either use one of those fields 

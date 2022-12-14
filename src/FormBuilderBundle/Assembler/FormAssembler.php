@@ -41,9 +41,6 @@ class FormAssembler
         $exceptionMessage = null;
         $formDefinition = null;
 
-        $formAssembleEvent = new FormAssembleEvent($optionsResolver);
-        $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_PRE);
-
         $formId = $optionsResolver->getFormId();
 
         if ($formId !== null) {
@@ -73,6 +70,9 @@ class FormAssembler
             return $viewVars;
         }
 
+        $formAssembleEvent = new FormAssembleEvent($optionsResolver, $formDefinition);
+        $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_PRE);
+
         $systemRuntimeData = [
             'form_preset'             => $optionsResolver->getFormPreset(),
             'form_output_workflow'    => $optionsResolver->getOutputWorkflow(),
@@ -93,7 +93,7 @@ class FormAssembler
 
         $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData, $formAssembleEvent->getFormData());
 
-        $formAssembleEvent = new FormAssembleEvent($optionsResolver, $form);
+        $formAssembleEvent = new FormAssembleEvent($optionsResolver, $formDefinition, $form);
         $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_POST);
 
         $viewVars['form'] = $form->createView();

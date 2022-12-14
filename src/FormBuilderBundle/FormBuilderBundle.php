@@ -12,7 +12,7 @@ use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicObjectResolverPass
 use FormBuilderBundle\DependencyInjection\CompilerPass\FieldTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\MailEditorWidgetPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OptionsTransformerPass;
-use FormBuilderBundle\DependencyInjection\CompilerPass\OutputTransformerPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\OutputInputTransformerPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowChannelPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowFunnelActionPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\OutputWorkflowFunnelLayerPass;
@@ -59,7 +59,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new DispatcherPass());
         $container->addCompilerPass(new ChoiceBuilderPass());
         $container->addCompilerPass(new MailEditorWidgetPass());
-        $container->addCompilerPass(new OutputTransformerPass());
+        $container->addCompilerPass(new OutputInputTransformerPass());
         $container->addCompilerPass(new OutputWorkflowChannelPass());
         $container->addCompilerPass(new OutputWorkflowFunnelLayerPass());
         $container->addCompilerPass(new OutputWorkflowFunnelActionPass());

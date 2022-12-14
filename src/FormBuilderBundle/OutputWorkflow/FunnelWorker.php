@@ -7,6 +7,7 @@ use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\Form\FormValuesInputApplierInterface;
 use FormBuilderBundle\Model\FormStorageData;
 use FormBuilderBundle\Model\FunnelActionElement;
 use FormBuilderBundle\Model\OutputWorkflowChannelInterface;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FunnelWorker implements FunnelWorkerInterface
 {
     protected Configuration $configuration;
+    protected FormValuesInputApplierInterface $formValuesInputApplier;
     protected StorageProviderRegistry $storageProviderRegistry;
     protected OutputWorkflowChannelRegistry $channelRegistry;
     protected FrontendFormBuilder $frontendFormBuilder;
@@ -33,6 +35,7 @@ class FunnelWorker implements FunnelWorkerInterface
 
     public function __construct(
         Configuration $configuration,
+        FormValuesInputApplierInterface $formValuesInputApplier,
         StorageProviderRegistry $storageProviderRegistry,
         OutputWorkflowChannelRegistry $channelRegistry,
         FrontendFormBuilder $frontendFormBuilder,
@@ -40,6 +43,7 @@ class FunnelWorker implements FunnelWorkerInterface
         FunnelDataResolver $funnelDataResolver,
     ) {
         $this->configuration = $configuration;
+        $this->formValuesInputApplier = $formValuesInputApplier;
         $this->storageProviderRegistry = $storageProviderRegistry;
         $this->channelRegistry = $channelRegistry;
         $this->frontendFormBuilder = $frontendFormBuilder;
@@ -267,11 +271,12 @@ class FunnelWorker implements FunnelWorkerInterface
     ): SubmissionEvent {
 
         $formRuntimeData = $formStorageData->getFormRuntimeData() ?? [];
+        $formData = $this->formValuesInputApplier->apply($formStorageData->getFormData(), $outputWorkflow->getFormDefinition());
 
         $form = $this->frontendFormBuilder->buildForm(
             $outputWorkflow->getFormDefinition(),
             $formRuntimeData,
-            $formStorageData->getFormData(),
+            $formData
         );
 
         return new SubmissionEvent($request, $formRuntimeData, $form, $formStorageData->getFunnelRuntimeData());

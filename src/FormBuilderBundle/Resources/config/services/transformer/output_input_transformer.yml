@@ -6,6 +6,7 @@ services:
         public: false
 
     FormBuilderBundle\Registry\OutputTransformerRegistry: ~
+    FormBuilderBundle\Registry\InputTransformerRegistry: ~
 
     FormBuilderBundle\Transformer\Output\FallbackTransformer:
         tags:
@@ -19,6 +20,7 @@ services:
     FormBuilderBundle\Transformer\Output\DateDataObjectTransformer:
         tags:
             - { name: form_builder.transformer.output, type: date_transformer, channel: object }
+            - { name: form_builder.transformer.input, type: date_transformer }
 
     FormBuilderBundle\Transformer\Output\ChoiceDataObjectTransformer:
         tags:
@@ -31,3 +33,4 @@ services:
     FormBuilderBundle\Transformer\Output\CheckboxObjectTransformer:
         tags:
             - { name: form_builder.transformer.output, type: checkbox_transformer, channel: object }
+
