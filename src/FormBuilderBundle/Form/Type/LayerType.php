@@ -23,7 +23,13 @@ class LayerType extends AbstractType
                 continue;
             }
 
-            $builder->add($element->getFunnelActionDefinition()->getName(), SubmitType::class);
+            $builder->add(
+                $element->getFunnelActionDefinition()->getName(),
+                SubmitType::class,
+                [
+                    'label' => $element->getFunnelActionDefinition()->getLabel()
+                ]
+            );
         }
     }
 
