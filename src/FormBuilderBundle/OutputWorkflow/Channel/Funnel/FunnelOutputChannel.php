@@ -137,10 +137,11 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
         $renderType = $funnelLayer->dynamicFunnelActionAware() ? self::RENDER_TYPE_PRERENDER : self::RENDER_TYPE_INCLUDE;
 
         $viewArguments = array_merge($funnelLayerData->getFunnelLayerViewArguments(), [
-            'form'          => $form->createView(),
-            'formTheme'     => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template'] ?? null,
+            'form'           => $form->createView(),
+            'formTheme'      => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template'] ?? null,
+            'formThemePath'  => $funnelWorkerData->getSubmissionEvent()->getFormRuntimeData()['form_template_full_path'] ?? null,
             'formRenderRest' => $renderType === self::RENDER_TYPE_INCLUDE,
-            'funnelActions' => $funnelWorkerData->getFunnelActionElementStack(),
+            'funnelActions'  => $funnelWorkerData->getFunnelActionElementStack(),
         ]);
 
         $templateArguments = [
