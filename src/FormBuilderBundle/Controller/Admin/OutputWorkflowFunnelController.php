@@ -9,6 +9,7 @@ use FormBuilderBundle\Registry\FunnelLayerRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -51,7 +52,18 @@ class OutputWorkflowFunnelController extends AdminController
                 'configuration' => [
                     'dynamicFunnelActionAware' => $service->dynamicFunnelActionAware(),
                     'funnelActionDefinitions'  => $this->serializer instanceof NormalizerInterface
-                        ? $this->serializer->normalize($funnelActionDefinitions, 'array', ['groups' => ['ExtJs']])
+                        ? $this->serializer->normalize(
+                            $funnelActionDefinitions,
+                            'array',
+                            [
+                                'groups'                      => ['ExtJs'],
+                                AbstractNormalizer::CALLBACKS => [
+                                    'label' => function ($data) {
+                                        return $this->trans($data, [], 'messages');
+                                    }
+                                ]
+                            ]
+                        )
                         : []
                 ]
             ];
