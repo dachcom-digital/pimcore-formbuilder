@@ -74,10 +74,11 @@ class FormAssembler
         }
 
         $systemRuntimeData = [
-            'form_preset'          => $optionsResolver->getFormPreset(),
-            'form_output_workflow' => $optionsResolver->getOutputWorkflow(),
-            'form_template'        => $optionsResolver->getFormTemplateName(),
-            'custom_options'       => $optionsResolver->getCustomOptions()
+            'form_preset'             => $optionsResolver->getFormPreset(),
+            'form_output_workflow'    => $optionsResolver->getOutputWorkflow(),
+            'form_template'           => $optionsResolver->getFormTemplateName(),
+            'form_template_full_path' => $optionsResolver->getFormTemplate(),
+            'custom_options'          => $optionsResolver->getCustomOptions()
         ];
 
         $viewVars['form_block_template'] = $optionsResolver->getFormBlockTemplate();
