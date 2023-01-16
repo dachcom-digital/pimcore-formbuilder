@@ -67,8 +67,12 @@ class ImportExportProcessor
             foreach ($fowChannelQb->execute()->fetchAllAssociative() as $rawFormOutputWorkflowChannelDefinition) {
                 $channels[] = [
                     'type'          => $rawFormOutputWorkflowChannelDefinition['type'],
+                    'name'          => $rawFormOutputWorkflowChannelDefinition['name'],
                     'configuration' => is_string($rawFormOutputWorkflowChannelDefinition['configuration'])
                         ? unserialize($rawFormOutputWorkflowChannelDefinition['configuration'], ['allowed_classes' => false])
+                        : null,
+                    'funnel_actions' => is_string($rawFormOutputWorkflowChannelDefinition['funnel_actions'])
+                        ? unserialize($rawFormOutputWorkflowChannelDefinition['funnel_actions'], ['allowed_classes' => false])
                         : null,
                 ];
             }
@@ -76,6 +80,7 @@ class ImportExportProcessor
             $outputWorkflows[] = [
                 'channels'           => $channels,
                 'name'               => $rawFormOutputWorkflowDefinition['name'],
+                'funnel_workflow'    => $rawFormOutputWorkflowDefinition['funnel_workflow'] === '1',
                 'success_management' => is_string($rawFormOutputWorkflowDefinition['success_management'])
                     ? unserialize($rawFormOutputWorkflowDefinition['success_management'], ['allowed_classes' => false])
                     : null,
@@ -137,6 +142,7 @@ class ImportExportProcessor
                 /** @var OutputWorkflowInterface $outputWorkflow */
                 $outputWorkflow = $this->outputWorkflowManager->save([
                     'name'           => $outputWorkflowDefinition['name'],
+                    'funnelAware'    => $outputWorkflowDefinition['funnel_workflow'] ?? false,
                     'formDefinition' => $formDefinition
                 ]);
 
@@ -147,6 +153,8 @@ class ImportExportProcessor
                         $channel = new OutputWorkflowChannel();
                         $channel->setType($channelDefinition['type']);
                         $channel->setConfiguration($channelDefinition['configuration']);
+                        $channel->setName($channelDefinition['name'] ?? null);
+                        $channel->setFunnelActions($channelDefinition['funnel_actions'] ?? null);
                         $channel->setOutputWorkflow($outputWorkflow);
 
                         $outputWorkflow->addChannel($channel);

@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Version 4.2.2
+- **[BUGFIX]**: Export/Import Form fix [#371](https://github.com/dachcom-digital/pimcore-formbuilder/issues/371)
+
 ## Version 4.2.1
 - **[ENHANCEMENT]**: Input Transformer [#7bde83b](https://github.com/dachcom-digital/pimcore-formbuilder/pull/369/commits/7bde83b015d242f2ce2f93fcd0b4feb78431587c)
 - **[BUGFIX]**: Translate Funnel Action Label in Backend [#b4966a2](https://github.com/dachcom-digital/pimcore-formbuilder/pull/369/commits/b4966a2f23c0aa55e1df214632984ff0164aa945)
