@@ -84,7 +84,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
             omFieldAttributes,
             outputWorkflowConfig;
 
-        if(node === null) {
+        if (node === null) {
             return null;
         }
 
@@ -191,10 +191,12 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                     }
                 };
 
-                // allow all container types except repeater!
-                if (fieldData.hasOwnProperty('fields') && Ext.isArray(fieldData.fields) && (fieldData.type === 'container' && fieldData.sub_type !== 'repeater')) {
+                if (fieldData.hasOwnProperty('fields') && Ext.isArray(fieldData.fields) && fieldData.type === 'container') {
                     item.omContainerFields = fieldData.fields;
-                    item.children = generateFields(fieldData.fields,[])
+                    // allow all container types except repeater!
+                    if (fieldData.sub_type !== 'repeater') {
+                        item.children = generateFields(fieldData.fields, []);
+                    }
                 }
 
                 // do not add any data to form item, if it has been forced disabled
@@ -279,7 +281,7 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                             fieldData = this.buildFormFieldConfigFromNode(record);
 
                         if (fieldData === null) {
-                            return true;
+                            return false;
                         }
 
                         if (fieldData.omFieldTypeIdentifier !== this.FIELD_TYPE_DATA_CLASS_FIELD) {
