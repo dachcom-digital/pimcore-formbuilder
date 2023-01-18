@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Version 4.2.3
+- **[BUGFIX]**: Fix field collection mapping [#370](https://github.com/dachcom-digital/pimcore-formbuilder/issues/370)
+
 ## Version 4.2.2
 - **[BUGFIX]**: Export/Import Form fix [#371](https://github.com/dachcom-digital/pimcore-formbuilder/issues/371)
 
