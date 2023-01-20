@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## Version 4.3.0
+- **[ENHANCEMENT]**: Use Flysystem for Storage [#334](https://github.com/dachcom-digital/pimcore-formbuilder/issues/334)
+  - Remove `PIMCORE_SYSTEM_TEMP_DIRECTORY/formbuilder-cache` as it is no longer needed
+
 ## Version 4.2.3
 - **[BUGFIX]**: Fix field collection mapping [#370](https://github.com/dachcom-digital/pimcore-formbuilder/issues/370)
 

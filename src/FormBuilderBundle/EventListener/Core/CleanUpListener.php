@@ -35,9 +35,9 @@ class CleanUpListener implements TaskInterface
             return;
         }
 
-        if ($file->isDir() && $minimumModifiedDelta->greaterThan(Carbon::createFromTimestamp($file->lastModified()))) {
+        if ($file->isDir()) {
             $this->formBuilderFilesStorage->deleteDirectory($file->path());
-        } elseif ($minimumModifiedDelta->greaterThan(Carbon::createFromTimestamp($file->lastModified()))) {
+        } else {
             $this->formBuilderFilesStorage->delete($file->path());
         }
 
