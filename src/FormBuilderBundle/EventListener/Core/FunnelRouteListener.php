@@ -85,9 +85,11 @@ class FunnelRouteListener implements EventSubscriberInterface
             return;
         }
 
-        $this->signalSubscribeHandler->broadcast();
+        $isFunnelShutdownRequest = $this->funnelDataResolver->isFunnelShutdownRequest($event->getRequest());
 
-        if ($this->funnelDataResolver->isFunnelShutdownRequest($event->getRequest())) {
+        $this->signalSubscribeHandler->broadcast(['funnel_shutdown' => $isFunnelShutdownRequest]);
+
+        if ($isFunnelShutdownRequest === true) {
             $this->funnelDataResolver->flushFunnelData($event->getRequest());
         }
     }
