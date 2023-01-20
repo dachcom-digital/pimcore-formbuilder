@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
 use FormBuilderBundle\Stream\File;
+use League\Flysystem\FilesystemOperator;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
@@ -13,18 +14,12 @@ use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
 
 class MailParser
 {
-    protected EngineInterface $templating;
-    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
-    protected PlaceholderParserInterface $placeholderParser;
-
     public function __construct(
-        EngineInterface $templating,
-        FormValuesOutputApplierInterface $formValuesOutputApplier,
-        PlaceholderParserInterface $placeholderParser
+        protected EngineInterface $templating,
+        protected FormValuesOutputApplierInterface $formValuesOutputApplier,
+        protected PlaceholderParserInterface $placeholderParser,
+        protected FilesystemOperator $formBuilderFilesStorage
     ) {
-        $this->templating = $templating;
-        $this->formValuesOutputApplier = $formValuesOutputApplier;
-        $this->placeholderParser = $placeholderParser;
     }
 
     /**
@@ -153,7 +148,7 @@ class MailParser
         /** @var File $attachmentFile */
         foreach ($attachments as $attachmentFile) {
             try {
-                $mail->attach(file_get_contents($attachmentFile->getPath()), $attachmentFile->getName());
+                $mail->attach($this->formBuilderFilesStorage->read($attachmentFile->getPath()), $attachmentFile->getName());
             } catch (\Exception $e) {
                 // fail silently.
             }

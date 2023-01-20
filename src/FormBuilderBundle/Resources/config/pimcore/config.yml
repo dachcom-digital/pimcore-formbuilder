@@ -37,6 +37,17 @@ parameters:
         - ['onselect','onselect']
     form_builder_field_attributes: '%form_builder_form_attributes%'
 
+flysystem:
+    storages:
+        form_builder.chunk.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/tmp/form-builder-chunks'
+        form_builder.files.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/tmp/form-builder-files'
+
 form_builder:
     area:
         presets: ~

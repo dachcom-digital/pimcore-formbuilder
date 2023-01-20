@@ -5,7 +5,8 @@ namespace FormBuilderBundle\Stream;
 use Doctrine\DBAL\Query\QueryBuilder;
 use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalEvent;
 use FormBuilderBundle\Event\OutputWorkflow\OutputWorkflowSignalsEvent;
-use FormBuilderBundle\Tool\FileLocator;
+use FormBuilderBundle\EventSubscriber\SignalSubscribeHandler;
+use League\Flysystem\FilesystemOperator;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -15,13 +16,10 @@ class AttachmentStream implements AttachmentStreamInterface
     public const SIGNAL_CLEAN_UP = 'tmp_file_attachment_stream';
     protected const PACKAGE_IDENTIFIER = 'formbuilder_package_identifier';
 
-    protected EventDispatcherInterface $eventDispatcher;
-    protected FileLocator $fileLocator;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, FileLocator $fileLocator)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->fileLocator = $fileLocator;
+    public function __construct(
+        protected EventDispatcherInterface $eventDispatcher,
+        protected FilesystemOperator $formBuilderFilesStorage
+    ) {
     }
 
     /**
@@ -46,7 +44,7 @@ class AttachmentStream implements AttachmentStreamInterface
 
         $packageIdentifier = '';
         foreach ($fileStack->getFiles() as $file) {
-            $packageIdentifier .= sprintf('%s-%s-%s-%s', filesize($file->getPath()), $file->getId(), $file->getPath(), $file->getName());
+            $packageIdentifier .= sprintf('%s-%s-%s-%s', $this->formBuilderFilesStorage->fileSize($file->getPath()), $file->getId(), $file->getPath(), $file->getName());
         }
 
         // create package identifier to check if we just in another channel
@@ -55,7 +53,7 @@ class AttachmentStream implements AttachmentStreamInterface
         $formName = \Pimcore\File::getValidFilename($formName);
         $zipKey = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 5);
         $zipFileName = sprintf('%s-%s.zip', \Pimcore\File::getValidFilename($fieldName), $zipKey);
-        $zipPath = sprintf('%s/%s', $this->fileLocator->getZipFolder(), $zipFileName);
+        $zipPath = sprintf('%s/%s', PIMCORE_SYSTEM_TEMP_DIRECTORY, $zipFileName);
 
         $existingAssetPackage = $this->findExistingAssetPackage($packageIdentifier, $formName);
 
@@ -68,7 +66,7 @@ class AttachmentStream implements AttachmentStreamInterface
             $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
             foreach ($fileStack->getFiles() as $file) {
-                $zip->addFile($file->getPath(), $file->getName());
+                $zip->addFromString($file->getName(), $this->formBuilderFilesStorage->read($file->getPath()));
             }
 
             $zip->close();
@@ -145,7 +143,18 @@ class AttachmentStream implements AttachmentStreamInterface
      */
     public function cleanUp(OutputWorkflowSignalsEvent $signalsEvent): void
     {
-        // keep assets if guard exception occurs: user may want to retry!
+        // keep assets:
+        // - if broadcasting channel is initiating funnel
+        // - if broadcasting channel is processing funnel and not done yet
+        // - if guard exception occurs: user may want to retry!
+
+        if ($signalsEvent->getChannel() === SignalSubscribeHandler::CHANNEL_FUNNEL_INITIATE) {
+            return;
+        }
+
+        if ($signalsEvent->getChannel() === SignalSubscribeHandler::CHANNEL_FUNNEL_PROCESS && $signalsEvent->getContextItem('funnel_shutdown') === false) {
+            return;
+        }
 
         if ($signalsEvent->hasGuardException() === true) {
             return;
@@ -166,28 +175,21 @@ class AttachmentStream implements AttachmentStreamInterface
 
     protected function removeAttachmentFile(File $attachmentFile): void
     {
-        $targetFolder = $this->fileLocator->getFilesFolder();
-        $target = implode(DIRECTORY_SEPARATOR, [$targetFolder, $attachmentFile->getId()]);
-
-        if (!is_dir($target)) {
-            return;
+        if ($this->formBuilderFilesStorage->directoryExists($attachmentFile->getId())) {
+            $this->formBuilderFilesStorage->deleteDirectory($attachmentFile->getId());
         }
-
-        $this->fileLocator->removeDir($target);
     }
 
     protected function extractFiles(array $data): FileStack
     {
         $files = new FileStack();
         foreach ($data as $fileData) {
-
             $fileId = (string) $fileData['id'];
-            $fileDir = sprintf('%s/%s', $this->fileLocator->getFilesFolder(), $fileId);
-
-            if (is_dir($fileDir)) {
-                $dirFiles = glob($fileDir . '/*');
-                if (count($dirFiles) === 1) {
-                    $files->addFile(new File($fileId, $fileData['fileName'], $dirFiles[0]));
+            if ($this->formBuilderFilesStorage->directoryExists($fileId)) {
+                $dirFiles = $this->formBuilderFilesStorage->listContents($fileId);
+                $flyFiles = iterator_to_array($dirFiles->getIterator());
+                if (count($flyFiles) === 1) {
+                    $files->addFile(new File($fileId, $fileData['fileName'], $flyFiles[0]->path()));
                 }
             }
         }

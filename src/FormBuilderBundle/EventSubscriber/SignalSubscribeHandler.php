@@ -65,7 +65,9 @@ class SignalSubscribeHandler implements EventSubscriberInterface
 
     public function broadcast(array $context = []): void
     {
-        if ($this->channel === null) {
+        $channelName = $this->channel;
+
+        if ($channelName === null) {
             return;
         }
 
@@ -74,8 +76,9 @@ class SignalSubscribeHandler implements EventSubscriberInterface
 
         $this->eventDispatcher->dispatch(
             new OutputWorkflowSignalsEvent(
+                $channelName,
                 $this->signalStorage->getSignals(),
-                $context['exception'] ?? null
+                $context
             ),
             FormBuilderEvents::OUTPUT_WORKFLOW_SIGNALS
         );

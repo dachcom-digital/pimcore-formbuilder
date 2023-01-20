@@ -7,30 +7,61 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class OutputWorkflowSignalsEvent extends Event
 {
+    protected string $channel;
     protected array $signals;
-    protected ?\Throwable $exception;
+    protected array $context;
 
-    public function __construct(array $signals, ?\Throwable $exception)
+    public function __construct(string $channel, array $signals, array $context)
     {
+        $this->channel = $channel;
         $this->signals = $signals;
-        $this->exception = $exception;
+        $this->context = $context;
+    }
+
+    public function getChannel(): string
+    {
+        return $this->channel;
+    }
+
+    public function hasContextItem(string $contextItem): bool
+    {
+        return array_key_exists($contextItem, $this->context);
+    }
+
+    public function getContextItem(string $contextItem): mixed
+    {
+        if (!$this->hasContextItem($contextItem)) {
+            return null;
+        }
+
+        return $this->context[$contextItem];
     }
 
     public function hasException(): bool
     {
-        return $this->exception instanceof \Throwable;
+        return $this->hasContextItem('exception') && $this->getContextItem('exception') instanceof \Throwable;
     }
 
     public function hasGuardException(): bool
     {
-        return $this->exception instanceof OutputWorkflow\GuardChannelException ||
-            $this->exception instanceof OutputWorkflow\GuardOutputWorkflowException ||
-            $this->exception instanceof OutputWorkflow\GuardStackedException;
+        if (!$this->hasException()) {
+            return false;
+        }
+
+        $exception = $this->getContextItem('exception');
+
+        return $exception instanceof OutputWorkflow\GuardChannelException ||
+            $exception instanceof OutputWorkflow\GuardOutputWorkflowException ||
+            $exception instanceof OutputWorkflow\GuardStackedException;
     }
 
     public function getException(): ?\Throwable
     {
-        return $this->exception;
+        if (!$this->hasException()) {
+            return null;
+        }
+
+        return $this->getContextItem('exception');
     }
 
     /**

@@ -2,34 +2,45 @@
 
 namespace FormBuilderBundle\EventListener\Core;
 
-use FormBuilderBundle\Tool\FileLocator;
+use Carbon\Carbon;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 use Pimcore\Logger;
 use Pimcore\Maintenance\TaskInterface;
 
 class CleanUpListener implements TaskInterface
 {
-    protected FileLocator $fileLocator;
-
-    public function __construct(FileLocator $fileLocator)
-    {
-        $this->fileLocator = $fileLocator;
+    public function __construct(
+        protected FilesystemOperator $formBuilderChunkStorage,
+        protected FilesystemOperator $formBuilderFilesStorage,
+    ) {
     }
 
     public function execute(): void
     {
-        foreach ($this->fileLocator->getFolderContent($this->fileLocator->getFilesFolder()) as $file) {
-            Logger::log('Remove form builder files folder: ' . $file);
-            $this->fileLocator->removeDir($file->getPathname());
+        $minimumModifiedDelta = Carbon::now()->subHour();
+
+        foreach ($this->formBuilderFilesStorage->listContents('/') as $file) {
+            $this->remove($minimumModifiedDelta, $file);
         }
 
-        foreach ($this->fileLocator->getFolderContent($this->fileLocator->getChunksFolder()) as $file) {
-            Logger::log('Remove form builder chunk folder: ' . $file);
-            $this->fileLocator->removeDir($file->getPathname());
+        foreach ($this->formBuilderChunkStorage->listContents('/') as $file) {
+            $this->remove($minimumModifiedDelta, $file);
+        }
+    }
+
+    protected function remove(Carbon $minimumModifiedDelta, StorageAttributes $file): void
+    {
+        if (!$minimumModifiedDelta->greaterThan(Carbon::createFromTimestamp($file->lastModified()))) {
+            return;
         }
 
-        foreach ($this->fileLocator->getFolderContent($this->fileLocator->getZipFolder()) as $file) {
-            Logger::log('Remove form builder zip folder: ' . $file);
-            $this->fileLocator->removeDir($file->getPathname());
+        if ($file->isDir()) {
+            $this->formBuilderFilesStorage->deleteDirectory($file->path());
+        } else {
+            $this->formBuilderFilesStorage->delete($file->path());
         }
+
+        Logger::log(sprintf('Removing outdated form builder tmp %s: %s', $file->isDir() ? 'directory' : 'file', $file->path()));
     }
 }
