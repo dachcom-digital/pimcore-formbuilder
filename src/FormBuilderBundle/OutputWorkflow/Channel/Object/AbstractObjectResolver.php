@@ -268,7 +268,7 @@ abstract class AbstractObjectResolver
                 $fieldDefinition = $this->findMapDefinition($fieldMapping, $fieldName);
 
                 if ($fieldDefinition === false) {
-                    return;
+                    continue;
                 }
 
                 $this->assignChildDataToObject($fieldCollection, $fieldDefinition, $fieldValue);
