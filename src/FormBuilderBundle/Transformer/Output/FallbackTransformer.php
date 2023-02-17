@@ -114,7 +114,7 @@ class FallbackTransformer implements OutputTransformerInterface
             $locale,
             $formatValues[$dateFormat],
             $formatValues[$timeFormat],
-            $value->getTimezone() === false ? null : $value->getTimezone(),
+            $value->getTimezone(),
             \IntlDateFormatter::GREGORIAN, // @todo: allow different formatter types (\IntlDateFormatter::TRADITIONAL)?
             null
         );
