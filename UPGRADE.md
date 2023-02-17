@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Version 4.3.2
+- **[BUGFIX]**: Assert valid timezone in date time fallback output transformer
+
 ## Version 4.3.1
 - **[BUGFIX]**: Fix field collection assignment [#375](https://github.com/dachcom-digital/pimcore-formbuilder/issues/375)
 
