@@ -36,6 +36,11 @@ form_builder:
                                 - ['Choice', 'choice']
                                 - ['Text', 'text']
                                 - ['Single Text', 'single_text']
+                    options.format:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.format'
+                        config: ~
                     options.seconds:
                         display_group_id: attributes
                         type: tagfield

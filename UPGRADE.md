@@ -1,5 +1,13 @@
 # Upgrade Notes
 
+## Version 4.4.0
+- **[ENHANCEMENT]**: Added `format` option to `Birthday`, `DateTime` and `DateField`
+- **[ENHANCEMENT]**: Translate all non-default constraints messages (Key contains `message`)
+- **[ENHANCEMENT]**: New Constraints added:
+  - `Symfony\Component\Validator\Constraints\Type`
+  - `Symfony\Component\Validator\Constraints\Count`
+  - `Symfony\Component\Validator\Constraints\Choice`
+
 ## Version 4.3.2
 - **[BUGFIX]**: Assert valid timezone in date time fallback output transformer
 

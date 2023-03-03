@@ -102,16 +102,35 @@ class Configuration
                 continue;
             }
 
+            $constraintParameters = $refClass->getConstructor()?->getParameters();
             $defaultProperties = $refClass->getDefaultProperties();
             $constraintConfig = [];
+
             foreach ($refClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $refProperty) {
+
                 $propertyName = $refProperty->getName();
 
                 if (in_array($propertyName, $invalidProperties)) {
                     continue;
                 }
 
-                if (isset($defaultProperties[$propertyName])) {
+                $constructorParameters = array_values(array_filter($constraintParameters ?? [], static function (\ReflectionParameter $parameter) use ($propertyName) {
+                    return $parameter->getName() === $propertyName;
+                }));
+
+                $constructorParameterType = null;
+                if (count($constructorParameters) > 0) {
+                    /** @var \ReflectionParameter $constructorParameter */
+                    $constructorParameter = $constructorParameters[0];
+                    if ($constructorParameter->hasType() && $constructorParameter->getType() instanceof \ReflectionNamedType) {
+                        $constructorParameterType = $constructorParameter->getType()->getName();
+                    }
+                }
+
+                if ($constructorParameterType !== null) {
+                    $defaultValue = $defaultProperties[$propertyName] ?? null;
+                    $type = $constructorParameterType;
+                } elseif (isset($defaultProperties[$propertyName])) {
                     $defaultValue = $defaultProperties[$propertyName];
                     $type = gettype($defaultValue);
                 } else {
@@ -119,7 +138,7 @@ class Configuration
                     $type = 'string';
                 }
 
-                if ($defaultValue === null || in_array(gettype($defaultValue), ['string', 'boolean', 'integer'])) {
+                if ($defaultValue === null || in_array(gettype($defaultValue), ['string', 'boolean', 'bool', 'integer', 'int', 'array'])) {
                     $constraintConfig[] = [
                         'name'         => $propertyName,
                         'type'         => $type,

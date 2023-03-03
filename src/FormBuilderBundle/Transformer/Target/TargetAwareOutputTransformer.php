@@ -23,10 +23,6 @@ class TargetAwareOutputTransformer
             return call_user_func_array($this->callable, [$this->targetAwareData]);
         }
 
-        if (is_array($this->callable)) {
-            return call_user_func_array($this->callable, [$this->targetAwareData]);
-        }
-
-        return null;
+        return call_user_func_array($this->callable, [$this->targetAwareData]);
     }
 }

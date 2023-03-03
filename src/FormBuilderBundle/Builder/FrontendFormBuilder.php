@@ -101,8 +101,9 @@ class FrontendFormBuilder
     private function addFormAttributes(array $currentAttributes, array $attributes): array
     {
         foreach ($attributes as $attribute) {
+
             // legacy
-            if (!isset($attribute['option']) || is_null($attribute['option'])) {
+            if (!isset($attribute['option'])) {
                 continue;
             }
 

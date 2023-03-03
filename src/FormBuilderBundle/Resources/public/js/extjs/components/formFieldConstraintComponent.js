@@ -155,6 +155,7 @@ Formbuilder.extjs.components.formFieldConstraint = Class.create({
 
                     break;
 
+                case 'bool':
                 case 'boolean':
                     field = new Ext.form.Checkbox({
                         fieldLabel: configElement.name,
@@ -180,6 +181,7 @@ Formbuilder.extjs.components.formFieldConstraint = Class.create({
 
                     break;
 
+                case 'int':
                 case 'integer':
                     field = new Ext.form.field.Number({
                         fieldLabel: configElement.name,
@@ -196,6 +198,57 @@ Formbuilder.extjs.components.formFieldConstraint = Class.create({
                         },
                         listeners: {
                             change: function (field, newVal, oldVal) {
+                                field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
+                            }
+                        }
+                    });
+
+                    break;
+
+                case 'array':
+                    field = new Ext.form.field.Tag({
+                        fieldLabel: configElement.name,
+                        name: 'config.' + configElement.name,
+                        value: this.getFieldValue(configElement.name, configElement.defaultValue),
+                        flex: 2,
+                        queryDelay: 0,
+                        mode: 'local',
+                        displayField: 'name',
+                        valueField: 'index',
+                        store: new Ext.data.ArrayStore({
+                            fields: ['index', 'name'],
+                            data: []
+                        }),
+                        allowBlank: true,
+                        editable: true,
+                        hideTrigger: true,
+                        filterPickList: false,
+                        createNewOnBlur: true,
+                        createNewOnEnter: true,
+                        selectOnFocus: false,
+                        forceSelection: true,
+                        style: opacityStyle,
+                        getSubmitValue: function () {
+
+                            if (Ext.isArray(this.getValue()) && this.getValue().length === 0) {
+                                return null;
+                            }
+
+                            if (this.getValue() === configElement.defaultValue) {
+                                return null;
+                            }
+
+                            return this.value;
+                        },
+                        listeners: {
+                            change: function (field, newVal, oldVal) {
+
+                                if (Ext.isArray(this.getValue()) && this.getValue().length === 0) {
+                                    newVal = null;
+                                }
+
+                                console.warn(newVal, configElement.defaultValue);
+
                                 field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
                             }
                         }
@@ -235,7 +288,7 @@ Formbuilder.extjs.components.formFieldConstraint = Class.create({
                     }
 
                     var description = t('form_builder_constraint_default_value') + ': <code>' + defaultValue + '</code>';
-                    if (configElement.name === 'message') {
+                    if (Ext.isString(configElement.name) && configElement.name.toLowerCase().indexOf('message') !== -1) {
                         description += '<br>' + t('form_builder_constraint_message_note');
                     }
 

@@ -18,7 +18,11 @@ class ElementValueCondition implements ConditionInterface
             $fieldValue = $this->getFieldValue($formData, $conditionFieldName);
 
             if ($this->getComparator() === 'contains') {
-                $value = is_array($this->getValue()) ? $this->getValue() : (is_string($this->getValue()) ? explode(',', $this->getValue()) : [$this->getValue()]);
+
+                $value = $this->getValue();
+                if (!is_array($value)) {
+                    $value = is_string($this->getValue()) && str_contains($this->getValue(), ',') ? explode(',', $this->getValue()) : [$this->getValue()];
+                }
 
                 return !empty(array_intersect($value, (array) $fieldValue));
             }
