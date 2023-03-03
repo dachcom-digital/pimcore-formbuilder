@@ -118,13 +118,16 @@ class Configuration
                     return $parameter->getName() === $propertyName;
                 }));
 
+                if (count($constructorParameters) === 0) {
+                    continue;
+                }
+
+                /** @var \ReflectionParameter $constructorParameter */
+                $constructorParameter = $constructorParameters[0];
                 $constructorParameterType = null;
-                if (count($constructorParameters) > 0) {
-                    /** @var \ReflectionParameter $constructorParameter */
-                    $constructorParameter = $constructorParameters[0];
-                    if ($constructorParameter->hasType() && $constructorParameter->getType() instanceof \ReflectionNamedType) {
-                        $constructorParameterType = $constructorParameter->getType()->getName();
-                    }
+
+                if ($constructorParameter->hasType() && $constructorParameter->getType() instanceof \ReflectionNamedType) {
+                    $constructorParameterType = $constructorParameter->getType()->getName();
                 }
 
                 if ($constructorParameterType !== null) {
