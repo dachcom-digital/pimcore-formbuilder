@@ -106,9 +106,6 @@ class Constraints implements ModuleInterface
             }
         }
 
-        //$tempArr = array_unique(array_column($defaultFieldConstraints, 'type'));
-        //array_intersect_key($defaultFieldConstraints, $tempArr);
-
         return $defaultFieldConstraints;
     }
 
@@ -116,8 +113,9 @@ class Constraints implements ModuleInterface
     {
         $constraintData = [];
         foreach ($constraints as $constraint) {
+
             $constraintType = $constraint['type'];
-            $constraintConfig = isset($constraint['config']) ? $constraint['config'] : [];
+            $constraintConfig = $constraint['config'] ?? [];
 
             if (!isset($this->availableConstraints[$constraintType])) {
                 continue;
@@ -125,13 +123,15 @@ class Constraints implements ModuleInterface
 
             $constraintInfo = $this->availableConstraints[$constraintType];
 
-            //translate custom message.
-            if (isset($constraintConfig['message']) && !empty($constraintConfig['message'])) {
-                $configKey = array_search('message', array_column($constraintInfo['config'], 'name'), true);
-                if ($configKey !== false) {
-                    $defaultMessage = $constraintInfo['config'][$configKey]['defaultValue'];
-                    if (!empty($defaultMessage) && !empty($constraintConfig['message']) && $defaultMessage !== $constraintConfig['message']) {
-                        $constraintConfig['message'] = $this->translator->trans($constraintConfig['message']);
+            // translate config properties containing "message" in configuration key
+            foreach ($constraintConfig as $messageKey => $messageData) {
+                if (str_contains(strtolower($messageKey), 'message')) {
+                    $configKey = array_search($messageKey, array_column($constraintInfo['config'], 'name'), true);
+                    if ($configKey !== false) {
+                        $defaultMessage = $constraintInfo['config'][$configKey]['defaultValue'];
+                        if (!empty($defaultMessage) && !empty($messageData) && $defaultMessage !== $messageData) {
+                            $constraintConfig[$messageKey] = $this->translator->trans($messageData);
+                        }
                     }
                 }
             }

@@ -135,3 +135,15 @@ form_builder:
             class: Symfony\Component\Validator\Constraints\Time
             label: 'form_builder_validation_constraint.time'
             icon_class: form_builder_icon_validation
+        type:
+            class: Symfony\Component\Validator\Constraints\Type
+            label: 'form_builder_validation_constraint.type'
+            icon_class: form_builder_icon_validation
+        count:
+            class: Symfony\Component\Validator\Constraints\Count
+            label: 'form_builder_validation_constraint.count'
+            icon_class: form_builder_icon_validation
+        choice:
+            class: Symfony\Component\Validator\Constraints\Choice
+            label: 'form_builder_validation_constraint.choice'
+            icon_class: form_builder_icon_validation
