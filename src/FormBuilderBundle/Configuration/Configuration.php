@@ -110,6 +110,14 @@ class Configuration
 
                 $propertyName = $refProperty->getName();
 
+                if (count(
+                        array_filter($constraintParameters ?? [], static function (\ReflectionParameter $parameter) use ($propertyName) {
+                            return $parameter->getName() === $propertyName;
+                        })
+                    ) === 0) {
+                    continue;
+                }
+
                 if (in_array($propertyName, $invalidProperties)) {
                     continue;
                 }
