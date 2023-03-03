@@ -7,9 +7,10 @@ namespace FormBuilderBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use FormBuilderBundle\Tool\Install;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-final class Version20230303094642 extends AbstractMigration
+final class Version20230303094642 extends AbstractMigration implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
