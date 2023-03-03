@@ -122,8 +122,8 @@ class Configuration
                 if (count($constructorParameters) > 0) {
                     /** @var \ReflectionParameter $constructorParameter */
                     $constructorParameter = $constructorParameters[0];
-                    if ($constructorParameter->hasType()) {
-                        $constructorParameterType = $constructorParameter->getType()?->getName();
+                    if ($constructorParameter->hasType() && $constructorParameter->getType() instanceof \ReflectionNamedType) {
+                        $constructorParameterType = $constructorParameter->getType()->getName();
                     }
                 }
 
