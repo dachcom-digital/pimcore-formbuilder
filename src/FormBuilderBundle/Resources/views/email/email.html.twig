@@ -11,7 +11,7 @@
         {% if editmode %}
 
             <div class="formbuilder-alert-info">
-                <strong>Admin:</strong> {{ 'form_builder.email.placeholder_list_available'|trans({},'admin')|format('<code>%Text(firstname);</code>')|raw }}
+                <strong>Admin:</strong> {{ 'form_builder.email.placeholder_list_available'|trans({},'admin')|format('<code>{{firstname}}</code>')|raw }}
             </div>
 
              {# If you're using output workflows, this property will be added on runtime and is not available in editmode! #}
