@@ -3,6 +3,7 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
     allowGroupSelector: true,
     allowChoiceMeta: true,
+    allowSort: true,
 
     fieldIdentifier: null,
 
@@ -18,7 +19,7 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
     optionStore: null,
 
-    initialize: function (identifier, label, storeData, optionStore, allowGroup, allowChoiceMeta) {
+    initialize: function (identifier, label, storeData, optionStore, allowGroup, allowChoiceMeta, allowSort) {
 
         this.fieldIdentifier = identifier;
         this.fieldLabel = label;
@@ -35,6 +36,10 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
 
         if (allowChoiceMeta === false) {
             this.allowChoiceMeta = false;
+        }
+
+        if (allowSort === false) {
+            this.allowSort = false;
         }
 
         this.generateRepeaterWithKeyValue();
@@ -294,15 +299,19 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
                     cls: 'choice_meta_data',
                     listeners: {
                         updateIndexName: function (fieldSetIndex, fieldContainerIndex) {
-                            this.name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'value');
+                            this.name = _.generateFieldName(fieldSetIndex, fieldContainerIndex, 'choice_meta');
                         }
                     }
-                }
+                },
             ]
         });
 
         if (this.allowChoiceMeta === true) {
             this.addChoiceMeta(compositeField, choiceMetaData);
+        }
+
+        if (this.allowSort === true) {
+            this.addSortBtn(compositeField, fieldSet);
         }
 
         compositeField.add({
@@ -487,12 +496,18 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
                     Ext.Array.each(Ext.ComponentQuery.query('textfield', container), function (field) {
                         field.fireEvent('updateIndexName', fieldSetIndex, fieldContainerIndex);
                     });
+                    Ext.Array.each(Ext.ComponentQuery.query('hidden', container), function (field) {
+                        field.fireEvent('updateIndexName', fieldSetIndex, fieldContainerIndex);
+                    });
                 });
             });
         } else {
             var fieldContainer = Ext.ComponentQuery.query('fieldcontainer', this.repeater);
             Ext.Array.each(fieldContainer, function (container, fieldContainerIndex) {
                 Ext.Array.each(Ext.ComponentQuery.query('textfield', container), function (field) {
+                    field.fireEvent('updateIndexName', null, fieldContainerIndex);
+                });
+                Ext.Array.each(Ext.ComponentQuery.query('hidden', container), function (field) {
                     field.fireEvent('updateIndexName', null, fieldContainerIndex);
                 });
             });
@@ -506,5 +521,47 @@ Formbuilder.extjs.types.keyValueRepeater = Class.create({
         } else {
             this.typeSelector.disable();
         }
-    }
+    },
+
+    addSortBtn: function (compositeField, fieldSet) {
+        const changeOrder = (item, indexChange, limit) => {
+            // get index from fieldset items
+            const oldIndex = fieldSet.items.indexOf(item);
+            // increase or reduce newIndex by one
+            const newIndex = oldIndex + indexChange;
+
+            // do nothing if newIndex is reaching limit
+            if (newIndex === limit) {
+                return;
+            }
+
+            // swap selected field and item at new index
+            let oldItem = fieldSet.items.getAt(newIndex);
+            fieldSet.items.insert(newIndex, item);
+            fieldSet.items.insert(oldIndex, oldItem);
+
+            fieldSet.updateLayout();
+            this.updateIndex();
+        }
+
+        compositeField.add({
+            xtype: 'button',
+            iconCls: 'pimcore_icon_up',
+            style: 'float:left;',
+            name: 'sort_up_button',
+            handler: function (compositeField) {
+                changeOrder(compositeField, -1, 0);
+            }.bind(this, compositeField)
+        });
+        compositeField.add({
+            xtype: 'button',
+            iconCls: 'pimcore_icon_down',
+            style: 'float:left;',
+            name: 'sort_down_button',
+            handler: function (compositeField) {
+                changeOrder(compositeField, 1, fieldSet.items.length);
+            }.bind(this, compositeField)
+        });
+    },
+
 });
