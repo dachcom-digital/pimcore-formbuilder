@@ -152,7 +152,10 @@ class MailParser
         $realSubject = $mailTemplate->getSubject();
         $availableValues = $this->findPlaceholderValues($fieldValues);
 
-        preg_match_all('/\%(.+?)\%/', $realSubject, $matches);
+        // Find all _our_ placeholders but make sure not to match with pimcore
+        // placeholders like %Text(); or %DataObject(); by not allowing ; in the
+        // placeholder match.
+        preg_match_all('/\%([^;]+?)\%/', $realSubject, $matches);
 
         if (!isset($matches[1]) || count($matches[1]) === 0) {
             return;
