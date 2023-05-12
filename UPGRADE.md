@@ -1,6 +1,8 @@
 # Upgrade Notes
 
 ## Version 4.5.0
+- **[BUGFIX]**: allow `GET` operation on `/form-control/get-url-structure` route [#383](https://github.com/dachcom-digital/pimcore-formbuilder/issues/383)
+- **[BUGFIX]**: suppress php warning of undefined array key [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/387)
 - **[ENHANCEMENT]**: Adds sort buttons for choices in ChoiceType [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/388)
 - **[ENHANCEMENT]**: Allow Relation(s) in Object Channel [#390](https://github.com/dachcom-digital/pimcore-formbuilder/issues/390)
 
