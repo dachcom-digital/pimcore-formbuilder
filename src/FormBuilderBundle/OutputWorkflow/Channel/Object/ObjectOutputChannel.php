@@ -46,7 +46,7 @@ class ObjectOutputChannel implements ChannelInterface
             $resolvingObject = $configuration['resolvingObject'] ?? null;
             if (is_array($resolvingObject)) {
                 $object = DataObject::getById($resolvingObject['id']);
-                $dynamicObjectResolverClass = $object instanceof DataObject ? $object->getClassName() : null;
+                $dynamicObjectResolverClass = $object instanceof DataObject\Concrete ? $object->getClassName() : null;
             }
         }
 
