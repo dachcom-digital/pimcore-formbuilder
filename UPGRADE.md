@@ -1,8 +1,11 @@
 # Upgrade Notes
 
 ## Version 4.5.0
-- **[BUGFIX]**: Adds sort buttons for choices in ChoiceType [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/388)
-- 
+- **[ENHANCEMENT]**: Adds sort buttons for choices in ChoiceType [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/388)
+
+## Version 4.4.1
+- **[BUGFIX]**: [Constraint Options] ignore internal properties [#381](https://github.com/dachcom-digital/pimcore-formbuilder/pull/381)
+
 ## Version 4.4.0
 - **[ENHANCEMENT]**: Added `format` option to `Birthday`, `DateTime` and `DateField`
 - **[ENHANCEMENT]**: Translate all non-default constraints messages (Key contains `message`)
