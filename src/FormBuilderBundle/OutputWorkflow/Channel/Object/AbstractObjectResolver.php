@@ -3,6 +3,8 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
@@ -299,13 +301,15 @@ abstract class AbstractObjectResolver
                 continue;
             }
 
-            $formDefinitionChildName = $formDefinitionChild['config']['name'];
-            $this->appendToMethod($object, $formDefinitionChildName, $value);
+            $this->appendToMethod($object, $formDefinitionChild['config'], $value);
         }
     }
 
-    protected function appendToMethod($object, string $fieldName, mixed $value): void
+    protected function appendToMethod($object, array $formDefinitionConfig, mixed $value): void
     {
+        $fieldName = $formDefinitionConfig['name'];
+        $objectFieldWorker = $formDefinitionConfig['worker'] ?? null;
+
         $objectSetter = sprintf('set%s', ucfirst($fieldName));
 
         if (!method_exists($object, $objectSetter)) {
@@ -315,6 +319,11 @@ abstract class AbstractObjectResolver
         if ($value instanceof TargetAwareOutputTransformer) {
             $fieldDefinition = $this->getObjectFieldDefinition($object, $fieldName);
             $value = $value->transform($fieldDefinition);
+        }
+
+        if ($objectFieldWorker !== null) {
+            $fieldDefinition = $this->getObjectFieldDefinition($object, $fieldName);
+            $value = $this->processFieldWorkerValue($objectFieldWorker, $formDefinitionConfig['workerData'] ?? [], $fieldDefinition, $value);
         }
 
         $object->$objectSetter($value);
@@ -335,6 +344,40 @@ abstract class AbstractObjectResolver
         }
 
         return false;
+    }
+
+    protected function processFieldWorkerValue(string $workerName, array $workerConfig, ?DataObject\ClassDefinition\Data $fieldDefinition, mixed $value)
+    {
+        return match ($workerName) {
+            'relationWorker' => call_user_func(function (?DataObject\ClassDefinition\Data $fieldDefinition, array $workerConfig, mixed $value) {
+
+                $relationType = $workerConfig['relationType'] ?? null;
+
+                if (!in_array($relationType, ['object', 'asset', 'document'])) {
+                    return null;
+                }
+
+                if (!is_numeric($value)) {
+                    return null;
+                }
+
+                $element = Service::getElementById($relationType, $value);
+
+                if (!$element instanceof ElementInterface) {
+                    return null;
+                }
+
+                if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
+                    return $element;
+                } elseif ($fieldDefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
+                    return [$element];
+                }
+
+                return null;
+
+            }, $fieldDefinition, $workerConfig, $value),
+            default => null
+        };
     }
 
     /**
@@ -358,7 +401,7 @@ abstract class AbstractObjectResolver
         return $channelSubjectGuardEvent->getSubject();
     }
 
-    protected function getObjectFieldDefinition(mixed $object, string $fieldName): DataObject\ClassDefinition\Data|null
+    protected function getObjectFieldDefinition(mixed $object, string $fieldName): ?DataObject\ClassDefinition\Data
     {
         if ($object instanceof DataObject\Concrete) {
             $classDefinition = $object->getClass();

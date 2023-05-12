@@ -326,8 +326,8 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
                         record = data.records[0];
 
                         if (target !== source) {
-                            if (this.formTreePanel.getRootNode().findChildBy(function (ss) {
-                                return ss.data.omFieldTypeIdentifier === this.FIELD_TYPE_DATA_CLASS_FIELD && ss.data.name === record.data.name;
+                            if (this.formTreePanel.getRootNode().findChildBy(function (child) {
+                                return child.data.omFieldTypeIdentifier === this.FIELD_TYPE_DATA_CLASS_FIELD && child.data.name === record.data.name;
                             }.bind(this), null, true)) {
                                 dropHandlers.cancelDrop();
                             } else {
@@ -606,6 +606,10 @@ Formbuilder.extjs.extensions.formObjectMappingEditorConfigurator.formObjectTreeM
     },
 
     getWorkerByNode: function (record, attr) {
+
+        if (attr.dataType === 'manyToOneRelation' || attr.dataType === 'manyToManyRelation') {
+            return this.getWorker('relationWorker', attr.name, null);
+        }
 
         if (attr.dataType === 'fieldcollections') {
             return this.getWorker('fieldCollectionWorker', attr.name, null);

@@ -185,6 +185,7 @@ form_builder.output_workflow.output_workflow_channel.object.fc_worker_referencin
 form_builder.output_workflow.output_workflow_channel.object.fc_worker_validation_message: 'Nachricht'
 form_builder.output_workflow.output_workflow_channel.object.fc_worker_enable_uniquenes_validation: 'Uniqueness-Validierung aktivieren'
 form_builder.output_workflow.output_workflow_channel.object.fc_worker_referencing_unique_field: 'Referenzierendes Unique-Feld'
+form_builder.output_workflow.output_workflow_channel.object.fc_worker_relation: 'Relation Typ wählen'
 form_builder.output_workflow.output_workflow_channel.api.start_api_mapping: 'Daten-Mapping starten'
 form_builder.output_workflow.output_workflow_channel.api.close_confirmation_title: 'Warnung'
 form_builder.output_workflow.output_workflow_channel.api.close_confirmation_message: 'Möchten Sie das Daten-Mapping wirklich beenden?'
