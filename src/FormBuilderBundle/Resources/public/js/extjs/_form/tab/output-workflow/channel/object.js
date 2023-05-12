@@ -12,7 +12,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
     getLayout: function () {
 
-        var formConfig;
+        var formConfig,
+            objectResolverValue = this.data !== null && this.data.hasOwnProperty('resolveStrategy') ? this.data['resolveStrategy'] : 'newObject';
 
         this.objectResolverPanel = null;
         this.objectMappingDataIsConsistent = true;
@@ -22,9 +23,6 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             formConfig = this.data;
             if (formConfig.hasOwnProperty('objectMappingData')) {
                 delete formConfig['objectMappingData'];
-                if (formConfig.hasOwnProperty('dynamicObjectResolver') && formConfig.dynamicObjectResolver === null) {
-                    formConfig.dynamicObjectResolver = '';
-                }
                 this.lastConsistentConfigHash = md5(Ext.encode(formConfig));
             }
         }
@@ -33,54 +31,53 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             title: false,
             border: false,
             defaults: {},
-            items: this.getConfigFields()
+            items: this.getConfigFields(objectResolverValue)
         });
 
         this.panel.on('afterrender', function () {
-            var objectResolverValue = this.data !== null && this.data.hasOwnProperty('resolveStrategy') ? this.data['resolveStrategy'] : 'newObject';
             this.generateObjectResolverPanel(objectResolverValue);
         }.bind(this));
 
         return this.panel;
     },
 
-    getConfigFields: function () {
+    getConfigFields: function (objectResolverValue) {
 
-        var objectResolverValue = this.data !== null && this.data.hasOwnProperty('resolveStrategy') ? this.data['resolveStrategy'] : 'newObject';
-
-        return [
-            {
-                xtype: 'combo',
-                fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.resolve_strategy'),
-                queryDelay: 0,
-                displayField: 'key',
-                valueField: 'value',
-                mode: 'local',
-                labelAlign: 'left',
-                store: new Ext.data.ArrayStore({
-                    fields: ['value', 'key'],
-                    data: [
-                        ['newObject', t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_new_object')],
-                        ['existingObject', t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_existing_object')],
-                    ]
-                }),
-                value: objectResolverValue,
-                editable: false,
-                triggerAction: 'all',
-                anchor: '100%',
-                summaryDisplay: true,
-                allowBlank: false,
-                name: 'resolveStrategy',
-                listeners: {
-                    change: function (field, value) {
-                        this.generateObjectResolverPanel(value);
-                    }.bind(this)
-                }
+        return [{
+            xtype: 'combo',
+            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.resolve_strategy'),
+            queryDelay: 0,
+            displayField: 'key',
+            valueField: 'value',
+            mode: 'local',
+            labelAlign: 'left',
+            store: new Ext.data.ArrayStore({
+                fields: ['value', 'key'],
+                data: [
+                    ['newObject', t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_new_object')],
+                    ['existingObject', t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_existing_object')],
+                ]
+            }),
+            value: objectResolverValue,
+            editable: false,
+            triggerAction: 'all',
+            anchor: '100%',
+            summaryDisplay: true,
+            allowBlank: false,
+            name: 'resolveStrategy',
+            listeners: {
+                change: function (field, value) {
+                    this.resetObjectMappingData();
+                    this.generateObjectResolverPanel(value);
+                }.bind(this)
             }
-        ]
+        }]
     },
 
-    generateObjectResolverPanel: function (value) {
+    generateObjectResolverPanel: function (resolveStrategy) {
+
+        var dynamicObjectResolverValue = this.data !== null && this.data.hasOwnProperty('dynamicObjectResolver') ? this.data['dynamicObjectResolver'] : null,
+            dynamicObjectResolverPanel;
 
         this.isLoading = true;
 
@@ -89,7 +86,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
         }
 
         this.objectResolverPanel = new Ext.form.FieldSet({
-            title: value === 'newObject'
+            title: resolveStrategy === 'newObject'
                 ? t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_new_object')
                 : t('form_builder.output_workflow.output_workflow_channel.object.resolve_with_existing_object'),
             collapsible: false,
@@ -101,24 +98,87 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             defaultType: 'textfield'
         });
 
-        if (value === 'newObject') {
-            this.objectResolverPanel.add(this.generateNewObjectResolverPanel());
-        } else if (value === 'existingObject') {
-            this.objectResolverPanel.add(this.generateExistingObjectResolverPanel());
-        } else {
-            // throw error.
-        }
+        dynamicObjectResolverPanel = new Ext.Panel({
+            defaults: {
+                labelWidth: 200
+            },
+            items: []
+        });
 
-        this.objectResolverPanel.add(this.generateObjectEditorControlPanel());
+        this.objectResolverPanel.add([
+            {
+                xtype: 'checkbox',
+                name: 'useDynamicObjectResolver',
+                itemCls: 'dynamicObjectResolverDispatcher',
+                submitValue: false,
+                hidden: true,
+                fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.use_dynamic_object_resolver'),
+                checked: dynamicObjectResolverValue !== null,
+                listeners: {
+                    change: function (cb, value) {
+
+                        if (value === false) {
+
+                            if (this.data === null) {
+                                this.data = {};
+                            }
+
+                            this.resetDynamicObjectResolverData();
+                            this.resetObjectMappingData();
+                        }
+
+                        this.generateObjectOptionsPanel(dynamicObjectResolverPanel, resolveStrategy, value === true);
+
+                    }.bind(this)
+                }
+            },
+            dynamicObjectResolverPanel,
+            this.generateObjectEditorControlPanel()
+        ]);
+
+        this.assertDynamicObjectResolverList(function (resolverList) {
+
+            var validList = Ext.Array.filter(resolverList, function (record) {
+                return Ext.Array.contains(record['allowedObjectResolverModes'], resolveStrategy);
+            });
+
+            if (validList.length > 0) {
+                this.objectResolverPanel.query('checkbox[itemCls="dynamicObjectResolverDispatcher"]')[0].setHidden(false);
+            } else {
+                this.resetDynamicObjectResolverData();
+            }
+
+            this.generateObjectOptionsPanel(dynamicObjectResolverPanel, resolveStrategy, false);
+
+        }.bind(this));
 
         this.panel.add(this.objectResolverPanel);
+    },
 
+    generateObjectOptionsPanel: function (panel, resolveStrategy, forceDynamicResolver) {
+
+        var dynamicObjectResolverValue = this.data !== null && this.data.hasOwnProperty('dynamicObjectResolver') ? this.data['dynamicObjectResolver'] : null,
+            dynamicObjectResolverClassValue = this.data !== null && this.data.hasOwnProperty('dynamicObjectResolverClass') ? this.data['dynamicObjectResolverClass'] : null;
+
+        panel.removeAll();
+
+        if (forceDynamicResolver === true || dynamicObjectResolverValue !== null) {
+
+            panel.add([
+                this.generateDynamicObjectResolverListCombo('dynamicObjectResolver', dynamicObjectResolverValue, resolveStrategy),
+                this.generateObjectClassListCombo('dynamicObjectResolverClass', dynamicObjectResolverClassValue)
+            ]);
+
+            return;
+        }
+
+        panel.add(resolveStrategy === 'newObject' ? this.generateNewObjectResolverPanel() : this.generateExistingObjectResolverPanel());
     },
 
     generateNewObjectResolverPanel: function () {
 
-        var firstTimeLoad = true,
-            storagePathValue = this.data !== null && this.data.hasOwnProperty('storagePath') ? this.data['storagePath'] : null,
+        var storagePathValue = this.data !== null && this.data.hasOwnProperty('storagePath') ? this.data['storagePath'] : null,
+            resolvingObjectClassValue = this.data !== null && this.data.hasOwnProperty('resolvingObjectClass') ? this.data['resolvingObjectClass'] : '',
             storagePathFieldConfig = {
                 label: t('form_builder.output_workflow.output_workflow_channel.object.storage_path'),
                 id: 'storagePath',
@@ -126,56 +186,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                     types: ['object'],
                     subtypes: {object: ['folder']}
                 }
-            },
-            comboBox = new Ext.form.ComboBox({
-                fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.choose_resolving_object_class'),
-                displayField: 'label',
-                valueField: 'key',
-                mode: 'local',
-                queryMode: 'local',
-                labelAlign: 'left',
-                value: null,
-                triggerAction: 'all',
-                anchor: '100%',
-                editable: false,
-                summaryDisplay: true,
-                allowBlank: false,
-                name: 'resolvingObjectClass',
-                listeners: {
-                    change: function (field, value) {
-                        if (firstTimeLoad === true) {
-                            firstTimeLoad = false;
-                            return;
-                        }
-                        this.validateResolverStrategy();
-                    }.bind(this),
-                    render: function (combo) {
-                        combo.getStore().load();
-                    }.bind(this),
-                }
-            }), store = new Ext.data.Store({
-                autoLoad: false,
-                autoDestroy: true,
-                proxy: {
-                    type: 'ajax',
-                    url: '/admin/formbuilder/output-workflow/object/get-object-classes',
-                    fields: ['label', 'key'],
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'types'
-                    },
-                },
-                listeners: {
-                    load: function (tree, records, success, opt) {
-                        comboBox.setValue(this.data !== null && this.data.hasOwnProperty('resolvingObjectClass') ? this.data['resolvingObjectClass'] : '');
-                        this.isLoading = false;
-                        this.validateResolverStrategy();
-                        firstTimeLoad = false;
-                    }.bind(this)
-                }
-            }), storagePathHrefField, storagePathHref;
-
-        comboBox.setStore(store);
+            }, storagePathHrefField, storagePathHref;
 
         storagePathHrefField = new Formbuilder.extjs.types.href(storagePathFieldConfig, storagePathValue, null);
         storagePathHref = storagePathHrefField.getHref();
@@ -192,15 +203,13 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
 
         return [
             storagePathHref,
-            comboBox
+            this.generateObjectClassListCombo('resolvingObjectClass', resolvingObjectClassValue)
         ];
     },
 
     generateExistingObjectResolverPanel: function () {
 
-        var firstTimeLoad = true,
-            resolvingObjectValue = this.data !== null && this.data.hasOwnProperty('resolvingObject') ? this.data['resolvingObject'] : null,
-            dynamicObjectResolverValue = this.data !== null && this.data.hasOwnProperty('dynamicObjectResolver') ? this.data['dynamicObjectResolver'] : null,
+        var resolvingObjectValue = this.data !== null && this.data.hasOwnProperty('resolvingObject') ? this.data['resolvingObject'] : null,
             resolvingObjectFieldConfig = {
                 label: t('form_builder.output_workflow.output_workflow_channel.object.choose_resolving_object'),
                 id: 'resolvingObject',
@@ -210,9 +219,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
                 }
             },
             resolvingObjectHrefField,
-            resolvingObjectHref,
-            dynamicObjectResolverCombo,
-            dynamicObjectResolverStore;
+            resolvingObjectHref;
 
         resolvingObjectHrefField = new Formbuilder.extjs.types.href(resolvingObjectFieldConfig, resolvingObjectValue, null);
         resolvingObjectHref = resolvingObjectHrefField.getHref();
@@ -226,73 +233,8 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
             }.bind(this)
         });
 
-        dynamicObjectResolverCombo = new Ext.form.ComboBox({
-            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_resolver'),
-            name: 'dynamicObjectResolver',
-            value: null,
-            displayField: 'label',
-            valueField: 'key',
-            mode: 'local',
-            queryMode: 'local',
-            labelAlign: 'left',
-            triggerAction: 'all',
-            editable: false,
-            summaryDisplay: true,
-            emptyText: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_no_resolver'),
-            allowBlank: true,
-            disabled: true,
-            listeners: {
-                change: function (field, value) {
-                    if (firstTimeLoad === true) {
-                        firstTimeLoad = false;
-                        return;
-                    }
-                    this.validateResolverStrategy();
-                }.bind(this),
-                render: function (combo) {
-                    combo.getStore().load();
-                }.bind(this),
-            }
-        });
-
-        dynamicObjectResolverStore = new Ext.data.Store({
-            autoLoad: false,
-            autoDestroy: true,
-            proxy: {
-                type: 'ajax',
-                url: '/admin/formbuilder/output-workflow/object/get-dynamic-object-resolver',
-                fields: ['label', 'key'],
-                reader: {
-                    type: 'json',
-                    rootProperty: 'resolver'
-                }
-            },
-            listeners: {
-                load: function (store, records) {
-
-                    store.insert(0, new Ext.data.Record({
-                        key: null,
-                        label: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_no_resolver')
-                    }));
-
-                    if (records.length > 0) {
-                        dynamicObjectResolverCombo.setDisabled(false);
-                    }
-
-                    dynamicObjectResolverCombo.setValue(dynamicObjectResolverValue);
-                    this.isLoading = false;
-                    this.validateResolverStrategy();
-                    firstTimeLoad = false;
-
-                }.bind(this)
-            }
-        });
-
-        dynamicObjectResolverCombo.setStore(dynamicObjectResolverStore);
-
         return [
-            resolvingObjectHref,
-            dynamicObjectResolverCombo,
+            resolvingObjectHref
         ];
     },
 
@@ -348,12 +290,22 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
         });
     },
 
+    resetObjectMappingData: function () {
+        this.objectMappingData = null;
+    },
+
+    resetDynamicObjectResolverData: function () {
+        this.data.dynamicObjectResolver = null;
+        this.data.dynamicObjectResolverClass = null;
+    },
+
     showObjectMappingEditor: function () {
 
         var setupConfiguration = this.getValues(),
             addParams = {channelId: this.channelId},
             callbacks = {
                 loadData: function () {
+
                     if (this.objectMappingData !== null) {
                         return this.objectMappingData;
                     }
@@ -437,5 +389,140 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
         }.bind(this));
 
         return fieldNames;
+    },
+
+    generateObjectClassListCombo: function (name, initialValue) {
+
+        var combo,
+            firstTimeLoad = true;
+
+        combo = new Ext.form.ComboBox({
+            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.choose_resolving_object_class'),
+            name: name,
+            width: 400,
+            value: null,
+            displayField: 'label',
+            valueField: 'key',
+            mode: 'local',
+            queryMode: 'local',
+            labelAlign: 'left',
+            triggerAction: 'all',
+            anchor: '100%',
+            editable: false,
+            summaryDisplay: true,
+            allowBlank: false,
+            listeners: {
+                change: function (field, value) {
+                    if (firstTimeLoad === true) {
+                        firstTimeLoad = false;
+                        return;
+                    }
+                    this.validateResolverStrategy();
+                }.bind(this),
+                render: function (combo) {
+                    combo.getStore().load();
+                }.bind(this),
+            },
+            store: new Ext.data.Store({
+                autoLoad: false,
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/formbuilder/output-workflow/object/get-object-classes',
+                    fields: ['label', 'key'],
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'types'
+                    },
+                },
+                listeners: {
+                    beforeload: function () {
+                        this.isLoading = true;
+                    }.bind(this),
+                    load: function (tree, records, success, opt) {
+                        combo.setValue(initialValue);
+                        this.isLoading = false;
+                        this.validateResolverStrategy();
+                        firstTimeLoad = false;
+                    }.bind(this)
+                }
+            })
+        });
+
+        return combo;
+    },
+
+    generateDynamicObjectResolverListCombo: function (name, initialValue, resolveStrategy) {
+
+        var combo,
+            firstTimeLoad = true;
+
+        combo = new Ext.form.ComboBox({
+            fieldLabel: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_resolver'),
+            name: name,
+            width: 400,
+            value: null,
+            displayField: 'label',
+            valueField: 'key',
+            mode: 'local',
+            queryMode: 'local',
+            labelAlign: 'left',
+            triggerAction: 'all',
+            editable: false,
+            summaryDisplay: true,
+            allowBlank: false,
+            emptyText: t('form_builder.output_workflow.output_workflow_channel.object.dynamic_object_no_resolver'),
+            listeners: {
+                change: function (field, value) {
+                    if (firstTimeLoad === true) {
+                        firstTimeLoad = false;
+                        return;
+                    }
+                    this.validateResolverStrategy();
+                }.bind(this),
+                render: function (combo) {
+                    combo.getStore().load();
+                }.bind(this),
+            },
+            store: new Ext.data.Store({
+                autoLoad: false,
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/formbuilder/output-workflow/object/get-dynamic-object-resolver',
+                    fields: ['label', 'key'],
+                    extraParams: {
+                        allowedObjectResolverMode: resolveStrategy
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'resolver'
+                    }
+                },
+                listeners: {
+                    beforeload: function () {
+                        this.isLoading = true;
+                    }.bind(this),
+                    load: function (store, records) {
+                        combo.setValue(initialValue);
+                        this.isLoading = false;
+                        this.validateResolverStrategy();
+                        firstTimeLoad = false;
+                    }.bind(this)
+                }
+            })
+        });
+
+        return combo;
+    },
+
+    assertDynamicObjectResolverList: function (callback) {
+        Ext.Ajax.request({
+            url: '/admin/formbuilder/output-workflow/object/get-dynamic-object-resolver',
+            success: function (response) {
+                var responseData = Ext.decode(response.responseText);
+                callback(responseData.resolver);
+            }.bind(this)
+        });
     }
 });

@@ -6,6 +6,7 @@ use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Factory\ObjectResolverFactoryInterface;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ObjectChannelType;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use Pimcore\Model\DataObject;
 
 class ObjectOutputChannel implements ChannelInterface
 {
@@ -26,6 +27,41 @@ class ObjectOutputChannel implements ChannelInterface
         return false;
     }
 
+    /**
+     * @deprecated since 4.5.0 and will be removed in 5.0.0. Update all forms before migrating
+     */
+    public static function parseLegacyDynamicObjectResolver(array $configuration): array
+    {
+        if (!array_key_exists('dynamicObjectResolver', $configuration)) {
+            return $configuration;
+        }
+
+        // already migrated
+        if (array_key_exists('dynamicObjectResolverClass', $configuration)) {
+            return $configuration;
+        }
+
+        $dynamicObjectResolverClass = null;
+        if (!empty($configuration['dynamicObjectResolver'])) {
+            $resolvingObject = $configuration['resolvingObject'] ?? null;
+            if (is_array($resolvingObject)) {
+                $object = DataObject::getById($resolvingObject['id']);
+                $dynamicObjectResolverClass = $object instanceof DataObject ? $object->getClassName() : null;
+            }
+        }
+
+        if ($dynamicObjectResolverClass === null) {
+            unset($configuration['dynamicObjectResolver']);
+
+            return $configuration;
+        }
+
+        $configuration['dynamicObjectResolverClass'] = $dynamicObjectResolverClass;
+        unset($configuration['resolvingObject']);
+
+        return $configuration;
+    }
+
     public function getUsedFormFieldNames(array $channelConfiguration): array
     {
         if (count($channelConfiguration['objectMappingData']) === 0) {
@@ -44,18 +80,28 @@ class ObjectOutputChannel implements ChannelInterface
         $locale = $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
 
+        $channelConfiguration = self::parseLegacyDynamicObjectResolver($channelConfiguration);
+
         $objectMappingData = $channelConfiguration['objectMappingData'];
+
+        $dynamicObjectResolverActive = false;
+        if (array_key_exists('dynamicObjectResolver', $channelConfiguration)) {
+            $dynamicObjectResolverActive = true;
+        }
 
         if ($channelConfiguration['resolveStrategy'] === 'newObject') {
             $objectResolver = $this->objectResolverFactory->createForNewObject($objectMappingData);
-            $objectResolver->setResolvingObjectClass($channelConfiguration['resolvingObjectClass']);
-            $objectResolver->setStoragePath($channelConfiguration['storagePath']);
+            $objectResolver->setResolvingObjectClass($dynamicObjectResolverActive ? null : $channelConfiguration['resolvingObjectClass']);
+            $objectResolver->setStoragePath($dynamicObjectResolverActive ? [] : $channelConfiguration['storagePath']);
         } elseif ($channelConfiguration['resolveStrategy'] === 'existingObject') {
             $objectResolver = $this->objectResolverFactory->createForExistingObject($objectMappingData);
-            $objectResolver->setResolvingObject($channelConfiguration['resolvingObject']);
-            $objectResolver->setDynamicObjectResolver($channelConfiguration['dynamicObjectResolver']);
+            $objectResolver->setResolvingObject($dynamicObjectResolverActive ? [] : $channelConfiguration['resolvingObject']);
         } else {
             throw new \Exception(sprintf('no object resolver for strategy "%s" found.', $channelConfiguration['resolveStrategy']));
+        }
+
+        if (array_key_exists('dynamicObjectResolver', $channelConfiguration)) {
+            $objectResolver->setDynamicObjectResolver($channelConfiguration['dynamicObjectResolver'], $channelConfiguration['dynamicObjectResolverClass']);
         }
 
         $objectResolver->setForm($form);

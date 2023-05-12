@@ -165,6 +165,7 @@ form_builder.output_workflow.output_workflow_channel.email.mail_editor.status_en
 form_builder.output_workflow.output_workflow_channel.email.mail_editor.status_disabled: 'Status: Disabled'
 form_builder.output_workflow.output_workflow_channel.object.storage_path: 'Object Storage Path'
 form_builder.output_workflow.output_workflow_channel.object.resolve_strategy: 'Resolve Strategy'
+form_builder.output_workflow.output_workflow_channel.object.use_dynamic_object_resolver: 'Use Dynamic Object Resolver'
 form_builder.output_workflow.output_workflow_channel.object.resolve_with_existing_object: 'Use existing object'
 form_builder.output_workflow.output_workflow_channel.object.resolve_with_new_object: 'Create new object'
 form_builder.output_workflow.output_workflow_channel.object.choose_resolving_object_class: 'Select Object Class'

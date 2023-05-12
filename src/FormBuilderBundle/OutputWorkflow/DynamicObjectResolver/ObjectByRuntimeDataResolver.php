@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\DynamicObjectResolver;
 
+use FormBuilderBundle\OutputWorkflow\Channel\Object\AbstractObjectResolver;
 use Pimcore\Model\DataObject;
 use Symfony\Component\Form\FormInterface;
 
@@ -18,18 +19,25 @@ class ObjectByRuntimeDataResolver implements DynamicObjectResolverInterface
         $this->isLocalizedValue = $isLocalizedValue;
     }
 
-    public function resolve(FormInterface $form, DataObject $referenceObject, array $formRuntimeData, string $locale): ?DataObject
+    public static function getAllowedObjectResolverModes(): array
+    {
+        return [
+            AbstractObjectResolver::OBJECT_RESOLVER_UPDATE
+        ];
+    }
+
+    public function resolve(FormInterface $form, string $dataClass, array $formRuntimeData, string $locale, string $objectResolverMode): ?DataObject
     {
         if (!isset($formRuntimeData[$this->runtimeDataId])) {
             return null;
         }
 
-        if (!$referenceObject instanceof DataObject\Concrete) {
+        if ($objectResolverMode !== AbstractObjectResolver::OBJECT_RESOLVER_UPDATE) {
             return null;
         }
 
         $dataObjectIdentifier = $formRuntimeData[$this->runtimeDataId];
-        $pathName = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($referenceObject->getClassName()));
+        $pathName = sprintf('\Pimcore\Model\DataObject\%s', $dataClass);
 
         if ($this->objectIdentifier === 'id' && method_exists($pathName, 'getById')) {
             return $pathName::getById($dataObjectIdentifier);

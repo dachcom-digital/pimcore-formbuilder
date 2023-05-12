@@ -2,19 +2,11 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
-use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
 use Pimcore\Model\DataObject;
 
 class ExistingObjectResolver extends AbstractObjectResolver
 {
-    protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry;
     protected array $resolvingObject;
-    protected ?string $dynamicObjectResolver;
-
-    public function setDynamicObjectResolverRegistry(DynamicObjectResolverRegistry $dynamicObjectResolverRegistry): void
-    {
-        $this->dynamicObjectResolverRegistry = $dynamicObjectResolverRegistry;
-    }
 
     public function setResolvingObject(array $resolvingObject): void
     {
@@ -26,33 +18,23 @@ class ExistingObjectResolver extends AbstractObjectResolver
         return $this->resolvingObject;
     }
 
-    public function setDynamicObjectResolver(?string $dynamicObjectResolver): void
-    {
-        $this->dynamicObjectResolver = $dynamicObjectResolver;
-    }
-
-    public function getDynamicObjectResolver(): ?string
-    {
-        return $this->dynamicObjectResolver;
-    }
-
     public function getStorageObject(): DataObject\Concrete
     {
-        $resolvingObjectInfo = $this->getResolvingObject();
-        $resolvingObjectId = $resolvingObjectInfo['id'];
-
-        $dataObject = DataObject::getById($resolvingObjectId);
-
         if ($this->getDynamicObjectResolver() !== null) {
             $resolver = $this->dynamicObjectResolverRegistry->get($this->getDynamicObjectResolver());
-            $dataObject = $resolver->resolve($this->getForm(), $dataObject, $this->getFormRuntimeData(), $this->getLocale());
+            $dataObject = $resolver->resolve($this->getForm(), $this->getDynamicObjectResolverClass(), $this->getFormRuntimeData(), $this->getLocale(), self::OBJECT_RESOLVER_UPDATE);
+            $resolvingObjectIdentifier = $this->getDynamicObjectResolverClass();
+        } else {
+            $resolvingObjectInfo = $this->getResolvingObject();
+            $resolvingObjectIdentifier = $resolvingObjectInfo['id'];
+            $dataObject = DataObject::getById($resolvingObjectIdentifier);
         }
 
         if (!$dataObject instanceof DataObject\Concrete) {
             throw new \Exception(sprintf(
-                'Resolving Object with id "%s" not found. %s',
-                $resolvingObjectId,
-                $this->getDynamicObjectResolver() === null ? '' : sprintf('Involved Resolver: "%s"', $this->getDynamicObjectResolver())
+                'Resolving existing object with identifier "%s" not found. %s',
+                $resolvingObjectIdentifier,
+                $this->getDynamicObjectResolver() === null ? '' : sprintf('Involved resolver: "%s"', $this->getDynamicObjectResolver())
             ));
         }
 
