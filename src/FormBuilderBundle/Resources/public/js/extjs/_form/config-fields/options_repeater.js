@@ -7,6 +7,7 @@ Formbuilder.extjs.form.fields.options_repeater = Class.create(Formbuilder.extjs.
             value,
             fieldConfig.config.options,
             false,
+            false,
             false
         );
 
