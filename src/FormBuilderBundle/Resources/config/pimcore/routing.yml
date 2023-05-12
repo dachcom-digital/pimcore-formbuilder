@@ -128,7 +128,7 @@ form_builder.controller.admin.output_workflow.funnel_layer.get_actions:
 form_builder.controller.ajax.url_structure:
     path: /{_locale}/form-control/get-url-structure
     defaults: { _controller: FormBuilderBundle\Controller\AjaxController::getAjaxUrlStructureAction }
-    methods: [POST]
+    methods: [POST, GET]
 form_builder.controller.ajax.parse_form:
     path: /{_locale}/form-control/parse
     defaults: { _controller: FormBuilderBundle\Controller\AjaxController::parseAction }
