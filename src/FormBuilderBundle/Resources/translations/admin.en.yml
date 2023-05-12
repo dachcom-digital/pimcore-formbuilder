@@ -185,6 +185,7 @@ form_builder.output_workflow.output_workflow_channel.object.fc_worker_referencin
 form_builder.output_workflow.output_workflow_channel.object.fc_worker_validation_message: 'Message'
 form_builder.output_workflow.output_workflow_channel.object.fc_worker_enable_uniquenes_validation: 'Enable Uniqueness Validation'
 form_builder.output_workflow.output_workflow_channel.object.fc_worker_referencing_unique_field: 'Referencing Unique Field'
+form_builder.output_workflow.output_workflow_channel.object.fc_worker_relation: 'Select Relation Type'
 form_builder.output_workflow.output_workflow_channel.api.start_api_mapping: 'Start Data Mapping'
 form_builder.output_workflow.output_workflow_channel.api.close_confirmation_title: 'Warning'
 form_builder.output_workflow.output_workflow_channel.api.close_confirmation_message: 'Do you really want to close the data mapping editor?'

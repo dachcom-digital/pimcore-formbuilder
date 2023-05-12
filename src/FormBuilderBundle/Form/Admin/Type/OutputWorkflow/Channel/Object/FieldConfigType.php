@@ -11,13 +11,14 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\Worker\FieldCollectionWorkerType;
+use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Object\Worker\RelationWorkerType;
 
 class FieldConfigType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', TextType::class);
-        $builder->add('worker', ChoiceType::class, ['choices' => ['fieldCollectionWorker' => 'fieldCollectionWorker']]);
+        $builder->add('worker', ChoiceType::class, ['choices' => ['fieldCollectionWorker' => 'fieldCollectionWorker', 'relationWorker' => 'relationWorker']]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
@@ -33,6 +34,8 @@ class FieldConfigType extends AbstractType
     {
         if ($workerType === 'fieldCollectionWorker') {
             $form->add('workerData', FieldCollectionWorkerType::class);
+        } elseif ($workerType === 'relationWorker') {
+            $form->add('workerData', RelationWorkerType::class);
         }
     }
 

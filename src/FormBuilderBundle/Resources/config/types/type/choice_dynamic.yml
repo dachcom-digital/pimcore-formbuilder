@@ -13,6 +13,8 @@ form_builder:
                 output_workflow:
                     object:
                         allowed_class_types:
+                            - manyToOneRelation
+                            - manyToManyRelation
                             - input
                             - select
                             - multiselect

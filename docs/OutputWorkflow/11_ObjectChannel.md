@@ -9,16 +9,16 @@ There are two different resolver strategies you can rely on.
 
 ### I. Create new Object
 If you want to create a new object after each form submission, use this one. 
-You need to choose a data class afterwards.
+You need to choose a data class afterward.
 
 You're able to map fields and field collections.
 
 #### Options
 
-| Name                  | Description                                                    |
-|-----------------------|----------------------------------------------------------------|
-| `Object Storage Path`  | Define where all the objects should be stored.                |
-| `Object Class`         | Choose, which data object type should be created.             |
+| Name                  | Description                                       |
+|-----------------------|---------------------------------------------------|
+| `Object Storage Path` | Define where all the objects should be stored.    |
+| `Object Class`        | Choose, which data object type should be created. |
 
 
 ### II. Use existing Object
@@ -29,9 +29,9 @@ You need to define an object reference afterwards.
 
 #### Options
 
-| Name                      | Description                                                    |
-|---------------------------|----------------------------------------------------------------|
-| `Referencing Object`      | Define where all the objects should be stored.                 |
+| Name                      | Description                                                                                                                                                    |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Referencing Object`      | Define where all the objects should be stored.                                                                                                                 |
 | `Dynamic Object Resolver` | If any resolver has been registered, you could choose one. Read more about the dynamic object resolver [below](./11_ObjectChannel.md#dynamic-object-resolver). |
 
 ***
@@ -42,25 +42,25 @@ You need to define an object reference afterwards.
 
 This table shows all possible data mapping fields:
 
-| FormBuilder Type | Allowed Pimcore Type                                           |
-|------------------|----------------------------------------------------------------|
-| `Text`           | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `CRM/Firstname`, `CRM/Lastname`, `CRM/Email` |
-| `Hidden`         | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`                  |
-| `Text Area`      | `Text/Textarea`, `Text/Wysiwyg`                                |
-| `Integer`        | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `Number/Number`, `Number/Slider` |
-| `Checkbox`       | `Other/Checkbox`, `CRM/NewsletterActive`, `CRM/NewsletterConfirmed`, `CRM/Consent` |
-| `Date`           | `Date/Date`                                                    |
-| `Date Time`      | `Date/DateTime`                                                |
-| `Time`           | `Date/Time`                                                    |
-| `Birthday`       | `Date/Date`                                                    | 
-| `Choice`         | `Text/Input`,`Select/Select`, `Select/MultiSelect`, `CRM/Gender` |
-| `Dynamic Choice` | `Text/Input`,`Select/Select`, `Select/MultiSelect`, `CRM/Gender` |
-| `Country`        | `Text/Input`,`Select/Country`, `Select/Country (MultiSelect)`  |
-| `Html Tag` | unsupported                |
-| `Snippet` | unsupported                 |
-| `reCAPTCHA v3` | unsupported            |
-| `Dynamic Multi File` | unsupported      |
-| `Submit` | unsupported                  |
+| FormBuilder Type     | Allowed Pimcore Type                                                                                                                               |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Text`               | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `CRM/Firstname`, `CRM/Lastname`, `CRM/Email`                                                        |
+| `Hidden`             | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `Relation/Many-to-One-Relation`,  `Relation/Many-to-Many-Relation`                                  |
+| `Text Area`          | `Text/Textarea`, `Text/Wysiwyg`                                                                                                                    |
+| `Integer`            | `Text/Input`, `Text/Textarea`, `Text/Wysiwyg`, `Number/Number`, `Number/Slider`, `Relation/Many-to-One-Relation`, `Relation/Many-to-Many-Relation` |
+| `Checkbox`           | `Other/Checkbox`, `CRM/NewsletterActive`, `CRM/NewsletterConfirmed`, `CRM/Consent`                                                                 |
+| `Date`               | `Date/Date`                                                                                                                                        |
+| `Date Time`          | `Date/DateTime`                                                                                                                                    |
+| `Time`               | `Date/Time`                                                                                                                                        |
+| `Birthday`           | `Date/Date`                                                                                                                                        | 
+| `Choice`             | `Text/Input`,`Select/Select`, `Select/MultiSelect`, `CRM/Gender`, `Relation/Many-to-One-Relation`,  `Relation/Many-to-Many-Relation`               |
+| `Dynamic Choice`     | `Text/Input`,`Select/Select`, `Select/MultiSelect`, `CRM/Gender`, `Relation/Many-to-One-Relation`,  `Relation/Many-to-Many-Relation`               |
+| `Country`            | `Text/Input`,`Select/Country`, `Select/Country (MultiSelect)`                                                                                      |
+| `Html Tag`           | unsupported                                                                                                                                        |
+| `Snippet`            | unsupported                                                                                                                                        |
+| `reCAPTCHA v3`       | unsupported                                                                                                                                        |
+| `Dynamic Multi File` | unsupported                                                                                                                                        |
+| `Submit`             | unsupported                                                                                                                                        |
 
 ### Dynamic Choices Mapping
 If you're using the dynamic choice type mapping, make sure your mapped pimcore field is connected to the same options provider source! 
@@ -76,10 +76,10 @@ You need to add the field collection relation to your form field. After that you
 
 There are two default validation constrains available within the field collection mapping.
 
-| Type | Description  |
-|------|--------------|
-| `Uniqueness Validation` | If enabled, you need to define a referencing uniqueness field. This will raise an `GuardOutputWorkflowException` exception, if the validation fails. The message will be translated via pimcore translation engine. |
-| `Count Validation` | If enabled, you ned to define a referencing count field (mostly a number field). This will raise an `GuardOutputWorkflowException` exception, if the validation fails. The message will be translated via pimcore translation engine. |
+| Type                    | Description                                                                                                                                                                                                                           |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Uniqueness Validation` | If enabled, you need to define a referencing uniqueness field. This will raise an `GuardOutputWorkflowException` exception, if the validation fails. The message will be translated via pimcore translation engine.                   |
+| `Count Validation`      | If enabled, you ned to define a referencing count field (mostly a number field). This will raise an `GuardOutputWorkflowException` exception, if the validation fails. The message will be translated via pimcore translation engine. |
 
 ## Events
 You're able to implement a guard and enrichment event. Read more about it [here](./30_Events.md).
