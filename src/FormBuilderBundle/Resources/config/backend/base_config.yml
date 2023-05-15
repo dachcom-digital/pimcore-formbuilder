@@ -63,7 +63,8 @@ form_builder:
                 display_group_id: base
                 type: textfield
                 label: 'form_builder_type_field_base.data'
-                config: ~
+                config:
+                    allowDataInjector: true
             options.help_text:
                 display_group_id: base
                 type: textfield

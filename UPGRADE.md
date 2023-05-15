@@ -5,6 +5,7 @@
 - **[BUGFIX]**: suppress php warning of undefined array key [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/387)
 - **[ENHANCEMENT]**: Adds sort buttons for choices in ChoiceType [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/388)
 - **[ENHANCEMENT]**: Allow Relation(s) in Object Channel [#390](https://github.com/dachcom-digital/pimcore-formbuilder/issues/390)
+- **[NEW FEATURE]**: Data Injectors [#395](https://github.com/dachcom-digital/pimcore-formbuilder/issues/395)
 
 ## Version 4.4.1
 - **[BUGFIX]**: [Constraint Options] ignore internal properties [#381](https://github.com/dachcom-digital/pimcore-formbuilder/pull/381)

@@ -48,6 +48,10 @@ form_builder.controller.admin.get_preset_description:
     path: /admin/formbuilder/settings/get-preset-description/{name}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::getPresetDescriptionAction }
 
+form_builder.controller.admin.getData_injection_store:
+    path: /admin/formbuilder/settings/get-data-injection-store
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::getDataInjectionStoreAction }
+
 # Output Workflows
 form_builder.controller.admin.output_workflow.get_output_workflow_tree:
     path: /admin/formbuilder/output-workflow/get-output-workflow-tree/{formId}

@@ -277,6 +277,8 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
         var fields,
             field = null,
             fieldComponent = null,
+            fieldValue = null,
+            additionalFieldValues = {},
             formFields = Object.keys(Formbuilder.extjs.form.fields).filter(
                 function (value) {
                     return value !== 'abstract';
@@ -298,10 +300,17 @@ Formbuilder.extjs.components.formTypeBuilder = Class.create({
                 fieldComponent = new Formbuilder.extjs.form.fields[fieldConfig.type]()
             }
 
-            field = fieldComponent.getField(
-                fieldConfig,
-                this.getFieldValue(fieldConfig.id)
-            );
+            fieldValue = this.getFieldValue(fieldConfig.id);
+            if (fieldComponent.isMultiValueAware(fieldConfig)) {
+                Ext.Array.each(fieldComponent.getMultiValueAwareValuePrefixes(fieldConfig), function (prefix) {
+                    var prefixedValue = this.getFieldValue(prefix);
+                    if (prefixedValue !== undefined) {
+                        additionalFieldValues[prefix] = prefixedValue;
+                    }
+                }.bind(this))
+            }
+
+            field = fieldComponent.getField(fieldConfig, fieldValue, additionalFieldValues);
 
             return field;
         }

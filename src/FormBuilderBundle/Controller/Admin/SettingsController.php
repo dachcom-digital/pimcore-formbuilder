@@ -4,10 +4,12 @@ namespace FormBuilderBundle\Controller\Admin;
 
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Form\DataInjector\DataInjectorInterface;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\PresetManager;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Registry\DataInjectionRegistry;
 use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -283,6 +285,26 @@ class SettingsController extends AdminController
             [
                 'success'     => true,
                 'previewData' => $preset
+            ]
+        );
+    }
+
+    public function getDataInjectionStoreAction(Request $request, DataInjectionRegistry $dataInjectionRegistry): JsonResponse
+    {
+        $store = [];
+
+        foreach ($dataInjectionRegistry->getAll() as $dataInjectorIdentifier => $dataInjectorService) {
+            $store[] = [
+                'value'       => $dataInjectorIdentifier,
+                'label'       => $dataInjectorService->getName(),
+                'description' => $dataInjectorService->getDescription()
+            ];
+        }
+
+        return $this->json(
+            [
+                'success' => true,
+                'store'   => $store
             ]
         );
     }
