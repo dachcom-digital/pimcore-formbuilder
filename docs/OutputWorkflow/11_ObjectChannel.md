@@ -99,7 +99,7 @@ Example: You want to show some events on your website. Every event has its own d
 To achieve this, you need to do some configuration work. Luckily, FormBuilder ships some pre-configured services, so you only need to configure them properly.
 
 #### I. Add Runtime Data Provider
-First, you need to determinate an object identifier. Mostly it's an ID in your query string.
+First, you need to determinate an object identifier. Mostly it's an ID in your query string. Were using a [runtime data provider](./../85_RuntimeData.md) to achieve this.
 
 ```yaml
 form_builder.form.runtime_data.event_id_fetcher:
@@ -130,7 +130,7 @@ form_builder.output_workflow.object.dynamic_object_resolver.event:
 ### II. Create a custom Resolver 
 
 ```yaml
-App\Formbuilder\OutputWorkflow\DynamicObjectResolver\CustomObjectResolver:
+App\FormBuilder\OutputWorkflow\DynamicObjectResolver\CustomObjectResolver:
     autowire: true
     tags:
         - { name: form_builder.output_workflow.object.dynamic_resolver, identifier: 'my_dynamic_object_resolver', label: 'My Dynamic Object Resolver'}
@@ -139,7 +139,7 @@ App\Formbuilder\OutputWorkflow\DynamicObjectResolver\CustomObjectResolver:
 ```php
 <?php
 
-namespace App\Formbuilder\OutputWorkflow\DynamicObjectResolver;
+namespace App\FormBuilder\OutputWorkflow\DynamicObjectResolver;
 
 use FormBuilderBundle\OutputWorkflow\Channel\Object\AbstractObjectResolver;
 use FormBuilderBundle\OutputWorkflow\DynamicObjectResolver\DynamicObjectResolverInterface;
@@ -151,6 +151,7 @@ class CustomObjectResolver implements DynamicObjectResolverInterface
     public static function getAllowedObjectResolverModes(): array
     {
         # this service is only allowed when using the "New Object" resolve strategy
+        
         return [
             AbstractObjectResolver::OBJECT_RESOLVER_CREATE
         ];
@@ -162,7 +163,6 @@ class CustomObjectResolver implements DynamicObjectResolverInterface
             return null;
         }
 
-        // only supporting TestClass?
         if ($dataClass !== 'TestClass') {
             return null;
         }
