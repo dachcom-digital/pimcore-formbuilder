@@ -90,3 +90,6 @@ parameters:
         - ['label','label']
         - ['p','p']
 ```
+
+## Data Injection
+If you want to add data to your text fields, based on a specific condition (a query parameter in request for example) you may want to check out [form data injectors](./86_FormDataInjection.md).

@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappi
 use Doctrine\DBAL\Types\Type;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ApiProviderPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\ChoiceBuilderPass;
+use FormBuilderBundle\DependencyInjection\CompilerPass\DataInjectionPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DispatcherPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicMultiFileAdapterPass;
 use FormBuilderBundle\DependencyInjection\CompilerPass\DynamicObjectResolverPass;
@@ -69,6 +70,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new ApiProviderPass());
         $container->addCompilerPass(new FieldTransformerPass());
         $container->addCompilerPass(new StorageProviderPass());
+        $container->addCompilerPass(new DataInjectionPass());
     }
 
     public function getInstaller(): Install
@@ -111,6 +113,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
             '/bundles/formbuilder/js/extjs/_form/config-fields/select.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/tagfield.js',
             '/bundles/formbuilder/js/extjs/_form/config-fields/textfield.js',
+            '/bundles/formbuilder/js/extjs/_form/data-injection/expression.js',
             '/bundles/formbuilder/js/extjs/extensions/formMetaData.js',
             '/bundles/formbuilder/js/extjs/extensions/formMailEditor.js',
             '/bundles/formbuilder/js/extjs/extensions/formApiMappingEditor.js',

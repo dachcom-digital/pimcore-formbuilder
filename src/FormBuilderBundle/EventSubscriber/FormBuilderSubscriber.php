@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\EventSubscriber;
 
+use FormBuilderBundle\Registry\DataInjectionRegistry;
 use FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlank;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
@@ -25,24 +26,16 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
-    protected Configuration $configuration;
-    protected EventDispatcherInterface $eventDispatcher;
-    protected Dispatcher $dispatcher;
-    protected FormRegistryInterface $formRegistry;
-
     private array $availableConstraints;
     private array $availableFormTypes;
 
     public function __construct(
-        Configuration $configuration,
-        EventDispatcherInterface $eventDispatcher,
-        Dispatcher $dispatcher,
-        FormRegistryInterface $formRegistry
+        protected Configuration $configuration,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected Dispatcher $dispatcher,
+        protected FormRegistryInterface $formRegistry,
+        protected DataInjectionRegistry $dataInjectionRegistry
     ) {
-        $this->configuration = $configuration;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->dispatcher = $dispatcher;
-        $this->formRegistry = $formRegistry;
         $this->availableConstraints = $this->configuration->getAvailableConstraints();
         $this->availableFormTypes = $this->configuration->getConfig('types');
     }
@@ -204,12 +197,16 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
         // options enrichment: tweak preferred choice options
         if (in_array($field->getType(), $this->getChoiceFieldTypes(), true)) {
-            if (isset($options['multiple']) && $options['multiple'] === false
-                && isset($options['data'])
-                && is_array($options['data'])
-                && !empty($options['data'])
-            ) {
+            if (isset($options['multiple']) && $options['multiple'] === false && array_key_exists('data', $options) && is_array($options['data'])) {
                 $options['data'] = $options['data'][0];
+            }
+        }
+
+        if (array_key_exists('dataInjection', $options) && !empty($options['dataInjection'])) {
+            $dataInjection = json_decode($options['dataInjection'], true);
+            unset($options['dataInjection']);
+            if ($this->dataInjectionRegistry->has($dataInjection['injector'])) {
+                $options['data'] = $this->dataInjectionRegistry->get($dataInjection['injector'])->parseData($dataInjection['config']);
             }
         }
 

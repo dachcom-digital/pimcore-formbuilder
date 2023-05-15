@@ -1,0 +1,12 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\Registry\DataInjectionRegistry: ~
+
+    FormBuilderBundle\Form\DataInjector\ExpressionDataInjector:
+        tags:
+            - { name: form_builder.data_injector, identifier: expression }
