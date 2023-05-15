@@ -8,7 +8,6 @@ use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\VirtualActionDefinitions;
-use FormBuilderBundle\OutputWorkflow\Channel\Object\ObjectOutputChannel;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
@@ -156,14 +155,6 @@ class ExtJsFormBuilder
         $outputWorkflowChannels = $this->serializer instanceof NormalizerInterface
             ? $this->serializer->normalize($outputWorkflow->getChannels(), 'array', ['groups' => ['ExtJs']])
             : [];
-
-        array_map(function ($row) {
-            if ($row['type'] === 'object') {
-                $row['configuration'] = ObjectOutputChannel::parseLegacyDynamicObjectResolver($row['configuration'] ?? []);
-            }
-
-            return $row;
-        }, $outputWorkflowChannels);
 
         $virtualFunnelActionDefinitions = $this->serializer instanceof NormalizerInterface
             ? $this->serializer->normalize(VirtualActionDefinitions::getVirtualFunnelActionDefinitions(), 'array', ['groups' => ['ExtJs']])

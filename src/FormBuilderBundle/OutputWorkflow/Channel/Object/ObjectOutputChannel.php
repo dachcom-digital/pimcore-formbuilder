@@ -27,41 +27,6 @@ class ObjectOutputChannel implements ChannelInterface
         return false;
     }
 
-    /**
-     * @deprecated since 4.5.0 and will be removed in 5.0.0. Update all forms before migrating
-     */
-    public static function parseLegacyDynamicObjectResolver(array $configuration): array
-    {
-        if (!array_key_exists('dynamicObjectResolver', $configuration)) {
-            return $configuration;
-        }
-
-        // already migrated
-        if (array_key_exists('dynamicObjectResolverClass', $configuration)) {
-            return $configuration;
-        }
-
-        $dynamicObjectResolverClass = null;
-        if (!empty($configuration['dynamicObjectResolver'])) {
-            $resolvingObject = $configuration['resolvingObject'] ?? null;
-            if (is_array($resolvingObject)) {
-                $object = DataObject::getById($resolvingObject['id']);
-                $dynamicObjectResolverClass = $object instanceof DataObject\Concrete ? $object->getClassName() : null;
-            }
-        }
-
-        if ($dynamicObjectResolverClass === null) {
-            unset($configuration['dynamicObjectResolver']);
-
-            return $configuration;
-        }
-
-        $configuration['dynamicObjectResolverClass'] = $dynamicObjectResolverClass;
-        unset($configuration['resolvingObject']);
-
-        return $configuration;
-    }
-
     public function getUsedFormFieldNames(array $channelConfiguration): array
     {
         if (count($channelConfiguration['objectMappingData']) === 0) {
@@ -79,8 +44,6 @@ class ObjectOutputChannel implements ChannelInterface
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
         $locale = $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
-
-        $channelConfiguration = self::parseLegacyDynamicObjectResolver($channelConfiguration);
 
         $objectMappingData = $channelConfiguration['objectMappingData'];
 
