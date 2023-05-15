@@ -6,6 +6,7 @@ use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Factory\ObjectResolverFactoryInterface;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ObjectChannelType;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use Pimcore\Model\DataObject;
 
 class ObjectOutputChannel implements ChannelInterface
 {
@@ -46,16 +47,24 @@ class ObjectOutputChannel implements ChannelInterface
 
         $objectMappingData = $channelConfiguration['objectMappingData'];
 
+        $dynamicObjectResolverActive = false;
+        if (array_key_exists('dynamicObjectResolver', $channelConfiguration)) {
+            $dynamicObjectResolverActive = true;
+        }
+
         if ($channelConfiguration['resolveStrategy'] === 'newObject') {
             $objectResolver = $this->objectResolverFactory->createForNewObject($objectMappingData);
-            $objectResolver->setResolvingObjectClass($channelConfiguration['resolvingObjectClass']);
-            $objectResolver->setStoragePath($channelConfiguration['storagePath']);
+            $objectResolver->setResolvingObjectClass($dynamicObjectResolverActive ? null : $channelConfiguration['resolvingObjectClass']);
+            $objectResolver->setStoragePath($dynamicObjectResolverActive ? [] : $channelConfiguration['storagePath']);
         } elseif ($channelConfiguration['resolveStrategy'] === 'existingObject') {
             $objectResolver = $this->objectResolverFactory->createForExistingObject($objectMappingData);
-            $objectResolver->setResolvingObject($channelConfiguration['resolvingObject']);
-            $objectResolver->setDynamicObjectResolver($channelConfiguration['dynamicObjectResolver']);
+            $objectResolver->setResolvingObject($dynamicObjectResolverActive ? [] : $channelConfiguration['resolvingObject']);
         } else {
             throw new \Exception(sprintf('no object resolver for strategy "%s" found.', $channelConfiguration['resolveStrategy']));
+        }
+
+        if (array_key_exists('dynamicObjectResolver', $channelConfiguration)) {
+            $objectResolver->setDynamicObjectResolver($channelConfiguration['dynamicObjectResolver'], $channelConfiguration['dynamicObjectResolverClass']);
         }
 
         $objectResolver->setForm($form);

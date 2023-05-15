@@ -7,5 +7,7 @@ use Symfony\Component\Form\FormInterface;
 
 interface DynamicObjectResolverInterface
 {
-    public function resolve(FormInterface $form, DataObject $referenceObject, array $formRuntimeData, string $locale): ?DataObject;
+    public function resolve(FormInterface $form, string $dataClass, array $formRuntimeData, string $locale, string $objectResolverMode): ?DataObject;
+
+    public static function getAllowedObjectResolverModes(): array;
 }

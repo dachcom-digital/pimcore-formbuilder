@@ -84,19 +84,22 @@ There are two default validation constrains available within the field collectio
 ## Events
 You're able to implement a guard and enrichment event. Read more about it [here](./30_Events.md).
 
-## Dynamic Object Resolver
+***
 
-> Note: The Dynamic Object Resolver is only available if you're using the "Use existing Object" strategy!
+## Dynamic Object Resolver
+You may want to extend the object channel storage definition to not only store them on a static place but change it individually, based on given form data.
+A Resolver is strategy aware, which means you're able to define if a resolver should be available for `Existing Objects` or `New Objects` or `both`.
+
+There are two ways to do this: Use the runtime data services or create a custom one:
+
+### I. Use Runtime Data Object Resolver 
+> Note: The Runtime Data Object Resolver is only available if you're using the "Use existing Object" strategy! If you need to add more logic, use a custom resolver (see next section "Create a custom Resolver")
 
 Example: You want to show some events on your website. Every event has its own detail page on your website. To allow user to apply to your event, you may want to add a form at the bottom of those event pages.
-
-After you've created an object output workflow you'll shortly run into a simple question: Does FormBuilder know, which existing event should be used to append the form data? 
-The answer is simple: No. 
-
 To achieve this, you need to do some configuration work. Luckily, FormBuilder ships some pre-configured services, so you only need to configure them properly.
 
-### I. Add Runtime Data   
-First, you need to determinate an object identifier. Mostly it's an ID in your query string.
+#### I. Add Runtime Data Provider
+First, you need to determinate an object identifier. Mostly it's an ID in your query string. Were using a [runtime data provider](./../85_RuntimeData.md) to achieve this.
 
 ```yaml
 form_builder.form.runtime_data.event_id_fetcher:
@@ -109,8 +112,8 @@ form_builder.form.runtime_data.event_id_fetcher:
         - { name: form_builder.runtime_data_provider}
 ```
 
-### II. Add dynamic Object Resolver
-Second, create a dynamic object resolver and append the found ID from the runtime data pool.
+#### II. Add Object Resolver
+Second, create a dynamic object resolver and append the ID from the runtime data pool.
 
 ```yaml
 form_builder.output_workflow.object.dynamic_object_resolver.event:
@@ -121,5 +124,56 @@ form_builder.output_workflow.object.dynamic_object_resolver.event:
         $objectIdentifier: 'name'
         $isLocalizedValue: false
     tags:
-        - { name: form_builder.output_workflow.object.dynamic_resolver, identifier: 'event', label: 'My Event Object Resolver'}
+        - { name: form_builder.output_workflow.object.dynamic_resolver, identifier: 'my_runtime_object_resolver', label: 'My Runtime Object Resolver'}
+```
+
+### II. Create a custom Resolver 
+
+```yaml
+App\FormBuilder\OutputWorkflow\DynamicObjectResolver\CustomObjectResolver:
+    autowire: true
+    tags:
+        - { name: form_builder.output_workflow.object.dynamic_resolver, identifier: 'my_dynamic_object_resolver', label: 'My Dynamic Object Resolver'}
+```
+
+```php
+<?php
+
+namespace App\FormBuilder\OutputWorkflow\DynamicObjectResolver;
+
+use FormBuilderBundle\OutputWorkflow\Channel\Object\AbstractObjectResolver;
+use FormBuilderBundle\OutputWorkflow\DynamicObjectResolver\DynamicObjectResolverInterface;
+use Pimcore\Model\DataObject;
+use Symfony\Component\Form\FormInterface;
+
+class CustomObjectResolver implements DynamicObjectResolverInterface
+{
+    public static function getAllowedObjectResolverModes(): array
+    {
+        # this service is only allowed when using the "New Object" resolve strategy
+        
+        return [
+            AbstractObjectResolver::OBJECT_RESOLVER_CREATE
+        ];
+    }
+
+    public function resolve(FormInterface $form, string $dataClass, array $formRuntimeData, string $locale, string $objectResolverMode): ?DataObject
+    {
+        if ($objectResolverMode !== AbstractObjectResolver::OBJECT_RESOLVER_CREATE) {
+            return null;
+        }
+
+        if ($dataClass !== 'TestClass') {
+            return null;
+        }
+
+        $object = new DataObject\TestClass();
+        $object->setKey('YOURKEY');
+        $object->setParent('YOURPARENT');
+        
+        // return object, the object mapper will do the rest
+
+        return $object;
+    }
+}
 ```

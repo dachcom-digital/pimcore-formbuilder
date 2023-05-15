@@ -7,6 +7,7 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\OutputWorkflowManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\OutputWorkflow\DynamicObjectResolver\DynamicObjectResolverInterface;
 use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject;
@@ -135,10 +136,12 @@ class OutputWorkflowObjectController extends AdminController
         }
 
         $resolveStrategy = $baseConfiguration['resolveStrategy'];
+        $dynamicObjectResolver = $baseConfiguration['dynamicObjectResolver'] ?? null;
 
-        if ($resolveStrategy === 'newObject') {
-            $resolvingObjectClass = $baseConfiguration['resolvingObjectClass'];
-            $classDefinition = DataObject\ClassDefinition::getByName($resolvingObjectClass);
+        if (!empty($dynamicObjectResolver)) {
+            $classDefinition = DataObject\ClassDefinition::getByName($baseConfiguration['dynamicObjectResolverClass'] ?? null);
+        } elseif ($resolveStrategy === 'newObject') {
+            $classDefinition = DataObject\ClassDefinition::getByName($baseConfiguration['resolvingObjectClass']);
         } elseif ($resolveStrategy === 'existingObject') {
             $dataObject = DataObject::getById($baseConfiguration['resolvingObject']['id']);
             $classDefinition = $dataObject instanceof DataObject\Concrete ? $dataObject->getClass() : null;
@@ -169,11 +172,23 @@ class OutputWorkflowObjectController extends AdminController
 
     public function getDynamicObjectResolverAction(Request $request): JsonResponse
     {
-        $services = $this->dynamicObjectResolverRegistry->getAll();
+        $objectResolverModeFilter = $request->query->get('allowedObjectResolverMode', null);
 
         $data = [];
-        foreach ($services as $identifier => $service) {
-            $data[] = ['label' => $service['label'], 'key' => $identifier];
+        foreach ($this->dynamicObjectResolverRegistry->getAll() as $identifier => $serviceData) {
+            /** @var DynamicObjectResolverInterface $service */
+            $service = $serviceData['service'];
+            $allowedObjectResolverModes = $service::getAllowedObjectResolverModes();
+
+            if ($objectResolverModeFilter !== null && !in_array($objectResolverModeFilter, $allowedObjectResolverModes)) {
+                continue;
+            }
+
+            $data[] = [
+                'label'                      => $serviceData['label'],
+                'key'                        => $identifier,
+                'allowedObjectResolverModes' => $allowedObjectResolverModes
+            ];
         }
 
         return $this->adminJson([

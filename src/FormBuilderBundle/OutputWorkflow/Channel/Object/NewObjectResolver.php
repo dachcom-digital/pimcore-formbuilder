@@ -7,15 +7,15 @@ use Pimcore\Model\DataObject;
 
 class NewObjectResolver extends AbstractObjectResolver
 {
-    protected string $resolvingObjectClass;
+    protected ?string $resolvingObjectClass;
     protected array $storagePath;
 
-    public function setResolvingObjectClass(string $resolvingObjectClass): void
+    public function setResolvingObjectClass(?string $resolvingObjectClass): void
     {
         $this->resolvingObjectClass = $resolvingObjectClass;
     }
 
-    public function getResolvingObjectClass(): string
+    public function getResolvingObjectClass(): ?string
     {
         return $this->resolvingObjectClass;
     }
@@ -35,17 +35,28 @@ class NewObjectResolver extends AbstractObjectResolver
         /** @var FormDataInterface $formData */
         $formData = $this->getForm()->getData();
 
-        $storageFolder = $this->getStorageFolder();
-        $pathName = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($this->getResolvingObjectClass()));
+        if ($this->getDynamicObjectResolver() !== null) {
+            $resolver = $this->dynamicObjectResolverRegistry->get($this->getDynamicObjectResolver());
+            $dataObject = $resolver->resolve($this->getForm(), $this->getDynamicObjectResolverClass(), $this->getFormRuntimeData(), $this->getLocale(), self::OBJECT_RESOLVER_CREATE);
+            $resolvingObjectIdentifier = $this->getDynamicObjectResolverClass();
+        } else {
+            /** @var DataObject\Concrete $dataObject */
+            $dataObject = $this->modelFactory->build(sprintf('\Pimcore\Model\DataObject\%s', ucfirst($this->getResolvingObjectClass())));
+            $dataObject->setParent($this->getStorageFolder());
+            $dataObject->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId()), true));
+            $dataObject->setPublished(true);
+            $resolvingObjectIdentifier = $this->getResolvingObjectClass();
+        }
 
-        /** @var DataObject\Concrete $object */
-        $object = $this->modelFactory->build($pathName);
+        if (!$dataObject instanceof DataObject\Concrete) {
+            throw new \Exception(sprintf(
+                'Resolving new object with identifier "%s" not found. %s',
+                $resolvingObjectIdentifier,
+                $this->getDynamicObjectResolver() === null ? '' : sprintf('Involved Resolver: "%s"', $this->getDynamicObjectResolver())
+            ));
+        }
 
-        $object->setParent($storageFolder);
-        $object->setKey(uniqid(sprintf('form-%d-', $formData->getFormDefinition()->getId()), true));
-        $object->setPublished(true);
-
-        return $object;
+        return $dataObject;
     }
 
     /**

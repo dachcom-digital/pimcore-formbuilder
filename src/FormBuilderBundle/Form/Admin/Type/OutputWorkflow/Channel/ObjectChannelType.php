@@ -30,9 +30,13 @@ class ObjectChannelType extends AbstractType
             // reset old form data to allow conditional switches
             $form->setData(null);
 
-            if ($data['resolveStrategy'] === 'existingObject') {
-                $form->add('resolvingObject', PimcoreHrefType::class);
+            $dynamicObjectResolver = array_key_exists('dynamicObjectResolver', $data) && !empty($data['dynamicObjectResolver']);
+
+            if ($dynamicObjectResolver === true) {
                 $form->add('dynamicObjectResolver', TextType::class);
+                $form->add('dynamicObjectResolverClass', TextType::class);
+            } elseif ($data['resolveStrategy'] === 'existingObject') {
+                $form->add('resolvingObject', PimcoreHrefType::class);
             } elseif ($data['resolveStrategy'] === 'newObject') {
                 $form->add('storagePath', PimcoreHrefType::class);
                 $form->add('resolvingObjectClass', TextType::class);

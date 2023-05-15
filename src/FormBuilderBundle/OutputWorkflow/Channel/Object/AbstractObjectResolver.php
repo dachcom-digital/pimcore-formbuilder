@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
+use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -19,25 +20,23 @@ use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractObjectResolver
 {
-    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
-    protected EventDispatcherInterface $eventDispatcher;
-    protected array $objectMappingData;
+    public const OBJECT_RESOLVER_CREATE = 'newObject';
+    public const OBJECT_RESOLVER_UPDATE = 'existingObject';
+
     protected FormInterface $form;
     protected array $formRuntimeData;
     protected string $locale;
     protected string $workflowName;
-    protected FactoryInterface $modelFactory;
+    protected ?string $dynamicObjectResolver = null;
+    protected ?string $dynamicObjectResolverClass = null;
 
     public function __construct(
-        FormValuesOutputApplierInterface $formValuesOutputApplier,
-        EventDispatcherInterface $eventDispatcher,
-        FactoryInterface $modelFactory,
-        array $objectMappingData
+        protected FormValuesOutputApplierInterface $formValuesOutputApplier,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected FactoryInterface $modelFactory,
+        protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry,
+        protected array $objectMappingData
     ) {
-        $this->formValuesOutputApplier = $formValuesOutputApplier;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->modelFactory = $modelFactory;
-        $this->objectMappingData = $objectMappingData;
     }
 
     /**
@@ -85,6 +84,22 @@ abstract class AbstractObjectResolver
     public function getWorkflowName(): string
     {
         return $this->workflowName;
+    }
+
+    public function setDynamicObjectResolver(string $dynamicObjectResolver, string $dynamicObjectResolverClass): void
+    {
+        $this->dynamicObjectResolver = $dynamicObjectResolver;
+        $this->dynamicObjectResolverClass = $dynamicObjectResolverClass;
+    }
+
+    public function getDynamicObjectResolver(): ?string
+    {
+        return $this->dynamicObjectResolver;
+    }
+
+    public function getDynamicObjectResolverClass(): ?string
+    {
+        return $this->dynamicObjectResolverClass;
     }
 
     public function getObjectMappingData(): array
