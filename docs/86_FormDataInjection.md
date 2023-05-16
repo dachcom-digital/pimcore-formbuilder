@@ -14,7 +14,6 @@ This feature is available for:
 - Integer Type
 - Text Type
 - Textarea Type
-- 
 
 ***
 
