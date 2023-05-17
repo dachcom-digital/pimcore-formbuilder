@@ -295,6 +295,11 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.object = Class.create(Formbui
     },
 
     resetDynamicObjectResolverData: function () {
+
+        if (this.data === null) {
+            return;
+        }
+
         this.data.dynamicObjectResolver = null;
         this.data.dynamicObjectResolverClass = null;
     },
