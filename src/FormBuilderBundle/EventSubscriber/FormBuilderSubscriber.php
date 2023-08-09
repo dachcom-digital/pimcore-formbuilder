@@ -216,6 +216,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
 
             // add field constraints to data attribute since we need them for the frontend cl applier.
             foreach ($field->getConstraints() as $constraint) {
+                if (array_key_exists('config', $constraint) && $constraint['type'] === 'range') {
+                    $options['attr']['min'] = $constraint['config']['min'] ?? ($constraint['config']['minPropertyPath'] ?? null);
+                    $options['attr']['max'] = $constraint['config']['max'] ?? ($constraint['config']['maxPropertyPath'] ?? null);
+                }
                 $constraintNames[] = $constraint['type'];
             }
 
