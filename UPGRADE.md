@@ -1,10 +1,11 @@
 # Upgrade Notes
  
 ## Migrating from Version 4.x to Version 5.0
+- Execute: `bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'`
 
 ### Global Changes
 - Recommended folder structure by symfony adopted
-- [FUNNEL] Route include changed from `@FormBuilderBundle/Resources/config/pimcore/routing_funnels.yml` to `@FormBuilderBundle/config/pimcore/routing_funnels.yml`
+- [FUNNEL] Route include changed from `@FormBuilderBundle/Resources/config/pimcore/routing_funnels.yml` to `@FormBuilderBundle/config/pimcore/routing_funnels.yaml`
 
 ### New Features
 TBD

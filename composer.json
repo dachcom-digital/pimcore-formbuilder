@@ -33,6 +33,7 @@
     "require": {
         "php": "^8.2",
         "pimcore/pimcore": "^11.0",
+        "symfony/form": "^6.0",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {

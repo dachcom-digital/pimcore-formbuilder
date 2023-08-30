@@ -53,7 +53,7 @@ class UseCustomRadioCheckboxCest
      */
     public function testUseCustomCheckboxDisabled(FunctionalTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_configuration_flags.yml');
+        $I->haveABootedSymfonyConfiguration('config_configuration_flags.yaml');
 
         $document = $I->haveAPageDocument('form-test');
         $adminEmail = $I->haveAEmailDocumentForAdmin();
@@ -133,7 +133,7 @@ class UseCustomRadioCheckboxCest
      */
     public function testUseCustomRadioDisabled(FunctionalTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_configuration_flags.yml');
+        $I->haveABootedSymfonyConfiguration('config_configuration_flags.yaml');
 
         $document = $I->haveAPageDocument('form-test');
         $adminEmail = $I->haveAEmailDocumentForAdmin();

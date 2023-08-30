@@ -9,7 +9,7 @@ class FineUploaderConstraintsCest
 {
     public function testEmptyFileUploadFormWithNotBlankConstraint(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)
@@ -34,7 +34,7 @@ class FineUploaderConstraintsCest
 
     public function testPopulatedFileUploadFormWithNotBlankConstraint(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))
             ->setUseAjax(true)

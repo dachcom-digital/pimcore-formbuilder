@@ -38,7 +38,7 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../../config']));
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $conditionalLogicDefinition = $container->getDefinition(ConditionalLogicRegistry::class);
 

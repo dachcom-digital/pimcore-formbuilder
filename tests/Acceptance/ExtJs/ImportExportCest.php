@@ -20,7 +20,7 @@ class ImportExportCest extends AbstractExtJs
         $I->click('Save', $this->getFormPanelSelector($formId));
         $I->waitForText('Form successfully saved', 10);
 
-        $formExportName = 'form_export_1.yml';
+        $formExportName = 'form_export_1.yaml';
 
         $I->click('Export', $this->getFormPanelSelector($formId));
         $I->wait(3);

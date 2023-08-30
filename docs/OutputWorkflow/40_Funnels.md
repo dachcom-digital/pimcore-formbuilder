@@ -52,11 +52,11 @@ Don't freak out, we're talking about one tiny route only:
 ```yaml
 # config/routes.yaml
 form_builder_routing_funnels:
-    resource: '@FormBuilderBundle/config/pimcore/routing_funnels.yml'
+    resource: '@FormBuilderBundle/config/pimcore/routing_funnels.yaml'
 
 # or import routes without the {locale} flag in routes
 # form_builder_routing_funnels:
-#     resource: '@FormBuilderBundle/config/pimcore/routing_funnels_not_localized.yml'
+#     resource: '@FormBuilderBundle/config/pimcore/routing_funnels_not_localized.yaml'
 ```
 
 ## Further Information

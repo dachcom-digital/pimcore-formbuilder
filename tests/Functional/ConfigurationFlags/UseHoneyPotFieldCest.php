@@ -39,7 +39,7 @@ class UseHoneyPotFieldCest
      */
     public function testHoneyPotFieldDisabled(FunctionalTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_configuration_flags.yml');
+        $I->haveABootedSymfonyConfiguration('config_configuration_flags.yaml');
 
         $document = $I->haveAPageDocument('form-test');
 

@@ -1,0 +1,7 @@
+imports:
+    - { resource: services/conditional_logic/*.yaml }
+    - { resource: services/mail_editor/*.yaml }
+    - { resource: services/output_workflow/*.yaml }
+    - { resource: services/forms/*.yaml }
+    - { resource: services/transformer/*.yaml }
+    - { resource: services/*.yaml }

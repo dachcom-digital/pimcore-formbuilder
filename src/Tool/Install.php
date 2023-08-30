@@ -134,7 +134,7 @@ class Install extends SettingsStoreAwareInstaller
             $type->setValues([
                 'name'       => $elementName,
                 'controller' => 'FormBuilderBundle\Controller\EmailController::emailAction',
-                'template'   => 'FormBuilderBundle:Email:email.html.twig',
+                'template'   => '@FormBuilder/email/email.html.twig',
                 'type'       => 'email',
                 'priority'   => 0
             ]);

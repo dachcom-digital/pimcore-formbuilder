@@ -239,7 +239,6 @@ form_builder:
                         type: workflow_select
                         label: 'form_builder_output_workflow_select'
 imports:
-    - { resource: '../backend/base_config.yml' }
-    - { resource: '../types/field_types.yml' }
-    - { resource: '../types/container_types.yml' }
-    - { resource: '../extension/extension.yml' }
+    - { resource: '../backend/base_config.yaml' }
+    - { resource: '../types/field_types.yaml' }
+    - { resource: '../types/container_types.yaml' }

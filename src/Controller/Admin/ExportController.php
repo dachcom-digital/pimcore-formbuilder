@@ -69,7 +69,7 @@ class ExportController extends AdminAbstractController
         }
 
         $response = new Response($data);
-        $exportName = 'form_export_' . $formId . '.yml';
+        $exportName = 'form_export_' . $formId . '.yaml';
 
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,

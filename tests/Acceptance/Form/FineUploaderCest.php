@@ -11,7 +11,7 @@ class FineUploaderCest
 
     public function testUploadFormWithOneFile(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -46,7 +46,7 @@ class FineUploaderCest
 
     public function testUploadFormWithOneLargeFile(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -81,7 +81,7 @@ class FineUploaderCest
 
     public function testUploadFormWithMultipleFile(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -122,7 +122,7 @@ class FineUploaderCest
 
     public function testUploadFormWithLimitedAllowedExtensionsMustPass(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -166,7 +166,7 @@ class FineUploaderCest
 
     public function testUploadFormWithLimitedAllowedExtensionsMustFail(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -207,7 +207,7 @@ class FineUploaderCest
 
     public function testUploadFormWithLimitedItemsLimitMustPass(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -250,7 +250,7 @@ class FineUploaderCest
 
     public function testUploadFormWithLimitedItemsLimitMustFail(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -295,7 +295,7 @@ class FineUploaderCest
 
     public function testUploadFormWithLimitedFileSizeMustPass(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -338,7 +338,7 @@ class FineUploaderCest
 
     public function testUploadFormWithLimitedFileSizeMustFail(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 
@@ -378,7 +378,7 @@ class FineUploaderCest
 
     public function testUploadFormWithFilesAsAttachment(AcceptanceTester $I): void
     {
-        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yml');
+        $I->haveABootedSymfonyConfiguration('config_fineuploaderjs.yaml');
 
         $testFormBuilder = $this->generateSimpleForm(true);
 

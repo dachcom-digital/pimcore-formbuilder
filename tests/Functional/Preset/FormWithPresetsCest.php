@@ -14,7 +14,7 @@ class FormWithPresetsCest
      */
     public function testAdminFormWithPresets(FunctionalTester $I)
     {
-        $I->haveABootedSymfonyConfiguration('config_presets.yml');
+        $I->haveABootedSymfonyConfiguration('config_presets.yaml');
 
         $user = $I->haveAUser('dachcom_test');
         $document = $I->haveAPageDocument('form-test');
