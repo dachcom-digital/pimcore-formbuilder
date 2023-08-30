@@ -11,14 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SwitchOutputWorkflow implements ModuleInterface
 {
-    protected DataFactory $dataFactory;
     protected array $formData;
     protected array $appliedConditions;
     protected array $availableConstraints;
 
-    public function __construct(DataFactory $dataFactory)
+    public function __construct(protected DataFactory $dataFactory)
     {
-        $this->dataFactory = $dataFactory;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

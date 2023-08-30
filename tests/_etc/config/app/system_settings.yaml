@@ -1,0 +1,47 @@
+pimcore:
+    general:
+        timezone: Europe/Berlin
+        domain: 'localhost'
+        redirect_to_maindomain: false
+        disable_usage_statistics: true
+        debug_admin_translations: false
+        language: en
+        default_language: en
+        valid_languages:
+            - en
+            - de
+        fallback_languages:
+            en: ''
+            de: ''
+    documents:
+        allow_trailing_slash: 'no'
+        generate_preview: false
+        versions:
+            days: null
+            steps: 10
+        error_pages:
+            default: '/error'
+            localized:
+                en: ''
+                de: ''
+    objects:
+        versions:
+            days: null
+            steps: 10
+    assets:
+        versions:
+            days: null
+            steps: 10
+    email:
+        debug:
+            email_addresses: development@dachcom.ch
+pimcore_admin:
+    assets:
+        hide_edit_image: true
+        disable_tree_preview: true
+    branding:
+        login_screen_invert_colors: false
+        color_login_screen: ''
+        color_admin_interface: ''
+        color_admin_interface_background: ''
+        login_screen_custom_image: ''

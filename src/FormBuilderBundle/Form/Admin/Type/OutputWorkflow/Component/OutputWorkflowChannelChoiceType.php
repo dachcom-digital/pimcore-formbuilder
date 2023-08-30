@@ -9,11 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputWorkflowChannelChoiceType extends AbstractType
 {
-    protected OutputWorkflowChannelRegistry $channelRegistry;
-
-    public function __construct(OutputWorkflowChannelRegistry $channelRegistry)
+    public function __construct(protected OutputWorkflowChannelRegistry $channelRegistry)
     {
-        $this->channelRegistry = $channelRegistry;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

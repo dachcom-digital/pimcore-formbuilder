@@ -12,11 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FunnelChannelType extends AbstractType
 {
-    protected FunnelLayerRegistry $funnelLayerRegistry;
-
-    public function __construct(FunnelLayerRegistry $funnelLayerRegistry)
+    public function __construct(protected FunnelLayerRegistry $funnelLayerRegistry)
     {
-        $this->funnelLayerRegistry = $funnelLayerRegistry;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

@@ -6,27 +6,20 @@ use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\FunnelActionInterface
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\FunnelLayerInterface;
 use FormBuilderBundle\Registry\FunnelActionRegistry;
 use FormBuilderBundle\Registry\FunnelLayerRegistry;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class OutputWorkflowFunnelController extends AdminController
+class OutputWorkflowFunnelController extends AdminAbstractController
 {
-    protected SerializerInterface $serializer;
-    protected FunnelLayerRegistry $funnelLayerRegistry;
-    protected FunnelActionRegistry $funnelActionRegistry;
-
     public function __construct(
-        SerializerInterface $serializer,
-        FunnelLayerRegistry $funnelLayerRegistry,
-        FunnelActionRegistry $funnelActionRegistry
+        protected SerializerInterface $serializer,
+        protected FunnelLayerRegistry $funnelLayerRegistry,
+        protected FunnelActionRegistry $funnelActionRegistry
     ) {
-        $this->serializer = $serializer;
-        $this->funnelLayerRegistry = $funnelLayerRegistry;
-        $this->funnelActionRegistry = $funnelActionRegistry;
     }
 
     public function getFunnelLayersAction(Request $request): JsonResponse

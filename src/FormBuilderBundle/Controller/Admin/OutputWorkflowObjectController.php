@@ -9,35 +9,22 @@ use FormBuilderBundle\Manager\OutputWorkflowManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\OutputWorkflow\DynamicObjectResolver\DynamicObjectResolverInterface;
 use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Model\DataObject;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class OutputWorkflowObjectController extends AdminController
+class OutputWorkflowObjectController extends AdminAbstractController
 {
-    protected Configuration $configuration;
-    protected FormFactoryInterface $formFactory;
-    protected FormDefinitionManager $formDefinitionManager;
-    protected OutputWorkflowManager $outputWorkflowManager;
-    protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry;
-    protected ExtJsFormBuilder $extJsFormBuilder;
-
     public function __construct(
-        Configuration $configuration,
-        FormFactoryInterface $formFactory,
-        FormDefinitionManager $formDefinitionManager,
-        OutputWorkflowManager $outputWorkflowManager,
-        DynamicObjectResolverRegistry $dynamicObjectResolverRegistry,
-        ExtJsFormBuilder $extJsFormBuilder
+        protected Configuration $configuration,
+        protected FormFactoryInterface $formFactory,
+        protected FormDefinitionManager $formDefinitionManager,
+        protected OutputWorkflowManager $outputWorkflowManager,
+        protected DynamicObjectResolverRegistry $dynamicObjectResolverRegistry,
+        protected ExtJsFormBuilder $extJsFormBuilder
     ) {
-        $this->configuration = $configuration;
-        $this->formFactory = $formFactory;
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->outputWorkflowManager = $outputWorkflowManager;
-        $this->dynamicObjectResolverRegistry = $dynamicObjectResolverRegistry;
-        $this->extJsFormBuilder = $extJsFormBuilder;
     }
 
     public function getObjectClassesAction(Request $request): JsonResponse

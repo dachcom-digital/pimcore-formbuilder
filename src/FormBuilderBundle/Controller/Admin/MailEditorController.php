@@ -7,28 +7,19 @@ use FormBuilderBundle\MailEditor\Widget\MailEditorFieldDataWidgetInterface;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class MailEditorController extends AdminController
+class MailEditorController extends AdminAbstractController
 {
-    protected MailEditorWidgetRegistry $mailEditorWidgetRegistry;
-    protected FormDefinitionManager $formDefinitionManager;
-    protected ExtJsFormBuilder $extJsFormBuilder;
-    protected Translator $pimcoreTranslator;
-
     public function __construct(
-        MailEditorWidgetRegistry $mailEditorWidgetRegistry,
-        FormDefinitionManager $formDefinitionManager,
-        ExtJsFormBuilder $extJsFormBuilder,
-        Translator $translator
+        protected MailEditorWidgetRegistry $mailEditorWidgetRegistry,
+        protected FormDefinitionManager $formDefinitionManager,
+        protected ExtJsFormBuilder $extJsFormBuilder,
+        protected Translator $pimcoreTranslator
     ) {
-        $this->mailEditorWidgetRegistry = $mailEditorWidgetRegistry;
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->extJsFormBuilder = $extJsFormBuilder;
-        $this->pimcoreTranslator = $translator;
     }
 
     public function getMailEditorDataAction(Request $request): JsonResponse

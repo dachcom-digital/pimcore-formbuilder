@@ -7,15 +7,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class OutputWorkflowSignalsEvent extends Event
 {
-    protected string $channel;
-    protected array $signals;
-    protected array $context;
-
-    public function __construct(string $channel, array $signals, array $context)
-    {
-        $this->channel = $channel;
-        $this->signals = $signals;
-        $this->context = $context;
+    public function __construct(
+        protected string $channel,
+        protected array $signals,
+        protected array $context
+    ) {
     }
 
     public function getChannel(): string

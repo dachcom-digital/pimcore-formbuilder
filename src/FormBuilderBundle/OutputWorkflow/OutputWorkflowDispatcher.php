@@ -14,18 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
 {
-    protected OutputWorkflowChannelRegistry $channelRegistry;
-    protected FunnelWorkerInterface $funnelWorker;
-    protected SignalSubscribeHandler $signalSubscribeHandler;
-
     public function __construct(
-        OutputWorkflowChannelRegistry $channelRegistry,
-        FunnelWorkerInterface $funnelWorker,
-        SignalSubscribeHandler $signalSubscribeHandler
+        protected OutputWorkflowChannelRegistry $channelRegistry,
+        protected FunnelWorkerInterface $funnelWorker,
+        protected SignalSubscribeHandler $signalSubscribeHandler
     ) {
-        $this->channelRegistry = $channelRegistry;
-        $this->funnelWorker = $funnelWorker;
-        $this->signalSubscribeHandler = $signalSubscribeHandler;
     }
 
     public function dispatch(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void

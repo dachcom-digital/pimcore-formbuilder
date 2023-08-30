@@ -5,7 +5,6 @@ namespace FormBuilderBundle\EventListener\Core;
 use FormBuilderBundle\Event\FormAssembleEvent;
 use FormBuilderBundle\Form\FormValuesInputApplierInterface;
 use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\ReturnToFormAction;
 use FormBuilderBundle\Resolver\FunnelDataResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -16,18 +15,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class FunnelFormAssemblingListener implements EventSubscriberInterface
 {
-    protected RequestStack $requestStack;
-    protected FunnelDataResolver $funnelDataResolver;
-    protected FormValuesInputApplierInterface $formValuesInputApplier;
-
     public function __construct(
-        RequestStack $requestStack,
-        FunnelDataResolver $funnelDataResolver,
-        FormValuesInputApplierInterface $formValuesInputApplier
+        protected RequestStack $requestStack,
+        protected FunnelDataResolver $funnelDataResolver,
+        protected FormValuesInputApplierInterface $formValuesInputApplier
     ) {
-        $this->requestStack = $requestStack;
-        $this->funnelDataResolver = $funnelDataResolver;
-        $this->formValuesInputApplier = $formValuesInputApplier;
     }
 
     public static function getSubscribedEvents(): array

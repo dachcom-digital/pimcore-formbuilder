@@ -1,0 +1,17 @@
+bundles:
+    - { namespace: \Pimcore\Bundle\AdminBundle\PimcoreAdminBundle, priority: 60 }
+    - { namespace: \Pimcore\Bundle\SeoBundle\PimcoreSeoBundle, priority: 0, execute_installer: true }
+    - { namespace: \Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle, priority: 0, execute_installer: true }
+    - { namespace: \Pimcore\Bundle\XliffBundle\PimcoreXliffBundle, priority: 0, execute_installer: true }
+    - { namespace: \FormBuilderBundle\FormBuilderBundle }
+setup_files:
+    - { path: app/config.yaml, dest: ./config/ }
+    - { path: app/system_settings.yaml, dest: ./var/config/system_settings/ }
+    - { path: app/controller/DefaultController.php, dest: ./src/Controller/ }
+    - { path: app/views/default.html.twig, dest: ./templates/default/ }
+    - { path: app/views/javascript.html.twig, dest: ./templates/default/ }
+    - { path: app/views/dynamic-multi-file.html.twig, dest: ./templates/default/ }
+    - { path: app/views/snippet.html.twig, dest: ./templates/default/ }
+    - { path: app/views/twigRender.html.twig, dest: ./templates/default/ }
+additional_composer_packages:
+    - { package: pimcore/admin-ui-classic-bundle, version: ^1.0 }

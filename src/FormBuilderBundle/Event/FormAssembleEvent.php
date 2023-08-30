@@ -9,17 +9,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class FormAssembleEvent extends Event
 {
-    protected FormOptionsResolver $formOptionsResolver;
-    protected ?FormInterface $form;
-
     protected array $formData = [];
-    protected FormDefinitionInterface $formDefinition;
 
-    public function __construct(FormOptionsResolver $formOptionsResolver, FormDefinitionInterface $formDefinition, ?FormInterface $form = null)
-    {
-        $this->formOptionsResolver = $formOptionsResolver;
-        $this->formDefinition = $formDefinition;
-        $this->form = $form;
+    public function __construct(
+        protected FormOptionsResolver $formOptionsResolver,
+        protected FormDefinitionInterface $formDefinition,
+        protected ?FormInterface $form = null
+    ) {
     }
 
     public function getFormOptionsResolver(): FormOptionsResolver

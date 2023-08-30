@@ -25,6 +25,10 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    FormBuilderBundle\EventListener\Admin\AssetListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
     FormBuilderBundle\EventListener\Core\CleanUpListener:
         tags:
             - {name: pimcore.maintenance.task, type: formbuilder_clean_up }

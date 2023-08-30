@@ -11,11 +11,8 @@ use Symfony\Component\Form\FormEvents;
 
 class FunnelActionType extends AbstractType
 {
-    protected FunnelActionRegistry $funnelActionRegistry;
-
-    public function __construct(FunnelActionRegistry $funnelActionRegistry)
+    public function __construct(protected FunnelActionRegistry $funnelActionRegistry)
     {
-        $this->funnelActionRegistry = $funnelActionRegistry;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

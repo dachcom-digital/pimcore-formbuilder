@@ -8,15 +8,10 @@ class FunnelActionElement
     protected mixed $subject = null;
     protected bool $isDisabled = false;
 
-    protected FunnelActionDefinition $funnelActionDefinition;
-    protected array $coreConfiguration;
-
     public function __construct(
-        FunnelActionDefinition $funnelActionDefinition,
-        array $coreConfiguration
+        protected FunnelActionDefinition $funnelActionDefinition,
+        protected array $coreConfiguration
     ) {
-        $this->funnelActionDefinition = $funnelActionDefinition;
-        $this->coreConfiguration = $coreConfiguration;
     }
 
     public function setPath(string $path): void

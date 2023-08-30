@@ -11,11 +11,8 @@ use Pimcore\Translation\Translator;
 
 class FineUploaderType extends AbstractType
 {
-    protected Translator $translator;
-
-    public function __construct(Translator $translator)
+    public function __construct(protected Translator $translator)
     {
-        $this->translator = $translator;
     }
 
     /**

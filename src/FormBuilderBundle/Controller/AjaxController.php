@@ -11,15 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AjaxController extends FrontendController
 {
-    protected Configuration $configuration;
-    protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry;
-
     public function __construct(
-        Configuration $configuration,
-        DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
+        protected Configuration $configuration,
+        protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
     ) {
-        $this->configuration = $configuration;
-        $this->dynamicMultiFileAdapterRegistry = $dynamicMultiFileAdapterRegistry;
     }
 
     /**

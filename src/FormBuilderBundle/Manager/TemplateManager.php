@@ -6,11 +6,8 @@ use FormBuilderBundle\Configuration\Configuration;
 
 class TemplateManager
 {
-    protected Configuration $configuration;
-
-    public function __construct(Configuration $configuration)
+    public function __construct(protected Configuration $configuration)
     {
-        $this->configuration = $configuration;
     }
 
     public function getFieldTemplates(): array

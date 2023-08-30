@@ -9,18 +9,12 @@ class FunnelLayerData
 {
     protected string $view;
     protected array $arguments = [];
-    protected Request $request;
-    protected SubmissionEvent $submissionEvent;
-    protected array $funnelLayerConfiguration;
 
     public function __construct(
-        Request $request,
-        SubmissionEvent $submissionEvent,
-        array $funnelLayerConfiguration
+        protected Request $request,
+        protected SubmissionEvent $submissionEvent,
+        protected array $funnelLayerConfiguration
     ) {
-        $this->request = $request;
-        $this->submissionEvent = $submissionEvent;
-        $this->funnelLayerConfiguration = $funnelLayerConfiguration;
     }
 
     public function getRequest(): Request

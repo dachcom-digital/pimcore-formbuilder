@@ -13,21 +13,12 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class FormAssembler
 {
-    protected EventDispatcherInterface $eventDispatcher;
-    protected FrontendFormBuilder $frontendFormBuilder;
-    protected FormDefinitionManager $formDefinitionManager;
-    protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator;
-
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        FrontendFormBuilder $frontendFormBuilder,
-        FormDefinitionManager $formDefinitionManager,
-        FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
+        protected EventDispatcherInterface $eventDispatcher,
+        protected FrontendFormBuilder $frontendFormBuilder,
+        protected FormDefinitionManager $formDefinitionManager,
+        protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
     ) {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->frontendFormBuilder = $frontendFormBuilder;
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->formRuntimeDataAllocator = $formRuntimeDataAllocator;
     }
 
     public function assemble(FormOptionsResolver $optionsResolver): array

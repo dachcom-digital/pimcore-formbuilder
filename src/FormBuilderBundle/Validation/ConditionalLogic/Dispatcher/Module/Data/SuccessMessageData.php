@@ -14,16 +14,12 @@ class SuccessMessageData implements DataInterface
     public const IDENTIFIER_REDIRECT = 'redirect';
     public const IDENTIFIER_REDIRECT_EXTERNAL = 'redirect_external';
 
-    protected LocaleDataMapper $localeDataMapper;
-    protected Translator $translator;
     protected array $data = [];
 
     public function __construct(
-        LocaleDataMapper $localeDataMapper,
-        Translator $translator
+        protected LocaleDataMapper $localeDataMapper,
+        protected Translator $translator
     ) {
-        $this->localeDataMapper = $localeDataMapper;
-        $this->translator = $translator;
     }
 
     public function setData(array $data): void

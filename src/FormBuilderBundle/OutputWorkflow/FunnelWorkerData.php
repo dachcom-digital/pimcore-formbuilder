@@ -15,25 +15,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class FunnelWorkerData
 {
-    protected FunnelData $funnelData;
-    protected SubmissionEvent $submissionEvent;
-    protected OutputWorkflowInterface $outputWorkflow;
-    protected OutputWorkflowChannelInterface $channel;
-    protected ChannelInterface $channelProcessor;
     protected ?FunnelActionElementStack $funnelActionElementStack = null;
 
     public function __construct(
-        FunnelData $funnelData,
-        SubmissionEvent $submissionEvent,
-        OutputWorkflowInterface $outputWorkflow,
-        OutputWorkflowChannelInterface $channel,
-        ChannelInterface $channelProcessor
+        protected FunnelData $funnelData,
+        protected SubmissionEvent $submissionEvent,
+        protected OutputWorkflowInterface $outputWorkflow,
+        protected OutputWorkflowChannelInterface $channel,
+        protected ChannelInterface $channelProcessor
     ) {
-        $this->funnelData = $funnelData;
-        $this->submissionEvent = $submissionEvent;
-        $this->outputWorkflow = $outputWorkflow;
-        $this->channel = $channel;
-        $this->channelProcessor = $channelProcessor;
     }
 
     public function getSubmissionEvent(): SubmissionEvent

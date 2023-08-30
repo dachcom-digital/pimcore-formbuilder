@@ -7,19 +7,13 @@ use Symfony\Component\Form\FormInterface;
 
 class TargetAwareData
 {
-    protected FieldDefinitionInterface $fieldDefinition;
-    protected FormInterface $formField;
-    protected mixed $target;
-    protected mixed $rawValue;
-    protected ?string $locale;
-
-    public function __construct(mixed $target, FieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale)
-    {
-        $this->target = $target;
-        $this->fieldDefinition = $fieldDefinition;
-        $this->formField = $formField;
-        $this->rawValue = $rawValue;
-        $this->locale = $locale;
+    public function __construct(
+        protected mixed $target,
+        protected FieldDefinitionInterface $fieldDefinition,
+        protected FormInterface $formField,
+        protected mixed $rawValue,
+        protected ?string $locale
+    ) {
     }
 
     public function getTarget(): mixed

@@ -8,20 +8,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SubmissionEvent extends Event
 {
-    private Request $request;
-    private FormInterface $form;
-    protected ?array $funnelRuntimeData = null;
-
-    private ?array $formRuntimeData;
     private ?string $redirectUri = null;
     private bool $outputWorkflowFinisherDisabled = false;
 
-    public function __construct(Request $request, ?array $formRuntimeData, FormInterface $form, ?array $funnelRuntimeData = null)
-    {
-        $this->request = $request;
-        $this->formRuntimeData = $formRuntimeData;
-        $this->form = $form;
-        $this->funnelRuntimeData = $funnelRuntimeData;
+    public function __construct(
+        private readonly Request $request,
+        private readonly ?array $formRuntimeData,
+        private readonly FormInterface $form,
+        protected ?array $funnelRuntimeData = null
+    ) {
     }
 
     public function disableOutputWorkflowFinisher(): void

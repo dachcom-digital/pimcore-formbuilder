@@ -9,11 +9,8 @@ use Symfony\Component\Uid\Uuid as Uid;
 
 class SessionStorageProvider implements StorageProviderInterface
 {
-    protected SerializerInterface $serializer;
-
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(protected SerializerInterface $serializer)
     {
-        $this->serializer = $serializer;
     }
 
     public function store(Request $request, FormStorageData $formStorageData): string

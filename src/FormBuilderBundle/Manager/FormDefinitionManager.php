@@ -8,26 +8,17 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Repository\FormDefinitionRepositoryInterface;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 
 class FormDefinitionManager
 {
-    protected FormDefinitionFactoryInterface $formDefinitionFactory;
-    protected FormDefinitionRepositoryInterface $formDefinitionRepository;
-    protected TokenStorageUserResolver $storageUserResolver;
-    protected EntityManagerInterface $entityManager;
-
     public function __construct(
-        FormDefinitionFactoryInterface $formDefinitionFactory,
-        FormDefinitionRepositoryInterface $formDefinitionRepository,
-        TokenStorageUserResolver $storageUserResolver,
-        EntityManagerInterface $entityManager
+        protected FormDefinitionFactoryInterface $formDefinitionFactory,
+        protected FormDefinitionRepositoryInterface $formDefinitionRepository,
+        protected TokenStorageUserResolver $storageUserResolver,
+        protected EntityManagerInterface $entityManager
     ) {
-        $this->formDefinitionFactory = $formDefinitionFactory;
-        $this->formDefinitionRepository = $formDefinitionRepository;
-        $this->storageUserResolver = $storageUserResolver;
-        $this->entityManager = $entityManager;
     }
 
     public function getById(int $id): ?FormDefinitionInterface

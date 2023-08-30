@@ -13,19 +13,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Constraints implements ModuleInterface
 {
-    protected Translator $translator;
-    protected DataFactory $dataFactory;
     protected FormFieldDefinitionInterface $field;
     protected array $formData;
     protected array $availableConstraints;
     protected array $appliedConditions;
 
     public function __construct(
-        Translator $translator,
-        DataFactory $dataFactory
+        protected Translator $translator,
+        protected DataFactory $dataFactory
     ) {
-        $this->translator = $translator;
-        $this->dataFactory = $dataFactory;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

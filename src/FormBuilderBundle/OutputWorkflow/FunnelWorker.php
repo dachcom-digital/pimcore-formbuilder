@@ -25,30 +25,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FunnelWorker implements FunnelWorkerInterface
 {
-    protected Configuration $configuration;
-    protected FormValuesInputApplierInterface $formValuesInputApplier;
-    protected StorageProviderRegistry $storageProviderRegistry;
-    protected OutputWorkflowChannelRegistry $channelRegistry;
-    protected FrontendFormBuilder $frontendFormBuilder;
-    protected FunnelActionElementAssembler $funnelActionElementAssembler;
-    protected FunnelDataResolver $funnelDataResolver;
-
     public function __construct(
-        Configuration $configuration,
-        FormValuesInputApplierInterface $formValuesInputApplier,
-        StorageProviderRegistry $storageProviderRegistry,
-        OutputWorkflowChannelRegistry $channelRegistry,
-        FrontendFormBuilder $frontendFormBuilder,
-        FunnelActionElementAssembler $funnelActionElementAssembler,
-        FunnelDataResolver $funnelDataResolver,
+        protected Configuration $configuration,
+        protected FormValuesInputApplierInterface $formValuesInputApplier,
+        protected StorageProviderRegistry $storageProviderRegistry,
+        protected OutputWorkflowChannelRegistry $channelRegistry,
+        protected FrontendFormBuilder $frontendFormBuilder,
+        protected FunnelActionElementAssembler $funnelActionElementAssembler,
+        protected FunnelDataResolver $funnelDataResolver,
     ) {
-        $this->configuration = $configuration;
-        $this->formValuesInputApplier = $formValuesInputApplier;
-        $this->storageProviderRegistry = $storageProviderRegistry;
-        $this->channelRegistry = $channelRegistry;
-        $this->frontendFormBuilder = $frontendFormBuilder;
-        $this->funnelActionElementAssembler = $funnelActionElementAssembler;
-        $this->funnelDataResolver = $funnelDataResolver;
     }
 
     /**

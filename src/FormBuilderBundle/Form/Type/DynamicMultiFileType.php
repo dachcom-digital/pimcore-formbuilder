@@ -13,18 +13,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DynamicMultiFileType extends AbstractType
 {
-    protected FormFactoryInterface $formFactory;
-    protected Configuration $configuration;
-    protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry;
-
     public function __construct(
-        FormFactoryInterface $formFactory,
-        Configuration $configuration,
-        DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
+        protected FormFactoryInterface $formFactory,
+        protected Configuration $configuration,
+        protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
     ) {
-        $this->formFactory = $formFactory;
-        $this->configuration = $configuration;
-        $this->dynamicMultiFileAdapterRegistry = $dynamicMultiFileAdapterRegistry;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

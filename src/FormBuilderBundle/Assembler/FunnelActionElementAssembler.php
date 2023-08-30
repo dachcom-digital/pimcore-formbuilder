@@ -16,11 +16,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FunnelActionElementAssembler
 {
-    protected FunnelActionRegistry $funnelActionRegistry;
-
-    public function __construct(FunnelActionRegistry $funnelActionRegistry)
+    public function __construct(protected FunnelActionRegistry $funnelActionRegistry)
     {
-        $this->funnelActionRegistry = $funnelActionRegistry;
     }
 
     public function assembleItem(

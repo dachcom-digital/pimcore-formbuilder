@@ -2,7 +2,6 @@
 
 namespace FormBuilderBundle\Tool;
 
-use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\Asset;
@@ -56,9 +55,8 @@ class Install extends SettingsStoreAwareInstaller
 
     protected function installDbStructure(): void
     {
-        /** @var Connection $db */
         $db = \Pimcore\Db::get();
-        $db->query(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
+        $db->executeQuery(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
     }
 
     /**

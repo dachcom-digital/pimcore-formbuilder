@@ -1,5 +1,5 @@
 # License
-Copyright (C) 2022 DACHCOM.DIGITAL
+Copyright (C) 2023 DACHCOM.DIGITAL
 
 This software is available under the GNU General Public License version 3 (GPLv3).
 

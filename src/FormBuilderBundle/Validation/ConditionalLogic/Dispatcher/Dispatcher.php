@@ -10,14 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Dispatcher
 {
-    protected ConditionalLogicProcessor $conditionalLogicProcessor;
-    protected DispatcherRegistry $dispatcherRegistry;
     protected array $optionsResolver = [];
 
-    public function __construct(DispatcherRegistry $dispatcherRegistry, ConditionalLogicProcessor $conditionalLogicProcessor)
-    {
-        $this->dispatcherRegistry = $dispatcherRegistry;
-        $this->conditionalLogicProcessor = $conditionalLogicProcessor;
+    public function __construct(
+        protected DispatcherRegistry $dispatcherRegistry,
+        protected ConditionalLogicProcessor $conditionalLogicProcessor
+    ) {
     }
 
     /**

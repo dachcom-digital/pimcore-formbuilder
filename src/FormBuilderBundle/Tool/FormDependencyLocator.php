@@ -2,8 +2,8 @@
 
 namespace FormBuilderBundle\Tool;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception;
-use Pimcore\Db\Connection;
 use Pimcore\Model\Document;
 
 class FormDependencyLocator

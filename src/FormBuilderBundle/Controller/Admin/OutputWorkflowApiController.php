@@ -7,28 +7,19 @@ use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Registry\ApiProviderRegistry;
 use FormBuilderBundle\Registry\FieldTransformerRegistry;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OutputWorkflowApiController extends AdminController
+class OutputWorkflowApiController extends AdminAbstractController
 {
-    protected FormDefinitionManager $formDefinitionManager;
-    protected ExtJsFormBuilder $extJsFormBuilder;
-    protected ApiProviderRegistry $apiProviderRegistry;
-    protected FieldTransformerRegistry $fieldTransformerRegistry;
-
     public function __construct(
-        FormDefinitionManager $formDefinitionManager,
-        ExtJsFormBuilder $extJsFormBuilder,
-        ApiProviderRegistry $apiProviderRegistry,
-        FieldTransformerRegistry $fieldTransformerRegistry
+        protected FormDefinitionManager $formDefinitionManager,
+        protected ExtJsFormBuilder $extJsFormBuilder,
+        protected ApiProviderRegistry $apiProviderRegistry,
+        protected FieldTransformerRegistry $fieldTransformerRegistry
     ) {
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->extJsFormBuilder = $extJsFormBuilder;
-        $this->apiProviderRegistry = $apiProviderRegistry;
-        $this->fieldTransformerRegistry = $fieldTransformerRegistry;
     }
 
     public function getFormDataAction(Request $request): JsonResponse

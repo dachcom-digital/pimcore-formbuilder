@@ -9,11 +9,8 @@ use Pimcore\Tool;
 
 class PresetManager
 {
-    protected Configuration $configuration;
-
-    public function __construct(Configuration $configuration)
+    public function __construct(protected Configuration $configuration)
     {
-        $this->configuration = $configuration;
     }
 
     public function getAll(Document\PageSnippet $document): array

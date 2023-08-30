@@ -10,11 +10,8 @@ use Twig\TwigFunction;
 
 class StaticFormExtension extends AbstractExtension
 {
-    protected FormAssembler $formAssembler;
-
-    public function __construct(FormAssembler $formAssembler)
+    public function __construct(protected FormAssembler $formAssembler)
     {
-        $this->formAssembler = $formAssembler;
     }
 
     /**

@@ -9,11 +9,8 @@ use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterfa
 
 class ConditionalLogicProcessor
 {
-    protected ConditionalLogicRegistry $conditionalLogicRegistry;
-
-    public function __construct(ConditionalLogicRegistry $conditionalLogicRegistry)
+    public function __construct(protected ConditionalLogicRegistry $conditionalLogicRegistry)
     {
-        $this->conditionalLogicRegistry = $conditionalLogicRegistry;
     }
 
     /**

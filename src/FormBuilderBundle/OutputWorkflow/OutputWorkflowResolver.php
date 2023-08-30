@@ -11,11 +11,8 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\SwitchO
 
 class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 {
-    protected Dispatcher $dispatcher;
-
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(protected Dispatcher $dispatcher)
     {
-        $this->dispatcher = $dispatcher;
     }
 
     public function resolve(SubmissionEvent $submissionEvent): ?OutputWorkflowInterface

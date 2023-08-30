@@ -11,30 +11,19 @@ use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Registry\DataInjectionRegistry;
 use FormBuilderBundle\Tool\FormDependencyLocator;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class SettingsController extends AdminController
+class SettingsController extends AdminAbstractController
 {
-    protected Configuration $configuration;
-    protected FormDefinitionManager $formDefinitionManager;
-    protected ExtJsFormBuilder $extJsFormBuilder;
-    protected ChoiceBuilderRegistry $choiceBuilderRegistry;
-    protected FormDependencyLocator $formDependencyLocator;
-
     public function __construct(
-        Configuration $configuration,
-        FormDefinitionManager $formDefinitionManager,
-        ExtJsFormBuilder $extJsFormBuilder,
-        ChoiceBuilderRegistry $choiceBuilderRegistry,
-        FormDependencyLocator $formDependencyLocator
+        protected Configuration $configuration,
+        protected FormDefinitionManager $formDefinitionManager,
+        protected ExtJsFormBuilder $extJsFormBuilder,
+        protected ChoiceBuilderRegistry $choiceBuilderRegistry,
+        protected FormDependencyLocator $formDependencyLocator
     ) {
-        $this->configuration = $configuration;
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->extJsFormBuilder = $extJsFormBuilder;
-        $this->choiceBuilderRegistry = $choiceBuilderRegistry;
-        $this->formDependencyLocator = $formDependencyLocator;
     }
 
     public function getTreeAction(): JsonResponse

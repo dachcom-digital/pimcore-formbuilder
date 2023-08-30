@@ -17,11 +17,8 @@ use Symfony\Component\Uid\Uuid;
 
 class OutputWorkflowChannelType extends AbstractType
 {
-    protected OutputWorkflowChannelRegistry $channelRegistry;
-
-    public function __construct(OutputWorkflowChannelRegistry $channelRegistry)
+    public function __construct(protected OutputWorkflowChannelRegistry $channelRegistry)
     {
-        $this->channelRegistry = $channelRegistry;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

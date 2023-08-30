@@ -2,29 +2,22 @@
 
 namespace FormBuilderBundle\Tool;
 
+use Doctrine\DBAL\Connection;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\OutputWorkflowManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowChannel;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
-use Pimcore\Db\ConnectionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Yaml\Yaml;
 
 class ImportExportProcessor
 {
-    protected ConnectionInterface $connection;
-    protected FormDefinitionManager $formDefinitionManager;
-    protected OutputWorkflowManager $outputWorkflowManager;
-
     public function __construct(
-        ConnectionInterface $connection,
-        FormDefinitionManager $formDefinitionManager,
-        OutputWorkflowManager $outputWorkflowManager
+        protected Connection $connection,
+        protected FormDefinitionManager $formDefinitionManager,
+        protected OutputWorkflowManager $outputWorkflowManager
     ) {
-        $this->connection = $connection;
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->outputWorkflowManager = $outputWorkflowManager;
     }
 
     /**

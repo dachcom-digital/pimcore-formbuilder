@@ -12,13 +12,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SnippetType extends AbstractType
 {
-    protected RequestStack $requestStack;
-    protected LocaleDataMapper $localeDataMapper;
-
-    public function __construct(RequestStack $requestStack, LocaleDataMapper $localeDataMapper)
-    {
-        $this->requestStack = $requestStack;
-        $this->localeDataMapper = $localeDataMapper;
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected LocaleDataMapper $localeDataMapper
+    ){
     }
 
     public function configureOptions(OptionsResolver $resolver): void

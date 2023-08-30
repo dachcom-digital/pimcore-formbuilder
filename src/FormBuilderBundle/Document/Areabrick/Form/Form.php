@@ -17,24 +17,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Form extends AbstractAreabrick implements EditableDialogBoxInterface
 {
-    protected FormDefinitionManager $formDefinitionManager;
-    protected PresetManager $presetManager;
-    protected FormAssembler $formAssembler;
-    protected TemplateManager $templateManager;
-    protected Translator $translator;
-
     public function __construct(
-        FormDefinitionManager $formDefinitionManager,
-        PresetManager $presetManager,
-        FormAssembler $formAssembler,
-        TemplateManager $templateManager,
-        Translator $translator
+        protected FormDefinitionManager $formDefinitionManager,
+        protected PresetManager $presetManager,
+        protected FormAssembler $formAssembler,
+        protected TemplateManager $templateManager,
+        protected Translator $translator
     ) {
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->presetManager = $presetManager;
-        $this->formAssembler = $formAssembler;
-        $this->templateManager = $templateManager;
-        $this->translator = $translator;
     }
 
     public function action(Document\Editable\Area\Info $info): ?Response

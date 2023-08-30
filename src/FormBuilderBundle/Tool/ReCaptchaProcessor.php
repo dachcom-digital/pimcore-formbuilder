@@ -9,14 +9,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ReCaptchaProcessor implements ReCaptchaProcessorInterface
 {
-    protected Configuration $configuration;
     protected string $url = 'https://www.google.com/recaptcha/api/siteverify';
-    protected RequestStack $requestStack;
 
-    public function __construct(Configuration $configuration, RequestStack $requestStack)
-    {
-        $this->configuration = $configuration;
-        $this->requestStack = $requestStack;
+    public function __construct(
+        protected Configuration $configuration,
+        protected RequestStack $requestStack
+    ) {
     }
 
     public function verify(mixed $value): Response

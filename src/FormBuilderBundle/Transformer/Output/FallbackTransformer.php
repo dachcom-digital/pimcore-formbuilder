@@ -15,11 +15,8 @@ use Symfony\Component\Intl\Countries;
 
 class FallbackTransformer implements OutputTransformerInterface
 {
-    protected Translator $translator;
-
-    public function __construct(Translator $translator)
+    public function __construct(protected Translator $translator)
     {
-        $this->translator = $translator;
     }
 
     public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, $rawValue, ?string $locale): mixed

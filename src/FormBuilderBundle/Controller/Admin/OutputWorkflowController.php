@@ -9,32 +9,21 @@ use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\OutputWorkflowManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class OutputWorkflowController extends AdminController
+class OutputWorkflowController extends AdminAbstractController
 {
-    protected Configuration $configuration;
-    protected FormFactoryInterface $formFactory;
-    protected FormDefinitionManager $formDefinitionManager;
-    protected OutputWorkflowManager $outputWorkflowManager;
-    protected ExtJsFormBuilder $extJsFormBuilder;
-
     public function __construct(
-        Configuration $configuration,
-        FormFactoryInterface $formFactory,
-        FormDefinitionManager $formDefinitionManager,
-        OutputWorkflowManager $outputWorkflowManager,
-        ExtJsFormBuilder $extJsFormBuilder
+        protected Configuration $configuration,
+        protected FormFactoryInterface $formFactory,
+        protected FormDefinitionManager $formDefinitionManager,
+        protected OutputWorkflowManager $outputWorkflowManager,
+        protected ExtJsFormBuilder $extJsFormBuilder
     ) {
-        $this->configuration = $configuration;
-        $this->formFactory = $formFactory;
-        $this->formDefinitionManager = $formDefinitionManager;
-        $this->outputWorkflowManager = $outputWorkflowManager;
-        $this->extJsFormBuilder = $extJsFormBuilder;
     }
 
     public function getOutputWorkflowTreeAction(Request $request, int $formId): JsonResponse

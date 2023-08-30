@@ -12,15 +12,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class FunnelRouteListener implements EventSubscriberInterface
 {
-    protected FunnelDataResolver $funnelDataResolver;
-    protected SignalSubscribeHandler $signalSubscribeHandler;
-
     public function __construct(
-        FunnelDataResolver $funnelDataResolver,
-        SignalSubscribeHandler $signalSubscribeHandler,
+        protected FunnelDataResolver $funnelDataResolver,
+        protected SignalSubscribeHandler $signalSubscribeHandler,
     ) {
-        $this->funnelDataResolver = $funnelDataResolver;
-        $this->signalSubscribeHandler = $signalSubscribeHandler;
     }
 
     public static function getSubscribedEvents(): array

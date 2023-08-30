@@ -18,15 +18,11 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class DynamicFormType extends AbstractType
 {
     public const EMPTY_RUNTIME_DATA_KEY = 'no-runtime-data';
-    protected CsrfTokenManagerInterface $defaultTokenManager;
-    protected Configuration $configuration;
 
     public function __construct(
-        CsrfTokenManagerInterface $defaultTokenManager,
-        Configuration $configuration
+        protected CsrfTokenManagerInterface $defaultTokenManager,
+        protected Configuration $configuration
     ) {
-        $this->defaultTokenManager = $defaultTokenManager;
-        $this->configuration = $configuration;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

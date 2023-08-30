@@ -9,18 +9,11 @@ use FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface;
 
 class OutputWorkflowManager
 {
-    protected OutputWorkflowFactoryInterface $outputWorkflowFactory;
-    protected OutputWorkflowRepositoryInterface $outputWorkflowRepository;
-    protected EntityManagerInterface $entityManager;
-
     public function __construct(
-        OutputWorkflowFactoryInterface $outputWorkflowFactory,
-        OutputWorkflowRepositoryInterface $outputWorkflowRepository,
-        EntityManagerInterface $entityManager
+        protected OutputWorkflowFactoryInterface $outputWorkflowFactory,
+        protected OutputWorkflowRepositoryInterface $outputWorkflowRepository,
+        protected EntityManagerInterface $entityManager
     ) {
-        $this->outputWorkflowFactory = $outputWorkflowFactory;
-        $this->outputWorkflowRepository = $outputWorkflowRepository;
-        $this->entityManager = $entityManager;
     }
 
     public function getById(int $id): ?OutputWorkflowInterface

@@ -12,14 +12,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormTypeClasses implements ModuleInterface
 {
-    protected DataFactory $dataFactory;
     protected array $formData;
     protected FieldDefinitionInterface $field;
     protected array $appliedConditions;
 
-    public function __construct(DataFactory $dataFactory)
+    public function __construct(protected DataFactory $dataFactory)
     {
-        $this->dataFactory = $dataFactory;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

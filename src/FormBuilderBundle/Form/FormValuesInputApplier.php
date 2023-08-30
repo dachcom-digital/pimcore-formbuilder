@@ -13,13 +13,10 @@ use FormBuilderBundle\Transformer\Input\InputTransformerInterface;
 
 class FormValuesInputApplier implements FormValuesInputApplierInterface
 {
-    protected Configuration $configuration;
-    protected InputTransformerRegistry $inputTransformerRegistry;
-
-    public function __construct(Configuration $configuration, InputTransformerRegistry $inputTransformerRegistry)
-    {
-        $this->configuration = $configuration;
-        $this->inputTransformerRegistry = $inputTransformerRegistry;
+    public function __construct(
+        protected Configuration $configuration,
+        protected InputTransformerRegistry $inputTransformerRegistry
+    ) {
     }
 
     public function apply(array $form, FormDefinitionInterface $formDefinition): array

@@ -21,14 +21,12 @@ use Symfony\Component\Form\FormInterface;
  */
 class FormValuesOutputApplier implements FormValuesOutputApplierInterface
 {
-    protected Configuration $configuration;
-    protected OutputTransformerRegistry $outputTransformerRegistry;
     protected ?string $channel;
 
-    public function __construct(Configuration $configuration, OutputTransformerRegistry $outputTransformerRegistry)
-    {
-        $this->configuration = $configuration;
-        $this->outputTransformerRegistry = $outputTransformerRegistry;
+    public function __construct(
+        protected Configuration $configuration,
+        protected OutputTransformerRegistry $outputTransformerRegistry
+    ) {
     }
 
     public function applyForChannel(FormInterface $form, array $ignoreFields, string $channel, ?string $locale): array

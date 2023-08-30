@@ -20,10 +20,6 @@ class MailParamListener implements EventSubscriberInterface
     {
         $mail = $event->getMail();
 
-        if (!$mail instanceof Mail) {
-            return;
-        }
-
         // mail does not have nice way to check existing params
         $params = $mail->getParams();
 

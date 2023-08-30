@@ -19,21 +19,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequestListener implements EventSubscriberInterface
 {
-    protected FrontendFormBuilder $frontendFormBuilder;
-    protected EventDispatcherInterface $eventDispatcher;
-    protected FormSubmissionFinisherInterface $formSubmissionFinisher;
-    protected FormDefinitionManager $formDefinitionManager;
-
     public function __construct(
-        FrontendFormBuilder $frontendFormBuilder,
-        EventDispatcherInterface $eventDispatcher,
-        FormSubmissionFinisherInterface $formSubmissionFinisher,
-        FormDefinitionManager $formDefinitionManager
+        protected FrontendFormBuilder $frontendFormBuilder,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected FormSubmissionFinisherInterface $formSubmissionFinisher,
+        protected FormDefinitionManager $formDefinitionManager
     ) {
-        $this->frontendFormBuilder = $frontendFormBuilder;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->formSubmissionFinisher = $formSubmissionFinisher;
-        $this->formDefinitionManager = $formDefinitionManager;
     }
 
     public static function getSubscribedEvents(): array
@@ -182,7 +173,7 @@ class RequestListener implements EventSubscriberInterface
         }
 
         if (isset($data['formRuntimeData']) && is_string($data['formRuntimeData'])) {
-            return json_decode($data['formRuntimeData'], true);
+            return json_decode($data['formRuntimeData'], true, 512, JSON_THROW_ON_ERROR);
         }
 
         return null;

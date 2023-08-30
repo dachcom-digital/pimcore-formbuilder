@@ -13,18 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FunnelController extends FrontendController
 {
-    protected OutputWorkflowRepositoryInterface $outputWorkflowRepository;
-    protected OutputWorkflowDispatcherInterface $outputWorkflowDispatcher;
-    protected FunnelDataResolver $funnelDataResolver;
-
     public function __construct(
-        OutputWorkflowRepositoryInterface $outputWorkflowRepository,
-        OutputWorkflowDispatcherInterface $outputWorkflowDispatcher,
-        FunnelDataResolver $funnelDataResolver,
+        protected OutputWorkflowRepositoryInterface $outputWorkflowRepository,
+        protected OutputWorkflowDispatcherInterface $outputWorkflowDispatcher,
+        protected FunnelDataResolver $funnelDataResolver,
     ) {
-        $this->outputWorkflowRepository = $outputWorkflowRepository;
-        $this->outputWorkflowDispatcher = $outputWorkflowDispatcher;
-        $this->funnelDataResolver = $funnelDataResolver;
     }
 
     public function dispatchAction(Request $request, string $funnelId, string $channelId, string $storageToken): Response

@@ -8,11 +8,8 @@ use Twig\TwigFunction;
 
 class FlashMessageExtension extends AbstractExtension
 {
-    protected FlashBagManagerInterface $flashBagManager;
-
-    public function __construct(FlashBagManagerInterface $flashBagManager)
+    public function __construct(protected FlashBagManagerInterface $flashBagManager)
     {
-        $this->flashBagManager = $flashBagManager;
     }
 
     /**

@@ -11,11 +11,8 @@ use Symfony\Component\Validator\Constraints\Blank;
 
 class HoneypotType extends AbstractType
 {
-    protected Configuration $configuration;
-
-    public function __construct(Configuration $configuration)
+    public function __construct(protected Configuration $configuration)
     {
-        $this->configuration = $configuration;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

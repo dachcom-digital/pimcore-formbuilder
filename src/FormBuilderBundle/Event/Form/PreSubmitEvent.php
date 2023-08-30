@@ -7,13 +7,10 @@ use Symfony\Component\Form\FormEvent;
 
 class PreSubmitEvent extends Event
 {
-    private FormEvent $formEvent;
-    private array $formOptions;
-
-    public function __construct(FormEvent $formEvent, $formOptions)
-    {
-        $this->formEvent = $formEvent;
-        $this->formOptions = $formOptions;
+    public function __construct(
+        private readonly FormEvent $formEvent,
+        private readonly array $formOptions
+    ) {
     }
 
     public function getFormEvent(): FormEvent

@@ -14,24 +14,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FrontendFormBuilder
 {
-    protected FormBuilderSubscriber $formBuilderSubscriber;
-    protected RequestStack $requestStack;
-    protected FormFactoryInterface $formFactory;
-    protected FormDataFactoryInterface $formDataFactory;
-    protected UrlGeneratorInterface $router;
-
     public function __construct(
-        FormBuilderSubscriber $formBuilderSubscriber,
-        RequestStack $requestStack,
-        FormFactoryInterface $formFactory,
-        FormDataFactoryInterface $formDataFactory,
-        UrlGeneratorInterface $router
+        protected FormBuilderSubscriber $formBuilderSubscriber,
+        protected RequestStack $requestStack,
+        protected FormFactoryInterface $formFactory,
+        protected FormDataFactoryInterface $formDataFactory,
+        protected UrlGeneratorInterface $router
     ) {
-        $this->formBuilderSubscriber = $formBuilderSubscriber;
-        $this->requestStack = $requestStack;
-        $this->formFactory = $formFactory;
-        $this->formDataFactory = $formDataFactory;
-        $this->router = $router;
     }
 
     /**

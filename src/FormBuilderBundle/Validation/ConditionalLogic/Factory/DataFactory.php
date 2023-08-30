@@ -6,11 +6,8 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInt
 
 class DataFactory
 {
-    protected iterable $dataHandler;
-
-    public function __construct(iterable $dataHandler)
+    public function __construct(protected iterable $dataHandler)
     {
-        $this->dataHandler = $dataHandler;
     }
 
     public function generate(string $serviceId): ?DataInterface

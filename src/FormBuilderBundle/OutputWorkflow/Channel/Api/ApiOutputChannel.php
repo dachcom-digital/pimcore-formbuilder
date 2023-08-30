@@ -8,11 +8,8 @@ use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 
 class ApiOutputChannel implements ChannelInterface
 {
-    protected ApiOutputChannelWorker $apiOutputChannelWorker;
-
-    public function __construct(ApiOutputChannelWorker $apiOutputChannelWorker)
+    public function __construct(protected ApiOutputChannelWorker $apiOutputChannelWorker)
     {
-        $this->apiOutputChannelWorker = $apiOutputChannelWorker;
     }
 
     public function getFormType(): string

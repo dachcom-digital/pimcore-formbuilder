@@ -4,21 +4,16 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\ReturnStack;
 
 class FieldReturnStack implements ReturnStackInterface
 {
-    public string $actionType;
-    public mixed $data;
-
     /**
      * @throws \Exception
      */
-    public function __construct(string $actionType = null, array $data = [])
-    {
-        $this->actionType = $actionType;
-        $this->data = $data;
-
+    public function __construct(
+        protected string $actionType,
+        protected array $data = []
+    ) {
         if (!$this->isAssoc($this->data)) {
             throw new \Exception('FieldReturnStack: Wrong data structure: data keys must contain form field names!');
         }
-
     }
 
     public function getActionType(): string
@@ -26,12 +21,12 @@ class FieldReturnStack implements ReturnStackInterface
         return $this->actionType;
     }
 
-    public function getData(): mixed
+    public function getData(): array
     {
         return $this->data;
     }
 
-    public function updateData(mixed $data): void
+    public function updateData(array $data): void
     {
         $this->data = $data;
     }

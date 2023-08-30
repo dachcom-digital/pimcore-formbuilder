@@ -31,13 +31,14 @@
         }
     },
     "require": {
-        "pimcore/pimcore": "^10.5",
+        "php": "^8.2",
+        "pimcore/pimcore": "^11.0",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {
-        "codeception/codeception": "^4.1",
-        "codeception/module-webdriver": "^1.4",
-        "codeception/module-symfony": "^1.6",
+        "codeception/codeception": "^5.0",
+        "codeception/module-symfony": "^3.1",
+        "codeception/module-webdriver": "^4.0",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",
         "symplify/easy-coding-standard": "^9.0"

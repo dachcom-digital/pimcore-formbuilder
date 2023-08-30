@@ -7,8 +7,8 @@ use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\Tool\ImportExportProcessor;
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Model\Tool\Email;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,17 +17,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\Yaml\Yaml;
 
-class ExportController extends AdminController
+class ExportController extends AdminAbstractController
 {
     public const NO_DATA_MESSAGE = 'NO_CSV_DATA_FOUND';
 
-    protected FormDefinitionManager $formDefinitionManager;
-
-    public function __construct(FormDefinitionManager $formDefinitionManager)
+    public function __construct(protected FormDefinitionManager $formDefinitionManager)
     {
-        $this->formDefinitionManager = $formDefinitionManager;
     }
 
     public function importFormAction(Request $request, ImportExportProcessor $importExportProcessor): JsonResponse

@@ -7,28 +7,18 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ChannelSubjectGuardEvent extends Event
 {
-    protected FormDataInterface $formData;
-    protected mixed $subject;
-    protected array $formRuntimeData;
-    protected string $workflowName;
-    protected string $channelType;
-    protected bool $suspended;
-    protected bool $failed;
-    protected bool $currentChannelOnly;
-    protected ?string $failMessage;
+    protected bool $suspended = false;
+    protected bool $failed = false;
+    protected bool $currentChannelOnly = true;
+    protected ?string $failMessage = null;
 
-    public function __construct(FormDataInterface $formData, mixed $subject, string $workflowName, string $channelType, array $formRuntimeData)
-    {
-        $this->formData = $formData;
-        $this->subject = $subject;
-        $this->workflowName = $workflowName;
-        $this->channelType = $channelType;
-        $this->formRuntimeData = $formRuntimeData;
-
-        $this->suspended = false;
-        $this->failed = false;
-        $this->currentChannelOnly = true;
-        $this->failMessage = null;
+    public function __construct(
+        protected FormDataInterface $formData,
+        protected mixed $subject,
+        protected string $workflowName,
+        protected string $channelType,
+        protected array $formRuntimeData
+    ) {
     }
 
     public function setSubject(mixed $subject): void

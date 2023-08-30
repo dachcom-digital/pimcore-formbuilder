@@ -12,13 +12,10 @@ use Symfony\Component\Form\FormInterface;
 
 class DynamicMultiFileTransformer implements OutputTransformerInterface
 {
-    protected Translator $translator;
-    protected AttachmentStreamInterface $attachmentStream;
-
-    public function __construct(Translator $translator, AttachmentStreamInterface $attachmentStream)
-    {
-        $this->translator = $translator;
-        $this->attachmentStream = $attachmentStream;
+    public function __construct(
+        protected Translator $translator,
+        protected AttachmentStreamInterface $attachmentStream
+    ) {
     }
 
     public function getValue(FieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): mixed

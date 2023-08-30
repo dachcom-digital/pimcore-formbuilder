@@ -7,14 +7,12 @@ use FormBuilderBundle\Stream\File;
 
 class FormData implements FormDataInterface
 {
-    protected FormDefinitionInterface $formDefinition;
-    protected array $data = [];
     protected array $attachments = [];
 
-    public function __construct(FormDefinitionInterface $formDefinition, array $data = [])
-    {
-        $this->formDefinition = $formDefinition;
-        $this->data = $data;
+    public function __construct(
+        protected FormDefinitionInterface $formDefinition,
+        protected array $data = []
+    ) {
     }
 
     public function getFormDefinition(): FormDefinitionInterface

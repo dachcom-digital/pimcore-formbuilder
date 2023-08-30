@@ -7,11 +7,8 @@ use FormBuilderBundle\Registry\RuntimeDataProviderRegistry;
 
 class FormRuntimeDataAllocator implements FormRuntimeDataAllocatorInterface
 {
-    protected RuntimeDataProviderRegistry $runtimeDataProviderRegistry;
-
-    public function __construct(RuntimeDataProviderRegistry $runtimeDataProviderRegistry)
+    public function __construct(protected RuntimeDataProviderRegistry $runtimeDataProviderRegistry)
     {
-        $this->runtimeDataProviderRegistry = $runtimeDataProviderRegistry;
     }
 
     public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData): RuntimeDataCollector
