@@ -9,7 +9,7 @@ class FieldReturnStack implements ReturnStackInterface
      */
     public function __construct(
         protected string $actionType,
-        protected array $data = []
+        protected mixed $data
     ) {
         if (!$this->isAssoc($this->data)) {
             throw new \Exception('FieldReturnStack: Wrong data structure: data keys must contain form field names!');
@@ -21,12 +21,12 @@ class FieldReturnStack implements ReturnStackInterface
         return $this->actionType;
     }
 
-    public function getData(): array
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    public function updateData(array $data): void
+    public function updateData(mixed $data): void
     {
         $this->data = $data;
     }

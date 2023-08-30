@@ -6,7 +6,7 @@ class SimpleReturnStack implements ReturnStackInterface
 {
     public function __construct(
         protected string $actionType,
-        protected array $data = []
+        protected mixed $data
     ) {
     }
 
@@ -15,7 +15,7 @@ class SimpleReturnStack implements ReturnStackInterface
         return $this->actionType;
     }
 
-    public function getData(): array
+    public function getData(): mixed
     {
         return $this->data;
     }

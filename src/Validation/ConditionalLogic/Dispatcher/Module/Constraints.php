@@ -94,7 +94,7 @@ class Constraints implements ModuleInterface
                     $defaultFieldConstraints = [];
                 } else {
                     foreach ($returnStack->getData() as $constraint) {
-                        $defaultFieldConstraints = array_filter($defaultFieldConstraints, function ($val) use ($constraint) {
+                        $defaultFieldConstraints = array_filter($defaultFieldConstraints, static function ($val) use ($constraint) {
                             return $val['type'] !== $constraint;
                         });
                     }

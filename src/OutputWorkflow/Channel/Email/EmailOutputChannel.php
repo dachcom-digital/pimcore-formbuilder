@@ -9,13 +9,10 @@ use FormBuilderBundle\Tool\LocaleDataMapper;
 
 class EmailOutputChannel implements ChannelInterface
 {
-    protected EmailOutputChannelWorker $channelWorker;
-    protected LocaleDataMapper $localeDataMapper;
-
-    public function __construct(EmailOutputChannelWorker $channelWorker, LocaleDataMapper $localeDataMapper)
-    {
-        $this->channelWorker = $channelWorker;
-        $this->localeDataMapper = $localeDataMapper;
+    public function __construct(
+        protected EmailOutputChannelWorker $channelWorker,
+        protected LocaleDataMapper $localeDataMapper
+    ) {
     }
 
     public function getFormType(): string

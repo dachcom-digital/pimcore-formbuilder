@@ -17,18 +17,11 @@ use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
 
 class EmailOutputChannelWorker
 {
-    protected Configuration $configuration;
-    protected MailParser $mailParser;
-    protected EventDispatcherInterface $eventDispatcher;
-
     public function __construct(
-        Configuration $configuration,
-        MailParser $mailParser,
-        EventDispatcherInterface $eventDispatcher
+        protected Configuration $configuration,
+        protected MailParser $mailParser,
+        protected EventDispatcherInterface $eventDispatcher
     ) {
-        $this->configuration = $configuration;
-        $this->mailParser = $mailParser;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -89,7 +82,7 @@ class EmailOutputChannelWorker
      */
     protected function sendPlainTextOnly(Mail $mail): void
     {
-        $mail->setSubject($mail->getSubjectRendered());
+        $mail->subject($mail->getSubjectRendered());
         $bodyTextRendered = $mail->getBodyTextRendered();
 
         if ($bodyTextRendered) {

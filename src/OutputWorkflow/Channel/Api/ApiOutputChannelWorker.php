@@ -15,21 +15,12 @@ use Symfony\Component\Form\FormInterface;
 
 class ApiOutputChannelWorker
 {
-    protected FormValuesOutputApplierInterface $formValuesOutputApplier;
-    protected ApiProviderRegistry $apiProviderRegistry;
-    protected FieldTransformerRegistry $fieldTransformerRegistry;
-    protected EventDispatcherInterface $eventDispatcher;
-
     public function __construct(
-        FormValuesOutputApplierInterface $formValuesOutputApplier,
-        ApiProviderRegistry $apiProviderRegistry,
-        FieldTransformerRegistry $fieldTransformerRegistry,
-        EventDispatcherInterface $eventDispatcher
+        protected FormValuesOutputApplierInterface $formValuesOutputApplier,
+        protected ApiProviderRegistry $apiProviderRegistry,
+        protected FieldTransformerRegistry $fieldTransformerRegistry,
+        protected EventDispatcherInterface $eventDispatcher
     ) {
-        $this->formValuesOutputApplier = $formValuesOutputApplier;
-        $this->apiProviderRegistry = $apiProviderRegistry;
-        $this->fieldTransformerRegistry = $fieldTransformerRegistry;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function process(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void

@@ -9,11 +9,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChannelAction implements FunnelActionInterface
 {
-    protected UrlGeneratorInterface $router;
-
-    public function __construct(UrlGeneratorInterface $router)
+    public function __construct(protected UrlGeneratorInterface $router)
     {
-        $this->router = $router;
     }
 
     public function getName(): string

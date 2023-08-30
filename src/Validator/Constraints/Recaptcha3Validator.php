@@ -38,6 +38,6 @@ final class Recaptcha3Validator extends ConstraintValidator
             return false;
         }
 
-        return $this->reCaptchaProcessor->verify($value);
+        return $this->reCaptchaProcessor->verify($value)->isSuccess();
     }
 }
