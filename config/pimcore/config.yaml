@@ -1,6 +1,6 @@
 doctrine_migrations:
     migrations_paths:
-        'FormBuilderBundle\Migrations': '@FormBuilderBundle/Migrations'
+        'FormBuilderBundle\Migrations': '@FormBuilderBundle/src/Migrations'
 
 doctrine:
     orm:

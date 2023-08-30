@@ -75,7 +75,7 @@ Just use the translation html editor to define some html label:
 If you're using some choice meta attributes, you need to adjust your theme:
 
 ```twig
-{# app/Resources/FormBuilderBundle/views/Form/Theme/bootstrap_4_layout.html.twig #}
+{# templates/bundles/FormBuilderBundle/form/theme/bootstrap_4_layout.html.twig #}
 {% extends "@!FormBuilder/Form/Theme/bootstrap_4_layout.html.twig" %}
 
 {% block widget_attributes -%}

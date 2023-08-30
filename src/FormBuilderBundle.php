@@ -73,6 +73,11 @@ class FormBuilderBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new DataInjectionPass());
     }
 
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+
     public function getInstaller(): Install
     {
         return $this->container->get(Install::class);
@@ -102,7 +107,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     protected function getNameSpacePath(): string
     {
         return sprintf(
-            '%s/Resources/config/doctrine/%s',
+            '%s/config/doctrine/%s',
             $this->getPath(),
             'model'
         );

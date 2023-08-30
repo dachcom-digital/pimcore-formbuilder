@@ -4,6 +4,7 @@
 
 ### Global Changes
 - Recommended folder structure by symfony adopted
+- [FUNNEL] Route include changed from `@FormBuilderBundle/Resources/config/pimcore/routing_funnels.yml` to `@FormBuilderBundle/config/pimcore/routing_funnels.yml`
 
 ### New Features
 TBD

@@ -9,7 +9,7 @@ If you've extended root forms with some complex form types,
 make sure your serializer data is configured within the right group:
 
 ```yaml
-# Resources/config/serialization/MyEntity.yaml
+# config/serialization/MyEntity.yaml
 App\Entity\MyEntity:
     attributes:
         id:
