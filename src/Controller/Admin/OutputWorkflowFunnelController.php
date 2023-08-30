@@ -54,7 +54,7 @@ class OutputWorkflowFunnelController extends AdminAbstractController
                                 'groups'                      => ['ExtJs'],
                                 AbstractNormalizer::CALLBACKS => [
                                     'label' => function ($data) {
-                                        return $this->trans($data, [], 'messages');
+                                        return $this->translator->trans($data, [], 'messages');
                                     }
                                 ]
                             ]
