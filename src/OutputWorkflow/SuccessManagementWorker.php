@@ -12,28 +12,17 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\Success
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Snippet;
 use Pimcore\Templating\Renderer\IncludeRenderer;
-use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SuccessManagementWorker implements SuccessManagementWorkerInterface
 {
-    protected LocaleDataMapper $localeDataMapper;
-    protected FlashBagManagerInterface $flashBagManager;
-    protected IncludeRenderer $includeRenderer;
-    protected Dispatcher $dispatcher;
-    protected Translator $translator;
-
     public function __construct(
-        LocaleDataMapper $localeDataMapper,
-        FlashBagManagerInterface $flashBagManager,
-        IncludeRenderer $includeRenderer,
-        Dispatcher $dispatcher,
-        Translator $translator
+        protected LocaleDataMapper $localeDataMapper,
+        protected FlashBagManagerInterface $flashBagManager,
+        protected IncludeRenderer $includeRenderer,
+        protected Dispatcher $dispatcher,
+        protected TranslatorInterface $translator
     ) {
-        $this->localeDataMapper = $localeDataMapper;
-        $this->flashBagManager = $flashBagManager;
-        $this->includeRenderer = $includeRenderer;
-        $this->dispatcher = $dispatcher;
-        $this->translator = $translator;
     }
 
     public function process(SubmissionEvent $submissionEvent, array $successManagementConfiguration): void

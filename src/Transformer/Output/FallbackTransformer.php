@@ -3,7 +3,6 @@
 namespace FormBuilderBundle\Transformer\Output;
 
 use FormBuilderBundle\Model\FieldDefinitionInterface;
-use Pimcore\Translation\Translator;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -12,10 +11,11 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Intl\Countries;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FallbackTransformer implements OutputTransformerInterface
 {
-    public function __construct(protected Translator $translator)
+    public function __construct(protected TranslatorInterface $translator)
     {
     }
 

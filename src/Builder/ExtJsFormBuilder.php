@@ -14,41 +14,24 @@ use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use FormBuilderBundle\Transformer\DynamicOptionsTransformerInterface;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
-use Pimcore\Translation\Translator;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExtJsFormBuilder
 {
-    protected Configuration $configuration;
-    protected SerializerInterface $serializer;
-    protected TemplateManager $templateManager;
-    protected Translator $translator;
-    protected OptionsTransformerRegistry $optionsTransformerRegistry;
-    protected ConditionalLogicRegistry $conditionalLogicRegistry;
-    protected OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry;
-
     public function __construct(
-        Configuration $configuration,
-        SerializerInterface $serializer,
-        TemplateManager $templateManager,
-        Translator $translator,
-        OptionsTransformerRegistry $optionsTransformerRegistry,
-        ConditionalLogicRegistry $conditionalLogicRegistry,
-        OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry
+        protected Configuration $configuration,
+        protected SerializerInterface $serializer,
+        protected TemplateManager $templateManager,
+        protected TranslatorInterface $translator,
+        protected OptionsTransformerRegistry $optionsTransformerRegistry,
+        protected ConditionalLogicRegistry $conditionalLogicRegistry,
+        protected OutputWorkflowChannelRegistry $outputWorkflowChannelRegistry
     ) {
-        $this->configuration = $configuration;
-        $this->serializer = $serializer;
-        $this->templateManager = $templateManager;
-        $this->translator = $translator;
-        $this->optionsTransformerRegistry = $optionsTransformerRegistry;
-        $this->conditionalLogicRegistry = $conditionalLogicRegistry;
-        $this->outputWorkflowChannelRegistry = $outputWorkflowChannelRegistry;
     }
 
     /**
-     * Generate array form with form attributes and available form types structure.
-     *
      * @throws \Exception
      */
     public function generateExtJsForm(FormDefinitionInterface $formDefinition): array
@@ -359,12 +342,10 @@ class ExtJsFormBuilder
             ];
         }
 
-        $formConditionalLogicData = [
+        return [
             'actions'    => $actions,
             'conditions' => $conditions,
         ];
-
-        return $formConditionalLogicData;
     }
 
     private function getFieldTypeGroups(): array

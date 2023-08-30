@@ -7,11 +7,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FineUploaderType extends AbstractType
 {
-    public function __construct(protected Translator $translator)
+    public function __construct(protected TranslatorInterface $translator)
     {
     }
 

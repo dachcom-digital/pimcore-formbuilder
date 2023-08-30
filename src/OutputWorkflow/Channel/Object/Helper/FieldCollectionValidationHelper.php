@@ -3,18 +3,15 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object\Helper;
 
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
-use Pimcore\Translation\Translator;
 use Pimcore\Model\DataObject;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FieldCollectionValidationHelper
 {
-    protected Translator $translator;
-    protected array $validationConfiguration;
-
-    public function __construct(array $validationConfiguration)
-    {
-        $this->translator = \Pimcore::getContainer()->get('translator');
-        $this->validationConfiguration = $validationConfiguration;
+    public function __construct(
+        protected TranslatorInterface $translator,
+        protected array $validationConfiguration
+    ) {
     }
 
     /**

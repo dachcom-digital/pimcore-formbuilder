@@ -8,8 +8,8 @@ use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInt
 use FormBuilderBundle\Validation\ConditionalLogic\Factory\DataFactory;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\FieldReturnStack;
 use FormBuilderBundle\Validation\ConditionalLogic\ReturnStack\ReturnStackInterface;
-use Pimcore\Translation\Translator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Constraints implements ModuleInterface
 {
@@ -19,7 +19,7 @@ class Constraints implements ModuleInterface
     protected array $appliedConditions;
 
     public function __construct(
-        protected Translator $translator,
+        protected TranslatorInterface $translator,
         protected DataFactory $dataFactory
     ) {
     }

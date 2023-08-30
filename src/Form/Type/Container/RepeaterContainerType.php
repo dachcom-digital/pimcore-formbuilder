@@ -11,15 +11,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RepeaterContainerType extends AbstractType
 {
     use Traits\ContainerTrait;
 
-    protected Translator $translator;
+    protected TranslatorInterface $translator;
 
-    public function setTranslator(Translator $translator): void
+    public function setTranslator(TranslatorInterface $translator): void
     {
         $this->translator = $translator;
     }

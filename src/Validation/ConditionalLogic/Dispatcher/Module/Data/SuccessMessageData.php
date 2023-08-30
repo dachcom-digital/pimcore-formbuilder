@@ -5,7 +5,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 use FormBuilderBundle\Tool\LocaleDataMapper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Snippet;
-use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SuccessMessageData implements DataInterface
 {
@@ -18,7 +18,7 @@ class SuccessMessageData implements DataInterface
 
     public function __construct(
         protected LocaleDataMapper $localeDataMapper,
-        protected Translator $translator
+        protected TranslatorInterface $translator
     ) {
     }
 

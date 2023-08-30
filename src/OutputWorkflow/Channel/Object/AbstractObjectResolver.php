@@ -17,6 +17,7 @@ use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValida
 use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractObjectResolver
 {
@@ -31,6 +32,7 @@ abstract class AbstractObjectResolver
     protected ?string $dynamicObjectResolverClass = null;
 
     public function __construct(
+        protected TranslatorInterface $translator,
         protected FormValuesOutputApplierInterface $formValuesOutputApplier,
         protected EventDispatcherInterface $eventDispatcher,
         protected FactoryInterface $modelFactory,
@@ -295,7 +297,7 @@ abstract class AbstractObjectResolver
                 continue;
             }
 
-            $validator = new FieldCollectionValidationHelper($validationData);
+            $validator = new FieldCollectionValidationHelper($this->translator, $validationData);
             $validator->validate($object, $objectFieldCollections, $fieldCollection);
 
             $objectFieldCollections->add($fieldCollection);

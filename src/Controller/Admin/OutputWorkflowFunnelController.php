@@ -12,10 +12,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OutputWorkflowFunnelController extends AdminAbstractController
 {
     public function __construct(
+        protected TranslatorInterface $translator,
         protected SerializerInterface $serializer,
         protected FunnelLayerRegistry $funnelLayerRegistry,
         protected FunnelActionRegistry $funnelActionRegistry

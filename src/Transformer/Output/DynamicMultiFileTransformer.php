@@ -6,14 +6,14 @@ use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use Pimcore\Model\Asset;
-use Pimcore\Translation\Translator;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DynamicMultiFileTransformer implements OutputTransformerInterface
 {
     public function __construct(
-        protected Translator $translator,
+        protected TranslatorInterface $translator,
         protected AttachmentStreamInterface $attachmentStream
     ) {
     }

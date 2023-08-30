@@ -8,9 +8,9 @@ use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
-use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MailEditorController extends AdminAbstractController
 {
@@ -18,7 +18,7 @@ class MailEditorController extends AdminAbstractController
         protected MailEditorWidgetRegistry $mailEditorWidgetRegistry,
         protected FormDefinitionManager $formDefinitionManager,
         protected ExtJsFormBuilder $extJsFormBuilder,
-        protected Translator $pimcoreTranslator
+        protected TranslatorInterface $translator
     ) {
     }
 
@@ -47,7 +47,7 @@ class MailEditorController extends AdminAbstractController
 
             if (!isset($allWidgets[$groupName])) {
                 $allWidgets[$groupName] = [
-                    'label'    => $this->pimcoreTranslator->trans($groupName, [], 'admin'),
+                    'label'    => $this->translator->trans($groupName, [], 'admin'),
                     'elements' => []
                 ];
             }
@@ -68,7 +68,7 @@ class MailEditorController extends AdminAbstractController
                 $allWidgets[$groupName]['elements'][] = [
                     'type'             => $widgetType,
                     'subType'          => null,
-                    'label'            => $this->pimcoreTranslator->trans($widget->getWidgetLabel(), [], 'admin'),
+                    'label'            => $this->translator->trans($widget->getWidgetLabel(), [], 'admin'),
                     'configIdentifier' => $widgetType,
                 ];
             }
@@ -106,7 +106,7 @@ class MailEditorController extends AdminAbstractController
     protected function translateWidgetConfig(array $config): array
     {
         foreach ($config as $index => $element) {
-            $config[$index]['label'] = $this->pimcoreTranslator->trans($element['label'], [], 'admin');
+            $config[$index]['label'] = $this->translator->trans($element['label'], [], 'admin');
         }
 
         return $config;
