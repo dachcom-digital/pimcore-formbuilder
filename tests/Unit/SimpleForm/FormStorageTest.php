@@ -2,8 +2,8 @@
 
 namespace DachcomBundle\Test\Unit\SimpleForm;
 
-use DachcomBundle\Test\Util\FormHelper;
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Util\FormHelper;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 
 class FormStorageTest extends DachcomBundleTestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace DachcomBundle\Test\Services;
+namespace DachcomBundle\Test\Support\Services;
 
 use FormBuilderBundle\Form\AdvancedChoiceBuilderInterface;
 use Symfony\Component\Form\CallbackTransformer;

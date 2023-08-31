@@ -2,7 +2,7 @@
 
 namespace DachcomBundle\Test\Unit\MailEditor;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
 use FormBuilderBundle\MailEditor\Parser\PlaceholderParser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\Form;

@@ -2,7 +2,7 @@
 
 namespace DachcomBundle\Test\Unit\Form;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
 use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;

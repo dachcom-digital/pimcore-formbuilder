@@ -3,7 +3,7 @@
 
 namespace DachcomBundle\Test\Acceptance\ExtJs;
 
-use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\Support\AcceptanceTester;
 
 class ImportExportCest extends AbstractExtJs
 {

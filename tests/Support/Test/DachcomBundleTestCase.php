@@ -1,9 +1,9 @@
 <?php
 
-namespace DachcomBundle\Test\Test;
+namespace DachcomBundle\Test\Support\Test;
 
-use Dachcom\Codeception\Test\BundleTestCase;
-use DachcomBundle\Test\Util\FormHelper;
+use Dachcom\Codeception\Support\Test\BundleTestCase;
+use DachcomBundle\Test\Support\Util\FormHelper;
 
 abstract class DachcomBundleTestCase extends BundleTestCase
 {

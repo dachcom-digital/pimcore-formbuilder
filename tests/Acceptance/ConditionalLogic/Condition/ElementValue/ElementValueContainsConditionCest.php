@@ -2,8 +2,8 @@
 
 namespace DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\ElementValue;
 
-use DachcomBundle\Test\AcceptanceTester;
-use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractConditionCest;
+use DachcomBundle\Test\Support\AcceptanceTester;
+use DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\AbstractConditionCest;
 
 /**
  *  * Condition "contains". Must work on:

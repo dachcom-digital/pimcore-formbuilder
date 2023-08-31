@@ -2,8 +2,8 @@
 
 namespace DachcomBundle\Test\Acceptance\ConditionalLogic\Action\Form;
 
-use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractActionCest;
-use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\AbstractActionCest;
+use DachcomBundle\Test\Support\AcceptanceTester;
 
 /**
  * Action "changeSuccessMessage"

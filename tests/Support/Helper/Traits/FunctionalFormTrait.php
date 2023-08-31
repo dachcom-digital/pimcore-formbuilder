@@ -3,10 +3,10 @@
 namespace DachcomBundle\Test\Support\Helper\Traits;
 
 use Codeception\Actor;
-use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\Support\AcceptanceTester;
 use DachcomBundle\Test\Support\FunctionalTester;
-use DachcomBundle\Test\Util\FormHelper;
-use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Support\Util\FormHelper;
+use DachcomBundle\Test\Support\Util\TestFormBuilder;
 
 trait FunctionalFormTrait
 {

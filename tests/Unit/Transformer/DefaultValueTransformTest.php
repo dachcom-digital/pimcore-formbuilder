@@ -2,7 +2,7 @@
 
 namespace DachcomBundle\Test\Unit\Transformer;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Transformer\DefaultValueTransformer;
 use FormBuilderBundle\Transformer\HrefTransformer;

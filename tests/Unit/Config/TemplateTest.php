@@ -2,7 +2,7 @@
 
 namespace DachcomBundle\Test\Unit\Config;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
 use FormBuilderBundle\Configuration\Configuration;
 
 class TemplateTest extends DachcomBundleTestCase

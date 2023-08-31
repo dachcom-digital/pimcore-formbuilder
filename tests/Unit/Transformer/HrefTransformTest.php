@@ -2,10 +2,10 @@
 
 namespace DachcomBundle\Test\Unit\Transformer;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
 use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Transformer\HrefTransformer;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class HrefTransformTest extends DachcomBundleTestCase
 {

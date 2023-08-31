@@ -3,7 +3,7 @@
 namespace DachcomBundle\Test\Functional\Fields;
 
 use DachcomBundle\Test\Support\FunctionalTester;
-use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Support\Util\TestFormBuilder;
 
 abstract class AbstractFieldCest
 {

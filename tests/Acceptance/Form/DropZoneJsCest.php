@@ -3,7 +3,7 @@
 namespace DachcomBundle\Test\Acceptance\Form;
 
 use DachcomBundle\Test\Support\Helper\Traits;
-use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\Support\AcceptanceTester;
 
 class DropZoneJsCest
 {

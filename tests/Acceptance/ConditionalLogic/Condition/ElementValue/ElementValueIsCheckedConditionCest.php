@@ -2,9 +2,9 @@
 
 namespace DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\ElementValue;
 
-use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractConditionCest;
-use DachcomBundle\Test\AcceptanceTester;
-use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\AbstractConditionCest;
+use DachcomBundle\Test\Support\AcceptanceTester;
+use DachcomBundle\Test\Support\Util\TestFormBuilder;
 
 /**
  * Condition "is_checked". Must work on:

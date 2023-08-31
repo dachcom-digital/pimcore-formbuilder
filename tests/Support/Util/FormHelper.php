@@ -1,6 +1,6 @@
 <?php
 
-namespace DachcomBundle\Test\Util;
+namespace DachcomBundle\Test\Support\Util;
 
 use Codeception\Util\Debug;
 use Pimcore\Db;

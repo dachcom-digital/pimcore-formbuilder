@@ -2,7 +2,7 @@
 
 namespace DachcomBundle\Test\Functional\Fields;
 
-use DachcomBundle\Test\Services\TestSimpleDynamicChoices;
+use DachcomBundle\Test\Support\Services\TestSimpleDynamicChoices;
 use DachcomBundle\Test\Support\FunctionalTester;
 
 class DynamicChoiceFieldCest extends AbstractFieldCest

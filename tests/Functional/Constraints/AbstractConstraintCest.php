@@ -3,7 +3,7 @@
 namespace DachcomBundle\Test\Functional\Constraints;
 
 use DachcomBundle\Test\Support\FunctionalTester;
-use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Support\Util\TestFormBuilder;
 
 abstract class AbstractConstraintCest
 {

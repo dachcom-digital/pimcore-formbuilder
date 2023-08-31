@@ -2,9 +2,9 @@
 
 namespace DachcomBundle\Test\Acceptance\ConditionalLogic\Action\Element;
 
-use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractActionCest;
-use DachcomBundle\Test\AcceptanceTester;
-use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\AbstractActionCest;
+use DachcomBundle\Test\Support\AcceptanceTester;
+use DachcomBundle\Test\Support\Util\TestFormBuilder;
 
 /**
  * Action "toggleElement". Must work on:

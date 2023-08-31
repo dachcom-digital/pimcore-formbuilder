@@ -2,8 +2,8 @@
 
 namespace DachcomBundle\Test\HAcceptance\ConditionalLogic\Condition;
 
-use DachcomBundle\Test\AcceptanceTester;
-use DachcomBundle\Test\Util\TestFormBuilder;
+use DachcomBundle\Test\Support\AcceptanceTester;
+use DachcomBundle\Test\Support\Util\TestFormBuilder;
 use Pimcore\Model\Document\Email;
 
 abstract class AbstractActionCest

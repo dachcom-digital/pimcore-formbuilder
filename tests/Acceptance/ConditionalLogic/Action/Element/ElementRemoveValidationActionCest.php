@@ -2,8 +2,8 @@
 
 namespace DachcomBundle\Test\Acceptance\ConditionalLogic\Action\Element;
 
-use DachcomBundle\Test\acceptance\ConditionalLogic\Condition\AbstractActionCest;
-use DachcomBundle\Test\AcceptanceTester;
+use DachcomBundle\Test\Acceptance\ConditionalLogic\Condition\AbstractActionCest;
+use DachcomBundle\Test\Support\AcceptanceTester;
 
 /**
  * We only test not_blank validators since we're only testing javascript behaviour here.

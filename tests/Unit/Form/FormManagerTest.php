@@ -2,8 +2,8 @@
 
 namespace DachcomBundle\Test\Unit\Form;
 
-use DachcomBundle\Test\Test\DachcomBundleTestCase;
-use DachcomBundle\Test\Util\FormHelper;
+use DachcomBundle\Test\Support\Test\DachcomBundleTestCase;
+use DachcomBundle\Test\Support\Util\FormHelper;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 
