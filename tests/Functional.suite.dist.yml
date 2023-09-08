@@ -10,7 +10,7 @@ modules:
             run_installer: true
         - \Dachcom\Codeception\Support\Helper\Browser\PhpBrowser:
             depends: \Dachcom\Codeception\Support\Helper\PimcoreCore
-        - \Dachcom\Codeception\Helper\Support\PimcoreAdminJson:
+        - \Dachcom\Codeception\Support\Helper\PimcoreAdminJson:
             depends: \Dachcom\Codeception\Support\Helper\PimcoreCore
         - \Dachcom\Codeception\Support\Helper\PimcoreAdminCsv:
             depends: \Dachcom\Codeception\Support\Helper\PimcoreCore

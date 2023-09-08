@@ -41,8 +41,8 @@ class PlaceholderParserTest extends DachcomBundleTestCase
      */
     private function getTestString(): string
     {
-        return '<fb-field data-type="fb_field" data-sub_type="last_name" data-render_type="L">last_name</fb-field>: <fb-field data-type="fb_field" data-sub_type="last_name" data-render_type="V">last_name</fb-field><br />
-                <fb-field data-type="fb_field" data-sub_type="first_name" data-render_type="L">first_name</fb-field>: <fb-field data-type="fb_field" data-sub_type="first_name" show_label="true" data-render_type="V">first_name</fb-field><br />
+        return '<fb-field data-type="fb_field" data-sub_type="last_name" data-render_type="L">last_name</fb-field><fb-field data-type="fb_field" data-sub_type="last_name" data-render_type="V">last_name</fb-field><br />
+                <fb-field data-type="fb_field" data-sub_type="first_name" data-render_type="L">first_name</fb-field><fb-field data-type="fb_field" data-sub_type="first_name" show_label="true" data-render_type="V">first_name</fb-field><br />
                 ===<br />
                 Date: <fb-field data-type="date" data-sub_type="null" format="d.m.Y">date</fb-field>';
     }
@@ -52,10 +52,10 @@ class PlaceholderParserTest extends DachcomBundleTestCase
      */
     private function getExpectedString(): string
     {
-        return sprintf('Last Name: The Tester<br />
-                First Name: Frank<br />
-                ===<br />
-                Date: %s', date('d.m.Y'));
+        return sprintf('Last Name: The Tester%1$s
+                First Name: Frank%1$s
+                ===%1$s
+                Date: %2$s', "\n", date('d.m.Y'));
     }
 
 }

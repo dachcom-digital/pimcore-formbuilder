@@ -138,7 +138,7 @@ final class Version20230830183642 extends AbstractMigration implements Container
                 !array_key_exists('show_label', $cleanConfig)
             )
         ) {
-            $prefix = sprintf('<fb-field data-type="fb_field" data-sub_type="%s" data-render_type="L">%s</fb-field>: ', $fieldSubType, $fieldLabel);
+            $prefix = sprintf('<fb-field data-type="fb_field" data-sub_type="%s" data-render_type="L">%s</fb-field>', $fieldSubType, $fieldLabel);
         }
 
         return sprintf('%s<fb-field data-type="%s" data-sub_type="%s"%s%s>%s</fb-field>', $prefix, $type, $fieldSubType, $additionalParameter, $renderType, $fieldLabel);
