@@ -1,11 +1,41 @@
+parameters:
+    form_builder_mail_editor_html_valid_tags: [ 'table', 'tbody', 'td', 'tr', 'a', 'strong', 'em', 'ul', 'ol', 'li', 'br' ]
+    form_builder_mail_editor_text_valid_tags: [ 'br' ]
+    form_builder_mail_editor_template_parser_inky_replaces: {
+        '<table': '<container',
+        '</table>': '</container>',
+        '<tr': '<row',
+        '</tr>': '</row>',
+        '<td': '<columns small="12" large="6"',
+        '</td>': '</columns>',
+        '<tbody>': '',
+        '</tbody>': ''
+    }
+
 services:
 
     _defaults:
         autowire: true
         autoconfigure: true
         public: true
+        bind:
+            $useEmailizr: '%formbuilder.use_emailizr%'
 
     FormBuilderBundle\Registry\MailEditorWidgetRegistry: ~
 
-    FormBuilderBundle\MailEditor\Parser\PlaceholderParser: ~
     FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface: '@FormBuilderBundle\MailEditor\Parser\PlaceholderParser'
+    FormBuilderBundle\MailEditor\Parser\PlaceholderParser:
+        arguments:
+            $validHtmlTags: '%form_builder_mail_editor_html_valid_tags%'
+            $validTextTags: '%form_builder_mail_editor_text_valid_tags%'
+            $templateParser: !tagged_iterator form_builder.mail_editor.template_parser
+
+    FormBuilderBundle\MailEditor\Parser\TemplateParser\InkyParser:
+        arguments:
+            $replaces: '%form_builder_mail_editor_template_parser_inky_replaces%'
+        tags:
+            - { name: form_builder.mail_editor.template_parser }
+
+    FormBuilderBundle\MailEditor\Parser\TemplateParser\PlainTextParser:
+        tags:
+            - { name: form_builder.mail_editor.template_parser }

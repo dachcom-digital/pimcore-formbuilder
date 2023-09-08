@@ -95,6 +95,8 @@ class EmailOutputChannelWorker
     protected function sendDefault(Mail $mail): void
     {
         $mail->send();
+
+        exit;
     }
 
     /**
@@ -111,7 +113,9 @@ class EmailOutputChannelWorker
 
         if ($channelSubjectGuardEvent->shouldStopChannel()) {
             throw new GuardChannelException($channelSubjectGuardEvent->getFailMessage());
-        } elseif ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
+        }
+
+        if ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
             throw new GuardOutputWorkflowException($channelSubjectGuardEvent->getFailMessage());
         }
 

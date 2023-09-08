@@ -10,7 +10,7 @@
             <div class="qq-upload-container"></div>
             <div class="qq-uploader-wrapper" style="display:none;">
                 <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="{{ 'form_builder.dynamic_multi_file.drop_files_here'|trans }}">
-                    {% include '@FormBuilder/form/elements/dynamic-multi-file/form.html.twig' %}
+                    {% include '@FormBuilder/form/elements/dynamic_multi_file/form.html.twig' %}
                 </div>
             </div>
             {% for child in form -%}
@@ -30,7 +30,7 @@
         <div {{ block('attributes') }}>
             <div class="dropzone-container"></div>
             <div class="dropzone-template" style="display: none;">
-                {% include '@FormBuilder/form/elements/dynamic-multi-file/form-drop-zone.html.twig' %}
+                {% include '@FormBuilder/form/elements/dynamic_multi_file/form_drop_zone.html.twig' %}
             </div>
             {% for child in form -%}
                 {% if not child.rendered %}

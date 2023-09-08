@@ -23,7 +23,7 @@ class EmailChannelType extends AbstractType
         $builder->add('forcePlainText', CheckboxType::class);
         $builder->add('disableDefaultMailBody', CheckboxType::class);
         $builder->add('disableMailLogging', CheckboxType::class);
-        $builder->add('mailLayoutData', TextType::class);
+        $builder->add('mailLayoutData', CollectionType::class, ['allow_add' => true, 'entry_type' => TextType::class]);
 
         $builder->get('ignoreFields')->addEventListener(
             FormEvents::PRE_SUBMIT, function (FormEvent $event) {

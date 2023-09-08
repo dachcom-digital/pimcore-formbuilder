@@ -3,9 +3,18 @@
 namespace FormBuilderBundle\MailEditor\Widget;
 
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\MailEditor\AttributeBag;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataWidgetInterface
 {
+    private const RENDER_TYPE_LABEL = 'L';
+    private const RENDER_TYPE_VALUE = 'V';
+
+    public function __construct(protected TranslatorInterface $translator)
+    {
+    }
+
     public function getWidgetGroupName(): string
     {
         return 'form_builder.mail_editor.widget_provider.form_fields';
@@ -18,7 +27,9 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
 
     public function getWidgetIdentifierByField(string $widgetType, array $field): string
     {
-        return sprintf('%s_%s', $widgetType, $field['type']);
+        $type = $field['type'] === 'container' ? sprintf('%s_%s', $field['type'], $field['sub_type']) : $field['type'];
+
+        return sprintf('%s_%s', $widgetType, $type);
     }
 
     public function getWidgetLabelByField(array $field): string
@@ -28,80 +39,49 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
 
     public function getWidgetConfigByField(array $field): array
     {
-        return [
-            'show_label' => [
-                'type'         => 'checkbox',
-                'defaultValue' => true,
-                'label'        => 'form_builder.mail_editor.widget_provider.form_fields.show_labels'
-            ],
-        ];
+        $fieldType = $field['type'] ?? null;
+        $subType = $field['sub_type'] ?? null;
+
+        $configData = [];
+
+        if ($fieldType === 'container' && $subType === 'repeater') {
+            $configData['block_label'] = [
+                'type'         => 'input',
+                'defaultValue' => '',
+                'label'        => 'form_builder.mail_editor.widget_provider.form_fields.repeater_block_label'
+            ];
+        }
+
+        return $configData;
     }
 
-    public function getValueForOutput(array $config): string
+    public function getValueForOutput(AttributeBag $attributeBag, string $layoutType): string
     {
-        $renderLabels = !isset($config['show_label']) || $config['show_label'] === true;
+        $renderType = $attributeBag->get('render_type');
 
-        $outputData = $config['outputData'] ?? null;
+        $outputData = $attributeBag->get('output_data', []);
         $fieldType = $outputData['field_type'] ?? null;
 
         if (!is_array($outputData)) {
             return '';
         }
 
-        $fieldValue = '';
         if ($fieldType === FormValuesOutputApplierInterface::FIELD_TYPE_CONTAINER) {
-            $fieldValue .= $this->parseContainerField($outputData, $renderLabels);
-        } else {
-            $fieldValue .= $this->parseSimpleField($outputData, $renderLabels);
+            return $this->buildContainerHead($layoutType, $outputData, $attributeBag);
         }
 
-        return $fieldValue;
+        return $this->parseSimpleField($outputData, $renderType, $layoutType);
     }
 
-    protected function parseContainerField(array $outputData, bool $renderLabels): string
+    protected function parseSimpleField(array $outputData, string $renderType, string $layoutType): string
     {
         $fieldValue = '';
+        $label = $outputData['label'] ?? null;
 
-        $label = $outputData['label'];
-        $blockLabel = $outputData['block_label'];
-
-        if (!is_array($outputData['fields'])) {
-            return $fieldValue;
-        }
-
-        if ($renderLabels === true) {
-            $fieldValue .= !empty($label) ? sprintf('%s:<br>', $label) : '';
-        }
-
-        foreach ($outputData['fields'] as $blockIndex => $subFieldCollection) {
-            $fieldValue .= !empty($blockLabel) ? sprintf('%s:<br>', $blockLabel) : '';
-            foreach ($subFieldCollection as $subFieldOutputData) {
-                $subFieldType = $subFieldOutputData['field_type'];
-                if ($subFieldType === FormValuesOutputApplierInterface::FIELD_TYPE_CONTAINER) {
-                    $fieldValue .= $this->parseContainerField($subFieldOutputData, $renderLabels);
-                } else {
-                    // currently we need to force subfields labels in container
-                    // since we have no options to define their states.
-                    $fieldValue .= $this->parseSimpleField($subFieldOutputData, true);
-                    $fieldValue .= '<br>';
-                }
-            }
-
-            if ($blockIndex + 1 !== count($outputData['fields'])) {
-                $fieldValue .= '<br>';
-            }
-        }
-
-        return $fieldValue;
-    }
-
-    protected function parseSimpleField(array $outputData, bool $renderLabels): string
-    {
-        $fieldValue = '';
-
-        $label = $outputData['label'];
-        if ($renderLabels === true) {
-            $fieldValue .= !empty($label) ? sprintf('%s: ', $label) : '';
+        if ($renderType === self::RENDER_TYPE_LABEL) {
+            return !empty($label)
+                ? $this->buildFieldLabel($layoutType, $label)
+                : '';
         }
 
         $fieldValue .= $this->parseFieldValue($outputData['value']);
@@ -115,7 +95,44 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
             return implode(', ', $fieldValue);
         }
 
-        return $fieldValue;
+        return nl2br($fieldValue);
+    }
+
+    protected function buildContainerHead(string $layoutType, array $outputData, AttributeBag $attributeBag): string
+    {
+        if ($outputData['type'] !== 'repeater') {
+            return '';
+        }
+
+        if ($attributeBag->get('block_label') === null) {
+            return '';
+        }
+
+        $blockLabel = $this->translator->trans($attributeBag->get('block_label'));
+
+        if ($layoutType === 'html') {
+            return sprintf('
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="block-label"><strong>%s</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>',
+                $blockLabel
+            );
+        }
+
+        return sprintf('%s<br>', $blockLabel);
+    }
+
+    protected function buildFieldLabel(string $layoutType, string $label): string
+    {
+        if ($layoutType === 'html') {
+            return $label;
+        }
+
+        return sprintf('%s: ', $label);
     }
 
     public function getWidgetLabel(): string

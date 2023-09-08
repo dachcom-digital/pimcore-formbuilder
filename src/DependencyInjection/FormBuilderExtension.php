@@ -18,6 +18,8 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
         $configs = $container->getExtensionConfig($this->getAlias());
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
 
+        $container->setParameter('formbuilder.use_emailizr', $container->hasExtension('emailizr'));
+
         if ($container->hasExtension('twig') === false) {
             return;
         }

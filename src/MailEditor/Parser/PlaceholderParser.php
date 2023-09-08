@@ -2,104 +2,164 @@
 
 namespace FormBuilderBundle\MailEditor\Parser;
 
+use FormBuilderBundle\MailEditor\Parser\TemplateParser\TemplateParserInterface;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
+use FormBuilderBundle\MailEditor\AttributeBag;
 use Symfony\Component\Form\FormInterface;
 
 class PlaceholderParser implements PlaceholderParserInterface
 {
-    protected array $outputData;
     protected FormInterface $form;
-    protected MailEditorWidgetRegistry $mailEditorWidgetRegistry;
+    protected array $outputData;
+    protected string $layoutType;
 
-    public function __construct(MailEditorWidgetRegistry $mailEditorWidgetRegistry)
-    {
-        $this->mailEditorWidgetRegistry = $mailEditorWidgetRegistry;
+    public function __construct(
+        protected MailEditorWidgetRegistry $mailEditorWidgetRegistry,
+        protected iterable $templateParser,
+        protected array $validHtmlTags,
+        protected array $validTextTags,
+    ) {
     }
 
-    public function replacePlaceholderWithOutputData(string $layout, FormInterface $form, array $outputData): string
+    public function replacePlaceholderWithOutputData(string $layout, FormInterface $form, array $outputData, string $layoutType): string
     {
-        $this->outputData = $outputData;
         $this->form = $form;
+        $this->outputData = $outputData;
+        $this->layoutType = $layoutType;
 
-        return preg_replace_callback($this->getPlaceholderRegex(), [$this, 'parseSquareBracketsTag'], $layout);
+        // first, parse all container blocks
+        $layout = preg_replace_callback($this->getPlaceholderRegex('fb-container-field'), [$this, 'parseContainerTag'], $layout);
+
+        $layout = preg_replace_callback($this->getPlaceholderRegex('fb-field'), [$this, 'parseFieldTag'], $layout);
+
+        return $this->parseLayoutTemplate($layout, $layoutType);
+    }
+
+    protected function parseContainerTag(array $tag): ?string
+    {
+        $type = $tag[1];
+
+        $attributes = $this->parseAttributes($type, $tag[0]);
+        $containerTemplate = $this->parseContainerTemplate($type, $tag[0]);
+
+        $tagType = $attributes->get('type');
+        $tagSubType = $attributes->get('sub_type');
+
+        if ($tagType === null || !$this->mailEditorWidgetRegistry->has($tagType)) {
+            return null;
+        }
+
+        $outputData = null;
+        if ($tagSubType !== null && isset($this->outputData[$tagSubType])) {
+            $outputData = $this->outputData[$tagSubType];
+            $attributes->set('output_data', $outputData);
+        }
+
+        // no container data found. remove template.
+        if ($outputData === null) {
+            return '';
+        }
+
+        $widget = $this->mailEditorWidgetRegistry->get($tagType);
+
+        $response = '';
+        foreach ($outputData['fields'] as $containerBlock) {
+            $response .= $widget->getValueForOutput($attributes, $this->layoutType);
+            $response .= preg_replace_callback(
+                $this->getPlaceholderRegex('fb-field'),
+                function (array $tag) use ($containerBlock) {
+                    return $this->parseFieldTag($tag, $containerBlock);
+                },
+                $containerTemplate
+            );
+        }
+
+        return $response;
+    }
+
+    protected function parseLayoutTemplate(string $layout, string $layoutType): string
+    {
+        $allowedTags = $layoutType === 'html' ? $this->validHtmlTags : $this->validTextTags;
+
+        $layout = strip_tags($layout, $allowedTags);
+
+        /** @var TemplateParserInterface $templateParser */
+        foreach ($this->templateParser as $templateParser) {
+            if ($templateParser->supports($layoutType, $layout)) {
+                return $templateParser->parse($layout);
+            }
+        }
+
+        return $layout;
     }
 
     /**
      * @throws \Exception
      */
-    protected function parseSquareBracketsTag(array $tag): ?string
+    protected function parseFieldTag(array $tag, ?array $containerData = null): ?string
     {
         $type = $tag[1];
-        $config = $this->parseSquareBracketsAttributes($tag[2]);
+        $attributes = $this->parseAttributes($type, $tag[0]);
 
-        if (!$this->mailEditorWidgetRegistry->has($type)) {
+        $tagType = $attributes->get('type');
+        $tagSubType = $attributes->get('sub_type');
+
+        if ($tagType === null || !$this->mailEditorWidgetRegistry->has($tagType)) {
             return null;
         }
 
-        $widget = $this->mailEditorWidgetRegistry->get($type);
+        $widget = $this->mailEditorWidgetRegistry->get($tagType);
 
-        // add field value to widget.
-        if (isset($config['sub-type'], $this->outputData[$config['sub-type']])) {
-            $config['outputData'] = $this->outputData[$config['sub-type']];
+        if ($tagSubType !== null) {
+            if ($containerData !== null) {
+                $containerOutputDataIndex = array_search($tagSubType, array_column($containerData, 'name'), true);
+                if ($containerOutputDataIndex !== false) {
+                    $attributes->set('output_data', $containerData[$containerOutputDataIndex]);
+                }
+            } elseif (isset($this->outputData[$tagSubType])) {
+                $attributes->set('output_data', $this->outputData[$tagSubType]);
+            }
         }
 
-        $cleanConfig = [
-            'form' => $this->form
-        ];
+        $attributes->set('form', $this->form);
 
-        foreach ($config as $key => $value) {
+        return $widget->getValueForOutput($attributes, $this->layoutType);
+    }
+
+    protected function parseAttributes(string $type, string $text): AttributeBag
+    {
+        libxml_use_internal_errors(true);
+        $doc = new \DOMDocument();
+        $doc->loadHTML($text);
+
+        $xpath = new \DOMXPath($doc);
+        $nodes = $xpath->query(sprintf('//%s/@*', $type));
+
+        $attributes = [];
+        foreach ($nodes as $node) {
+
+            $value = $node->nodeValue;
             if ($value === 'true' || $value === 'false') {
                 $value = $value === 'true';
             }
 
-            $cleanConfig[$key] = $value;
+            $attributes[str_replace('data-', '', $node->nodeName)] = $value;
         }
 
-        return $widget->getValueForOutput($cleanConfig);
+        return new AttributeBag($attributes);
     }
 
-    protected function parseSquareBracketsAttributes(string $text): array
+    protected function parseContainerTemplate(string $type, string $text): string
     {
-        $attributes = [];
-        $pattern = $this->getSquareBracketsAttributeRegex();
-        $text = preg_replace('/[\x{00a0}\x{200b}]+/u', ' ', $text);
-        if (preg_match_all($pattern, $text, $match, PREG_SET_ORDER)) {
-            foreach ($match as $m) {
-                if (!empty($m[1])) {
-                    $attributes[strtolower($m[1])] = stripcslashes($m[2]);
-                } elseif (!empty($m[3])) {
-                    $attributes[strtolower($m[3])] = stripcslashes($m[4]);
-                } elseif (!empty($m[5])) {
-                    $attributes[strtolower($m[5])] = stripcslashes($m[6]);
-                } elseif (isset($m[7]) && strlen($m[7])) {
-                    $attributes[] = stripcslashes($m[7]);
-                } elseif (isset($m[8])) {
-                    $attributes[] = stripcslashes($m[8]);
-                }
-            }
-            foreach ($attributes as &$value) {
-                if (str_contains($value, '<')) {
-                    if (preg_match('/^[^<]*+(?:<[^>]*+>[^<]*+)*+$/', $value) !== 1) {
-                        $value = '';
-                    }
-                }
-            }
-        } else {
-            $attributes = [ltrim($text)];
-        }
+        preg_match('/<fb-container-field[^>]*>(.*)<\/fb-container-field>/', $text, $matches);
 
-        return $attributes;
+        return $matches[1];
     }
 
-    protected function getSquareBracketsAttributeRegex(): string
+    protected function getPlaceholderRegex(string $type): string
     {
-        return '/([\w-]+)\s*=\s*"([^"]*)"(?:\s|$)|([\w-]+)\s*=\s*\'([^\']*)\'(?:\s|$)|([\w-]+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
-    }
+        $typeRegex = str_replace('-', '\-', $type);
 
-    protected function getPlaceholderRegex(): string
-    {
-        $allowedRex = implode('|', $this->mailEditorWidgetRegistry->getAllIdentifier());
-
-        return '/\\[\\[(' . $allowedRex . ')(.*?)\\]\\]/';
+        return sprintf('/<(%s)(.*?)<\/(%s)>/', $typeRegex, $typeRegex);
     }
 }

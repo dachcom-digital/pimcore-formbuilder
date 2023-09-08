@@ -30,9 +30,9 @@
 
         <table class="row">
             <tr>
-                <th class="large-12 small-12 columns first last">
+                <td class="large-12 small-12 columns first last">
                     {{ pimcore_wysiwyg('text', {width: '500'}) }}
-                </th>
+                </td>
             </tr>
         </table>
 
@@ -40,13 +40,13 @@
         {% if document.getProperty('mail_disable_default_mail_body') != true %}
             <table class="row">
                 <tr>
-                    <th class="large-12 small-12 columns first last">
+                    <td class="large-12 small-12 columns first last">
                         {% if editmode != true %}
                             {% if body is defined %}{{ body|raw }}{% endif %}
                         {% else %}
                             <p class="formbuilder-placeholder-body">{{ 'form_builder.email.form_will_placed_here'|trans({},'admin') }}</p>
                         {% endif %}
-                    </th>
+                    </td>
                 </tr>
             </table>
         {% endif %}

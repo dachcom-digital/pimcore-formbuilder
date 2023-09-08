@@ -98,6 +98,9 @@ class AssetListener implements EventSubscriberInterface
             '/bundles/formbuilder/js/extjs/components/successMessageToggleComponent.js',
             '/bundles/formbuilder/js/extjs/components/elements/Formbuilder.HrefTextField.js',
             '/bundles/formbuilder/js/extjs/vendor/dataObject.js',
+            '/bundles/formbuilder/js/extjs/editor/AbstractFieldComponent.js',
+            '/bundles/formbuilder/js/extjs/editor/ContainerFieldComponent.js',
+            '/bundles/formbuilder/js/extjs/editor/FieldComponent.js'
         ]);
     }
 

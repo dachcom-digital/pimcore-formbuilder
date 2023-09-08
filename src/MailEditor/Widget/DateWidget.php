@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\MailEditor\Widget;
 
+use FormBuilderBundle\MailEditor\AttributeBag;
+
 class DateWidget implements MailEditorWidgetInterface
 {
     public function getWidgetGroupName(): string
@@ -25,9 +27,9 @@ class DateWidget implements MailEditorWidgetInterface
         ];
     }
 
-    public function getValueForOutput(array $config): string
+    public function getValueForOutput(AttributeBag $attributeBag, string $layoutType): string
     {
-        $format = $config['format'] ?? 'm/d/y H:i:s';
+        $format = $attributeBag->get('format', 'm/d/y H:i:s');
 
         return date($format);
     }

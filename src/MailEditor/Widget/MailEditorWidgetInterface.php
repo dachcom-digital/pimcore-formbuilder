@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\MailEditor\Widget;
 
+use FormBuilderBundle\MailEditor\AttributeBag;
+
 interface MailEditorWidgetInterface
 {
     public function getWidgetGroupName(): string;
@@ -10,5 +12,5 @@ interface MailEditorWidgetInterface
 
     public function getWidgetConfig(): array;
 
-    public function getValueForOutput(array $config): string;
+    public function getValueForOutput(AttributeBag $attributeBag, string $layoutType): string;
 }

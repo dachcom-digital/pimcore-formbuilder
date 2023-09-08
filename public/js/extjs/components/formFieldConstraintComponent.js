@@ -247,8 +247,6 @@ Formbuilder.extjs.components.formFieldConstraint = Class.create({
                                     newVal = null;
                                 }
 
-                                console.warn(newVal, configElement.defaultValue);
-
                                 field.setStyle('opacity', newVal !== configElement.defaultValue ? 1 : 0.6);
                             }
                         }

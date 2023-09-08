@@ -4,9 +4,11 @@ namespace FormBuilderBundle\Controller\Admin;
 
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\MailEditor\Widget\MailEditorFieldDataWidgetInterface;
+use FormBuilderBundle\MailEditor\Widget\MailEditorWidgetInterface;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Registry\MailEditorWidgetRegistry;
+use FormBuilderBundle\MailEditor\TemplateGenerator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,8 +43,14 @@ class MailEditorController extends AdminAbstractController
 
         $allWidgets = [];
         $widgetsConfiguration = [];
+        $widgetFieldsTemplate = null;
 
+        /**
+         * @var string                    $widgetType
+         * @var MailEditorWidgetInterface $widget
+         */
         foreach ($widgets as $widgetType => $widget) {
+
             $groupName = $widget->getWidgetGroupName();
 
             if (!isset($allWidgets[$groupName])) {
@@ -53,16 +61,50 @@ class MailEditorController extends AdminAbstractController
             }
 
             if ($widget instanceof MailEditorFieldDataWidgetInterface) {
+
+                $fieldConfigElements = [];
                 foreach ($formFields as $field) {
+
                     $widgetFieldType = $widget->getWidgetIdentifierByField($widgetType, $field);
                     $widgetsConfiguration[$widgetFieldType] = $this->translateWidgetConfig($widget->getWidgetConfigByField($field));
-                    $allWidgets[$groupName]['elements'][] = [
+
+                    $fieldConfig = [
                         'type'             => $widgetType,
                         'subType'          => $widget->getSubTypeByField($field),
                         'label'            => $widget->getWidgetLabelByField($field),
+                        'field_type'       => $field['type'] ?? null,
                         'configIdentifier' => $widgetFieldType,
                     ];
+
+                    $children = [];
+                    if (array_key_exists('fields', $field)) {
+                        foreach ($field['fields'] as $subField) {
+                            $widgetFieldType = $widget->getWidgetIdentifierByField($widgetType, $subField);
+
+                            if (!array_key_exists($widgetFieldType, $widgetsConfiguration)) {
+                                $widgetsConfiguration[$widgetFieldType] = $this->translateWidgetConfig($widget->getWidgetConfigByField($subField));
+                            }
+
+                            $children[] = [
+                                'type'             => $widgetType,
+                                'subType'          => $widget->getSubTypeByField($subField),
+                                'label'            => $widget->getWidgetLabelByField($subField),
+                                'field_type'       => $field['type'] ?? null,
+                                'configIdentifier' => $widgetFieldType,
+                            ];
+                        }
+                    }
+
+                    if (count($fieldConfig) > 0) {
+                        $fieldConfig['children'] = $children;
+                    }
+
+                    $fieldConfigElements[] = $fieldConfig;
                 }
+
+                $allWidgets[$groupName]['elements'] = $fieldConfigElements;
+                $widgetFieldsTemplate = (new TemplateGenerator())->generateWidgetFieldTemplate($fieldConfigElements);
+
             } else {
                 $widgetsConfiguration[$widgetType] = $this->translateWidgetConfig($widget->getWidgetConfig());
                 $allWidgets[$groupName]['elements'][] = [
@@ -79,28 +121,14 @@ class MailEditorController extends AdminAbstractController
         $data = [
             'formId'        => (int) $formId,
             'configuration' => [
-                'help'                => '',
-                'widgetGroups'        => $allWidgets,
-                'widgetConfiguration' => $widgetsConfiguration
+                'help'                 => '',
+                'widgetGroups'         => $allWidgets,
+                'widgetConfiguration'  => $widgetsConfiguration,
+                'widgetFieldsTemplate' => $widgetFieldsTemplate,
             ]
         ];
 
         return $this->json($data);
-    }
-
-    protected function cleanupMailLayout(array $mailLayout): array
-    {
-        foreach ($mailLayout as $mailType => $layout) {
-            $mailLayout[$mailType] = array_filter($layout, static function ($localizedLayout) {
-                return !empty($localizedLayout);
-            });
-
-            if (count($mailLayout[$mailType]) === 0) {
-                unset($mailLayout[$mailType]);
-            }
-        }
-
-        return $mailLayout;
     }
 
     protected function translateWidgetConfig(array $config): array

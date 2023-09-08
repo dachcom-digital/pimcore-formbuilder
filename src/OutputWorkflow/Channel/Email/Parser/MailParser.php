@@ -47,8 +47,8 @@ class MailParser
         $formData = $form->getData();
 
         if ($disableDefaultMailBody === false) {
-            $mailLayout = $this->getMailLayout($channelConfiguration);
-            $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout);
+            $mailLayout = $this->getMailLayout($channelConfiguration, $forcePlainText);
+            $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout, $forcePlainText ? 'text' : 'html');
         }
 
         $attachments = [];
@@ -129,15 +129,15 @@ class MailParser
         }
     }
 
-    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, ?string $mailLayout = null): void
+    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, ?string $mailLayout = null, string $layoutType): void
     {
         if ($mailLayout === null) {
             $body = $this->templating->render(
-                '@FormBuilder/email/form-data.html.twig',
+                '@FormBuilder/email/form_data.html.twig',
                 ['fields' => $fieldValues]
             );
         } else {
-            $body = $this->placeholderParser->replacePlaceholderWithOutputData($mailLayout, $form, $fieldValues);
+            $body = $this->placeholderParser->replacePlaceholderWithOutputData($mailLayout, $form, $fieldValues, $layoutType);
         }
 
         $mail->setParam('body', $body);
@@ -257,12 +257,14 @@ class MailParser
         return $values;
     }
 
-    protected function getMailLayout(array $channelConfiguration): ?string
+    protected function getMailLayout(array $channelConfiguration, bool $forcePlainText): ?string
     {
-        if (!empty($channelConfiguration['mailLayoutData'])) {
-            return $channelConfiguration['mailLayoutData'];
+        $data = null;
+
+        if (array_key_exists('mailLayoutData', $channelConfiguration) && is_array($channelConfiguration['mailLayoutData'])) {
+            $data = $forcePlainText ? $channelConfiguration['mailLayoutData']['text'] : $channelConfiguration['mailLayoutData']['html'];
         }
 
-        return null;
+        return $data === '' ? null : $data;
     }
 }
