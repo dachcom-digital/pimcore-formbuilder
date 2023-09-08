@@ -1,5 +1,6 @@
 actor: FunctionalTester
 error_level: '%PIMCORE_PHP_ERROR_REPORTING%'
+bootstrap: _bootstrap.php
 modules:
     enabled:
         - \Dachcom\Codeception\Support\Helper\PimcoreCore:

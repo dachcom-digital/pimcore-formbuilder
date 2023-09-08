@@ -1,5 +1,6 @@
 actor: AcceptanceTester
 error_level: '%PIMCORE_PHP_ERROR_REPORTING%'
+bootstrap: _bootstrap.php
 modules:
     config:
         \Dachcom\Codeception\Support\Helper\Browser\WebDriver:

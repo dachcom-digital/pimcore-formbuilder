@@ -129,7 +129,7 @@ class MailParser
         }
     }
 
-    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, ?string $mailLayout = null, string $layoutType): void
+    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, ?string $mailLayout, string $layoutType): void
     {
         if ($mailLayout === null) {
             $body = $this->templating->render(
