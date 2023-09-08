@@ -22,12 +22,12 @@ Formbuilder.extjs.conditionalLogic.action.switchOutputWorkflow = Class.create(Fo
                 },
                 {
                     xtype: 'combo',
-                    name: _.generateFieldName(this.sectionId, this.index, 'workflowId'),
+                    name: _.generateFieldName(this.sectionId, this.index, 'workflowName'),
                     fieldLabel: t('form_builder_switch_output_workflow_identifier'),
                     anchor: '100%',
                     queryDelay: 0,
                     displayField: 'name',
-                    valueField: 'id',
+                    valueField: 'name',
                     mode: 'local',
                     labelAlign: 'top',
                     allowBlank: false,
@@ -50,7 +50,7 @@ Formbuilder.extjs.conditionalLogic.action.switchOutputWorkflow = Class.create(Fo
                         afterrender: function (cb) {
                             cb.store.load({
                                 callback: function () {
-                                    var value = this.data ? this.checkFieldAvailability([this.data.workflowId], cb.store, 'id') : null;
+                                    var value = this.data ? this.checkFieldAvailability([this.data.workflowName], cb.store, 'name') : null;
                                     cb.setValue(value !== null && value.length > 0 ? value[0] : null);
                                 }.bind(this)
                             });

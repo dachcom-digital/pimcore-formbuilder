@@ -29,8 +29,8 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         /** @var SwitchOutputWorkflowData $switchOutputWorkflowData */
         $switchOutputWorkflowData = $this->checkOutputWorkflowCondition('switch_output_workflow', $data, $formRuntimeData, []);
 
-        if ($switchOutputWorkflowData->hasOutputWorkflowId()) {
-            $userSelectedOutputWorkflow = $switchOutputWorkflowData->getOutputWorkflowId();
+        if ($switchOutputWorkflowData->hasOutputWorkflowName()) {
+            $userSelectedOutputWorkflow = $switchOutputWorkflowData->getOutputWorkflowName();
         }
 
         $outputWorkflows = $formDefinition->getOutputWorkflows();
@@ -41,9 +41,7 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 
         if ($userSelectedOutputWorkflow !== null) {
             $selectedOutputWorkflows = $outputWorkflows->filter(function (OutputWorkflowInterface $outputWorkflow) use ($userSelectedOutputWorkflow) {
-                return is_numeric($userSelectedOutputWorkflow)
-                    ? $outputWorkflow->getId() === $userSelectedOutputWorkflow
-                    : $outputWorkflow->getName() === $userSelectedOutputWorkflow;
+                return $outputWorkflow->getName() === $userSelectedOutputWorkflow;
             });
 
             return $selectedOutputWorkflows->count() === 1 ? $selectedOutputWorkflows->first() : null;
