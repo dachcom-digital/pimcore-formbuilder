@@ -95,8 +95,6 @@ class EmailOutputChannelWorker
     protected function sendDefault(Mail $mail): void
     {
         $mail->send();
-
-        exit;
     }
 
     /**
