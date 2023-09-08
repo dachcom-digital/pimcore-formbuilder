@@ -1,6 +1,6 @@
 <?php
 
-namespace DachcomBundle\Test\HAcceptance\ConditionalLogic\Condition;
+namespace DachcomBundle\Test\Acceptance\ConditionalLogic\Condition;
 
 use DachcomBundle\Test\Support\AcceptanceTester;
 use DachcomBundle\Test\Support\Util\TestFormBuilder;

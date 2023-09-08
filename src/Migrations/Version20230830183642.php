@@ -103,11 +103,6 @@ final class Version20230830183642 extends AbstractMigration implements Container
         $type = $tag[1];
         $config = $this->parseSquareBracketsAttributes($tag[2]);
 
-        // add field value to widget.
-        if (isset($config['sub-type'], $this->outputData[$config['sub-type']])) {
-            $config['outputData'] = $this->outputData[$config['sub-type']];
-        }
-
         $cleanConfig = [];
         foreach ($config as $key => $value) {
             if ($value === 'true' || $value === 'false') {

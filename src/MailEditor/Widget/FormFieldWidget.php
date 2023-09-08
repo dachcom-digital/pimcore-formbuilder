@@ -9,7 +9,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataWidgetInterface
 {
     private const RENDER_TYPE_LABEL = 'L';
-    private const RENDER_TYPE_VALUE = 'V';
 
     public function __construct(protected TranslatorInterface $translator)
     {

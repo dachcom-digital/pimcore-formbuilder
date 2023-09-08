@@ -95,7 +95,7 @@ class MailEditorController extends AdminAbstractController
                         }
                     }
 
-                    if (count($fieldConfig) > 0) {
+                    if (count($children) > 0) {
                         $fieldConfig['children'] = $children;
                     }
 
