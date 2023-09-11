@@ -1,6 +1,6 @@
 modules:
     config:
-        \Dachcom\Codeception\Helper\Browser\WebDriver:
+        \Dachcom\Codeception\Support\Helper\Browser\WebDriver:
             browser: chrome
             port: 9515
             restart: true

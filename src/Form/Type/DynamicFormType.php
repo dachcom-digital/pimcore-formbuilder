@@ -52,16 +52,16 @@ class DynamicFormType extends AbstractType
                 return is_array($conditionalLogic) ? json_encode($conditionalLogic) : null;
             },
             function ($conditionalLogic) {
-                return empty($conditionalLogic) ? null : json_decode($conditionalLogic, true);
+                return empty($conditionalLogic) ? null : json_decode($conditionalLogic, true, 512, JSON_THROW_ON_ERROR);
             }
         ));
 
         $builder->get('formRuntimeData')->addModelTransformer(new CallbackTransformer(
             function ($runtimeData) {
-                return is_array($runtimeData) ? json_encode($runtimeData) : null;
+                return is_array($runtimeData) ? json_encode($runtimeData, JSON_THROW_ON_ERROR) : null;
             },
             function ($runtimeData) {
-                return empty($runtimeData) ? null : json_decode($runtimeData, true);
+                return empty($runtimeData) ? null : json_decode($runtimeData, true, 512, JSON_THROW_ON_ERROR);
             }
         ));
     }
@@ -70,11 +70,7 @@ class DynamicFormType extends AbstractType
     {
         $runtimeData = $options['runtime_data'] ?? null;
 
-        if (isset($runtimeData['email'], $runtimeData['email']['_deprecated_note'])) {
-            unset($runtimeData['email']['_deprecated_note']);
-        }
-
-        $token = is_array($runtimeData) ? md5(json_encode($runtimeData)) : md5(self::EMPTY_RUNTIME_DATA_KEY);
+        $token = is_array($runtimeData) ? md5(json_encode($runtimeData, JSON_THROW_ON_ERROR)) : md5(self::EMPTY_RUNTIME_DATA_KEY);
 
         $builder
             ->add('formRuntimeData', HiddenType::class, [

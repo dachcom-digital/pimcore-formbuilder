@@ -7,6 +7,8 @@ modules:
             host: '%WEBDRIVER_HOST%'
             url: '%WEBDRIVER_URL%'
             browser: chrome
+            port: 4444
+            restart: true
     enabled:
         - \Dachcom\Codeception\Support\Helper\PimcoreCore:
             part: SERVICES

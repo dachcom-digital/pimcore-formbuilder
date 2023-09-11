@@ -42,16 +42,6 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
 
     public function getCreatedBy(): int;
 
-    /**
-     * @deprecated since 4.0 and will be removed with 5.0
-     */
-    public function setMailLayout(?array $mailLayout = null): void;
-
-    /**
-     * @deprecated since 4.0 and will be removed with 5.0
-     */
-    public function getMailLayout(): ?array;
-
     public function hasOutputWorkflows(): bool;
 
     public function hasOutputWorkflow(OutputWorkflowInterface $outputWorkflow): bool;
