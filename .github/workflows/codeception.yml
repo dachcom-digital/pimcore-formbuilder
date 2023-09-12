@@ -45,8 +45,8 @@ jobs:
                     -   pimcore: ~11.0.0
                         template_tag: v11.0.0
         steps:
-            -   uses: actions/checkout@v2
             -   uses: nanasess/setup-chromedriver@v2
+            -   uses: actions/checkout@v2
                 with:
                     path: lib/test-bundle
 
