@@ -38,7 +38,7 @@
         "doctrine/orm": "^2.7"
     },
     "require-dev": {
-        "codeception/codeception": "^5.0",
+        "codeception/codeception": "5.0.10",
         "codeception/module-symfony": "^3.1",
         "codeception/module-webdriver": "^4.0",
         "phpstan/phpstan": "^1.0",
