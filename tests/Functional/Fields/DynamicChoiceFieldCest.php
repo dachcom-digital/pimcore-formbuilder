@@ -165,7 +165,7 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, $optionals);
 
-        $I->selectOption('select#formbuilder_1_dynamic_choice_field', 2);
+        $I->selectOption('select#formbuilder_1_dynamic_choice_field', '2');
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
         $I->seeInRenderedEmailBody($adminEmail, 'Dynamic Choice Email Selection');
@@ -185,7 +185,7 @@ class DynamicChoiceFieldCest extends AbstractFieldCest
 
         list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
 
-        $I->selectOption('select#formbuilder_1_dynamic_choice_field', 1);
+        $I->selectOption('select#formbuilder_1_dynamic_choice_field', '1');
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
         $I->seePropertiesInEmail($adminEmail, ['dynamic_choice_field' => 'Entity 1']);
