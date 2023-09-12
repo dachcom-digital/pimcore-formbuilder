@@ -46,6 +46,7 @@ jobs:
                         template_tag: v11.0.0
         steps:
             -   uses: actions/checkout@v2
+            -   uses: nanasess/setup-chromedriver@v2
                 with:
                     path: lib/test-bundle
 
@@ -98,9 +99,10 @@ jobs:
 
             -   name: Setup Chromium
                 run: |
-                    nohup $CHROMEWEBDRIVER/chromedriver --url-base=/wd/hub /dev/null 2>&1 &
+                    export DISPLAY=:99
+                    chromedriver --url-base=/wd/hub &
 
-            -   name: Start Webserver and Chrome
+            -   name: Start Symfony Server
                 run: |
                     curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir=$HOME/.symfony/bin
                     ~/.symfony/bin/symfony server:start --port=8080 --dir=public --allow-http --no-tls --daemon
