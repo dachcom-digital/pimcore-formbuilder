@@ -41,7 +41,9 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
 
         if ($userSelectedOutputWorkflow !== null) {
             $selectedOutputWorkflows = $outputWorkflows->filter(function (OutputWorkflowInterface $outputWorkflow) use ($userSelectedOutputWorkflow) {
-                return $outputWorkflow->getName() === $userSelectedOutputWorkflow;
+                return is_numeric($userSelectedOutputWorkflow)
+                    ? $outputWorkflow->getId() === $userSelectedOutputWorkflow
+                    : $outputWorkflow->getName() === $userSelectedOutputWorkflow;
             });
 
             return $selectedOutputWorkflows->count() === 1 ? $selectedOutputWorkflows->first() : null;
