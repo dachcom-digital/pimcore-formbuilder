@@ -5,6 +5,7 @@ modules:
             port: 9515
             restart: true
             wait: 1
+            window_size: 1280x1024
             capabilities:
                 chromeOptions:
                     args: ['--headless', '--disable-gpu']
