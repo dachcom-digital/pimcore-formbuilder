@@ -194,11 +194,7 @@ class ExportController extends AdminAbstractController
         $normalizedParams = [];
         $forbiddenKeys = ['body', '_form_builder_id'];
 
-        try {
-            $mailParams = json_decode($log->getParams(), true);
-        } catch (\Exception $e) {
-            return $normalizedParams;
-        }
+        $mailParams = $log->getParams();
 
         if (empty($mailParams)) {
             return $normalizedParams;
