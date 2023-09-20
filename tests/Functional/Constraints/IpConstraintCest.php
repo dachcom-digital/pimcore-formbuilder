@@ -48,7 +48,7 @@ class IpConstraintCest extends AbstractConstraintCest
     {
         list($testFormBuilder, $form) = $this->setupForm($I, [['ip', ['version' => 6]]]);
 
-        $this->fillForm($I, ['text_0' => '192.168.108.105']);
+        $this->fillForm($I, ['text_0' => '12001:0db8:85a3:0000:0000:8a2e:0370:7334']);
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 

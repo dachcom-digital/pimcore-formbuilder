@@ -7,6 +7,6 @@ modules:
             wait: 1
             capabilities:
                 chromeOptions:
-                    args: ['--no-sandbox', '--disable-extensions', '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--window-size=1280,1024']
+                    args: ['--headless', '--disable-gpu']
                     prefs:
                         download.default_directory: '%TEST_BUNDLE_TEST_DIR%/_data/downloads'
