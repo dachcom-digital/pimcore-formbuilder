@@ -41,7 +41,7 @@ class FormSwitchOutputWorkflowActionCest
         $actions = [
             [
                 'type'       => 'switchOutputWorkflow',
-                'workflowId' => $workflow->getId(),
+                'workflowName' => $workflow->getName(),
             ]
         ];
 
