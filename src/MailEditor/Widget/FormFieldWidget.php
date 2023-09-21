@@ -83,7 +83,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
                 : '';
         }
 
-        $fieldValue .= $this->parseFieldValue($outputData['value']);
+        $fieldValue .= $this->parseFieldValue($outputData['value'] ?? '[NO VALUE]');
 
         return $fieldValue;
     }
