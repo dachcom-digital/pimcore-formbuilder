@@ -15,7 +15,7 @@ jobs:
             TEST_PROJECT_ROOT_DIR: "${{ github.workspace }}"
 
             PIMCORE_CODECEPTION_FRAMEWORK: "${{ github.workspace }}/pimcore-codeception-framework"
-            PIMCORE_CODECEPTION_VERSION: "2.0"
+            PIMCORE_CODECEPTION_VERSION: "3.0"
 
             APP_ENV: test
             PIMCORE_TEST_DB_DSN: "mysql://root:root@127.0.0.1:3306/dachcom_bundle_test"
@@ -37,12 +37,12 @@ jobs:
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         strategy:
             matrix:
-                php: [ 8.1 ]
-                symfony: [ ^5.4 ]
-                pimcore: [ ~10.6.0 ]
+                php: [ 8.2 ]
+                symfony: [ ^6.2 ]
+                pimcore: [ ~11.0.0 ]
                 include:
-                    -   pimcore: ~10.6.0
-                        template_tag: v10.2.5
+                    -   pimcore: ~11.0.0
+                        template_tag: v11.0.0
         steps:
             -   uses: actions/checkout@v2
                 with:

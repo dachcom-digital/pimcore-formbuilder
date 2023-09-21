@@ -53,20 +53,12 @@ After that, you have to set up a PHP-Service:
 
 namespace App\OutputTransformer;
 
-use Pimcore\Translation\Translator;
 use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Transformer\Output\OutputTransformerInterface;
 
 class TextInputTransformer implements OutputTransformerInterface
 {
-    protected Translator $translator;
-
-    public function __construct(Translator $translator)
-    {
-        $this->translator = $translator;
-    }
-
     public function getValue(FieldDefinitionInterface $field, FormInterface $formField, $rawValue, $locale)
     {
         // manipulate or change the value

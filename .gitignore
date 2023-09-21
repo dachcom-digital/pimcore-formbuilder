@@ -52,4 +52,4 @@ php-cgi.core
 /tests/_output/*
 /tests/_data/*
 !/tests/_data/.gitkeep
-/tests/_support/_generated/*
+/tests/Support/_generated/*

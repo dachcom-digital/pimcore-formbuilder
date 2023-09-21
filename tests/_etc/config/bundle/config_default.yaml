@@ -1,0 +1,35 @@
+services:
+    DachcomBundle\Test\Support\Services\TestSimpleDynamicChoices:
+        autowire: true
+        public: false
+        tags:
+            - { name: form_builder.dynamic_choice_builder, label: 'Simple Test Selector' }
+
+    DachcomBundle\Test\Support\Services\TestAdvancedDynamicChoices:
+        autowire: true
+        public: false
+        tags:
+            - { name: form_builder.dynamic_choice_builder, label: 'Advanced Test Selector' }
+
+form_builder:
+
+    email:
+        html_2_text_options:
+            strip_tags: true
+            hard_break: false
+
+    form:
+        field:
+            templates:
+                default:
+                    value: 'default'
+                    label: 'form_builder_type_template.default'
+                    default: false
+                full:
+                    value: 'col-12'
+                    label: 'form_builder_type_template.full'
+                    default: true
+                half:
+                    value: 'col-6'
+                    label: 'form_builder_type_template.half'
+                    default: false

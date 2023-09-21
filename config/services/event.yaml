@@ -1,0 +1,34 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\EventSubscriber\FormBuilderSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Core\RequestListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Core\MailParamListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Core\FunnelRouteListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Core\FunnelFormAssemblingListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Admin\AssetListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    FormBuilderBundle\EventListener\Core\CleanUpListener:
+        tags:
+            - {name: pimcore.maintenance.task, type: formbuilder_clean_up }

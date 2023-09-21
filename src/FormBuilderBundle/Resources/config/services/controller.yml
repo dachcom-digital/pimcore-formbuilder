@@ -1,8 +1,0 @@
-services:
-
-    FormBuilderBundle\Controller\:
-        resource: '../../Controller'
-        public: true
-        autowire: true
-        autoconfigure: true
-        tags: ['controller.service_arguments']

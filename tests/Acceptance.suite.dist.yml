@@ -1,0 +1,21 @@
+actor: AcceptanceTester
+error_level: '%PIMCORE_PHP_ERROR_REPORTING%'
+bootstrap: _bootstrap.php
+modules:
+    config:
+        \Dachcom\Codeception\Support\Helper\Browser\WebDriver:
+            host: '%WEBDRIVER_HOST%'
+            url: '%WEBDRIVER_URL%'
+            browser: chrome
+            port: 4444
+            restart: true
+    enabled:
+        - \Dachcom\Codeception\Support\Helper\PimcoreCore:
+            part: SERVICES
+            connect_db: true
+            rebootable_client: true
+        - \Dachcom\Codeception\Support\Helper\PimcoreBundleCore:
+            run_installer: true
+        - \Dachcom\Codeception\Support\Helper\Browser\WebDriver
+        - \Dachcom\Codeception\Support\Helper\PimcoreUser
+        - \DachcomBundle\Test\Support\Helper\PimcoreBackend

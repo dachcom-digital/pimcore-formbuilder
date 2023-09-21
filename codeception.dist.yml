@@ -1,14 +1,15 @@
 namespace: DachcomBundle\Test
+support_namespace: Support
 actor: Tester
 paths:
     tests: tests
-    output: tests/_output
-    data: tests/_data
-    support: tests/_support
     envs: tests/_envs
+    output: tests/_output
     log: tests/_output/var/logs
+    data: tests/_data
+    support: tests/Support
+bootstrap: _bootstrap.php
 settings:
-    bootstrap: _bootstrap.php
     memory_limit: -1
     colors: true
 params:

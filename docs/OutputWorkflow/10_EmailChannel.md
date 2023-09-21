@@ -10,13 +10,13 @@ There is also a `Default` fallback field. If a requested locale can't be found d
 
 ## Available Options
 
-| Name | Type        | Description |
-|------|-------------|-------------|
-| Mail Template | Pimcore Mail Type | Use it to define the mail template via drag'n'drop. |
-| Ignored Field in Email | Tags | In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user. Add one or multiple fields as string. *Notice:* The field name needs be identical to the field name in your form configuration. |
-| Allow Attachment | Checkbox | If this is checked, attachments or attachments-links will be appended to the mail. |
-| Force Plain Text Submission | Checkbox | If you want to force the plain text submission, you need to check this option. Read more about the submission types [below](./10_EmailChannel.md#mail-submission-types). |
-| Required By | Checkbox | If this is checked, you need to add your own data to the mail template. You can use all the field names as placeholder. This function is only necessary in rare cases. |
+| Name                        | Type              | Description                                                                                                                                                                                                                                  |
+|-----------------------------|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Mail Template               | Pimcore Mail Type | Use it to define the mail template via drag'n'drop.                                                                                                                                                                                          |
+| Ignored Field in Email      | Tags              | In some cases, you don't want to send specific fields via mail. For example, if you send a copy to the user. Add one or multiple fields as string. *Notice:* The field name needs be identical to the field name in your form configuration. |
+| Allow Attachment            | Checkbox          | If this is checked, attachments or attachments-links will be appended to the mail.                                                                                                                                                           |
+| Force Plain Text Submission | Checkbox          | If you want to force the plain text submission, you need to check this option. Read more about the submission types [below](./10_EmailChannel.md#mail-submission-types).                                                                     |
+| Required By                 | Checkbox          | If this is checked, you need to add your own data to the mail template. You can use all the field names as placeholder. This function is only necessary in rare cases.                                                                       |
 
 ***
 
@@ -62,15 +62,14 @@ You'll find all available options directly on GitHub via [thephpleague/html-to-m
 ***
 
 ## Mail Layout Editor
+https://user-images.githubusercontent.com/700119/266572709-6367f49b-9f86-4d5a-8029-45067d629733.png
 
-![](http://g.recordit.co/OJ7uM6FxY0.gif)
-
-> **Attention**: This mail layout editor does not respect any special mail template language (like inky)!
- 
 ## Things to know
 - Always save your form before opening the mail editor
 
-## Custom Service
+***
+
+## Custom Widget
 Use the mail editor to specify some special mail templates.
 It's very easy to add some custom template widgets (Eg. date field).
 
@@ -114,12 +113,45 @@ class DateWidget implements MailEditorWidgetInterface
         ];
     }
 
-    public function getValueForOutput(array $config)
+    public function getValueForOutput(array $config, string $layoutType)
     {
         $form = $config['form'];
         $link = isset($config['link']) ? $config['link'] : '';
 
         return 'SPECIAL_DATA';
+    }
+}
+```
+
+## Template Parser
+
+### Build-In Parser
+- Inky Parser (Only available if emailizr has been installed)
+- PlainText Parser
+
+### Custom Template Parser
+
+```yaml
+App\MailEditor\Parser\TemplateParser\MySpecialParser:
+    tags:
+        - { name: form_builder.mail_editor.template_parser }
+```
+
+```php
+<?php
+
+namespace App\MailEditor\Parser\TemplateParser;
+
+class MySpecialParser implements TemplateParserInterface
+{
+    public function supports(string $layoutType, string $layout): bool
+    {
+        return $layoutType === 'text';
+    }
+
+    public function parse(string $template): string
+    {
+        return str_replace(['<br />', '<br>'], "\n", $template);
     }
 }
 ```
