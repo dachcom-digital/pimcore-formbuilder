@@ -211,7 +211,7 @@ Formbuilder.extjs.components.successMessageToggleComponent = Class.create({
             anchor: '100%',
             labelAlign: 'top',
             summaryDisplay: true,
-            allowBlank: false,
+            allowBlank: true,
             emptyText: t('form_builder_success_message_text_empty'),
             value: this.data ? this.data.flashMessage : null,
             flex: 1,
