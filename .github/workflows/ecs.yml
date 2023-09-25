@@ -114,4 +114,4 @@ jobs:
                 continue-on-error: true
                 run: |
                     bin/console cache:warmup --env=test
-                    vendor/bin/ecs check ${{ github.workspace }}/lib/test-bundle/src/FormBuilderBundle --config ${{ github.workspace }}/lib/test-bundle/ecs.php
+                    vendor/bin/ecs check ${{ github.workspace }}/lib/test-bundle/src --config ${{ github.workspace }}/lib/test-bundle/ecs.php
