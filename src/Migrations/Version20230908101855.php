@@ -35,9 +35,6 @@ final class Version20230908101855 extends AbstractMigration
                                 return $condition;
                             }
 
-                            $condition['outputWorkflows'][0] = 21;
-                            $condition['outputWorkflows'][1] = 1;
-
                             foreach ($condition['outputWorkflows'] as $index => $outputWorkflowId) {
 
                                 if (!isset($workflowIdMap[$outputWorkflowId])) {
@@ -56,7 +53,7 @@ final class Version20230908101855 extends AbstractMigration
 
                             return $condition;
 
-                        }, $logic['condition'])
+                        }, $logic['condition'] ?? [])
                     ),
                     'action'    => array_filter(
                         array_map(static function ($action) use ($workflowIdMap) {
@@ -73,7 +70,7 @@ final class Version20230908101855 extends AbstractMigration
 
                             return $action;
 
-                        }, $logic['action'])
+                        }, $logic['action'] ?? [])
                     )
                 ];
             }, unserialize($form['conditionalLogic']));
@@ -94,6 +91,7 @@ final class Version20230908101855 extends AbstractMigration
         $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE conditionalLogic LIKE '%switchOutputWorkflow%'");
 
         foreach ($forms as $form) {
+
             $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
                     'condition' => array_map(static function ($condition) use ($workflowIdMap) {
@@ -107,7 +105,7 @@ final class Version20230908101855 extends AbstractMigration
 
                         return $condition;
 
-                    }, $logic['condition']),
+                    }, $logic['condition'] ?? []),
                     'action'    => array_map(static function ($action) use ($workflowIdMap) {
                         if ($action['type'] !== 'switchOutputWorkflow') {
                             return $action;
@@ -118,7 +116,7 @@ final class Version20230908101855 extends AbstractMigration
 
                         return $action;
 
-                    }, $logic['action'])
+                    }, $logic['action'] ?? [])
                 ];
             }, unserialize($form['conditionalLogic']));
 

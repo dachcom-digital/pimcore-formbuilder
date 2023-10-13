@@ -56,7 +56,7 @@ Formbuilder.extjs.conditionalLogic.action.switchOutputWorkflow = Class.create(Fo
                             });
                         }.bind(this),
                         updateIndexName: function (sectionId, index) {
-                            this.name = _.generateFieldName(sectionId, index, 'outputWorkflows');
+                            this.name = _.generateFieldName(sectionId, index, 'workflowName');
                         }
                     }
                 }

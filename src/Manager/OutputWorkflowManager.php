@@ -79,4 +79,32 @@ class OutputWorkflowManager
     {
         return $this->outputWorkflowRepository->findByNameAndFormId($name, $formId);
     }
+
+    public function outputWorkflowIsRequiredByConditionalLogic(OutputWorkflowInterface $outputWorkflow): bool
+    {
+        $cl = $outputWorkflow->getFormDefinition()->getConditionalLogic();
+
+        foreach ($cl as $block) {
+
+            if (count(
+                    array_filter(
+                        $block['condition'] ?? [],
+                        static function (array $condition) use ($outputWorkflow) {
+                            return $condition['type'] === 'outputWorkflow' && in_array($outputWorkflow->getName(), $condition['outputWorkflows'], true);
+                        })) > 0) {
+                return true;
+            }
+
+            if (count(
+                    array_filter(
+                        $block['action'] ?? [],
+                        static function (array $action) use ($outputWorkflow) {
+                            return $action['type'] === 'switchOutputWorkflow' && $action['workflowName'] === $outputWorkflow->getName();
+                        })) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
