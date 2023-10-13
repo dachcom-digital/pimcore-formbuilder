@@ -18,23 +18,25 @@ final class Version20230908101855 extends AbstractMigration
     {
         $workflowIdMapData = $this->connection->fetchAllAssociative('SELECT id, name FROM formbuilder_output_workflow');
 
-        $workflowIdMap = array_reduce($workflowIdMapData, function ($carry, $data) {
+        $workflowIdMap = array_reduce($workflowIdMapData, static function ($carry, $data) {
             $carry[$data['id']] = $data['name'];
             return $carry;
         }, []);
+
         $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE conditionalLogic LIKE '%switchOutputWorkflow%'");
 
         foreach ($forms as $form) {
-            $conditionalLogic = array_map(static function ($logic) use($workflowIdMap) {
+            $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
                     'condition' => $logic['condition'],
-                    'action' => array_map(static function ($action) use($workflowIdMap){
+                    'action'    => array_map(static function ($action) use ($workflowIdMap) {
                         if ($action['type'] !== 'switchOutputWorkflow') {
                             return $action;
                         }
 
                         $action['workflowName'] = $workflowIdMap[$action['workflowId']];
                         unset($action['workflowId']);
+
                         return $action;
 
                     }, $logic['action'])
@@ -49,23 +51,25 @@ final class Version20230908101855 extends AbstractMigration
     {
         $workflowIdMapData = $this->connection->fetchAllAssociative('SELECT id, name FROM formbuilder_output_workflow');
 
-        $workflowIdMap = array_reduce($workflowIdMapData, function ($carry, $data) {
+        $workflowIdMap = array_reduce($workflowIdMapData, static function ($carry, $data) {
             $carry[$data['name']] = $data['id'];
             return $carry;
         }, []);
+
         $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE conditionalLogic LIKE '%switchOutputWorkflow%'");
 
         foreach ($forms as $form) {
-            $conditionalLogic = array_map(static function ($logic) use($workflowIdMap) {
+            $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
                     'condition' => $logic['condition'],
-                    'action' => array_map(static function ($action) use($workflowIdMap){
+                    'action'    => array_map(static function ($action) use ($workflowIdMap) {
                         if ($action['type'] !== 'switchOutputWorkflow') {
                             return $action;
                         }
 
                         $action['workflowId'] = $workflowIdMap[$action['workflowName']];
                         unset($action['workflowName']);
+
                         return $action;
 
                     }, $logic['action'])
