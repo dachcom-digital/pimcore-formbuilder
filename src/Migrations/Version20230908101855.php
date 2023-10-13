@@ -29,29 +29,52 @@ final class Version20230908101855 extends AbstractMigration
 
             $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
-                    'condition' => array_map(static function ($condition) use ($workflowIdMap) {
-                        if ($condition['type'] !== 'outputWorkflow') {
+                    'condition' => array_filter(
+                        array_map(static function ($condition) use ($workflowIdMap) {
+                            if ($condition['type'] !== 'outputWorkflow') {
+                                return $condition;
+                            }
+
+                            $condition['outputWorkflows'][0] = 21;
+                            $condition['outputWorkflows'][1] = 1;
+
+                            foreach ($condition['outputWorkflows'] as $index => $outputWorkflowId) {
+
+                                if (!isset($workflowIdMap[$outputWorkflowId])) {
+                                    unset($condition['outputWorkflows'][$index]);
+                                    continue;
+                                }
+
+                                $condition['outputWorkflows'][$index] = $workflowIdMap[$outputWorkflowId];
+                            }
+
+                            if (count($condition['outputWorkflows']) === 0) {
+                                return null;
+                            }
+
+                            $condition['outputWorkflows'] = array_values($condition['outputWorkflows']);
+
                             return $condition;
-                        }
 
-                        foreach ($condition['outputWorkflows'] as $index => $outputWorkflowId) {
-                            $condition['outputWorkflows'][$index] = $workflowIdMap[$outputWorkflowId];
-                        }
+                        }, $logic['condition'])
+                    ),
+                    'action'    => array_filter(
+                        array_map(static function ($action) use ($workflowIdMap) {
+                            if ($action['type'] !== 'switchOutputWorkflow') {
+                                return $action;
+                            }
 
-                        return $condition;
+                            if (!isset($workflowIdMap[$action['workflowId']])) {
+                                return null;
+                            }
 
-                    }, $logic['condition']),
-                    'action' => array_map(static function ($action) use ($workflowIdMap) {
-                        if ($action['type'] !== 'switchOutputWorkflow') {
+                            $action['workflowName'] = $workflowIdMap[$action['workflowId']];
+                            unset($action['workflowId']);
+
                             return $action;
-                        }
 
-                        $action['workflowName'] = $workflowIdMap[$action['workflowId']];
-                        unset($action['workflowId']);
-
-                        return $action;
-
-                    }, $logic['action'])
+                        }, $logic['action'])
+                    )
                 ];
             }, unserialize($form['conditionalLogic']));
 
