@@ -25,7 +25,7 @@ Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formb
                     anchor: '100%',
                     stacked: true,
                     displayField: 'name',
-                    valueField: 'id',
+                    valueField: 'name',
                     allowBlank: false,
                     flex: 1,
                     queryMode: 'local',
@@ -49,7 +49,7 @@ Formbuilder.extjs.conditionalLogic.condition.outputWorkflow = Class.create(Formb
                         afterrender: function (cb) {
                             cb.store.load({
                                 callback: function () {
-                                    var value = this.data ? this.checkFieldAvailability(this.data.outputWorkflows, cb.store, 'id') : null;
+                                    var value = this.data ? this.checkFieldAvailability(this.data.outputWorkflows, cb.store, 'name') : null;
                                     cb.setValue(value);
                                 }.bind(this)
                             });

@@ -2,6 +2,8 @@
 
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition;
 
+use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface;
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ConditionTrait;
 
 class OutputWorkflowCondition implements ConditionInterface
@@ -9,6 +11,10 @@ class OutputWorkflowCondition implements ConditionInterface
     use ConditionTrait;
 
     protected array $outputWorkflow = [];
+
+    public function __construct(protected OutputWorkflowRepositoryInterface $outputWorkflowRepository)
+    {
+    }
 
     public function isValid(array $formData, int $ruleId, array $configuration = []): bool
     {
@@ -27,7 +33,14 @@ class OutputWorkflowCondition implements ConditionInterface
             return true;
         }
 
-        return in_array($configuration['formRuntimeOptions']['form_output_workflow'], $this->getOutputWorkflows(), true);
+        $formOutputWorkflowId = $configuration['formRuntimeOptions']['form_output_workflow'];
+        $outputWorkflow = $this->outputWorkflowRepository->findById($formOutputWorkflowId);
+
+        if (!$outputWorkflow instanceof OutputWorkflowInterface) {
+            return false;
+        }
+
+        return in_array($outputWorkflow->getName(), $this->getOutputWorkflows(), true);
     }
 
     public function getOutputWorkflows(): array

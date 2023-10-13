@@ -26,10 +26,22 @@ final class Version20230908101855 extends AbstractMigration
         $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE conditionalLogic LIKE '%switchOutputWorkflow%'");
 
         foreach ($forms as $form) {
+
             $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
-                    'condition' => $logic['condition'],
-                    'action'    => array_map(static function ($action) use ($workflowIdMap) {
+                    'condition' => array_map(static function ($condition) use ($workflowIdMap) {
+                        if ($condition['type'] !== 'outputWorkflow') {
+                            return $condition;
+                        }
+
+                        foreach ($condition['outputWorkflows'] as $index => $outputWorkflowId) {
+                            $condition['outputWorkflows'][$index] = $workflowIdMap[$outputWorkflowId];
+                        }
+
+                        return $condition;
+
+                    }, $logic['condition']),
+                    'action' => array_map(static function ($action) use ($workflowIdMap) {
                         if ($action['type'] !== 'switchOutputWorkflow') {
                             return $action;
                         }
@@ -61,7 +73,18 @@ final class Version20230908101855 extends AbstractMigration
         foreach ($forms as $form) {
             $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
-                    'condition' => $logic['condition'],
+                    'condition' => array_map(static function ($condition) use ($workflowIdMap) {
+                        if ($condition['type'] !== 'outputWorkflow') {
+                            return $condition;
+                        }
+
+                        foreach ($condition['outputWorkflows'] as $index => $outputWorkflowId) {
+                            $condition['outputWorkflows'][$index] = $workflowIdMap[$outputWorkflowId];
+                        }
+
+                        return $condition;
+
+                    }, $logic['condition']),
                     'action'    => array_map(static function ($action) use ($workflowIdMap) {
                         if ($action['type'] !== 'switchOutputWorkflow') {
                             return $action;
