@@ -23,7 +23,7 @@ final class Version20230908101855 extends AbstractMigration
             return $carry;
         }, []);
 
-        $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE conditionalLogic LIKE '%switchOutputWorkflow%'");
+        $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE (conditionalLogic LIKE '%\"switchOutputWorkflow\"%' OR conditionalLogic LIKE '%\"outputWorkflow\"%')");
 
         foreach ($forms as $form) {
 
@@ -88,7 +88,7 @@ final class Version20230908101855 extends AbstractMigration
             return $carry;
         }, []);
 
-        $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE conditionalLogic LIKE '%switchOutputWorkflow%'");
+        $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE (conditionalLogic LIKE '%\"switchOutputWorkflow\"%' OR conditionalLogic LIKE '%\"outputWorkflow\"%')");
 
         foreach ($forms as $form) {
 
