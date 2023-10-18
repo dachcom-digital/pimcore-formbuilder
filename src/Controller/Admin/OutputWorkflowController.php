@@ -184,6 +184,13 @@ class OutputWorkflowController extends AdminAbstractController
                     'message' => sprintf('Output Workflow with name "%s" already exists in this form!', $outputWorkflowName)
                 ]);
             }
+
+            if ($this->outputWorkflowManager->outputWorkflowIsRequiredByConditionalLogic($outputWorkflow)) {
+                return $this->json([
+                    'success' => false,
+                    'message' => sprintf('Output Workflow with name "%s" is required in conditional logic section. Please remove those dependencies first!', $outputWorkflowName)
+                ]);
+            }
         }
 
         $form = $this->formFactory->createNamed('', OutputWorkflowType::class, $outputWorkflow);
@@ -203,7 +210,7 @@ class OutputWorkflowController extends AdminAbstractController
             }
 
             $success = false;
-            $message = join('<br>', $errors);
+            $message = implode('<br>', $errors);
         }
 
         return $this->adminJson([

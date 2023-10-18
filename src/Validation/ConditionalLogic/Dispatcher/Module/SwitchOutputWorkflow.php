@@ -65,11 +65,11 @@ class SwitchOutputWorkflow implements ModuleInterface
                 continue;
             }
 
-            if (!isset($returnStackData['workflowId']) || !is_numeric($returnStackData['workflowId'])) {
+            if (empty($returnStackData['workflowName'])) {
                 continue;
             }
 
-            $switchWorkflowConfig['workflowId'] = (int) $returnStackData['workflowId'];
+            $switchWorkflowConfig['workflowName'] = $returnStackData['workflowName'];
         }
 
         $returnContainer->setData($switchWorkflowConfig);

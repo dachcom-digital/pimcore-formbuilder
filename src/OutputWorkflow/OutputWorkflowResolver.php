@@ -29,8 +29,8 @@ class OutputWorkflowResolver implements OutputWorkflowResolverInterface
         /** @var SwitchOutputWorkflowData $switchOutputWorkflowData */
         $switchOutputWorkflowData = $this->checkOutputWorkflowCondition('switch_output_workflow', $data, $formRuntimeData, []);
 
-        if ($switchOutputWorkflowData->hasOutputWorkflowId()) {
-            $userSelectedOutputWorkflow = $switchOutputWorkflowData->getOutputWorkflowId();
+        if ($switchOutputWorkflowData->hasOutputWorkflowName()) {
+            $userSelectedOutputWorkflow = $switchOutputWorkflowData->getOutputWorkflowName();
         }
 
         $outputWorkflows = $formDefinition->getOutputWorkflows();

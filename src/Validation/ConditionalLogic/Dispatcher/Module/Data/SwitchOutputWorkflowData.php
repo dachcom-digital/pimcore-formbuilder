@@ -4,7 +4,7 @@ namespace FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data;
 
 class SwitchOutputWorkflowData implements DataInterface
 {
-    public const IDENTIFIER = 'workflowId';
+    public const IDENTIFIER = 'workflowName';
 
     private array $data = [];
 
@@ -23,14 +23,14 @@ class SwitchOutputWorkflowData implements DataInterface
         return $this->data;
     }
 
-    public function hasOutputWorkflowId(): bool
+    public function hasOutputWorkflowName(): bool
     {
-        return isset($this->data[self::IDENTIFIER]) && is_int($this->data[self::IDENTIFIER]);
+        return !empty($this->data[self::IDENTIFIER]);
     }
 
-    public function getOutputWorkflowId(): ?int
+    public function getOutputWorkflowName(): ?string
     {
-        if (!$this->hasOutputWorkflowId()) {
+        if (!$this->hasOutputWorkflowName()) {
             return null;
         }
 

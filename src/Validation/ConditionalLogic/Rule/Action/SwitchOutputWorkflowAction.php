@@ -10,25 +10,25 @@ class SwitchOutputWorkflowAction implements ActionInterface
 {
     use ActionTrait;
 
-    protected ?string $workflowId = null;
+    protected ?string $workflowName = null;
 
     public function apply(bool $validationState, array $formData, int $ruleId): ReturnStackInterface
     {
         $data = [];
         if ($validationState === true) {
-            $data['workflowId'] = $this->getWorkflowId();
+            $data['workflowName'] = $this->getWorkflowName();
         }
 
         return new SimpleReturnStack('switchOutputWorkflow', $data);
     }
 
-    public function getWorkflowId(): ?string
+    public function getWorkflowName(): ?string
     {
-        return $this->workflowId;
+        return $this->workflowName;
     }
 
-    public function setWorkflowId(string $workflowId): void
+    public function setWorkflowName(string $workflowName): void
     {
-        $this->workflowId = $workflowId;
+        $this->workflowName = $workflowName;
     }
 }
