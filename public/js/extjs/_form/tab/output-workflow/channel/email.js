@@ -29,7 +29,7 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.email = Class.create(Formbuil
     getConfigFields: function (locale) {
 
         var localeData = this.data !== null && this.data.hasOwnProperty(locale) ? this.data[locale] : null,
-            hasMailLayoutData = localeData !== null && localeData.hasOwnProperty('mailLayoutData') && localeData.mailLayoutData !== null;
+            hasMailLayoutData = localeData !== null && localeData.hasOwnProperty('mailLayoutData') && Ext.isObject(localeData.mailLayoutData) && !Ext.Object.isEmpty(localeData.mailLayoutData);
 
         if (localeData !== null && hasMailLayoutData === true) {
             this.mailTemplateData[locale] = localeData.mailLayoutData;

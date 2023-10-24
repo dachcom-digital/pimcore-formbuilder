@@ -261,7 +261,7 @@ class MailParser
     {
         $data = null;
 
-        if (array_key_exists('mailLayoutData', $channelConfiguration) && is_array($channelConfiguration['mailLayoutData'])) {
+        if (array_key_exists('mailLayoutData', $channelConfiguration) && is_array($channelConfiguration['mailLayoutData']) && !empty($channelConfiguration['mailLayoutData'])) {
             $data = $forcePlainText ? $channelConfiguration['mailLayoutData']['text'] : $channelConfiguration['mailLayoutData']['html'];
         }
 

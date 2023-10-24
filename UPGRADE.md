@@ -1,5 +1,8 @@
 # Upgrade Notes
  
+## 5.0.1
+- Fix Mail Layout Editor Availability State [#420](https://github.com/dachcom-digital/pimcore-formbuilder/issues/420)
+
 ## Migrating from Version 4.x to Version 5.0
 - Execute: `bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'`
 
