@@ -20,7 +20,7 @@ jobs:
             APP_ENV: test
             PIMCORE_TEST_DB_DSN: "mysql://test:test@127.0.0.1:3306/dachcom_bundle_test"
             PIMCORE_TEST_URL: "http://localhost"
-            PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes/DataObject"
+            PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes"
 
             SYMFONY_DEPRECATIONS_HELPER: "weak"
             PIMCORE_PHP_ERROR_REPORTING: 32767
