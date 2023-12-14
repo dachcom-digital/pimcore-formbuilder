@@ -297,16 +297,32 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
 
     initEditor: function (type, editorId, locale) {
 
-        var editorInstance;
+        const userLanguage = pimcore.globalmanager.get('user').language;
+
+        let editorInstance,
+            language,
+            languageMapping = {
+                fr: 'fr_FR',
+                pt: 'pt_PT',
+                sv: 'sv_SE',
+                th: 'th_TH',
+                hu: 'hu_HU'
+            };
 
         if (this.editors.hasOwnProperty(editorId)) {
             return;
         }
 
+        language = languageMapping[userLanguage];
+
+        if (!language) {
+            language = userLanguage;
+        }
+
         editorInstance = tinymce.init({
             icons: 'customIcons',
             height: 500,
-            language: pimcore.settings['language'],
+            language: language,
             resize: false,
             menubar: false,
             block_unsupported_drop: false,
@@ -328,6 +344,9 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             table_advtab: false,
             table_row_advtab: false,
             table_cell_advtab: false,
+            base_url: '/bundles/pimcoretinymce/build/tinymce',
+            suffix: '.min',
+            convert_urls: false,
             content_style: `
                 
                 .mce-content-body inline-token[contentEditable=false][data-mce-selected] {
