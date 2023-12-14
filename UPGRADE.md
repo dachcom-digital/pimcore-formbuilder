@@ -1,5 +1,8 @@
 # Upgrade Notes
  
+## 5.0.2
+- Fix Mail Layout Editor base path [#426](https://github.com/dachcom-digital/pimcore-formbuilder/issues/426)
+
 ## 5.0.1
 - Fix Mail Layout Editor Availability State [#420](https://github.com/dachcom-digital/pimcore-formbuilder/issues/420)
 
