@@ -1,5 +1,8 @@
 # Upgrade Notes
  
+## 5.0.3
+- Fix element type check in api channel [#423](https://github.com/dachcom-digital/pimcore-formbuilder/issues/423)
+
 ## 5.0.2
 - Fix Mail Layout Editor base path [#426](https://github.com/dachcom-digital/pimcore-formbuilder/issues/426)
 
