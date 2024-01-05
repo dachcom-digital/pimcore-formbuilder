@@ -122,7 +122,7 @@ class ApiOutputChannelWorker
             foreach ($apiMappingFields as $apiMappingField) {
 
                 $context = [
-                    'type'            => $formField['type'],
+                    'type'            => $formField['type'] ?? null,
                     'parentType'      => $hasParent ? $parentType : null,
                     'formData'        => $formData,
                     'formField'       => $formField,
@@ -130,6 +130,8 @@ class ApiOutputChannelWorker
                 ];
 
                 $nodes[$apiMappingField] = $this->findFormFieldValue($formField, $fieldTransformer, $context);
+
+                unset($apiMappingField);
             }
 
             if ($hasChildren) {

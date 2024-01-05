@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.5.1
+- **[BUGFIX]**: Fix element type check in api channel [#423](https://github.com/dachcom-digital/pimcore-formbuilder/issues/423)
+
 ## Version 4.5.0
 - **[BUGFIX]**: allow `GET` operation on `/form-control/get-url-structure` route [#383](https://github.com/dachcom-digital/pimcore-formbuilder/issues/383)
 - **[BUGFIX]**: suppress php warning of undefined array key [@jheimbach](https://github.com/dachcom-digital/pimcore-formbuilder/pull/387)
