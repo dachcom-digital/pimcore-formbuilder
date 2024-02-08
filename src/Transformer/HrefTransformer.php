@@ -28,6 +28,13 @@ class HrefTransformer implements OptionsTransformerInterface
             $type = $value['type'];
             $id = $value['id'];
 
+            if (
+                !in_array($type, ['object', 'asset', 'document'])
+                || empty($id)
+            ) {
+                continue;
+            }
+
             if (is_numeric($id)) {
                 $element = Service::getElementById($type, $id);
             } else {
