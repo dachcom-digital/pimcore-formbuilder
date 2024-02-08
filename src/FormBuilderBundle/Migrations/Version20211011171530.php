@@ -55,13 +55,13 @@ final class Version20211011171530 extends AbstractMigration
 
             $configuration = $data['config'] ?? [];
             $conditionalLogic = $data['conditional_logic'] ?? [];
-            $fields = $data['fields'] ?? [];
 
-            $fixedFields = $this->ensureSymfony5Compatibility($fields);
+            $fields = $data['fields'] ?? [];
+            $this->ensureSymfony5Compatibility($fields);
 
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `configuration` = "%s" WHERE `id` = %d', addslashes(serialize($configuration)), $formDefinitionId));
             $this->addSql(sprintf('UPDATE formbuilder_forms SET `conditionalLogic` = "%s" WHERE `id` = %d', addslashes(serialize($conditionalLogic)), $formDefinitionId));
-            $this->addSql(sprintf('UPDATE formbuilder_forms SET `fields` = "%s" WHERE `id` = %d', addslashes(serialize($fixedFields)), $formDefinitionId));
+            $this->addSql(sprintf('UPDATE formbuilder_forms SET `fields` = "%s" WHERE `id` = %d', addslashes(serialize($fields)), $formDefinitionId));
         }
     }
 
@@ -70,10 +70,9 @@ final class Version20211011171530 extends AbstractMigration
         // disabled
     }
 
-    private function ensureSymfony5Compatibility(array $fields): array
+    private function ensureSymfony5Compatibility(array &$fields): void
     {
-        $fixedFields = [];
-        foreach ($fields as $field) {
+        foreach ($fields as &$field) {
             if ($field['type'] === 'choice') {
                 $this->fixChoiceField($field);
             }
@@ -82,10 +81,10 @@ final class Version20211011171530 extends AbstractMigration
                 $this->fixConstraints($field);
             }
 
-            $fixedFields[] = $field;
+            if (isset($field['fields']) && is_array($field['fields'])) {
+                $this->ensureSymfony5Compatibility($field['fields']);
+            }
         }
-
-        return $fixedFields;
     }
 
     private function fixChoiceField(array &$field): void
