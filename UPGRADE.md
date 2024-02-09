@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.5.2
+- **[BUGFIX]**: Fix element type check in api channel [@patkul0](https://github.com/dachcom-digital/pimcore-formbuilder/pull/433)
+
 ## 4.5.1
 - **[BUGFIX]**: Fix element type check in api channel [#423](https://github.com/dachcom-digital/pimcore-formbuilder/issues/423)
 
