@@ -98,9 +98,7 @@ jobs:
 
             -   name: Setup Chromium
                 run: |
-                    export DISPLAY=:99
-                    chromedriver --url-base=/wd/hub &
-                    sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+                    nohup $CHROMEWEBDRIVER/chromedriver --url-base=/wd/hub /dev/null 2>&1 &
 
             -   name: Start Symfony Server
                 run: |
@@ -135,7 +133,7 @@ jobs:
             -   name: Tests
                 run: |
                     bin/console cache:warmup --env=test
-                    vendor/bin/codecept run --env github -c ${{ github.workspace }}/lib/test-bundle
+                    vendor/bin/codecept run --env github -c ${{ github.workspace }}/lib/test-bundle tests/Acceptance/ExtJs/ConditionalLogicCest.php:testExtJsConditionalLogicBlockAddition --debug
 
             -   name: Log Output
                 uses: actions/upload-artifact@v2
