@@ -14,7 +14,7 @@ class BicConstraintCest extends AbstractConstraintCest
     /**
      * @var string
      */
-    protected $defaultErrorMessage = 'This is not a valid Business Identifier Code (BIC)';
+    protected $defaultErrorMessage = 'This value is not a valid Business Identifier Code (BIC)';
 
     /**
      * @var string
