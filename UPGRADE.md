@@ -1,8 +1,11 @@
 # Upgrade Notes
  
+## 5.0.5
+- Sort chunked uploaded files before merging
+
 ## 5.0.4
 - Add Additional HrefTransformer validation for `$type` and `$id` [@patkul0](https://github.com/dachcom-digital/pimcore-formbuilder/pull/434)
-- Fix chunked upload `$type` and `$id` [@life-style-de](https://github.com/dachcom-digital/pimcore-formbuilder/pull/430)
+- Fix chunked upload merge [@life-style-de](https://github.com/dachcom-digital/pimcore-formbuilder/pull/430)
 
 ## 5.0.3
 - Fix element type check in api channel [#423](https://github.com/dachcom-digital/pimcore-formbuilder/issues/423)

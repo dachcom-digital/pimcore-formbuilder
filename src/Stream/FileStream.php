@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Stream;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 use Pimcore\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -184,7 +185,15 @@ class FileStream implements FileStreamInterface
         $fileSafeName = $this->getSafeFileName($options['fileName']);
 
         $tmpStream = tmpfile();
-        $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid);
+        $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid)->toArray();
+
+        usort($chunkFiles, static function (StorageAttributes $a, StorageAttributes $b) {
+
+            $pathInfoA = pathinfo($a->path());
+            $pathInfoB = pathinfo($b->path());
+
+            return $pathInfoA['filename'] <=> $pathInfoB['filename'];
+        });
 
         foreach ($chunkFiles as $chunkFile) {
             $chunkPathResource = $this->formBuilderChunkStorage->readStream($chunkFile->path());
