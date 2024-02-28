@@ -34,7 +34,7 @@
         "pimcore/pimcore": "^10.5",
         "doctrine/orm": "^2.7"
     },
-    "conflict": {"league/csv": ">=9.11.0"}, "require-dev": {
+    "require-dev": {
         "codeception/codeception": "^4.1",
         "codeception/module-webdriver": "^1.4",
         "codeception/module-symfony": "^1.6",
