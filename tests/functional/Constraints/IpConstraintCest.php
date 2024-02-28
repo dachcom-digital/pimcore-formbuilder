@@ -14,7 +14,7 @@ class IpConstraintCest extends AbstractConstraintCest
     /**
      * @var string
      */
-    protected $defaultErrorMessage = 'This is not a valid IP address';
+    protected $defaultErrorMessage = 'This value is not a valid IP address';
 
     /**
      * @var string
