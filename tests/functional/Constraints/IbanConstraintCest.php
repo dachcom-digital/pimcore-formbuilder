@@ -14,7 +14,7 @@ class IbanConstraintCest extends AbstractConstraintCest
     /**
      * @var string
      */
-    protected $defaultErrorMessage = 'This is not a valid International Bank Account Number (IBAN)';
+    protected $defaultErrorMessage = 'This value is not a valid International Bank Account Number (IBAN)';
 
     /**
      * @var string
