@@ -183,18 +183,13 @@ class FileStream implements FileStreamInterface
         $uuid = $mainRequest->request->get($options['uuid']);
         $fileSafeName = $this->getSafeFileName($options['fileName']);
 
-        $totalParts = $mainRequest->request->has($options['totalChunkCount']) ? (int) $mainRequest->request->get($options['totalChunkCount']) : 1;
-
         $tmpStream = tmpfile();
-        for ($i = 0; $i < $totalParts; $i++) {
+        $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid);
 
-            $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid);
-
-            foreach ($chunkFiles as $chunkFile) {
-                $chunkPathResource = $this->formBuilderChunkStorage->readStream($chunkFile->path());
-                stream_copy_to_stream($chunkPathResource, $tmpStream);
-                fclose($chunkPathResource);
-            }
+        foreach ($chunkFiles as $chunkFile) {
+            $chunkPathResource = $this->formBuilderChunkStorage->readStream($chunkFile->path());
+            stream_copy_to_stream($chunkPathResource, $tmpStream);
+            fclose($chunkPathResource);
         }
 
         try {

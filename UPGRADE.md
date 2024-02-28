@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.5.3
+- **[BUGFIX]**: Fix chunked upload [@life-style-de](https://github.com/dachcom-digital/pimcore-formbuilder/pull/430)
+
 ## 4.5.2
 - **[BUGFIX]**: Fix element type check in api channel [@patkul0](https://github.com/dachcom-digital/pimcore-formbuilder/pull/433)
 
