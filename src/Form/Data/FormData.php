@@ -47,11 +47,8 @@ class FormData implements FormDataInterface
     public function getFieldValue(string $name): mixed
     {
         $array = $this->getData();
-        if (isset($array[$name])) {
-            return $array[$name];
-        }
 
-        return null;
+        return $array[$name] ?? null;
     }
 
     public function setFieldValue(string $name, $value): void
@@ -66,13 +63,9 @@ class FormData implements FormDataInterface
 
     public function __isset(string $name): bool
     {
-        if (!is_string($name)) {
-            return false;
-        }
+        $reflectionClass = new \ReflectionClass($this);
 
-        $data = $this->getData();
-
-        return isset($data[$name]);
+        return !$reflectionClass->hasProperty($name);
     }
 
     public function __get(string $name): mixed
