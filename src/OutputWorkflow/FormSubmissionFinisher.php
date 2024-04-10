@@ -68,7 +68,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             if ($e instanceof GuardOutputWorkflowException) {
                 $errorMessage = $e->getMessage();
             } elseif ($e instanceof GuardStackedException) {
-                $errorMessage = $e->getGuardExceptionMessages();
+                $errorMessage = implode(', ',$e->getGuardExceptionMessages());
             } else {
                 $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
             }
