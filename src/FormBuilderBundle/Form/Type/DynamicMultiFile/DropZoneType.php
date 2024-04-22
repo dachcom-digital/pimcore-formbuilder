@@ -7,13 +7,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DropZoneType extends AbstractType
 {
-    protected Translator $translator;
+    protected TranslatorInterface $translator;
 
-    public function __construct(Translator $translator)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
