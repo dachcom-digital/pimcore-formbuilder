@@ -331,7 +331,6 @@ Formbuilder.extjs.extensions.formMailEditor = Class.create({
             plugins: type === 'html' ? 'code link lists table' : 'code',
             toolbar: type === 'html' ? 'bold italic | bullist numlist link | code | inserttable' : 'code',
             custom_elements: '~fb-field,fb-container-field',
-            editable_root: false,
             forced_root_block: 'div',
             contextmenu: false,
             object_resizing: false,
