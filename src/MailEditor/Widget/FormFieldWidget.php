@@ -76,6 +76,11 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
     {
         $fieldValue = '';
         $label = $outputData['label'] ?? null;
+        $value = $outputData['value'] ?? null;
+
+        if ($label === null && $value === null) {
+            return '';
+        }
 
         if ($renderType === self::RENDER_TYPE_LABEL) {
             return !empty($label)
@@ -83,7 +88,7 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
                 : '';
         }
 
-        $fieldValue .= $this->parseFieldValue($outputData['value'] ?? '[NO VALUE]');
+        $fieldValue .= $this->parseFieldValue($value ?? '[NO VALUE]');
 
         return $fieldValue;
     }
