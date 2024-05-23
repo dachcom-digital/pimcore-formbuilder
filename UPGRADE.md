@@ -2,6 +2,7 @@
  
 ## 5.0.7
 - Remove `editable_root` restriction from mail editor
+- Skip widget field rendering, if no label and no value is available
 
 ## 5.0.6
 - Fix magic property access [#442](https://github.com/dachcom-digital/pimcore-formbuilder/issues/442)
