@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.5.4
+- **[BUGFIX]** Use Pimcore AdminUserTranslator for Editable Dialog Box [#450](https://github.com/dachcom-digital/pimcore-formbuilder/issues/450)
+
 ## 4.5.3
 - **[BUGFIX]** [Backport]: Fix chunked upload
 

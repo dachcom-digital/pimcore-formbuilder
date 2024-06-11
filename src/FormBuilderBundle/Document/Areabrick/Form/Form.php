@@ -12,7 +12,7 @@ use Pimcore\Extension\Document\Areabrick\AbstractAreabrick;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model\Document;
-use Pimcore\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class Form extends AbstractAreabrick implements EditableDialogBoxInterface
@@ -21,14 +21,14 @@ class Form extends AbstractAreabrick implements EditableDialogBoxInterface
     protected PresetManager $presetManager;
     protected FormAssembler $formAssembler;
     protected TemplateManager $templateManager;
-    protected Translator $translator;
+    protected TranslatorInterface $translator;
 
     public function __construct(
         FormDefinitionManager $formDefinitionManager,
         PresetManager $presetManager,
         FormAssembler $formAssembler,
         TemplateManager $templateManager,
-        Translator $translator
+        TranslatorInterface $translator,
     ) {
         $this->formDefinitionManager = $formDefinitionManager;
         $this->presetManager = $presetManager;
