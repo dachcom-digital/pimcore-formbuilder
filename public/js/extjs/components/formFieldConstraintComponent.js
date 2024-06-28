@@ -132,6 +132,7 @@ Formbuilder.extjs.components.formFieldConstraint = Class.create({
 
             switch (configElement.type) {
                 case 'string':
+                case 'mixed':
                     field = new Ext.form.TextField({
                         fieldLabel: configElement.name,
                         name: 'config.' + configElement.name,
