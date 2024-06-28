@@ -27,14 +27,6 @@ final class FriendlyCaptchaType extends AbstractType
         $config = $this->configuration->getConfig('spam_protection');
         $friendlyCaptchaConfig = $config['friendly_captcha'];
 
-        if (!empty($options['callback'])) {
-            $view->vars['attr']['data-callback'] = $options['callback'];
-        }
-
-        if (!empty($options['callback'])) {
-            $view->vars['attr']['data-callback'] = $options['callback'];
-        }
-
         $locale = $options['lang'] ?? null;
         if ($locale === null) {
             $locale = $this->requestStack->getCurrentRequest()?->getLocale() ?? 'en';
