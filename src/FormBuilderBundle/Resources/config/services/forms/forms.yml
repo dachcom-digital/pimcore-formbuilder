@@ -6,6 +6,14 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Type\FriendlyCaptchaType:
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@FormBuilderBundle\Configuration\Configuration'
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Type\DynamicFormType:
         public: false
         arguments:

@@ -1,0 +1,35 @@
+form_builder:
+    types:
+        friendly_captcha:
+            class: FormBuilderBundle\Form\Type\FriendlyCaptchaType
+            backend:
+                form_type_group: security_fields
+                label: 'form_builder_type.friendly_captcha'
+                icon_class: 'form_builder_icon_friendly_captcha'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~
+                    options.start:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.friendly_captcha.start'
+                        config:
+                            options:
+                                - ['Focus', 'focus']
+                                - ['Auto', 'auto']
+                                - ['None', 'none']
+                    options.darkmode:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.friendly_captcha.darkmode'
+                        config:
+                            default_value: null
+                    options.callback:
+                        display_group_id: attributes
+                        type: textfield
+                        label: 'form_builder_type_field.friendly_captcha.callback'
+                        config:
+                            default_value: null

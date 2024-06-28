@@ -23,6 +23,10 @@ services:
     FormBuilderBundle\Tool\ReCaptchaProcessorInterface: '@FormBuilderBundle\Tool\ReCaptchaProcessor'
     FormBuilderBundle\Tool\ReCaptchaProcessor: ~
 
+    # tool: friendly captcha processor
+    FormBuilderBundle\Tool\FriendlyCaptchaProcessorInterface: '@FormBuilderBundle\Tool\FriendlyCaptchaProcessor'
+    FormBuilderBundle\Tool\FriendlyCaptchaProcessor: ~
+
     # configuration
     FormBuilderBundle\Configuration\Configuration: ~
 
