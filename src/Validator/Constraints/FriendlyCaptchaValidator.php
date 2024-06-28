@@ -9,11 +9,8 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 final class FriendlyCaptchaValidator extends ConstraintValidator
 {
-    protected FriendlyCaptchaProcessor $friendlyCaptchaProcessor;
-
-    public function __construct(FriendlyCaptchaProcessor $friendlyCaptchaProcessor)
+    public function __construct(protected FriendlyCaptchaProcessor $friendlyCaptchaProcessor)
     {
-        $this->friendlyCaptchaProcessor = $friendlyCaptchaProcessor;
     }
 
     public function validate(mixed $value, Constraint $constraint): void
