@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.5.5
+- **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
+
 ## 4.5.4
 - **[BUGFIX]** Use Pimcore AdminUserTranslator for Editable Dialog Box [#450](https://github.com/dachcom-digital/pimcore-formbuilder/issues/450)
 
