@@ -194,6 +194,10 @@
     background: url(/bundles/formbuilder/img/recaptcha_v3.svg) left center no-repeat !important;
 }
 
+.form_builder_icon_friendly_captcha {
+    background: url(/bundles/formbuilder/img/friendly_captcha.svg) left center no-repeat !important;
+}
+
 /*
     Conditional Logic
 */

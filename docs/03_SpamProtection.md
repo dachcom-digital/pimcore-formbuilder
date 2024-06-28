@@ -36,3 +36,23 @@ form_builder:
 3. Add the reCAPTCHA field to your form
 4. Enable the reCAPTCHA [javascript module](./91_Javascript.md)
 4. Done
+
+## Friendly Captcha
+Friendly Captcha is a system for preventing spam on your website.
+You can add the Friendly Captcha widget to your form to fight spam, with little impact to the user experience.
+
+1. Set your application: https://docs.friendlycaptcha.com/#/installation?id=_1-generating-a-sitekey
+2. Add site and secret key to your formbuilder settings:
+
+```yaml
+form_builder:
+    spam_protection:
+        friendly_captcha:
+            secret_key: 'YOUR_SECRET_KEY'
+            site_key: 'YOUR_SITE_KEY'
+            eu_only: false # see https://docs.friendlycaptcha.com/#/eu_endpoint (enterprise only)
+```
+
+3. Add the "Friendly Captcha" field to your form
+4. Enable the FriendlyCaptcha [javascript module](./91_Javascript.md)
+4. Done
