@@ -1,0 +1,10 @@
+{%- block form_builder_friendly_captcha_type_widget -%}
+    <div class="frc-captcha{{ form.vars.darkmode ? ' dark' : '' }} form-builder-friendly-captcha"
+         data-solution-field-name="{{ form.vars.full_name }}"
+         {% for type, value in form.vars.friendly_captcha_attributes %}
+            data-{{ type }}="{{ value }}"
+        {% endfor %}
+    >
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock  -%}

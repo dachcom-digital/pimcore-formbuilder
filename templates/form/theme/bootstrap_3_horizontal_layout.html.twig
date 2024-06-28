@@ -4,6 +4,7 @@
 {% use '@FormBuilder/form/theme/type/html_tag.html.twig' %}
 {% use '@FormBuilder/form/theme/type/snippet.html.twig' %}
 {% use '@FormBuilder/form/theme/type/container.html.twig' %}
+{% use '@FormBuilder/form/theme/type/friendly_captcha.html.twig' %}
 
 {% block help_text_label %}
     <span class="help-block">{{ help_text|trans }}</span>
@@ -68,6 +69,15 @@
         {{ parent() }}
     </div>
 {%- endblock radio_row %}
+
+{% block form_builder_friendly_captcha_type_row %}
+    <div class="formbuilder-row {{ attr['data-template'] is defined ? attr['data-template'] : 'col-xs-12' }}">
+        <div class="form-group">
+            {{- form_widget(form) -}}
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+{% endblock form_builder_friendly_captcha_type_row %}
 
 {% block form_builder_container_collection_widget %}
     {%- set attr = attr|merge({class: (attr.class|default('') ~ ' row')|trim}) -%}

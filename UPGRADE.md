@@ -1,4 +1,7 @@
 # Upgrade Notes
+
+## 5.1.0
+- **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
  
 ## 5.0.7
 - Remove `editable_root` restriction from mail editor
