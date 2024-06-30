@@ -641,6 +641,13 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('cloudflare_turnstile')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('site_key')->defaultNull()->end()
+                        ->scalarNode('secret_key')->defaultNull()->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $rootNode;

@@ -4,33 +4,26 @@ namespace FormBuilderBundle\Tool\FriendlyCaptcha;
 
 class Response
 {
-    private bool $success;
-    private ?string $details;
-    private ?array $errors;
-
     public static function fromJson(string $json): Response
     {
-        $responseData = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-
-        if (!$responseData) {
-            return new self(false, 'invalid-json', null);
+        try {
+            $responseData = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Throwable $e) {
+            return new self(false, 'invalid-json');
         }
 
-        $success = $responseData['success'] ?? false;
-        $details = $responseData['details'] ?? null;
-        $errors = $responseData['errors'] ?? null;
-
-        return new self($success, $details, $errors);
+        return new self(
+            $responseData['success'] ?? false,
+            $responseData['details'] ?? null,
+            $responseData['errors'] ?? null
+        );
     }
 
     public function __construct(
-        bool $success,
-        ?string $details,
-        ?array $errors
+        protected bool $success,
+        protected ?string $details,
+        protected ?array $errors = null
     ) {
-        $this->success = $success;
-        $this->details = $details;
-        $this->errors = $errors;
     }
 
     public function isSuccess(): bool

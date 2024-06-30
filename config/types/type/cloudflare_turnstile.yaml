@@ -1,0 +1,40 @@
+form_builder:
+    types:
+        cloudflare_turnstile:
+            class: FormBuilderBundle\Form\Type\CloudflareTurnstileType
+            backend:
+                form_type_group: security_fields
+                label: 'form_builder_type.cloudflare_turnstile'
+                icon_class: 'form_builder_icon_cloudflare_turnstile'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~
+                    options.theme:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.cloudflare_turnstile.theme'
+                        config:
+                            options:
+                                - ['Auto', 'auto']
+                                - ['Light', 'light']
+                                - ['Dark', 'dark']
+                    options.appearance:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.cloudflare_turnstile.appearance'
+                        config:
+                            options:
+                                - ['Always', 'always']
+                                - ['Execute', 'execute']
+                                - ['Interaction Only', 'interaction-only']
+                    options.size:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.cloudflare_turnstile.size'
+                        config:
+                            options:
+                                - ['Normal', 'normal']
+                                - ['Compact', 'compact']

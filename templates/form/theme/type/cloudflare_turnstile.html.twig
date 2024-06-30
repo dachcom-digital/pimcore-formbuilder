@@ -1,0 +1,10 @@
+{%- block form_builder_cloudflare_turnstile_type_widget -%}
+    <div class="cf-turnstile form-builder-cloudflare-turnstile"
+         data-response-field="true"
+         data-response-field-name="{{ form.vars.full_name }}"
+         {% for type, value in form.vars.turnstile_attributes %}
+            data-{{ type }}="{{ value }}"
+        {% endfor %}
+    >
+    </div>
+{%- endblock  -%}

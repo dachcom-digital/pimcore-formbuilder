@@ -27,6 +27,10 @@ services:
     FormBuilderBundle\Tool\FriendlyCaptchaProcessorInterface: '@FormBuilderBundle\Tool\FriendlyCaptchaProcessor'
     FormBuilderBundle\Tool\FriendlyCaptchaProcessor: ~
 
+    # tool: cloudflare turnstile processor
+    FormBuilderBundle\Tool\CloudflareTurnstileProcessorInterface: '@FormBuilderBundle\Tool\CloudflareTurnstileProcessor'
+    FormBuilderBundle\Tool\CloudflareTurnstileProcessor: ~
+
     # configuration
     FormBuilderBundle\Configuration\Configuration: ~
 
