@@ -56,3 +56,23 @@ form_builder:
 3. Add the "Friendly Captcha" field to your form
 4. Enable the FriendlyCaptcha [javascript module](./91_Javascript.md)
 4. Done
+
+## Cloudflare Turnstile
+Turnstile delivers frustration-free, CAPTCHA-free web experiences to website visitors - with just a simple snippet of free code.
+Moreover, Turnstile stops abuse and confirms visitors are real without the data privacy concerns or awful user experience of CAPTCHAs.
+
+1. Set your application: https://dash.cloudflare.com/
+2. Add site and secret key to your formbuilder settings:
+
+```yaml
+form_builder:
+    spam_protection:
+        cloudflare_turnstile:
+            secret_key: 'YOUR_SECRET_KEY'
+            site_key: 'YOUR_SITE_KEY'
+
+```
+
+3. Add the "Cloudflare Turnstile" field to your form
+4. Enable the CloudFlareTurnstile [javascript module](./91_Javascript.md)
+4. Done

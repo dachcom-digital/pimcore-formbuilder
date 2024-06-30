@@ -3,7 +3,7 @@
 namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Validator\Constraints\FriendlyCaptcha;
+use FormBuilderBundle\Validator\Constraints\CloudflareTurnstile;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class FriendlyCaptchaType extends AbstractType
+final class CloudflareTurnstileType extends AbstractType
 {
     public function __construct(
         protected RequestStack $requestStack,
@@ -22,7 +22,7 @@ final class FriendlyCaptchaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $config = $this->configuration->getConfig('spam_protection');
-        $friendlyCaptchaConfig = $config['friendly_captcha'];
+        $turnstileConfig = $config['cloudflare_turnstile'];
 
         $locale = $options['lang'] ?? null;
         if ($locale === null) {
@@ -30,17 +30,14 @@ final class FriendlyCaptchaType extends AbstractType
         }
 
         $friendlyCaptchaDataAttributes = array_filter([
-            'sitekey'         => $friendlyCaptchaConfig['site_key'],
-            'lang'            => str_contains($locale, '_') ? explode('_', $locale)[0] : $locale,
-            'start'           => $options['start'] ?? 'focus',
-            'callback'        => $options['callback'] ?? null,
-            'puzzle-endpoint' => $friendlyCaptchaConfig['eu_only'] === true
-                ? $friendlyCaptchaConfig['puzzle']['eu_endpoint']
-                : $friendlyCaptchaConfig['puzzle']['global_endpoint'],
+            'sitekey'    => $turnstileConfig['site_key'],
+            'lang'       => str_contains($locale, '_') ? explode('_', $locale)[0] : $locale,
+            'theme'      => $options['theme'] ?? 'auto',
+            'appearance' => $options['appearance'] ?? 'always',
+            'size'       => $options['size'] ?? 'normal',
         ]);
 
-        $view->vars['friendly_captcha_attributes'] = $friendlyCaptchaDataAttributes;
-        $view->vars['darkmode'] = $options['darkmode'] ?? false;
+        $view->vars['turnstile_attributes'] = $friendlyCaptchaDataAttributes;
     }
 
     public function getParent(): string
@@ -50,20 +47,18 @@ final class FriendlyCaptchaType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'form_builder_friendly_captcha_type';
+        return 'form_builder_cloudflare_turnstile_type';
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'lang'        => null,
-            'start'       => 'focus',
-            'callback'    => null,
             'mapped'      => false,
-            'darkmode'    => false,
-            'constraints' => [new FriendlyCaptcha()],
+            'lang'        => false,
+            'theme'       => 'auto',
+            'appearance'  => 'always',
+            'size'        => 'normal',
+            'constraints' => [new CloudflareTurnstile()],
         ]);
-
-        $resolver->setAllowedValues('start', ['auto', 'focus', 'none']);
     }
 }

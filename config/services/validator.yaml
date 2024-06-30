@@ -14,6 +14,11 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
+    FormBuilderBundle\Validator\Constraints\CloudflareTurnstileValidator:
+        public: false
+        tags:
+            - { name: validator.constraint_validator }
+
     FormBuilderBundle\Validator\Constraints\FriendlyCaptchaValidator:
         public: false
         tags:

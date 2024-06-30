@@ -118,6 +118,10 @@
     background: url(/bundles/formbuilder/img/captcha.svg) left center no-repeat !important;
 }
 
+.form_builder_icon_cloudflare_turnstile {
+    background: url(/bundles/formbuilder/img/cloudflare_turnstile.svg) left center no-repeat !important;
+}
+
 .form_builder_icon_checkbox {
     background: url(/bundles/formbuilder/img/checkbox.svg) left center no-repeat !important;
 }

@@ -2,6 +2,7 @@
 
 ## 5.1.0
 - **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
+- **[SECURITY FEATURE]** Add [cloudflare turnstile](/docs/03_SpamProtection.md#cloudflare-turnstile)
  
 ## 5.0.7
 - Remove `editable_root` restriction from mail editor
