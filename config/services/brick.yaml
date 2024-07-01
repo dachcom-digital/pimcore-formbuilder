@@ -7,5 +7,7 @@ services:
 
     # area brick
     FormBuilderBundle\Document\Areabrick\Form\Form:
+        arguments:
+            $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
         tags:
             - { name: pimcore.area.brick, id: formbuilder_form }

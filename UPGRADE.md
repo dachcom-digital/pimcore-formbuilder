@@ -3,7 +3,8 @@
 ## 5.1.0
 - **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
 - **[SECURITY FEATURE]** Add [cloudflare turnstile](/docs/03_SpamProtection.md#cloudflare-turnstile)
- 
+- **[BUGFIX]** Use Pimcore AdminUserTranslator for Editable Dialog Box [#450](https://github.com/dachcom-digital/pimcore-formbuilder/issues/450)
+
 ## 5.0.7
 - Remove `editable_root` restriction from mail editor
 - Skip widget field rendering, if no label and no value is available
