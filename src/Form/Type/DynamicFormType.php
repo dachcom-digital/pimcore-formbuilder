@@ -78,6 +78,10 @@ class DynamicFormType extends AbstractType
                 'data'   => $runtimeData,
             ]);
 
+        if ($options['csrf_protection'] === false) {
+            return;
+        }
+
         $builder
             ->add('formRuntimeDataToken', HiddenType::class, [
                 'mapped' => false,
@@ -85,6 +89,7 @@ class DynamicFormType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+
             $data = $event->getData();
             $runtimeData = $data['formRuntimeData'] ?? null;
             $tokenValue = $data['formRuntimeDataToken'] ?? null;
