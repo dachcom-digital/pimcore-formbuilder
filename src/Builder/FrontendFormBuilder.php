@@ -6,6 +6,7 @@ use FormBuilderBundle\EventSubscriber\FormBuilderSubscriber;
 use FormBuilderBundle\Factory\FormDataFactoryInterface;
 use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +27,14 @@ class FrontendFormBuilder
     /**
      * @throws \Exception
      */
-    public function buildForm(FormDefinitionInterface $formDefinition, array $formRuntimeData = [], array $formData = []): FormInterface
-    {
+    public function buildForm(
+        FormDefinitionInterface $formDefinition,
+        array $formRuntimeData = [],
+        array $formAttributes = [],
+        array $formData = [],
+        bool $useCsrfProtection = true
+    ): FormInterface {
+
         $defaults = [
             'form_preset'   => null,
             'form_template' => null
@@ -40,8 +47,6 @@ class FrontendFormBuilder
         /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         $formDefinitionConfig = $formDefinition->getConfiguration();
-
-        $formAttributes = [];
 
         if ($formDefinitionConfig['noValidate'] === false) {
             $formAttributes['novalidate'] = 'novalidate';
@@ -58,6 +63,47 @@ class FrontendFormBuilder
         //@todo: implement inline functionality.
         //$formAttributes['class'] = 'form-inline';
 
+        $formOptions = [
+            'csrf_protection' => $useCsrfProtection,
+        ];
+
+        $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions);
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        return $form;
+    }
+
+    public function buildHeadlessForm(
+        FormDefinitionInterface $formDefinition,
+        array $formRuntimeData = [],
+        array $formAttributes = [],
+        array $formData = [],
+        bool $useCsrfProtection = true
+    ): FormInterface {
+
+        $formOptions = [
+            'csrf_protection'                => $useCsrfProtection,
+            'render_conditional_logic_field' => false,
+            'render_form_id_field'           => false,
+        ];
+
+        $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions);
+
+        return $builder->getForm();
+    }
+
+    private function getBuilder(
+        FormDefinitionInterface $formDefinition,
+        array $formRuntimeData,
+        array $formAttributes,
+        array $formData = [],
+        array $formOptions = []
+    ): FormBuilderInterface {
+
+        $formDefinitionConfig = $formDefinition->getConfiguration();
+
         if (isset($formDefinitionConfig['attributes']) && is_array($formDefinitionConfig['attributes'])) {
             $formAttributes = $this->addFormAttributes($formAttributes, $formDefinitionConfig['attributes']);
         }
@@ -66,25 +112,19 @@ class FrontendFormBuilder
             sprintf('formbuilder_%s', $formDefinition->getId()),
             DynamicFormType::class,
             $this->formDataFactory->createFormData($formDefinition, $formData),
-            [
+            array_merge([
                 'method'            => $formDefinitionConfig['method'],
-                'action'            => $formDefinitionConfig['action'] === '/' ? $request->getUri() : $formDefinitionConfig['action'],
+                'action'            => $formDefinitionConfig['action'],
                 'current_form_id'   => $formDefinition->getId(),
                 'conditional_logic' => $formDefinition->getConditionalLogic(),
                 'runtime_data'      => $formRuntimeData,
                 'attr'              => $formAttributes,
-            ]
+            ], $formOptions)
         );
 
         $builder->addEventSubscriber($this->formBuilderSubscriber);
 
-        // get final form
-        $form = $builder->getForm();
-
-        // Handle request
-        $form->handleRequest($request);
-
-        return $form;
+        return $builder;
     }
 
     private function addFormAttributes(array $currentAttributes, array $attributes): array

@@ -31,39 +31,35 @@ class DynamicFormType extends AbstractType
         $spamProtectionConfig = $this->configuration->getConfig('spam_protection');
         $honeyPotConfig = $spamProtectionConfig['honeypot'];
 
-        $builder
-            ->add('formId', HiddenType::class, [
+        if ($options['render_form_id_field']) {
+            $builder->add('formId', HiddenType::class, [
                 'mapped' => false,
                 'data'   => $options['current_form_id'],
-            ])
-            ->add('formCl', HiddenType::class, [
-                'mapped' => false,
-                'data'   => $options['conditional_logic'] ?? null,
             ]);
+        }
 
         if ($addHoneypot === true) {
             $builder->add($honeyPotConfig['field_name'], HoneypotType::class, ['mapped' => false]);
         }
 
+        if ($options['render_conditional_logic_field']) {
+
+            $builder->add('formCl', HiddenType::class, [
+                'mapped' => false,
+                'data'   => $options['conditional_logic'] ?? null,
+            ]);
+
+            $builder->get('formCl')->addModelTransformer(new CallbackTransformer(
+                function ($conditionalLogic) {
+                    return is_array($conditionalLogic) ? json_encode($conditionalLogic) : null;
+                },
+                function ($conditionalLogic) {
+                    return empty($conditionalLogic) ? null : json_decode($conditionalLogic, true, 512, JSON_THROW_ON_ERROR);
+                }
+            ));
+        }
+
         $this->addRuntimeData($builder, $options);
-
-        $builder->get('formCl')->addModelTransformer(new CallbackTransformer(
-            function ($conditionalLogic) {
-                return is_array($conditionalLogic) ? json_encode($conditionalLogic) : null;
-            },
-            function ($conditionalLogic) {
-                return empty($conditionalLogic) ? null : json_decode($conditionalLogic, true, 512, JSON_THROW_ON_ERROR);
-            }
-        ));
-
-        $builder->get('formRuntimeData')->addModelTransformer(new CallbackTransformer(
-            function ($runtimeData) {
-                return is_array($runtimeData) ? json_encode($runtimeData, JSON_THROW_ON_ERROR) : null;
-            },
-            function ($runtimeData) {
-                return empty($runtimeData) ? null : json_decode($runtimeData, true, 512, JSON_THROW_ON_ERROR);
-            }
-        ));
     }
 
     protected function addRuntimeData(FormBuilderInterface $builder, array $options): void
@@ -77,6 +73,15 @@ class DynamicFormType extends AbstractType
                 'mapped' => false,
                 'data'   => $runtimeData,
             ]);
+
+        $builder->get('formRuntimeData')->addModelTransformer(new CallbackTransformer(
+            function ($runtimeData) {
+                return is_array($runtimeData) ? json_encode($runtimeData, JSON_THROW_ON_ERROR) : null;
+            },
+            function ($runtimeData) {
+                return empty($runtimeData) ? null : json_decode($runtimeData, true, 512, JSON_THROW_ON_ERROR);
+            }
+        ));
 
         if ($options['csrf_protection'] === false) {
             return;
@@ -108,12 +113,14 @@ class DynamicFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'current_form_id'    => 0,
-            'conditional_logic'  => [],
-            'runtime_data'       => [],
-            'allow_extra_fields' => true,
-            'csrf_protection'    => true,
-            'data_class'         => FormData::class
+            'current_form_id'                => 0,
+            'conditional_logic'              => [],
+            'runtime_data'                   => [],
+            'allow_extra_fields'             => true,
+            'csrf_protection'                => true,
+            'render_conditional_logic_field' => true,
+            'render_form_id_field'           => true,
+            'data_class'                     => FormData::class
         ]);
     }
 }

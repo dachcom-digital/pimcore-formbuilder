@@ -7,6 +7,7 @@
 - **[IMPROVEMENT]** [#458](https://github.com/dachcom-digital/pimcore-formbuilder/pull/458)
   - Allow to modify FormType options via `FORM_TYPE_OPTIONS` event
   - Do not render `formRuntimeDataToken` if csrf has been disabled in form options 
+  - Allow form assembling without request and view resolver
 
 ## 5.0.7
 - Remove `editable_root` restriction from mail editor
