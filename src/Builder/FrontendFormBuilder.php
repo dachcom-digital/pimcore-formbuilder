@@ -65,6 +65,7 @@ class FrontendFormBuilder
 
         $formOptions = [
             'csrf_protection' => $useCsrfProtection,
+            'action'          => $formDefinitionConfig['action'] === '/' ? $request->getUri() : $formDefinitionConfig['action'],
         ];
 
         $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions);
@@ -83,8 +84,11 @@ class FrontendFormBuilder
         bool $useCsrfProtection = true
     ): FormInterface {
 
+        $formDefinitionConfig = $formDefinition->getConfiguration();
+
         $formOptions = [
             'csrf_protection'                => $useCsrfProtection,
+            'action'                         => $formDefinitionConfig['action'],
             'render_conditional_logic_field' => false,
             'render_form_id_field'           => false,
         ];
@@ -114,7 +118,6 @@ class FrontendFormBuilder
             $this->formDataFactory->createFormData($formDefinition, $formData),
             array_merge([
                 'method'            => $formDefinitionConfig['method'],
-                'action'            => $formDefinitionConfig['action'],
                 'current_form_id'   => $formDefinition->getId(),
                 'conditional_logic' => $formDefinition->getConditionalLogic(),
                 'runtime_data'      => $formRuntimeData,
