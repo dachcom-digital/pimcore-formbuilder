@@ -15,7 +15,9 @@ class SubmissionEvent extends Event
         private readonly Request $request,
         private readonly ?array $formRuntimeData,
         private readonly FormInterface $form,
-        protected ?array $funnelRuntimeData = null
+        private ?array $funnelRuntimeData = null,
+        private bool $useFlashBag = true,
+        private array $messages = []
     ) {
     }
 
@@ -64,4 +66,36 @@ class SubmissionEvent extends Event
         return $this->form;
     }
 
+    public function useFlashBag(): bool
+    {
+        return $this->useFlashBag;
+    }
+
+    public function getMessages(): array
+    {
+        return $this->messages;
+    }
+
+    public function getMessagesOfType(string $type): array
+    {
+        return $this->messages[$type] ?? [];
+    }
+
+    public function hasMessagesOfType(string $type): bool
+    {
+        return array_key_exists($type, $this->messages);
+    }
+
+    public function addMessage(string $type, mixed $message): void
+    {
+        if (empty($message)) {
+            return;
+        }
+
+        if (!array_key_exists($type, $this->messages)) {
+            $this->messages[$type] = [];
+        }
+
+        $this->messages[$type][] = $message;
+    }
 }

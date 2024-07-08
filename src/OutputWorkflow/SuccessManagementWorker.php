@@ -4,7 +4,6 @@ namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Data\FormDataInterface;
-use FormBuilderBundle\Session\FlashBagManagerInterface;
 use FormBuilderBundle\Tool\LocaleDataMapper;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
@@ -18,7 +17,6 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
 {
     public function __construct(
         protected LocaleDataMapper $localeDataMapper,
-        protected FlashBagManagerInterface $flashBagManager,
         protected IncludeRenderer $includeRenderer,
         protected Dispatcher $dispatcher,
         protected TranslatorInterface $translator
@@ -35,7 +33,6 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
 
-        $formId = $formData->getFormDefinition()->getId();
         $error = false;
         $message = 'Success!';
 
@@ -44,8 +41,8 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
 
         if ($successConditionData->hasData()) {
             $afterSuccess = $successConditionData->getIdentifiedData($locale);
-            if ($successConditionData->hasFlashMessage()) {
-                $this->flashBagManager->add('formbuilder_redirect_flash_message', $successConditionData->getFlashMessage($locale));
+            if ($submissionEvent->useFlashBag() === true && $successConditionData->hasFlashMessage()) {
+                $submissionEvent->addMessage('redirect_message', $successConditionData->getFlashMessage($locale));
             }
         } else {
             if ($successManagementConfiguration['identifier'] === 'string') {
@@ -70,14 +67,14 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
                 $message = $e->getMessage();
             }
         } elseif ($afterSuccess instanceof Document) {
-            $message = $afterSuccess->getFullPath();
+            $message = null;
             $submissionEvent->setRedirectUri($afterSuccess->getFullPath());
-            if (!$this->flashBagManager->has('formbuilder_redirect_flash_message')) {
-                $redirectFlashMessage = isset($successManagementConfiguration['flashMessage'])
+            if (!$submissionEvent->hasMessagesOfType('redirect_message')) {
+                $redirectMessage = isset($successManagementConfiguration['flashMessage'])
                     ? $this->getFlashMessage($successManagementConfiguration['flashMessage'], $locale)
                     : null;
-                if (!is_null($redirectFlashMessage)) {
-                    $this->flashBagManager->add('formbuilder_redirect_flash_message', $redirectFlashMessage);
+                if (!is_null($redirectMessage)) {
+                    $submissionEvent->addMessage('redirect_message', $redirectMessage);
                 }
             }
         } elseif (is_string($afterSuccess)) {
@@ -89,9 +86,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
             }
         }
 
-        $key = sprintf('formbuilder_%s_%s', $formId, ($error ? 'error' : 'success'));
-
-        $this->flashBagManager->add($key, $message);
+        $submissionEvent->addMessage($error ? 'error' : 'success', $message);
     }
 
     public function getSnippet(array $value, ?string $locale): ?Snippet

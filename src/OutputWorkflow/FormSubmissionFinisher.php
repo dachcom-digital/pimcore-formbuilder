@@ -68,7 +68,7 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             if ($e instanceof GuardOutputWorkflowException) {
                 $errorMessage = $e->getMessage();
             } elseif ($e instanceof GuardStackedException) {
-                $errorMessage = implode(', ',$e->getGuardExceptionMessages());
+                $errorMessage = implode(', ', $e->getGuardExceptionMessages());
             } else {
                 $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
             }
@@ -113,6 +113,24 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
     protected function generateRedirectFormSuccessResponse(SubmissionEvent $submissionEvent): Response
     {
         $uri = '?send=true';
+
+        $form = $submissionEvent->getForm();
+        /** @var FormDataInterface $data */
+        $data = $form->getData();
+
+        if ($submissionEvent->useFlashBag() === true) {
+            foreach ($submissionEvent->getMessages() as $type => $eventMessages) {
+                foreach ($eventMessages as $message) {
+
+                    $messageKey = $type === 'redirect_message'
+                        ? 'formbuilder_redirect_flash_message'
+                        : sprintf('formbuilder_%d_%s', $data->getFormDefinition()->getId(), $type);
+
+                    $this->flashBagManager->add($messageKey, $message);
+                }
+            }
+        }
+
         if ($submissionEvent->hasRedirectUri()) {
             $uri = $submissionEvent->getRedirectUri();
         }
@@ -130,21 +148,18 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         $messages = [];
         $error = false;
 
-        $form = $submissionEvent->getForm();
-        /** @var FormDataInterface $data */
-        $data = $form->getData();
+        foreach ($submissionEvent->getMessages() as $type => $eventMessages) {
 
-        foreach (['success', 'error'] as $type) {
-            $messageKey = sprintf('formbuilder_%s_%s', $data->getFormDefinition()->getId(), $type);
-
-            if (!$this->flashBagManager->has($messageKey)) {
-                continue;
+            if ($type === 'error') {
+                $error = true;
             }
 
-            foreach ($this->flashBagManager->get($messageKey) as $message) {
-                if ($type === 'error') {
-                    $error = true;
+            foreach ($eventMessages as $message) {
+
+                if ($type === 'redirect_message' && $submissionEvent->useFlashBag() === true) {
+                    $this->flashBagManager->add('formbuilder_redirect_flash_message', $message);
                 }
+
                 $messages[] = ['type' => $type, 'message' => $message];
             }
         }
@@ -194,8 +209,10 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 
         $messageKey = sprintf('formbuilder_%s_error', $data->getFormDefinition()->getId());
 
-        foreach ($errors as $error) {
-            $this->flashBagManager->add($messageKey, $error);
+        if ($submissionEvent->useFlashBag() === true) {
+            foreach ($errors as $error) {
+                $this->flashBagManager->add($messageKey, $error);
+            }
         }
 
         return new RedirectResponse($uri);
@@ -209,7 +226,9 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 
         return new JsonResponse([
             'success'           => false,
-            'validation_errors' => ['general' => $errors],
+            'validation_errors' => [
+                'general' => $errors
+            ],
         ]);
     }
 }
