@@ -9,6 +9,7 @@
   - Allow to modify FormType options via `FORM_TYPE_OPTIONS` event
   - Do not render `formRuntimeDataToken` if csrf has been disabled in form options 
   - Allow form assembling without request and view resolver
+  - Add FormDialogBuilder
 
 ## 5.0.7
 - Remove `editable_root` restriction from mail editor
