@@ -93,7 +93,7 @@ class FrontendFormBuilder
             'render_form_id_field'           => false,
         ];
 
-        $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions);
+        $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions, false);
 
         return $builder->getForm();
     }
@@ -103,7 +103,8 @@ class FrontendFormBuilder
         array $formRuntimeData,
         array $formAttributes,
         array $formData = [],
-        array $formOptions = []
+        array $formOptions = [],
+        bool $addFormName = true
     ): FormBuilderInterface {
 
         $formDefinitionConfig = $formDefinition->getConfiguration();
@@ -113,7 +114,7 @@ class FrontendFormBuilder
         }
 
         $builder = $this->formFactory->createNamedBuilder(
-            sprintf('formbuilder_%s', $formDefinition->getId()),
+            $addFormName === false ? '' : sprintf('formbuilder_%s', $formDefinition->getId()),
             DynamicFormType::class,
             $this->formDataFactory->createFormData($formDefinition, $formData),
             array_merge([
