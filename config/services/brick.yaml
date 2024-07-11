@@ -5,9 +5,10 @@ services:
         autoconfigure: true
         public: true
 
-    # area brick
-    FormBuilderBundle\Document\Areabrick\Form\Form:
+    FormBuilderBundle\Document\Areabrick\Form\FormDialogBuilder:
         arguments:
             $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
+
+    FormBuilderBundle\Document\Areabrick\Form\Form:
         tags:
             - { name: pimcore.area.brick, id: formbuilder_form }

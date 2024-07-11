@@ -28,7 +28,7 @@ class FlashMessageExtension extends AbstractExtension
         $messages = [];
         foreach ($types as $type) {
             $messages[$type] = [];
-            $messageKey = $formId . '_' . $type;
+            $messageKey = sprintf('%s_%s', $formId, $type);
 
             if (!$this->flashBagManager->has($messageKey)) {
                 continue;

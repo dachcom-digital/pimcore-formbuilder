@@ -35,6 +35,7 @@ services:
         arguments:
             - '@Symfony\Component\Form\FormFactoryInterface'
             - '@FormBuilderBundle\Configuration\Configuration'
+            - '@event_dispatcher'
             - '@FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry'
         tags:
             - { name: form.type }

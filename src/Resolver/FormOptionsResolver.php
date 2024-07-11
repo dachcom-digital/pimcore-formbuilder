@@ -10,7 +10,9 @@ class FormOptionsResolver
     protected ?string $formBlockTemplate = null;
     protected int|string|null $outputWorkflow = null;
     protected string $preset = 'custom';
+    protected bool $useCsrfProtection = true;
     protected array $customOptions = [];
+    protected array $formAttributes = [];
 
     public function setFormId(?int $formId): void
     {
@@ -58,6 +60,16 @@ class FormOptionsResolver
         return $this->preset;
     }
 
+    public function useCsrfProtection(): bool
+    {
+        return $this->useCsrfProtection;
+    }
+
+    public function setUseCsrfProtection(bool $useCsrfProtection): void
+    {
+        $this->useCsrfProtection = $useCsrfProtection;
+    }
+
     public function setCustomOptions(array $customOptions = []): void
     {
         $this->customOptions = $customOptions;
@@ -66,6 +78,16 @@ class FormOptionsResolver
     public function getCustomOptions(): array
     {
         return $this->customOptions;
+    }
+
+    public function getFormAttributes(): array
+    {
+        return $this->formAttributes;
+    }
+
+    public function setFormAttributes(array $formAttributes): void
+    {
+        $this->formAttributes = $formAttributes;
     }
 
     public function setFormTemplate(string $formTemplate): void

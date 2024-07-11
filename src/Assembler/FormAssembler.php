@@ -9,6 +9,7 @@ use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class FormAssembler
@@ -21,57 +22,134 @@ class FormAssembler
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function assemble(FormOptionsResolver $optionsResolver): array
     {
-        return $this->assembleViewVars($optionsResolver);
+        try {
+            $formDefinition = $this->getFormDefinition($optionsResolver);
+        } catch (\Throwable $e) {
+            return [
+                'message'       => $e->getMessage(),
+                'form_layout'   => $optionsResolver->getFormLayout(),
+                'form_template' => null,
+                'form_id'       => null
+            ];
+        }
+
+        $formAssembleEvent = $this->dispatchAssembleEvent(
+            FormBuilderEvents::FORM_ASSEMBLE_PRE,
+            [$optionsResolver, $formDefinition]
+        );
+
+        $viewVars = $this->getViewVars($optionsResolver);
+
+        $form = $this->buildForm(
+            $formDefinition,
+            $optionsResolver,
+            $formAssembleEvent->getFormData(),
+        );
+
+        $this->dispatchAssembleEvent(
+            FormBuilderEvents::FORM_ASSEMBLE_POST,
+            [$optionsResolver, $formDefinition, $form]
+        );
+
+        $viewVars['form'] = $form->createView();
+
+        return $viewVars;
     }
 
-    public function assembleViewVars(FormOptionsResolver $optionsResolver): array
+    /**
+     * @throws \Exception
+     */
+    public function assembleHeadlessForm(FormOptionsResolver $optionsResolver): FormInterface
     {
-        $builderError = false;
-        $exceptionMessage = null;
-        $formDefinition = null;
+        $formDefinition = $this->getFormDefinition($optionsResolver);
 
+        $formAssembleEvent = $this->dispatchAssembleEvent(
+            FormBuilderEvents::FORM_ASSEMBLE_PRE,
+            [$optionsResolver, $formDefinition]
+        );
+
+        $form = $this->buildForm(
+            $formDefinition,
+            $optionsResolver,
+            $formAssembleEvent->getFormData(),
+            true
+        );
+
+        $this->dispatchAssembleEvent(
+            FormBuilderEvents::FORM_ASSEMBLE_POST,
+            [$optionsResolver, $formDefinition, $form]
+        );
+
+        return $form;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getFormDefinition(FormOptionsResolver $optionsResolver): FormDefinitionInterface
+    {
         $formId = $optionsResolver->getFormId();
 
-        if ($formId !== null) {
-            try {
-                $formDefinition = $this->formDefinitionManager->getById($formId);
-                if (!$formDefinition instanceof FormDefinitionInterface) {
-                    $exceptionMessage = sprintf('Form with id "%s" is not valid.', $formId);
-                    $builderError = true;
-                }
-            } catch (\Exception $e) {
-                $exceptionMessage = $e->getMessage();
-                $builderError = true;
-            }
-        } else {
-            $exceptionMessage = 'No valid form selected.';
-            $builderError = true;
+        if ($formId === null) {
+            throw new \Exception('No valid form selected.', 404);
         }
 
-        $viewVars = [];
-        $viewVars['form_layout'] = $optionsResolver->getFormLayout();
-
-        if ($builderError === true) {
-            $viewVars['message'] = $exceptionMessage;
-            $viewVars['form_template'] = null;
-            $viewVars['form_id'] = null;
-
-            return $viewVars;
+        $formDefinition = $this->formDefinitionManager->getById($formId);
+        if (!$formDefinition instanceof FormDefinitionInterface) {
+            throw new \Exception(sprintf('Form with id "%s" is not valid.', $formId), 404);
         }
 
-        $formAssembleEvent = new FormAssembleEvent($optionsResolver, $formDefinition);
-        $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_PRE);
+        return $formDefinition;
+    }
 
-        $systemRuntimeData = [
-            'form_preset'             => $optionsResolver->getFormPreset(),
-            'form_output_workflow'    => $optionsResolver->getOutputWorkflow(),
-            'form_template'           => $optionsResolver->getFormTemplateName(),
-            'form_template_full_path' => $optionsResolver->getFormTemplate(),
-            'custom_options'          => $optionsResolver->getCustomOptions()
+    /**
+     * @throws \Exception
+     */
+    public function buildForm(
+        FormDefinitionInterface $formDefinition,
+        FormOptionsResolver $optionsResolver,
+        array $formData = [],
+        bool $headless = false
+    ): FormInterface {
+
+        $systemRuntimeData = $this->getSystemRuntimeData($optionsResolver, $headless);
+        $formAttributes = $optionsResolver->getFormAttributes();
+        $useCsrfProtection = $optionsResolver->useCsrfProtection();
+
+        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
+        $formRuntimeData = $formRuntimeDataCollector->getData();
+
+        if ($headless === true) {
+            return $this->frontendFormBuilder->buildHeadlessForm($formDefinition, $formRuntimeData, $formAttributes, $formData, $useCsrfProtection);
+        }
+
+        return $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData, $formAttributes, $formData, $useCsrfProtection);
+    }
+
+    public function getSystemRuntimeData(FormOptionsResolver $optionsResolver, bool $headless = false): array
+    {
+        $data = [
+            'form_preset'          => $optionsResolver->getFormPreset(),
+            'form_output_workflow' => $optionsResolver->getOutputWorkflow(),
+            'custom_options'       => $optionsResolver->getCustomOptions()
         ];
 
+        return $headless ? $data : array_merge($data, [
+            'form_template'           => $optionsResolver->getFormTemplateName(),
+            'form_template_full_path' => $optionsResolver->getFormTemplate(),
+        ]);
+    }
+
+    public function getViewVars(FormOptionsResolver $optionsResolver): array
+    {
+        $viewVars = [];
+
+        $viewVars['form_layout'] = $optionsResolver->getFormLayout();
         $viewVars['form_block_template'] = $optionsResolver->getFormBlockTemplate();
         $viewVars['form_template'] = $optionsResolver->getFormTemplate();
         $viewVars['form_id'] = $optionsResolver->getFormId();
@@ -79,16 +157,14 @@ class FormAssembler
         $viewVars['form_output_workflow'] = $optionsResolver->getOutputWorkflow();
         $viewVars['main_layout'] = $optionsResolver->getMainLayout();
 
-        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
-        $formRuntimeData = $formRuntimeDataCollector->getData();
-
-        $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData, $formAssembleEvent->getFormData());
-
-        $formAssembleEvent = new FormAssembleEvent($optionsResolver, $formDefinition, $form);
-        $this->eventDispatcher->dispatch($formAssembleEvent, FormBuilderEvents::FORM_ASSEMBLE_POST);
-
-        $viewVars['form'] = $form->createView();
-
         return $viewVars;
+    }
+
+    public function dispatchAssembleEvent(string $eventName, array $arguments): FormAssembleEvent
+    {
+        $formAssembleEvent = new FormAssembleEvent(...$arguments);
+        $this->eventDispatcher->dispatch($formAssembleEvent, $eventName);
+
+        return $formAssembleEvent;
     }
 }

@@ -261,6 +261,7 @@ class FunnelWorker implements FunnelWorkerInterface
         $form = $this->frontendFormBuilder->buildForm(
             $outputWorkflow->getFormDefinition(),
             $formRuntimeData,
+            [],
             $formData
         );
 

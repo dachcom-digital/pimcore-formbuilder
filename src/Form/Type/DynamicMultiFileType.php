@@ -3,6 +3,8 @@
 namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Event\Form\FormTypeOptionsEvent;
+use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -10,12 +12,14 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class DynamicMultiFileType extends AbstractType
 {
     public function __construct(
         protected FormFactoryInterface $formFactory,
         protected Configuration $configuration,
+        protected EventDispatcherInterface $eventDispatcher,
         protected DynamicMultiFileAdapterRegistry $dynamicMultiFileAdapterRegistry
     ) {
     }
@@ -41,7 +45,14 @@ class DynamicMultiFileType extends AbstractType
         $options['attr']['data-dynamic-multi-file-instance'] = 'true';
         $options['attr']['data-js-handler'] = $dmfAdapter->getJsHandler();
 
-        $dmfForm = $this->formFactory->createNamedBuilder('adapter', $dmfAdapter->getForm(), null, $options);
+        $adapterFormFieldName = 'adapter';
+
+        $dmfForm = $this->formFactory->createNamedBuilder(
+            $adapterFormFieldName,
+            $dmfAdapter->getForm(),
+            null,
+            $this->dispatchFormTypeOptionsEvent($adapterFormFieldName, $dmfAdapter->getForm(), $options)
+        );
 
         $dmfForm->add('data', HiddenType::class, []);
         $dmfForm->get('data')->addModelTransformer(new CallbackTransformer(
@@ -54,6 +65,15 @@ class DynamicMultiFileType extends AbstractType
         ));
 
         $builder->add($dmfForm);
+    }
+
+    private function dispatchFormTypeOptionsEvent(string $name, string $type, array $options): array
+    {
+        $event = new FormTypeOptionsEvent($name, $type, $options);
+
+        $this->eventDispatcher->dispatch($event, FormBuilderEvents::FORM_TYPE_OPTIONS);
+
+        return $event->getOptions();
     }
 
     public function getBlockPrefix(): string

@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\EventSubscriber;
 
+use FormBuilderBundle\Event\Form\FormTypeOptionsEvent;
 use FormBuilderBundle\Registry\DataInjectionRegistry;
 use FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlank;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
@@ -167,17 +168,22 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $containerAttributes['data-template'] = implode(' ', $attrDataTemplate);
         }
 
-        return [
-            'name'    => $fieldContainer->getName(),
-            'type'    => $typeClass,
-            'options' => [
-                'attr'                      => $containerAttributes,
-                'formbuilder_configuration' => $configuration,
-                'entry_options'             => [
-                    'fields'         => $fields,
-                    'container_type' => $fieldContainer->getSubType()
-                ]
+        $name = $fieldContainer->getName();
+        $type = $typeClass;
+
+        $options = [
+            'attr'                      => $containerAttributes,
+            'formbuilder_configuration' => $configuration,
+            'entry_options'             => [
+                'fields'         => $fields,
+                'container_type' => $fieldContainer->getSubType()
             ]
+        ];
+
+        return [
+            'name'    => $name,
+            'type'    => $type,
+            'options' => $this->dispatchFormTypeOptionsEvent($name, $type, $options)
         ];
     }
 
@@ -225,12 +231,12 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             }
         }
 
-        $options['attr']['data-initial-constraints'] = join(',', $constraintNames);
+        $options['attr']['data-initial-constraints'] = implode(',', $constraintNames);
 
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                    array_filter($constraints, function ($constraint) {
+                    array_filter($constraints, static function ($constraint) {
                         return $constraint instanceof NotBlank || $constraint instanceof DynamicMultiFileNotBlank;
                     })
                 ) === 1;
@@ -265,11 +271,23 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $options['attr']['data-template'] = implode(' ', $templateClasses);
         }
 
+        $name = $field->getName();
+        $type = $this->availableFormTypes[$field->getType()]['class'];
+
         return [
-            'name'    => $field->getName(),
-            'type'    => $this->availableFormTypes[$field->getType()]['class'],
-            'options' => $options
+            'name'    => $name,
+            'type'    => $type,
+            'options' => $this->dispatchFormTypeOptionsEvent($name, $type, $options)
         ];
+    }
+
+    private function dispatchFormTypeOptionsEvent(string $name, string $type, array $options): array
+    {
+        $event = new FormTypeOptionsEvent($name, $type, $options);
+
+        $this->eventDispatcher->dispatch($event, FormBuilderEvents::FORM_TYPE_OPTIONS);
+
+        return $event->getOptions();
     }
 
     /**
@@ -298,10 +316,13 @@ class FormBuilderSubscriber implements EventSubscriberInterface
             $options['attr']['data-template'] = $optional['template'];
         }
 
+        $name = $field->getName();
+        $type = $field->getType();
+
         return [
-            'name'    => $field->getName(),
-            'type'    => $field->getType(),
-            'options' => $options
+            'name'    => $name,
+            'type'    => $type,
+            'options' => $this->dispatchFormTypeOptionsEvent($name, $type, $options)
         ];
     }
 

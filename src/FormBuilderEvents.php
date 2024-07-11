@@ -5,6 +5,14 @@ namespace FormBuilderBundle;
 final class FormBuilderEvents
 {
     /**
+     * The FORM_TYPE_OPTIONS event is dispatched after the form builder options has been defined.
+     * It contains the field name, type and the defined options. You're able to modify the options only.
+     *
+     * @see \FormBuilderBundle\Event\Form\FormTypeOptionsEvent
+     */
+    public const FORM_TYPE_OPTIONS = 'form_builder.form_type.build_options';
+
+    /**
      * The FORM_PRE_SET_DATA event is dispatched at the beginning of the Form::setData() method.
      * It contains the form event and also some form builder settings.
      *

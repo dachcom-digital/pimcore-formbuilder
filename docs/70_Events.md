@@ -2,6 +2,23 @@
 
 It's possible to add some events to every form submission.
 
+## Form Type Options Event
+The `FORM_TYPE_OPTIONS` event is dispatched after the form builder options has been defined.
+It contains the field name, type and the defined options. You're able to modify the options only.
+
+@see \FormBuilderBundle\Event\Form\FormTypeOptionsEvent
+     
+**Example**  
+```php
+<?php
+
+use FormBuilderBundle\FormBuilderEvents;
+
+[
+    FormBuilderEvents::FORM_TYPE_OPTIONS => 'formTypeOptions'
+];
+```
+
 ## Pre Set Data Event
 The `FORM_PRE_SET_DATA` event is dispatched at the beginning of the Form::setData() method.
 It contains the form event and also some form builder settings.
