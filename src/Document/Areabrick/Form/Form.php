@@ -64,9 +64,9 @@ class Form extends AbstractAreabrick implements EditableDialogBoxInterface
         $outputWorkflowSelector = null;
 
         if ($info instanceof Document\Editable\Area\Info) {
-            /** @var Document\Editable\Select $formNameElement */
+            /** @var Document\Editable\Select $formSelector */
             $formSelector = $this->getDocumentEditable($info->getDocument(), 'select', 'formName');
-            /** @var Document\Editable\Select $outputWorkflowSelection */
+            /** @var Document\Editable\Select $outputWorkflowSelector */
             $outputWorkflowSelector = $this->getDocumentEditable($info->getDocument(), 'select', 'outputWorkflow');
         }
 
