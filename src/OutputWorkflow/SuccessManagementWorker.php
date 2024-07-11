@@ -32,6 +32,7 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         $form = $submissionEvent->getForm();
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
+        $isHeadlessForm = $form->getConfig()->hasOption('is_headless_form') && $form->getConfig()->getOption('is_headless_form') === true;
 
         $error = false;
         $message = 'Success!';
@@ -61,10 +62,20 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
             $params['document'] = $afterSuccess;
 
             try {
-                $message = $this->includeRenderer->render($afterSuccess, $params, false);
-            } catch (\Exception $e) {
+                $message = $isHeadlessForm
+                    ? [
+                        'type' => 'snippet',
+                        'data' => $afterSuccess->getId()
+                    ]
+                    : $this->includeRenderer->render($afterSuccess, $params, false);
+            } catch (\Throwable $e) {
                 $error = true;
-                $message = $e->getMessage();
+                $message = $isHeadlessForm
+                    ? [
+                        'type' => 'string',
+                        'data' => $e->getMessage()
+                    ]
+                    : $e->getMessage();
             }
         } elseif ($afterSuccess instanceof Document) {
             $message = null;
@@ -80,9 +91,15 @@ class SuccessManagementWorker implements SuccessManagementWorkerInterface
         } elseif (is_string($afterSuccess)) {
             // maybe it's an external redirect
             if (str_starts_with($afterSuccess, 'http')) {
+                $message = null;
                 $submissionEvent->setRedirectUri($afterSuccess);
             } else {
-                $message = $afterSuccess;
+                $message = $isHeadlessForm
+                    ? [
+                        'type' => 'string',
+                        'data' => $afterSuccess
+                    ]
+                    : $afterSuccess;
             }
         }
 

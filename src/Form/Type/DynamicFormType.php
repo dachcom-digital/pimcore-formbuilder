@@ -120,6 +120,7 @@ class DynamicFormType extends AbstractType
             'csrf_protection'                => true,
             'render_conditional_logic_field' => true,
             'render_form_id_field'           => true,
+            'is_headless_form'               => false,
             'data_class'                     => FormData::class
         ]);
     }

@@ -93,7 +93,7 @@ class FrontendFormBuilder
             'render_form_id_field'           => false,
         ];
 
-        $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions, false);
+        $builder = $this->getBuilder($formDefinition, $formRuntimeData, $formAttributes, $formData, $formOptions, true);
 
         return $builder->getForm();
     }
@@ -104,7 +104,7 @@ class FrontendFormBuilder
         array $formAttributes,
         array $formData = [],
         array $formOptions = [],
-        bool $addFormName = true
+        bool $isHeadlessForm = false
     ): FormBuilderInterface {
 
         $formDefinitionConfig = $formDefinition->getConfiguration();
@@ -114,11 +114,12 @@ class FrontendFormBuilder
         }
 
         $builder = $this->formFactory->createNamedBuilder(
-            $addFormName === false ? '' : sprintf('formbuilder_%s', $formDefinition->getId()),
+            $isHeadlessForm === true ? '' : sprintf('formbuilder_%s', $formDefinition->getId()),
             DynamicFormType::class,
             $this->formDataFactory->createFormData($formDefinition, $formData),
             array_merge([
                 'method'            => $formDefinitionConfig['method'],
+                'is_headless_form'  => $isHeadlessForm,
                 'current_form_id'   => $formDefinition->getId(),
                 'conditional_logic' => $formDefinition->getConditionalLogic(),
                 'runtime_data'      => $formRuntimeData,
