@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\Yaml\Yaml;
 
 class ExportController extends AdminController
 {
@@ -235,6 +234,10 @@ class ExportController extends AdminController
                         $displayKeyName = $formField->getDisplayName();
                     }
                 }
+            }
+
+            if (!array_key_exists('data', $mailParam)) {
+                continue;
             }
 
             if (!in_array($displayKeyName, $mailHeader, true)) {
