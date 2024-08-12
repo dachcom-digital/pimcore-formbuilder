@@ -229,6 +229,10 @@ class ExportController extends AdminAbstractController
                 }
             }
 
+            if (!array_key_exists('data', $mailParam)) {
+                continue;
+            }
+
             if (!in_array($displayKeyName, $mailHeader, true)) {
                 $mailHeader[] = $displayKeyName;
             }
