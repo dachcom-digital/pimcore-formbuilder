@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.5.6
+- **[BUGFIX]** CSV Export: Ignore mail params with empty data
+
 ## 4.5.5
 - **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
 
