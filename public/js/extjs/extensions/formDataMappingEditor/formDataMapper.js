@@ -201,7 +201,6 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                             queryDelay: 0,
                             displayField: 'label',
                             valueField: 'value',
-                            id: Ext.id(),
                             anchor: '100%',
                             store: predefinedApiFieldStore,
                             allowBlank: true,
