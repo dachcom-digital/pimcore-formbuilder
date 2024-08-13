@@ -48,7 +48,7 @@ class OutputWorkflowApiController extends AdminAbstractController
         }
 
         try {
-            $predefinedApiFields = $this->validateApPredefinedFields($apiProvider->getPredefinedApiFields($formDefinition, $configurationFields));
+            $predefinedApiFields = $this->validateApiPredefinedFields($apiProvider->getPredefinedApiFields($formDefinition, $configurationFields));
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -109,12 +109,20 @@ class OutputWorkflowApiController extends AdminAbstractController
         ]);
     }
 
-    protected function validateApPredefinedFields(array $fields): array
+    protected function validateApiPredefinedFields(array $fields): array
     {
         return array_map(static function ($property) {
+
+            if (!is_array($property)) {
+                $property = [
+                    'label' => $property,
+                    'value' => $property,
+                ];
+            }
+
             return [
-                'label' => $property,
-                'value' => $property
+                'label' => $property['label'] ?? 'UNKNOWN',
+                'value' => $property['value'] ?? 'UNKNOWN'
             ];
 
         }, $fields);

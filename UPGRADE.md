@@ -5,6 +5,7 @@
 - **[SECURITY FEATURE]** Add [cloudflare turnstile](/docs/03_SpamProtection.md#cloudflare-turnstile)
 - **[BUGFIX]** Use Pimcore AdminUserTranslator for Editable Dialog Box [#450](https://github.com/dachcom-digital/pimcore-formbuilder/issues/450)
 - **[BUGFIX]** CSV Export: Ignore mail params with empty data [#461](https://github.com/dachcom-digital/pimcore-formbuilder/issues/461)
+- **[IMPROVEMENT]** Improve API OC Field Mapping [#462](https://github.com/dachcom-digital/pimcore-formbuilder/issues/462)
 - **[IMPROVEMENT]** Improve json response success message behaviour [#416](https://github.com/dachcom-digital/pimcore-formbuilder/issues/416)
 - **[IMPROVEMENT]** Allow custom message in `DynamicMultiFileNotBlankValidator` constraint [#438](https://github.com/dachcom-digital/pimcore-formbuilder/issues/438)
 - **[IMPROVEMENT]** [#458](https://github.com/dachcom-digital/pimcore-formbuilder/pull/458)
