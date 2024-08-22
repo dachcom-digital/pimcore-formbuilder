@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS `formbuilder_forms` (
   `modificationDate` datetime NOT NULL,
   `createdBy` int(11) NOT NULL,
   `modifiedBy` int(11) NOT NULL,
-  `mailLayout` longtext COMMENT '(DC2Type:object)',
   `configuration` longtext COMMENT '(DC2Type:object)',
   `conditionalLogic` longtext COMMENT '(DC2Type:object)',
   `fields` longtext COMMENT '(DC2Type:form_builder_fields)',
@@ -38,3 +37,19 @@ CREATE TABLE IF NOT EXISTS `formbuilder_output_workflow_channel` (
   KEY `IDX_CEC462362C75DDDC` (`output_workflow`),
   CONSTRAINT `FK_CEC462362C75DDDC` FOREIGN KEY (`output_workflow`) REFERENCES `formbuilder_output_workflow` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE IF NOT EXISTS `formbuilder_double_opt_in_session` (
+    `token` binary(16) NOT NULL COMMENT '(DC2Type:uuid)' PRIMARY KEY,
+    `form_definition` int NULL,
+    `email` varchar(190) NOT NULL,
+    `additional_data` longtext NULL COMMENT '(DC2Type:array)',
+    `dispatch_location` longtext NULL,
+    `applied` tinyint(1) DEFAULT 0 NOT null,
+    `creationDate` datetime NOT NULL,
+    CONSTRAINT email_form_definition UNIQUE (email, form_definition, applied),
+    CONSTRAINT FK_88815C4F61F7634C FOREIGN KEY (form_definition) REFERENCES formbuilder_forms (id) ON DELETE CASCADE
+);
+
+create index IDX_88815C4F61F7634C on formbuilder_double_opt_in_session (form_definition);
+create index token_form on formbuilder_double_opt_in_session (token, form_definition, applied);
+
