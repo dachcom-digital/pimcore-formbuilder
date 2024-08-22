@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\Maintenance\CleanUpTask:
+        tags:
+            - {name: pimcore.maintenance.task, type: formbuilder_clean_up }

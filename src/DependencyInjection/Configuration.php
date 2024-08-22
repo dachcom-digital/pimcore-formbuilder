@@ -650,6 +650,20 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('secret_key')->defaultNull()->end()
                     ->end()
                 ->end()
+
+                ->arrayNode('email_checker')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('disposable_email_domains')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('enabled')->defaultFalse()->end()
+                                ->booleanNode('include_subdomains')->defaultFalse()->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+
             ->end();
 
         return $rootNode;

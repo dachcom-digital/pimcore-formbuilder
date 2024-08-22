@@ -1,0 +1,13 @@
+flysystem:
+    storages:
+        form_builder.email_checker.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/tmp/form-builder-email-checker'
+
+form_builder:
+    validation_constraints:
+        email_checker:
+            class: FormBuilderBundle\Validator\Constraints\EmailChecker
+            label: 'form_builder_validation_constraint.email_checker'
+            icon_class: form_builder_icon_validation

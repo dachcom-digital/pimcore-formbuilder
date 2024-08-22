@@ -29,6 +29,8 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
                 'form_builder_spam_protection_recaptcha_v3_site_key' => $config['spam_protection']['recaptcha_v3']['site_key'],
             ],
         ]);
+
+        $this->buildEmailCheckerStack($container, $config);
     }
 
     /**
@@ -64,5 +66,26 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
 
         $container->setParameter('form_builder.persistence.doctrine.enabled', true);
         $container->setParameter('form_builder.persistence.doctrine.manager', $entityManagerName);
+
+    }
+
+    private function buildEmailCheckerStack(ContainerBuilder $container, array $config): void
+    {
+        $enabled = false;
+        $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../../config/optional']));
+
+        if ($config['spam_protection']['email_checker']['disposable_email_domains']['enabled'] === true) {
+            $enabled = true;
+            $loader->load('services/disposable_email_domain_checker.yaml');
+        } elseif (count($container->findTaggedServiceIds('form_builder.validator.email_checker')) > 0) {
+            $enabled = true;
+        }
+
+        if ($enabled === false) {
+            return;
+        }
+
+        $loader->load('config/email_checker.yaml');
+        $loader->load('services/email_checker.yaml');
     }
 }

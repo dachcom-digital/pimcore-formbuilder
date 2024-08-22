@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Form\Type;
 
+use FormBuilderBundle\Validator\Constraints\EmailChecker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -33,6 +34,7 @@ class DoubleOptInType extends AbstractType
             'constraints' => [
                 new NotBlank(),
                 new Email(),
+                new EmailChecker()
             ]
         ]);
 

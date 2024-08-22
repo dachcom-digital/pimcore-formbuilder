@@ -1,6 +1,6 @@
 <?php
 
-namespace FormBuilderBundle\EventListener\Core;
+namespace FormBuilderBundle\Maintenance;
 
 use Carbon\Carbon;
 use FormBuilderBundle\Manager\DoubleOptInManager;
@@ -10,7 +10,7 @@ use League\Flysystem\StorageAttributes;
 use Pimcore\Logger;
 use Pimcore\Maintenance\TaskInterface;
 
-class CleanUpListener implements TaskInterface
+class CleanUpTask implements TaskInterface
 {
     public function __construct(
         protected DoubleOptInManager $doubleOptInManager,

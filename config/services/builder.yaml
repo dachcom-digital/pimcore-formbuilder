@@ -9,7 +9,9 @@ services:
     FormBuilderBundle\Builder\FrontendFormBuilder: ~
 
     # backend form builder
-    FormBuilderBundle\Builder\ExtJsFormBuilder: ~
+    FormBuilderBundle\Builder\ExtJsFormBuilder:
+        arguments:
+            $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
 
     # form values output applier
     FormBuilderBundle\Form\FormValuesOutputApplier: ~
