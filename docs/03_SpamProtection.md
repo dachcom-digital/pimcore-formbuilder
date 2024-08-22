@@ -81,13 +81,12 @@ form_builder:
 4. Done
 
 ## Email Checker
-The Email Checker Validator is available, if at you've added at least one service.
-Per default, no service is available. 
+The Email Checker Validator is available, if you've added at least one service. Per default, no service is registered by default. 
 
 This validator includes all services tagged with `form_builder.validator.email_checker`.
 If one of those services returns false in `isValid()` method, the validator will fail.
 
-### Disposable Email Domain Checker
+### [BUILT IN] Disposable Email Domain Checker
 If enabled, this checker will fetch every 24h a database (stored in `%kernel.project_dir%/var/tmp/form-builder-email-checker` via flysystem) with known disposable mail hosts from [disposable/disposable](https://github.com/disposable/disposable).
 After that, the validator will check the given domain of an email address against the database.
 
