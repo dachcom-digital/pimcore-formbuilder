@@ -6,6 +6,7 @@ use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Event\FormAssembleEvent;
 use FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Manager\DoubleOptInManager;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
@@ -18,6 +19,7 @@ class FormAssembler
         protected EventDispatcherInterface $eventDispatcher,
         protected FrontendFormBuilder $frontendFormBuilder,
         protected FormDefinitionManager $formDefinitionManager,
+        protected DoubleOptInManager $doubleOptInManager,
         protected FormRuntimeDataAllocatorInterface $formRuntimeDataAllocator
     ) {
     }
@@ -121,8 +123,12 @@ class FormAssembler
         $formAttributes = $optionsResolver->getFormAttributes();
         $useCsrfProtection = $optionsResolver->useCsrfProtection();
 
-        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData);
+        $formRuntimeDataCollector = $this->formRuntimeDataAllocator->allocate($formDefinition, $systemRuntimeData, $headless);
         $formRuntimeData = $formRuntimeDataCollector->getData();
+
+        if ($this->doubleOptInManager->requiresDoubleOptInForm($formDefinition, $formRuntimeData)) {
+            return $this->frontendFormBuilder->buildDoubleOptInForm($formDefinition, $formAttributes, $headless, $useCsrfProtection);
+        }
 
         if ($headless === true) {
             return $this->frontendFormBuilder->buildHeadlessForm($formDefinition, $formRuntimeData, $formAttributes, $formData, $useCsrfProtection);

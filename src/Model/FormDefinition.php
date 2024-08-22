@@ -15,7 +15,6 @@ class FormDefinition implements FormDefinitionInterface
     protected \DateTime $modificationDate;
     protected int $modifiedBy;
     protected int $createdBy;
-    protected ?array $mailLayout;
     protected Collection $outputWorkflows;
     public array $configuration = [];
     public array $conditionalLogic = [];
@@ -135,6 +134,18 @@ class FormDefinition implements FormDefinitionInterface
     public function getConfiguration(): array
     {
         return $this->configuration;
+    }
+
+    public function getDoubleOptInConfig(): array
+    {
+        return $this->configuration['doubleOptIn'] ?? [];
+    }
+
+    public function isDoubleOptInActive(): bool
+    {
+        $doubleOptInConfig = $this->getDoubleOptInConfig();
+
+        return ($doubleOptInConfig['enabled'] ?? false) === true;
     }
 
     public function getConditionalLogic(): array

@@ -15,8 +15,8 @@ class SubmissionEvent extends Event
         private readonly Request $request,
         private readonly ?array $formRuntimeData,
         private readonly FormInterface $form,
-        private ?array $funnelRuntimeData = null,
-        private bool $useFlashBag = true,
+        private readonly ?array $funnelRuntimeData = null,
+        private readonly bool $useFlashBag = true,
         private array $messages = []
     ) {
     }

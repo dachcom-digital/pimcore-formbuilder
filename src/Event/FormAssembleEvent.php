@@ -14,7 +14,8 @@ class FormAssembleEvent extends Event
     public function __construct(
         protected FormOptionsResolver $formOptionsResolver,
         protected FormDefinitionInterface $formDefinition,
-        protected ?FormInterface $form = null
+        protected ?FormInterface $form = null,
+        protected bool $headless = false
     ) {
     }
 
@@ -41,5 +42,10 @@ class FormAssembleEvent extends Event
     public function setFormData(array $formData): void
     {
         $this->formData = $formData;
+    }
+
+    public function isHeadless(): bool
+    {
+        return $this->headless;
     }
 }

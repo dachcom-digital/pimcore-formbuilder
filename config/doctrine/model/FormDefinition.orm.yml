@@ -33,10 +33,6 @@ FormBuilderBundle\Model\FormDefinition:
         modifiedBy:
             column: modifiedBy
             type: integer
-        mailLayout:
-            column: mailLayout
-            type: object
-            nullable: true
         configuration:
             column: configuration
             type: object

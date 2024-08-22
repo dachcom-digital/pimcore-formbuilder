@@ -3,6 +3,8 @@
 namespace FormBuilderBundle\EventListener\Core;
 
 use Carbon\Carbon;
+use FormBuilderBundle\Manager\DoubleOptInManager;
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Logger;
@@ -11,12 +13,19 @@ use Pimcore\Maintenance\TaskInterface;
 class CleanUpListener implements TaskInterface
 {
     public function __construct(
+        protected DoubleOptInManager $doubleOptInManager,
         protected FilesystemOperator $formBuilderChunkStorage,
         protected FilesystemOperator $formBuilderFilesStorage,
     ) {
     }
 
     public function execute(): void
+    {
+        $this->cleanUpFileStorage();
+        $this->cleanUpDoubleOptInSessions();
+    }
+
+    protected function cleanUpFileStorage(): void
     {
         $minimumModifiedDelta = Carbon::now()->subHour();
 
@@ -26,6 +35,18 @@ class CleanUpListener implements TaskInterface
 
         foreach ($this->formBuilderChunkStorage->listContents('/') as $file) {
             $this->remove($minimumModifiedDelta, $file);
+        }
+    }
+
+    protected function cleanUpDoubleOptInSessions(): void
+    {
+        if (!$this->doubleOptInManager->doubleOptInEnabled()) {
+            return;
+        }
+
+        /** @var DoubleOptInSessionInterface $session */
+        foreach ($this->doubleOptInManager->getOutDatedDoubleOptInSessions() as $session) {
+            $this->doubleOptInManager->deleteDoubleOptInSession($session);
         }
     }
 

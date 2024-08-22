@@ -46,8 +46,17 @@ final class FormBuilderEvents
 
     /**
      * The FORM_SUBMIT_SUCCESS event occurs when a frontend form submission was successful.
+     *
+     * @see \FormBuilderBundle\Event\SubmissionEvent
      */
     public const FORM_SUBMIT_SUCCESS = 'form_builder.submit.success';
+
+    /**
+     * The FORM_DOUBLE_OPT_IN_SUBMIT_SUCCESS event occurs when a frontend double-opt-in form submission was successful.
+     *
+     * @see \FormBuilderBundle\Event\DoubleOptInSubmissionEvent
+     */
+    public const FORM_DOUBLE_OPT_IN_SUBMIT_SUCCESS = 'form_builder.double_opt_in.submit.success';
 
     /**
      * The FORM_MAIL_PRE_SUBMIT event occurs before sending an email.

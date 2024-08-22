@@ -4,6 +4,7 @@ namespace FormBuilderBundle\DependencyInjection;
 
 use FormBuilderBundle\DynamicMultiFile\Adapter\DropZoneAdapter;
 use FormBuilderBundle\EventSubscriber\SignalStorage\FormDataSignalStorage;
+use FormBuilderBundle\Manager\DoubleOptInManager;
 use FormBuilderBundle\Storage\SessionStorageProvider;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -23,6 +24,7 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         $rootNode->append($this->buildFunnelNode());
+        $rootNode->append($this->buildDoubleOptInNode());
         $rootNode->append($this->createPersistenceNode());
         $rootNode->append($this->buildFlagsNode());
         $rootNode->append($this->buildSpamProductionNode());
@@ -705,6 +707,32 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('enabled')->defaultValue(false)->end()
                 ->scalarNode('storage_provider')->defaultValue(SessionStorageProvider::class)->end()
                 ->scalarNode('signal_storage_class')->defaultValue(FormDataSignalStorage::class)->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildDoubleOptInNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('double_opt_in');
+
+        $rootNode = $builder->getRootNode();
+
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')->defaultValue(false)->end()
+                ->enumNode('redeem_mode')
+                    ->values([DoubleOptInManager::REDEEM_MODE_DELETE, DoubleOptInManager::REDEEM_MODE_DEVALUE])
+                    ->defaultValue(DoubleOptInManager::REDEEM_MODE_DELETE)
+                ->end()
+                ->arrayNode('expiration')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('open_sessions')->info('Define expiration (in hours) for open sessions. 0 disables expiration.')->defaultValue(24)->end()
+                        ->integerNode('redeemed_sessions')->info('Define expiration (in hours) for redeemed sessions. 0 disables expiration.')->defaultValue(0)->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $rootNode;

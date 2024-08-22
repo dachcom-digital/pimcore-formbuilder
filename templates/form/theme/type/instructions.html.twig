@@ -1,0 +1,11 @@
+{% block form_builder_instruction_type_label %}{% endblock %}
+
+{% block form_builder_instruction_type_widget %}
+    {% apply spaceless %}
+        {% if form.vars.instructions is not empty %}
+            <div {{ block('attributes') }}>
+                {{ form.vars.instructions|trans|raw }}
+            </div>
+        {% endif %}
+    {% endapply %}
+{% endblock %}

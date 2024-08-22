@@ -11,7 +11,7 @@ class FormRuntimeDataAllocator implements FormRuntimeDataAllocatorInterface
     {
     }
 
-    public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData): RuntimeDataCollector
+    public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData, bool $headless): RuntimeDataCollector
     {
         $dataCollector = new RuntimeDataCollector();
 
@@ -20,7 +20,13 @@ class FormRuntimeDataAllocator implements FormRuntimeDataAllocatorInterface
             $dataCollector->add($systemRuntimeDataId, $systemRuntimeDataBlock);
         }
 
-        foreach ($this->runtimeDataProviderRegistry->getAll() as $dataProviderIdentifier => $dataProvider) {
+        /** @var RuntimeDataProviderInterface $dataProvider */
+        foreach ($this->runtimeDataProviderRegistry->getAll() as $dataProvider) {
+
+            if ($headless === true && !$dataProvider instanceof HeadlessAwareRuntimeDataProviderInterface) {
+                continue;
+            }
+
             if (!$dataProvider->hasRuntimeData($formDefinition)) {
                 continue;
             }

@@ -9,5 +9,5 @@ interface FormRuntimeDataAllocatorInterface
     /**
      * @throws \Exception
      */
-    public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData): RuntimeDataCollector;
+    public function allocate(FormDefinitionInterface $formDefinition, array $systemRuntimeData, bool $headless): RuntimeDataCollector;
 }

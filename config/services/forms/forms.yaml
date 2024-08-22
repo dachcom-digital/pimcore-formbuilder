@@ -52,6 +52,11 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Type\InstructionsType:
+        public: false
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Type\SnippetType:
         autowire: true
         public: false
@@ -96,3 +101,11 @@ services:
         tags:
             - { name: form.type }
 
+
+    #
+    # Double-Opt-In
+
+    FormBuilderBundle\Form\Type\DoubleOptIn\DoubleOptInType:
+        public: false
+        tags:
+            - { name: form.type }

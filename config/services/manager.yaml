@@ -16,3 +16,6 @@ services:
 
     # manager: template (form themes, type templates)
     FormBuilderBundle\Manager\TemplateManager: ~
+
+    # manager: double-opt-in
+    FormBuilderBundle\Manager\DoubleOptInManager: ~

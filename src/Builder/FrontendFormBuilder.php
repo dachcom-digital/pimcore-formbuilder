@@ -4,6 +4,7 @@ namespace FormBuilderBundle\Builder;
 
 use FormBuilderBundle\EventSubscriber\FormBuilderSubscriber;
 use FormBuilderBundle\Factory\FormDataFactoryInterface;
+use FormBuilderBundle\Form\Type\DoubleOptInType;
 use FormBuilderBundle\Form\Type\DynamicFormType;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,6 +23,60 @@ class FrontendFormBuilder
         protected FormDataFactoryInterface $formDataFactory,
         protected UrlGeneratorInterface $router
     ) {
+    }
+
+    public function buildDoubleOptInForm(
+        FormDefinitionInterface $formDefinition,
+        array $formAttributes = [],
+        bool $isHeadlessForm = false,
+        bool $useCsrfProtection = true
+    ): FormInterface {
+
+        $formDefinitionConfig = $formDefinition->getConfiguration();
+        $doubleOptInConfig = $formDefinition->getDoubleOptInConfig();
+
+        $request = !$isHeadlessForm && $this->requestStack->getMainRequest() instanceof Request ? $this->requestStack->getMainRequest() : null;
+
+        if ($formDefinitionConfig['noValidate'] === false) {
+            $formAttributes['novalidate'] = 'novalidate';
+        }
+
+        $formAttributes['class'] = 'formbuilder formbuilder-double-opt-in';
+
+        if ($formDefinitionConfig['useAjax'] === true && $isHeadlessForm === false) {
+            $formAttributes['data-ajax-structure-url'] = $this->router->generate('form_builder.controller.ajax.url_structure');
+            $formAttributes['class'] = sprintf('%s ajax-form', $formAttributes['class']);
+        }
+
+        $action = $formDefinitionConfig['action'];
+        if (!$isHeadlessForm && $request instanceof Request) {
+            $action = $formDefinitionConfig['action'] === '/' ? $request->getUri() : $formDefinitionConfig['action'];
+        }
+
+        $builder = $this->formFactory->createNamedBuilder(
+            $isHeadlessForm === true ? '' : sprintf('formbuilder_double_opt_in_%s', $formDefinition->getId()),
+            DoubleOptInType::class,
+            null,
+            [
+                'action'                         => $action,
+                'method'                         => $formDefinitionConfig['method'],
+                'attr'                           => $formAttributes,
+                'csrf_protection'                => $useCsrfProtection,
+                'render_conditional_logic_field' => !$isHeadlessForm,
+                'render_form_id_field'           => !$isHeadlessForm,
+                'current_form_id'                => $formDefinition->getId(),
+                'is_headless_form'               => $isHeadlessForm,
+                'double_opt_in_instruction_note' => $doubleOptInConfig['instructionNote'] ?? null
+            ]
+        );
+
+        $form = $builder->getForm();
+
+        if (!$isHeadlessForm && $request instanceof Request) {
+            $form->handleRequest($request);
+        }
+
+        return $form;
     }
 
     /**

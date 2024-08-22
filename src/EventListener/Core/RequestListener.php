@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\EventListener\Core;
 
+use FormBuilderBundle\Event\DoubleOptInSubmissionEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\FormBuilderEvents;
@@ -19,6 +20,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequestListener implements EventSubscriberInterface
 {
+    private const FORM_TYPE_DEFAULT = 'formbuilder_';
+    private const FORM_TYPE_DOUBLE_OPT_IN = 'formbuilder_double_opt_in_';
+
     public function __construct(
         protected FrontendFormBuilder $frontendFormBuilder,
         protected EventDispatcherInterface $eventDispatcher,
@@ -36,12 +40,15 @@ class RequestListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        $form = null;
+        $formRuntimeData = null;
+
         if (!$event->isMainRequest()) {
             return;
         }
 
         $request = $event->getRequest();
-        $formId = $this->findFormIdByRequest($request);
+        [$formId, $formType] = $this->findFormIdByRequest($request);
 
         if ($formId === null) {
             return;
@@ -53,16 +60,25 @@ class RequestListener implements EventSubscriberInterface
         }
 
         try {
-            $formRuntimeData = $this->detectFormRuntimeDataInRequest($event->getRequest(), $formDefinition);
 
-            if (null === $formRuntimeData) {
-                return;
+            if ($formType === self::FORM_TYPE_DOUBLE_OPT_IN) {
+                $form = $this->frontendFormBuilder->buildDoubleOptInForm($formDefinition);
+            } elseif ($formType === self::FORM_TYPE_DEFAULT) {
+                $formRuntimeData = $this->detectFormRuntimeDataInRequest($event->getRequest(), $formDefinition);
+                if ($formRuntimeData !== null) {
+                    $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
+                }
+            } else {
+                throw new \InvalidArgumentException(sprintf('Invalid form type "%s"', $formType));
             }
-            
-            $form = $this->frontendFormBuilder->buildForm($formDefinition, $formRuntimeData);
-        } catch (\Exception $e) {
+
+        } catch (\Throwable $e) {
             $this->generateErroredJsonReturn($event, $e);
 
+            return;
+        }
+
+        if (!$form instanceof FormInterface) {
             return;
         }
 
@@ -72,9 +88,17 @@ class RequestListener implements EventSubscriberInterface
 
         if ($form->isValid() === false) {
             $this->doneWithError($event, $form);
-        } else {
-            $this->doneWithSuccess($event, $form, $formRuntimeData);
+
+            return;
         }
+
+        if ($formType === self::FORM_TYPE_DOUBLE_OPT_IN) {
+            $this->doubleOptInDoneWithSuccess($event, $formDefinition, $form);
+
+            return;
+        }
+
+        $this->doneWithSuccess($event, $form, $formRuntimeData);
     }
 
     protected function doneWithError(RequestEvent $event, FormInterface $form): void
@@ -87,7 +111,20 @@ class RequestListener implements EventSubscriberInterface
         }
     }
 
-    protected function doneWithSuccess(RequestEvent $event, FormInterface $form, $formRuntimeData): void
+    protected function doubleOptInDoneWithSuccess(RequestEvent $event, FormDefinitionInterface $formDefinition, FormInterface $form): void
+    {
+        $request = $event->getRequest();
+        $submissionEvent = new DoubleOptInSubmissionEvent($request, $formDefinition, $form);
+        $this->eventDispatcher->dispatch($submissionEvent, FormBuilderEvents::FORM_DOUBLE_OPT_IN_SUBMIT_SUCCESS);
+
+        $finishResponse = $this->formSubmissionFinisher->finishDoubleOptInWithSuccess($request, $submissionEvent);
+
+        if ($finishResponse instanceof Response) {
+            $event->setResponse($finishResponse);
+        }
+    }
+
+    protected function doneWithSuccess(RequestEvent $event, FormInterface $form, ?array $formRuntimeData): void
     {
         $request = $event->getRequest();
         $submissionEvent = new SubmissionEvent($request, $formRuntimeData, $form);
@@ -117,7 +154,7 @@ class RequestListener implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    protected function findFormIdByRequest(Request $request): ?int
+    protected function findFormIdByRequest(Request $request): ?array
     {
         $isProcessed = false;
         $data = null;
@@ -130,24 +167,20 @@ class RequestListener implements EventSubscriberInterface
         }
 
         if ($isProcessed === true) {
-            return null;
+            return [null, null];
         }
 
         if (empty($data)) {
-            return null;
+            return [null, null];
         }
 
-        foreach ($data as $key => $parameters) {
-            if (!str_contains($key, 'formbuilder_')) {
-                continue;
-            }
-
-            if (isset($parameters['formId'])) {
-                return $parameters['formId'];
+        foreach ([self::FORM_TYPE_DOUBLE_OPT_IN, self::FORM_TYPE_DEFAULT] as $formType) {
+            if (null !== $formId = $this->detectFormIdByType($data, $formType)) {
+                return [$formId, $formType];
             }
         }
 
-        return null;
+        return [null, null];
     }
 
     protected function detectFormRuntimeDataInRequest(Request $request, FormDefinitionInterface $formDefinition): ?array
@@ -174,6 +207,22 @@ class RequestListener implements EventSubscriberInterface
 
         if (isset($data['formRuntimeData']) && is_string($data['formRuntimeData'])) {
             return json_decode($data['formRuntimeData'], true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return null;
+    }
+
+    protected function detectFormIdByType(array $values, string $formMatchType = self::FORM_TYPE_DEFAULT): ?int
+    {
+        foreach ($values as $key => $parameters) {
+
+            if (!str_contains($key, $formMatchType)) {
+                continue;
+            }
+
+            if (isset($parameters['formId'])) {
+                return $parameters['formId'];
+            }
         }
 
         return null;

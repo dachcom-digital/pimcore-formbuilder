@@ -1,5 +1,8 @@
 # Spam Protection
 
+## Double-Opt-In
+Read more about the double-opt-in feature [here](./04_DoubleOptIn.md).
+
 ## HoneyPot
 The Honeypot Field is enabled by default. You can disable it via [configuration flags](100_ConfigurationFlags.md).
 
