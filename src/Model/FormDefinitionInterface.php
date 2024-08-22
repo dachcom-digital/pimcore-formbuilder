@@ -13,6 +13,7 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
         'enctype',
         'noValidate',
         'useAjax',
+        'doubleOptIn',
         'attributes'
     ];
 
@@ -58,6 +59,10 @@ interface FormDefinitionInterface extends SubFieldsAwareInterface
     public function setConfiguration(array $configuration): void;
 
     public function getConfiguration(): array;
+
+    public function getDoubleOptInConfig(): array;
+
+    public function isDoubleOptInActive(): bool;
 
     public function setConditionalLogic(array $conditionalLogic): void;
 

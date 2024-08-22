@@ -53,7 +53,8 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 ## Further Information
 - [Usage (Rendering Types, Configuration)](docs/0_Usage.md)
   - [Headless Mode](docs/1_HeadlessMode.md)
-- [SPAM Protection (Honeypot, reCAPTCHA)](docs/03_SpamProtection.md)
+- [SPAM Protection](docs/03_SpamProtection.md)
+  - [Double-Opt-In Feature](docs/03_SpamProtection.md)
 - [Output Workflows](docs/OutputWorkflow/0_Usage.md)
   - [API Channel](docs/OutputWorkflow/09_ApiChannel.md)
   - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)

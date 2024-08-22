@@ -62,6 +62,7 @@ class ExtJsFormBuilder
         $data['fields_structure'] = $this->generateExtJsFormTypesStructure();
         $data['fields_template'] = $this->getFormTypeTemplates();
         $data['funnel'] = $this->generateFunnelConfiguration();
+        $data['double_opt_in'] = $this->generateDoubleOptInConfiguration();
         $data['config_store'] = $this->getFormStoreData();
         $data['container_types'] = $this->getTranslatedContainerTypes();
         $data['validation_constraints'] = $this->getTranslatedValidationConstraints();
@@ -541,6 +542,11 @@ class ExtJsFormBuilder
         return $this->configuration->getConfig('funnel');
     }
 
+    private function generateDoubleOptInConfiguration(): array
+    {
+        return $this->configuration->getConfig('double_opt_in');
+    }
+    
     private function getFormStoreData(): array
     {
         $formAttributes = $this->configuration->getConfig('form_attributes');

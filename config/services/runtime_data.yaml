@@ -9,3 +9,7 @@ services:
 
     FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocator: ~
     FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface: '@FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocator'
+
+    FormBuilderBundle\Form\RuntimeData\Provider\DoubleOptInSessionDataProvider:
+        tags:
+            - { name: form_builder.runtime_data_provider }

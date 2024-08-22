@@ -10,3 +10,6 @@ services:
 
     FormBuilderBundle\Repository\OutputWorkflowRepositoryInterface: '@FormBuilderBundle\Repository\OutputWorkflowRepository'
     FormBuilderBundle\Repository\OutputWorkflowRepository: ~
+
+    FormBuilderBundle\Repository\DoubleOptInSessionRepositoryInterface: '@FormBuilderBundle\Repository\DoubleOptInSessionRepository'
+    FormBuilderBundle\Repository\DoubleOptInSessionRepository: ~

@@ -49,6 +49,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
         this.formConditionalsStructured = formData.conditional_logic;
         this.formConditionalsStore = formData.conditional_logic_store;
         this.formFields = formData.fields;
+        this.doubleOptIn = formData.double_opt_in;
         this.availableFormFields = formData.fields_structure;
         this.availableContainerTypes = formData.container_types;
         this.availableConstraints = formData.validation_constraints;
@@ -500,10 +501,12 @@ Formbuilder.extjs.formPanel.config = Class.create({
             return el.submitValue === undefined || el.submitValue === true;
         });
 
-        for (var i = 0; i < items.length; i++) {
-            if (typeof items[i].getValue === 'function') {
-                var val = items[i].getValue(),
-                    fieldName = items[i].name;
+        Ext.Array.each(items, function (item, index) {
+            if (typeof item.getValue === 'function') {
+
+                var val = item.getValue(),
+                    fieldName = item.name;
+
                 if (fieldName) {
 
                     if (fieldName === 'name') {
@@ -519,6 +522,13 @@ Formbuilder.extjs.formPanel.config = Class.create({
                     }
                 }
             }
+        }.bind(this));
+
+        // parse form config
+        this.formConfig = DataObjectParser.transpose(this.formConfig).data();
+
+        if (this.formConfig.doubleOptIn && this.formConfig.doubleOptIn.enabled === false) {
+            this.formConfig.doubleOptIn = {enabled: false}
         }
 
         // parse conditional logic to add them later again
@@ -632,7 +642,8 @@ Formbuilder.extjs.formPanel.config = Class.create({
 
     getRootPanel: function () {
 
-        var methodStore = new Ext.data.ArrayStore({
+        var doubleOptInLocalizedField,
+            methodStore = new Ext.data.ArrayStore({
                 fields: ['value', 'label'],
                 data: [['post', 'POST'], ['get', 'GET']]
             }),
@@ -658,8 +669,8 @@ Formbuilder.extjs.formPanel.config = Class.create({
                 listeners: {
                     load: function (store) {
                         store.insert(0, {
-                            id : 'all',
-                            name : t('form_builder_email_csv_export_mail_type_all')
+                            id: 'all',
+                            name: t('form_builder_email_csv_export_mail_type_all')
                         });
                     }
                 }
@@ -674,6 +685,92 @@ Formbuilder.extjs.formPanel.config = Class.create({
                 false
             ),
             clBuilder = new Formbuilder.extjs.conditionalLogic.builder(this.formConditionalsStructured, this.formConditionalsStore, this);
+
+        if (this.doubleOptIn.enabled === true) {
+
+            doubleOptInLocalizedField = new Formbuilder.extjs.types.localizedField(function (locale) {
+
+                var hrefField = new Formbuilder.extjs.types.href({
+                        label: t('form_builder_form.double_opt_in.mail_template'),
+                        id: 'doubleOptIn.mailTemplate.' + locale,
+                        config: {
+                            types: ['document'],
+                            subtypes: {document: ['email']}
+                        }
+                    },
+                    this.formConfig.doubleOptIn && this.formConfig.doubleOptIn.mailTemplate && this.formConfig.doubleOptIn.mailTemplate[locale]
+                        ? this.formConfig.doubleOptIn.mailTemplate[locale]
+                        : null,
+                    null
+                );
+
+                return hrefField.getHref();
+
+            }.bind(this), true);
+
+            this.doubleOptInPanel = new Ext.form.FieldSet({
+                title: t('form_builder_form.double_opt_in'),
+                collapsible: false,
+                autoHeight: true,
+                width: '100%',
+                style: 'margin-top: 20px;',
+                submitValue: false,
+                defaults: {
+                    labelWidth: 160
+                },
+                items: [
+                    {
+                        xtype: 'checkbox',
+                        name: 'doubleOptIn.enabled',
+                        fieldLabel: t('form_builder_form.double_opt_in.enable'),
+                        inputValue: true,
+                        uncheckedValue: false,
+                        value: this.formConfig.doubleOptIn ? this.formConfig.doubleOptIn.enabled : false,
+                        listeners: {
+                            change: function (cb, value) {
+
+                                var containerField = cb.nextSibling();
+
+                                containerField.setHidden(!value);
+                                containerField.query('textfield[name="doubleOptIn.confirmationMessage"]')[0].allowBlank = !value
+
+                            }.bind(this)
+                        }
+                    },
+                    {
+                        xtype: 'container',
+                        hidden: !this.formConfig.doubleOptIn || this.formConfig.doubleOptIn.enabled === false,
+                        items: [
+                            {
+                                fieldLabel: false,
+                                xtype: 'displayfield',
+                                style: 'display:block !important; margin-bottom:15px !important; font-weight: 300;',
+                                value: t('form_builder_form.double_opt_in.description')
+                            },
+                            {
+                                xtype: 'textfield',
+                                name: 'doubleOptIn.instructionNote',
+                                fieldLabel: t('form_builder_form.double_opt_in.double_opt_in_instruction_note'),
+                                value: this.formConfig.doubleOptIn ? this.formConfig.doubleOptIn.instructionNote : null,
+                                allowBlank: true,
+                                width: '100%',
+                                inputAttrTpl: ' data-qwidth="250" data-qalign="br-r?" data-qtrackMouse="false" data-qtip="' + t('form_builder_type_field_base.translatable_field') + '"',
+                            },
+                            {
+                                xtype: 'textfield',
+                                name: 'doubleOptIn.confirmationMessage',
+                                fieldLabel: t('form_builder_form.double_opt_in.confirmation_message'),
+                                value: this.formConfig.doubleOptIn ? this.formConfig.doubleOptIn.confirmationMessage : null,
+                                allowBlank: true,
+                                width: '100%',
+                                inputAttrTpl: ' data-qwidth="250" data-qalign="br-r?" data-qtrackMouse="false" data-qtip="' + t('form_builder_type_field_base.translatable_field') + '"',
+                            },
+                            doubleOptInLocalizedField.getField()
+                        ]
+                    }
+                ]
+            });
+        }
 
         this.metaDataPanel = keyValueRepeater.getRepeater();
 
@@ -792,11 +889,10 @@ Formbuilder.extjs.formPanel.config = Class.create({
                     checked: this.formConfig.useAjax === undefined,
                     value: this.formConfig.useAjax
                 },
-
                 this.metaDataPanel,
                 this.clBuilder,
+                this.doubleOptInPanel ? this.doubleOptInPanel : null,
                 this.exportPanel
-
             ]
         });
 
