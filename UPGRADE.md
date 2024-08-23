@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 5.1.0
-- **[SECURITY FEATURE]** Double-Opt-In Feature, read more about it [here](/docs/.md)
+- **[SECURITY FEATURE]** Double-Opt-In Feature, read more about it [here](./docs/04_DoubleOptIn.md)
   - If you're using a custom form theme, please include the `instructions` type (`{% use '@FormBuilder/form/theme/type/instructions.html.twig' %}`)
 - **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
 - **[SECURITY FEATURE]** Add [cloudflare turnstile](/docs/03_SpamProtection.md#cloudflare-turnstile)
