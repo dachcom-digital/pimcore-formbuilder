@@ -137,7 +137,7 @@ class RequestListener implements EventSubscriberInterface
         }
     }
 
-    protected function generateErroredJsonReturn(RequestEvent $event, ?\Exception $e, ?string $message = null): void
+    protected function generateErroredJsonReturn(RequestEvent $event, ?\Throwable $e, ?string $message = null): void
     {
         $request = $event->getRequest();
 
@@ -147,8 +147,8 @@ class RequestListener implements EventSubscriberInterface
 
         $response = new JsonResponse([
             'success' => false,
-            'error'   => $e instanceof \Exception ? $e->getMessage() : $message,
-            'trace'   => $e instanceof \Exception ? $e->getTrace() : [],
+            'error'   => $e instanceof \Throwable ? $e->getMessage() : $message,
+            'trace'   => $e instanceof \Throwable ? $e->getTrace() : [],
         ]);
 
         $event->setResponse($response);

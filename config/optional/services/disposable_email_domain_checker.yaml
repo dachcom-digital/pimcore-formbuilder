@@ -1,0 +1,16 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    FormBuilderBundle\Validator\EmailChecker\DisposableEmailDomainChecker:
+        tags:
+            - { name: form_builder.validator.email_checker }
+
+    FormBuilderBundle\Maintenance\DisposableEmailDomainFetchTask:
+        arguments:
+            $logger: '@form_builder.application_logger.email_checker_logger'
+        tags:
+            - {name: pimcore.maintenance.task, type: formbuilder_email_checker_disposable_email_domain_fetch }

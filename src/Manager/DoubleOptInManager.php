@@ -93,7 +93,7 @@ class DoubleOptInManager
     {
         $formData = $submissionEvent->getForm()->getData();
         $doubleOptInConfig = $submissionEvent->getFormDefinition()->getDoubleOptInConfig();
-        $locale = $submissionEvent->getRequest()->getLocale();
+        $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
 
         $email = $formData['emailAddress'] ?? null;
 
@@ -103,9 +103,13 @@ class DoubleOptInManager
 
         unset($formData['emailAddress']);
 
-        $dispatchLocation = $submissionEvent->getRequest()->getUri();
-        if ($submissionEvent->getRequest()->isXmlHttpRequest()) {
-            $dispatchLocation = $submissionEvent->getRequest()->headers->get('referer');
+        if ($submissionEvent->getDispatchLocation() !== null) {
+            $dispatchLocation = $submissionEvent->getDispatchLocation();
+        } else {
+            $dispatchLocation = $submissionEvent->getRequest()->getUri();
+            if ($submissionEvent->getRequest()->isXmlHttpRequest()) {
+                $dispatchLocation = $submissionEvent->getRequest()->headers->get('referer');
+            }
         }
 
         if (empty($dispatchLocation)) {
@@ -260,20 +264,35 @@ class DoubleOptInManager
 
     private function generateDoubleOptInSessionAwareLink(DoubleOptInSessionInterface $doubleOptInSession): string
     {
-        $query = [];
+        $params = [];
         $dispatchLocationUrl = parse_url($doubleOptInSession->getDispatchLocation());
 
         if (!empty($dispatchLocationUrl['query'])) {
-            parse_str($dispatchLocationUrl['query'], $query);
-            if (array_key_exists(self::DOUBLE_OPT_IN_SESSION_QUERY_IDENTIFIER, $query)) {
-                unset($query[self::DOUBLE_OPT_IN_SESSION_QUERY_IDENTIFIER]);
+            parse_str($dispatchLocationUrl['query'], $params);
+            if (array_key_exists(self::DOUBLE_OPT_IN_SESSION_QUERY_IDENTIFIER, $params)) {
+                unset($params[self::DOUBLE_OPT_IN_SESSION_QUERY_IDENTIFIER]);
             }
         }
 
-        $query[self::DOUBLE_OPT_IN_SESSION_QUERY_IDENTIFIER] = $doubleOptInSession->getTokenAsString();
+        $params[self::DOUBLE_OPT_IN_SESSION_QUERY_IDENTIFIER] = $doubleOptInSession->getTokenAsString();
 
-        $dispatchLocationUrl['query'] = http_build_query($query);
+        return $this->buildUrl($dispatchLocationUrl, $params);
+    }
 
-        return http_build_url($dispatchLocationUrl);
+    private function buildUrl(array $url, array $params = []): string
+    {
+        $url['query'] = http_build_query($params, '', '&');
+
+        $scheme = isset($url['scheme']) ? $url['scheme'] . '://' : '';
+        $host = $url['host'] ?? '';
+        $port = isset($url['port']) ? ':' . $url['port'] : '';
+        $user = $url['user'] ?? '';
+        $pass = isset($url['pass']) ? ':' . $url['pass'] : '';
+        $pass = ($user || $pass) ? "$pass@" : '';
+        $path = $url['path'] ?? '';
+        $query = $url['query'] ? '?' . $url['query'] : '';
+        $fragment = isset($url['fragment']) ? '#' . $url['fragment'] : '';
+
+        return $scheme . $user . $pass . $host . $port . $path . $query . $fragment;
     }
 }

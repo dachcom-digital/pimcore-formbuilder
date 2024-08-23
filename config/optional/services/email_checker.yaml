@@ -1,0 +1,8 @@
+services:
+
+    form_builder.application_logger.email_checker_logger:
+        public: true
+        class: Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger
+        calls:
+            - [addWriter, ['@Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb']]
+            - [setComponent, ['form_builder_email_checker']]

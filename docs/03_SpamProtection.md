@@ -79,3 +79,52 @@ form_builder:
 3. Add the "Cloudflare Turnstile" field to your form
 4. Enable the CloudFlareTurnstile [javascript module](./91_Javascript.md)
 4. Done
+
+## Email Checker
+The Email Checker Validator is available, if you've added at least one service. Per default, no service is registered by default. 
+
+This validator includes all services tagged with `form_builder.validator.email_checker`.
+If one of those services returns false in `isValid()` method, the validator will fail.
+
+### [BUILT IN] Disposable Email Domain Checker
+If enabled, this checker will fetch every 24h a database (stored in `%kernel.project_dir%/var/tmp/form-builder-email-checker` via flysystem) with known disposable mail hosts from [disposable/disposable](https://github.com/disposable/disposable).
+After that, the validator will check the given domain of an email address against the database.
+
+This service is not available per default and needs to be enabled if you want to use it:
+
+```yaml
+form_builder:
+    spam_protection:
+        email_checker:
+            disposable_email_domains:
+                enabled: true
+                include_subdomains: false # Also search host as subdomain. Default: false. Note, that this can be a huge performance impact
+```
+
+### Create custom Email Checker
+
+```yaml
+services:
+    App\Validator\EmailChecker\MyEmailChecker:
+        tags:
+            - { name: form_builder.validator.email_checker }
+```
+
+```php
+<?php
+
+namespace App\Validator\EmailChecker;
+
+use FormBuilderBundle\Configuration\Configuration;
+use League\Flysystem\FilesystemOperator;
+use function Symfony\Component\String\u;
+
+final class MyEmailChecker implements EmailCheckerInterface
+{
+    public function isValid(string $email, array $context): bool
+    {
+        // do your validation here
+        return true;
+    }
+}
+```

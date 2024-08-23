@@ -35,4 +35,5 @@ Additional Info:
 - Additional fields will be stored as array in the DoubleOptInSession in `additionalData`
 
 ## Trash-Mail Protection
-TBD
+The `EmailChecker` Validator is automatically appended to the `emailAddress` field.
+This validator only triggers, if you've configured at least one email checker service - read more about it [here](./docs/03_SpamProtection.md#email-checker)

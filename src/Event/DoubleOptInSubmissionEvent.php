@@ -3,24 +3,30 @@
 namespace FormBuilderBundle\Event;
 
 use FormBuilderBundle\Model\FormDefinitionInterface;
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class DoubleOptInSubmissionEvent extends Event
+class DoubleOptInSubmissionEvent extends BaseSubmissionEvent
 {
-    public function __construct(
-        private readonly Request $request,
-        private readonly FormDefinitionInterface $formDefinition,
-        private readonly FormInterface $form,
-        private readonly bool $useFlashBag = true,
-        private array $messages = []
-    ) {
-    }
+    protected FormDefinitionInterface $formDefinition;
 
-    public function getRequest(): Request
-    {
-        return $this->request;
+    protected ?string $dispatchLocation = null;
+
+    public function __construct(
+        Request $request,
+        FormDefinitionInterface $formDefinition,
+        FormInterface $form,
+        bool $useFlashBag = true,
+        array $messages = []
+    ) {
+        parent::__construct(
+            $request,
+            $form,
+            $useFlashBag,
+            $messages
+        );
+
+        $this->formDefinition = $formDefinition;
     }
 
     public function getFormDefinition(): FormDefinitionInterface
@@ -28,31 +34,13 @@ class DoubleOptInSubmissionEvent extends Event
         return $this->formDefinition;
     }
 
-    public function getForm(): FormInterface
+    public function getDispatchLocation(): ?string
     {
-        return $this->form;
+        return $this->dispatchLocation;
     }
 
-    public function useFlashBag(): bool
+    public function setDispatchLocation(?string $dispatchLocation): void
     {
-        return $this->useFlashBag;
-    }
-
-    public function getMessages(): array
-    {
-        return $this->messages;
-    }
-
-    public function addMessage(string $type, mixed $message): void
-    {
-        if (empty($message)) {
-            return;
-        }
-
-        if (!array_key_exists($type, $this->messages)) {
-            $this->messages[$type] = [];
-        }
-
-        $this->messages[$type][] = $message;
+        $this->dispatchLocation = $dispatchLocation;
     }
 }

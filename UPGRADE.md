@@ -1,12 +1,14 @@
 # Upgrade Notes
 
 ## 5.1.0
-- **[SECURITY FEATURE]** Double-Opt-In Feature, read more about it [here](/docs/.md)
+- **[SECURITY FEATURE]** Double-Opt-In Feature, read more about it [here](./docs/04_DoubleOptIn.md)
+- **[SECURITY FEATURE]** Email Checker Validator [#471](https://github.com/dachcom-digital/pimcore-formbuilder/issues/471), read more about it [here](./docs/03_SpamProtection.md#email-checker)
   - If you're using a custom form theme, please include the `instructions` type (`{% use '@FormBuilder/form/theme/type/instructions.html.twig' %}`)
 - **[SECURITY FEATURE]** Add [friendly captcha field](/docs/03_SpamProtection.md#friendly-captcha)
 - **[SECURITY FEATURE]** Add [cloudflare turnstile](/docs/03_SpamProtection.md#cloudflare-turnstile)
 - **[BUGFIX]** Use Pimcore AdminUserTranslator for Editable Dialog Box [#450](https://github.com/dachcom-digital/pimcore-formbuilder/issues/450)
 - **[BUGFIX]** CSV Export: Ignore mail params with empty data [#461](https://github.com/dachcom-digital/pimcore-formbuilder/issues/461)
+- **[IMPROVEMENT]** Improve response message context [#416](https://github.com/dachcom-digital/pimcore-formbuilder/issues/416)
 - **[IMPROVEMENT]** Improve API OC Field Mapping [#462](https://github.com/dachcom-digital/pimcore-formbuilder/issues/462)
 - **[IMPROVEMENT]** Improve json response success message behaviour [#416](https://github.com/dachcom-digital/pimcore-formbuilder/issues/416)
 - **[IMPROVEMENT]** Allow custom message in `DynamicMultiFileNotBlankValidator` constraint [#438](https://github.com/dachcom-digital/pimcore-formbuilder/issues/438)
