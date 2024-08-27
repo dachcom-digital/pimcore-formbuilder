@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.1.1
+- **[BUGFIX]** Fix Migration and Installer
+
 ## 5.1.0
 - **[SECURITY FEATURE]** Double-Opt-In Feature, read more about it [here](./docs/04_DoubleOptIn.md)
 - **[SECURITY FEATURE]** Email Checker Validator [#471](https://github.com/dachcom-digital/pimcore-formbuilder/issues/471), read more about it [here](./docs/03_SpamProtection.md#email-checker)
