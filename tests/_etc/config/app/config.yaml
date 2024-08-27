@@ -14,6 +14,7 @@ doctrine:
     dbal:
         connections:
             default:
+                server_version: 8.0
                 mapping_types:
                     enum: string
                     bit: boolean
