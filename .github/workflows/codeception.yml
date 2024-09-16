@@ -136,7 +136,7 @@ jobs:
                     vendor/bin/codecept run --env github -c ${{ github.workspace }}/lib/test-bundle
 
             -   name: Log Output
-                uses: actions/upload-artifact@v2
+                uses: actions/upload-artifact@v4
                 if: failure()
                 with:
                     name: "Logs (PHP ${{ matrix.php }}, Pimcore ${{ matrix.pimcore }}, Symfony ${{ matrix.symfony }})"
