@@ -7,6 +7,6 @@ modules:
             wait: 1
             capabilities:
                 'goog:chromeOptions':
-                    args: ['--no-sandbox', '--disable-extensions', '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--window-size=1280,1024']
+                    args: ['--no-sandbox', '--disable-extensions', '--disable-search-engine-choice-screen', '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--window-size=1280,1024']
                     prefs:
                         download.default_directory: '%TEST_BUNDLE_TEST_DIR%/_data/downloads'
