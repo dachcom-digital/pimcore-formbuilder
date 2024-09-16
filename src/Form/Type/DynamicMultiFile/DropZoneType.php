@@ -42,10 +42,11 @@ class DropZoneType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'max_file_size'        => null,
-            'allowed_extensions'   => [],
-            'item_limit'           => null,
-            'submit_as_attachment' => false
+            'max_file_size'             => null,
+            'allowed_extensions'        => [],
+            'item_limit'                => null,
+            'submit_as_attachment'      => false,
+            'submit_as_admin_deep_link' => false,
         ]);
     }
 

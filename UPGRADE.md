@@ -1,6 +1,9 @@
 # Upgrade Notes
 
 ## 5.1.1
+- **[IMPROVEMENT]** [File Upload] Add Deeplink Option to file upload field [#475](https://github.com/dachcom-digital/pimcore-formbuilder/issues/475)
+
+## 5.1.1
 - **[BUGFIX]** Fix Migration and Installer
 
 ## 5.1.0
