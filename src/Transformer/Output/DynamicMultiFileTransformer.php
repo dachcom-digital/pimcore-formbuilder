@@ -8,11 +8,13 @@ use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use Pimcore\Model\Asset;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DynamicMultiFileTransformer implements OutputTransformerInterface
 {
     public function __construct(
+        protected RouterInterface $router,
         protected TranslatorInterface $translator,
         protected AttachmentStreamInterface $attachmentStream
     ) {
@@ -44,13 +46,19 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
         $asset = $this->attachmentStream->createAttachmentAsset($attachmentData, $fieldDefinition->getName(), $rootFormData->getFormDefinition()->getName());
 
         if ($asset instanceof Asset) {
-            $path = $asset->getFrontendFullPath();
 
+            $hostUrl = \Pimcore\Tool::getHostUrl();
+
+            if (isset($options['submit_as_admin_deep_link']) && $options['submit_as_admin_deep_link'] === true) {
+                return sprintf('%s%s?%s_%d_%s', $hostUrl, $this->router->generate('pimcore_admin_login_deeplink'), 'asset', $asset->getId(), $asset->getType());
+            }
+
+            $path = $asset->getFrontendFullPath();
             if (str_starts_with($path, 'http')) {
                 return $path;
             }
 
-            return sprintf('%s%s', \Pimcore\Tool::getHostUrl(), $asset->getRealFullPath());
+            return sprintf('%s%s', $hostUrl, $asset->getRealFullPath());
         }
 
         return null;

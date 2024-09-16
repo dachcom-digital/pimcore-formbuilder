@@ -27,11 +27,12 @@ class DynamicMultiFileType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'compound'             => true,
-            'max_file_size'        => 0,
-            'allowed_extensions'   => [],
-            'item_limit'           => 0,
-            'submit_as_attachment' => false
+            'compound'                  => true,
+            'max_file_size'             => 0,
+            'allowed_extensions'        => [],
+            'item_limit'                => 0,
+            'submit_as_attachment'      => false,
+            'submit_as_admin_deep_link' => false,
         ]);
     }
 

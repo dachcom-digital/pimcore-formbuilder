@@ -49,3 +49,12 @@ form_builder:
                         display_group_id: attributes
                         type: label
                         label: 'form_builder_type_field.submit_as_attachment_desc'
+                    options.submit_as_admin_deep_link:
+                        display_group_id: attributes
+                        type: checkbox
+                        label: 'form_builder_type_field.submit_as_admin_deep_link'
+                        config: ~
+                    options.submit_as_admin_deep_link_label:
+                        display_group_id: attributes
+                        type: label
+                        label: 'form_builder_type_field.submit_as_admin_deep_link_desc'
