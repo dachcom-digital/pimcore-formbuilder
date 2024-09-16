@@ -99,7 +99,7 @@ class MailParser
 
         preg_match_all('/\%(.+?)\%/', $realSubject, $matches);
 
-        if (!isset($matches[1]) || count($matches[1]) === 0) {
+        if (count($matches[1]) === 0) {
             return;
         }
 
@@ -164,7 +164,7 @@ class MailParser
 
         preg_match_all('/\%(.+?)\%/', $str, $matches);
 
-        if (!isset($matches[1]) || count($matches[1]) === 0) {
+        if (count($matches[1]) === 0) {
             return $str;
         }
 
