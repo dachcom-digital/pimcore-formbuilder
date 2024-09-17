@@ -46,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `formbuilder_double_opt_in_session` (
     `dispatch_location` longtext NULL,
     `applied` tinyint(1) DEFAULT 0 NOT null,
     `creationDate` datetime NOT NULL,
-    CONSTRAINT email_form_definition UNIQUE (email, form_definition, applied),
     CONSTRAINT FK_88815C4F61F7634C FOREIGN KEY (form_definition) REFERENCES formbuilder_forms (id) ON DELETE CASCADE
 );
 
