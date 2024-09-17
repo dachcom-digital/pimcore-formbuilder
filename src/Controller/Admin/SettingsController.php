@@ -5,7 +5,6 @@ namespace FormBuilderBundle\Controller\Admin;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Form\DataInjector\DataInjectorInterface;
 use FormBuilderBundle\Manager\DoubleOptInManager;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\PresetManager;
@@ -18,6 +17,7 @@ use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class SettingsController extends AdminAbstractController
@@ -325,11 +325,13 @@ class SettingsController extends AdminAbstractController
             [
                 'success'  => true,
                 'total'    => $paginator->count(),
-                'sessions' => $this->serializer->normalize(
-                    iterator_to_array($paginator->getIterator()),
-                    'array',
-                    ['groups' => ['ExtJs']]
-                )
+                'sessions' => $this->serializer instanceof NormalizerInterface
+                    ? $this->serializer->normalize(
+                        iterator_to_array($paginator->getIterator()),
+                        'array',
+                        ['groups' => ['ExtJs']]
+                    )
+                    : []
             ]
         );
     }

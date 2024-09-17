@@ -12,11 +12,3 @@ services:
     FormBuilderBundle\MailEditor\Widget\DateWidget:
         tags:
             - { name: form_builder.mail_editor.widget, type: date }
-
-    FormBuilderBundle\MailEditor\Widget\DoubleOptInSessionEmailWidget:
-        tags:
-            - { name: form_builder.mail_editor.widget, type: double_opt_in_session_email }
-
-    FormBuilderBundle\MailEditor\Widget\DoubleOptInSessionAdditionalDataWidget:
-        tags:
-            - { name: form_builder.mail_editor.widget, type: double_opt_in_session_additional_data }

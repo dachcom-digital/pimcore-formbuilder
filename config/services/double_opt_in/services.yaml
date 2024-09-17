@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    FormBuilderBundle\MailEditor\Widget\DoubleOptInSessionEmailWidget:
+        tags:
+            - { name: form_builder.mail_editor.widget, type: double_opt_in_session_email }
+
+    FormBuilderBundle\MailEditor\Widget\DoubleOptInSessionAdditionalDataWidget:
+        tags:
+            - { name: form_builder.mail_editor.widget, type: double_opt_in_session_additional_data }
