@@ -45,6 +45,7 @@ jobs:
                     -   pimcore: ~11.2.0
                         template_tag: v11.0.0
         steps:
+            -   uses: nanasess/setup-chromedriver@v2
             -   uses: actions/checkout@v4
                 with:
                     path: lib/test-bundle
@@ -97,7 +98,6 @@ jobs:
                 run: mysql -utest -ptest -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
 
             -   name: Setup Chromium
-                uses: nanasess/setup-chromedriver@v2
                 run: |
                     chromedriver --url-base=/wd/hub &
 
