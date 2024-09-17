@@ -97,8 +97,9 @@ jobs:
                 run: mysql -utest -ptest -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
 
             -   name: Setup Chromium
+                uses: nanasess/setup-chromedriver@v2
                 run: |
-                    nohup $CHROMEWEBDRIVER/chromedriver --url-base=/wd/hub /dev/null 2>&1 &
+                    chromedriver --url-base=/wd/hub &
 
             -   name: Start Symfony Server
                 run: |
