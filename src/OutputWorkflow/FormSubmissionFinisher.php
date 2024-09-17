@@ -10,6 +10,7 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardStackedException;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Form\FormErrorsSerializerInterface;
 use FormBuilderBundle\Manager\DoubleOptInManager;
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\Session\FlashBagManagerInterface;
@@ -52,6 +53,15 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
 
         if (!$outputWorkflow instanceof OutputWorkflowInterface) {
             return $this->buildErrorResponse($request, $submissionEvent, 'No valid output workflow found.');
+        }
+
+        /** @var FormDataInterface $data */
+        $data = $submissionEvent->getForm()->getData();
+        $formDefinition = $data->getFormDefinition();
+        $doubleOptInSession = $this->doubleOptInManager->findDoubleOptInSession($formDefinition, $submissionEvent->getFormRuntimeData());
+
+        if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            $submissionEvent->setDoubleOptInSession($doubleOptInSession);
         }
 
         try {
@@ -110,7 +120,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             $data = $submissionEvent->getForm()->getData();
             $formDefinition = $data->getFormDefinition();
             $redirectUri = $submissionEvent->hasRedirectUri() ? $submissionEvent->getRedirectUri() : null;
-
         } else {
             $flashBagPrefix = 'formbuilder_double_opt_in';
             $formDefinition = $submissionEvent->getFormDefinition();
@@ -154,10 +163,10 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
             $responseMessages
         ];
 
-        if ($submissionEvent instanceof SubmissionEvent) {
+        if ($submissionEvent instanceof SubmissionEvent && $submissionEvent->hasDoubleOptInSession()) {
             try {
-                $this->doubleOptInManager->redeemDoubleOptInSessionToken($formDefinition, $submissionEvent->getFormRuntimeData());
-            } catch(\Throwable $e) {
+                $this->doubleOptInManager->redeemDoubleOptInSessionToken($submissionEvent->getDoubleOptInSession());
+            } catch (\Throwable $e) {
                 return $this->buildErrorResponse($request, $submissionEvent, $e->getMessage());
             }
         }

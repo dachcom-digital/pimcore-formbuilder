@@ -122,6 +122,7 @@ class PlaceholderParser implements PlaceholderParserInterface
         }
 
         $attributes->set('form', $this->form);
+        $attributes->set('raw_output_data', $this->outputData);
 
         return $widget->getValueForOutput($attributes, $this->layoutType);
     }
