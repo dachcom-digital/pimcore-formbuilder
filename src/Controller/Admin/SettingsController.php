@@ -2,27 +2,35 @@
 
 namespace FormBuilderBundle\Controller\Admin;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
 use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Form\DataInjector\DataInjectorInterface;
+use FormBuilderBundle\Manager\DoubleOptInManager;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Manager\PresetManager;
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use FormBuilderBundle\Registry\ChoiceBuilderRegistry;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Registry\DataInjectionRegistry;
+use FormBuilderBundle\Repository\DoubleOptInSessionRepositoryInterface;
 use FormBuilderBundle\Tool\FormDependencyLocator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class SettingsController extends AdminAbstractController
 {
     public function __construct(
         protected Configuration $configuration,
         protected FormDefinitionManager $formDefinitionManager,
+        protected DoubleOptInManager $doubleOptInManager,
         protected ExtJsFormBuilder $extJsFormBuilder,
         protected ChoiceBuilderRegistry $choiceBuilderRegistry,
-        protected FormDependencyLocator $formDependencyLocator
+        protected FormDependencyLocator $formDependencyLocator,
+        protected DoubleOptInSessionRepositoryInterface $doubleOptInSessionRepository,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 
@@ -296,6 +304,53 @@ class SettingsController extends AdminAbstractController
                 'store'   => $store
             ]
         );
+    }
+
+    public function getDoubleOptInSessionsAction(Request $request, int $formId): JsonResponse
+    {
+        $offset = (int) $request->get('start', 0);
+        $limit = (int) $request->get('limit', 25);
+
+        $qb = $this->doubleOptInSessionRepository->getQueryBuilder();
+
+        $qb->where('s.formDefinition = :formDefinition');
+        $qb->setParameter('formDefinition', $formId);
+
+        $qb->setMaxResults($limit);
+        $qb->setFirstResult($offset);
+
+        $paginator = new Paginator($qb);
+
+        return $this->json(
+            [
+                'success'  => true,
+                'total'    => $paginator->count(),
+                'sessions' => $this->serializer instanceof NormalizerInterface
+                    ? $this->serializer->normalize(
+                        iterator_to_array($paginator->getIterator()),
+                        'array',
+                        ['groups' => ['ExtJs']]
+                    )
+                    : []
+            ]
+        );
+    }
+
+    public function deleteDoubleOptInSessionAction(string $token): JsonResponse
+    {
+        $doubleOptInSession = $this->doubleOptInSessionRepository->find($token);
+
+        if (!$doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            return $this->json([
+                    'success' => false,
+                    'message' => sprintf('Session %s not found', $token)
+                ]
+            );
+        }
+
+        $this->doubleOptInManager->deleteDoubleOptInSession($doubleOptInSession);
+
+        return $this->json(['success' => true]);
     }
 
     private function getSaveName(string $name): string

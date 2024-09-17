@@ -37,3 +37,26 @@ Additional Info:
 ## Trash-Mail Protection
 The `EmailChecker` Validator is automatically appended to the `emailAddress` field.
 This validator only triggers, if you've configured at least one email checker service - read more about it [here](./docs/03_SpamProtection.md#email-checker)
+
+## Templating
+Based on given output workflow, you may want to use the double opt in data in given channel:
+
+### E-Mail Channel
+If DOI is active, the submitted mail object will receive two additional parameters:
+- _form_builder_double_opt_in_token
+- _form_builder_double_opt_in_session_email
+
+#### E-Mail Data Template
+DOI information can't be rendered by default since the rendering heavily depends on your implementation. 
+Checkout out this [part](https://github.com/dachcom-digital/pimcore-formbuilder/blob/a9da6dada95274049d07f920999b57dfc0c9b462/templates/email/form_data.html.twig#L57-L74) in `templates/email/form_data.html.twig`, 
+to show DOI data within your submitted mail data.
+
+#### E-Mail Editor
+![image](https://github.com/user-attachments/assets/30f209a1-231a-4511-bdf9-0c6ccef423d3)
+Use the additional fields on the right side to add DOI information to the mail template editor.
+
+### Object Channel
+Currently not implemented
+
+### API Channel
+Currently not implemented

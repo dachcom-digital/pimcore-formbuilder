@@ -44,6 +44,3 @@ FormBuilderBundle\Model\DoubleOptInSession:
                 name: form_definition
                 referencedColumnName: id
                 onDelete: CASCADE
-    uniqueConstraints:
-        email_form_definition:
-            columns: [email, form_definition, applied]

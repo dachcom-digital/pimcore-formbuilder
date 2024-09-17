@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\Event;
 
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,6 +13,7 @@ class SubmissionEvent extends BaseSubmissionEvent
 
     protected ?string $redirectUri = null;
     protected bool $outputWorkflowFinisherDisabled = false;
+    protected ?DoubleOptInSessionInterface $doubleOptInSession = null;
 
     public function __construct(
         Request $request,
@@ -65,5 +67,20 @@ class SubmissionEvent extends BaseSubmissionEvent
     public function getFunnelRuntimeData(): ?array
     {
         return $this->funnelRuntimeData;
+    }
+
+    public function hasDoubleOptInSession(): bool
+    {
+        return $this->doubleOptInSession instanceof DoubleOptInSessionInterface;
+    }
+
+    public function getDoubleOptInSession(): ?DoubleOptInSessionInterface
+    {
+        return $this->doubleOptInSession;
+    }
+
+    public function setDoubleOptInSession(?DoubleOptInSessionInterface $doubleOptInSession): void
+    {
+        $this->doubleOptInSession = $doubleOptInSession;
     }
 }

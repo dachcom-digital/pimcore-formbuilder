@@ -70,6 +70,7 @@ class AssetListener implements EventSubscriberInterface
             '/bundles/formbuilder/js/extjs/_form/data-injection/expression.js',
             '/bundles/formbuilder/js/extjs/extensions/formMetaData.js',
             '/bundles/formbuilder/js/extjs/extensions/formMailEditor.js',
+            '/bundles/formbuilder/js/extjs/extensions/formDoubleOptInData.js',
             '/bundles/formbuilder/js/extjs/extensions/formApiMappingEditor.js',
             '/bundles/formbuilder/js/extjs/extensions/formDataMappingEditor/formDataMapper.js',
             '/bundles/formbuilder/js/extjs/extensions/formObjectMappingEditor.js',

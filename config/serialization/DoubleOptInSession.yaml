@@ -1,0 +1,16 @@
+FormBuilderBundle\Model\DoubleOptInSession:
+    attributes:
+        token:
+            groups: [ Default, ExtJs ]
+        formDefinition:
+            groups: [ Default ]
+        email:
+            groups: [ Default, ExtJs ]
+        additionalData:
+            groups: [ Default, ExtJs ]
+        dispatchLocation:
+            groups: [ Default, ExtJs ]
+        applied:
+            groups: [ Default, ExtJs ]
+        creationDate:
+            groups: [ Default, ExtJs ]

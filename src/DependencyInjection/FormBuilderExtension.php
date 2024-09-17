@@ -44,6 +44,10 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../../config']));
         $loader->load('services.yaml');
 
+        if ($config['double_opt_in']['enabled'] === true) {
+            $loader->load('services/double_opt_in/services.yaml');
+        }
+
         $conditionalLogicDefinition = $container->getDefinition(ConditionalLogicRegistry::class);
 
         foreach ($config['conditional_logic']['action'] as $identifier => $action) {

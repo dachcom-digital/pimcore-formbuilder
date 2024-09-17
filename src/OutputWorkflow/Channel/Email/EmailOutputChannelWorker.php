@@ -7,6 +7,7 @@ use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -27,7 +28,7 @@ class EmailOutputChannelWorker
     /**
      * @throws \Exception
      */
-    public function process(FormInterface $form, array $channelConfiguration, array $formRuntimeData, string $workflowName, string $locale): void
+    public function process(FormInterface $form, array $channelConfiguration, array $formRuntimeData, string $workflowName, array $context = []): void
     {
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
@@ -36,6 +37,7 @@ class EmailOutputChannelWorker
         $forcePlainText = $channelConfiguration['forcePlainText'];
         $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
         $disableMailLogging = $channelConfiguration['disableMailLogging'] ?? false;
+        $doubleOptInSession = $context['doubleOptInSession'] ?? null;
 
         $mailTemplateId = $mailTemplate['id'];
         $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
@@ -44,12 +46,17 @@ class EmailOutputChannelWorker
             throw new \Exception('Invalid Email Document Id: ' . $mailTemplateId);
         }
 
-        $mail = $this->mailParser->create($mailTemplate, $form, $channelConfiguration, $locale);
+        $mail = $this->mailParser->create($mailTemplate, $form, $channelConfiguration, $context);
         $forceSubmissionAsPlainText = (bool) $forcePlainText;
 
         $mail->setParam('_form_builder_output_workflow_name', $workflowName);
         $mail->setParam('_form_builder_id', (int) $formData->getFormDefinition()->getId());
         $mail->setParam('_form_builder_preset', $formRuntimeData['form_preset'] === 'custom' ? null : $formRuntimeData['form_preset']);
+
+        if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            $mail->setParam('_form_builder_double_opt_in_token', $doubleOptInSession->getTokenAsString());
+            $mail->setParam('_form_builder_double_opt_in_session_email', $doubleOptInSession->getEmail());
+        }
 
         if ($disableDefaultMailBody === true) {
             $mail->setParam('_form_builder_disabled_default_mail_body', 1);

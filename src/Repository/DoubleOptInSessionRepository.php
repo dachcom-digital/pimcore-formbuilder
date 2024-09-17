@@ -23,6 +23,16 @@ class DoubleOptInSessionRepository implements DoubleOptInSessionRepositoryInterf
         return $this->repository->createQueryBuilder('s');
     }
 
+    public function find(string $token): ?DoubleOptInSessionInterface
+    {
+        return $this->repository->find(Uuid::fromString($token)->toBinary());
+    }
+
+    public function findOneBy(array $criteria, ?array $orderBy = null): ?DoubleOptInSessionInterface
+    {
+        return $this->repository->findOneBy($criteria, $orderBy);
+    }
+
     public function findByNonAppliedFormAwareSessionToken(string $token, int $formDefinitionId): ?DoubleOptInSessionInterface
     {
         if (!Uuid::isValid($token)) {

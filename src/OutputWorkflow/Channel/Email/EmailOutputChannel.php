@@ -37,13 +37,18 @@ class EmailOutputChannel implements ChannelInterface
      */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
-        $locale = $submissionEvent->getRequest()->getLocale();
+        $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
 
         $localizedConfig = $this->validateOutputConfig($channelConfiguration, $locale);
 
-        $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $locale);
+        $context = [
+            'locale'             => $locale,
+            'doubleOptInSession' => $submissionEvent->getDoubleOptInSession(),
+        ];
+
+        $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $context);
     }
 
     /**

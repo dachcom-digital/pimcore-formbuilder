@@ -2,11 +2,11 @@
 
 namespace FormBuilderBundle\Manager;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\DoubleOptInSubmissionEvent;
 use FormBuilderBundle\Exception\DoubleOptInException;
+use FormBuilderBundle\Exception\DoubleOptInUniqueConstraintViolationException;
 use FormBuilderBundle\Form\RuntimeData\Provider\DoubleOptInSessionDataProvider;
 use FormBuilderBundle\Model\DoubleOptInSession;
 use FormBuilderBundle\Model\DoubleOptInSessionInterface;
@@ -49,26 +49,8 @@ class DoubleOptInManager
         return !$this->isValidNonAppliedFormAwareSessionToken($formDefinition, $sessionToken);
     }
 
-    public function redeemDoubleOptInSessionToken(FormDefinitionInterface $formDefinition, array $formRuntimeData): void
+    public function redeemDoubleOptInSessionToken(DoubleOptInSessionInterface $doubleOptInSession): void
     {
-        if ($this->doubleOptInEnabled($formDefinition) === false) {
-            return;
-        }
-
-        if (!array_key_exists(DoubleOptInSessionDataProvider::DOUBLE_OPT_IN_SESSION_RUNTIME_DATA_IDENTIFIER, $formRuntimeData)) {
-            return;
-        }
-
-        if (null === $sessionToken = $formRuntimeData[DoubleOptInSessionDataProvider::DOUBLE_OPT_IN_SESSION_RUNTIME_DATA_IDENTIFIER]) {
-            return;
-        }
-
-        $doubleOptInSession = $this->doubleOptInSessionRepository->findByNonAppliedFormAwareSessionToken($sessionToken, $formDefinition->getId());
-
-        if (!$doubleOptInSession instanceof DoubleOptInSessionInterface) {
-            throw new DoubleOptInException('invalid double-opt-in session');
-        }
-
         $doubleOptInConfig = $this->configuration->getConfig('double_opt_in');
 
         if ($doubleOptInConfig['redeem_mode'] === self::REDEEM_MODE_DELETE) {
@@ -76,6 +58,28 @@ class DoubleOptInManager
         } else {
             $this->devalueDoubleOptInSession($doubleOptInSession);
         }
+    }
+
+    public function findDoubleOptInSession(FormDefinitionInterface $formDefinition, array $formRuntimeData): ?DoubleOptInSessionInterface
+    {
+        if ($this->doubleOptInEnabled($formDefinition) === false) {
+            return null;
+        }
+
+        if (!array_key_exists(DoubleOptInSessionDataProvider::DOUBLE_OPT_IN_SESSION_RUNTIME_DATA_IDENTIFIER, $formRuntimeData)) {
+            return null;
+        }
+
+        if (null === $sessionToken = $formRuntimeData[DoubleOptInSessionDataProvider::DOUBLE_OPT_IN_SESSION_RUNTIME_DATA_IDENTIFIER]) {
+            return null;
+        }
+
+        $doubleOptInSession = $this->doubleOptInSessionRepository->findByNonAppliedFormAwareSessionToken($sessionToken, $formDefinition->getId());
+        if (!$doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            return null;
+        }
+
+        return $doubleOptInSession;
     }
 
     public function isValidNonAppliedFormAwareSessionToken(FormDefinitionInterface $formDefinition, ?string $sessionToken): bool
@@ -123,7 +127,7 @@ class DoubleOptInManager
                 $formData,
                 $dispatchLocation
             );
-        } catch (UniqueConstraintViolationException) {
+        } catch (DoubleOptInUniqueConstraintViolationException) {
             throw new DoubleOptInException($this->translator->trans('form_builder.form.double_opt_in.duplicate_session'));
         }
 
@@ -144,6 +148,23 @@ class DoubleOptInManager
         ?array $additionalData,
         string $dispatchLocation
     ): DoubleOptInSessionInterface {
+
+        $doubleOptInConfig = $this->configuration->getConfig('double_opt_in');
+        $allowMultipleUserSessions = $doubleOptInConfig['allowMultipleUserSessions'] ?? true;
+
+        if ($allowMultipleUserSessions === false) {
+
+            $doubleOptInSession = $this->doubleOptInSessionRepository->findOneBy([
+                'applied'        => false,
+                'email'          => $email,
+                'formDefinition' => $formDefinition
+            ]);
+
+            if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
+                throw new DoubleOptInUniqueConstraintViolationException();
+            }
+        }
+
         $doubleOptInSession = new DoubleOptInSession();
 
         $doubleOptInSession->setFormDefinition($formDefinition);
