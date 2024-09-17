@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use FormBuilderBundle\Stream\File;
 use League\Flysystem\FilesystemOperator;
 use Pimcore\Mail;
@@ -25,9 +26,12 @@ class MailParser
     /**
      * @throws \Exception
      */
-    public function create(Email $mailTemplate, FormInterface $form, array $channelConfiguration, string $locale): Mail
+    public function create(Email $mailTemplate, FormInterface $form, array $channelConfiguration, array $context): Mail
     {
         $mail = new Mail();
+
+        $locale = $context['locale'] ?? null;
+        $doubleOptInSession = $context['doubleOptInSession'] ?? null;
 
         $allowAttachments = $channelConfiguration['allowAttachments'];
         $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
@@ -43,12 +47,14 @@ class MailParser
         $this->parseSubject($mailTemplate, $fieldValues);
         $this->setMailPlaceholders($mail, $fieldValues);
 
+        $mail->setParam('double_opt_in_session', $doubleOptInSession);
+
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
 
         if ($disableDefaultMailBody === false) {
             $mailLayout = $this->getMailLayout($channelConfiguration, $forcePlainText);
-            $this->setMailBodyPlaceholder($mail, $form, $fieldValues, $mailLayout, $forcePlainText ? 'text' : 'html');
+            $this->setMailBodyPlaceholder($mail, $form, $doubleOptInSession, $fieldValues, $mailLayout, $forcePlainText ? 'text' : 'html');
         }
 
         $attachments = [];
@@ -129,14 +135,37 @@ class MailParser
         }
     }
 
-    protected function setMailBodyPlaceholder(Mail $mail, FormInterface $form, array $fieldValues, ?string $mailLayout, string $layoutType): void
-    {
+    protected function setMailBodyPlaceholder(
+        Mail $mail,
+        FormInterface $form,
+        ?DoubleOptInSessionInterface $doubleOptInSession,
+        array $fieldValues,
+        ?string $mailLayout,
+        string $layoutType
+    ): void {
+
+        $doubleOptInSessionValues = [];
+        if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            $doubleOptInSessionValues['email'] = $doubleOptInSession->getEmail();
+            $doubleOptInSessionValues['token'] = $doubleOptInSession->getTokenAsString();
+            $doubleOptInSessionValues['creation_date'] = $doubleOptInSession->getCreationDate();
+            $doubleOptInSessionValues['additional_data'] = $doubleOptInSession->getAdditionalData();
+        }
+
         if ($mailLayout === null) {
             $body = $this->templating->render(
                 '@FormBuilder/email/form_data.html.twig',
-                ['fields' => $fieldValues]
+                [
+                    'fields'                => $fieldValues,
+                    'double_opt_in_session' => $doubleOptInSessionValues
+                ]
             );
         } else {
+
+            if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
+                $fieldValues['double_opt_in_session'] = $doubleOptInSessionValues;
+            }
+
             $body = $this->placeholderParser->replacePlaceholderWithOutputData($mailLayout, $form, $fieldValues, $layoutType);
         }
 

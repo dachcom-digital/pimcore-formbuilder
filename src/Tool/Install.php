@@ -2,7 +2,7 @@
 
 namespace FormBuilderBundle\Tool;
 
-use FormBuilderBundle\Migrations\Version20240819150642;
+use FormBuilderBundle\Migrations\Version20240916132702;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\Asset;
@@ -30,7 +30,7 @@ class Install extends SettingsStoreAwareInstaller
 
     public function getLastMigrationVersionClassName(): ?string
     {
-        return Version20240819150642::class;
+        return Version20240916132702::class;
     }
 
     public function updateTranslations(): void

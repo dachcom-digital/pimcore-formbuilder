@@ -725,6 +725,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
                         fieldLabel: t('form_builder_form.double_opt_in.enable'),
                         inputValue: true,
                         uncheckedValue: false,
+                        labelWidth: 200,
                         value: this.formConfig.doubleOptIn ? this.formConfig.doubleOptIn.enabled : false,
                         listeners: {
                             change: function (cb, value) {
@@ -740,12 +741,23 @@ Formbuilder.extjs.formPanel.config = Class.create({
                     {
                         xtype: 'container',
                         hidden: !this.formConfig.doubleOptIn || this.formConfig.doubleOptIn.enabled === false,
+                        defaults: {
+                            labelWidth: 200
+                        },
                         items: [
                             {
                                 fieldLabel: false,
                                 xtype: 'displayfield',
                                 style: 'display:block !important; margin-bottom:15px !important; font-weight: 300;',
                                 value: t('form_builder_form.double_opt_in.description')
+                            },
+                            {
+                                xtype: 'checkbox',
+                                name: 'doubleOptIn.allowMultipleUserSessions',
+                                fieldLabel: t('form_builder_form.double_opt_in.allow_multiple_user_sessions'),
+                                inputValue: true,
+                                uncheckedValue: false,
+                                value: this.formConfig.allowMultipleUserSessions ? this.formConfig.doubleOptIn.allowMultipleUserSessions : true,
                             },
                             {
                                 xtype: 'textfield',
@@ -765,7 +777,13 @@ Formbuilder.extjs.formPanel.config = Class.create({
                                 width: '100%',
                                 inputAttrTpl: ' data-qwidth="250" data-qalign="br-r?" data-qtrackMouse="false" data-qtip="' + t('form_builder_type_field_base.translatable_field') + '"',
                             },
-                            doubleOptInLocalizedField.getField()
+                            doubleOptInLocalizedField.getField(),
+                            {
+                                xtype: 'button',
+                                text: t('form_builder_form.double_opt_in.show_sessions'),
+                                iconCls: 'pimcore_icon_export',
+                                handler: this.showFormDoubleOptInData.bind(this)
+                            }
                         ]
                     }
                 ]
@@ -924,9 +942,10 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return toolbar;
     },
 
-    /**
-     * Display info window with current form meta information
-     */
+    showFormDoubleOptInData: function() {
+        new Formbuilder.extjs.extensions.formDoubleOptInData(this.formId, this.formConfig.doubleOptIn);
+    },
+
     showFormMetaInfo: function () {
         new Formbuilder.extjs.extensions.formMetaData(this.formId, this.formMeta);
     },

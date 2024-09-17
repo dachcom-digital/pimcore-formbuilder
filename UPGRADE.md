@@ -1,7 +1,10 @@
 # Upgrade Notes
 
-## 5.1.1
+## 5.1.2
 - **[IMPROVEMENT]** [File Upload] Add Deeplink Option to file upload field [#475](https://github.com/dachcom-digital/pimcore-formbuilder/issues/475)
+- **[BUGFIX]** [Double-Opt-In] Remove unique index, allow admin to define unique data behavior [#477](https://github.com/dachcom-digital/pimcore-formbuilder/issues/477)
+- **[IMPROVEMENT]** [Double-Opt-In] Allow to list and manage active sessions [#478](https://github.com/dachcom-digital/pimcore-formbuilder/issues/478)
+- **[IMPROVEMENT]** [Double-Opt-In] Pass data to email channel and store double-opt-in main data in mail params [#479](https://github.com/dachcom-digital/pimcore-formbuilder/issues/479)
 
 ## 5.1.1
 - **[BUGFIX]** Fix Migration and Installer

@@ -48,9 +48,23 @@ form_builder.controller.admin.get_preset_description:
     path: /admin/formbuilder/settings/get-preset-description/{name}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::getPresetDescriptionAction }
 
-form_builder.controller.admin.getData_injection_store:
+form_builder.controller.admin.get_data_injection_store:
     path: /admin/formbuilder/settings/get-data-injection-store
     defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::getDataInjectionStoreAction }
+
+# Double-Opt-In
+form_builder.controller.admin.get_double_opt_in_session:
+    path: /admin/formbuilder/settings/double-opt-in/sessions/{formId}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::getDoubleOptInSessionsAction }
+    options:
+        expose: true
+
+form_builder.controller.admin.delete_double_opt_in_session:
+    path: /admin/formbuilder/settings/double-opt-in/delete/{token}
+    defaults: { _controller: FormBuilderBundle\Controller\Admin\SettingsController::deleteDoubleOptInSessionAction }
+    methods: [DELETE]
+    options:
+        expose: true
 
 # Output Workflows
 form_builder.controller.admin.output_workflow.get_output_workflow_tree:
