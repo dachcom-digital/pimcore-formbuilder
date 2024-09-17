@@ -54,5 +54,23 @@
             {% endif %}
         {% endif %}
     {% endfor %}
+    {#
+        [DOUBLE-OPT-IN]
+        If you want to show double opt in session values, uncomment this section
+
+        available fields:
+            - double_opt_in_session.email
+            - double_opt_in_session.token
+            - double_opt_in_session.creation_date
+            - double_opt_in_session.additional_data
+    #}
+    {#
+        {% if double_opt_in_session is defined and double_opt_in_session is not null %}
+            <tr>
+                <td width="50%" valign="top" align="left"><strong>Double-Opt-In-Email:</strong></td>
+                <td width="50%" valign="top" align="left">{{ double_opt_in_session.email }}</td>
+            </tr>
+        {% endif %}
+    #}
     </tbody>
 </table>
