@@ -105,7 +105,7 @@ services:
     #
     # Double-Opt-In
 
-    FormBuilderBundle\Form\Type\DoubleOptIn\DoubleOptInType:
+    FormBuilderBundle\Form\Type\DoubleOptInType:
         public: false
         tags:
             - { name: form.type }
