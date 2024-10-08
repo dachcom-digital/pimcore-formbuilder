@@ -110,6 +110,10 @@ jobs:
                 run: |
                     bin/console assets:install public --relative --symlink
 
+            -   name: Validate Container
+                run: |
+                    bin/console lint:container
+
             -   name: Php Stan
                 run: |
                     bin/console cache:warmup --env=test

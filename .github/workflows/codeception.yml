@@ -46,8 +46,6 @@ jobs:
                         template_tag: v11.0.0
         steps:
             -   uses: nanasess/setup-chromedriver@v2
-                with:
-                    chromedriver-version: '127.0.6533.119'
             -   uses: actions/checkout@v4
                 with:
                     path: lib/test-bundle
