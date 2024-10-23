@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.1.4
+- **[BUGFIX]** Allow using double-opt-in variables in placeholder processor
+
 ## 5.1.3
 - **[BUGFIX]** Fix DoubleOptInType Service Definition [@dpfaffenbauer](https://github.com/dachcom-digital/pimcore-formbuilder/pull/483)
 

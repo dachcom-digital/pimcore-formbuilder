@@ -41,13 +41,16 @@ class MailParser
 
         $fieldValues = $this->formValuesOutputApplier->applyForChannel($form, $ignoreFields, 'mail', $locale);
 
-        $this->parseMailRecipients($mailTemplate, $fieldValues);
-        $this->parseMailSender($mailTemplate, $fieldValues);
-        $this->parseReplyTo($mailTemplate, $fieldValues);
-        $this->parseSubject($mailTemplate, $fieldValues);
-        $this->setMailPlaceholders($mail, $fieldValues);
+        $systemFieldValues = $fieldValues;
+        if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            $systemFieldValues = array_merge($systemFieldValues, $this->createDoubleOptInSessionValues($doubleOptInSession, ['email'], true));
+        }
 
-        $mail->setParam('double_opt_in_session', $doubleOptInSession);
+        $this->parseMailRecipients($mailTemplate, $systemFieldValues);
+        $this->parseMailSender($mailTemplate, $systemFieldValues);
+        $this->parseReplyTo($mailTemplate, $systemFieldValues);
+        $this->parseSubject($mailTemplate, $systemFieldValues);
+        $this->setMailPlaceholders($mail, $fieldValues);
 
         /** @var FormDataInterface $formData */
         $formData = $form->getData();
@@ -146,10 +149,10 @@ class MailParser
 
         $doubleOptInSessionValues = [];
         if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
-            $doubleOptInSessionValues['email'] = $doubleOptInSession->getEmail();
-            $doubleOptInSessionValues['token'] = $doubleOptInSession->getTokenAsString();
-            $doubleOptInSessionValues['creation_date'] = $doubleOptInSession->getCreationDate();
-            $doubleOptInSessionValues['additional_data'] = $doubleOptInSession->getAdditionalData();
+            $doubleOptInSessionValues = $this->createDoubleOptInSessionValues(
+                $doubleOptInSession,
+                ['email', 'token', 'creation_date', 'additional_data']
+            );
         }
 
         if ($mailLayout === null) {
@@ -296,5 +299,45 @@ class MailParser
         }
 
         return $data === '' ? null : $data;
+    }
+
+    protected function createDoubleOptInSessionValues(?DoubleOptInSessionInterface $doubleOptInSession, array $validFields, bool $createFieldValueScheme = false): array
+    {
+        if (!$doubleOptInSession instanceof DoubleOptInSessionInterface) {
+            return [];
+        }
+
+        $data = [];
+
+        foreach ($validFields as $validField) {
+            $data[] = match ($validField) {
+                'email' => $this->createDoubleOptInSessionValue('email', $doubleOptInSession->getEmail(), $createFieldValueScheme),
+                'token' => $this->createDoubleOptInSessionValue('token', $doubleOptInSession->getTokenAsString(), $createFieldValueScheme),
+                'creation_date' => $this->createDoubleOptInSessionValue('creation_date', $doubleOptInSession->getCreationDate(), $createFieldValueScheme),
+                'additional_data' => $this->createDoubleOptInSessionValue('additional_data', $doubleOptInSession->getAdditionalData(), $createFieldValueScheme),
+                default => null,
+            };
+        }
+
+        return array_merge([], ...$data);
+    }
+
+    protected function createDoubleOptInSessionValue(string $name, mixed $value, bool $createFieldValueScheme = false): mixed
+    {
+        if ($createFieldValueScheme === false) {
+            return [$name => $value];
+        }
+
+        return [
+            sprintf('double_opt_in_session_%s', $name) => [
+                'label'       => sprintf('double_opt_in_session_%s', $name),
+                'email_label' => sprintf('double_opt_in_session_%s', $name),
+                'name'        => sprintf('double_opt_in_session_%s', $name),
+                'value'       => $value,
+                'field_type'  => 'simple',
+                'type'        => 'text'
+            ]
+        ];
+
     }
 }

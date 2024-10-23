@@ -21,14 +21,16 @@ There is also a `Default` fallback field. If a requested locale can't be found d
 ***
 
 ## Placeholder
-
 Place your form somewhere on your Website.
 If you want to submit the form to the user, you can use your field names as placeholders. Formbuilder automatically will transform the field into the given address.
-For Example you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
+For example, you can set a placeholder called `%emailaddress%` (where *emailaddress* is the name of your form field) in the *To:* field ("Settings" Tab of your email template).
 
 **Subject, From, ReplyTo**
 You also may want to add some placeholder in the subject of your mail template.
 To do so, just add a placeholder like `%emailaddress%` to the subject field. They will get transformed automatically.
+
+> [!NOTE]
+> If the double-opt-in-feature is enabled, an additional property `double_opt_in_session_email` is available!
 
 ***
 
