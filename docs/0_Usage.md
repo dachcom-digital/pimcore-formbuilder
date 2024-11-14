@@ -57,10 +57,11 @@ use Pimcore\Controller\FrontendController;
 use FormBuilderBundle\Assembler\FormAssembler;
 use FormBuilderBundle\Resolver\FormOptionsResolver;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends FrontendController
 {
-    public function formAction(Request $request)
+    public function formAction(Request $request): Response
     {
         $options = [
             'form_id'             => 3,
