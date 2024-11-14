@@ -21,6 +21,9 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 with:
+                    path-to-signatures: 'signatures/version1/cla.json'
                     path-to-document: 'https://github.com/dachcom-digital/pimcore-formbuilder/blob/master/CLA.md'
                     branch: 'master'
                     allowlist: bot*
+                    remote-organization-name: 'dachcom-digital'
+                    remote-repository-name: 'cla'
