@@ -97,6 +97,9 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
 
-## Copyright and license
-Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.ch)  
+## License
+**DACHCOM.DIGITAL AG**, Löwenhofstrasse 15, 9424 Rheineck, Schweiz  
+[dachcom.com](https://www.dachcom.com), dcdi@dachcom.ch  
+Copyright © 2024 DACHCOM.DIGITAL. All rights reserved.  
+
 For licensing details please visit [LICENSE.md](LICENSE.md)  
