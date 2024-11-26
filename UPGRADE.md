@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.1.5
+- **[BUGFIX]** Update custom channel docs [#493](https://github.com/dachcom-digital/pimcore-formbuilder/issues/493)
+
 ## 5.1.4
 - **[BUGFIX]** Allow using double-opt-in variables in placeholder processor
 
