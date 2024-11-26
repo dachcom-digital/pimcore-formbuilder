@@ -26,18 +26,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MyChannelType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('myConfigField', TextType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([]);
     }
@@ -58,48 +52,29 @@ use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 
 class MyChannel implements ChannelInterface
 {
-    /**
-     * @var FormValuesOutputApplierInterface
-     */
-    protected $formValuesOutputApplier;
-
-    public function __construct(FormValuesOutputApplierInterface $formValuesOutputApplier)
+    public function __construct(protected FormValuesOutputApplierInterface $formValuesOutputApplier)
     {
-        $this->formValuesOutputApplier = $formValuesOutputApplier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFormType(): string
     {
         // you need to create a form type for backend configuration validation.
         return MyChannelType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isLocalizedConfiguration(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsedFormFieldNames(array $channelConfiguration)
+    public function getUsedFormFieldNames(array $channelConfiguration): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration)
+    public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
-        $formConfiguration = $submissionEvent->getFormConfiguration();
-        $locale = $submissionEvent->getRequest()->getLocale();
+        $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
         
         // Output Transformer (See section "Output Transformer" above).
@@ -112,7 +87,8 @@ class MyChannel implements ChannelInterface
 ```
 
 ## ExtJS Class
-You need to register this class via `\Pimcore\Event\BundleManagerEvents::JS_PATHS` Event.
+You need to register this class via `\Pimcore\Event\BundleManagerEvents::JS_PATHS` Event. 
+Make sure, that you've defined a low priority, to allow loading fb resources first!.
 
 ```js
 pimcore.registerNS('Formbuilder.extjs.formPanel.outputWorkflow.channel.myChannel');
