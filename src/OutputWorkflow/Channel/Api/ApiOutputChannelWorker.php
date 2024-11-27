@@ -128,7 +128,7 @@ class ApiOutputChannelWorker
             if ($hasChildren) {
                 $apiField = $hasParent ? $nodes : [];
                 if ($formField['type'] === 'fieldset' && count($apiMappingFields) === 0) {
-                    $nodes = array_merge([], ...[$nodes, $this->buildApiNodes($apiField, $formData, $mapRow['children'], true, $formField['type'])]);
+                    $nodes = array_replace([], ...[$nodes, $this->buildApiNodes($apiField, $formData, $mapRow['children'], true, $formField['type'])]);
                 } else {
                     foreach ($apiMappingFields as $apiMappingField) {
                         $nodes[$apiMappingField] = $this->buildApiNodes($apiField, $formData, $mapRow['children'], true, $formField['type']);
