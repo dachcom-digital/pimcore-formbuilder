@@ -20,10 +20,8 @@
 
 ## Installation
 
-```json
-"require" : {
-    "dachcom-digital/formbuilder" : "~5.1.0"
-}
+```bash
+composer require "dachcom-digital/formbuilder":"~5.1.4"
 ```
 
 Add Bundle to `bundles.php`:
@@ -93,7 +91,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [Frontend Tips](docs/90_FrontendTips.md)
 - [FormBuilder Javascript Plugins](docs/91_Javascript.md)
 - [Configuration Flags](docs/100_ConfigurationFlags.md)
-
+- [Custom form templates](docs/110_CustomTemplates.md)
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
 

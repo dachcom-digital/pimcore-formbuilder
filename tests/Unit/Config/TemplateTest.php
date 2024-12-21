@@ -25,7 +25,9 @@ class TemplateTest extends DachcomBundleTestCase
         $this->assertArrayHasKey('bootstrap_3_horizontal_layout', $formConfig['templates']);
         $this->assertArrayHasKey('bootstrap_4_layout', $formConfig['templates']);
         $this->assertArrayHasKey('bootstrap_4_horizontal_layout', $formConfig['templates']);
-        $this->assertCount(5, $formConfig['templates']);
+        $this->assertArrayHasKey('bootstrap_5_layout', $formConfig['templates']);
+        $this->assertArrayHasKey('bootstrap_5_horizontal_layout', $formConfig['templates']);
+        $this->assertCount(7, $formConfig['templates']);
     }
 
     public function testFormFieldTemplates()
