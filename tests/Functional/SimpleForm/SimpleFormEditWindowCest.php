@@ -69,6 +69,14 @@ class SimpleFormEditWindowCest
                     0 => 'bootstrap_4_horizontal_layout.html.twig',
                     1 => 'Bootstrap 4 Horizontal Layout',
                 ],
+                5 => [
+                    0 => 'bootstrap_5_layout.html.twig',
+                    1 => 'Bootstrap 5 Layout',
+                ],
+                6 => [
+                    0 => 'bootstrap_5_horizontal_layout.html.twig',
+                    1 => 'Bootstrap 5 Horizontal Layout',
+                ],
             ],
         ];
 
