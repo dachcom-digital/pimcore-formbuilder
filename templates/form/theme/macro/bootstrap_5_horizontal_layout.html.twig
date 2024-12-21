@@ -1,0 +1,22 @@
+{% macro form_builder_form_head() %}
+    <div class="row">
+{% endmacro %}
+
+{% macro form_builder_form_foot() %}
+    </div>
+{% endmacro %}
+
+{% macro form_builder_form_message(flash_messages) %}
+    {% if flash_messages is not empty %}
+        <div class="col-12">
+            {% for label, messages in flash_messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                        {{ message|raw }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}

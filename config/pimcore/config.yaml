@@ -73,6 +73,14 @@ form_builder:
                 value: 'bootstrap_4_horizontal_layout.html.twig'
                 label: 'form_builder_form_template.bootstrap_4_horizontal_layout'
                 default: false
+            bootstrap_5_layout:
+                value: 'bootstrap_5_layout.html.twig'
+                label: 'form_builder_form_template.bootstrap_5_layout'
+                default: false
+            bootstrap_5_horizontal_layout:
+                value: 'bootstrap_5_horizontal_layout.html.twig'
+                label: 'form_builder_form_template.bootstrap_5_horizontal_layout'
+                default: false
         field:
             templates:
                 default:
