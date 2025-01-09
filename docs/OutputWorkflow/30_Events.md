@@ -22,26 +22,32 @@ class OutputWorkflowEventListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH  => 'checkSubject',
+            FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH  => ['addChannelContextData', 'checkSubject'],
         ];
     }
 
-    public function checkSubject(ChannelSubjectGuardEvent $event): void
+    public function addChannelContextData(ChannelSubjectGuardEvent $event): void
     {
         // this could be a data object but also a field collection
         $subject = $event->getSubject();
 
         if (
-            // if it's a special channel, add som context data to fetch it again in the next channel!
+            // if it's a special channel, add some context data to fetch it again in the next channel!
             $event->getWorkflowName() === 'my_workflow' && 
-            $event->getWorkflowName() === 'my_special_channel' && 
+            $event->getChannelType() === 'mail' && 
             $event->hasChannelContext()
         ) {
             $event
                 ->getChannelContext()
                 ->addContextData('special_key', 'my_special_data');
         }
-        
+    }
+    
+    public function checkSubject(ChannelSubjectGuardEvent $event): void
+    {
+        // this could be a data object but also a field collection
+        $subject = $event->getSubject();
+
         if ($event->getWorkflowName() === 'my_workflow') {
             $event->shouldFail('My invalid message for a specific channel! Allow further channels to pass!', true);
             
