@@ -8,7 +8,9 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardStackedException;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,21 +37,34 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         $this->signalSubscribeHandler->listen(SignalSubscribeHandler::CHANNEL_OUTPUT_WORKFLOW);
 
         $exceptionStack = [];
+        $channelContext = new ChannelContext();
+
         foreach ($outputWorkflow->getChannels() as $index => $channel) {
             try {
                 $channelProcessor = $this->channelRegistry->get($channel->getType());
+
+                if ($channelProcessor instanceof ChannelContextAwareInterface) {
+                    $channelProcessor->setChannelContext($channelContext);
+                }
+
                 $channelProcessor->dispatchOutputProcessing($submissionEvent, $outputWorkflow->getName(), $channel->getConfiguration());
             } catch (GuardChannelException $e) {
                 $exceptionStack[] = $e;
             } catch (GuardOutputWorkflowException $e) {
 
-                $this->signalSubscribeHandler->broadcast(['exception' => $e]);
+                $this->signalSubscribeHandler->broadcast([
+                    'exception'      => $e,
+                    'channelContext' => $channelContext
+                ]);
 
                 throw $e;
 
             } catch (\Throwable $e) {
 
-                $this->signalSubscribeHandler->broadcast(['exception' => $e]);
+                $this->signalSubscribeHandler->broadcast([
+                    'exception'      => $e,
+                    'channelContext' => $channelContext
+                ]);
 
                 throw new \Exception(
                     sprintf(
@@ -66,12 +81,15 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         if (count($exceptionStack) > 0) {
 
             $exception = new GuardStackedException($exceptionStack);
-            $this->signalSubscribeHandler->broadcast(['exception' => $exception]);
+            $this->signalSubscribeHandler->broadcast([
+                'exception'      => $exception,
+                'channelContext' => $channelContext
+            ]);
 
             throw $exception;
         }
 
-        $this->signalSubscribeHandler->broadcast();
+        $this->signalSubscribeHandler->broadcast(['channelContext' => $channelContext]);
     }
 
     protected function dispatchOutputWorkflowFunnelInitiating(OutputWorkflowInterface $outputWorkflow, SubmissionEvent $submissionEvent): void
@@ -115,5 +133,4 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
 
         return $response;
     }
-
 }

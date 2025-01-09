@@ -3,6 +3,7 @@
 namespace FormBuilderBundle\Event\OutputWorkflow;
 
 use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ChannelSubjectGuardEvent extends Event
@@ -17,7 +18,8 @@ class ChannelSubjectGuardEvent extends Event
         protected mixed $subject,
         protected string $workflowName,
         protected string $channelType,
-        protected array $formRuntimeData
+        protected array $formRuntimeData,
+        protected ?ChannelContext $channelContext = null
     ) {
     }
 
@@ -49,6 +51,20 @@ class ChannelSubjectGuardEvent extends Event
     public function getChannelType(): string
     {
         return $this->channelType;
+    }
+
+    public function hasChannelContext(): bool
+    {
+        return $this->channelContext instanceof ChannelContext;
+    }
+
+    public function getChannelContext(): ChannelContext
+    {
+        if (!$this->hasChannelContext()) {
+            throw new \RuntimeException('ChannelContext not available');
+        }
+
+        return $this->channelContext;
     }
 
     /**

@@ -2,31 +2,20 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Api;
 
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use Symfony\Component\Form\FormInterface;
 
 class ApiData
 {
-    protected string $apiProviderName;
-    protected array $apiNodes;
-    protected ?array $providerConfiguration;
-    protected string $locale;
-    protected array $formRuntimeData;
-    protected FormInterface $form;
-
     public function __construct(
-        string $apiProviderName,
-        array $apiNodes,
-        ?array $providerConfiguration,
-        string $locale,
-        array $formRuntimeData,
-        FormInterface $form
+        protected string $apiProviderName,
+        protected array $apiNodes,
+        protected ?array $providerConfiguration,
+        protected string $locale,
+        protected array $formRuntimeData,
+        protected FormInterface $form,
+        protected ?ChannelContext $channelContext
     ) {
-        $this->apiProviderName = $apiProviderName;
-        $this->apiNodes = $apiNodes;
-        $this->providerConfiguration = $providerConfiguration;
-        $this->locale = $locale;
-        $this->formRuntimeData = $formRuntimeData;
-        $this->form = $form;
     }
 
     public function getApiProviderName(): string
@@ -37,6 +26,20 @@ class ApiData
     public function getForm(): FormInterface
     {
         return $this->form;
+    }
+
+    public function hasChannelContext(): bool
+    {
+        return $this->channelContext instanceof ChannelContext;
+    }
+
+    public function getChannelContext(): ChannelContext
+    {
+        if (!$this->hasChannelContext()) {
+            throw new \RuntimeException('ChannelContext not available');
+        }
+
+        return $this->channelContext;
     }
 
     public function getFormRuntimeData(): array

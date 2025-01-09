@@ -6,9 +6,13 @@ use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\EmailChannelType;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 use FormBuilderBundle\Tool\LocaleDataMapper;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Trait\ChannelContextTrait;
 
-class EmailOutputChannel implements ChannelInterface
+class EmailOutputChannel implements ChannelInterface, ChannelContextAwareInterface
 {
+    use ChannelContextTrait;
+
     public function __construct(
         protected EmailOutputChannelWorker $channelWorker,
         protected LocaleDataMapper $localeDataMapper
@@ -46,6 +50,7 @@ class EmailOutputChannel implements ChannelInterface
         $context = [
             'locale'             => $locale,
             'doubleOptInSession' => $submissionEvent->getDoubleOptInSession(),
+            'channelContext'     => $this->getChannelContext(),
         ];
 
         $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $context);

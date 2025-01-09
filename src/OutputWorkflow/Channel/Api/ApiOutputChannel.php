@@ -4,10 +4,14 @@ namespace FormBuilderBundle\OutputWorkflow\Channel\Api;
 
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ApiChannelType;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Trait\ChannelContextTrait;
 
-class ApiOutputChannel implements ChannelInterface
+class ApiOutputChannel implements ChannelInterface, ChannelContextAwareInterface
 {
+    use ChannelContextTrait;
+
     public function __construct(protected ApiOutputChannelWorker $apiOutputChannelWorker)
     {
     }
@@ -33,7 +37,11 @@ class ApiOutputChannel implements ChannelInterface
 
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
-        $this->apiOutputChannelWorker->process($submissionEvent, $workflowName, $channelConfiguration);
+        $context = [
+            'channelContext' => $this->getChannelContext(),
+        ];
+
+        $this->apiOutputChannelWorker->process($submissionEvent, $workflowName, $channelConfiguration, $context);
     }
 
     protected function findUsedFormFieldsInConfiguration(array $definitionFields, array $fieldNames = []): array

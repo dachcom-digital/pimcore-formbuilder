@@ -1,7 +1,11 @@
 # Upgrade Notes
 
-## 5.1.5
-- **[BUGFIX]** Update custom channel docs [#493](https://github.com/dachcom-digital/pimcore-formbuilder/issues/493)
+## 5.2.0
+- **[NEW FEATURE]** Bootstrap 5 Layout Support [@mackrais](https://github.com/dachcom-digital/pimcore-formbuilder/pull/500)
+- **[NEW FEATURE]** Introduce Channel Context [#486](https://github.com/dachcom-digital/pimcore-formbuilder/issues/486)
+- **[IMPROVEMENT]** Doctrine ORM 3.0 Support [#503](https://github.com/dachcom-digital/pimcore-formbuilder/pull/503)
+- **[BUGFIX]** API Channel: Keep array index when merging child nodes [@simon-matt-oetztal](https://github.com/dachcom-digital/pimcore-formbuilder/pull/496)
+- **[BUGFIX]** Update Custom Channel Documentation [#493](https://github.com/dachcom-digital/pimcore-formbuilder/issues/493)
 
 ## 5.1.4
 - **[BUGFIX]** Allow using double-opt-in variables in placeholder processor

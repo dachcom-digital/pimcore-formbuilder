@@ -8,6 +8,7 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use FormBuilderBundle\Registry\ApiProviderRegistry;
 use FormBuilderBundle\Registry\FieldTransformerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,7 +24,7 @@ class ApiOutputChannelWorker
     ) {
     }
 
-    public function process(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
+    public function process(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration, array $context = []): void
     {
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
         $locale = $submissionEvent->getRequest()->getLocale();
@@ -32,6 +33,8 @@ class ApiOutputChannelWorker
         $apiProviderName = $channelConfiguration['apiProvider'];
         $apiMappingData = $channelConfiguration['apiMappingData'];
         $providerConfiguration = $channelConfiguration['apiConfiguration'];
+
+        $channelContext = $context['channelContext'] ?? null;
 
         // no data, no gain.
         if (!is_array($apiMappingData)) {
@@ -50,9 +53,9 @@ class ApiOutputChannelWorker
             return;
         }
 
-        $apiData = new ApiData($apiProviderName, $nodes, $providerConfiguration, $locale, $formRuntimeData, $form);
+        $apiData = new ApiData($apiProviderName, $nodes, $providerConfiguration, $locale, $formRuntimeData, $form, $channelContext);
 
-        if (null === $apiData = $this->dispatchGuardEvent($apiData, $form, $workflowName, $formRuntimeData)) {
+        if (null === $apiData = $this->dispatchGuardEvent($apiData, $form, $workflowName, $formRuntimeData, $channelContext)) {
             return;
         }
 
@@ -248,9 +251,23 @@ class ApiOutputChannelWorker
      * @throws GuardChannelException
      * @throws GuardOutputWorkflowException
      */
-    protected function dispatchGuardEvent($subject, FormInterface $form, string $workflowName, array $formRuntimeData): mixed
-    {
-        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($form->getData(), $subject, $workflowName, 'api', $formRuntimeData);
+    protected function dispatchGuardEvent(
+        $subject,
+        FormInterface $form,
+        string $workflowName,
+        array $formRuntimeData,
+        ?ChannelContext $channelContext
+    ): mixed {
+
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent(
+            $form->getData(),
+            $subject,
+            $workflowName,
+            'api',
+            $formRuntimeData,
+            $channelContext
+        );
+
         $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {
@@ -259,7 +276,9 @@ class ApiOutputChannelWorker
 
         if ($channelSubjectGuardEvent->shouldStopChannel()) {
             throw new GuardChannelException($channelSubjectGuardEvent->getFailMessage());
-        } elseif ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
+        }
+
+        if ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
             throw new GuardOutputWorkflowException($channelSubjectGuardEvent->getFailMessage());
         }
 

@@ -2,6 +2,7 @@
 
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
@@ -25,6 +26,8 @@ abstract class AbstractObjectResolver
     public const OBJECT_RESOLVER_UPDATE = 'existingObject';
 
     protected FormInterface $form;
+    protected ?ChannelContext $channelContext;
+
     protected array $formRuntimeData;
     protected string $locale;
     protected string $workflowName;
@@ -66,6 +69,16 @@ abstract class AbstractObjectResolver
     public function getFormRuntimeData(): array
     {
         return $this->formRuntimeData;
+    }
+
+    public function setChannelContext(?ChannelContext $channelContext): void
+    {
+        $this->channelContext = $channelContext;
+    }
+
+    public function getChannelContext(): ?ChannelContext
+    {
+        return $this->channelContext;
     }
 
     public function setLocale(string $locale): void
@@ -366,7 +379,7 @@ abstract class AbstractObjectResolver
     protected function processFieldWorkerValue(string $workerName, array $workerConfig, ?DataObject\ClassDefinition\Data $fieldDefinition, mixed $value)
     {
         return match ($workerName) {
-            'relationWorker' => call_user_func(function (?DataObject\ClassDefinition\Data $fieldDefinition, array $workerConfig, mixed $value) {
+            'relationWorker' => call_user_func(static function (?DataObject\ClassDefinition\Data $fieldDefinition, array $workerConfig, mixed $value) {
 
                 $relationType = $workerConfig['relationType'] ?? null;
 
@@ -386,7 +399,9 @@ abstract class AbstractObjectResolver
 
                 if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     return $element;
-                } elseif ($fieldDefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
+                }
+
+                if ($fieldDefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
                     return [$element];
                 }
 
@@ -399,10 +414,19 @@ abstract class AbstractObjectResolver
 
     /**
      * @throws GuardException
+     * @throws GuardOutputWorkflowException
      */
     protected function dispatchGuardEvent(mixed $subject): DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|null
     {
-        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($this->getForm()->getData(), $subject, $this->getWorkflowName(), 'object', $this->getFormRuntimeData());
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent(
+            $this->getForm()->getData(),
+            $subject,
+            $this->getWorkflowName(),
+            'object',
+            $this->getFormRuntimeData(),
+            $this->getChannelContext()
+        );
+
         $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {
@@ -411,7 +435,9 @@ abstract class AbstractObjectResolver
 
         if ($channelSubjectGuardEvent->shouldStopChannel()) {
             throw new GuardChannelException($channelSubjectGuardEvent->getFailMessage());
-        } elseif ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
+        }
+
+        if ($channelSubjectGuardEvent->shouldStopOutputWorkflow()) {
             throw new GuardOutputWorkflowException($channelSubjectGuardEvent->getFailMessage());
         }
 
