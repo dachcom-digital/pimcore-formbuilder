@@ -91,7 +91,7 @@ class FormBuilderBundle extends AbstractPimcoreBundle
     protected function configureDoctrineExtension(ContainerBuilder $container): void
     {
         $container->addCompilerPass(
-            DoctrineOrmMappingsPass::createYamlMappingDriver(
+            DoctrineOrmMappingsPass::createXmlMappingDriver(
                 [$this->getNameSpacePath() => $this->getNamespaceName()],
                 ['form_builder.persistence.doctrine.manager'],
                 'form_builder.persistence.doctrine.enabled'

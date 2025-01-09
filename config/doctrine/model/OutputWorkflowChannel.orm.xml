@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="FormBuilderBundle\Model\OutputWorkflowChannel" table="formbuilder_output_workflow_channel">
+        <unique-constraints>
+            <unique-constraint name="ow_name" columns="output_workflow,name"/>
+        </unique-constraints>
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="type" type="string" column="type" length="190"/>
+        <field name="name" type="string" column="name" length="190"/>
+        <field name="configuration" type="object" column="configuration" nullable="true"/>
+        <field name="funnelActions" type="object" column="funnel_actions" nullable="true"/>
+        <many-to-one field="outputWorkflow" target-entity="FormBuilderBundle\Model\OutputWorkflow" inversed-by="channels"
+                     fetch="LAZY">
+            <join-columns>
+                <join-column name="output_workflow" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

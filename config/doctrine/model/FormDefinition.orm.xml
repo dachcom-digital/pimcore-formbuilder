@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="FormBuilderBundle\Model\FormDefinition" table="formbuilder_forms">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="name" type="string" column="`name`" length="190" unique="true" nullable="true"/>
+        <field name="group" type="string" column="`group`" length="190" nullable="true"/>
+        <field name="creationDate" type="datetime" column="creationDate" nullable="false"/>
+        <field name="modificationDate" type="datetime" column="modificationDate" nullable="false"/>
+        <field name="createdBy" type="integer" column="createdBy"/>
+        <field name="modifiedBy" type="integer" column="modifiedBy"/>
+        <field name="configuration" type="object" column="configuration" nullable="true"/>
+        <field name="conditionalLogic" type="object" column="conditionalLogic" nullable="true"/>
+        <field name="fields" type="form_builder_fields" column="fields" nullable="true"/>
+        <one-to-many field="outputWorkflows" target-entity="FormBuilderBundle\Model\OutputWorkflow" mapped-by="formDefinition"
+                     fetch="LAZY">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

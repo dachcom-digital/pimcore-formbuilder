@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="FormBuilderBundle\Model\DoubleOptInSession" table="formbuilder_double_opt_in_session">
+        <indexes>
+            <index name="token_form" columns="token,form_definition,applied"/>
+        </indexes>
+        <id name="token" type="uuid" column="token">
+            <generator strategy="CUSTOM"/>
+            <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
+        </id>
+        <field name="email" type="string" column="email" length="190" nullable="false"/>
+        <field name="additionalData" type="array" column="additional_data" nullable="true"/>
+        <field name="dispatchLocation" type="text" column="dispatch_location" nullable="true"/>
+        <field name="applied" type="boolean" column="applied">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+        <field name="creationDate" type="datetime" column="creationDate" nullable="false"/>
+        <many-to-one field="formDefinition" target-entity="FormBuilderBundle\Model\FormDefinition" fetch="LAZY">
+            <join-columns>
+                <join-column name="form_definition" referenced-column-name="id" on-delete="CASCADE"/>
+            </join-columns>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>
