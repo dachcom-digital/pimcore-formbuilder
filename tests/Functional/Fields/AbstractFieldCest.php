@@ -31,7 +31,7 @@ abstract class AbstractFieldCest
         $testFormBuilder = (new TestFormBuilder('dachcom_test'))->setUseAjax(false);
 
         if ($this->type === 'container') {
-            $subFields = isset($optional['subFields']) ? $optional['subFields'] : [];
+            $subFields = $optional['subFields'] ?? [];
             $testFormBuilder->addFormFieldContainer(
                 $this->subType,
                 $this->name,

@@ -7,31 +7,24 @@ use DachcomBundle\Test\Support\FunctionalTester;
 class DateTimeFieldCest extends AbstractFieldCest
 {
     protected $type = 'date_time';
-
     protected $name = 'simple_date_time';
-
     protected $displayName = 'simple_date_time';
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testDateTimeFieldOptionsWithLabel(FunctionalTester $I)
+    public function testDateTimeFieldOptionsWithLabel(FunctionalTester $I): void
     {
         $options = [
             'label' => 'Date Time Selection'
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options);
 
         $I->see('Date Time Selection', 'label');
     }
 
     /**
      * Help Text is not implemented!
-     *
-     * @param FunctionalTester $I
      */
-    private function testDateTimeFieldOptionsWithHelpText(FunctionalTester $I)
+    private function testDateTimeFieldOptionsWithHelpText(FunctionalTester $I): void
     {
         $options = [
             'date_widget' => 'single_text',
@@ -39,16 +32,13 @@ class DateTimeFieldCest extends AbstractFieldCest
             'help_text'   => 'This is a Helptext'
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, []);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options, []);
 
         $I->see('This is a Helptext', 'span');
 
     }
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testDateTimeFieldOptionalsWithEmailLabel(FunctionalTester $I)
+    public function testDateTimeFieldOptionalsWithEmailLabel(FunctionalTester $I): void
     {
         $options = [
             'date_widget' => 'single_text',
@@ -59,7 +49,7 @@ class DateTimeFieldCest extends AbstractFieldCest
             'email_label' => 'Date Time Email Selection'
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options, $optionals);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options, $optionals);
 
         $I->fillField('input#formbuilder_1_simple_date_time_date', '1983-06-21');
         $I->fillField('input#formbuilder_1_simple_date_time_time', '21:45');
@@ -69,17 +59,14 @@ class DateTimeFieldCest extends AbstractFieldCest
         $I->seeInRenderedEmailBody($adminEmail, 'Date Time Email Selection');
     }
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testDateTimeFieldWithSingleTextWidget(FunctionalTester $I)
+    public function testDateTimeFieldWithSingleTextWidget(FunctionalTester $I): void
     {
         $options = [
             'date_widget' => 'single_text',
             'time_widget' => 'single_text',
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options);
 
         $I->seeElement('input#formbuilder_1_simple_date_time_date', ['type' => 'date']);
         $I->seeElement('input#formbuilder_1_simple_date_time_time', ['type' => 'time']);
@@ -88,20 +75,17 @@ class DateTimeFieldCest extends AbstractFieldCest
         $I->fillField('input#formbuilder_1_simple_date_time_time', '21:45');
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
-        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => 'Jun 21, 1983, 9:45:00 PM']);
+        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, 1983, 9:45:00%sPM', "\u{202F}")]);
     }
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testDateTimeFieldWithChoiceWidget(FunctionalTester $I)
+    public function testDateTimeFieldWithChoiceWidget(FunctionalTester $I): void
     {
         $options = [
             'date_widget' => 'choice',
             'time_widget' => 'choice',
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options);
 
         $I->seeElement('select#formbuilder_1_simple_date_time_date_month');
         $I->seeElement('select#formbuilder_1_simple_date_time_date_day');
@@ -119,13 +103,10 @@ class DateTimeFieldCest extends AbstractFieldCest
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
-        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, %s, 9:45:00 PM', date('Y'))]);
+        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, %s, 9:45:00%sPM', date('Y'), "\u{202F}")]);
     }
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testDateTimeFieldWithSecondsAndChoiceWidget(FunctionalTester $I)
+    public function testDateTimeFieldWithSecondsAndChoiceWidget(FunctionalTester $I): void
     {
         $options = [
             'date_widget' => 'choice',
@@ -133,7 +114,7 @@ class DateTimeFieldCest extends AbstractFieldCest
             'with_seconds' => true
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options);
 
         $I->seeElement('select#formbuilder_1_simple_date_time_date_month');
         $I->seeElement('select#formbuilder_1_simple_date_time_date_day');
@@ -153,20 +134,17 @@ class DateTimeFieldCest extends AbstractFieldCest
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
-        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, %s, 9:45:12 PM', date('Y'))]);
+        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, %s, 9:45:12%sPM', date('Y'), "\u{202F}")]);
     }
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function testDateTimeFieldWithTextWidget(FunctionalTester $I)
+    public function testDateTimeFieldWithTextWidget(FunctionalTester $I): void
     {
         $options = [
             'date_widget' => 'text',
             'time_widget' => 'text',
         ];
 
-        list($adminEmail, $testFormBuilder, $form) = $this->setupField($I, $options);
+        [$adminEmail, $testFormBuilder, $form] = $this->setupField($I, $options);
 
         $I->seeElement('input#formbuilder_1_simple_date_time_date_month');
         $I->seeElement('input#formbuilder_1_simple_date_time_date_day');
@@ -184,6 +162,6 @@ class DateTimeFieldCest extends AbstractFieldCest
 
         $I->click($testFormBuilder->getFormFieldSelector(1, 'submit'));
 
-        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, %s, 9:45:00 PM', date('Y'))]);
+        $I->seePropertiesInEmail($adminEmail, ['simple_date_time' => sprintf('Jun 21, %s, 9:45:00%sPM', date('Y'), "\u{202F}")]);
     }
 }
