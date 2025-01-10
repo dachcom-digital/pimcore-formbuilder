@@ -38,9 +38,9 @@ class ObjectOutputChannel implements ChannelInterface, ChannelContextAwareInterf
 
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
-        $formRuntimeData = $submissionEvent->getFormRuntimeData();
-        $locale = $submissionEvent->getRequest()->getLocale();
+        $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
+        $formRuntimeData = $submissionEvent->getFormRuntimeData();
 
         $objectMappingData = $channelConfiguration['objectMappingData'];
 
