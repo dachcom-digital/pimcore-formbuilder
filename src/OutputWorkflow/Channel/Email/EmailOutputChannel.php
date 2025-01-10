@@ -36,16 +36,13 @@ class EmailOutputChannel implements ChannelInterface, ChannelContextAwareInterfa
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
         $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
 
-        $localizedConfig = $this->validateOutputConfig($channelConfiguration, $locale);
+        $localizedChannelConfiguration = $this->validateOutputConfig($channelConfiguration, $locale);
 
         $context = [
             'locale'             => $locale,
@@ -53,7 +50,7 @@ class EmailOutputChannel implements ChannelInterface, ChannelContextAwareInterfa
             'channelContext'     => $this->getChannelContext(),
         ];
 
-        $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $context);
+        $this->channelWorker->process($form, $localizedChannelConfiguration, $formRuntimeData, $workflowName, $context);
     }
 
     /**
@@ -61,17 +58,17 @@ class EmailOutputChannel implements ChannelInterface, ChannelContextAwareInterfa
      */
     protected function validateOutputConfig(array $channelConfiguration, string $locale): array
     {
-        $localizedConfig = $this->localeDataMapper->mapMultiDimensional($locale, 'mailTemplate', true, $channelConfiguration);
+        $localizedChannelConfiguration = $this->localeDataMapper->mapMultiDimensional($locale, 'mailTemplate', true, $channelConfiguration);
 
         $message = null;
-        if (!isset($localizedConfig['mailTemplate'])) {
+        if (!isset($localizedChannelConfiguration['mailTemplate'])) {
             $message = 'No mail template definition available.';
-        } elseif ($localizedConfig['mailTemplate']['id'] === null) {
+        } elseif ($localizedChannelConfiguration['mailTemplate']['id'] === null) {
             $message = 'No mail template id available.';
         }
 
         if ($message === null) {
-            return $localizedConfig;
+            return $localizedChannelConfiguration;
         }
 
         throw new \Exception($message);

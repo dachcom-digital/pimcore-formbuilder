@@ -3,7 +3,6 @@
 namespace FormBuilderBundle\OutputWorkflow\Channel\Api;
 
 use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
-use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
@@ -24,17 +23,14 @@ class ApiOutputChannelWorker
     ) {
     }
 
-    public function process(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration, array $context = []): void
+    public function process(FormInterface $form, array $channelConfiguration, array $formRuntimeData, string $workflowName, array $context = []): void
     {
-        $formRuntimeData = $submissionEvent->getFormRuntimeData();
-        $locale = $submissionEvent->getRequest()->getLocale();
-        $form = $submissionEvent->getForm();
-
         $apiProviderName = $channelConfiguration['apiProvider'];
         $apiMappingData = $channelConfiguration['apiMappingData'];
         $providerConfiguration = $channelConfiguration['apiConfiguration'];
 
         $channelContext = $context['channelContext'] ?? null;
+        $locale = $context['locale'] ?? null;
 
         // no data, no gain.
         if (!is_array($apiMappingData)) {

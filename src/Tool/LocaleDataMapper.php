@@ -35,10 +35,10 @@ class LocaleDataMapper
     {
         $blockGenerator = static function ($locale) use ($isHref, $data, $identifier) {
             if ($isHref === true) {
-                return isset($data[$locale][$identifier]['id']) && $data[$locale][$identifier]['id'] !== null;
+                return isset($data[$locale][$identifier]['id']);
             }
 
-            return isset($data[$locale][$identifier]) && $data[$locale][$identifier] !== null;
+            return isset($data[$locale][$identifier]);
         };
 
         if ($blockGenerator($requestedLocale) === true) {

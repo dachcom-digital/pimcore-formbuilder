@@ -37,11 +37,17 @@ class ApiOutputChannel implements ChannelInterface, ChannelContextAwareInterface
 
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
+        $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
+        $form = $submissionEvent->getForm();
+        $formRuntimeData = $submissionEvent->getFormRuntimeData();
+
         $context = [
-            'channelContext' => $this->getChannelContext(),
+            'locale'             => $locale,
+            'doubleOptInSession' => $submissionEvent->getDoubleOptInSession(),
+            'channelContext'     => $this->getChannelContext(),
         ];
 
-        $this->apiOutputChannelWorker->process($submissionEvent, $workflowName, $channelConfiguration, $context);
+        $this->apiOutputChannelWorker->process($form, $channelConfiguration, $formRuntimeData, $workflowName, $context);
     }
 
     protected function findUsedFormFieldsInConfiguration(array $definitionFields, array $fieldNames = []): array
