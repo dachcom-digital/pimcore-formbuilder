@@ -37,12 +37,12 @@ jobs:
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         strategy:
             matrix:
-                php: [ 8.2 ]
-                symfony: [ ^6.2 ]
-                pimcore: [ ~11.2.0 ]
+                php: [ 8.3 ]
+                symfony: [ ^6.4 ]
+                pimcore: [ ~11.4.0 ]
                 include:
-                    -   pimcore: ~11.2.0
-                        template_tag: v11.0.0
+                    -   pimcore: ~11.4.0
+                        template_tag: 2024.3
         steps:
             -   uses: actions/checkout@v4
                 with:

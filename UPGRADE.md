@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 5.2.0
+- **[LICENSE]** Dual-License with GPL and Dachcom Commercial License (DCL) added
 - **[NEW FEATURE]** Bootstrap 5 Layout Support [@mackrais](https://github.com/dachcom-digital/pimcore-formbuilder/pull/500)
 - **[NEW FEATURE]** Introduce Channel Context [#486](https://github.com/dachcom-digital/pimcore-formbuilder/issues/486)
 - **[IMPROVEMENT]** Doctrine ORM 3.0 Support [#503](https://github.com/dachcom-digital/pimcore-formbuilder/pull/503)
