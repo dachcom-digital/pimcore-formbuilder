@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\EventSubscriber;
 
 use FormBuilderBundle\Configuration\Configuration;
@@ -23,7 +34,6 @@ class SignalSubscribeHandler implements EventSubscriberInterface
     protected StorageProviderRegistry $storageProviderRegistry;
     protected EventDispatcherInterface $eventDispatcher;
     protected SignalStorageInterface $signalStorage;
-
     protected ?string $channel = null;
 
     public function __construct(
@@ -95,7 +105,6 @@ class SignalSubscribeHandler implements EventSubscriberInterface
         }
 
         if ($channel === self::CHANNEL_FUNNEL_PROCESS) {
-
             $funnelConfiguration = $this->configuration->getConfig('funnel');
 
             $signalStorageClass = $funnelConfiguration['signal_storage_class'];

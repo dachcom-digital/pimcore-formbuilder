@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\SubmissionEvent;
@@ -9,8 +20,8 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardStackedException;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
-use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
+use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -51,16 +62,13 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
             } catch (GuardChannelException $e) {
                 $exceptionStack[] = $e;
             } catch (GuardOutputWorkflowException $e) {
-
                 $this->signalSubscribeHandler->broadcast([
                     'exception'      => $e,
                     'channelContext' => $channelContext
                 ]);
 
                 throw $e;
-
             } catch (\Throwable $e) {
-
                 $this->signalSubscribeHandler->broadcast([
                     'exception'      => $e,
                     'channelContext' => $channelContext
@@ -79,7 +87,6 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         }
 
         if (count($exceptionStack) > 0) {
-
             $exception = new GuardStackedException($exceptionStack);
             $this->signalSubscribeHandler->broadcast([
                 'exception'      => $exception,
@@ -99,7 +106,6 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         try {
             $this->funnelWorker->initiateFunnel($outputWorkflow, $submissionEvent);
         } catch (\Throwable $e) {
-
             $this->signalSubscribeHandler->broadcast(['exception' => $e]);
 
             throw new \Exception(
@@ -121,7 +127,6 @@ class OutputWorkflowDispatcher implements OutputWorkflowDispatcherInterface
         try {
             $response = $this->funnelWorker->processFunnel($outputWorkflow, $request);
         } catch (\Throwable $e) {
-
             throw new \Exception(
                 sprintf(
                     '"%s" workflow funnel errored at processing state: %s',

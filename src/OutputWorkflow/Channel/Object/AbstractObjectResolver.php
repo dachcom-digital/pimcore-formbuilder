@@ -1,23 +1,34 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 
+use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
+use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
+use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
+use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValidationHelper;
 use FormBuilderBundle\Registry\DynamicObjectResolverRegistry;
+use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
-use FormBuilderBundle\FormBuilderEvents;
-use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
-use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
-use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
-use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
-use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
-use FormBuilderBundle\OutputWorkflow\Channel\Object\Helper\FieldCollectionValidationHelper;
-use FormBuilderBundle\Transformer\Target\TargetAwareOutputTransformer;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractObjectResolver
@@ -27,7 +38,6 @@ abstract class AbstractObjectResolver
 
     protected FormInterface $form;
     protected ?ChannelContext $channelContext;
-
     protected array $formRuntimeData;
     protected string $locale;
     protected string $workflowName;
@@ -206,9 +216,7 @@ abstract class AbstractObjectResolver
 
         // there could be more than just one data field assignment
         foreach ($fieldDefinition['childs'] as $formDefinitionChild) {
-
             if ($formDefinitionChild['type'] !== 'data_class_field') {
-
                 foreach ($containerFieldData['fields'] ?? [] as $field) {
                     $this->processObjectData($object, $field);
                 }
@@ -376,7 +384,6 @@ abstract class AbstractObjectResolver
     {
         return match ($workerName) {
             'relationWorker' => call_user_func(static function (?DataObject\ClassDefinition\Data $fieldDefinition, array $workerConfig, mixed $value) {
-
                 $relationType = $workerConfig['relationType'] ?? null;
 
                 if (!in_array($relationType, ['object', 'asset', 'document'])) {
@@ -402,7 +409,6 @@ abstract class AbstractObjectResolver
                 }
 
                 return null;
-
             }, $fieldDefinition, $workerConfig, $value),
             default => null
         };

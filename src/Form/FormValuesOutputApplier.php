@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Form;
 
 use FormBuilderBundle\Configuration\Configuration;
@@ -44,7 +55,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         });
 
         foreach ($orderedFields as $field) {
-
             if (in_array($field->getName(), $ignoreFields, true)) {
                 continue;
             }
@@ -70,14 +80,12 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         mixed $fieldRawValue,
         array $ignoreFields
     ): ?array {
-
         if ($fieldDefinition instanceof FormFieldContainerDefinitionInterface) {
             $subFieldValues = [];
             foreach ($this->getFormSubFields($formField) as $index => $subFieldCollection) {
                 $subCollectionFieldValues = [];
                 /** @var FormFieldDefinitionInterface $subEntityField */
                 foreach ($fieldDefinition->getFields() as $subEntityField) {
-
                     if (in_array($subEntityField->getName(), $ignoreFields, true)) {
                         continue;
                     }
@@ -152,7 +160,6 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         mixed $rawValue,
         ?string $locale
     ): ?array {
-
         $defaults = [
             'field_type' => FormValuesOutputApplierInterface::FIELD_TYPE_SIMPLE,
             'name'       => $fieldDefinition->getName(),

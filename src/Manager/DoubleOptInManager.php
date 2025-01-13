@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -148,12 +159,10 @@ class DoubleOptInManager
         ?array $additionalData,
         string $dispatchLocation
     ): DoubleOptInSessionInterface {
-
         $doubleOptInConfig = $this->configuration->getConfig('double_opt_in');
         $allowMultipleUserSessions = $doubleOptInConfig['allowMultipleUserSessions'] ?? true;
 
         if ($allowMultipleUserSessions === false) {
-
             $doubleOptInSession = $this->doubleOptInSessionRepository->findOneBy([
                 'applied'        => false,
                 'email'          => $email,
@@ -221,7 +230,6 @@ class DoubleOptInManager
         }
 
         if ($expiration['open_sessions'] > 0) {
-
             $expiredOpenSessionDate = new \DateTime();
             $expiredOpenSessionDate->modify(sprintf('-%d hour', $expiration['open_sessions']));
 
@@ -236,7 +244,6 @@ class DoubleOptInManager
         }
 
         if ($expiration['redeemed_sessions'] > 0) {
-
             $expiredRedeemedSessionDate = new \DateTime();
             $expiredRedeemedSessionDate->modify(sprintf('-%d hour', $expiration['redeemed_sessions']));
 
@@ -262,6 +269,7 @@ class DoubleOptInManager
         foreach ([$locale, 'default'] as $layoutLocale) {
             if (!empty($mailTemplates[$layoutLocale]['id'])) {
                 $mailTemplate = $mailTemplates[$layoutLocale]['id'];
+
                 break;
             }
         }

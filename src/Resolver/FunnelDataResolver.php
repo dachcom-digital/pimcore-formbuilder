@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Resolver;
 
 use FormBuilderBundle\Configuration\Configuration;
@@ -12,7 +23,6 @@ use Symfony\Component\HttpFoundation\Request;
 class FunnelDataResolver
 {
     public const FUNNEL_DATA_NAME = 'form_builder_funnel_data';
-
     public const FUNNEL_STORAGE_TOKEN_FRAGMENT = 'funnel_data_token';
     public const FUNNEL_ERROR_TOKEN_FRAGMENT = 'funnel_error_token';
     public const FUNNEL_FUNNEL_FINISHED_FRAGMENT = 'funnel_finished';

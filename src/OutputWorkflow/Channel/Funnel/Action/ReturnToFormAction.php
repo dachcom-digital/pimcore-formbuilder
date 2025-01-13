@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action;
 
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\Type\ReturnToFormActionType;
@@ -26,12 +37,10 @@ class ReturnToFormAction implements FunnelActionInterface
         array $configuration,
         array $context,
     ): FunnelActionElement {
-
         $initiationPath = $context['initiationPath'];
         $populateForm = $configuration['populateForm'] ?? false;
 
         if ($initiationPath === null) {
-
             $funnelActionElement->setPath('#');
 
             return $funnelActionElement;

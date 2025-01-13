@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\MailEditor;
 
 class TemplateGenerator
@@ -11,7 +22,6 @@ class TemplateGenerator
         $template = '';
 
         foreach ($fields as $field) {
-
             $fieldType = $field['field_type'] ?? null;
             if ($fieldType === 'submit') {
                 continue;
@@ -50,7 +60,6 @@ class TemplateGenerator
         $tableData = sprintf('<table><tbody>%s</tbody></table>', implode('', $containerFields));
 
         return sprintf('<fb-container-field data-type="%s" data-sub_type="%s">%s</fb-container-field>', $field['type'], $field['subType'], $tableData);
-
     }
 
     private function closeTable(): string
@@ -75,5 +84,4 @@ class TemplateGenerator
 
         return $template;
     }
-
 }

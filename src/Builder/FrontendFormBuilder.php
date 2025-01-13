@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Builder;
 
 use FormBuilderBundle\EventSubscriber\FormBuilderSubscriber;
@@ -31,7 +42,6 @@ class FrontendFormBuilder
         bool $isHeadlessForm = false,
         bool $useCsrfProtection = true
     ): FormInterface {
-
         $formDefinitionConfig = $formDefinition->getConfiguration();
         $doubleOptInConfig = $formDefinition->getDoubleOptInConfig();
 
@@ -89,7 +99,6 @@ class FrontendFormBuilder
         array $formData = [],
         bool $useCsrfProtection = true
     ): FormInterface {
-
         $defaults = [
             'form_preset'   => null,
             'form_template' => null
@@ -136,7 +145,6 @@ class FrontendFormBuilder
         array $formData = [],
         bool $useCsrfProtection = true
     ): FormInterface {
-
         $formDefinitionConfig = $formDefinition->getConfiguration();
 
         $formOptions = [
@@ -159,7 +167,6 @@ class FrontendFormBuilder
         array $formOptions = [],
         bool $isHeadlessForm = false
     ): FormBuilderInterface {
-
         $formDefinitionConfig = $formDefinition->getConfiguration();
 
         if (isset($formDefinitionConfig['attributes']) && is_array($formDefinitionConfig['attributes'])) {
@@ -188,7 +195,6 @@ class FrontendFormBuilder
     private function addFormAttributes(array $currentAttributes, array $attributes): array
     {
         foreach ($attributes as $attribute) {
-
             // legacy
             if (!isset($attribute['option'])) {
                 continue;

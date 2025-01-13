@@ -1,29 +1,40 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\EventSubscriber;
 
+use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\Form\FormTypeOptionsEvent;
-use FormBuilderBundle\Registry\DataInjectionRegistry;
-use FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlank;
+use FormBuilderBundle\Event\Form\PostSetDataEvent;
+use FormBuilderBundle\Event\Form\PreSetDataEvent;
+use FormBuilderBundle\Event\Form\PreSubmitEvent;
+use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldContainerDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDynamicDefinitionInterface;
-use FormBuilderBundle\Configuration\Configuration;
-use FormBuilderBundle\Form\Data\FormDataInterface;
-use FormBuilderBundle\Event\Form\PostSetDataEvent;
-use FormBuilderBundle\Event\Form\PreSetDataEvent;
-use FormBuilderBundle\Event\Form\PreSubmitEvent;
-use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Registry\DataInjectionRegistry;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Dispatcher;
 use FormBuilderBundle\Validation\ConditionalLogic\Dispatcher\Module\Data\DataInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use FormBuilderBundle\Validator\Constraints\DynamicMultiFileNotBlank;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class FormBuilderSubscriber implements EventSubscriberInterface
 {
@@ -236,10 +247,10 @@ class FormBuilderSubscriber implements EventSubscriberInterface
         // options enrichment: check required state
         if (in_array('required', $availableOptions)) {
             $options['required'] = count(
-                    array_filter($constraints, static function ($constraint) {
-                        return $constraint instanceof NotBlank || $constraint instanceof DynamicMultiFileNotBlank;
-                    })
-                ) === 1;
+                array_filter($constraints, static function ($constraint) {
+                    return $constraint instanceof NotBlank || $constraint instanceof DynamicMultiFileNotBlank;
+                })
+            ) === 1;
         }
 
         // options enrichment: check for custom radio / checkbox layout

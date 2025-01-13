@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Form\Admin\Type\OutputWorkflow;
 
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Funnel\Action\FunnelActionsCollectionType;
@@ -28,7 +39,6 @@ class OutputWorkflowChannelType extends AbstractType
         $builder->add('funnelActions', FunnelActionsCollectionType::class, []);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $form = $event->getForm();
             $formData = $form->getData();
@@ -61,21 +71,19 @@ class OutputWorkflowChannelType extends AbstractType
             $form->add('configuration', $formClass, $formOptions);
 
             if (!array_key_exists('name', $data)) {
-
                 $name = $formData instanceof OutputWorkflowChannel && !empty($formData->getName())
                     ? $formData->getName()
                     : Uuid::v1()->toRfc4122();
 
                 $event->setData(array_merge($data, ['name' => $name]));
             }
-
         });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => OutputWorkflowChannel::class,
+            'data_class'    => OutputWorkflowChannel::class,
             'property_path' => '[2]'
         ]);
     }

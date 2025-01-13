@@ -1,10 +1,21 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class BaseSubmissionEvent extends Event
 {
@@ -12,7 +23,6 @@ abstract class BaseSubmissionEvent extends Event
     protected FormInterface $form;
     protected bool $useFlashBag;
     protected array $messages;
-
     protected ?string $locale = null;
 
     public function __construct(

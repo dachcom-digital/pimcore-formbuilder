@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email;
 
 use FormBuilderBundle\Configuration\Configuration;
@@ -7,15 +18,15 @@ use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
-use FormBuilderBundle\Model\DoubleOptInSessionInterface;
-use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
-use Pimcore\Mail;
-use Pimcore\Model\Document;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\FormBuilderEvents;
+use FormBuilderBundle\Model\DoubleOptInSessionInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use FormBuilderBundle\OutputWorkflow\Channel\Email\Parser\MailParser;
+use Pimcore\Mail;
+use Pimcore\Model\Document;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class EmailOutputChannelWorker
 {
@@ -118,7 +129,6 @@ class EmailOutputChannelWorker
         array $formRuntimeData,
         ?ChannelContext $channelContext
     ): ?Mail {
-
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent(
             $formData,
             $subject,

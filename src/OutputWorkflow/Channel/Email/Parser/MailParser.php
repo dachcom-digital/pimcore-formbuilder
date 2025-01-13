@@ -1,7 +1,21 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow\Channel\Email\Parser;
 
+use FormBuilderBundle\Form\Data\FormDataInterface;
+use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
+use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
 use FormBuilderBundle\Model\DoubleOptInSessionInterface;
 use FormBuilderBundle\Stream\File;
 use League\Flysystem\FilesystemOperator;
@@ -9,9 +23,6 @@ use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Templating\EngineInterface;
-use FormBuilderBundle\Form\Data\FormDataInterface;
-use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
-use FormBuilderBundle\MailEditor\Parser\PlaceholderParserInterface;
 
 class MailParser
 {
@@ -146,7 +157,6 @@ class MailParser
         ?string $mailLayout,
         string $layoutType
     ): void {
-
         $doubleOptInSessionValues = [];
         if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
             $doubleOptInSessionValues = $this->createDoubleOptInSessionValues(
@@ -164,7 +174,6 @@ class MailParser
                 ]
             );
         } else {
-
             if ($doubleOptInSession instanceof DoubleOptInSessionInterface) {
                 $fieldValues['double_opt_in_session'] = $doubleOptInSessionValues;
             }
@@ -311,11 +320,11 @@ class MailParser
 
         foreach ($validFields as $validField) {
             $data[] = match ($validField) {
-                'email' => $this->createDoubleOptInSessionValue('email', $doubleOptInSession->getEmail(), $createFieldValueScheme),
-                'token' => $this->createDoubleOptInSessionValue('token', $doubleOptInSession->getTokenAsString(), $createFieldValueScheme),
-                'creation_date' => $this->createDoubleOptInSessionValue('creation_date', $doubleOptInSession->getCreationDate(), $createFieldValueScheme),
+                'email'           => $this->createDoubleOptInSessionValue('email', $doubleOptInSession->getEmail(), $createFieldValueScheme),
+                'token'           => $this->createDoubleOptInSessionValue('token', $doubleOptInSession->getTokenAsString(), $createFieldValueScheme),
+                'creation_date'   => $this->createDoubleOptInSessionValue('creation_date', $doubleOptInSession->getCreationDate(), $createFieldValueScheme),
                 'additional_data' => $this->createDoubleOptInSessionValue('additional_data', $doubleOptInSession->getAdditionalData(), $createFieldValueScheme),
-                default => null,
+                default           => null,
             };
         }
 
@@ -338,6 +347,5 @@ class MailParser
                 'type'        => 'text'
             ]
         ];
-
     }
 }

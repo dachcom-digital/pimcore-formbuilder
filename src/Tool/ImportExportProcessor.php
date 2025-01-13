@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Tool;
 
 use Doctrine\DBAL\Connection;
@@ -48,7 +59,6 @@ class ImportExportProcessor
 
         $outputWorkflows = [];
         foreach ($fowQb->execute()->fetchAllAssociative() as $rawFormOutputWorkflowDefinition) {
-
             $fowChannelQb = $this->connection->createQueryBuilder();
             $fowChannelQb
                 ->select('*')
@@ -78,7 +88,6 @@ class ImportExportProcessor
                     ? unserialize($rawFormOutputWorkflowDefinition['success_management'], ['allowed_classes' => false])
                     : null,
             ];
-
         }
 
         $data = [
@@ -130,7 +139,6 @@ class ImportExportProcessor
         }
 
         if (is_array($formContent['output_workflows'])) {
-
             foreach ($formContent['output_workflows'] as $outputWorkflowDefinition) {
                 /** @var OutputWorkflowInterface $outputWorkflow */
                 $outputWorkflow = $this->outputWorkflowManager->save([

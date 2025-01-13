@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Registry;
 
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Action\ActionInterface;
@@ -11,12 +22,10 @@ class ConditionalLogicRegistry
         'action'    => [],
         'condition' => []
     ];
-
     protected array $serviceConfiguration = [
         'action'    => [],
         'condition' => []
     ];
-
     private string $actionInterface;
     private string $conditionInterface;
 
@@ -26,7 +35,7 @@ class ConditionalLogicRegistry
         $this->conditionInterface = $conditionInterface;
     }
 
-    public function register(string$identifier, mixed $service, ?string $type = null, array $configuration = []): void
+    public function register(string $identifier, mixed $service, ?string $type = null, array $configuration = []): void
     {
         $allowedTypes = ['action', 'condition'];
         if (!is_null($type) && !in_array($type, $allowedTypes)) {

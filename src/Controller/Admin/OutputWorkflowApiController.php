@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Controller\Admin;
 
 use FormBuilderBundle\Builder\ExtJsFormBuilder;
@@ -89,7 +100,6 @@ class OutputWorkflowApiController extends AdminAbstractController
         }
 
         foreach ($services as $identifier => $service) {
-
             try {
                 $configurationFields = $this->validateApiConfigurationFields($service->getProviderConfigurationFields($formDefinition));
             } catch (\Throwable $e) {
@@ -112,7 +122,6 @@ class OutputWorkflowApiController extends AdminAbstractController
     protected function validateApiPredefinedFields(array $fields): array
     {
         return array_map(static function ($property) {
-
             if (!is_array($property)) {
                 $property = [
                     'label' => $property,
@@ -124,7 +133,6 @@ class OutputWorkflowApiController extends AdminAbstractController
                 'label' => $property['label'] ?? 'UNKNOWN',
                 'value' => $property['value'] ?? 'UNKNOWN'
             ];
-
         }, $fields);
     }
 
@@ -137,7 +145,6 @@ class OutputWorkflowApiController extends AdminAbstractController
         $validatedConfigurationFields = [];
 
         foreach ($fields as $field) {
-
             $optionsResolver = new OptionsResolver();
             $optionsResolver->setRequired(['type', 'label', 'name', 'required']);
             $optionsResolver->setAllowedValues('type', ['text', 'select']);

@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -35,7 +46,6 @@ final class Version20230830183642 extends AbstractMigration implements Container
 
         /** @var OutputWorkflowChannel $channel */
         foreach ($repository->findAll() as $channel) {
-
             if ($channel->getType() !== 'email') {
                 continue;
             }
@@ -65,7 +75,6 @@ final class Version20230830183642 extends AbstractMigration implements Container
         $changed = false;
 
         foreach ($configuration as $locale => $configurationData) {
-
             if (!array_key_exists('mailLayoutData', $configurationData)) {
                 continue;
             }
@@ -122,7 +131,6 @@ final class Version20230830183642 extends AbstractMigration implements Container
         $additionalParameter = '';
 
         foreach ($cleanConfig as $configName => $configValue) {
-
             if (in_array($configName, ['sub-type', 'show_label'], true)) {
                 continue;
             }
