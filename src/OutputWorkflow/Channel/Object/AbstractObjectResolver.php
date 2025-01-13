@@ -152,10 +152,6 @@ abstract class AbstractObjectResolver
 
         $formData = $this->formValuesOutputApplier->applyForChannel($this->getForm(), [], 'object', $this->getLocale());
 
-        if (!is_array($formData)) {
-            return;
-        }
-
         $this->processObjectData($object, $formData);
     }
 
@@ -447,15 +443,11 @@ abstract class AbstractObjectResolver
     protected function getObjectFieldDefinition(mixed $object, string $fieldName): ?DataObject\ClassDefinition\Data
     {
         if ($object instanceof DataObject\Concrete) {
-            $classDefinition = $object->getClass();
-            if ($classDefinition instanceof DataObject\ClassDefinition) {
-                return $classDefinition->getFieldDefinition($fieldName);
-            }
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $classDefinition = $object->getDefinition();
-            if ($classDefinition instanceof DataObject\Fieldcollection\Definition) {
-                return $classDefinition->getFieldDefinition($fieldName);
-            }
+            return $object->getClass()->getFieldDefinition($fieldName);
+        }
+
+        if ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            return $object->getDefinition()->getFieldDefinition($fieldName);
         }
 
         return null;

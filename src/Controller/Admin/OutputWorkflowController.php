@@ -200,7 +200,7 @@ class OutputWorkflowController extends AdminAbstractController
         if ($form->isValid()) {
             $this->outputWorkflowManager->saveRawEntity($outputWorkflow);
         } else {
-            /** @var FormError $e */
+
             foreach ($form->getErrors(true, true) as $e) {
                 $errorMessageTemplate = $e->getMessageTemplate();
                 foreach ($e->getMessageParameters() as $key => $value) {

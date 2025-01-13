@@ -70,7 +70,7 @@ class FormBuilderFieldsType extends Type
             if ($field['type'] === 'container') {
                 $formField = $this->formDefinitionFactory->createFormFieldContainerDefinition();
                 $this->populateFormField($formField, $field);
-                if ($formField instanceof SubFieldsAwareInterface && isset($field['fields']) && is_array($field['fields'])) {
+                if (isset($field['fields']) && is_array($field['fields'])) {
                     $subFields = [];
                     foreach ($field['fields'] as $subField) {
                         $subFormField = $this->formDefinitionFactory->createFormFieldDefinition();

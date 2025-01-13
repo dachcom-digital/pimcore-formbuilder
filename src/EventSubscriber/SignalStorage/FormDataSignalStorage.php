@@ -41,10 +41,6 @@ class FormDataSignalStorage implements SignalStorageInterface, ProviderAwareStor
         $storageToken = $this->funnelData->getStorageToken();
         $formStorageData = $this->funnelData->getFormStorageData();
 
-        if (!$formStorageData instanceof FormStorageData) {
-            throw new \Exception('Cannot store signal without valid FormStorageData');
-        }
-
         if ($signal->getName() !== AttachmentStream::SIGNAL_CLEAN_UP) {
             throw new \Exception(sprintf('FormDataSignalStorage only supports signal events of type "%s"', AttachmentStream::SIGNAL_CLEAN_UP));
         }
@@ -61,10 +57,6 @@ class FormDataSignalStorage implements SignalStorageInterface, ProviderAwareStor
     public function getSignals(): array
     {
         $formStorageData = $this->funnelData->getFormStorageData();
-
-        if (!$formStorageData instanceof FormStorageData) {
-            return [];
-        }
 
         $restoredAttachmentSignalEvents = [];
         /** @var FileStack $fileStack */

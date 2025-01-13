@@ -103,10 +103,6 @@ class FunnelWorker implements FunnelWorkerInterface
     {
         $funnelData = $this->funnelDataResolver->getFunnelData($request);
 
-        if (!$funnelData instanceof FunnelData) {
-            throw new \Exception($request, 'Invalid Funnel Data');
-        }
-
         if (!$outputWorkflow->isFunnelWorkflow()) {
             throw new \Exception(sprintf('Funnel with id %d is not a valid funnel', $outputWorkflow->getId()));
         }
@@ -120,10 +116,6 @@ class FunnelWorker implements FunnelWorkerInterface
         }
 
         $formStorageData = $funnelData->getFormStorageData();
-
-        if (!$formStorageData instanceof FormStorageData) {
-            throw new \Exception(sprintf('No storage data for token "%s" found', $storageToken));
-        }
 
         // restore submission event to allow seamless output workflow channel processing
         $submissionEvent = $this->buildSubmissionEvent($request, $outputWorkflow, $formStorageData);

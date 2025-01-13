@@ -85,10 +85,6 @@ class ConditionalLogicProcessor
 
             $appliedData = $this->conditionalLogicRegistry->getAction($action['type'])->setValues($action)->apply($validationState, $formData, $ruleId);
 
-            if (!$appliedData instanceof ReturnStackInterface) {
-                continue;
-            }
-
             //If field is available: only add affected field data to return container!
             if (!$field instanceof FieldDefinitionInterface) {
                 $returnContainer[] = $appliedData;
