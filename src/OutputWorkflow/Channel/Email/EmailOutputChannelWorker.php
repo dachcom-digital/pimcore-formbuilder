@@ -8,6 +8,7 @@ use FormBuilderBundle\Exception\OutputWorkflow\GuardChannelException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardException;
 use FormBuilderBundle\Exception\OutputWorkflow\GuardOutputWorkflowException;
 use FormBuilderBundle\Model\DoubleOptInSessionInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
 use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -37,7 +38,9 @@ class EmailOutputChannelWorker
         $forcePlainText = $channelConfiguration['forcePlainText'];
         $disableDefaultMailBody = $channelConfiguration['disableDefaultMailBody'];
         $disableMailLogging = $channelConfiguration['disableMailLogging'] ?? false;
+
         $doubleOptInSession = $context['doubleOptInSession'] ?? null;
+        $channelContext = $context['channelContext'] ?? null;
 
         $mailTemplateId = $mailTemplate['id'];
         $mailTemplate = is_numeric($mailTemplateId) ? Document\Email::getById($mailTemplateId) : null;
@@ -67,7 +70,7 @@ class EmailOutputChannelWorker
         }
 
         // dispatch subject guard event
-        if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeData)) {
+        if (null === $mail = $this->dispatchGuardEvent($form->getData(), $mail, $workflowName, $formRuntimeData, $channelContext)) {
             return;
         }
 
@@ -106,10 +109,25 @@ class EmailOutputChannelWorker
 
     /**
      * @throws GuardException
+     * @throws GuardOutputWorkflowException
      */
-    protected function dispatchGuardEvent(FormDataInterface $formData, Mail $subject, string $workflowName, array $formRuntimeData): ?Mail
-    {
-        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent($formData, $subject, $workflowName, 'email', $formRuntimeData);
+    protected function dispatchGuardEvent(
+        FormDataInterface $formData,
+        Mail $subject,
+        string $workflowName,
+        array $formRuntimeData,
+        ?ChannelContext $channelContext
+    ): ?Mail {
+
+        $channelSubjectGuardEvent = new ChannelSubjectGuardEvent(
+            $formData,
+            $subject,
+            $workflowName,
+            'email',
+            $formRuntimeData,
+            $channelContext
+        );
+
         $this->eventDispatcher->dispatch($channelSubjectGuardEvent, FormBuilderEvents::OUTPUT_WORKFLOW_GUARD_SUBJECT_PRE_DISPATCH);
 
         if ($channelSubjectGuardEvent->isSuspended()) {

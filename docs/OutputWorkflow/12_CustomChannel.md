@@ -13,6 +13,9 @@ services:
 ## Output Transformer
 Read [here](./15_OutputTransformer.md#custom-output-transformer) how to add a single output transformer to your new custom channel.
 
+## Channel Context
+Read [here](./13_ChannelContext.md) how to support channel context within your new custom channel.
+
 ## PHP Configuration Form Type Class
 ```php
 <?php
@@ -122,5 +125,4 @@ Formbuilder.extjs.formPanel.outputWorkflow.channel.myChannel = Class.create(Form
        return this.panel.form.getValues();
     }
 });
-
 ```

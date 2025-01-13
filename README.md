@@ -63,6 +63,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
   - [Email Channel](docs/OutputWorkflow/10_EmailChannel.md)
   - [Object Channel](docs/OutputWorkflow/11_ObjectChannel.md)
   - [Custom Channel](docs/OutputWorkflow/12_CustomChannel.md)
+  - [Channel Context](docs/OutputWorkflow/13_ChannelContext.md)
   - [Output Transformer](docs/OutputWorkflow/15_OutputTransformer.md)
   - [Field Transformer](docs/OutputWorkflow/16_FieldTransformer.md)
   - [Success Management](docs/OutputWorkflow/20_SuccessManagement.md)

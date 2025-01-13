@@ -5,16 +5,16 @@ namespace FormBuilderBundle\OutputWorkflow\Channel\Object;
 use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Factory\ObjectResolverFactoryInterface;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\ObjectChannelType;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
-use Pimcore\Model\DataObject;
+use FormBuilderBundle\OutputWorkflow\Channel\Trait\ChannelContextTrait;
 
-class ObjectOutputChannel implements ChannelInterface
+class ObjectOutputChannel implements ChannelInterface, ChannelContextAwareInterface
 {
-    protected ObjectResolverFactoryInterface $objectResolverFactory;
+    use ChannelContextTrait;
 
-    public function __construct(ObjectResolverFactoryInterface $objectResolverFactory)
+    public function __construct(protected ObjectResolverFactoryInterface $objectResolverFactory)
     {
-        $this->objectResolverFactory = $objectResolverFactory;
     }
 
     public function getFormType(): string
@@ -36,14 +36,11 @@ class ObjectOutputChannel implements ChannelInterface
         return $this->findUsedFormFieldsInConfiguration($channelConfiguration['objectMappingData']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
-        $formRuntimeData = $submissionEvent->getFormRuntimeData();
-        $locale = $submissionEvent->getRequest()->getLocale();
+        $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
+        $formRuntimeData = $submissionEvent->getFormRuntimeData();
 
         $objectMappingData = $channelConfiguration['objectMappingData'];
 
@@ -71,6 +68,7 @@ class ObjectOutputChannel implements ChannelInterface
         $objectResolver->setLocale($locale);
         $objectResolver->setWorkflowName($workflowName);
         $objectResolver->setFormRuntimeData($formRuntimeData);
+        $objectResolver->setChannelContext($this->getChannelContext());
 
         $objectResolver->resolve();
     }
@@ -79,7 +77,7 @@ class ObjectOutputChannel implements ChannelInterface
     {
         foreach ($definitionFields as $definitionField) {
             $hasChildren = isset($definitionField['childs']) && is_array($definitionField['childs']) && count($definitionField['childs']) > 0;
-            $hasWorkerFieldMapping = isset($definitionField['config']['workerData']) && isset($definitionField['config']['workerData']['fieldMapping']);
+            $hasWorkerFieldMapping = isset($definitionField['config']['workerData']['fieldMapping']);
 
             if ($definitionField['type'] === 'form_field' && $hasChildren) {
                 $fieldNames[] = $definitionField['config']['name'];

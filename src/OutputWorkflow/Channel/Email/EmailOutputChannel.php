@@ -6,9 +6,13 @@ use FormBuilderBundle\Event\SubmissionEvent;
 use FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\EmailChannelType;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelInterface;
 use FormBuilderBundle\Tool\LocaleDataMapper;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\Trait\ChannelContextTrait;
 
-class EmailOutputChannel implements ChannelInterface
+class EmailOutputChannel implements ChannelInterface, ChannelContextAwareInterface
 {
+    use ChannelContextTrait;
+
     public function __construct(
         protected EmailOutputChannelWorker $channelWorker,
         protected LocaleDataMapper $localeDataMapper
@@ -32,23 +36,21 @@ class EmailOutputChannel implements ChannelInterface
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatchOutputProcessing(SubmissionEvent $submissionEvent, string $workflowName, array $channelConfiguration): void
     {
         $locale = $submissionEvent->getLocale() ?? $submissionEvent->getRequest()->getLocale();
         $form = $submissionEvent->getForm();
         $formRuntimeData = $submissionEvent->getFormRuntimeData();
 
-        $localizedConfig = $this->validateOutputConfig($channelConfiguration, $locale);
+        $localizedChannelConfiguration = $this->validateOutputConfig($channelConfiguration, $locale);
 
         $context = [
             'locale'             => $locale,
             'doubleOptInSession' => $submissionEvent->getDoubleOptInSession(),
+            'channelContext'     => $this->getChannelContext(),
         ];
 
-        $this->channelWorker->process($form, $localizedConfig, $formRuntimeData, $workflowName, $context);
+        $this->channelWorker->process($form, $localizedChannelConfiguration, $formRuntimeData, $workflowName, $context);
     }
 
     /**
@@ -56,17 +58,17 @@ class EmailOutputChannel implements ChannelInterface
      */
     protected function validateOutputConfig(array $channelConfiguration, string $locale): array
     {
-        $localizedConfig = $this->localeDataMapper->mapMultiDimensional($locale, 'mailTemplate', true, $channelConfiguration);
+        $localizedChannelConfiguration = $this->localeDataMapper->mapMultiDimensional($locale, 'mailTemplate', true, $channelConfiguration);
 
         $message = null;
-        if (!isset($localizedConfig['mailTemplate'])) {
+        if (!isset($localizedChannelConfiguration['mailTemplate'])) {
             $message = 'No mail template definition available.';
-        } elseif ($localizedConfig['mailTemplate']['id'] === null) {
+        } elseif ($localizedChannelConfiguration['mailTemplate']['id'] === null) {
             $message = 'No mail template id available.';
         }
 
         if ($message === null) {
-            return $localizedConfig;
+            return $localizedChannelConfiguration;
         }
 
         throw new \Exception($message);

@@ -157,7 +157,7 @@ class MailChimpApiProvider implements ApiProviderInterface
         }
     }
     
-    protected function getClient() 
+    protected function getClient(): MailchimpMarketing\ApiClient 
     {
         $mailchimp = new MailchimpMarketing\ApiClient();
 
@@ -213,12 +213,13 @@ class OutputWorkflowEventListener implements EventSubscriberInterface
         // different fail scenarios can be applied:
         
         $event->shouldFail('My invalid message for a specific channel! Allow further channels to pass!', true);
-    
+        // OR
         $event->shouldFail('My invalid message! If this happens, no further channel will be executed!', false);
     
         // silently skip channel
         if ($subject->getProviderConfigurationNode('myConfig') === 'a special value') {
             $event->shouldSuspend();
+            
             return;
         }
     }
