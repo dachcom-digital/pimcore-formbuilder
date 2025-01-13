@@ -1,15 +1,26 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\DependencyInjection;
 
+use FormBuilderBundle\Configuration\Configuration as BundleConfiguration;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use FormBuilderBundle\Configuration\Configuration as BundleConfiguration;
 
 class FormBuilderExtension extends Extension implements PrependExtensionInterface
 {
@@ -70,7 +81,6 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
 
         $container->setParameter('form_builder.persistence.doctrine.enabled', true);
         $container->setParameter('form_builder.persistence.doctrine.manager', $entityManagerName);
-
     }
 
     private function buildEmailCheckerStack(ContainerBuilder $container, array $config): void

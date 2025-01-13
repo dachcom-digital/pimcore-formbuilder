@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -20,13 +31,13 @@ final class Version20230908101855 extends AbstractMigration
 
         $workflowIdMap = array_reduce($workflowIdMapData, static function ($carry, $data) {
             $carry[$data['id']] = $data['name'];
+
             return $carry;
         }, []);
 
         $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE (conditionalLogic LIKE '%\"switchOutputWorkflow\"%' OR conditionalLogic LIKE '%\"outputWorkflow\"%')");
 
         foreach ($forms as $form) {
-
             $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
                     'condition' => array_filter(
@@ -36,9 +47,9 @@ final class Version20230908101855 extends AbstractMigration
                             }
 
                             foreach ($condition['outputWorkflows'] as $index => $outputWorkflowId) {
-
                                 if (!isset($workflowIdMap[$outputWorkflowId])) {
                                     unset($condition['outputWorkflows'][$index]);
+
                                     continue;
                                 }
 
@@ -52,7 +63,6 @@ final class Version20230908101855 extends AbstractMigration
                             $condition['outputWorkflows'] = array_values($condition['outputWorkflows']);
 
                             return $condition;
-
                         }, $logic['condition'] ?? [])
                     ),
                     'action'    => array_filter(
@@ -69,7 +79,6 @@ final class Version20230908101855 extends AbstractMigration
                             unset($action['workflowId']);
 
                             return $action;
-
                         }, $logic['action'] ?? [])
                     )
                 ];
@@ -85,13 +94,13 @@ final class Version20230908101855 extends AbstractMigration
 
         $workflowIdMap = array_reduce($workflowIdMapData, static function ($carry, $data) {
             $carry[$data['name']] = $data['id'];
+
             return $carry;
         }, []);
 
         $forms = $this->connection->fetchAllAssociative("SELECT id, conditionalLogic FROM formbuilder_forms WHERE (conditionalLogic LIKE '%\"switchOutputWorkflow\"%' OR conditionalLogic LIKE '%\"outputWorkflow\"%')");
 
         foreach ($forms as $form) {
-
             $conditionalLogic = array_map(static function ($logic) use ($workflowIdMap) {
                 return [
                     'condition' => array_map(static function ($condition) use ($workflowIdMap) {
@@ -104,7 +113,6 @@ final class Version20230908101855 extends AbstractMigration
                         }
 
                         return $condition;
-
                     }, $logic['condition'] ?? []),
                     'action'    => array_map(static function ($action) use ($workflowIdMap) {
                         if ($action['type'] !== 'switchOutputWorkflow') {
@@ -115,7 +123,6 @@ final class Version20230908101855 extends AbstractMigration
                         unset($action['workflowName']);
 
                         return $action;
-
                     }, $logic['action'] ?? [])
                 ];
             }, unserialize($form['conditionalLogic']));

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\MailEditor\Widget;
 
 use FormBuilderBundle\Form\FormValuesOutputApplierInterface;
@@ -115,7 +126,8 @@ class FormFieldWidget implements MailEditorWidgetInterface, MailEditorFieldDataW
         $blockLabel = $this->translator->trans($attributeBag->get('block_label'));
 
         if ($layoutType === 'html') {
-            return sprintf('
+            return sprintf(
+                '
                     <table>
                         <tbody>
                             <tr>

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow;
 
 use FormBuilderBundle\Event\DoubleOptInSubmissionEvent;
@@ -71,7 +82,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         } catch (GuardStackedException $e) {
             return $this->buildErrorResponse($request, $submissionEvent, implode(', ', $e->getGuardExceptionMessages()));
         } catch (\Throwable $e) {
-
             $errorMessage = sprintf('Error while dispatching workflow "%s". Message was: %s', $outputWorkflow->getName(), $e->getMessage());
 
             return $this->buildErrorResponse($request, $submissionEvent, $errorMessage);
@@ -188,7 +198,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         if ($useFlashBag === true) {
             foreach ($responseMessages as $type => $eventMessages) {
                 foreach ($eventMessages as $message) {
-
                     $messageKey = $type === 'redirect_message'
                         ? sprintf('%s_redirect_flash_message', $flashBagPrefix)
                         : sprintf('%s_%d_%s', $flashBagPrefix, $formDefinition->getId(), $type);
@@ -212,13 +221,11 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         $error = false;
 
         foreach ($responseMessages as $type => $eventMessages) {
-
             if ($type === 'error') {
                 $error = true;
             }
 
             foreach ($eventMessages as $message) {
-
                 if ($type === 'redirect_message' && $useFlashBag === true) {
                     $this->flashBagManager->add(sprintf('%s_redirect_flash_message', $flashBagPrefix), $message);
                 }
@@ -250,7 +257,6 @@ class FormSubmissionFinisher implements FormSubmissionFinisherInterface
         string $flashBagPrefix,
         array|string $errors
     ): RedirectResponse {
-
         $uri = $redirectUri ?? '?send=false';
 
         if (!is_array($errors)) {

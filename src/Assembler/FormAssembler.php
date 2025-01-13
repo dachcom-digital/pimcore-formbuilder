@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Assembler;
 
 use FormBuilderBundle\Builder\FrontendFormBuilder;
@@ -7,9 +18,9 @@ use FormBuilderBundle\Event\FormAssembleEvent;
 use FormBuilderBundle\Form\RuntimeData\FormRuntimeDataAllocatorInterface;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Manager\DoubleOptInManager;
-use FormBuilderBundle\Resolver\FormOptionsResolver;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Resolver\FormOptionsResolver;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -118,7 +129,6 @@ class FormAssembler
         array $formData = [],
         bool $headless = false
     ): FormInterface {
-
         $systemRuntimeData = $this->getSystemRuntimeData($optionsResolver, $headless);
         $formAttributes = $optionsResolver->getFormAttributes();
         $useCsrfProtection = $optionsResolver->useCsrfProtection();

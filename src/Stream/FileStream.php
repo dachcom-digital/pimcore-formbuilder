@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Stream;
 
 use League\Flysystem\FilesystemException;
@@ -123,7 +134,6 @@ class FileStream implements FileStreamInterface
         $uuid = $mainRequest->request->get($options['uuid']);
 
         if ($totalParts > 1) {
-
             // chunked upload
             $partIndex = (int) $mainRequest->request->get($options['chunkIndex']);
 
@@ -166,7 +176,6 @@ class FileStream implements FileStreamInterface
             'fileName' => $fileSafeName,
             'uuid'     => $uuid
         ];
-
     }
 
     public function combineChunks(array $options = []): array
@@ -188,7 +197,6 @@ class FileStream implements FileStreamInterface
         $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid)->toArray();
 
         usort($chunkFiles, static function (StorageAttributes $a, StorageAttributes $b) {
-
             $pathInfoA = pathinfo($a->path());
             $pathInfoB = pathinfo($b->path());
 
@@ -211,7 +219,6 @@ class FileStream implements FileStreamInterface
         fclose($tmpStream);
 
         if ($chunkSuccess === false) {
-
             try {
                 $this->formBuilderChunkStorage->deleteDirectory($uuid);
             } catch (FilesystemException $exception) {

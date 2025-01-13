@@ -1,12 +1,23 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Transformer\Output;
 
-use Symfony\Component\Form\FormInterface;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
+use FormBuilderBundle\Transformer\Output\Traits\ChoiceTargetTransformerTrait;
 use FormBuilderBundle\Transformer\Target\TargetAwareData;
 use FormBuilderBundle\Transformer\Target\TargetAwareValue;
-use FormBuilderBundle\Transformer\Output\Traits\ChoiceTargetTransformerTrait;
+use Symfony\Component\Form\FormInterface;
 
 class ChoiceDataObjectTransformer implements OutputTransformerInterface
 {

@@ -1,4 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
 
 namespace FormBuilderBundle\Doctrine\Type;
 
@@ -8,7 +21,6 @@ use Doctrine\DBAL\Types\Type;
 use FormBuilderBundle\Factory\FormDefinitionFactoryInterface;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
 use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
-use FormBuilderBundle\Model\Fragment\SubFieldsAwareInterface;
 
 class FormBuilderFieldsType extends Type
 {
@@ -116,5 +128,4 @@ class FormBuilderFieldsType extends Type
     {
         return ucfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
-
 }

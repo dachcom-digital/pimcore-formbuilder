@@ -1,12 +1,23 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Transformer\Output;
 
 use FormBuilderBundle\Form\Data\FormDataInterface;
 use FormBuilderBundle\Model\FieldDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use FormBuilderBundle\Stream\AttachmentStreamInterface;
 use Pimcore\Model\Asset;
-use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -46,7 +57,6 @@ class DynamicMultiFileTransformer implements OutputTransformerInterface
         $asset = $this->attachmentStream->createAttachmentAsset($attachmentData, $fieldDefinition->getName(), $rootFormData->getFormDefinition()->getName());
 
         if ($asset instanceof Asset) {
-
             $hostUrl = \Pimcore\Tool::getHostUrl();
 
             if (isset($options['submit_as_admin_deep_link']) && $options['submit_as_admin_deep_link'] === true) {

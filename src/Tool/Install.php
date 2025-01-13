@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Tool;
 
 use FormBuilderBundle\Migrations\Version20240916132702;
@@ -8,8 +19,8 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Translation;
-use Pimcore\Tool\Admin;
 use Pimcore\Model\User\Permission;
+use Pimcore\Tool\Admin;
 
 class Install extends SettingsStoreAwareInstaller
 {

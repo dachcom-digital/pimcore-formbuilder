@@ -1,15 +1,25 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\EventListener\Core;
 
+use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\Event\DoubleOptInSubmissionEvent;
 use FormBuilderBundle\Event\SubmissionEvent;
-use FormBuilderBundle\Builder\FrontendFormBuilder;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\OutputWorkflow\FormSubmissionFinisherInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class RequestListener implements EventSubscriberInterface
 {
@@ -60,7 +71,6 @@ class RequestListener implements EventSubscriberInterface
         }
 
         try {
-
             if ($formType === self::FORM_TYPE_DOUBLE_OPT_IN) {
                 $form = $this->frontendFormBuilder->buildDoubleOptInForm($formDefinition);
             } elseif ($formType === self::FORM_TYPE_DEFAULT) {
@@ -71,7 +81,6 @@ class RequestListener implements EventSubscriberInterface
             } else {
                 throw new \InvalidArgumentException(sprintf('Invalid form type "%s"', $formType));
             }
-
         } catch (\Throwable $e) {
             $this->generateErroredJsonReturn($event, $e);
 
@@ -215,7 +224,6 @@ class RequestListener implements EventSubscriberInterface
     protected function detectFormIdByType(array $values, string $formMatchType = self::FORM_TYPE_DEFAULT): ?int
     {
         foreach ($values as $key => $parameters) {
-
             if (!str_contains($key, $formMatchType)) {
                 continue;
             }

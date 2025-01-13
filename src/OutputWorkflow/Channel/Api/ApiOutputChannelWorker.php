@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow\Channel\Api;
 
 use FormBuilderBundle\Event\OutputWorkflow\ChannelSubjectGuardEvent;
@@ -61,7 +72,6 @@ class ApiOutputChannelWorker
     protected function buildMapping(array $apiStructure, array $apiMappingData, array $formData, bool $hasParent = false): array
     {
         foreach ($apiMappingData as $apiMappingField) {
-
             $fieldName = $apiMappingField['name'];
             $hasChildren = isset($apiMappingField['children']) && is_array($apiMappingField['children']) && count($apiMappingField['children']) > 0;
             $mapping = $apiMappingField['config']['apiMapping'] ?? null;
@@ -80,13 +90,13 @@ class ApiOutputChannelWorker
 
             if ($hasChildren) {
                 $apiStructure[] = $this->buildMapping($apiField, $apiMappingField['children'], $formData, true);
+
                 continue;
             }
 
             if ($hasParent === false) {
                 $apiStructure[] = $apiField;
             }
-
         }
 
         return $apiStructure;
@@ -110,7 +120,6 @@ class ApiOutputChannelWorker
             }
 
             foreach ($apiMappingFields as $apiMappingField) {
-
                 $context = [
                     'type'            => $formField['type'] ?? null,
                     'parentType'      => $hasParent ? $parentType : null,
@@ -162,7 +171,6 @@ class ApiOutputChannelWorker
     {
         $fields = [];
         foreach ($rows as $mapRow) {
-
             $repeaterFormFields = $mapRow['formField'];
             $repeaterApiMapping = $mapRow['apiMapping'];
             $fieldTransformer = $mapRow['fieldTransformer'];
@@ -219,7 +227,6 @@ class ApiOutputChannelWorker
     protected function findFormDataField(string $requestedFieldName, array $data): ?array
     {
         foreach ($data as $fieldData) {
-
             if ($requestedFieldName === $fieldData['name']) {
                 return $fieldData;
             }
@@ -254,7 +261,6 @@ class ApiOutputChannelWorker
         array $formRuntimeData,
         ?ChannelContext $channelContext
     ): mixed {
-
         $channelSubjectGuardEvent = new ChannelSubjectGuardEvent(
             $form->getData(),
             $subject,

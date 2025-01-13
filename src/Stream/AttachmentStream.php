@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Stream;
 
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -70,7 +81,6 @@ class AttachmentStream implements AttachmentStreamInterface
             }
 
             $zip->close();
-
         } catch (\Exception $e) {
             Logger::error(sprintf('Error while creating attachment zip (%s): %s', $zipPath, $e->getMessage()));
 
@@ -128,7 +138,6 @@ class AttachmentStream implements AttachmentStreamInterface
             $asset->save();
 
             unlink($zipPath);
-
         } catch (\Exception $e) {
             Logger::error(sprintf('Error while storing asset in pimcore (%s): %s', $zipPath, $e->getMessage()));
 
@@ -161,7 +170,6 @@ class AttachmentStream implements AttachmentStreamInterface
         }
 
         foreach ($signalsEvent->getSignalsByName(self::SIGNAL_CLEAN_UP) as $signal) {
-
             $fileStack = $signal->getData();
             if (!$fileStack instanceof FileStack) {
                 continue;

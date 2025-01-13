@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\OutputWorkflow\Channel\Funnel;
 
 use FormBuilderBundle\Event\SubmissionEvent;
@@ -98,7 +109,6 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
         $funnelLayer->buildForm($funnelLayerData, $formBuilder);
 
         $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($funnelWorkerData) {
-
             $form = $event->getForm();
 
             try {
@@ -106,14 +116,12 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
             } catch (\Throwable $e) {
                 $form->addError(new FormError($e->getMessage()));
             }
-
         }, 250);
 
         $form = $formBuilder->getForm();
         $form->handleRequest($funnelWorkerData->getRequest());
 
         if ($form->isSubmitted()) {
-
             // exception already handled in post submit event!
             $funnelTargetAction = $this->findFunnelTargetAction($funnelWorkerData, $form);
 
@@ -122,7 +130,6 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
             }
 
             if ($form->isValid()) {
-
                 if (!empty($form->getData())) {
                     $handledFormData = $funnelLayer->handleFormData($funnelLayerData, $form->getData());
                     $funnelWorkerData->getFormStorageData()->addFunnelRuntimeData($funnelName, $handledFormData);
@@ -150,7 +157,6 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
         ];
 
         if ($renderType === self::RENDER_TYPE_PRERENDER) {
-
             $template = $this->renderer->createTemplate($this->templating->render(
                 $funnelLayerData->getFunnelLayerView(),
                 $viewArguments
@@ -165,14 +171,15 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
         );
 
         if ($funnelWorkerData->getRequest()->isXmlHttpRequest()) {
-
             $jsonArguments = $this->serializer instanceof NormalizerInterface ? $this->serializer->normalize(
                 array_merge(
                     [
                         'funnelActions' => $funnelWorkerData->getFunnelActionElementStack()->getAll(),
                     ],
                     $funnelLayerData->getFunnelLayerViewArguments()
-                ), null, ['groups' => ['FunnelOutput']]
+                ),
+                null,
+                ['groups' => ['FunnelOutput']]
             ) : [];
 
             return new JsonResponse(
@@ -202,9 +209,9 @@ class FunnelOutputChannel implements ChannelInterface, FunnelAwareChannelInterfa
         $target = null;
 
         foreach ($form->all() as $formType) {
-
             if ($formType instanceof SubmitButton && $formType->isClicked()) {
                 $target = $formType->getName();
+
                 break;
             }
         }

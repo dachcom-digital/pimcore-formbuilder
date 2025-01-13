@@ -1,15 +1,26 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Builder;
 
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Manager\TemplateManager;
-use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\Fragment\EntityToArrayAwareInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Layer\VirtualActionDefinitions;
-use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
+use FormBuilderBundle\Registry\OptionsTransformerRegistry;
 use FormBuilderBundle\Registry\OutputWorkflowChannelRegistry;
 use FormBuilderBundle\Transformer\DynamicOptionsTransformerInterface;
 use FormBuilderBundle\Transformer\OptionsTransformerInterface;
@@ -248,7 +259,6 @@ class ExtJsFormBuilder
     {
         $data = [];
         foreach ($this->outputWorkflowChannelRegistry->getAllIdentifier() as $availableChannel) {
-
             if ($this->outputWorkflowChannelRegistry->isFunnelAwareChannel($availableChannel) && $outputWorkflow->isFunnelWorkflow() === false) {
                 continue;
             }
@@ -269,7 +279,6 @@ class ExtJsFormBuilder
         $fieldStructure = $flat === true ? [] : $this->getFieldTypeGroups();
 
         foreach ($formTypes as $formType => $formTypeConfiguration) {
-
             if (!$this->isAllowedFormType($formType)) {
                 continue;
             }
@@ -546,7 +555,7 @@ class ExtJsFormBuilder
     {
         return $this->configuration->getConfig('double_opt_in');
     }
-    
+
     private function getFormStoreData(): array
     {
         $formAttributes = $this->configuration->getConfig('form_attributes');
@@ -605,7 +614,6 @@ class ExtJsFormBuilder
         }
 
         foreach ($fieldData['options'] as $optionName => $optionValue) {
-
             $optionKey = sprintf('options.%s', $optionName);
 
             if (!isset($backendConfig['fields'][$optionKey])) {
@@ -652,7 +660,6 @@ class ExtJsFormBuilder
         }
 
         foreach ($dynamicFields as $dynamicFieldName => $dynamicFieldOption) {
-
             $dynamicFieldKey = str_replace('options.', '', $dynamicFieldName);
             $optionFieldKey = str_replace('options.', '', $optionKey);
 
@@ -667,7 +674,6 @@ class ExtJsFormBuilder
 
             $dynamicFieldData = $transformedData;
             if (!empty($dynamicFieldOption['options_transformer'])) {
-
                 /** @var DynamicOptionsTransformerInterface $transformer */
                 $transformer = $this->optionsTransformerRegistry->getDynamic($dynamicFieldOption['options_transformer']);
                 $dynamicFieldConfig = $dynamicFieldOption['config'] ?? null;
@@ -675,7 +681,6 @@ class ExtJsFormBuilder
                 $dynamicFieldData = $reverse === false
                     ? $transformer->transform($rawData, $transformedData, $dynamicFieldConfig)
                     : $transformer->reverseTransform($fieldData['options'][$dynamicFieldKey], $transformedData, $dynamicFieldConfig);
-
             }
 
             if ($reverse === true) {
@@ -706,14 +711,12 @@ class ExtJsFormBuilder
         $currentConfiguration = $fieldData['configuration'];
 
         foreach ($containerConfigurations as $containerConfiguration) {
-
             $configName = $containerConfiguration['name'];
             if (!isset($currentConfiguration[$configName])) {
                 continue;
             }
 
             if (!empty($containerConfiguration['options_transformer'])) {
-
                 $blockValue = $currentConfiguration[$configName];
                 $blockConfig = $containerConfiguration['config'];
 

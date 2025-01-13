@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Form\Admin\Type\OutputWorkflow\Channel\Api;
 
 use Symfony\Component\Form\AbstractType;
@@ -17,13 +28,11 @@ class DataMappingElementCollectionType extends AbstractType
                 return $data;
             },
             function ($data) {
-
                 if (!is_array($data)) {
                     return $data;
                 }
 
                 foreach ($data as $index => $collectionData) {
-
                     $hasChildren = isset($collectionData['children']) && count($collectionData['children']) > 0;
 
                     if ($hasChildren === true) {
@@ -33,7 +42,6 @@ class DataMappingElementCollectionType extends AbstractType
                     if (count($collectionData['config']['apiMapping']) === 0) {
                         unset($data[$index]);
                     }
-
                 }
 
                 return array_values($data);

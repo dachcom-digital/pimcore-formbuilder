@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Validation\ConditionalLogic\Rule\Condition;
 
 use FormBuilderBundle\Validation\ConditionalLogic\Rule\Traits\ConditionTrait;
@@ -18,7 +29,6 @@ class ElementValueCondition implements ConditionInterface
             $fieldValue = $this->getFieldValue($formData, $conditionFieldName);
 
             if ($this->getComparator() === 'contains') {
-
                 $value = $this->getValue();
                 if (!is_array($value)) {
                     $value = is_string($this->getValue()) && str_contains($this->getValue(), ',') ? explode(',', $this->getValue()) : [$this->getValue()];
@@ -60,7 +70,8 @@ class ElementValueCondition implements ConditionInterface
         return false;
     }
 
-    protected function getFieldValue(array $formData, string $fieldname) {
+    protected function getFieldValue(array $formData, string $fieldname)
+    {
         $fieldValue = $formData[$fieldname] ?? null;
         if ($fieldValue !== null) {
             return $fieldValue;

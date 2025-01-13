@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Configuration\Configuration;
@@ -43,7 +54,6 @@ class DynamicFormType extends AbstractType
         }
 
         if ($options['render_conditional_logic_field']) {
-
             $builder->add('formCl', HiddenType::class, [
                 'mapped' => false,
                 'data'   => $options['conditional_logic'] ?? null,
@@ -94,7 +104,6 @@ class DynamicFormType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
             $data = $event->getData();
             $runtimeData = $data['formRuntimeData'] ?? null;
             $tokenValue = $data['formRuntimeDataToken'] ?? null;
