@@ -1,7 +1,7 @@
 # Pimcore FormBuilder
 
-[![Join the chat at https://gitter.im/pimcore/pimcore](https://img.shields.io/gitter/room/pimcore/pimcore.svg?style=flat-square)](https://gitter.im/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Software License](https://img.shields.io/badge/license-DCL-white.svg?style=flat-square&color=%23ff5c5c)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/formbuilder.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/formbuilder)
 [![Tests](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-formbuilder/.github/workflows/codeception.yml?branch=master&style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3ACodeception+branch%3Amaster)
 [![PhpStan](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-formbuilder/.github/workflows/php-stan.yml?branch=master&style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-formbuilder/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
@@ -12,7 +12,7 @@
 
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch                                                                           |
 |---------|-----------------------------------|----------------------------|--------------|----------------|----------------------------------------------------------------------------------|
-| **5.x** | `11.0`                            | `^6.2`                     | 18.10.2023   | Feature Branch | master                                                                           |
+| **5.x** | `11.0`                            | `^6.4`                     | 18.10.2023   | Feature Branch | master                                                                           |
 | **4.x** | `10.5`, `10.6`                    | `^5.4`                     | 13.10.2021   | Unsupported    | [4.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/4.x)           |
 | **3.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 17.07.2019   | Unsupported    | [3.x](https://github.com/dachcom-digital/pimcore-formbuilder/tree/3.x)           |
 | **2.7** | `5.4`, `5.5`, `5.6`, `5.7`, `5.8` | `3.4`                      | 27.06.2019   | Unsupported    | [2.7](https://github.com/dachcom-digital/pimcore-formbuilder/tree/2.7)           |
@@ -21,7 +21,7 @@
 ## Installation
 
 ```bash
-composer require "dachcom-digital/formbuilder":"~5.1.4"
+composer require "dachcom-digital/formbuilder":"~5.2.0"
 ```
 
 Add Bundle to `bundles.php`:
@@ -93,12 +93,13 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
 - [FormBuilder Javascript Plugins](docs/91_Javascript.md)
 - [Configuration Flags](docs/100_ConfigurationFlags.md)
 - [Custom form templates](docs/110_CustomTemplates.md)
+
 ## Upgrade Info
 Before updating, please [check our upgrade notes!](UPGRADE.md)
 
 ## License
 **DACHCOM.DIGITAL AG**, Löwenhofstrasse 15, 9424 Rheineck, Schweiz  
 [dachcom.com](https://www.dachcom.com), dcdi@dachcom.ch  
-Copyright © 2024 DACHCOM.DIGITAL. All rights reserved.  
+Copyright © 2025 DACHCOM.DIGITAL. All rights reserved.  
 
 For licensing details please visit [LICENSE.md](LICENSE.md)  

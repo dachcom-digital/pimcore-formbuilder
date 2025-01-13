@@ -98,7 +98,7 @@ final class Version20230830183642 extends AbstractMigration implements Container
         return $configuration;
     }
 
-    protected function parseSquareBracketsTag(array $tag): ?string
+    protected function parseSquareBracketsTag(array $tag): string
     {
         $type = $tag[1];
         $config = $this->parseSquareBracketsAttributes($tag[2]);

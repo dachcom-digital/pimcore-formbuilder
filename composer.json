@@ -1,7 +1,10 @@
 {
     "name": "dachcom-digital/formbuilder",
     "type": "pimcore-bundle",
-    "license": "GPL-3.0-or-later",
+    "license": [
+        "GPL-3.0-or-later",
+        "proprietary"
+    ],
     "description": "Pimcore FormBuilder - create forms easily!",
     "keywords": ["pimcore", "formbuilder"],
     "homepage": "https://github.com/dachcom-digital/pimcore-formbuilder",
@@ -9,7 +12,7 @@
         {
             "name": "DACHCOM.DIGITAL Stefan Hagspiel",
             "email": "shagspiel@dachcom.ch",
-            "homepage": "http://www.dachcom.com/",
+            "homepage": "https://www.dachcom.com",
             "role": "Developer"
         }
     ],
@@ -33,16 +36,16 @@
     "require": {
         "php": "^8.2",
         "pimcore/pimcore": "^11.0",
-        "symfony/form": "^6.2",
-        "symfony/intl": "^6.2",
-        "doctrine/orm": "^2.7"
+        "symfony/form": "^6.4",
+        "symfony/intl": "^6.4",
+        "doctrine/orm": "^2.7 || ^3.0"
     },
     "require-dev": {
         "codeception/codeception": "^5.0",
         "codeception/module-symfony": "^3.1",
         "codeception/module-webdriver": "^4.0",
-        "phpstan/phpstan": "^1.0",
-        "phpstan/phpstan-symfony": "^1.0",
-        "symplify/easy-coding-standard": "^9.0"
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "symplify/easy-coding-standard": "~12.2.0"
     }
 }

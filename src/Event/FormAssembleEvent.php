@@ -24,7 +24,7 @@ class FormAssembleEvent extends Event
         return $this->formOptionsResolver;
     }
 
-    public function getForm(): FormInterface
+    public function getForm(): ?FormInterface
     {
         return $this->form;
     }

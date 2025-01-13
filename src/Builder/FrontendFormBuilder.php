@@ -95,9 +95,7 @@ class FrontendFormBuilder
             'form_template' => null
         ];
 
-        if (is_array($formRuntimeData)) {
-            $formRuntimeData = array_merge($defaults, $formRuntimeData);
-        }
+        $formRuntimeData = array_merge($defaults, $formRuntimeData);
 
         /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();

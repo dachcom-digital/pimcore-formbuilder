@@ -47,7 +47,7 @@ class FormDefinition implements FormDefinitionInterface
 
     public function setGroup(?string $groupName = null): void
     {
-        $this->group = !empty($groupName) && is_string($groupName) ? $groupName : null;
+        $this->group = !empty($groupName) ? $groupName : null;
     }
 
     public function getGroup(): ?string
