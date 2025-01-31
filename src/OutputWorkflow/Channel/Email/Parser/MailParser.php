@@ -227,8 +227,11 @@ class MailParser
             $str = str_replace($matches[0][$key], $value, $str);
         }
 
-        //remove invalid commas
-        $fragments = preg_split('@,@', $str, null, PREG_SPLIT_NO_EMPTY);
+        dump($str);
+        exit;
+
+        // remove invalid commas
+        $fragments = preg_split('@,@', $str, -1, PREG_SPLIT_NO_EMPTY);
         $fragmentsGlued = is_array($fragments) ? implode(',', $fragments) : $fragments;
         $extractedValue = is_string($fragmentsGlued) ? trim($fragmentsGlued) : $fragmentsGlued;
 

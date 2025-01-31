@@ -7,6 +7,7 @@
 - **[IMPROVEMENT]** Doctrine ORM 3.0 Support [#503](https://github.com/dachcom-digital/pimcore-formbuilder/pull/503)
 - **[BUGFIX]** API Channel: Keep array index when merging child nodes [@simon-matt-oetztal](https://github.com/dachcom-digital/pimcore-formbuilder/pull/496)
 - **[BUGFIX]** Update Custom Channel Documentation [#493](https://github.com/dachcom-digital/pimcore-formbuilder/issues/493)
+- **[BUGFIX]** Fix passing null value to `preg_split` 
 
 ## 5.1.4
 - **[BUGFIX]** Allow using double-opt-in variables in placeholder processor
