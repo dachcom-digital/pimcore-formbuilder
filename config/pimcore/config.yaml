@@ -35,6 +35,7 @@ parameters:
         - ['onmouseover','onmouseover']
         - ['onmouseup','onmouseup']
         - ['onselect','onselect']
+        - ['autocomplete','autocomplete']
     form_builder_field_attributes: '%form_builder_form_attributes%'
 
 flysystem:

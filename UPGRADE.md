@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.2.1
+- **[IMPROVEMENT]** Accessibility form field attribute autocomplete
+
 ## 5.2.0
 - **[LICENSE]** Dual-License with GPL and Dachcom Commercial License (DCL) added
 - **[NEW FEATURE]** Bootstrap 5 Layout Support [@mackrais](https://github.com/dachcom-digital/pimcore-formbuilder/pull/500)
