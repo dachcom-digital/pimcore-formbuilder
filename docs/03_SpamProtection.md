@@ -96,8 +96,10 @@ Since no session storage is required, it can be easily integrated with minimal o
 > However, it will give you time, to set up stronger spam protection like 
 > recaptcha, turnstile or friendly captcha (which are all supported by this bundle) to get rid of smart bots!
 
+### Encryption Secret
+
 > [!IMPORTANT]  
-> Match Captcha requires a valid encryption key!
+> Math Captcha requires a valid encryption key!
 > It uses the `%pimcore.encryption.secret%` as default, but you're able to set a dedicated one:
 
 ```yaml
@@ -105,6 +107,18 @@ form_builder:
     spam_protection:
         math_captcha:
             encryption_secret: 'my-very-long-encryption-secret'
+```
+
+### Math Captcha TTL | Expiration
+To prevent replay attacks in a long-term view, a math captcha gets invalided after 30 minutes.
+
+If you want to change the value, you need to update the configuration
+
+```yaml
+form_builder:
+    spam_protection:
+        math_captcha:
+            hash_ttl: 30 # 30 minutes (default value)
 ```
 
 ***

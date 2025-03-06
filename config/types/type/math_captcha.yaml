@@ -13,7 +13,7 @@ form_builder:
                     options.data: ~
                     options.value: ~
                     options.difficulty:
-                        display_group_id: attributes
+                        display_group_id: base
                         type: select
                         label: 'form_builder_type_field.math_captcha.difficulty'
                         config:
@@ -21,3 +21,7 @@ form_builder:
                                 - ['easy','easy']
                                 - ['normal','normal']
                                 - ['hard','hard']
+                    options.validation_message_trans_note:
+                        display_group_id: base
+                        type: label
+                        label: 'form_builder_type_field.math_captcha.validation_message_trans_note'

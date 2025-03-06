@@ -17,5 +17,6 @@ use Symfony\Component\Validator\Constraint;
 
 final class MathCaptcha extends Constraint
 {
-    public string $message = 'The given answer is not correct.';
+    public string $invalidValueMessage = 'The given answer is not correct.';
+    public string $expiredMessage = 'Captcha has expired due to inactivity. Please refresh the page and try again.';
 }

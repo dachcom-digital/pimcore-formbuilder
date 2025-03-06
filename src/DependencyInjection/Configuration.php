@@ -666,6 +666,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('encryption_secret')->defaultNull()->end()
+                        ->integerNode('hash_ttl')->defaultValue(30)->end()
                     ->end()
                 ->end()
 

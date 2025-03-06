@@ -17,11 +17,14 @@ use FormBuilderBundle\Tool\MathCaptchaProcessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class MathCaptchaValidator extends ConstraintValidator
 {
-    public function __construct(protected MathCaptchaProcessor $mathCaptchaProcessor)
-    {
+    public function __construct(
+        protected TranslatorInterface $translator,
+        protected MathCaptchaProcessor $mathCaptchaProcessor
+    ) {
     }
 
     public function validate(mixed $value, Constraint $constraint): void
@@ -36,20 +39,30 @@ final class MathCaptchaValidator extends ConstraintValidator
 
         $challenge = $value['challenge'] ?? null;
         $hash = $value['hash'] ?? null;
+        $stamp = $value['stamp'] ?? null;
 
-        if (!$this->validateCaptcha($challenge, $hash)) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $this->formatValue($value))
-                ->addViolation();
+        $validationState = $this->validateCaptcha($challenge, $hash, $stamp);
+
+        if ($validationState === MathCaptchaProcessor::VALIDATION_STATE_VALID) {
+            return;
         }
+
+        $validationMessage = $validationState === MathCaptchaProcessor::VALIDATION_STATE_EXPIRED
+            ? $constraint->expiredMessage
+            : $constraint->invalidValueMessage;
+
+        $this->context
+            ->buildViolation($this->translator->trans($validationMessage))
+            ->setParameter('{{ value }}', $this->formatValue($value))
+            ->addViolation();
     }
 
-    private function validateCaptcha(?string $value, $hash): bool
+    private function validateCaptcha(?string $value, ?string $hash, ?string $stamp): string
     {
-        if ($value === '' || $hash === null) {
-            return false;
+        if ($value === '' || $value === null || $hash === null || $stamp === null) {
+            return MathCaptchaProcessor::VALIDATION_STATE_INVALID_VALUE;
         }
 
-        return $this->mathCaptchaProcessor->verify((int) $value, $hash);
+        return $this->mathCaptchaProcessor->verify((int) $value, $hash, $stamp);
     }
 }

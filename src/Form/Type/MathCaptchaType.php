@@ -31,10 +31,11 @@ final class MathCaptchaType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $challenge = $this->mathCaptchaProcessor->generateChallenge($options['difficulty']);
+        $stamp = $this->mathCaptchaProcessor->generateStamp();
+        $challenge = $this->mathCaptchaProcessor->generateChallenge($options['difficulty'], $stamp);
 
         $challengeFieldOptions = [
-            'label' => $challenge['user_challenge'],
+            'label'      => $challenge['user_challenge'],
             'label_attr' => [
                 'class' => 'math-captcha-challenge-label'
             ],
@@ -42,11 +43,12 @@ final class MathCaptchaType extends AbstractType
 
         if ($challenge['hash'] === null) {
             $challengeFieldOptions['attr']['disabled'] = true;
-            $challengeFieldOptions['label'] = 'No encryption secret found. cannot create challenge';
+            $challengeFieldOptions['label'] = 'No encryption secret found. cannot create challenge.';
         }
 
         $builder->add('challenge', TextType::class, $challengeFieldOptions);
         $builder->add('hash', HiddenType::class, ['data' => $challenge['hash']]);
+        $builder->add('stamp', HiddenType::class, ['data' => $stamp]);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void

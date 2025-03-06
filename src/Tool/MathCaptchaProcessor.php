@@ -13,17 +13,22 @@
 
 namespace FormBuilderBundle\Tool;
 
+use Carbon\Carbon;
 use FormBuilderBundle\Configuration\Configuration;
 
 class MathCaptchaProcessor implements MathCaptchaProcessorInterface
 {
+    public const VALIDATION_STATE_VALID = 'valid';
+    public const VALIDATION_STATE_INVALID_VALUE = 'invalid_value';
+    public const VALIDATION_STATE_EXPIRED = 'expired';
+
     public function __construct(
         protected ?string $pimcoreEncryptionSecret,
         protected Configuration $configuration
     ) {
     }
 
-    public function generateChallenge(string $difficulty): array
+    public function generateChallenge(string $difficulty, string $stamp): array
     {
         $numbers = match ($difficulty) {
             default => [
@@ -45,16 +50,30 @@ class MathCaptchaProcessor implements MathCaptchaProcessorInterface
 
         return [
             'user_challenge' => $challenge,
-            'hash'           => $this->encryptChallenge(array_sum($numbers))
+            'hash'           => $this->encryptChallenge(array_sum($numbers), $stamp)
         ];
     }
 
-    public function verify(int $challenge, string $hash): bool
+    public function generateStamp(): string
     {
-        return $hash === $this->encryptChallenge($challenge);
+        return Carbon::now()->toIso8601String();
     }
 
-    public function encryptChallenge(int $challenge): ?string
+    public function verify(int $challenge, string $hash, string $stamp): string
+    {
+        $now = Carbon::now();
+        $date = Carbon::parse($stamp)->addMinutes($this->getHashTtl());
+
+        if ($now->isAfter($date)) {
+            return self::VALIDATION_STATE_EXPIRED;
+        }
+
+        return $hash === $this->encryptChallenge($challenge, $stamp)
+            ? self::VALIDATION_STATE_VALID
+            : self::VALIDATION_STATE_INVALID_VALUE;
+    }
+
+    public function encryptChallenge(int $challenge, string $stamp): ?string
     {
         $encryptionSecret = $this->getEncryptionSecret();
 
@@ -65,7 +84,7 @@ class MathCaptchaProcessor implements MathCaptchaProcessorInterface
         return hash_hmac(
             'sha256',
             (string) $challenge,
-            $encryptionSecret
+            sprintf('%s%s', $encryptionSecret, $stamp)
         );
     }
 
@@ -80,5 +99,13 @@ class MathCaptchaProcessor implements MathCaptchaProcessorInterface
         }
 
         return $encryptionSecret;
+    }
+
+    private function getHashTtl(): int
+    {
+        $config = $this->configuration->getConfig('spam_protection');
+        $mathCaptchaConfig = $config['math_captcha'];
+
+        return $mathCaptchaConfig['hash_ttl'];
     }
 }
