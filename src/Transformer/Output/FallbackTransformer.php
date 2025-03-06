@@ -70,7 +70,7 @@ class FallbackTransformer implements OutputTransformerInterface
 
     protected function parseDefaultField(mixed $value, FormInterface $formField, ?string $locale): mixed
     {
-        if (empty($value)) {
+        if ($value === null || $value === '') {
             return $value;
         }
 
@@ -164,7 +164,7 @@ class FallbackTransformer implements OutputTransformerInterface
         $label = $formField->getConfig()->hasOption('label') ? $formField->getConfig()->getOption('label') : $field->getName();
         $optionalOptions = $field->getOptional();
 
-        $emailLabel = isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
+        $emailLabel = !empty($optionalOptions['email_label'])
             ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
             : null;
 
@@ -172,7 +172,7 @@ class FallbackTransformer implements OutputTransformerInterface
             return $emailLabel;
         }
 
-        return isset($label) && !empty($label)
+        return !empty($label)
             ? $this->translator->trans($label, [], null, $locale)
             : $label;
     }
@@ -186,7 +186,7 @@ class FallbackTransformer implements OutputTransformerInterface
         $fieldOptions = $field->getOptions();
         $optionalOptions = $field->getOptional();
 
-        $emailLabel = isset($optionalOptions['email_label']) && !empty($optionalOptions['email_label'])
+        $emailLabel = !empty($optionalOptions['email_label'])
             ? $this->translator->trans($optionalOptions['email_label'], [], null, $locale)
             : null;
 
@@ -194,7 +194,7 @@ class FallbackTransformer implements OutputTransformerInterface
             return $emailLabel;
         }
 
-        return isset($fieldOptions['label']) && !empty($fieldOptions['label'])
+        return !empty($fieldOptions['label'])
             ? $this->translator->trans($fieldOptions['label'], [], null, $locale)
             : $field->getName();
     }

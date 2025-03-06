@@ -2,6 +2,7 @@
 
 ## 5.3.0
 - **[IMPROVEMENT]** New field added to `form_builder_form_attributes`: `autocomplete`
+- **[BUGFIX]** Solidify check for empty value in output transformer [#486](https://github.com/dachcom-digital/pimcore-formbuilder/issues/508)
 
 ## 5.2.0
 - **[LICENSE]** Dual-License with GPL and Dachcom Commercial License (DCL) added
