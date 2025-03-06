@@ -60,6 +60,8 @@ form_builder:
 4. Enable the FriendlyCaptcha [javascript module](./91_Javascript.md)
 4. Done
 
+***
+
 ## Cloudflare Turnstile
 Turnstile delivers frustration-free, CAPTCHA-free web experiences to website visitors - with just a simple snippet of free code.
 Moreover, Turnstile stops abuse and confirms visitors are real without the data privacy concerns or awful user experience of CAPTCHAs.
@@ -79,6 +81,33 @@ form_builder:
 3. Add the "Cloudflare Turnstile" field to your form
 4. Enable the CloudFlareTurnstile [javascript module](./91_Javascript.md)
 4. Done
+
+***
+
+## Math Captcha
+This simple math captcha form provides a lightweight and session-free way to prevent automated submissions.
+It offers three difficulty levels, allowing customization based on security needs.
+The captcha generates random math problems that users must solve before submitting the form.
+Since no session storage is required, it can be easily integrated with minimal overhead.
+
+> [!CAUTION]  
+> The Math captcha doesn't solve the problem of figuring out that a user has previously solved the captcha.
+> It only protects individual requests and might help if you're in the middle of a spam attack.
+> However, it will give you time, to set up stronger spam protection like 
+> recaptcha, turnstile or friendly captcha (which are all supported by this bundle) to get rid of smart bots!
+
+> [!IMPORTANT]  
+> Match Captcha requires a valid encryption key!
+> It uses the `%pimcore.encryption.secret%` as default, but you're able to set a dedicated one:
+
+```yaml
+form_builder:
+    spam_protection:
+        math_captcha:
+            encryption_secret: 'my-very-long-encryption-secret'
+```
+
+***
 
 ## Email Checker
 The Email Checker Validator is available, if you've added at least one service. Per default, no service is registered by default. 

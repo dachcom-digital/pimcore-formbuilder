@@ -1,0 +1,23 @@
+form_builder:
+    types:
+        math_captcha:
+            class: FormBuilderBundle\Form\Type\MathCaptchaType
+            backend:
+                form_type_group: security_fields
+                label: 'form_builder_type.math_captcha'
+                icon_class: 'form_builder_icon_math_captcha'
+                constraints: false
+                fields:
+                    optional.email_label: ~
+                    options.help_text: ~
+                    options.data: ~
+                    options.value: ~
+                    options.difficulty:
+                        display_group_id: attributes
+                        type: select
+                        label: 'form_builder_type_field.math_captcha.difficulty'
+                        config:
+                            options:
+                                - ['easy','easy']
+                                - ['normal','normal']
+                                - ['hard','hard']

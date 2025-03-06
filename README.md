@@ -21,7 +21,7 @@
 ## Installation
 
 ```bash
-composer require "dachcom-digital/formbuilder":"~5.2.0"
+composer require "dachcom-digital/formbuilder":"~5.3.0"
 ```
 
 Add Bundle to `bundles.php`:
@@ -56,6 +56,7 @@ Nothing to tell here, it's just [Symfony](https://symfony.com/doc/current/templa
   - [FriendlyCaptcha](docs/03_SpamProtection.md#friendly-captcha)
   - [Honeypot](docs/03_SpamProtection.md#honeypot)
   - [ReCaptcha V3](docs/03_SpamProtection.md#recaptcha-v3)
+  - [Math Captcha](docs/03_SpamProtection.md#math-captcha)
   - [Email Checker](docs/03_SpamProtection.md#email-checker)
   - [Double-Opt-In Feature](docs/04_DoubleOptIn.md)
 - [Output Workflows](docs/OutputWorkflow/0_Usage.md)

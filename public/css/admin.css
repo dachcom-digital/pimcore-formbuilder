@@ -202,6 +202,10 @@
     background: url(/bundles/formbuilder/img/friendly_captcha.svg) left center no-repeat !important;
 }
 
+.form_builder_icon_math_captcha {
+    background: url(/bundles/formbuilder/img/math_captcha.svg) left center no-repeat !important;
+}
+
 /*
     Conditional Logic
 */

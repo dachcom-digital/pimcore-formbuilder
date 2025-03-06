@@ -62,6 +62,8 @@
 "form_builder_type.time_type","Time Type","Uhrzeit Element"
 "form_builder_type.birthday_type","Birthday Type","Geburtstag Element"
 "form_builder_type.recaptcha_v3","reCAPTCHA v3 Field","reCAPTCHA v3 Feld"
+"form_builder_type.math_captcha","Math Captcha Field","Mathematisches Captcha Feld"
+"form_builder_type_field.math_captcha.difficulty","Difficulty","Schwierigkeit"
 "form_builder_type.friendly_captcha","Friendly Captcha Field","Friendly Captcha Feld"
 "form_builder_type.cloudflare_turnstile","Cloudflare Turnstile Field","Cloudflare Turnstile Feld"
 "form_builder_type_tab.default","Default","Standard"
