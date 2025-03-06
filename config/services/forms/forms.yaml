@@ -22,6 +22,13 @@ services:
         tags:
             - { name: form.type }
 
+    FormBuilderBundle\Form\Type\MathCaptchaType:
+        public: false
+        arguments:
+            - '@FormBuilderBundle\Tool\MathCaptchaProcessor'
+        tags:
+            - { name: form.type }
+
     FormBuilderBundle\Form\Type\DynamicFormType:
         public: false
         arguments:

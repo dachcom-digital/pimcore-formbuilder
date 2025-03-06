@@ -662,6 +662,14 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
+                ->arrayNode('math_captcha')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('encryption_secret')->defaultNull()->end()
+                        ->integerNode('hash_ttl')->defaultValue(30)->end()
+                    ->end()
+                ->end()
+
                 ->arrayNode('email_checker')
                     ->addDefaultsIfNotSet()
                     ->children()

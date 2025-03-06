@@ -104,6 +104,11 @@
     </div>
 {% endblock form_builder_cloudflare_turnstile_type_row %}
 
+{% block form_builder_math_captcha_type_widget %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' row')|trim}) -%}
+    {{- block('form_widget') -}}
+{% endblock form_builder_math_captcha_type_widget %}
+
 {% block form_builder_container_collection_widget %}
     {%- set attr = attr|merge({class: (attr.class|default('') ~ ' row')|trim}) -%}
     {{- parent() -}}

@@ -31,6 +31,13 @@ services:
     FormBuilderBundle\Tool\CloudflareTurnstileProcessorInterface: '@FormBuilderBundle\Tool\CloudflareTurnstileProcessor'
     FormBuilderBundle\Tool\CloudflareTurnstileProcessor: ~
 
+    # tool: math captcha processor
+    FormBuilderBundle\Tool\MathCaptchaProcessorInterface: '@FormBuilderBundle\Tool\MathCaptchaProcessor'
+    FormBuilderBundle\Tool\MathCaptchaProcessor:
+        arguments:
+            - '%pimcore.encryption.secret%'
+            - '@FormBuilderBundle\Configuration\Configuration'
+
     # configuration
     FormBuilderBundle\Configuration\Configuration: ~
 
