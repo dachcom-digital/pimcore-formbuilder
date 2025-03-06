@@ -1,7 +1,7 @@
 # Upgrade Notes
 
-## 5.2.1
-- **[IMPROVEMENT]** Accessibility form field attribute autocomplete
+## 5.3.0
+- **[IMPROVEMENT]** New field added to `form_builder_form_attributes`: `autocomplete`
 
 ## 5.2.0
 - **[LICENSE]** Dual-License with GPL and Dachcom Commercial License (DCL) added
@@ -69,6 +69,8 @@
 
 ## 5.0.1
 - Fix Mail Layout Editor Availability State [#420](https://github.com/dachcom-digital/pimcore-formbuilder/issues/420)
+
+***
 
 ## Migrating from Version 4.x to Version 5.0
 - Execute: `bin/console doctrine:migrations:migrate --prefix 'FormBuilderBundle\Migrations'`
