@@ -37,7 +37,7 @@ class ImportExportCest extends AbstractExtJs
         $I->attachFile($this->getUploadBoxFileInputSelector(), sprintf('downloads/%s', $formExportName));
         $I->wait(1);
 
-        $I->click('Import');
+        $I->click('Import', '.x-window[aria-hidden="false"]');
         $I->wait(5);
 
         $I->see('first_text_field', $this->getFormElementsTreeSelector($secondFormId));
