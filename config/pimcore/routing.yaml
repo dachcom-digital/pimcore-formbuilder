@@ -28,13 +28,20 @@ form_builder.controller.admin.load_form_mail_editor_data:
 form_builder.controller.admin.export_form:
     path: /admin/formbuilder/settings/export-form/{id}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\ExportController::exportFormAction }
+    options:
+        expose: true
+
 form_builder.controller.admin.import_form:
     path: /admin/formbuilder/settings/import-form/{id}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\ExportController::importFormAction }
+    options:
+        expose: true
 
 form_builder.controller.admin.csv_export.export:
     path: /admin/formbuilder/export/mail-csv-export/{id}
     defaults: { _controller: FormBuilderBundle\Controller\Admin\ExportController::exportFormEmailsAction }
+    options:
+        expose: true
 
 form_builder.controller.admin.get_group_templates:
     path: /admin/formbuilder/settings/get-group-templates

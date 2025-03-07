@@ -942,7 +942,7 @@ Formbuilder.extjs.formPanel.config = Class.create({
         return toolbar;
     },
 
-    showFormDoubleOptInData: function() {
+    showFormDoubleOptInData: function () {
         new Formbuilder.extjs.extensions.formDoubleOptInData(this.formId, this.formConfig.doubleOptIn);
     },
 
@@ -1180,42 +1180,27 @@ Formbuilder.extjs.formPanel.config = Class.create({
         }
     },
 
-    /**
-     * Create Import Panel (Upload File)
-     */
     showImportPanel: function () {
-        Ext.Msg.confirm(t('export'), t('form_builder.import_note'), function (btn) {
 
-            if (btn !== 'yes') {
-                return;
-            }
+        var importPanel;
 
-            var importPanel = new Formbuilder.extjs.components.formImporter(this);
-            importPanel.showPanel();
-        }.bind(this));
+        importPanel = new Formbuilder.extjs.components.formImporter(this);
+        importPanel.showPanel();
     },
 
     importForm: function (formId) {
         this.formSelectionPanel.rebuildFormPanel(formId);
     },
 
-    /**
-     * Trigger browser download (if form is valid)
-     * -> for form export
-     */
     exportForm: function () {
 
         if (!this.formIsValid()) {
             return;
         }
 
-        pimcore.helpers.download('/admin/formbuilder/settings/export-form/' + this.formId);
+        pimcore.helpers.download(Routing.generate('form_builder.controller.admin.export_form', {id: this.formId}));
     },
 
-    /**
-     * Trigger browser download
-     * -> for csv export of sent emails
-     */
     exportFormEmailCsv: function () {
         var mailTypeField = this.exportPanel.query('combo'),
             mailTypeValue = 'all';
@@ -1224,7 +1209,9 @@ Formbuilder.extjs.formPanel.config = Class.create({
             mailTypeValue = mailTypeField[0].getValue();
         }
 
-        pimcore.helpers.download('/admin/formbuilder/export/mail-csv-export/' + this.formId + '?mailType=' + mailTypeValue);
+        pimcore.helpers.download(
+            Routing.generate('form_builder.controller.admin.csv_export.export', {id: this.formId, mailType: mailTypeValue})
+        );
     },
 
     save: function (ev) {

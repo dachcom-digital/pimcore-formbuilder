@@ -40,6 +40,7 @@ class ExportController extends AdminAbstractController
     public function importFormAction(Request $request, ImportExportProcessor $importExportProcessor): JsonResponse
     {
         $formId = (int) $request->request->get('formId');
+
         /** @var UploadedFile $file */
         $file = $request->files->get('formData');
         $data = file_get_contents($file->getPathname());
@@ -55,14 +56,24 @@ class ExportController extends AdminAbstractController
             'message' => null,
         ];
 
+        $importOptions = [
+            ImportExportProcessor::FORM_SECTION_OUTPUT_WORKFLOWS  => $request->request->get('outputWorkflows') === 'true',
+            ImportExportProcessor::FORM_SECTION_CONDITIONAL_LOGIC => $request->request->get('conditionalLogic') === 'true',
+        ];
+
         try {
-            $importExportProcessor->processYamlToFormDefinition($formId, $data);
+            $importExportProcessor->processYamlToFormDefinition($formId, $data, $importOptions);
         } catch (\Throwable $e) {
             $response['success'] = false;
             $response['message'] = sprintf('Error while importing form definition: %s', $e->getMessage());
         }
 
-        return new JsonResponse(json_encode($response, JSON_THROW_ON_ERROR), 200, ['Content-Type' => 'text/plain'], true);
+        return new JsonResponse(
+            json_encode($response, JSON_THROW_ON_ERROR),
+            200,
+            ['Content-Type' => 'text/plain'],
+            true
+        );
     }
 
     public function exportFormAction(Request $request, ImportExportProcessor $importExportProcessor): Response
@@ -102,10 +113,23 @@ class ExportController extends AdminAbstractController
         }
 
         $emailLogs = new Email\Log\Listing();
-        $emailLogs->addConditionParam('params LIKE :form', ['form' => sprintf('%%%s%%', $this->generateFormIdQuery($formId))]);
+        $emailLogs->addConditionParam(
+            'params LIKE :form',
+            [
+                'form' => sprintf('%%%s%%', $this->generateFormIdQuery($formId))
+            ]
+        );
 
         if ($filter !== 'all') {
-            $emailLogs->addConditionParam('params LIKE :workflow', ['workflow' => sprintf('%%%s%%', $this->generateOutputWorkflowFilterQuery($formId, (int) $filter))]);
+            $emailLogs->addConditionParam(
+                'params LIKE :workflow',
+                [
+                    'workflow' => sprintf(
+                        '%%%s%%',
+                        $this->generateOutputWorkflowFilterQuery($formId, (int) $filter)
+                    )
+                ]
+            );
         }
 
         $response = new Response();
