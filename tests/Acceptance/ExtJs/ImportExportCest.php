@@ -33,11 +33,11 @@ class ImportExportCest extends AbstractExtJs
         $I->click('Import', $this->getFormPanelSelector($secondFormId));
         $I->wait(1);
 
-        $I->see('Yes');
-        $I->click('Yes');
-        $I->wait(1);
 
         $I->attachFile($this->getUploadBoxFileInputSelector(), sprintf('downloads/%s', $formExportName));
+        $I->wait(1);
+
+        $I->click('Import');
         $I->wait(5);
 
         $I->see('first_text_field', $this->getFormElementsTreeSelector($secondFormId));

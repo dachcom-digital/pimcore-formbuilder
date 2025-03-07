@@ -24,6 +24,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class ImportExportProcessor
 {
+    public const FORM_SECTION_OUTPUT_WORKFLOWS = 'outputWorkflows';
+    public const FORM_SECTION_CONDITIONAL_LOGIC = 'conditionalLogic';
+
     public function __construct(
         protected Connection $connection,
         protected FormDefinitionManager $formDefinitionManager,
@@ -36,7 +39,6 @@ class ImportExportProcessor
      */
     public function processFormDefinitionToYaml(int $formId): string
     {
-        // load raw entity
         $fQb = $this->connection->createQueryBuilder();
         $fQb
             ->select('*')
@@ -58,7 +60,7 @@ class ImportExportProcessor
             ->setParameter('id', $formId);
 
         $outputWorkflows = [];
-        foreach ($fowQb->execute()->fetchAllAssociative() as $rawFormOutputWorkflowDefinition) {
+        foreach ($fowQb->executeQuery()->fetchAllAssociative() as $rawFormOutputWorkflowDefinition) {
             $fowChannelQb = $this->connection->createQueryBuilder();
             $fowChannelQb
                 ->select('*')
@@ -67,11 +69,11 @@ class ImportExportProcessor
                 ->setParameter('id', $rawFormOutputWorkflowDefinition['id']);
 
             $channels = [];
-            foreach ($fowChannelQb->execute()->fetchAllAssociative() as $rawFormOutputWorkflowChannelDefinition) {
+            foreach ($fowChannelQb->executeQuery()->fetchAllAssociative() as $rawFormOutputWorkflowChannelDefinition) {
                 $channels[] = [
-                    'type'          => $rawFormOutputWorkflowChannelDefinition['type'],
-                    'name'          => $rawFormOutputWorkflowChannelDefinition['name'],
-                    'configuration' => is_string($rawFormOutputWorkflowChannelDefinition['configuration'])
+                    'type'           => $rawFormOutputWorkflowChannelDefinition['type'],
+                    'name'           => $rawFormOutputWorkflowChannelDefinition['name'],
+                    'configuration'  => is_string($rawFormOutputWorkflowChannelDefinition['configuration'])
                         ? unserialize($rawFormOutputWorkflowChannelDefinition['configuration'], ['allowed_classes' => false])
                         : null,
                     'funnel_actions' => is_string($rawFormOutputWorkflowChannelDefinition['funnel_actions'])
@@ -109,7 +111,7 @@ class ImportExportProcessor
     /**
      * @throws \Throwable
      */
-    public function processYamlToFormDefinition(int $formId, mixed $data): void
+    public function processYamlToFormDefinition(int $formId, mixed $data, array $importOptions): void
     {
         $formContent = Yaml::parse($data);
 
@@ -124,13 +126,20 @@ class ImportExportProcessor
         }
 
         $data = [
-            'form_name'              => $formDefinition->getName(),
-            'form_config'            => $formContent['configuration'] ?? [],
-            'form_conditional_logic' => $formContent['conditional_logic'] ?? [],
-            'form_fields'            => $formContent['fields'] ? ['fields' => $formContent['fields']] : [],
+            'form_name'   => $formDefinition->getName(),
+            'form_config' => $formContent['configuration'] ?? [],
+            'form_fields' => $formContent['fields'] ? ['fields' => $formContent['fields']] : [],
         ];
 
+        if ($importOptions[self::FORM_SECTION_CONDITIONAL_LOGIC] === true) {
+            $data['form_conditional_logic'] = $formContent['conditional_logic'] ?? [];
+        }
+
         $this->formDefinitionManager->save($data, $formDefinition->getId());
+
+        if ($importOptions[self::FORM_SECTION_OUTPUT_WORKFLOWS] === false) {
+            return;
+        }
 
         // remove all workflows and channels first (yes, we informed users about that earlier)
         /** @var OutputWorkflowInterface $outputWorkflow */
