@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## 5.3.1
+- **[BUGFIX]** [FUNNEL] Add channel context handling to FunnelWorker [#518](https://github.com/dachcom-digital/pimcore-formbuilder/issues/518)
+- **[BUGFIX]** [FUNNEL] Render `_token` in funnel base template if available and renderable
+
 ## 5.3.0
 - **[IMPROVEMENT]** New field added to `form_builder_form_attributes`: `autocomplete`
 - **[BUGFIX]** Solidify check for empty value in output transformer [#486](https://github.com/dachcom-digital/pimcore-formbuilder/issues/508)
