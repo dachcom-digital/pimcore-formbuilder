@@ -46,8 +46,10 @@ class ConditionalLogicRegistry
 
         if (!is_null($service)) {
             $interfaceReference = $type . 'Interface';
+            /* @phpstan-ignore-next-line */
             if (!in_array($this->{$interfaceReference}, class_implements($service), true)) {
                 throw new \InvalidArgumentException(
+                    /* @phpstan-ignore-next-line */
                     sprintf('%s needs to implement "%s", "%s" given.', get_class($service), $this->{$interfaceReference}, implode(', ', class_implements($service)))
                 );
             }
