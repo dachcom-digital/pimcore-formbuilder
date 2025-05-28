@@ -23,6 +23,8 @@ use FormBuilderBundle\Model\FormStorageData;
 use FormBuilderBundle\Model\FunnelActionElement;
 use FormBuilderBundle\Model\OutputWorkflowChannelInterface;
 use FormBuilderBundle\Model\OutputWorkflowInterface;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContext;
+use FormBuilderBundle\OutputWorkflow\Channel\ChannelContextAwareInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\ChannelResponseAwareInterface;
 use FormBuilderBundle\OutputWorkflow\Channel\Funnel\Action\FunnelActionElementStack;
 use FormBuilderBundle\OutputWorkflow\Channel\FunnelAwareChannelInterface;
@@ -164,12 +166,18 @@ class FunnelWorker implements FunnelWorkerInterface
         $dataChannelResponse = null;
         $channelProcessor = $funnelWorkerData->getChannelProcessor();
 
+        $channelContext = new ChannelContext();
+
         try {
             $arguments = [
                 $funnelWorkerData->getSubmissionEvent(),
                 $funnelWorkerData->getOutputWorkflow()->getName(),
                 $funnelWorkerData->getChannel()->getConfiguration()
             ];
+
+            if ($channelProcessor instanceof ChannelContextAwareInterface) {
+                $channelProcessor->setChannelContext($channelContext);
+            }
 
             if ($channelProcessor instanceof ChannelResponseAwareInterface) {
                 $dataChannelResponse = $channelProcessor->dispatchResponseOutputProcessing(...$arguments);

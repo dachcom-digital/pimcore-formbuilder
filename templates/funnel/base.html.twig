@@ -16,6 +16,10 @@
         {{ view|raw }}
     {% endif %}
 
+    {% if form._token is defined and not form._token.isRendered %}
+        {{ form_widget(form._token) }}
+    {% endif %}
+
     {{ form_end(form, {render_rest: formRenderRest}) }}
 
 {% endblock funnel_content %}
