@@ -229,7 +229,7 @@ class RequestListener implements EventSubscriberInterface
             }
 
             if (isset($parameters['formId'])) {
-                return $parameters['formId'];
+                return is_numeric($parameters['formId']) ? (int) $parameters['formId'] : null;
             }
         }
 

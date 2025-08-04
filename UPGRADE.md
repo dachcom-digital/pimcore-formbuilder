@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.3.2
+- **[BUGFIX]** Validate and cast formId to integer in RequestListener
+
 ## 5.3.1
 - **[BUGFIX]** [FUNNEL] Add channel context handling to FunnelWorker [#518](https://github.com/dachcom-digital/pimcore-formbuilder/issues/518)
 - **[BUGFIX]** [FUNNEL] Render `_token` in funnel base template if available and renderable
