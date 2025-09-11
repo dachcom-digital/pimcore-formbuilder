@@ -13,43 +13,66 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
 
     public function getDescription(): string
     {
-        return 'Migrate formbuilder_forms.configuration and formbuilder_forms.conditionalLogic data from object to json format';
+        return 'Migrate all formbuilder object type columns to json format';
     }
 
     public function up(Schema $schema): void
     {
-        // First migrate the data
-        $this->addSql("
-            UPDATE formbuilder_forms
-            SET configuration = CASE
-                WHEN configuration IS NOT NULL AND configuration != ''
-                THEN JSON_QUOTE(configuration)
-                ELSE NULL
-            END,
-            conditionalLogic = CASE
-                WHEN conditionalLogic IS NOT NULL AND conditionalLogic != ''
-                THEN JSON_QUOTE(conditionalLogic)
-                ELSE NULL
-            END;
-        ");
+        $connection = $this->connection;
 
-        // Then change the column types
-        $table = $schema->getTable('formbuilder_forms');
+        // 1. Migrate formbuilder_forms table
+        $this->migrateTable($connection, 'formbuilder_forms', ['configuration', 'conditionalLogic']);
 
-        if ($table->hasColumn('configuration')) {
-            $table->changeColumn('configuration', [
-                'type' => \Doctrine\DBAL\Types\Types::JSON,
-                'notnull' => false,
-                'comment' => null
-            ]);
-        }
+        // 2. Migrate formbuilder_output_workflow table
+        $this->migrateTable($connection, 'formbuilder_output_workflow', ['success_management']);
 
-        if ($table->hasColumn('conditionalLogic')) {
-            $table->changeColumn('conditionalLogic', [
-                'type' => \Doctrine\DBAL\Types\Types::JSON,
-                'notnull' => false,
-                'comment' => null
-            ]);
+        // 3. Migrate formbuilder_output_workflow_channel table
+        $this->migrateTable($connection, 'formbuilder_output_workflow_channel', ['configuration', 'funnel_actions']);
+
+        // Change column types to JSON
+        $this->addSql('ALTER TABLE formbuilder_forms MODIFY COLUMN configuration JSON');
+        $this->addSql('ALTER TABLE formbuilder_forms MODIFY COLUMN conditionalLogic JSON');
+        $this->addSql('ALTER TABLE formbuilder_output_workflow MODIFY COLUMN success_management JSON');
+        $this->addSql('ALTER TABLE formbuilder_output_workflow_channel MODIFY COLUMN configuration JSON');
+        $this->addSql('ALTER TABLE formbuilder_output_workflow_channel MODIFY COLUMN funnel_actions JSON');
+    }
+
+    private function migrateTable($connection, $tableName, $columns): void
+    {
+        $columnList = implode(', ', $columns);
+        $conditions = array_map(fn($col) => "$col IS NOT NULL", $columns);
+        $whereClause = implode(' OR ', $conditions);
+
+        $result = $connection->executeQuery("SELECT id, $columnList FROM $tableName WHERE $whereClause");
+
+        while ($row = $result->fetchAssociative()) {
+            $updates = [];
+            $values = [];
+
+            foreach ($columns as $column) {
+                if (!empty($row[$column])) {
+                    $unserialized = @unserialize($row[$column]);
+                    if ($unserialized !== false) {
+                        $updates[] = "$column = ?";
+                        $values[] = json_encode($unserialized);
+                    } else {
+                        // If unserialization fails, store as JSON string
+                        $updates[] = "$column = ?";
+                        $values[] = json_encode($row[$column]);
+                    }
+                } else {
+                    $updates[] = "$column = ?";
+                    $values[] = null;
+                }
+            }
+
+            if (!empty($updates)) {
+                $values[] = $row['id'];
+                $connection->executeStatement(
+                    "UPDATE $tableName SET " . implode(', ', $updates) . ' WHERE id = ?',
+                    $values
+                );
+            }
         }
     }
 
