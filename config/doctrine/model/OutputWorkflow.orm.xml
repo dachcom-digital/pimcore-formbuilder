@@ -11,7 +11,7 @@
         </id>
         <field name="name" type="string" column="`name`" length="190" nullable="true"/>
         <field name="funnelWorkflow" type="boolean" column="funnel_workflow" nullable="false"/>
-        <field name="successManagement" type="object" column="success_management" nullable="true"/>
+        <field name="successManagement" type="json" column="success_management" nullable="true"/>
         <one-to-many field="channels" target-entity="FormBuilderBundle\Model\OutputWorkflowChannel" mapped-by="outputWorkflow"
                      orphan-removal="true" fetch="LAZY">
             <cascade>
