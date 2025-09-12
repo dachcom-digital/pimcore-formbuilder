@@ -53,14 +53,20 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
                 if (!empty($row[$column])) {
                     $unserialized = @unserialize($row[$column]);
                     if ($unserialized !== false) {
+                        // Successfully unserialized (could be empty array, object, etc.)
                         $updates[] = "$column = ?";
                         $values[] = json_encode($unserialized);
-                    } else {
-                        // If unserialization fails, store as JSON string
+                    } elseif ($row[$column] === '[]') {
+                        // Handle literal "[]" string as empty array
                         $updates[] = "$column = ?";
-                        $values[] = json_encode($row[$column]);
+                        $values[] = '[]';
+                    } elseif ($row[$column] === '{}') {
+                        // Handle literal "{}" string as empty object
+                        $updates[] = "$column = ?";
+                        $values[] = '{}';
                     }
                 } else {
+                    // Handle null and empty string cases
                     $updates[] = "$column = ?";
                     $values[] = null;
                 }
