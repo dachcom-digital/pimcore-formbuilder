@@ -20,13 +20,8 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
     {
         $connection = $this->connection;
 
-        // 1. Migrate formbuilder_forms table
         $this->migrateTable($connection, 'formbuilder_forms', ['configuration', 'conditionalLogic']);
-
-        // 2. Migrate formbuilder_output_workflow table
         $this->migrateTable($connection, 'formbuilder_output_workflow', ['success_management']);
-
-        // 3. Migrate formbuilder_output_workflow_channel table
         $this->migrateTable($connection, 'formbuilder_output_workflow_channel', ['configuration', 'funnel_actions']);
 
         // Change column types to JSON
@@ -53,20 +48,16 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
                 if (!empty($row[$column])) {
                     $unserialized = @unserialize($row[$column]);
                     if ($unserialized !== false) {
-                        // Successfully unserialized (could be empty array, object, etc.)
                         $updates[] = "$column = ?";
                         $values[] = json_encode($unserialized);
                     } elseif ($row[$column] === '[]') {
-                        // Handle literal "[]" string as empty array
                         $updates[] = "$column = ?";
                         $values[] = '[]';
                     } elseif ($row[$column] === '{}') {
-                        // Handle literal "{}" string as empty object
                         $updates[] = "$column = ?";
                         $values[] = '{}';
                     }
                 } else {
-                    // Handle null and empty string cases
                     $updates[] = "$column = ?";
                     $values[] = null;
                 }
@@ -84,7 +75,7 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
 
     public function down(Schema $schema): void
     {
-        // This migration is not reversible as we're converting serialized data to JSON
+        // This migration is not reversible because we are converting serialized data to JSON
         $this->throwIrreversibleMigrationException();
     }
 }
