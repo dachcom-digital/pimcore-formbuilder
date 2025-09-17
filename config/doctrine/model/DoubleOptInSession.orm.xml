@@ -11,7 +11,7 @@
             <custom-id-generator class="Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator"/>
         </id>
         <field name="email" type="string" column="email" length="190" nullable="false"/>
-        <field name="additionalData" type="array" column="additional_data" nullable="true"/>
+        <field name="additionalData" type="json" column="additional_data" nullable="true"/>
         <field name="dispatchLocation" type="text" column="dispatch_location" nullable="true"/>
         <field name="applied" type="boolean" column="applied">
             <options>
