@@ -23,7 +23,7 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
         $this->migrateTable($connection, 'formbuilder_forms', ['configuration', 'conditionalLogic']);
         $this->migrateTable($connection, 'formbuilder_output_workflow', ['success_management']);
         $this->migrateTable($connection, 'formbuilder_output_workflow_channel', ['configuration', 'funnel_actions']);
-        $this->migrateTable($connection, 'formbuilder_double_opt_in_session', ['additionalData']);
+        $this->migrateTable($connection, 'formbuilder_double_opt_in_session', ['additional_data']);
 
         // Change column types to JSON
         $this->addSql('ALTER TABLE formbuilder_forms MODIFY COLUMN configuration JSON');
