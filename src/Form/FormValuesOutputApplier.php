@@ -80,6 +80,9 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         mixed $fieldRawValue,
         array $ignoreFields
     ): ?array {
+
+        $fieldRawValue = $this->sanitizeString($fieldRawValue);
+
         if ($fieldDefinition instanceof FormFieldContainerDefinitionInterface) {
             $subFieldValues = [];
             foreach ($this->getFormSubFields($formField) as $index => $subFieldCollection) {
@@ -124,8 +127,8 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     protected function transformFormBuilderContainerField(FormFieldContainerDefinitionInterface $fieldDefinition, array $subFormFields, ?string $locale): ?array
     {
         $fieldConfig = $fieldDefinition->getConfiguration();
-        $containerLabel = isset($fieldConfig['label']) && !empty($fieldConfig['label']) ? $fieldConfig['label'] : false;
-        $blockLabel = isset($fieldConfig['block_label']) && !empty($fieldConfig['block_label']) ? $fieldConfig['block_label'] : false;
+        $containerLabel = !empty($fieldConfig['label']) ? $fieldConfig['label'] : false;
+        $blockLabel = !empty($fieldConfig['block_label']) ? $fieldConfig['block_label'] : false;
 
         return [
             'field_type'  => FormValuesOutputApplierInterface::FIELD_TYPE_CONTAINER,
@@ -140,7 +143,7 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     protected function transformDynamicField(FormFieldDynamicDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): ?array
     {
         $optionals = $fieldDefinition->getOptional();
-        $outputTransformerIdentifier = isset($optionals['output_transformer']) && !empty($optionals['output_transformer']) ? $optionals['output_transformer'] : '';
+        $outputTransformerIdentifier = !empty($optionals['output_transformer']) ? $optionals['output_transformer'] : '';
 
         return $this->parseFieldValueWithOutputTransformer($fieldDefinition, $formField, $outputTransformerIdentifier, $rawValue, $locale);
     }
@@ -148,7 +151,7 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     protected function transformFormBuilderField(FormFieldDefinitionInterface $fieldDefinition, FormInterface $formField, mixed $rawValue, ?string $locale): ?array
     {
         $formType = $this->configuration->getFieldTypeConfig($fieldDefinition->getType());
-        $outputTransformerIdentifier = isset($formType['output_transformer']) && !empty($formType['output_transformer']) ? $formType['output_transformer'] : '';
+        $outputTransformerIdentifier = !empty($formType['output_transformer']) ? $formType['output_transformer'] : '';
 
         return $this->parseFieldValueWithOutputTransformer($fieldDefinition, $formField, $outputTransformerIdentifier, $rawValue, $locale);
     }
@@ -160,6 +163,7 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
         mixed $rawValue,
         ?string $locale
     ): ?array {
+
         $defaults = [
             'field_type' => FormValuesOutputApplierInterface::FIELD_TYPE_SIMPLE,
             'name'       => $fieldDefinition->getName(),
@@ -238,5 +242,14 @@ class FormValuesOutputApplier implements FormValuesOutputApplierInterface
     protected function isEmptyValue(mixed $formFieldValue): bool
     {
         return empty($formFieldValue) && $formFieldValue !== 0 && $formFieldValue !== '0';
+    }
+
+    protected function sanitizeString(mixed $value): mixed
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        return preg_replace('/\{\{\s*(.*?)\s*\}\}|\{\%\s*(.*?)\s*\%\}/s', '$1$2', $value);
     }
 }

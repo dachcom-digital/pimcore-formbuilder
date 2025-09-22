@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.3.3
+- **[BUGFIX]** Sanitize form field values by removing template tags during output transformation
+
 ## 5.3.2
 - **[BUGFIX]** Validate and cast formId to integer in RequestListener
 
