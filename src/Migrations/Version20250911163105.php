@@ -20,10 +20,10 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
     {
         $connection = $this->connection;
 
-        $this->migrateTable($connection, 'formbuilder_forms', ['configuration', 'conditionalLogic']);
-        $this->migrateTable($connection, 'formbuilder_output_workflow', ['success_management']);
-        $this->migrateTable($connection, 'formbuilder_output_workflow_channel', ['configuration', 'funnel_actions']);
-        $this->migrateTable($connection, 'formbuilder_double_opt_in_session', ['additional_data']);
+        $this->migrateTable($connection, 'formbuilder_forms', ['configuration', 'conditionalLogic'], 'id');
+        $this->migrateTable($connection, 'formbuilder_output_workflow', ['success_management'], 'id');
+        $this->migrateTable($connection, 'formbuilder_output_workflow_channel', ['configuration', 'funnel_actions'], 'id');
+        $this->migrateTable($connection, 'formbuilder_double_opt_in_session', ['additional_data'], 'token');
 
         // Change column types to JSON
         $this->addSql('ALTER TABLE formbuilder_forms MODIFY COLUMN configuration JSON');
@@ -31,16 +31,16 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
         $this->addSql('ALTER TABLE formbuilder_output_workflow MODIFY COLUMN success_management JSON');
         $this->addSql('ALTER TABLE formbuilder_output_workflow_channel MODIFY COLUMN configuration JSON');
         $this->addSql('ALTER TABLE formbuilder_output_workflow_channel MODIFY COLUMN funnel_actions JSON');
-        $this->addSql('ALTER TABLE formbuilder_double_opt_in_session MODIFY COLUMN additionalData JSON');
+        $this->addSql('ALTER TABLE formbuilder_double_opt_in_session MODIFY COLUMN additional_data JSON');
     }
 
-    private function migrateTable($connection, $tableName, $columns): void
+    private function migrateTable($connection, $tableName, $columns, $primaryKey = 'id'): void
     {
         $columnList = implode(', ', $columns);
         $conditions = array_map(fn($col) => "$col IS NOT NULL", $columns);
         $whereClause = implode(' OR ', $conditions);
 
-        $result = $connection->executeQuery("SELECT id, $columnList FROM $tableName WHERE $whereClause");
+        $result = $connection->executeQuery("SELECT $primaryKey, $columnList FROM $tableName WHERE $whereClause");
 
         while ($row = $result->fetchAssociative()) {
             $updates = [];
@@ -66,9 +66,9 @@ class Version20250911163105 extends AbstractMigration implements ContainerAwareI
             }
 
             if (!empty($updates)) {
-                $values[] = $row['id'];
+                $values[] = $row[$primaryKey];
                 $connection->executeStatement(
-                    "UPDATE $tableName SET " . implode(', ', $updates) . ' WHERE id = ?',
+                    "UPDATE $tableName SET " . implode(', ', $updates) . " WHERE $primaryKey = ?",
                     $values
                 );
             }
