@@ -11,8 +11,8 @@
         </id>
         <field name="type" type="string" column="type" length="190"/>
         <field name="name" type="string" column="name" length="190"/>
-        <field name="configuration" type="object" column="configuration" nullable="true"/>
-        <field name="funnelActions" type="object" column="funnel_actions" nullable="true"/>
+        <field name="configuration" type="json" column="configuration" nullable="true"/>
+        <field name="funnelActions" type="json" column="funnel_actions" nullable="true"/>
         <many-to-one field="outputWorkflow" target-entity="FormBuilderBundle\Model\OutputWorkflow" inversed-by="channels"
                      fetch="LAZY">
             <join-columns>

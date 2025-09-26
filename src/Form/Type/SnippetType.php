@@ -56,7 +56,7 @@ class SnippetType extends AbstractType
         $view->vars = $vars;
     }
 
-    private function getSnippetId(array $data): ?string
+    private function getSnippetId(array $data): ?int
     {
         $locale = $this->requestStack->getMainRequest()->getLocale();
 
