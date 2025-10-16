@@ -92,8 +92,8 @@ class DynamicFormType extends AbstractType
             function ($runtimeData) {
                 try {
                     return empty($runtimeData) ? null : json_decode($runtimeData, true, 512, JSON_THROW_ON_ERROR);
-                } catch (\jsonException $e) {
-                    throw new TransformationFailedException('', 0, $e);
+                } catch (\JsonException $exception) {
+                    throw new TransformationFailedException('Invalid runtime data JSON.', $exception->getCode(), $exception);
                 }
             }
         ));
