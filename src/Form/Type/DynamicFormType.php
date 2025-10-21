@@ -17,6 +17,7 @@ use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Form\Data\FormData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -89,7 +90,11 @@ class DynamicFormType extends AbstractType
                 return is_array($runtimeData) ? json_encode($runtimeData, JSON_THROW_ON_ERROR) : null;
             },
             function ($runtimeData) {
-                return empty($runtimeData) ? null : json_decode($runtimeData, true, 512, JSON_THROW_ON_ERROR);
+                try {
+                    return empty($runtimeData) ? null : json_decode($runtimeData, true, 512, JSON_THROW_ON_ERROR);
+                } catch (\JsonException $exception) {
+                    throw new TransformationFailedException('Invalid runtime data JSON.', $exception->getCode(), $exception);
+                }
             }
         ));
 
