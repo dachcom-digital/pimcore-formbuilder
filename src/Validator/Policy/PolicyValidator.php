@@ -13,16 +13,18 @@
 
 namespace FormBuilderBundle\Validator\Policy;
 
+use FormBuilderBundle\Stream\Upload\UploadedFileInterface;
+
 final class PolicyValidator
 {
     public function __construct(protected ?UploadPolicyValidatorInterface $uploadPolicyValidator = null)
     {
     }
 
-    public function validateUploadedFile(mixed $data, array $context = []): void
+    public function validateUploadedFile(UploadedFileInterface $file, array $context = []): void
     {
         if ($this->uploadPolicyValidator instanceof UploadPolicyValidatorInterface) {
-            $this->uploadPolicyValidator->validate($data, $context);
+            $this->uploadPolicyValidator->validate($file, $context);
         }
     }
 }

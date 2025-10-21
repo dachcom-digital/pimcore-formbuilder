@@ -121,18 +121,17 @@ services:
 namespace App\Formbuilder\PolicyValidator;
 
 use FormBuilderBundle\Validator\Policy\UploadPolicyValidatorInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
-use FormBuilderBundle\Exception\UploadErrorException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use FormBuilderBundle\Stream\Upload\UploadedFileInterface;
 
 class UploadedFilePolicyValidator implements UploadPolicyValidatorInterface
 {
     public function __construct(private RateLimiterFactory $formBuilderUploadLimiter)
     {}
 
-    public function validateUpload(mixed $file, ?Request $request = null): void
+    public function validate(UploadedFileInterface $file, ?Request $request = null): void
     {
         $limiter = $this->formBuilderUploadLimiter->create($request->getClientIp());
         $limit = $limiter->consume(1);

@@ -18,6 +18,8 @@ use FormBuilderBundle\Exception\UploadErrorException;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Stream\Upload\LocalFile;
+use FormBuilderBundle\Stream\Upload\ServerFile;
 use FormBuilderBundle\Validator\Policy\PolicyValidator;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -197,7 +199,7 @@ class FileStream implements FileStreamInterface
         }
 
         try {
-            $this->validateUploadPolicy($file, $mainRequest);
+            $this->validateUploadPolicy($file, $fileSafeName, $mainRequest);
         } catch (UploadErrorException $e) {
             return [
                 'success'    => false,
@@ -346,7 +348,7 @@ class FileStream implements FileStreamInterface
         }
 
         try {
-            $this->validateUploadPolicy($filePath, $mainRequest);
+            $this->validateUploadPolicy($filePath, $fileSafeName, $mainRequest);
         } catch (UploadErrorException $e) {
 
             $this->removeUploadDirectories($uuid);
@@ -477,6 +479,9 @@ class FileStream implements FileStreamInterface
     {
         $fileMimeType = null;
 
+        $file->getMimeType();
+        $file->getClientMimeType();
+
         try {
             $fileMimeType = $this->mimeTypeGuesser->guessMimeType($file->getPathname());
         } catch (\Throwable) {
@@ -493,9 +498,9 @@ class FileStream implements FileStreamInterface
     {
         $filesize = $file->getSize();
 
-        $totalFileSize = $options['totalFileSize'] ?? null;
-        if ($totalFileSize !== null && $request->request->has($totalFileSize)) {
-            $filesize = $request->request->get($totalFileSize);
+        $totalFileSizeKey = $options['totalFileSize'] ?? null;
+        if ($totalFileSizeKey !== null && $request->request->has($totalFileSizeKey)) {
+            $filesize = $request->request->get($totalFileSizeKey);
         }
 
         $filesize = is_numeric($filesize) ? (int) $filesize : null;
@@ -566,10 +571,16 @@ class FileStream implements FileStreamInterface
     /**
      * @throws UploadErrorException
      */
-    protected function validateUploadPolicy($data, Request $request): void
+    protected function validateUploadPolicy($data, string $filename, Request $request): void
     {
+        if ($data instanceof UploadedFile) {
+            $file = new LocalFile($data, $filename);
+        } else {
+            $file = new ServerFile($this->formBuilderFilesStorage, $data, $filename);
+        }
+
         try {
-           $this->policyValidator->validateUploadedFile($data, ['request' => $request]);
+           $this->policyValidator->validateUploadedFile($file, ['request' => $request]);
         } catch (\Throwable $e) {
             throw new UploadErrorException($e->getMessage(), !empty($e->getCode()) ? $e->getCode() : 400, $e);
         }

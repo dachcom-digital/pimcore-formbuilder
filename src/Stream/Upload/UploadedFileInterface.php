@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This source file is available under two different licenses:
  *   - GNU General Public License version 3 (GPLv3)
@@ -11,15 +13,18 @@
  * @license    GPLv3 and DCL
  */
 
-namespace FormBuilderBundle\Validator\Policy;
+namespace FormBuilderBundle\Stream\Upload;
 
-use FormBuilderBundle\Exception\UploadErrorException;
-use FormBuilderBundle\Stream\Upload\UploadedFileInterface;
-
-interface UploadPolicyValidatorInterface
+interface UploadedFileInterface
 {
+    public function getSize(): int;
+
+    public function getMimeType(): ?string;
+
+    public function getOriginalName(): string;
+
     /**
-     * @throws  UploadErrorException
+     * @return resource
      */
-    public function validate(UploadedFileInterface $file, array $context = []);
+    public function getStream(): mixed;
 }
