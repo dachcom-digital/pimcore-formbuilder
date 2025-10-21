@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 5.3.4
+- **[SECURITY]** Introduce upload field reference and server-side MIME type validation. Read more about upload security [here](./docs/80_FileUpload.md#security)
+
 ## 5.3.3
 - **[BUGFIX]** Sanitize form field values by removing template tags during output transformation
 
