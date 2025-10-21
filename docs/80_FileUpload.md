@@ -74,6 +74,80 @@ This ensures that only valid file types are accepted, preventing spoofed files o
 > Note: This option is disabled by default to maintain backward compatibility.
 > Enable it when you want the server to strictly validate MIME types for uploaded files.
 
+### Upload Policy Validator
+The Upload Policy Validator allows projects to define custom security and policy rules for file uploads, such as IP-based rate limits or user-specific upload rules.
+
+The bundle itself contains no validation logic or infrastructure dependencies (e.g., cache, Redis, database).
+Projects provide their own implementation and register it via bundle configuration.
+
+#### Example: IP-Based Rate Limiting
+A common use case is limiting the number of uploads per IP address within a certain time window.
+This can be implemented easily using the Symfony RateLimiter component.
+
+To keep the limiter lightweight, in this example we use a dedicated APCu cache service.
+
+
+```yaml
+form_builder:
+    security:
+        upload_policy_validator: App\Formbuilder\PolicyValidator\UploadedFilePolicyValidator
+```
+
+> [!NOTE]  
+> The service must implement the interface `FormBuilderBundle\Validator\Policy\UploadPolicyValidatorInterface`.
+
+This configuration defines a sliding-window rate limiter that 
+allows a maximum of 10 uploads per 5 minutes per client:
+
+```yaml
+# config/packages/rate_limiter.yaml:
+framework:
+    rate_limiter:
+        form_builder_upload:
+            policy: sliding_window
+            limit: 10
+            interval: '5 minutes'
+            cache_pool: cache.form_builder_upload_rate_limiter
+
+services:
+    cache.form_builder_upload_rate_limiter:
+        class: Symfony\Component\Cache\Adapter\ApcuAdapter
+        arguments:
+            - 'form_builder_upload'
+            - 0 # TTL is set to 0 so entries are not automatically evicted. The RateLimiter manages expiration internally.
+```
+
+```php
+namespace App\Formbuilder\PolicyValidator;
+
+use FormBuilderBundle\Validator\Policy\UploadPolicyValidatorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use FormBuilderBundle\Stream\Upload\UploadedFileInterface;
+
+class UploadedFilePolicyValidator implements UploadPolicyValidatorInterface
+{
+    public function __construct(private RateLimiterFactory $formBuilderUploadLimiter)
+    {}
+
+    public function validate(UploadedFileInterface $file, ?Request $request = null): void
+    {
+        $limiter = $this->formBuilderUploadLimiter->create($request->getClientIp());
+        $limit = $limiter->consume(1);
+
+        if (!$limit->isAccepted()) {
+            throw new TooManyRequestsHttpException(
+                null,
+                'Rate limit exceeded. Please wait before uploading more files.'
+                null,
+                429
+            );
+        }
+    }
+}
+```
+
 ***
 
 ## Available Adapter

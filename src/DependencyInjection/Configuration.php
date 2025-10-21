@@ -619,6 +619,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->booleanNode('enable_upload_field_reference')->defaultFalse()->end()
                 ->booleanNode('enable_upload_server_mime_type_validation')->defaultFalse()->end()
+                ->scalarNode('upload_policy_validator')->defaultNull()->end()
             ->end();
 
         return $rootNode;

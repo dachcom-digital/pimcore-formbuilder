@@ -18,6 +18,9 @@ use FormBuilderBundle\Exception\UploadErrorException;
 use FormBuilderBundle\Manager\FormDefinitionManager;
 use FormBuilderBundle\Model\FormDefinitionInterface;
 use FormBuilderBundle\Model\FormFieldDefinitionInterface;
+use FormBuilderBundle\Stream\Upload\LocalFile;
+use FormBuilderBundle\Stream\Upload\ServerFile;
+use FormBuilderBundle\Validator\Policy\PolicyValidator;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
@@ -38,7 +41,8 @@ class FileStream implements FileStreamInterface
         protected FilesystemOperator $formBuilderChunkStorage,
         protected FilesystemOperator $formBuilderFilesStorage,
         protected MimeTypeGuesserInterface $mimeTypeGuesser,
-        protected FormDefinitionManager $formDefinitionManager
+        protected FormDefinitionManager $formDefinitionManager,
+        protected PolicyValidator $policyValidator,
     ) {
     }
 
@@ -148,14 +152,19 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        $totalParts = $mainRequest->request->has($options['totalChunkCount']) ? (int) $mainRequest->request->get($options['totalChunkCount']) : 1;
+        $totalParts = $mainRequest->request->has($options['totalChunkCount'])
+            ? (int) $mainRequest->request->get($options['totalChunkCount'])
+            : 1;
 
         if ($totalParts > 1) {
             // chunked upload
             $partIndex = (int) $mainRequest->request->get($options['chunkIndex']);
 
             try {
-                $this->formBuilderChunkStorage->write(sprintf('%s%s%s', $uuid, DIRECTORY_SEPARATOR, $partIndex), file_get_contents($file->getPathname()));
+                $this->formBuilderChunkStorage->write(
+                    sprintf('%s%s%s', $uuid, DIRECTORY_SEPARATOR, $partIndex),
+                    file_get_contents($file->getPathname())
+                );
             } catch (FilesystemException $e) {
                 return [
                     'success'    => false,
@@ -190,7 +199,21 @@ class FileStream implements FileStreamInterface
         }
 
         try {
-            $this->formBuilderFilesStorage->write($uuid . '/' . $serverFileSafeName, file_get_contents($file->getPathname()));
+            $this->validateUploadPolicy($file, $fileSafeName, $mainRequest);
+        } catch (UploadErrorException $e) {
+            return [
+                'success'    => false,
+                'statusCode' => $e->getCode(),
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage(),
+            ];
+        }
+
+        try {
+            $this->formBuilderFilesStorage->write(
+                $uuid . '/' . $serverFileSafeName,
+                file_get_contents($file->getPathname())
+            );
         } catch (FilesystemException $e) {
             return [
                 'success'    => false,
@@ -324,6 +347,20 @@ class FileStream implements FileStreamInterface
             ];
         }
 
+        try {
+            $this->validateUploadPolicy($filePath, $fileSafeName, $mainRequest);
+        } catch (UploadErrorException $e) {
+
+            $this->removeUploadDirectories($uuid);
+
+            return [
+                'success'    => false,
+                'statusCode' => $e->getCode(),
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage(),
+            ];
+        }
+
         return [
             'success'  => true,
             'uuid'     => $uuid,
@@ -442,6 +479,9 @@ class FileStream implements FileStreamInterface
     {
         $fileMimeType = null;
 
+        $file->getMimeType();
+        $file->getClientMimeType();
+
         try {
             $fileMimeType = $this->mimeTypeGuesser->guessMimeType($file->getPathname());
         } catch (\Throwable) {
@@ -458,9 +498,9 @@ class FileStream implements FileStreamInterface
     {
         $filesize = $file->getSize();
 
-        $totalFileSize = $options['totalFileSize'] ?? null;
-        if ($totalFileSize !== null && $request->request->has($totalFileSize)) {
-            $filesize = $request->request->get($totalFileSize);
+        $totalFileSizeKey = $options['totalFileSize'] ?? null;
+        if ($totalFileSizeKey !== null && $request->request->has($totalFileSizeKey)) {
+            $filesize = $request->request->get($totalFileSizeKey);
         }
 
         $filesize = is_numeric($filesize) ? (int) $filesize : null;
@@ -525,6 +565,24 @@ class FileStream implements FileStreamInterface
                 ),
                 400
             );
+        }
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateUploadPolicy($data, string $filename, Request $request): void
+    {
+        if ($data instanceof UploadedFile) {
+            $file = new LocalFile($data, $filename);
+        } else {
+            $file = new ServerFile($this->formBuilderFilesStorage, $data, $filename);
+        }
+
+        try {
+           $this->policyValidator->validateUploadedFile($file, ['request' => $request]);
+        } catch (\Throwable $e) {
+            throw new UploadErrorException($e->getMessage(), !empty($e->getCode()) ? $e->getCode() : 400, $e);
         }
     }
 
