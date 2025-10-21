@@ -101,16 +101,14 @@ class FileStream implements FileStreamInterface
             ];
         }
 
-        if ($this->fieldReferenceEnabled() === true) {
-            try {
-                $this->assertFieldReference($fieldReference);
-            } catch (UploadErrorException $e) {
-                return [
-                    'success'    => false,
-                    'statusCode' => 400,
-                    'error'      => $e->getMessage()
-                ];
-            }
+        try {
+            $this->assertFieldReference($fieldReference);
+        } catch (UploadErrorException $e) {
+            return [
+                'success'    => false,
+                'statusCode' => 400,
+                'error'      => $e->getMessage()
+            ];
         }
 
         $uploadRestrictions = $this->getUploadRestrictions($fieldReference);
@@ -238,18 +236,16 @@ class FileStream implements FileStreamInterface
         $fieldReferenceKey = $options['fieldReferenceKey'] ?? null;
         $fieldReference = $fieldReferenceKey !== null ? $mainRequest->request->get($fieldReferenceKey) : null;
 
-        if ($this->fieldReferenceEnabled() === true) {
-            try {
-                $this->assertFieldReference($fieldReference);
-            } catch (UploadErrorException) {
-                return [
-                    'success'      => false,
-                    'statusCode'   => 400,
-                    'preventRetry' => true,
-                    'uuid'         => $uuid,
-                    'fileName'     => $fileSafeName,
-                ];
-            }
+        try {
+            $this->assertFieldReference($fieldReference);
+        } catch (UploadErrorException) {
+            return [
+                'success'      => false,
+                'statusCode'   => 400,
+                'preventRetry' => true,
+                'uuid'         => $uuid,
+                'fileName'     => $fileSafeName,
+            ];
         }
 
         try {
@@ -337,16 +333,14 @@ class FileStream implements FileStreamInterface
 
     public function handleDelete(string $identifier, bool $checkChunkFolder = false, ?string $fieldReference = null): array
     {
-        if ($this->fieldReferenceEnabled() === true) {
-            try {
-                $this->assertFieldReference($fieldReference);
-            } catch (UploadErrorException $e) {
-                return [
-                    'success'    => false,
-                    'statusCode' => 400,
-                    'message'    => $e->getMessage(),
-                ];
-            }
+        try {
+            $this->assertFieldReference($fieldReference);
+        } catch (UploadErrorException $e) {
+            return [
+                'success'    => false,
+                'statusCode' => 400,
+                'message'    => $e->getMessage(),
+            ];
         }
 
         $storages = [self::STORAGE_FILE];

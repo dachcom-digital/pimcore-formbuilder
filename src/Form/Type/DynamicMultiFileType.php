@@ -62,6 +62,8 @@ class DynamicMultiFileType extends AbstractType
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
         $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
 
+        $options = $event->getForm()->getConfig()->getOptions();
+
         $options['compound'] = true;
         $options['auto_initialize'] = false;
         $options['label'] = empty($options['label']) ? false : $options['label'];
