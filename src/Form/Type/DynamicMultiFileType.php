@@ -15,12 +15,15 @@ namespace FormBuilderBundle\Form\Type;
 
 use FormBuilderBundle\Configuration\Configuration;
 use FormBuilderBundle\Event\Form\FormTypeOptionsEvent;
+use FormBuilderBundle\Form\Data\FormData;
 use FormBuilderBundle\FormBuilderEvents;
 use FormBuilderBundle\Registry\DynamicMultiFileAdapterRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -49,15 +52,30 @@ class DynamicMultiFileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'handleDynamicMultiFileForm']);
+    }
+
+    public function handleDynamicMultiFileForm(FormEvent $event): void
+    {
+        $adapterFormFieldName = 'adapter';
+
         $dmfAdapterName = $this->configuration->getConfig('dynamic_multi_file_adapter');
         $dmfAdapter = $this->dynamicMultiFileAdapterRegistry->get($dmfAdapterName);
 
         $options['compound'] = true;
+        $options['auto_initialize'] = false;
         $options['label'] = empty($options['label']) ? false : $options['label'];
         $options['attr']['data-dynamic-multi-file-instance'] = 'true';
         $options['attr']['data-js-handler'] = $dmfAdapter->getJsHandler();
 
-        $adapterFormFieldName = 'adapter';
+        $rootForm = $event->getForm()->getRoot();
+        if ($rootForm->getData() instanceof FormData) {
+            $options['attr']['data-field-reference'] = sprintf(
+                '%s:%s',
+                $rootForm->getData()->getFormDefinition()->getId(),
+                $event->getForm()->getName()
+            );
+        }
 
         $dmfForm = $this->formFactory->createNamedBuilder(
             $adapterFormFieldName,
@@ -66,7 +84,7 @@ class DynamicMultiFileType extends AbstractType
             $this->dispatchFormTypeOptionsEvent($adapterFormFieldName, $dmfAdapter->getForm(), $options)
         );
 
-        $dmfForm->add('data', HiddenType::class, []);
+        $dmfForm->add('data', HiddenType::class);
         $dmfForm->get('data')->addModelTransformer(new CallbackTransformer(
             function ($identifier) {
                 return $identifier === null ? null : json_encode($identifier, JSON_THROW_ON_ERROR);
@@ -76,7 +94,7 @@ class DynamicMultiFileType extends AbstractType
             }
         ));
 
-        $builder->add($dmfForm);
+        $event->getForm()->add($dmfForm->getForm());
     }
 
     private function dispatchFormTypeOptionsEvent(string $name, string $type, array $options): array

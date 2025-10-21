@@ -13,6 +13,11 @@
 
 namespace FormBuilderBundle\Stream;
 
+use FormBuilderBundle\Configuration\Configuration;
+use FormBuilderBundle\Exception\UploadErrorException;
+use FormBuilderBundle\Manager\FormDefinitionManager;
+use FormBuilderBundle\Model\FormDefinitionInterface;
+use FormBuilderBundle\Model\FormFieldDefinitionInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
@@ -20,118 +25,132 @@ use Pimcore\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
 
 class FileStream implements FileStreamInterface
 {
-    public array $allowedExtensions = [];
-    public ?int $sizeLimit = null;
+    private const STORAGE_FILE = 'file';
+    private const STORAGE_CHUNK = 'chunk';
 
     public function __construct(
+        protected Configuration $configuration,
         protected RequestStack $requestStack,
         protected FilesystemOperator $formBuilderChunkStorage,
-        protected FilesystemOperator $formBuilderFilesStorage
+        protected FilesystemOperator $formBuilderFilesStorage,
+        protected MimeTypeGuesserInterface $mimeTypeGuesser,
+        protected FormDefinitionManager $formDefinitionManager
     ) {
     }
 
     public function handleUpload(array $options = [], bool $instantChunkCombining = true): array
     {
         $binaryIdentifier = $options['binary'];
+        $fieldReferenceKey = $options['fieldReferenceKey'] ?? null;
 
         $mainRequest = $this->requestStack->getMainRequest();
 
         if (!$mainRequest instanceof Request) {
             return [
-                'success' => false,
-                'error'   => 'No request given'
-            ];
-        }
-
-        if ($this->toBytes(ini_get('post_max_size')) < $this->sizeLimit || $this->toBytes(ini_get('upload_max_filesize')) < $this->sizeLimit) {
-            $neededRequestSize = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
-
-            return [
-                'success' => false,
-                'error'   => sprintf('Server error. Increase post_max_size and upload_max_filesize to %s', $neededRequestSize)
+                'success'    => false,
+                'statusCode' => 400,
+                'error'      => 'No request given'
             ];
         }
 
         $type = $mainRequest->headers->get('Content-Type');
+        $fieldReference = $fieldReferenceKey !== null ? $mainRequest->request->get($fieldReferenceKey) : null;
 
         if (empty($type)) {
             return [
-                'success' => false,
-                'error'   => 'No files were uploaded.'
+                'success'    => false,
+                'statusCode' => 400,
+                'error'      => 'No files were uploaded.'
             ];
         }
 
         if (!str_starts_with(strtolower($type), 'multipart/')) {
             return [
-                'success' => false,
-                'error'   => 'Server error. Not a multipart request. Please set forceMultipart to default value (true).'
+                'success'    => false,
+                'statusCode' => 400,
+                'error'      => 'Server error. Not a multipart request. Please set forceMultipart to default value (true).'
             ];
         }
 
-        /** @var UploadedFile $file */
         $file = $mainRequest->files->get($binaryIdentifier);
 
-        $size = $file->getSize();
-        $fileName = $file->getClientOriginalName();
-        $fileExtension = $file->getClientOriginalExtension();
-
-        if ($mainRequest->request->has($options['totalFileSize'])) {
-            $size = $mainRequest->request->get($options['totalFileSize']);
+        if (!$file instanceof UploadedFile) {
+            return [
+                'success'    => false,
+                'statusCode' => 400,
+                'fileName'   => null,
+                'error'      => 'no file'
+            ];
         }
+
+        $fileName = $file->getClientOriginalName();
 
         $serverFileSafeName = $this->getSafeFileName($fileName, true);
         $fileSafeName = $this->getSafeFileName($fileName);
 
-        // check file error
         if ($file->getError() !== UPLOAD_ERR_OK) {
             return [
-                'success'  => false,
-                'fileName' => $fileSafeName,
-                'error'    => sprintf('Upload Error: %s', $file->getErrorMessage())
+                'success'    => false,
+                'statusCode' => 400,
+                'fileName'   => $fileSafeName,
+                'error'      => 'upload error'
             ];
         }
 
-        // Validate name
+        if ($this->fieldReferenceEnabled() === true) {
+            try {
+                $this->assertFieldReference($fieldReference);
+            } catch (UploadErrorException $e) {
+                return [
+                    'success'    => false,
+                    'statusCode' => 400,
+                    'error'      => $e->getMessage()
+                ];
+            }
+        }
+
+        $uploadRestrictions = $this->getUploadRestrictions($fieldReference);
+
+        $sizeLimit = $uploadRestrictions['sizeLimit'];
+        $allowedMimeTypes = $uploadRestrictions['allowedMimeTypes'];
+
+        try {
+            $uuid = $this->determinateUuid($mainRequest, $options['uuid'] ?? null);
+        } catch (UploadErrorException $e) {
+            return [
+                'success'    => false,
+                'statusCode' => 400,
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage()
+            ];
+        }
+
         if ($fileSafeName === '') {
             return [
-                'success'  => false,
-                'fileName' => $fileSafeName,
-                'error'    => 'File name empty.'
+                'success'    => false,
+                'statusCode' => 400,
+                'fileName'   => $fileSafeName,
+                'error'      => 'File name empty.'
             ];
         }
 
-        // Validate file size
-        if ($size === 0 || $size === '0') {
-            return [
-                'success'  => false,
-                'fileName' => $fileSafeName,
-                'error'    => 'File is empty.'
-            ];
-        }
-
-        if (!is_null($this->sizeLimit) && $size > $this->sizeLimit) {
+        try {
+            $this->validateUploadedFileSize($file, $sizeLimit, $options, $mainRequest);
+        } catch (UploadErrorException $e) {
             return [
                 'success'      => false,
+                'statusCode'   => $e->getCode(),
                 'fileName'     => $fileSafeName,
-                'error'        => 'File is too large.',
-                'preventRetry' => true
-            ];
-        }
-
-        if (count($this->allowedExtensions) > 0 &&
-            !in_array(strtolower($fileExtension), array_map('strtolower', $this->allowedExtensions), true)) {
-            return [
-                'success'  => false,
-                'fileName' => $fileSafeName,
-                'error'    => sprintf('File has an invalid extension, it should be one of %s.', implode(', ', $this->allowedExtensions))
+                'error'        => $e->getMessage(),
+                'preventRetry' => $e->getCode() !== 400
             ];
         }
 
         $totalParts = $mainRequest->request->has($options['totalChunkCount']) ? (int) $mainRequest->request->get($options['totalChunkCount']) : 1;
-        $uuid = $mainRequest->request->get($options['uuid']);
 
         if ($totalParts > 1) {
             // chunked upload
@@ -141,10 +160,11 @@ class FileStream implements FileStreamInterface
                 $this->formBuilderChunkStorage->write(sprintf('%s%s%s', $uuid, DIRECTORY_SEPARATOR, $partIndex), file_get_contents($file->getPathname()));
             } catch (FilesystemException $e) {
                 return [
-                    'success'  => false,
-                    'fileName' => $fileSafeName,
-                    'error'    => $e->getMessage(),
-                    'uuid'     => $uuid
+                    'success'    => false,
+                    'statusCode' => 400,
+                    'fileName'   => $fileSafeName,
+                    'error'      => $e->getMessage(),
+                    'uuid'       => $uuid
                 ];
             }
 
@@ -161,13 +181,25 @@ class FileStream implements FileStreamInterface
         }
 
         try {
+            $this->validateUploadedFileMimeType($file, $allowedMimeTypes);
+        } catch (UploadErrorException $e) {
+            return [
+                'success'    => false,
+                'statusCode' => $e->getCode(),
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage(),
+            ];
+        }
+
+        try {
             $this->formBuilderFilesStorage->write($uuid . '/' . $serverFileSafeName, file_get_contents($file->getPathname()));
         } catch (FilesystemException $e) {
             return [
-                'success'  => false,
-                'fileName' => $fileSafeName,
-                'error'    => $e->getMessage(),
-                'uuid'     => $uuid
+                'success'    => false,
+                'statusCode' => 400,
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage(),
+                'uuid'       => $uuid
             ];
         }
 
@@ -185,101 +217,380 @@ class FileStream implements FileStreamInterface
 
         if (!$mainRequest instanceof Request) {
             return [
-                'statusCode'   => 400,
-                'success'      => false,
+                'success'    => false,
+                'statusCode' => 400,
             ];
         }
 
-        $uuid = $mainRequest->request->get($options['uuid']);
         $fileSafeName = $this->getSafeFileName($options['fileName']);
 
-        $tmpStream = tmpfile();
-        $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid)->toArray();
+        try {
+            $uuid = $this->determinateUuid($mainRequest, $options['uuid'] ?? null);
+        } catch (UploadErrorException $e) {
+            return [
+                'success'    => false,
+                'statusCode' => 400,
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage()
+            ];
+        }
 
-        usort($chunkFiles, static function (StorageAttributes $a, StorageAttributes $b) {
-            $pathInfoA = pathinfo($a->path());
-            $pathInfoB = pathinfo($b->path());
+        $fieldReferenceKey = $options['fieldReferenceKey'] ?? null;
+        $fieldReference = $fieldReferenceKey !== null ? $mainRequest->request->get($fieldReferenceKey) : null;
 
-            return $pathInfoA['filename'] <=> $pathInfoB['filename'];
-        });
-
-        foreach ($chunkFiles as $chunkFile) {
-            $chunkPathResource = $this->formBuilderChunkStorage->readStream($chunkFile->path());
-            stream_copy_to_stream($chunkPathResource, $tmpStream);
-            fclose($chunkPathResource);
+        if ($this->fieldReferenceEnabled() === true) {
+            try {
+                $this->assertFieldReference($fieldReference);
+            } catch (UploadErrorException) {
+                return [
+                    'success'      => false,
+                    'statusCode'   => 400,
+                    'preventRetry' => true,
+                    'uuid'         => $uuid,
+                    'fileName'     => $fileSafeName,
+                ];
+            }
         }
 
         try {
+            $tmpStream = tmpfile();
+            $chunkFiles = $this->formBuilderChunkStorage->listContents($uuid)->toArray();
+
+            usort($chunkFiles, static function (StorageAttributes $a, StorageAttributes $b) {
+                $pathInfoA = pathinfo($a->path());
+                $pathInfoB = pathinfo($b->path());
+
+                return $pathInfoA['filename'] <=> $pathInfoB['filename'];
+            });
+
+            foreach ($chunkFiles as $chunkFile) {
+                $chunkPathResource = $this->formBuilderChunkStorage->readStream($chunkFile->path());
+                stream_copy_to_stream($chunkPathResource, $tmpStream);
+                fclose($chunkPathResource);
+            }
+
             $this->formBuilderFilesStorage->writeStream($uuid . '/' . $fileSafeName, $tmpStream);
-        } catch (FilesystemException $exception) {
+
+            // Success
+            fclose($tmpStream);
+
+        } catch (\Throwable) {
             $chunkSuccess = false;
         }
 
-        // Success
-        fclose($tmpStream);
-
         if ($chunkSuccess === false) {
-            try {
-                $this->formBuilderChunkStorage->deleteDirectory($uuid);
-            } catch (FilesystemException $exception) {
-                // fail silently
-            }
 
-            try {
-                $this->formBuilderFilesStorage->deleteDirectory($uuid);
-            } catch (FilesystemException $exception) {
-                // fail silently
-            }
+            $this->removeUploadDirectories($uuid);
 
             return [
-                'statusCode'   => 413,
                 'success'      => false,
+                'statusCode'   => 400,
                 'preventRetry' => true,
                 'uuid'         => $uuid,
                 'fileName'     => $fileSafeName,
             ];
         }
 
+        $this->removeUploadDirectories($uuid, [self::STORAGE_CHUNK]);
+
+        $uploadRestrictions = $this->getUploadRestrictions($fieldReference);
+        $sizeLimit = $uploadRestrictions['sizeLimit'];
+        $allowedMimeTypes = $uploadRestrictions['allowedMimeTypes'];
+
+        $filePath = sprintf('%s/%s', $uuid, $fileSafeName);
+
         try {
-            $this->formBuilderChunkStorage->deleteDirectory($uuid);
-        } catch (FilesystemException $exception) {
-            // fail silently
+            $this->validateStorageFileSize($filePath, $sizeLimit);
+        } catch (UploadErrorException $e) {
+
+            $this->removeUploadDirectories($uuid);
+
+            return [
+                'success'      => false,
+                'statusCode'   => $e->getCode(),
+                'fileName'     => $fileSafeName,
+                'error'        => $e->getMessage(),
+                'preventRetry' => $e->getCode() !== 400
+            ];
         }
 
-        $fileSize = $this->formBuilderFilesStorage->fileSize($uuid . '/' . $fileSafeName);
+        try {
+            $this->validateStorageFileMimeType($filePath, $allowedMimeTypes);
+        } catch (UploadErrorException $e) {
 
-        if (!is_null($this->sizeLimit) && $fileSize > $this->sizeLimit) {
+            $this->removeUploadDirectories($uuid);
+
             return [
-                'statusCode'   => 413,
-                'success'      => false,
-                'preventRetry' => true,
-                'uuid'         => $uuid,
-                'fileName'     => $fileSafeName,
+                'success'    => false,
+                'statusCode' => $e->getCode(),
+                'fileName'   => $fileSafeName,
+                'error'      => $e->getMessage(),
             ];
         }
 
         return [
-            'statusCode' => 200,
-            'success'    => true,
-            'uuid'       => $uuid,
-            'fileName'   => $fileSafeName,
+            'success'  => true,
+            'uuid'     => $uuid,
+            'fileName' => $fileSafeName,
         ];
     }
 
-    public function handleDelete(string $identifier, bool $checkChunkFolder = false): array
+    public function handleDelete(string $identifier, bool $checkChunkFolder = false, ?string $fieldReference = null): array
     {
-        if ($checkChunkFolder === true && $this->formBuilderChunkStorage->directoryExists($identifier)) {
-            $this->formBuilderChunkStorage->deleteDirectory($identifier);
+        if ($this->fieldReferenceEnabled() === true) {
+            try {
+                $this->assertFieldReference($fieldReference);
+            } catch (UploadErrorException $e) {
+                return [
+                    'success'    => false,
+                    'statusCode' => 400,
+                    'message'    => $e->getMessage(),
+                ];
+            }
         }
 
-        if ($this->formBuilderFilesStorage->directoryExists($identifier)) {
-            $this->formBuilderFilesStorage->deleteDirectory($identifier);
+        $storages = [self::STORAGE_FILE];
+
+        if ($checkChunkFolder === true) {
+            $storages[] = self::STORAGE_CHUNK;
         }
+
+        $this->removeUploadDirectories($identifier, $storages);
 
         return [
             'success' => true,
             'uuid'    => $identifier
         ];
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function assertFieldReference(?string $fieldReference): void
+    {
+        if ($this->fieldReferenceEnabled() === false) {
+            return;
+        }
+
+        $formField = $this->getFieldByReference($fieldReference);
+
+        if ($formField === null) {
+            throw new UploadErrorException('Field reference is invalid');
+        }
+    }
+
+    protected function getUploadRestrictions(?string $fieldReference): array
+    {
+        $restrictions = [
+            'sizeLimit'        => null,
+            'allowedMimeTypes' => [],
+        ];
+
+        if ($this->fieldReferenceEnabled() === false) {
+            return $restrictions;
+        }
+
+        $formField = $this->getFieldByReference($fieldReference);
+        if (!$formField instanceof FormFieldDefinitionInterface) {
+            return $restrictions;
+        }
+
+        $formFieldOptions = $formField->getOptions();
+
+        $sizeLimit = $formFieldOptions['max_file_size'] ?? null;
+        $allowedMimeTypes = $formFieldOptions['allowed_extensions'] ?? [];
+
+        if (is_numeric($sizeLimit)) {
+            $sizeLimit = (int) ($sizeLimit * 1024 * 1024);
+        }
+
+        $restrictions['sizeLimit'] = $sizeLimit;
+        $restrictions['allowedMimeTypes'] = count($allowedMimeTypes) > 0 ? array_map('strtolower', $allowedMimeTypes) : [];
+
+        return $restrictions;
+    }
+
+    protected function getFieldByReference(?string $fieldReference): ?FormFieldDefinitionInterface
+    {
+        if ($fieldReference === null) {
+            return null;
+        }
+
+        try {
+            [$formId, $fieldName] = explode(':', $fieldReference);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        $form = $this->formDefinitionManager->getById((int) $formId);
+
+        if (!$form instanceof FormDefinitionInterface) {
+            return null;
+        }
+
+        $field = $form->getField($fieldName);
+
+        if (!$field instanceof FormFieldDefinitionInterface) {
+            return null;
+        }
+
+        if ($field->getType() !== 'dynamic_multi_file') {
+            return null;
+        }
+
+        return $field;
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateUploadedFileMimeType(UploadedFile $file, array $allowedMimeTypes): void
+    {
+        $fileMimeType = null;
+
+        try {
+            $fileMimeType = $this->mimeTypeGuesser->guessMimeType($file->getPathname());
+        } catch (\Throwable) {
+            // fail silently
+        }
+
+        $this->validateMimeType($fileMimeType, $allowedMimeTypes);
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateUploadedFileSize(UploadedFile $file, ?int $allowedFilesize, array $options, Request $request): void
+    {
+        $filesize = $file->getSize();
+
+        $totalFileSize = $options['totalFileSize'] ?? null;
+        if ($totalFileSize !== null && $request->request->has($totalFileSize)) {
+            $filesize = $request->request->get($totalFileSize);
+        }
+
+        $filesize = is_numeric($filesize) ? (int) $filesize : null;
+
+        $this->validateSize($filesize, $allowedFilesize);
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateStorageFileMimeType(string $path, array $allowedMimeTypes): void
+    {
+        $fileMimeType = null;
+
+        try {
+            $fileMimeType = $this->formBuilderFilesStorage->mimeType($path);
+        } catch (\Throwable) {
+            // fail silently
+        }
+
+        $this->validateMimeType($fileMimeType, $allowedMimeTypes);
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateStorageFileSize(string $path, ?int $allowedFilesize): void
+    {
+        $fileSize = null;
+
+        try {
+            $fileSize = $this->formBuilderFilesStorage->fileSize($path);
+        } catch (\Throwable) {
+            // fail silently
+        }
+
+        $this->validateSize($fileSize, $allowedFilesize);
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateMimeType(?string $fileMimeType, array $allowedMimeTypes): void
+    {
+        if ($this->serverMimeTypeValidationEnabled() === false) {
+            return;
+        }
+
+        if (count($allowedMimeTypes) === 0) {
+            return;
+        }
+
+        if ($fileMimeType === null) {
+            return;
+        }
+
+        if (!in_array($fileMimeType, $allowedMimeTypes, true)) {
+            throw new UploadErrorException(
+                sprintf(
+                    'File has an invalid mime type, it should be one of %s.',
+                    implode(', ', $allowedMimeTypes)
+                ),
+                400
+            );
+        }
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function validateSize(?int $filesize, ?int $allowedFilesize): void
+    {
+        if ($allowedFilesize === null) {
+            return;
+        }
+
+        if ($filesize === 0) {
+            throw new UploadErrorException('File is empty.', 400);
+        }
+
+        if ($filesize > $allowedFilesize) {
+            throw new UploadErrorException('File is too large.', 413);
+        }
+    }
+
+    /**
+     * @throws UploadErrorException
+     */
+    protected function determinateUuid(Request $request, ?string $uuidIdentifier): string
+    {
+        if ($uuidIdentifier === null) {
+            throw new UploadErrorException('Missing uuid identifier', 400);
+        }
+
+        $uuid = $request->request->get($uuidIdentifier);
+
+        if ($uuid === null || $uuid === '') {
+            throw new UploadErrorException('Missing uuid', 400);
+        }
+
+        return preg_replace('/[^A-Za-z0-9_-]/', '-', $uuid);
+    }
+
+    protected function removeUploadDirectories(string $location, array $storages = [self::STORAGE_FILE, self::STORAGE_CHUNK]): void
+    {
+        try {
+
+            if (
+                in_array(self::STORAGE_CHUNK, $storages, true) &&
+                $this->formBuilderChunkStorage->directoryExists($location)
+            ) {
+                $this->formBuilderChunkStorage->deleteDirectory($location);
+            }
+
+            if (
+                in_array(self::STORAGE_FILE, $storages, true) &&
+                $this->formBuilderFilesStorage->directoryExists($location)
+            ) {
+                $this->formBuilderFilesStorage->deleteDirectory($location);
+            }
+
+        } catch (FilesystemException) {
+            // fail silently
+        }
     }
 
     protected function toBytes(mixed $sizeStr): int|string
@@ -306,5 +617,19 @@ class FileStream implements FileStreamInterface
         }
 
         return preg_replace('/[^a-zA-Z0-9]_+/', '', str_replace('.', '_', $fileName));
+    }
+
+    protected function fieldReferenceEnabled(): bool
+    {
+        $security = $this->configuration->getConfig('security');
+
+        return $security['enable_upload_field_reference'] === true;
+    }
+
+    protected function serverMimeTypeValidationEnabled(): bool
+    {
+        $security = $this->configuration->getConfig('security');
+
+        return $security['enable_upload_server_mime_type_validation'] === true;
     }
 }

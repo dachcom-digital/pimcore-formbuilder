@@ -39,6 +39,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->append($this->createPersistenceNode());
         $rootNode->append($this->buildFlagsNode());
         $rootNode->append($this->buildSpamProductionNode());
+        $rootNode->append($this->buildSecurityNode());
         $rootNode->append($this->buildAreaNode());
         $rootNode->append($this->buildFormConfigurationNode());
         $rootNode->append($this->buildAdminConfigurationNode());
@@ -603,6 +604,21 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+            ->end();
+
+        return $rootNode;
+    }
+
+    private function buildSecurityNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder('security');
+
+        $rootNode = $builder->getRootNode();
+        $rootNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enable_upload_field_reference')->defaultFalse()->end()
+                ->booleanNode('enable_upload_server_mime_type_validation')->defaultFalse()->end()
             ->end();
 
         return $rootNode;
