@@ -15,8 +15,10 @@ namespace FormBuilderBundle\DependencyInjection;
 
 use FormBuilderBundle\Configuration\Configuration as BundleConfiguration;
 use FormBuilderBundle\Registry\ConditionalLogicRegistry;
+use FormBuilderBundle\Validator\Policy\PolicyValidator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
@@ -81,6 +83,8 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
 
         $container->setParameter('form_builder.persistence.doctrine.enabled', true);
         $container->setParameter('form_builder.persistence.doctrine.manager', $entityManagerName);
+
+        $this->setupPolicyValidator($container, $config);
     }
 
     private function buildEmailCheckerStack(ContainerBuilder $container, array $config): void
@@ -101,5 +105,20 @@ class FormBuilderExtension extends Extension implements PrependExtensionInterfac
 
         $loader->load('config/email_checker.yaml');
         $loader->load('services/email_checker.yaml');
+    }
+
+    private function setupPolicyValidator(ContainerBuilder $container, array $config): void
+    {
+        $policyValidator = new Definition();
+        $policyValidator->setClass(PolicyValidator::class);
+
+        $uploadPolicyValidator = [];
+        if ($config['security']['upload_policy_validator'] !== null) {
+            $uploadPolicyValidator['$uploadPolicyValidator'] = new Reference($config['security']['upload_policy_validator']);
+        }
+
+        $policyValidator->setArguments($uploadPolicyValidator);
+
+        $container->setDefinition(PolicyValidator::class, $policyValidator);
     }
 }
