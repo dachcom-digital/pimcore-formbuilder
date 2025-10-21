@@ -42,12 +42,12 @@ class DefaultController extends FrontendController
 
         if ($this->document->getKey() === 'drop-zone') {
             $options = [
-                'defaultHandlerPath' => 'https://rawcdn.githack.com/dachcom-digital/jquery-pimcore-formbuilder/v1.0.0/dist/dynamic-multi-file',
+                'defaultHandlerPath' => 'https://rawcdn.githack.com/dachcom-digital/jquery-pimcore-formbuilder/v1.2.0/dist/dynamic-multi-file',
                 'libPath'            => 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js'
             ];
         } elseif ($this->document->getKey() === 'fine-uploader') {
             $options = [
-                'defaultHandlerPath' => 'https://rawcdn.githack.com/dachcom-digital/jquery-pimcore-formbuilder/v1.0.0/dist/dynamic-multi-file',
+                'defaultHandlerPath' => 'https://rawcdn.githack.com/dachcom-digital/jquery-pimcore-formbuilder/v1.2.0/dist/dynamic-multi-file',
                 'libPath'            => 'https://cdnjs.cloudflare.com/ajax/libs/file-uploader/5.16.2/jquery.fine-uploader/jquery.fine-uploader.min.js'
             ];
         }

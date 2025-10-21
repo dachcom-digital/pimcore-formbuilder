@@ -11,13 +11,8 @@
  * @license    GPLv3 and DCL
  */
 
-namespace FormBuilderBundle\Stream;
+namespace FormBuilderBundle\Exception;
 
-interface FileStreamInterface
+class UploadErrorException extends \Exception
 {
-    public function handleUpload(array $options = [], bool $instantChunkCombining = true): array;
-
-    public function combineChunks(array $options = []): array;
-
-    public function handleDelete(string $identifier, bool $checkChunkFolder = false, ?string $fieldReference = null): array;
 }

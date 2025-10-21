@@ -44,14 +44,15 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
 
         if ($method === 'POST') {
             $result = $this->fileStream->handleUpload([
-                'binary'          => 'qqfile',
-                'uuid'            => 'qquuid',
-                'chunkIndex'      => 'qqpartindex',
-                'totalChunkCount' => 'qqtotalparts',
-                'totalFileSize'   => 'qqtotalfilesize',
+                'binary'            => 'qqfile',
+                'uuid'              => 'qquuid',
+                'fieldReferenceKey' => 'fieldReference',
+                'chunkIndex'        => 'qqpartindex',
+                'totalChunkCount'   => 'qqtotalparts',
+                'totalFileSize'     => 'qqtotalfilesize',
             ], false);
 
-            return new JsonResponse($result);
+            return new JsonResponse($result, $result['statusCode'] ?? 200);
         }
 
         if ($method === 'DELETE') {
@@ -64,14 +65,15 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
     public function onDone(Request $request): Response
     {
         $result = $this->fileStream->combineChunks([
-            'fileName'        => $request->request->get('qqfilename'),
-            'uuid'            => 'qquuid',
-            'chunkIndex'      => 'qqpartindex',
-            'totalChunkCount' => 'qqtotalparts',
-            'totalFileSize'   => 'qqtotalfilesize',
+            'fileName'          => $request->request->get('qqfilename'),
+            'uuid'              => 'qquuid',
+            'fieldReferenceKey' => 'fieldReference',
+            'chunkIndex'        => 'qqpartindex',
+            'totalChunkCount'   => 'qqtotalparts',
+            'totalFileSize'     => 'qqtotalfilesize',
         ]);
 
-        return new JsonResponse($result, $result['statusCode']);
+        return new JsonResponse($result, $result['statusCode'] ?? 200);
     }
 
     public function onDelete(Request $request): Response
@@ -80,8 +82,10 @@ class FineUploadAdapter implements DynamicMultiFileAdapterInterface
             ? $request->attributes->get('identifier')
             : $request->request->get('uuid');
 
-        $result = $this->fileStream->handleDelete($identifier);
+        $fieldReference = $request->query->get('fieldReference');
 
-        return new JsonResponse($result);
+        $result = $this->fileStream->handleDelete($identifier, false, $fieldReference);
+
+        return new JsonResponse($result, $result['statusCode'] ?? 200);
     }
 }
