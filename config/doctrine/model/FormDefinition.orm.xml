@@ -12,8 +12,8 @@
         <field name="modificationDate" type="datetime" column="modificationDate" nullable="false"/>
         <field name="createdBy" type="integer" column="createdBy"/>
         <field name="modifiedBy" type="integer" column="modifiedBy"/>
-        <field name="configuration" type="object" column="configuration" nullable="true"/>
-        <field name="conditionalLogic" type="object" column="conditionalLogic" nullable="true"/>
+        <field name="configuration" type="json" column="configuration" nullable="true"/>
+        <field name="conditionalLogic" type="json" column="conditionalLogic" nullable="true"/>
         <field name="fields" type="form_builder_fields" column="fields" nullable="true"/>
         <one-to-many field="outputWorkflows" target-entity="FormBuilderBundle\Model\OutputWorkflow" mapped-by="formDefinition"
                      fetch="LAZY">
