@@ -82,6 +82,34 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                 }
             }),
             storeCollection = new Ext.util.Collection(),
+            /**
+             * Resolves a stored api mapping value (the "value" field of the predefined api field
+             * store) to its store record.
+             *
+             * Store#findRecord() must not be used for this: it does not compare exactly but builds
+             * a case-insensitive prefix regex ("^street"), so the first record whose value starts
+             * with the searched value wins. With both "street" and "street_no" being offered as
+             * mapping targets, the mapping configured for "street" was resolved to the
+             * "street_no" record - rendered in the "API Fields" column and, when the dialog was
+             * saved without touching that row, written back as the mapping (see NXPLKH-708).
+             *
+             * Store#findExact() is no drop-in replacement either, it returns an index instead of a
+             * record. This is therefore "findRecord() with an exact comparison", so the filtering
+             * behaviour stays unchanged.
+             *
+             * @param {Ext.data.Store} store
+             * @param {String} value
+             * @return {Ext.data.Model|null}
+             */
+            findApiFieldRecord = function (store, value) {
+
+                var data = store.getData(),
+                    index = data.findIndexBy(function (record) {
+                        return record.get('value') === value;
+                    });
+
+                return index === -1 ? null : data.getAt(index);
+            },
             generateFields = function (fields, treeItems, parent) {
 
                 Ext.Array.each(fields, function (field) {
@@ -102,7 +130,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                             expanded: true,
                             children: [],
                             apiMapping: Ext.isArray(apiMappingValues) ? Ext.Array.map(apiMappingValues, function (value) {
-                                return predefinedApiFieldStore.findRecord('value', Ext.isObject(value) ? value.get('value') : value);
+                                return findApiFieldRecord(predefinedApiFieldStore, Ext.isObject(value) ? value.get('value') : value);
                             }) : [],
                             fieldTransformer: fieldTransformer,
                             formFieldAttributes: {
@@ -111,9 +139,9 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                         };
 
                     Ext.Array.each(Ext.isArray(apiMappingValues) ? apiMappingValues : [], function (mappingKey) {
-                        var record = predefinedApiFieldStore.findRecord('value', mappingKey);
+                        var record = findApiFieldRecord(predefinedApiFieldStore, mappingKey);
                         if (record !== null) {
-                            storeCollection.add(predefinedApiFieldStore.findRecord('value', mappingKey));
+                            storeCollection.add(record);
                             predefinedApiFieldStore.getData().onFilterChange();
                         }
                     });
@@ -252,7 +280,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                                         return value.get('label');
                                     }
 
-                                    storeRecord = predefinedApiFieldStore.findRecord('value', value);
+                                    storeRecord = findApiFieldRecord(predefinedApiFieldStore, value);
 
                                     return storeRecord ? storeRecord.get('label') : v;
                                 })
@@ -263,7 +291,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                             return v.get('label');
                         }
 
-                        storeRecord = predefinedApiFieldStore.findRecord('value', v);
+                        storeRecord = findApiFieldRecord(predefinedApiFieldStore, v);
 
                         return storeRecord ? storeRecord.get('label') : v;
 
@@ -310,7 +338,7 @@ Formbuilder.extjs.extensions.formDataMappingEditor.formDataMapper = Class.create
                             return null;
                         }
 
-                        record = fieldTransformerStore.findRecord('value', v);
+                        record = findApiFieldRecord(fieldTransformerStore, v);
 
                         if (record === null) {
                             return null;
